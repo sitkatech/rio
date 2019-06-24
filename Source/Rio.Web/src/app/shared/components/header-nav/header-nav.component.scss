@@ -1,0 +1,27 @@
+.navbarLogo {
+    height: 30px;
+  }
+  
+  .footerLogo {
+    height: 50px;
+    float: right;
+    margin: 5px 0;
+  }
+  
+  a.signOut {
+    cursor: pointer;
+  }
+  
+  .dropdown-menu {
+    z-index: 1021;
+  }
+  
+  .navbar.navbar-rio
+  {
+    background-color: #448AC6;
+  }
+
+  .navbar.navbar-rio a.nav-link
+  {
+    color: #fff;
+  }

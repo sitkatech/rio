@@ -1,0 +1,90 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
+            <span *ngIf="!currentUserIsAdmin()">Users</span>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Invite User
+        </li>
+    </ol>
+</nav>
+<div class="container">
+    <h2>Invite User</h2>
+    <p class="lead">
+        This page lets you proactively invite users to the Water Trading Platform. After clicking Invite, the user will
+        be added
+        to the User list and you can assign appropriate roles to the user account.
+
+        If the invited user already has a Keystone account (e.g. they have logged into Miradi Share, Action Agenda
+        Tracker, etc.), you can control whether they receive an email inviting them to log into Puget Sound Info.
+
+        If the invited user does NOT have a Keystone account, they'll receive an email with a link to verify their
+        account. Clicking this link will display a Keystone webpage where the user can set their password. </p>
+</div>
+<div class="container my-sm-4">
+    <app-alert-display></app-alert-display>
+    <form (ngSubmit)="onSubmit(inviteUserForm)" #inviteUserForm="ngForm">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">First Name</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required
+                                [(ngModel)]="model.FirstName" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">Last Name</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required
+                                [(ngModel)]="model.LastName" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">Email</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Email" placeholder="Email" required
+                                [(ngModel)]="model.Email" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+
+                            <label class="required">Role</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <select name="RoleID" class="form-control" [(ngModel)]="model.RoleID" required>
+                                <option value=""></option>
+                                <option *ngFor="let role of roles" [value]="role.RoleID">
+                                    {{role.RoleDisplayName}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <hr />
+            <div class="col-xs-12 col-sm-2">
+                <i class="fas fa-bolt "></i> Required field
+            </div>
+            <div class="col-xs-12 col-sm-10 text-right">
+                <button type="submit" class="btn btn-primary"
+                    [disabled]="!inviteUserForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Invite
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/users">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

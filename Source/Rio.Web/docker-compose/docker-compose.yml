@@ -1,0 +1,10 @@
+version: '3.5'
+
+services:
+  rio.web:
+    image: sitkacontainers.azurecr.io/rio/web
+    build:
+      args:
+        env: ${ENVIRONMENT}
+      context: ../..
+      dockerfile: Rio.Web/Dockerfile

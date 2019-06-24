@@ -1,0 +1,76 @@
+.k-grid {
+  td a, td a:not(.k-state-selected) {
+    color: $primary;
+  }
+
+  tr.k-state-selected {
+    background-color: #ff9;
+  }
+
+  tr.k-alt :not(tr.k-state-selected) {
+    background-color: rgba(0, 0, 0, .05);
+  }
+
+  tr:hover {
+    background-color: rgba(0, 0, 0, .1);
+    cursor: pointer;
+    &.k-state-selected {
+      background-color: #e5e589;
+    }
+  }
+
+  .k-grid-header {
+    tr:hover {
+      background-color: inherit;
+    }
+
+    th {
+      font-weight: 700;
+    }
+  }
+
+  .k-grid-toolbar {
+    background-color: inherit;
+    border-top: solid 1px $muted;
+  }
+
+  .k-icon.k-i-filter-clear {
+    color: $base-text;
+  }
+
+  ul.k-pager-numbers
+  a.k-state-selected {
+    background-color: $primary;
+  }
+  a:not(.k-state-selected) {
+    color: $primary;
+  }
+
+  .k-pager-numbers .k-link, .k-pager-numbers .k-link {
+    &:link {
+      color: $primary;
+    }
+    &.k-state-selected:link {
+      color: $white;
+    }
+  }
+}
+
+.k-widget, .k-textbox {
+  font-size: 14px;
+}
+
+#ticketGrid .k-grid td{
+  padding: 4px 4px;
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.k-checkbox:checked + .k-checkbox-label::before {
+  border-color: $primary;
+  background-color: $primary;
+}

@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  rio.api:
+    image: sitkacontainers.azurecr.io/rio/api
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    ports:
+      - "8888:80"
+      - "8889:443"

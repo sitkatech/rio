@@ -1,0 +1,28 @@
+$footer-height: 60px;
+
+$theme-colors: (
+        "primary": #205c90,     // systemBlue
+        "secondary": #c4c4c4,   // lightGray
+        "info": #228be6,        // brightBlue
+        "light": #f5f5f5,       // offWhite
+        "muted": #dee2e6,       // footerGray
+        "danger": #ff0000,
+        "success": #00cc00,
+        "warning": #ffff9f
+);
+
+// this looks redundant, but we need to make the override in both ways
+$primary: #205c90;
+$secondary: #c4c4c4;
+$info: #228be6;
+$light: #f5f5f5;
+$muted: #dee2e6;
+$danger: #ff0000;
+$success: #00cc00;
+$warning: #ffff9f;
+$text-muted: darken(#d3d3d3, 15%);
+$text-warning: darken($warning, 20%);
+
+$font-family-sans-serif: 'Roboto', sans-serif, 'Helvetica Neue', sans-serif;
+$font-size: 16px;
+$base-text: #000000;

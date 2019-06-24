@@ -1,0 +1,40 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page">Users</li>
+  </ol>
+</nav>
+<div class="container">
+    <div style="margin: 1rem 0 1rem 0;">
+        <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/invite-user">Invite User</a>
+    </div>  
+    <h2 style="display: inline-block">Users</h2>
+    <p class="lead">
+        A list of user accounts is shown in the grid below.
+    </p>
+</div>
+<div class="container mt-sm-4">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Role</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let user of users">
+          <th scope="row">{{ user.UserID }}</th>
+          <td>
+            <a routerLink="/users/{{user.UserID}}">
+            {{ user.FullName }}
+            </a>
+          </td>
+          <td>{{ user.Email }}</td>
+          <td>{{ user.Phone }}</td>
+          <td>{{ user.Role.RoleDisplayName }}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

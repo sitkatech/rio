@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+  rio.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - KEYSTONE_HOST=${KEYSTONE_HOST}
+      - RIO_DB_CONNECTION_STRING=${RIO_DB_CONNECTION_STRING}
+      - SECRET_PATH=${SECRET_PATH}

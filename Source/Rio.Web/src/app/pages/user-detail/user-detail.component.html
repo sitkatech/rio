@@ -1,0 +1,68 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
+            <span *ngIf="!currentUserIsAdmin()">Users</span>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <div class="row">
+        <div class="col-xs-12 col-md-6 mt-4">
+            <div class="card">
+                <div class="card-header">
+                    Basics
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Username</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.LoginName}}
+                            <em *ngIf="!user?.LoginName" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">First Name</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.FirstName}}
+                            <em *ngIf="!user?.FirstName" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Last Name</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.LastName}}
+                            <em *ngIf="!user?.LastName" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Full Name</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.FullName}}
+                            <em *ngIf="!user?.FullName" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Phone</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.Phone}}
+                            <em *ngIf="!user?.Phone" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Email</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.Email}}
+                            <em *ngIf="!user?.Email" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Role</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{user?.Role?.RoleDisplayName}}
+                            <em *ngIf="!user?.Role?.RoleDisplayName" class="text-muted">Not Available</em>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+  rio.web:
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1    
+    image: sitkacontainers.azurecr.io/rio/web
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"

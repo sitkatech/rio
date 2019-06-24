@@ -1,0 +1,37 @@
+<nav class="navbar navbar-rio navbar-expand-lg">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a href="https://www.rrbwsd.com/" class="navbar-brand">
+            <img src="assets/main/logos/rrbwsd_logo.png" class="navbarLogo">
+        </a>
+        <a routerLink="/" routerLinkActive="active" class="navbar-brand nav-link">
+            Water Trading Platform
+        </a>
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+            </li>
+            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="viewManage()">
+                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    Manage
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a routerLink="/users" routerLinkActive="active" class="dropdown-item">
+                        Users
+                    </a>
+                    <a routerLink="/trades" routerLinkActive="active" class="dropdown-item">
+                        Trades
+                    </a>
+                    <a routerLink="/market-metrics" routerLinkActive="active" class="dropdown-item">
+                        Market Metrics
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <user-authentication></user-authentication>
+    </div>
+</nav>

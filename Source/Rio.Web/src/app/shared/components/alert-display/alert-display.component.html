@@ -1,0 +1,6 @@
+<div class="mt-2" *ngIf="alerts.length > 0">
+    <ngb-alert *ngFor="let alert of alerts" [type]="alert.context" [dismissible]="alert.dismissable"
+               (close)="closeAlert(alert)">
+       <span [innerHTML]="alert.message"></span>
+    </ngb-alert>
+</div>

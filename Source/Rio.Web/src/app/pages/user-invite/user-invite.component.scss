@@ -1,0 +1,30 @@
+.can-manage-user-container {
+    margin: 5px 0 1rem 0;
+}
+
+.can-manage-user-container p-inputSwitch {
+    position: relative;
+    top: 6px;
+    left: 12px;
+}
+
+.error-message {
+    display: block;
+    margin: 5px 0 5px 0;
+}
+
+.form-card::ng-deep {
+    .ui-card {
+        margin: 1rem 0 1rem 0;
+    }
+    .field-error {
+        background-color: #f8b7bd;
+        color: #b74c56;
+    }
+}
+
+.buttonBar::ng-deep {
+    .ui-toolbar {
+        text-align: center;
+    }
+}

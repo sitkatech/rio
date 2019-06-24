@@ -1,0 +1,11 @@
+version: '3.5'
+
+services:
+  rio.web:
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    image: sitkacontainers.azurecr.io/rio/web
+    ports:
+      - "8887:80"
+      - "8886:443"
