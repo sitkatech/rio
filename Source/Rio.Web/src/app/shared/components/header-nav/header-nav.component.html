@@ -14,6 +14,12 @@
             <li class="nav-item">
                 <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
             </li>
+            <li class="nav-item" *ngIf="viewManage()">
+                <a class="nav-link" routerLink="/trades" routerLinkActive="active">Trades</a>
+            </li>
+            <li class="nav-item" *ngIf="viewManage()">
+                <a class="nav-link" routerLink="/market-metrics" routerLinkActive="active">Market Metrics</a>
+            </li>
             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="viewManage()">
                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
@@ -22,12 +28,6 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a routerLink="/users" routerLinkActive="active" class="dropdown-item">
                         Users
-                    </a>
-                    <a routerLink="/trades" routerLinkActive="active" class="dropdown-item">
-                        Trades
-                    </a>
-                    <a routerLink="/market-metrics" routerLinkActive="active" class="dropdown-item">
-                        Market Metrics
                     </a>
                 </div>
             </li>
