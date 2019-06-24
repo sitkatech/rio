@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   staging: false,
   dev: false,
-  apiHostName: 'api.rio.org:8889',
+  apiHostName: 'rio-api.yachats.sitkatech.com',
 
   keystoneAuthConfiguration: {
     clientId: 'Rio',
