@@ -10,11 +10,5 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-:r .\LookupTables\Script.PostDeployment.LookupTables.sql
-GO
-
-:r .\Views\Script.PostDeployment.Views.sql
-GO
-
-:r .\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql
+:r .\dbo.vGeoServerAllParcels.sql
 GO
