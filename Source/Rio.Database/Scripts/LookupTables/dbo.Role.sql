@@ -1,9 +1,8 @@
 ﻿MERGE INTO dbo.Role AS Target
 USING (VALUES
 (1, 'Admin', 'Administrator', '', 30),
-(2, 'Unassigned', 'Unassigned', '', 10),
-(3, 'Normal', 'Normal', '', 20),
-(4, 'SitkaAdmin', 'Sitka Admin', '', 40)
+(2, 'Normal', 'Normal', '', 20),
+(3, 'Unassigned', 'Unassigned', '', 10)
 )
 AS Source (RoleID, RoleName, RoleDisplayName, RoleDescription, SortOrder)
 ON Target.RoleID = Source.RoleID
