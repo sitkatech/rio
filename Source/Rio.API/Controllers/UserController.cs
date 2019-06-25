@@ -4,6 +4,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.User;
@@ -24,6 +25,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("/users/invite")]
+        [UserManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid User Invite JSON object from the Request Body.")]
         public IActionResult PostProgramUserInvite([FromBody] UserInviteDto inviteDto)
         {
@@ -90,6 +92,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("users")]
+        [UserManageFeature]
         public ActionResult<IEnumerable<UserDto>> Get()
         {
             var userDtos = Rio.EFModels.Entities.User.GetList(_dbContext);
@@ -97,6 +100,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("users/{userID}")]
+        [UserManageFeature]
         public ActionResult<UserDto> GetFromUserID([FromRoute] int userID)
         {
             var userDto = Rio.EFModels.Entities.User.GetSingle(_dbContext, userID);
@@ -127,6 +131,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPut("users/{userID}")]
+        [UserManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid User Upsert JSON object from the Request Body.")]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userEditDto)
         {

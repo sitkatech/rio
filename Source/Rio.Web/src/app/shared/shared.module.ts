@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages';
-import { HeaderNavComponent, FooterComponent, UserAuthenticationComponent } from './components';
+import { HeaderNavComponent, FooterComponent } from './components';
 import { UnauthenticatedComponent } from './pages/unauthenticated/unauthenticated.component';
 import { SubscriptionInsufficientComponent } from './pages/subscription-insufficient/subscription-insufficient.component';
 import { NgProgressModule } from '@ngx-progressbar/core';
@@ -12,8 +12,7 @@ import { RouterModule } from '@angular/router';
 @NgModule({
     declarations: [
         HeaderNavComponent,
-        FooterComponent,
-        UserAuthenticationComponent,
+        FooterComponent,        
         NotFoundComponent,
         UnauthenticatedComponent,
         SubscriptionInsufficientComponent

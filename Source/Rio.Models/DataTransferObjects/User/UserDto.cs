@@ -11,7 +11,6 @@ namespace Rio.Models.DataTransferObjects.User
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public int RoleID { get; set; }
         public RoleDto Role { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }

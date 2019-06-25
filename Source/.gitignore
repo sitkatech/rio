@@ -4,10 +4,6 @@ obj
 *.dbmdl
 *.jfm
 
-TerraTrak.ProjectManagement.API/docker-compose/.env
-TerraTrak.RealEstate.API/docker-compose/.env
 *.env
-TerraTrak.RealEstate.API.IntegrationTesting/TerraTrak.RealEstate.API.IntegrationTesting/environment.json
-TerraTrak.ProjectManagement.API.IntegrationTesting/TerraTrak.ProjectManagement.API.IntegrationTesting/environment.json
 *.user
-TerraTrak.Web/wwwroot/
+Rio.Web/wwwroot/

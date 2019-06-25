@@ -25,4 +25,12 @@ namespace Rio.EFModels.Entities
             return role?.AsDto();
         }
     }
+
+    public enum RoleEnum
+    {
+        Admin = 1,
+        Unassigned = 2,
+        Normal = 3,
+        SitkaAdmin = 4
+    }
 }
