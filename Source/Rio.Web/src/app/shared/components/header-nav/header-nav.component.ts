@@ -92,7 +92,7 @@ export class HeaderNavComponent implements OnInit {
         const role = this.currentUser && this.currentUser.Role
             ? this.currentUser.Role.RoleID
             : null;
-        return role === 3 || role === 4; // SitkaAdmin or Admin; todo: need to add enums
+        return role === 1; // Admin; todo: need to add enums
     }
 
 }

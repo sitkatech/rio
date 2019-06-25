@@ -8,10 +8,12 @@ import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
 import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
+import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
 
 const routes: Routes = [
   { path: "trades", component: TradesHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "parcels", component: ParcelsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },

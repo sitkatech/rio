@@ -1,0 +1,10 @@
+.location-card {
+    width: 100%;
+    z-index: 99;
+}
+
+@media print {
+    .leaflet-control-container {
+        display: none !important;
+    }
+}

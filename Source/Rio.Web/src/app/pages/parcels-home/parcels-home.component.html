@@ -1,0 +1,19 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page">Parcels</li>
+  </ol>
+</nav>
+<div class="container">
+    <h2 style="display: inline-block">Parcels</h2>
+    <p class="lead">
+        A list of parcels.
+    </p>
+</div>
+<div class="container mt-sm-4">
+  <parcel-map
+  mapId="parcelsMap"
+  mapHeight="500px"
+  [disableDefaultClick]="true"
+  [defaultFitBoundsOptions]="defaultFitBoundsOptions">
+  </parcel-map>
+</div>

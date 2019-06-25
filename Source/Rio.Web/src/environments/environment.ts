@@ -16,7 +16,8 @@ export const environment = {
     sessionChecksEnabled: true,
     logoutUrl: 'https://qa.keystone.sitkatech.com/core/connect/endsession',
     postLogoutRedirectUri: ''
-  }
+  },
+  geoserverMapServiceUrl: 'https://qa-mapserver.projectfirma.com/geoserver/Rio'
 };
 
 /*

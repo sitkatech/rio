@@ -17,6 +17,8 @@ import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
+import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
+import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-m
     UserInviteComponent,
     UserDetailComponent,
     TradesHomeComponent,
-    MarketMetricsHomeComponent
+    MarketMetricsHomeComponent,
+    ParcelsHomeComponent,
+    ParcelMapComponent
   ],
   imports: [
     AppRoutingModule,
