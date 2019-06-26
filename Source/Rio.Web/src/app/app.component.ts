@@ -5,6 +5,7 @@ import { environment } from '../environments/environment';
 import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';
 import { Router, RouteConfigLoadStart, RouteConfigLoadEnd, NavigationEnd } from '@angular/router';
 import { BusyService } from './shared/services';
+import { AuthenticationService } from './services/authentication.service';
 
 declare var require: any
 
@@ -18,7 +19,7 @@ export class AppComponent {
     userClaimsUpsertStarted = false;
     ignoreSessionTerminated = false;
 
-    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService) {
+    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService) {
     }
 
     ngOnInit() {
@@ -33,7 +34,9 @@ export class AppComponent {
         });
         
         this.configureAuthService().subscribe(() => {
-            this.oauthService.tryLogin();
+            this.oauthService.tryLogin().then(() => {
+                this.authenticationService.getAuthenticationUser();
+            });
         });
     }
 
