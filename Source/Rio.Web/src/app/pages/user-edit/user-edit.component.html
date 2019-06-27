@@ -4,7 +4,7 @@
       <a routerLink="/users">Users</a>
     </li>
     <li class="breadcrumb-item">
-      <a routerLink="/users/{{user?.userId}}">
+      <a routerLink="/users/{{user?.UserID}}">
         {{user?.FullName || (user?.FirstName + ' ' + user?.LastName)}}
       </a>
     </li>
@@ -40,7 +40,7 @@
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Submit
           </button>
-          <a class="btn btn-secondary ml-1" routerLink="/users/{{user?.userId}}">Cancel</a>
+          <a class="btn btn-secondary ml-1" routerLink="/users/{{user?.UserID}}">Cancel</a>
         </div>
       </div>
     </form>
