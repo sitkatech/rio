@@ -7,6 +7,7 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Controllers
@@ -31,7 +32,7 @@ namespace Rio.API.Controllers
         {
             if (inviteDto.RoleID.HasValue)
             {
-                var systemRole = Role.GetSingle(_dbContext, inviteDto.RoleID.Value);
+                var systemRole = Role.GetByRoleID(_dbContext, inviteDto.RoleID.Value);
                 if (systemRole == null)
                 {
                     return NotFound($"Could not find a Role with the ID {inviteDto.RoleID}");
@@ -71,7 +72,7 @@ namespace Rio.API.Controllers
             }
 
             var keystoneUser = response.Payload.Claims;
-            var existingUser = Rio.EFModels.Entities.User.GetSingle(_dbContext, keystoneUser.UserGuid);
+            var existingUser = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, keystoneUser.UserGuid);
             if (existingUser != null)
             {
                 return Ok(existingUser);
@@ -93,17 +94,17 @@ namespace Rio.API.Controllers
 
         [HttpGet("users")]
         [UserManageFeature]
-        public ActionResult<IEnumerable<UserDto>> Get()
+        public ActionResult<IEnumerable<UserDto>> List()
         {
-            var userDtos = Rio.EFModels.Entities.User.GetList(_dbContext);
+            var userDtos = Rio.EFModels.Entities.User.List(_dbContext);
             return Ok(userDtos);
         }
 
         [HttpGet("users/{userID}")]
         [UserManageFeature]
-        public ActionResult<UserDto> GetFromUserID([FromRoute] int userID)
+        public ActionResult<UserDto> GetByUserID([FromRoute] int userID)
         {
-            var userDto = Rio.EFModels.Entities.User.GetSingle(_dbContext, userID);
+            var userDto = Rio.EFModels.Entities.User.GetByUserID(_dbContext, userID);
             if (userDto == null)
             {
                 return NotFound();
@@ -113,7 +114,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("user-claims/{globalID}")]
-        public ActionResult<UserDto> GetFromGlobalID([FromRoute] string globalID)
+        public ActionResult<UserDto> GetByGlobalID([FromRoute] string globalID)
         {
             var isValidGuid = Guid.TryParse(globalID, out var globalIDAsGuid);
             if (!isValidGuid)
@@ -121,7 +122,7 @@ namespace Rio.API.Controllers
                 return BadRequest();
             }
 
-            var userDto = Rio.EFModels.Entities.User.GetSingle(_dbContext, globalIDAsGuid);
+            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, globalIDAsGuid);
             if (userDto == null)
             {
                 return NotFound();
@@ -135,7 +136,7 @@ namespace Rio.API.Controllers
         [RequiresValidJSONBodyFilter("Could not parse a valid User Upsert JSON object from the Request Body.")]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
         {
-            var userDto = Rio.EFModels.Entities.User.GetSingle(_dbContext, userID);
+            var userDto = Rio.EFModels.Entities.User.GetByUserID(_dbContext, userID);
             if (userDto == null)
             {
                 return NotFound();
@@ -151,7 +152,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = Role.GetSingle(_dbContext, userUpsertDto.RoleID.Value);
+            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.Value);
             if (role == null)
             {
                 return NotFound($"Could not find a System Role with the ID {userUpsertDto.RoleID}");
@@ -159,6 +160,20 @@ namespace Rio.API.Controllers
 
             var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userUpsertDto);
             return Ok(updatedUserDto);
+        }
+
+
+        [HttpGet("users/{userID}/parcels")]
+        [UserManageFeature]
+        public ActionResult<List<ParcelDto>> ListParcelsByUserID([FromRoute] int userID)
+        {
+            var parcelDtos = Rio.EFModels.Entities.Parcel.ListByUserID(_dbContext, userID);
+            if (parcelDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parcelDtos);
         }
     }
 }

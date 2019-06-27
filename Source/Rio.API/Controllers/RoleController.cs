@@ -23,7 +23,7 @@ namespace Rio.API.Controllers
         [HttpGet("roles")]
         public ActionResult<IEnumerable<RoleDto>> Get()
         {
-            var roleDtos = Role.GetList(_dbContext);
+            var roleDtos = Role.List(_dbContext);
             return Ok(roleDtos);
         }
     }

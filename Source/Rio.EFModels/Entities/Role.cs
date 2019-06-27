@@ -7,7 +7,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class Role
     {
-        public static IEnumerable<RoleDto> GetList(RioDbContext dbContext)
+        public static IEnumerable<RoleDto> List(RioDbContext dbContext)
         {
             var roles = dbContext.Role
                 .AsNoTracking()
@@ -16,7 +16,7 @@ namespace Rio.EFModels.Entities
             return roles;
         }
 
-        public static RoleDto GetSingle(RioDbContext dbContext, int roleID)
+        public static RoleDto GetByRoleID(RioDbContext dbContext, int roleID)
         {
             var role = dbContext.Role
                 .AsNoTracking()
@@ -29,8 +29,7 @@ namespace Rio.EFModels.Entities
     public enum RoleEnum
     {
         Admin = 1,
-        Unassigned = 2,
-        Normal = 3,
-        SitkaAdmin = 4
+        Normal = 2,
+        Unassigned = 3
     }
 }

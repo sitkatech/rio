@@ -4,7 +4,7 @@ namespace Rio.API.Services.Authorization
 {
     public class UserManageFeature : BaseAuthorizationAttribute
     {
-        public UserManageFeature() : base(new []{RoleEnum.Admin, RoleEnum.SitkaAdmin})
+        public UserManageFeature() : base(new []{RoleEnum.Admin})
         {
         }
     }

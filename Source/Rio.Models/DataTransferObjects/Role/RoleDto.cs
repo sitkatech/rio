@@ -9,7 +9,7 @@
 
         public static string GetSingleRoute(int roleID)
         {
-            return $"system-roles/{roleID}";
+            return $"roles/{roleID}";
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Rio.API.Services
             }
 
             var userGuid = Guid.Parse(claimsPrincipal.Claims.Single(c => c.Type == "sub").Value);
-            var keystoneUser = Rio.EFModels.Entities.User.GetSingle(dbContext, userGuid);
+            var keystoneUser = Rio.EFModels.Entities.User.GetByUserGuid(dbContext, userGuid);
             return keystoneUser;
         }
     }

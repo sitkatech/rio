@@ -3,41 +3,45 @@ import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { forkJoin } from 'rxjs';
+import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 
 @Component({
-  selector: 'template-user-detail',
-  templateUrl: './user-detail.component.html',
-  styleUrls: ['./user-detail.component.scss']
+    selector: 'template-user-detail',
+    templateUrl: './user-detail.component.html',
+    styleUrls: ['./user-detail.component.scss']
 })
 export class UserDetailComponent implements OnInit {
 
-  public user: UserDto;
+    public user: UserDto;
+    public parcels: Array<ParcelDto>;
 
-  constructor(
-      private route: ActivatedRoute,
-      private router: Router,
-      private userService: UserService,
-      private authenticationService: AuthenticationService
-  ) {
-  }
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private userService: UserService,
+        private parcelService: ParcelService,
+        private authenticationService: AuthenticationService
+    ) {
+    }
 
-  ngOnInit() {
-      this.getUser();
-  }
+    ngOnInit() {
+        const id = parseInt(this.route.snapshot.paramMap.get("id"));
+        if (id) {
+            forkJoin(
+                this.userService.getUserFromUserID(id),
+                this.parcelService.getParcelsByUserID(id)
+            ).subscribe(([user, parcels]) => {
+                this.user = user instanceof Array
+                    ? null
+                    : user as UserDto;
+                this.parcels = parcels;
+            });
+        }
+    }
 
-  private getUser(): void {
-      const id = parseInt(this.route.snapshot.paramMap.get("id"));
-      if (id) {
-          this.userService.getUserFromUserID(id)
-              .subscribe(resource => {
-                  this.user = resource instanceof Array
-                      ? null
-                      : resource as UserDto;
-              });
-      }
-  }
-
-  public currentUserIsAdmin(): boolean {
-      return this.authenticationService.canAdmin();
-  }
+    public currentUserIsAdmin(): boolean {
+        return this.authenticationService.canAdmin();
+    }
 }

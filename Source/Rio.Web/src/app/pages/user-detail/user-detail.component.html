@@ -10,14 +10,16 @@
     </ol>
 </nav>
 <div class="container mt-sm-4">
-    <h2 style="display: inline-block">{{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}</h2>
+    <h2 style="display: inline-block">
+        {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
+    </h2>
     <app-alert-display></app-alert-display>
-    <div class="row">
-        <div class="col-xs-12 col-md-6 mt-4">
+    <div class="row mt-4">
+        <div class="col-xs-12 col-md-6">
             <div class="card">
                 <div class="card-header">
                     <a *ngIf="currentUserIsAdmin()" class="btn btn-primary btn-sm float-right"
-                       routerLink="/users/{{user?.UserID}}/edit">
+                        routerLink="/users/{{user?.UserID}}/edit">
                         <span class="fas fa-edit"></span> Edit
                     </a>
                     Basics
@@ -66,6 +68,18 @@
                             <em *ngIf="!user?.Role?.RoleDisplayName" class="text-muted">Not Available</em>
                         </dd>
                     </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Parcels
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li *ngFor="let parcel of parcels">{{parcel.ParcelNumber}}</li>
+                    </ul>
                 </div>
             </div>
         </div>

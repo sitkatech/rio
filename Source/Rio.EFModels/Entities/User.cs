@@ -16,9 +16,7 @@ namespace Rio.EFModels.Entities
                 return null;
             }
 
-            var systemRole = Role.GetSingle(dbContext, userToCreate.RoleID.Value);
-
-            var user = new User()
+            var user = new User
             {
                 UserGuid = userGuid,
                 LoginName = loginName,
@@ -34,10 +32,10 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(user).Reload();
 
-            return GetSingle(dbContext, user.UserID);
+            return GetByUserID(dbContext, user.UserID);
         }
 
-        public static IEnumerable<UserDto> GetList(RioDbContext dbContext)
+        public static IEnumerable<UserDto> List(RioDbContext dbContext)
         {
             var users = dbContext.User
                 .Include(x => x.Role)
@@ -49,7 +47,7 @@ namespace Rio.EFModels.Entities
             return users;
         }
 
-        public static UserDto GetSingle(RioDbContext dbContext, int userID)
+        public static UserDto GetByUserID(RioDbContext dbContext, int userID)
         {
             var user = dbContext.User
                 .Include(x => x.Role)
@@ -60,7 +58,7 @@ namespace Rio.EFModels.Entities
             return userDto;
         }
 
-        public static UserDto GetSingle(RioDbContext dbContext, Guid userGuid)
+        public static UserDto GetByUserGuid(RioDbContext dbContext, Guid userGuid)
         {
             var user = dbContext.User
                 .Include(x => x.Role)
@@ -69,14 +67,6 @@ namespace Rio.EFModels.Entities
 
             var userDto = user?.AsDto();
             return userDto;
-        }
-
-        public static UserDto GetSingle(RioDbContext dbContext, string globalIDAsString)
-        {
-            var isValidGuid = Guid.TryParse(globalIDAsString, out var globalIDAsGuid);
-            return isValidGuid
-                ? GetSingle(dbContext, globalIDAsGuid)
-                : null;
         }
 
         public static UserDto UpdateUserEntity(RioDbContext dbContext, int userID, UserUpsertDto userEditDto)
@@ -95,7 +85,7 @@ namespace Rio.EFModels.Entities
 
             dbContext.SaveChanges();
             dbContext.Entry(user).Reload();
-            return GetSingle(dbContext, userID);
+            return GetByUserID(dbContext, userID);
         }
 
         public static List<ErrorMessage> ValidateUpdate(RioDbContext dbContext, UserUpsertDto userEditDto, int userID)
