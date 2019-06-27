@@ -9,15 +9,12 @@ namespace Rio.EFModels.Entities
     {
         public User()
         {
-            AuditLog = new HashSet<AuditLog>();
             FileResource = new HashSet<FileResource>();
-            Organization = new HashSet<Organization>();
-            SupportRequestLog = new HashSet<SupportRequestLog>();
+            UserParcel = new HashSet<UserParcel>();
         }
 
-        [Column("UserID")]
         public int UserID { get; set; }
-        public Guid UserGuid { get; set; }
+        public Guid? UserGuid { get; set; }
         [Required]
         [StringLength(100)]
         public string FirstName { get; set; }
@@ -29,7 +26,6 @@ namespace Rio.EFModels.Entities
         public string Email { get; set; }
         [StringLength(30)]
         public string Phone { get; set; }
-        [Column("RoleID")]
         public int RoleID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime CreateDate { get; set; }
@@ -38,26 +34,18 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? LastActivityDate { get; set; }
         public bool IsActive { get; set; }
-        [Column("OrganizationID")]
-        public int? OrganizationID { get; set; }
         public bool ReceiveSupportEmails { get; set; }
-        [Required]
         [StringLength(128)]
         public string LoginName { get; set; }
+        [StringLength(100)]
+        public string Company { get; set; }
 
-        [ForeignKey("OrganizationID")]
-        [InverseProperty("User")]
-        public virtual Organization OrganizationNavigation { get; set; }
         [ForeignKey("RoleID")]
         [InverseProperty("User")]
         public virtual Role Role { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<AuditLog> AuditLog { get; set; }
         [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResource { get; set; }
-        [InverseProperty("PrimaryContactUser")]
-        public virtual ICollection<Organization> Organization { get; set; }
-        [InverseProperty("RequestUser")]
-        public virtual ICollection<SupportRequestLog> SupportRequestLog { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<UserParcel> UserParcel { get; set; }
     }
 }

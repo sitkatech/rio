@@ -10,18 +10,9 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-:r .\dbo.AuditLogEventType.sql
-GO
-
 :r .\dbo.RioPageType.sql
 GO
 
-:r .\dbo.FieldDefinition.sql 
-GO
-
 :r .\dbo.Role.sql 
-GO
-
-:r .\dbo.SupportRequestType.sql 
 GO
 

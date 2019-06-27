@@ -12,10 +12,8 @@ namespace Rio.EFModels.Entities
             RioPageImage = new HashSet<RioPageImage>();
         }
 
-        [Column("RioPageID")]
-        public int RioPageId { get; set; }
-        [Column("RioPageTypeID")]
-        public int RioPageTypeId { get; set; }
+        public int RioPageID { get; set; }
+        public int RioPageTypeID { get; set; }
         public string RioPageContent { get; set; }
 
         [InverseProperty("RioPage")]

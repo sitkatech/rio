@@ -10,40 +10,30 @@ namespace Rio.EFModels.Entities
         public FileResource()
         {
             RioPageImage = new HashSet<RioPageImage>();
-            FieldDefinitionDataImage = new HashSet<FieldDefinitionDataImage>();
-            Organization = new HashSet<Organization>();
         }
 
-        [Column("FileResourceID")]
-        public int FileResourceId { get; set; }
-        [Column("FileResourceMimeTypeID")]
-        public int FileResourceMimeTypeId { get; set; }
+        public int FileResourceID { get; set; }
+        public int FileResourceMimeTypeID { get; set; }
         [Required]
         [StringLength(255)]
         public string OriginalBaseFilename { get; set; }
         [Required]
         [StringLength(255)]
         public string OriginalFileExtension { get; set; }
-        [Column("FileResourceGUID")]
-        public Guid FileResourceGuid { get; set; }
+        public Guid FileResourceGUID { get; set; }
         [Required]
         public byte[] FileResourceData { get; set; }
-        [Column("CreateUserID")]
-        public int CreateUserId { get; set; }
+        public int CreateUserID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime CreateDate { get; set; }
 
-        [ForeignKey("CreateUserId")]
+        [ForeignKey("CreateUserID")]
         [InverseProperty("FileResource")]
         public virtual User CreateUser { get; set; }
-        [ForeignKey("FileResourceMimeTypeId")]
+        [ForeignKey("FileResourceMimeTypeID")]
         [InverseProperty("FileResource")]
         public virtual FileResourceMimeType FileResourceMimeType { get; set; }
         [InverseProperty("FileResource")]
         public virtual ICollection<RioPageImage> RioPageImage { get; set; }
-        [InverseProperty("FileResource")]
-        public virtual ICollection<FieldDefinitionDataImage> FieldDefinitionDataImage { get; set; }
-        [InverseProperty("LogoFileResource")]
-        public virtual ICollection<Organization> Organization { get; set; }
     }
 }

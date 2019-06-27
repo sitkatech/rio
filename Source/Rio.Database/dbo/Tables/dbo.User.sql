@@ -1,6 +1,6 @@
 CREATE TABLE dbo.[User](
     UserID int IDENTITY(1,1) NOT NULL CONSTRAINT PK_User_UserID PRIMARY KEY,
-    UserGuid uniqueidentifier NOT NULL,
+    UserGuid uniqueidentifier NULL,
     FirstName varchar(100) NOT NULL,
     LastName varchar(100) NOT NULL,
     Email varchar(255) NOT NULL,
@@ -10,16 +10,15 @@ CREATE TABLE dbo.[User](
     UpdateDate datetime NULL,
     LastActivityDate datetime NULL,
     IsActive bit NOT NULL,
-    OrganizationID int NULL CONSTRAINT FK_User_Organization_OrganizationID FOREIGN KEY REFERENCES dbo.Organization (OrganizationID),
     ReceiveSupportEmails bit NOT NULL,
-    LoginName varchar(128) NOT NULL,
-    CONSTRAINT AK_User_Email UNIQUE (Email),
-    CONSTRAINT AK_User_UserGuid UNIQUE (UserGuid)
+    LoginName varchar(128) NULL,
+    Company varchar(100) null,
+    CONSTRAINT AK_User_Email UNIQUE (Email)
 )
 GO
 
-CREATE UNIQUE INDEX AK_Organization_OrganizationGuid ON dbo.Organization
+CREATE UNIQUE INDEX AK_User_UserGuid ON dbo.[User]
 (
-    OrganizationGuid
+    UserGuid
 )
-WHERE (OrganizationGuid IS NOT NULL)
+WHERE (UserGuid IS NOT NULL)

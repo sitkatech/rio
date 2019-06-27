@@ -7,8 +7,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class RioPageType
     {
-        [Column("RioPageTypeID")]
-        public int RioPageTypeId { get; set; }
+        public int RioPageTypeID { get; set; }
         [Required]
         [StringLength(100)]
         public string RioPageTypeName { get; set; }

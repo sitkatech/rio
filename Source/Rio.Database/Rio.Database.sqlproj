@@ -66,21 +66,12 @@
     <Folder Include="Scripts\Views" />
   </ItemGroup>
   <ItemGroup>
-    <BuildNone Include="dbo\Tables\dbo.AuditLog.sql" />
-    <Build Include="dbo\Tables\dbo.AuditLogEventType.sql" />
     <Build Include="dbo\Tables\dbo.RioPage.sql" />
     <Build Include="dbo\Tables\dbo.RioPageImage.sql" />
     <Build Include="dbo\Tables\dbo.RioPageType.sql" />
-    <Build Include="dbo\Tables\dbo.FieldDefinition.sql" />
-    <Build Include="dbo\Tables\dbo.FieldDefinitionData.sql" />
-    <Build Include="dbo\Tables\dbo.FieldDefinitionDataImage.sql" />
     <Build Include="dbo\Tables\dbo.FileResource.sql" />
     <Build Include="dbo\Tables\dbo.FileResourceMimeType.sql" />
-    <Build Include="dbo\Tables\dbo.Organization.sql" />
-    <Build Include="dbo\Tables\dbo.OrganizationType.sql" />
     <Build Include="dbo\Tables\dbo.Role.sql" />
-    <Build Include="dbo\Tables\dbo.SupportRequestLog.sql" />
-    <Build Include="dbo\Tables\dbo.SupportRequestType.sql" />
     <Build Include="dbo\Tables\dbo.User.sql" />
     <Build Include="dbo\Tables\dbo.DatabaseMigration.sql" />
     <Build Include="RioDBWebUser.sql" />
@@ -88,11 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />
-    <None Include="Scripts\LookupTables\dbo.AuditLogEventType.sql" />
-    <None Include="Scripts\LookupTables\dbo.FieldDefinition.sql" />
     <None Include="Scripts\LookupTables\dbo.RioPageType.sql" />
     <None Include="Scripts\LookupTables\dbo.Role.sql" />
-    <None Include="Scripts\LookupTables\dbo.SupportRequestType.sql" />
     <None Include="Scripts\LookupTables\Script.PostDeployment.LookupTables.sql" />
     <None Include="Scripts\ReleaseScripts\0001 - Initial Data Population.sql" />
     <None Include="Scripts\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql" />
@@ -104,5 +92,7 @@
     <Build Include="dbo\Tables\dbo.Parcel.sql" />
     <None Include="Scripts\Views\dbo.vGeoServerAllParcels.sql" />
     <None Include="Scripts\Views\Script.PostDeployment.Views.sql" />
+    <Build Include="dbo\Tables\dbo.UserParcel.sql" />
+    <None Include="Scripts\ReleaseScripts\0002 - Associating Users to Parcels.sql" />
   </ItemGroup>
 </Project>

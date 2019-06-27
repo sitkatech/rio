@@ -13,3 +13,6 @@ Post-Deployment Script Template
 
 :r ".\0001 - Initial Data Population.sql"
 GO
+
+:r ".\0002 - Associating Users to Parcels.sql"
+GO

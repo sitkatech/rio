@@ -7,18 +7,15 @@ namespace Rio.EFModels.Entities
 {
     public partial class RioPageImage
     {
-        [Column("RioPageImageID")]
-        public int RioPageImageId { get; set; }
-        [Column("RioPageID")]
-        public int RioPageId { get; set; }
-        [Column("FileResourceID")]
-        public int FileResourceId { get; set; }
+        public int RioPageImageID { get; set; }
+        public int RioPageID { get; set; }
+        public int FileResourceID { get; set; }
 
-        [ForeignKey("RioPageId")]
-        [InverseProperty("RioPageImage")]
-        public virtual RioPage RioPage { get; set; }
-        [ForeignKey("FileResourceId")]
+        [ForeignKey("FileResourceID")]
         [InverseProperty("RioPageImage")]
         public virtual FileResource FileResource { get; set; }
+        [ForeignKey("RioPageID")]
+        [InverseProperty("RioPageImage")]
+        public virtual RioPage RioPage { get; set; }
     }
 }
