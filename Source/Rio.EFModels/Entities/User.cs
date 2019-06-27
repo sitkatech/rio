@@ -102,12 +102,20 @@ namespace Rio.EFModels.Entities
         {
             var result = new List<ErrorMessage>();
 
+            //if (string.IsNullOrWhiteSpace(userEditDto.FirstName))
+            //{
+            //    result.Add(new ErrorMessage() { Type = "First Name", Message = "First Name is required." });
+            //}
+
+            //if (string.IsNullOrWhiteSpace(userEditDto.LastName))
+            //{
+            //    result.Add(new ErrorMessage() { Type = "Last Name", Message = "Last Name is required." });
+            //}
+
             if (!userEditDto.RoleID.HasValue)
             {
-                result.Add(new ErrorMessage() { Type = "System Role ID", Message = "System Role ID is required." });
+                result.Add(new ErrorMessage() { Type = "Role ID", Message = "Role ID is required." });
             }
-
-
 
             return result;
         }

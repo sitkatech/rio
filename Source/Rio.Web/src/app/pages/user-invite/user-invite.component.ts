@@ -1,14 +1,12 @@
 import { Component, OnInit, Output, Input, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
-import { SystemRoleService } from 'src/app/services/role/role.service';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { ValidationError } from "src/app/shared/models/validation-error";
+import { RoleService } from 'src/app/services/role/role.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
-import { forkJoin } from "rxjs";
+import { RoleDto } from 'src/app/shared/models/role/role-dto';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 
 
@@ -20,11 +18,11 @@ import { forkJoin } from "rxjs";
 })
 export class UserInviteComponent implements OnInit {
 
-    public roles: any = [];
+    public roles: Array<RoleDto>;
     public model: any = {};
     public isLoadingSubmit: boolean = false;
 
-    constructor(private cdr: ChangeDetectorRef, private router: Router, private userService: UserService, private roleService: SystemRoleService, private authenticationService: OAuthService, private alertService: AlertService) { }
+    constructor(private cdr: ChangeDetectorRef, private router: Router, private userService: UserService, private roleService: RoleService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
 
     ngOnInit(): void {
         this.roleService.getRoles().subscribe(result => {
@@ -62,6 +60,6 @@ export class UserInviteComponent implements OnInit {
     }
 
     public currentUserIsAdmin(): boolean {
-        return this.authenticationService.hasValidAccessToken();
+        return this.authenticationService.canAdmin();
     }
 }

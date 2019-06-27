@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'template-user-detail',
@@ -17,7 +17,7 @@ export class UserDetailComponent implements OnInit {
       private route: ActivatedRoute,
       private router: Router,
       private userService: UserService,
-      private authenticationService: OAuthService
+      private authenticationService: AuthenticationService
   ) {
   }
 
@@ -38,6 +38,6 @@ export class UserDetailComponent implements OnInit {
   }
 
   public currentUserIsAdmin(): boolean {
-      return this.authenticationService.hasValidAccessToken();
+      return this.authenticationService.canAdmin();
   }
 }

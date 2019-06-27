@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class SystemRoleService {
+export class RoleService {
 
     constructor(private apiService: ApiService) { }
         

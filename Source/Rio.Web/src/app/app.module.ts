@@ -19,6 +19,7 @@ import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
 import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
 import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
+import { UserEditComponent } from './pages/user-edit/user-edit.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.co
     TradesHomeComponent,
     MarketMetricsHomeComponent,
     ParcelsHomeComponent,
-    ParcelMapComponent
+    ParcelMapComponent,
+    UserEditComponent
   ],
   imports: [
     AppRoutingModule,

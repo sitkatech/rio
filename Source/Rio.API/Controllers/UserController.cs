@@ -133,7 +133,7 @@ namespace Rio.API.Controllers
         [HttpPut("users/{userID}")]
         [UserManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid User Upsert JSON object from the Request Body.")]
-        public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userEditDto)
+        public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
         {
             var userDto = Rio.EFModels.Entities.User.GetSingle(_dbContext, userID);
             if (userDto == null)
@@ -141,7 +141,7 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            var validationMessages = Rio.EFModels.Entities.User.ValidateUpdate(_dbContext, userEditDto, userDto.UserID);
+            var validationMessages = Rio.EFModels.Entities.User.ValidateUpdate(_dbContext, userUpsertDto, userDto.UserID);
             validationMessages.ForEach(vm => {
                 ModelState.AddModelError(vm.Type, vm.Message);
             });
@@ -151,13 +151,13 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var systemRole = Role.GetSingle(_dbContext, userEditDto.RoleID.Value);
-            if (systemRole == null)
+            var role = Role.GetSingle(_dbContext, userUpsertDto.RoleID.Value);
+            if (role == null)
             {
-                return NotFound($"Could not find a System Role with the ID {userEditDto.RoleID}");
+                return NotFound($"Could not find a System Role with the ID {userUpsertDto.RoleID}");
             }
 
-            var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userEditDto);
+            var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userUpsertDto);
             return Ok(updatedUserDto);
         }
     }

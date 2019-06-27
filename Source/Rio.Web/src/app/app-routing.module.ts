@@ -9,6 +9,7 @@ import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
 import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
 import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
+import { UserEditComponent } from './pages/user-edit/user-edit.component';
 
 const routes: Routes = [
   { path: "trades", component: TradesHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: "parcels", component: ParcelsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },

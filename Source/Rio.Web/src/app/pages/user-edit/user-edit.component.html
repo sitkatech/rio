@@ -1,0 +1,48 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a routerLink="/users">Users</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a routerLink="/users/{{user?.userId}}">
+        {{user?.FullName || (user?.FirstName + ' ' + user?.LastName)}}
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      Edit Basics
+    </li>
+  </ol>
+</nav>
+<div class="container mt-sm-4">
+    <h2 style="display: inline-block">{{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}</h2>
+    <app-alert-display></app-alert-display>
+  <div class="col-sm-12">
+    <form (ngSubmit)="onSubmit(editUserForm)" #editUserForm="ngForm">
+      <div class="form-group mt-4">
+        <div class="col-sm-2 control-label">
+          <label class="required">Role</label>
+        </div>
+        <div class="col-sm-10">
+          <select name="RoleID" class="form-control" [(ngModel)]="model.RoleID" required>
+            <option value=""></option>
+            <option *ngFor="let role of roles" [value]="role.RoleID">
+              {{role.RoleDisplayName}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm">
+          <i class="fas fa-bolt"></i> Required field
+        </div>
+        <div class="col-sm text-right">
+          <button type="submit" class="btn btn-primary" [disabled]="!editUserForm.form.valid || isLoadingSubmit">
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Submit
+          </button>
+          <a class="btn btn-secondary ml-1" routerLink="/users/{{user?.userId}}">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
