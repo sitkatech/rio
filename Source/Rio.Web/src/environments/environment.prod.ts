@@ -13,5 +13,5 @@ export const environment = {
     logoutUrl: 'https://www.keystone.sitkatech.com/core/connect/endsession',
     postLogoutRedirectUri: ''
   },
-  geoserverMapServiceUrl: 'https://mapserver.projectfirma.com/geoserver/Rio'
+  geoserverMapServiceUrl: 'http://rio-geoserver.yachats.sitkatech.com/geoserver/Rio'
 };
