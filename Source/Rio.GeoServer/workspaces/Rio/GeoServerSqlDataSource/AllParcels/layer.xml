@@ -1,0 +1,20 @@
+<layer>
+  <name>AllParcels</name>
+  <id>LayerInfoImpl--5295db08:16ba03a820a:-7ff6</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-53e9eefb:16b9054e5ea:-6bb7</id>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <id>StyleInfoImpl-74c98642:16baecba8e3:260a</id>
+    </style>
+  </styles>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--5295db08:16ba03a820a:-7ff7</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

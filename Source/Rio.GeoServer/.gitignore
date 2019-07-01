@@ -1,0 +1,10 @@
+resources/*
+!resources/plugins/
+resources/plugins/*
+!resources/plugins/README.txt
+!resources/overlays/
+resources/overlays/*
+!resources/overlays/README.txt
+.idea
+btsync-media.env 
+btsync-db.env 
