@@ -1,7 +1,7 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {Feature, FeatureCollection, Polygon} from "geojson";
-import {environment} from "src/environments/environment";
-import {WfsService} from "../../services/wfs.service";
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Feature, FeatureCollection, Polygon } from "geojson";
+import { environment } from "src/environments/environment";
+import { WfsService } from "../../services/wfs.service";
 import {
     Control, FitBoundsOptions,
     GeoJSON,
@@ -21,15 +21,12 @@ import {
     templateUrl: './parcel-map.component.html',
     styleUrls: ['./parcel-map.component.scss']
 })
-export class ParcelMapComponent implements OnInit, AfterViewInit, OnChanges {
+export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Input()
-    public mapId: string = '';
+    public mapID: string = '';
 
     @Input()
-    public feature?: any;
-
-    @Input()
-    public defaultExtent?: FeatureCollection;
+    public selectedParcelIDs: Array<number> = [];
 
     @Input()
     public onEachFeatureCallback?: (feature, layer) => void;
@@ -64,7 +61,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit, OnChanges {
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
 
-    constructor() {
+    constructor(
+        private wfsService: WfsService,
+    ) {
     }
 
     public ngOnInit(): void {
@@ -81,16 +80,31 @@ export class ParcelMapComponent implements OnInit, AfterViewInit, OnChanges {
         }, this.tileLayers);
 
         this.overlayLayers = Object.assign({
-            "Parcels": tileLayer.wms(`${environment.geoserverMapServiceUrl}/wms?`, {
+            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", {
                 layers: "Rio:AllParcels",
                 transparent: true,
                 format: "image/png",
                 tiled: true,
-            } as WMSOptions),
+            } as WMSOptions)
         }, this.overlayLayers);
+
+        if (this.selectedParcelIDs.length > 0) {
+            this.overlayLayers = Object.assign({
+                "My Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", {
+                    layers: "Rio:AllParcels",
+                    transparent: true,
+                    format: "image/png",
+                    tiled: true,
+                    styles: "parcel_yellow",
+                    cql_filter: "ParcelID in (" + this.selectedParcelIDs.join(',') + ")"
+                } as WMSOptions)
+            }, this.overlayLayers);
+        }
+
     }
 
     public ngAfterViewInit(): void {
+
         const mapOptions: MapOptions = {
             // center: [46.8797, -110],
             // zoom: 6,
@@ -100,121 +114,56 @@ export class ParcelMapComponent implements OnInit, AfterViewInit, OnChanges {
                 this.tileLayers["Aerial"],
             ],
         } as MapOptions;
-        this.map = map(this.mapId, mapOptions);
+        this.map = map(this.mapID, mapOptions);
 
-        this.map.on('load', (event: LeafletEvent)=> {
+        this.map.on('load', (event: LeafletEvent) => {
             this.afterLoadMap.emit(event);
         });
         this.map.on("moveend", (event: LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
         });
 
-        this.map.fitBounds([[35.26, -119.5], [35.47, -119.1]], this.defaultFitBoundsOptions);
-        this.map.setMaxBounds([[35.26, -119.5], [35.47, -119.1]]);
+        this.map.fitBounds([[35.34, -119.43], [35.35, -119.15]], this.defaultFitBoundsOptions);
+        //this.map.setMaxBounds([[35.26, -119.5], [35.47, -119.1]]);
 
         this.setControl();
-        this.ngOnChanges(null);
 
         if (!this.disableDefaultClick) {
-//             const wfsService = this.wfsService;
-//             const self = this;
-//             this.map.on("click", (event: LeafletMouseEvent): void => {
-//                 wfsService.getparcelByCoordinate(event.latlng.lng, event.latlng.lat)
-//                     .subscribe((parcelFeatureCollection: FeatureCollection) => {
-//                         parcelFeatureCollection.features
-//                             .forEach((feature: Feature) => {
-//                                 // Flip the coordinates
-//                                 switch (feature.geometry.type) {
-//                                     case "Polygon":
-//                                         const polygon: Polygon = feature.geometry as Polygon;
-//                                         polygon.coordinates = polygon.coordinates
-//                                             .map(coordinate => coordinate.map(point => [point[1], point[0]]));
-//                                         break;
-//                                 }
-//                                 new Popup({
-//                                     minWidth: 250,
-//                                 })
-//                                     .setLatLng(event.latlng)
-//                                     .setContent(`
-// <dl class="row mb-0">
-//     <dt class="col-5 text-right">Trust Area</dt>
-//     <dd class="col-7">
-//         <a href="/#/trust-areas/${feature.properties.parcelId}" target="_blank">
-//             ${feature.properties.strid}
-//             <span class="fas fa-external-link-alt"></span>
-//         </a>
-//     </dd>
-
-//     <dt class="col-5 text-right">Trust</dt>
-//     <dd class="col-7">
-//         <a href="/#/trusts/${feature.properties.trustId}" target="_blank">
-//             ${feature.properties.trustName}
-//             <span class="fas fa-external-link-alt"></span>
-//         </a>
-//     </dd>
-// </dl>
-// `
-//                                     )
-//                                     .openOn(self.map);
-//                             });
-//                    });
-//            });
-        }
-    }
-
-    // using ngOnChanges to make sure that we update the map when we have this.feature
-    public ngOnChanges(changes: SimpleChanges): void {
-        if (this.defaultExtent && this.map) {
-            const defaultExtentLayer = new GeoJSON(this.defaultExtent, {
-                style: {
-                    "color": "#800080",
-                    "weight": 1,
-                    "opacity": 0.5,
-                    "fillColor": "#800080",
-                    "dashArray": "10 5",
-                    "fillOpacity": 0.08
-                },
-                coordsToLatLng: (coords) => {
-                    return new LatLng(coords[0], coords[1], coords[2]);
-                }
+            const wfsService = this.wfsService;
+            const self = this;
+            this.map.on("click", (event: LeafletMouseEvent): void => {
+                wfsService.getParcelByCoordinate(event.latlng.lng, event.latlng.lat)
+                    .subscribe((parcelFeatureCollection: FeatureCollection) => {
+                        parcelFeatureCollection.features
+                            .forEach((feature: Feature) => {
+                                // Flip the coordinates
+                                switch (feature.geometry.type) {
+                                    case "Polygon":
+                                        const polygon: Polygon = feature.geometry as Polygon;
+                                        polygon.coordinates = polygon.coordinates
+                                            .map(coordinate => coordinate.map(point => [point[1], point[0]]));
+                                        break;
+                                }
+                                new Popup({
+                                    minWidth: 250,
+                                })
+                                    .setLatLng(event.latlng)
+                                    .setContent(`
+<dl class="row mb-0">
+    <dt class="col-5 text-right">Trust Area</dt>
+    <dd class="col-7">
+        <a href="/#/trust-areas/${feature.properties.ParcelID}" target="_blank">
+            ${feature.properties.ParcelNumber}
+            <span class="fas fa-external-link-alt"></span>
+        </a>
+    </dd>
+</dl>
+`
+                                    )
+                                    .openOn(self.map);
+                            });
+                    });
             });
-            defaultExtentLayer.addTo(this.map).bringToBack();
-            if (this.zoomMapToDefaultExtent) {
-                this.map.fitBounds(defaultExtentLayer.getBounds());
-            }
-        }
-
-        if (!(changes && changes.feature) || !this.map) {
-            return;
-        }
-
-        if (this.featureLayer) {
-            this.map.removeLayer(this.featureLayer);
-        }
-
-        const geoJsonOptions: GeoJSONOptions = {
-            style: {
-                "color": "#205c90",
-                "weight": 1,
-                "opacity": 1,
-                "fillColor": "#205c90",
-                "fillOpacity": 0.65
-            },
-            minZoom: 7,
-            maxZoom: 12,
-            onEachFeature: this.onEachFeatureCallback,
-            // leaflet is overzealously flipping our coordinates because of cartographical traditions
-            // setting this property overwrites that behavior so our shapes don't look like they're down in antarctica
-            coordsToLatLng: function (coords) {
-                return new LatLng(coords[0], coords[1], coords[2])
-            }
-        } as GeoJSONOptions;
-        this.featureLayer = new GeoJSON(this.feature, geoJsonOptions);
-        this.featureLayer.addTo(this.map);
-
-        // only resize the map if the feature is not null
-        if (this.feature && (this.feature.geometry || this.feature.features.length) && !this.defaultExtent) {
-            this.map.fitBounds(this.featureLayer.getBounds());
         }
     }
 
@@ -223,6 +172,12 @@ export class ParcelMapComponent implements OnInit, AfterViewInit, OnChanges {
             .addTo(this.map);
         if (this.displayparcelsLayerOnLoad) {
             this.overlayLayers["Parcels"].addTo(this.map);
+        }
+        if(this.selectedParcelIDs.length > 0)
+        {
+            const myParcelsLayer = this.overlayLayers["My Parcels"];
+            myParcelsLayer.addTo(this.map);
+            this.map.fitBounds(myParcelsLayer.getBounds());
         }
         this.afterSetControl.emit(this.control);
     }

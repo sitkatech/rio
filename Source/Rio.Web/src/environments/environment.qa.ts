@@ -13,6 +13,6 @@ export const environment = {
     logoutUrl: 'https://qa.keystone.sitkatech.com/core/connect/endsession',
     postLogoutRedirectUri: ''
   },
-  geoserverMapServiceUrl: 'http://rio-geoserver.qa.sycan.sitkatech.com/geoserver/Rio'
+  geoserverMapServiceUrl: 'https://rio-geoserver.qa.sycan.sitkatech.com/geoserver/Rio'
 };
 

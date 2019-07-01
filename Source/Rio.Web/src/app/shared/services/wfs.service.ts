@@ -10,15 +10,30 @@ import {environment} from "src/environments/environment";
 })
 export class WfsService {
 
-    private getparcelIdsIntersectingUnsubscribe: Subject<void> = new Subject<void>();
+    private getparcelIDsIntersectingUnsubscribe: Subject<void> = new Subject<void>();
 
     constructor(
         private http: HttpClient,
     ) {
     }
 
-    public getparcelIdsIntersecting(lon1: number, lon2: number, lat1: number, lat2: number): Observable<number[]> {
-        this.getparcelIdsIntersectingUnsubscribe.next();
+    public getParcelByCoordinate(longitude: number, latitude: number): Observable<FeatureCollection> {
+        const url: string = `${environment.geoserverMapServiceUrl}/wms`;
+        return this.http.get<FeatureCollection>(url, {
+            params: {
+                service: 'WFS',
+                version: '2.0',
+                request: 'GetFeature',
+                outputFormat: 'application/json',
+                SrsName: 'EPSG:4326',
+                typeName: 'Rio:AllParcels',
+                cql_filter: `intersects(ParcelGeometry, POINT(${latitude} ${longitude}))`
+            }
+        });
+    }
+
+    public getParcelIdsIntersecting(lon1: number, lon2: number, lat1: number, lat2: number): Observable<number[]> {
+        this.getparcelIDsIntersectingUnsubscribe.next();
 
         const url: string = `${environment.geoserverMapServiceUrl}/wms`;
         return this.http.get(url, {
@@ -30,22 +45,22 @@ export class WfsService {
                 SrsName: "EPSG:4326",
                 typeName: "Rio:AllParcels",
                 valueReference: "ParcelID",
-                cql_filter: `bbox(parcelGeometry,${lat1},${lon1},${lat2},${lon2})`,
+                cql_filter: `bbox(ParcelGeometry,${lat1},${lon1},${lat2},${lon2})`,
             },
         })
             .pipe(
-                takeUntil(this.getparcelIdsIntersectingUnsubscribe),
+                takeUntil(this.getparcelIDsIntersectingUnsubscribe),
                 map((rawData: string) => {
                     // Parse XML to retrieve nodes
-                    const parcelIdNodes: HTMLCollection = new DOMParser()
+                    const parcelIDNodes: HTMLCollection = new DOMParser()
                         .parseFromString(rawData, "text/xml")
                         .getElementsByTagName("heartwood:parcelId");
 
-                    const parcelIds: number[] = [];
-                    for (let i = 0; i < parcelIdNodes.length; i++) {
-                        parcelIds.push(parseInt(parcelIdNodes[i].innerHTML))
+                    const parcelIDs: number[] = [];
+                    for (let i = 0; i < parcelIDNodes.length; i++) {
+                        parcelIDs.push(parseInt(parcelIDNodes[i].innerHTML))
                     }
-                    return parcelIds;
+                    return parcelIDs;
                 })
             );
 

@@ -44,4 +44,8 @@ export class UserDetailComponent implements OnInit {
     public currentUserIsAdmin(): boolean {
         return this.authenticationService.canAdmin();
     }
+
+    public getSelectedParcelIDs(): Array<number> {
+        return this.parcels.map(p => p.ParcelID);
+    }
 }
