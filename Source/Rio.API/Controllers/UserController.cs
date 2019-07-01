@@ -28,12 +28,12 @@ namespace Rio.API.Controllers
         [HttpPost("/users/invite")]
         [UserManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid User Invite JSON object from the Request Body.")]
-        public IActionResult PostProgramUserInvite([FromBody] UserInviteDto inviteDto)
+        public IActionResult InviteUser([FromBody] UserInviteDto inviteDto)
         {
             if (inviteDto.RoleID.HasValue)
             {
-                var systemRole = Role.GetByRoleID(_dbContext, inviteDto.RoleID.Value);
-                if (systemRole == null)
+                var role = Role.GetByRoleID(_dbContext, inviteDto.RoleID.Value);
+                if (role == null)
                 {
                     return NotFound($"Could not find a Role with the ID {inviteDto.RoleID}");
                 }
@@ -43,11 +43,18 @@ namespace Rio.API.Controllers
                 return BadRequest($"Role ID is required.");
             }
 
+            const string applicationName = "Rosedale-Rio Bravo Water Trading Platform";
+            const string rioBravoWaterStorageDistrict = "Rosedale-Rio Bravo Water Storage District";
             var inviteModel = new KeystoneService.KeystoneInviteModel
             {
                 FirstName = inviteDto.FirstName,
                 LastName = inviteDto.LastName,
-                Email = inviteDto.Email
+                Email = inviteDto.Email,
+                Subject = $"Invitation to the {applicationName}",
+                WelcomeText = $"You are receiving this notification because you are identified as a participant in the pilot phase of the {applicationName}, an online platform provided by the {rioBravoWaterStorageDistrict}.",
+                SiteName = applicationName,
+                SignatureBlock = $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:admin@rrbwsd.com'>admin@rrbwsd.com</a><br />(661) 589-6045<br /><a href='https://www.rrbwsd.com'>https://www.rrbwsd.com</a>",
+                RedirectURL = "https://rrbwatertrading.sitkatech.com"
             };
 
             var response = _keystoneService.Invite(inviteModel);
