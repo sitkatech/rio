@@ -177,7 +177,6 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         {
             const myParcelsLayer = this.overlayLayers["My Parcels"];
             myParcelsLayer.addTo(this.map);
-            this.map.fitBounds(myParcelsLayer.getBounds());
         }
         this.afterSetControl.emit(this.control);
     }
