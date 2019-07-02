@@ -74,7 +74,6 @@
     <Build Include="dbo\Tables\dbo.Role.sql" />
     <Build Include="dbo\Tables\dbo.User.sql" />
     <Build Include="dbo\Tables\dbo.DatabaseMigration.sql" />
-    <Build Include="RioDBWebUser.sql" />
     <None Include="Rio.Database.publish.xml" />
   </ItemGroup>
   <ItemGroup>

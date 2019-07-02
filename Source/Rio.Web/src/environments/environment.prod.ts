@@ -2,16 +2,16 @@ export const environment = {
   production: true,
   staging: false,
   dev: false,
-  apiHostName: 'rio-api.yachats.sitkatech.com',
+  apiHostName: 'api-rrbwatertrading.sitkatech.com',
 
   keystoneAuthConfiguration: {
     clientId: 'Rio',
-    issuer: 'https://www.keystone.sitkatech.com/core',
+    issuer: 'https://keystone.sitkatech.com/core',
     redirectUri: window.location.origin + '/',
     scope: 'openid all_claims keystone',
     sessionChecksEnabled: true,
-    logoutUrl: 'https://www.keystone.sitkatech.com/core/connect/endsession',
+    logoutUrl: 'https://keystone.sitkatech.com/core/connect/endsession',
     postLogoutRedirectUri: ''
   },
-  geoserverMapServiceUrl: 'http://rio-geoserver.yachats.sitkatech.com/geoserver/Rio'
+  geoserverMapServiceUrl: 'https://rio-geoserver.yachats.sitkatech.com/geoserver/Rio'
 };
