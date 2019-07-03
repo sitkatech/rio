@@ -7,7 +7,7 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingUpdateDto } from 'src/app/shared/models/posting/posting-update-dto';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
-import { PostingTypeDto } from 'src/app/shared/models/postingType/role-dto';
+import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostingService } from 'src/app/services/posting.service';
-import { PostingTypeDto } from 'src/app/shared/models/postingType/role-dto';
+import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingTypeService } from 'src/app/services/posting-type.service';

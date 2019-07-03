@@ -1,4 +1,4 @@
-import { PostingTypeDto } from '../postingType/role-dto';
+import { PostingTypeDto } from '../postingType/postingType-dto';
 import { UserDto } from '../user/user-dto';
 
 export class PostingDto {
