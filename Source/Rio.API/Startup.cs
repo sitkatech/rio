@@ -55,7 +55,7 @@ namespace Rio.API
             });
 
             var connectionString = Configuration["RIO_DB_CONNECTION_STRING"];
-            services.AddDbContext<RioDbContext>(c => { c.UseSqlServer(connectionString); });
+            services.AddDbContext<RioDbContext>(c => { c.UseSqlServer(connectionString, x => x.UseNetTopologySuite()); });
 
             services.AddSingleton(Configuration);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
