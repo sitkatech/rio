@@ -26,7 +26,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let posting of postings">
-            <th scope="row">{{ posting.PostingDate }}</th>
+            <th scope="row">{{ posting.PostingDate | date:"short" }}</th>
             <td>{{ posting.PostingType.PostingTypeDisplayName }}</td>
             <td>{{ posting.Quantity }} AF</td>
             <td>{{ posting.Price }} / AF</td>

@@ -5,7 +5,7 @@
     </li>
     <li class="breadcrumb-item">
       <a routerLink="/postings/{{posting.PostingID}}">
-        {{posting.PostingDate + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
+        {{(posting.PostingDate | date:'short') + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
       </a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
@@ -15,7 +15,7 @@
 </nav>
 <div class="container">
   <h2>
-    {{posting.PostingDate + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
+    {{(posting.PostingDate | date:'short') + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
   </h2>
 </div>
 <div class="container my-sm-4">
