@@ -1,0 +1,38 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Trades</li>
+    </ol>
+  </nav>
+  <div class="container">
+      <div style="margin: 1rem 0 1rem 0;">
+          <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/new-posting">New Posting</a>
+      </div>  
+      <h2 style="display: inline-block">Sales Posting Board</h2>
+      <p class="lead">
+          A list of postings is shown in the grid below.
+      </p>
+  </div>
+  <div class="container mt-sm-4">
+      <table class="table table-striped">
+          <thead>
+          <tr>
+            <th scope="col">Posting Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Posting</th>
+            <th scope="col">View/Contact</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let posting of postings">
+            <th scope="row">{{ posting.PostingDate }}</th>
+            <td>{{ posting.PostingType.PostingTypeDisplayName }}</td>
+            <td>{{ posting.Quantity }} AF</td>
+            <td>{{ posting.Price }} / AF</td>
+            <td>{{ posting.PostingDescription }}</td>
+            <td><a class="btn btn-primary btn-sm" routerLink="/postings/{{posting.PostingID}}">View</a></td>
+          </tr>
+          </tbody>
+      </table>
+  </div>

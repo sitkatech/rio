@@ -29,7 +29,7 @@ namespace Rio.EFModels.Entities
     public enum RoleEnum
     {
         Admin = 1,
-        Normal = 2,
+        LandOwner = 2,
         Unassigned = 3
     }
 }

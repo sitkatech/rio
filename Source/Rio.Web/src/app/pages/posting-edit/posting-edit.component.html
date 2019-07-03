@@ -1,0 +1,82 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" aria-current="page">
+      <a routerLink="/trades">Trades</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a routerLink="/postings/{{posting.PostingID}}">
+        {{posting.PostingDate + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      Edit
+    </li>
+  </ol>
+</nav>
+<div class="container">
+  <h2>
+    {{posting.PostingDate + ' - ' + posting.PostingType.PostingTypeDisplayName + ' - ' + posting.CreateUser.FullName}}
+  </h2>
+</div>
+<div class="container my-sm-4">
+  <app-alert-display></app-alert-display>
+  <form (ngSubmit)="onSubmit(editPostingForm)" #editPostingForm="ngForm">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-2 control-label">
+              <label class="required">Type</label>
+            </div>
+            <div class="col-sm-10">
+              <select name="PostingTypeID" class="form-control" [(ngModel)]="model.PostingTypeID" required>
+                <option value=""></option>
+                <option *ngFor="let postingType of postingTypes" [value]="postingType.PostingTypeID">
+                  {{postingType.PostingTypeDisplayName}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-2 control-label">
+              <label class="required">Quantity</label>
+            </div>
+            <div class="col-sm-10">
+              <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-2 control-label">
+              <label class="required">Price</label>
+            </div>
+            <div class="col-sm-10">
+              <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-2 control-label">
+              <label class="required">Description</label>
+            </div>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="PostingDescription" required
+                [(ngModel)]="model.PostingDescription"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <hr />
+      <div class="col-xs-12 col-sm-2">
+        <i class="fas fa-bolt"></i> Required field
+      </div>
+      <div class="col-xs-12 col-sm-10 text-right">
+        <button type="submit" class="btn btn-primary" [disabled]="!editPostingForm.form.valid || isLoadingSubmit">
+          <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+          Save
+        </button>
+        <a class="btn btn-secondary ml-1" routerLink="/postings">Cancel</a>
+      </div>
+    </div>
+  </form>
+</div>

@@ -75,6 +75,9 @@
     <Build Include="dbo\Tables\dbo.User.sql" />
     <Build Include="dbo\Tables\dbo.DatabaseMigration.sql" />
     <None Include="Rio.Database.publish.xml" />
+    <Build Include="dbo\Tables\dbo.Posting.sql" />
+    <Build Include="dbo\Tables\dbo.PostingType.sql" />
+    <None Include="Scripts\LookupTables\dbo.PostingType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

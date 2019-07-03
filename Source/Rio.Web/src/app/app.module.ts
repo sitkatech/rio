@@ -15,11 +15,14 @@ import { AlertDisplayComponent } from './shared/components/alert-display/alert-d
 import { RouterModule } from '@angular/router';
 import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
-import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
 import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
 import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
 import { UserEditComponent } from './pages/user-edit/user-edit.component';
+import { PostingListComponent } from './pages/posting-list/posting-list.component';
+import { PostingNewComponent } from './pages/posting-new/posting-new.component';
+import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
+import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
 
 @NgModule({
   declarations: [
@@ -29,11 +32,14 @@ import { UserEditComponent } from './pages/user-edit/user-edit.component';
     UserListComponent,
     UserInviteComponent,
     UserDetailComponent,
-    TradesHomeComponent,
     MarketMetricsHomeComponent,
     ParcelsHomeComponent,
     ParcelMapComponent,
-    UserEditComponent
+    UserEditComponent,
+    PostingListComponent,
+    PostingNewComponent,
+    PostingDetailComponent,
+    PostingEditComponent
   ],
   imports: [
     AppRoutingModule,

@@ -16,3 +16,5 @@ GO
 :r .\dbo.Role.sql 
 GO
 
+:r .\dbo.PostingType.sql 
+GO

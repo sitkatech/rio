@@ -19,6 +19,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<FileResource> FileResource { get; set; }
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
+        public virtual DbSet<Posting> Posting { get; set; }
+        public virtual DbSet<PostingType> PostingType { get; set; }
         public virtual DbSet<RioPage> RioPage { get; set; }
         public virtual DbSet<RioPageImage> RioPageImage { get; set; }
         public virtual DbSet<RioPageType> RioPageType { get; set; }
@@ -112,6 +114,39 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerZipCode).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Posting>(entity =>
+            {
+                entity.Property(e => e.PostingDescription).IsUnicode(false);
+
+                entity.HasOne(d => d.CreateUser)
+                    .WithMany(p => p.Posting)
+                    .HasForeignKey(d => d.CreateUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Posting_User_CreateUserID_UserID");
+
+                entity.HasOne(d => d.PostingType)
+                    .WithMany(p => p.Posting)
+                    .HasForeignKey(d => d.PostingTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<PostingType>(entity =>
+            {
+                entity.HasIndex(e => e.PostingTypeDisplayName)
+                    .HasName("AK_PostingType_PostingTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PostingTypeName)
+                    .HasName("AK_PostingType_PostingTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.PostingTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.PostingTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.PostingTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<RioPage>(entity =>

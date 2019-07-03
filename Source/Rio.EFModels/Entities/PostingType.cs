@@ -1,0 +1,34 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Posting;
+
+namespace Rio.EFModels.Entities
+{
+    public partial class PostingType
+    {
+        public static IEnumerable<PostingTypeDto> List(RioDbContext dbContext)
+        {
+            var roles = dbContext.PostingType
+                .AsNoTracking()
+                .Select(x => x.AsDto());
+
+            return roles;
+        }
+
+        public static PostingTypeDto GetByPostingTypeID(RioDbContext dbContext, int postingTypeID)
+        {
+            var role = dbContext.PostingType
+                .AsNoTracking()
+                .SingleOrDefault(x => x.PostingTypeID == postingTypeID);
+
+            return role?.AsDto();
+        }
+    }
+
+    public enum PostingTypeEnum
+    {
+        Buyer = 1,
+        Seller = 2
+    }
+}
