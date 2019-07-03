@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using GeoAPI.Geometries;
 
 namespace Rio.EFModels.Entities
 {
@@ -16,6 +17,9 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(20)]
         public string ParcelNumber { get; set; }
+        [Required]
+        [Column(TypeName = "geometry")]
+        public IGeometry ParcelGeometry { get; set; }
         [Required]
         [StringLength(100)]
         public string OwnerName { get; set; }

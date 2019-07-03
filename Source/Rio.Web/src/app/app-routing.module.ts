@@ -7,12 +7,18 @@ import { HomeIndexComponent } from './pages/home/home-index/home-index.component
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
-import { TradesHomeComponent } from './pages/trades-home/trades-home.component';
 import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
 import { UserEditComponent } from './pages/user-edit/user-edit.component';
+import { PostingListComponent } from './pages/posting-list/posting-list.component';
+import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
+import { PostingNewComponent } from './pages/posting-new/posting-new.component';
+import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
 
 const routes: Routes = [
-  { path: "trades", component: TradesHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "postings/:id", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "postings/:id/edit", component: PostingEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels", component: ParcelsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },

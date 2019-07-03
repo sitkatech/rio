@@ -1,0 +1,57 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" aria-current="page">
+      <a routerLink="/trades">Trades</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
+    </li>
+  </ol>
+</nav>
+<div class="container mt-sm-4">
+  <h2 style="display: inline-block">
+    {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
+  </h2>
+  <app-alert-display></app-alert-display>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <a *ngIf="canEditCurrentPosting()" class="btn btn-primary btn-sm float-right"
+            routerLink="/postings/{{posting.PostingID}}/edit">
+            <span class="fas fa-edit"></span> Edit
+          </a>
+          Details
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="text-sm-right col-sm-5 col-xs-12">Posting Date</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.PostingDate | date:'short'}}
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Type</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.PostingType.PostingTypeDisplayName}}
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.Quantity}} AF
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.Price}} / AF
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Posting</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.PostingDescription}}
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

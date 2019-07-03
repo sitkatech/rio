@@ -1,0 +1,21 @@
+﻿using Rio.Models.DataTransferObjects.Posting;
+
+namespace Rio.EFModels.Entities
+{
+    public static class PostingExtensionMethods
+    {
+        public static PostingDto AsDto(this Posting posting)
+        {
+            return new PostingDto()
+            {
+                PostingID = posting.PostingID,
+                PostingDate = posting.PostingDate,
+                PostingDescription = posting.PostingDescription,
+                Quantity = posting.Quantity,
+                Price = posting.Price,
+                CreateUser = posting.CreateUser.AsDto(),
+                PostingType = posting.PostingType.AsDto()
+            };
+        }
+    }
+}
