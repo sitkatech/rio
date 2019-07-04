@@ -5,17 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NetTopologySuite.IO.GeoJSON" Version="1.15.5" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GeoAPI">
-      <HintPath>..\..\..\..\..\Users\Ray.SITKA\.nuget\packages\geoapi.core\1.7.5\lib\netstandard2.0\GeoAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="NetTopologySuite">
-      <HintPath>..\..\..\..\..\Users\Ray.SITKA\.nuget\packages\nettopologysuite.core\1.15.2\lib\netstandard2.0\NetTopologySuite.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
