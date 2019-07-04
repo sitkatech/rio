@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
@@ -32,6 +33,7 @@ namespace Rio.EFModels.Entities
         public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)
         {
             var parcel = dbContext.Parcel
+                .Include(x => x.UserParcel).ThenInclude(x => x.User)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
@@ -47,6 +49,15 @@ namespace Rio.EFModels.Entities
 
             var parcelDto = parcel?.AsDto();
             return parcelDto;
+        }
+
+        public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            var parcels = dbContext.Parcel
+                .AsNoTracking()
+                .Where(x => parcelIDs.Contains(x.ParcelID));
+
+            return new BoundingBoxDto(parcels.Select(x => x.ParcelGeometry));
         }
     }
 }

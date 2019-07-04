@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,7 +10,8 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 @Component({
     selector: 'template-user-detail',
     templateUrl: './user-detail.component.html',
-    styleUrls: ['./user-detail.component.scss']
+    styleUrls: ['./user-detail.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailComponent implements OnInit {
 
@@ -22,7 +23,8 @@ export class UserDetailComponent implements OnInit {
         private router: Router,
         private userService: UserService,
         private parcelService: ParcelService,
-        private authenticationService: AuthenticationService
+        private authenticationService: AuthenticationService,
+        private cdr: ChangeDetectorRef
     ) {
     }
 
@@ -37,6 +39,7 @@ export class UserDetailComponent implements OnInit {
                     ? null
                     : user as UserDto;
                 this.parcels = parcels;
+                this.cdr.detectChanges();
             });
         }
     }
@@ -46,6 +49,6 @@ export class UserDetailComponent implements OnInit {
     }
 
     public getSelectedParcelIDs(): Array<number> {
-        return this.parcels.map(p => p.ParcelID);
+        return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
     }
 }

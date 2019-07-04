@@ -13,6 +13,7 @@ import { PostingListComponent } from './pages/posting-list/posting-list.componen
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
 import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
+import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: "postings/:id/edit", component: PostingEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels", component: ParcelsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },

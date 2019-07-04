@@ -19,6 +19,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<FileResource> FileResource { get; set; }
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
+        public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
+        public virtual DbSet<ParcelMonthlyUsage> ParcelMonthlyUsage { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
         public virtual DbSet<RioPage> RioPage { get; set; }
@@ -114,6 +116,30 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerZipCode).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ParcelAllocation>(entity =>
+            {
+                entity.HasIndex(e => new { e.ParcelID, e.WaterYear })
+                    .HasName("AK_ParcelAllocation_ParcelID_WaterYear")
+                    .IsUnique();
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelAllocation)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelMonthlyUsage>(entity =>
+            {
+                entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.WaterMonth })
+                    .HasName("AK_ParcelMonthlyUsage_ParcelID_WaterYear_WaterMonth")
+                    .IsUnique();
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelMonthlyUsage)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Posting>(entity =>

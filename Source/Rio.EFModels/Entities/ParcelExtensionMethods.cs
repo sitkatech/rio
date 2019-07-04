@@ -1,4 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.Parcel;
+﻿using System.Linq;
+using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
 {
@@ -9,7 +10,9 @@ namespace Rio.EFModels.Entities
             return new ParcelDto()
             {
                 ParcelID = parcel.ParcelID,
-                ParcelNumber = parcel.ParcelNumber
+                ParcelNumber = parcel.ParcelNumber,
+                ParcelAreaInAcres = parcel.ParcelAreaInAcres,
+                LandOwner = parcel.UserParcel.SingleOrDefault()?.User.AsSimpleDto()
             };
         }
     }

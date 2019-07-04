@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { Feature, FeatureCollection, Polygon } from "geojson";
 import { environment } from "src/environments/environment";
 import { WfsService } from "../../services/wfs.service";
@@ -15,11 +15,16 @@ import {
     tileLayer,
     WMSOptions
 } from 'leaflet';
+import { forkJoin } from 'rxjs';
+import { UserDto } from '../../models';
+import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { BoundingBoxDto } from '../../models/bounding-box-dto';
 
 @Component({
     selector: 'parcel-map',
     templateUrl: './parcel-map.component.html',
-    styleUrls: ['./parcel-map.component.scss']
+    styleUrls: ['./parcel-map.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Input()
@@ -60,13 +65,22 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public control: Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
+    boundingBox: BoundingBoxDto;
 
     constructor(
         private wfsService: WfsService,
+        private parcelService: ParcelService
     ) {
     }
 
     public ngOnInit(): void {
+        // Default bounding box
+        this.boundingBox = new BoundingBoxDto();
+        this.boundingBox.Left = -119.11015104115182;
+        this.boundingBox.Bottom = 35.442022035628575;
+        this.boundingBox.Right = -119.45272037350193;
+        this.boundingBox.Top = 35.27608156273151;
+
         this.tileLayers = Object.assign({}, {
             "Aerial": tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Aerial',
@@ -99,8 +113,14 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                     cql_filter: "ParcelID in (" + this.selectedParcelIDs.join(',') + ")"
                 } as WMSOptions)
             }, this.overlayLayers);
-        }
 
+            forkJoin(
+                this.parcelService.getBoundingBoxByParcelIDs(this.selectedParcelIDs)
+            ).subscribe(([boundingBox]) => {
+                this.boundingBox = boundingBox;
+                this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
+            });
+        }
     }
 
     public ngAfterViewInit(): void {
@@ -122,9 +142,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         this.map.on("moveend", (event: LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
         });
-
-        this.map.fitBounds([[35.34, -119.43], [35.35, -119.15]], this.defaultFitBoundsOptions);
-        //this.map.setMaxBounds([[35.26, -119.5], [35.47, -119.1]]);
+        this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
         this.setControl();
 
@@ -173,8 +191,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         if (this.displayparcelsLayerOnLoad) {
             this.overlayLayers["Parcels"].addTo(this.map);
         }
-        if(this.selectedParcelIDs.length > 0)
-        {
+        if (this.selectedParcelIDs.length > 0) {
             const myParcelsLayer = this.overlayLayers["My Parcels"];
             myParcelsLayer.addTo(this.map);
         }

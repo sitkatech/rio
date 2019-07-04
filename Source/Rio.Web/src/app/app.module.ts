@@ -23,6 +23,7 @@ import { PostingListComponent } from './pages/posting-list/posting-list.componen
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
+import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { PostingEditComponent } from './pages/posting-edit/posting-edit.componen
     PostingListComponent,
     PostingNewComponent,
     PostingDetailComponent,
-    PostingEditComponent
+    PostingEditComponent,
+    ParcelDetailComponent
   ],
   imports: [
     AppRoutingModule,

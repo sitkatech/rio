@@ -19,5 +19,15 @@ namespace Rio.EFModels.Entities
             };
         }
 
+        public static UserSimpleDto AsSimpleDto(this User user)
+        {
+            return new UserSimpleDto()
+            {
+                UserID = user.UserID,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+            };
+        }
     }
 }
