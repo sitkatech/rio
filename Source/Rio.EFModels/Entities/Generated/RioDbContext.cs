@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
-        public virtual DbSet<ParcelMonthlyUsage> ParcelMonthlyUsage { get; set; }
+        public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
         public virtual DbSet<RioPage> RioPage { get; set; }
@@ -130,14 +130,14 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<ParcelMonthlyUsage>(entity =>
+            modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
             {
                 entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.WaterMonth })
-                    .HasName("AK_ParcelMonthlyUsage_ParcelID_WaterYear_WaterMonth")
+                    .HasName("AK_ParcelMonthlyEvapotranspiration_ParcelID_WaterYear_WaterMonth")
                     .IsUnique();
 
                 entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelMonthlyUsage)
+                    .WithMany(p => p.ParcelMonthlyEvapotranspiration)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });

@@ -1,6 +1,6 @@
 ﻿namespace Rio.Models.DataTransferObjects.Parcel
 {
-    public class ParcelMonthlyUsageDto
+    public class ParcelMonthlyEvapotranspirationDto
     {
     }
 }

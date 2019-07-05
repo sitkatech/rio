@@ -8,6 +8,6 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public int WaterYear { get; set; }
         public decimal AcreFeetAllocated { get; set; }
 
-        public List<ParcelMonthlyUsageDto> MonthlyConsumption { get; set; }
+        public List<ParcelMonthlyEvapotranspirationDto> MonthlyEvapotranspiration { get; set; }
     }
 }

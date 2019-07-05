@@ -79,7 +79,7 @@
     <Build Include="dbo\Tables\dbo.PostingType.sql" />
     <None Include="Scripts\LookupTables\dbo.PostingType.sql" />
     <Build Include="dbo\Tables\dbo.ParcelAllocation.sql" />
-    <Build Include="dbo\Tables\dbo.ParcelMonthlyUsage.sql" />
+    <Build Include="dbo\Tables\dbo.ParcelMonthlyEvapotranspiration.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />
