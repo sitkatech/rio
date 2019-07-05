@@ -35,8 +35,8 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">Land Owner</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{parcel.LandOwner?.FullName}}
-              <em *ngIf="!parcel.LandOwner?.FullName" class="text-muted">Not Available</em>
+              <a *ngIf="parcel.LandOwner?.FullName" routerLink="/users/{{parcel.LandOwner?.UserID}}">{{parcel.LandOwner?.FullName}}</a>
+              <em *ngIf="!parcel.LandOwner?.FullName" class="text-muted">Not Set</em>
             </dd>
           </dl>
         </div>
@@ -73,25 +73,25 @@
             <thead>
               <tr>
                 <th>Year</th>
-                <th>Allocation</th>
-                <th>Jan</th>
-                <th>Feb</th>
-                <th>Mar</th>
-                <th>Apr</th>
-                <th>May</th>
-                <th>Jun</th>
-                <th>Jul</th>
-                <th>Aug</th>
-                <th>Sep</th>
-                <th>Oct</th>
-                <th>Nov</th>
-                <th>Dec</th>
+                <th style="text-align: right">Allocation</th>
+                <th style="text-align: right">Jan</th>
+                <th style="text-align: right">Feb</th>
+                <th style="text-align: right">Mar</th>
+                <th style="text-align: right">Apr</th>
+                <th style="text-align: right">May</th>
+                <th style="text-align: right">Jun</th>
+                <th style="text-align: right">Jul</th>
+                <th style="text-align: right">Aug</th>
+                <th style="text-align: right">Sep</th>
+                <th style="text-align: right">Oct</th>
+                <th style="text-align: right">Nov</th>
+                <th style="text-align: right">Dec</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let parcelAllocationAndConsumption of parcelAllocationAndConsumptions">
                 <td>{{parcelAllocationAndConsumption.WaterYear}}</td>
-                <td>{{parcelAllocationAndConsumption.AcreFeetAllocated}}</td>
+                <td style="text-align: right">{{parcelAllocationAndConsumption.AcreFeetAllocated}}</td>
                 <td *ngFor="let month of months">{{getConsumptionForMonth(parcelAllocationAndConsumption, month)}}</td>
               </tr>
             </tbody>
