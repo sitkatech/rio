@@ -24,6 +24,7 @@ import { PostingNewComponent } from './pages/posting-new/posting-new.component';
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
+import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.compo
     PostingNewComponent,
     PostingDetailComponent,
     PostingEditComponent,
-    ParcelDetailComponent
+    ParcelDetailComponent,
+    ParcelEditAllocationComponent
   ],
   imports: [
     AppRoutingModule,

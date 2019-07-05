@@ -5,6 +5,8 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
     public class ParcelAllocationUpsertDto
     {
         [Required]
-        public decimal AcreFeetAllocated { get; set; }
+        public int WaterYear { get; set; }
+        [Required]
+        public decimal? AcreFeetAllocated { get; set; }
     }
 }

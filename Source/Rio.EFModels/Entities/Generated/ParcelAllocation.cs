@@ -11,7 +11,7 @@ namespace Rio.EFModels.Entities
         public int ParcelID { get; set; }
         public int WaterYear { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
-        public decimal AcreFeetAllocated { get; set; }
+        public decimal? AcreFeetAllocated { get; set; }
 
         [ForeignKey("ParcelID")]
         [InverseProperty("ParcelAllocation")]

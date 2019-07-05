@@ -1,5 +1,5 @@
 export enum RoleEnum {
     Admin = "Admin",
-    Editor = "Editor",
+    LandOwner = "Land Owner",
     ReadOnly = "ReadOnly"
 }

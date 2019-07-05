@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" *ngIf="parcel">
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page">
       <a routerLink="/parcels">Parcels</a>
@@ -8,7 +8,7 @@
     </li>
   </ol>
 </nav>
-<div class="container mt-sm-4">
+<div class="container mt-sm-4" *ngIf="parcel">
   <h2 style="display: inline-block">
     {{parcel.ParcelNumber}}
   </h2>
@@ -62,7 +62,11 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          Usage
+          <a class="btn btn-primary btn-sm float-right"
+            routerLink="/parcels/{{parcel.ParcelID}}/edit-annual-allocation">
+            <span class="fas fa-edit"></span> Edit
+          </a>
+          Usage (in Acre Feet)
         </div>
         <div class="card-body">
           <table class="table table-striped table-condensed">
@@ -85,7 +89,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr *ngFor="let parcelAllocationAndConsumption of parcelAllocationAndConsumptions">
+                <td>{{parcelAllocationAndConsumption.WaterYear}}</td>
+                <td>{{parcelAllocationAndConsumption.AcreFeetAllocated}}</td>
+                <td *ngFor="let month of months">{{getConsumptionForMonth(parcelAllocationAndConsumption, month)}}</td>
               </tr>
             </tbody>
           </table>

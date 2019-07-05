@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
@@ -8,26 +7,28 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelAllocation
     {
-        public static ParcelAllocationDto Upsert(RioDbContext dbContext, int parcelID, int waterYear, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        public static List<ParcelAllocationDto> Upsert(RioDbContext dbContext, int parcelID, List<ParcelAllocationUpsertDto> parcelAllocationUpsertDtos)
         {
-            var parcelAllocation = dbContext.ParcelAllocation
-                .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == waterYear);
-
-            if (parcelAllocation == null)
+            foreach (var parcelAllocationUpsertDto in parcelAllocationUpsertDtos)
             {
-                parcelAllocation = new ParcelAllocation
+                var parcelAllocation = dbContext.ParcelAllocation
+                    .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == parcelAllocationUpsertDto.WaterYear);
+
+                if (parcelAllocation == null)
                 {
-                    ParcelID = parcelID,
-                    WaterYear = waterYear
-                };
-                dbContext.ParcelAllocation.Add(parcelAllocation);
+                    parcelAllocation = new ParcelAllocation
+                    {
+                        ParcelID = parcelID,
+                        WaterYear = parcelAllocationUpsertDto.WaterYear
+                    };
+                    dbContext.ParcelAllocation.Add(parcelAllocation);
+                }
+
+                parcelAllocation.AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated;
             }
-
-            parcelAllocation.AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated;
             dbContext.SaveChanges();
-            dbContext.Entry(parcelAllocation).Reload();
 
-            return GetByParcelIDAndWaterYear(dbContext, parcelAllocation.ParcelID, parcelAllocation.WaterYear);
+            return ListByParcelID(dbContext, parcelID);
         }
 
         public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
