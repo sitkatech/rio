@@ -8,6 +8,8 @@ import { Component, OnInit, DoCheck, ChangeDetectorRef } from '@angular/core';
 export class ParcelDetailPopupComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef) { }
 
+  public feature : any;
+  
   ngOnInit() {
   }
 
