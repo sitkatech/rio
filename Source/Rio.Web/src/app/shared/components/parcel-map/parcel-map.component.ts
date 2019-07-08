@@ -168,9 +168,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                                     .setLatLng(event.latlng)
                                     .setContent(`
 <dl class="row mb-0">
-    <dt class="col-5 text-right">Trust Area</dt>
+    <dt class="col-5 text-right">APN</dt>
     <dd class="col-7">
-        <a href="/#/trust-areas/${feature.properties.ParcelID}" target="_blank">
+        <a href="/parcels/${feature.properties.ParcelID}" target="_blank">
             ${feature.properties.ParcelNumber}
             <span class="fas fa-external-link-alt"></span>
         </a>

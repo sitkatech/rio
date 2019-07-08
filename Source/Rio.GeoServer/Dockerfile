@@ -19,10 +19,10 @@ ARG WAR_URL=http://downloads.sourceforge.net/project/geoserver/GeoServer/${GS_VE
 ARG COMMUNITY_MODULES=true
 
 ## Maximum Memory that Java can allocate
-ARG MAXIMUM_MEMORY="4G"
+ARG MAXIMUM_MEMORY="16G"
 
 ## Initial Memory that Java can allocate
-ARG INITIAL_MEMORY="2G"
+ARG INITIAL_MEMORY="4G"
 
 RUN set -e \
     export DEBIAN_FRONTEND=noninteractive \
@@ -82,6 +82,14 @@ RUN sed -i '\:</web-app>:i\
       <init-param>\n\
         <param-name>cors.allowed.origins</param-name>\n\
         <param-value>*</param-value>\n\
+      </init-param>\n\
+      <init-param>\n\
+        <param-name>cors.allowed.methods</param-name>\n\
+        <param-value>GET,POST,HEAD,OPTIONS,PUT</param-value>\n\
+      </init-param>\n\
+      <init-param>\n\
+        <param-name>cors.allowed.headers</param-name>\n\
+        <param-value>Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization</param-value>\n\
       </init-param>\n\
     </filter>\n\
     <filter-mapping>\n\
