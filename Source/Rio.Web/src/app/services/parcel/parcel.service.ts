@@ -36,4 +36,10 @@ export class ParcelService {
     let route = `/parcels/${parcelID}/getAllocationAndConsumption`;
     return this.apiService.getFromApi(route);
   }
+
+  getParcelAllocationAndConsumptionByUserID(userID: number): Observable<any[]> {
+    let route = `/users/${userID}/getParcelsAllocationAndConsumption`;
+    return this.apiService.getFromApi(route);
+  }
+
 }

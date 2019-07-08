@@ -6,6 +6,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
+import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 
 @Component({
     selector: 'template-user-detail',
@@ -45,10 +46,15 @@ export class UserDetailComponent implements OnInit {
     }
 
     public currentUserIsAdmin(): boolean {
-        return this.authenticationService.canAdmin();
+        return this.authenticationService.isAdministrator();
     }
 
     public getSelectedParcelIDs(): Array<number> {
         return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
+    }
+
+    public canViewLandOwnerDashboard(): boolean {
+        console.log(this.user.Role);
+        return this.currentUserIsAdmin() && this.user.Role.RoleDisplayName == RoleEnum.LandOwner;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -174,13 +175,32 @@ namespace Rio.API.Controllers
         [UserManageFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByUserID([FromRoute] int userID)
         {
-            var parcelDtos = Rio.EFModels.Entities.Parcel.ListByUserID(_dbContext, userID);
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
             if (parcelDtos == null)
             {
                 return NotFound();
             }
 
             return Ok(parcelDtos);
+        }
+
+        [HttpGet("users/{userID}/getParcelsAllocationAndConsumption")]
+        [UserManageFeature]
+        public ActionResult<List<ParcelAllocationAndConsumptionDto>> ListParcelsAllocationAndConsumptionByUserID([FromRoute] int userID)
+        {
+            var parcelDtosEnumerable = Parcel.ListByUserID(_dbContext, userID);
+            if (parcelDtosEnumerable == null)
+            {
+                return NotFound();
+            }
+
+            var parcelDtos = parcelDtosEnumerable.ToList();
+            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
+            var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelIDs);
+            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
+            var waterYears = DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateTime.Now.Year);
+            var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, parcelDtos, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
+            return Ok(parcelAllocationAndConsumptionDtos);
         }
     }
 }

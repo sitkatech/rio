@@ -1,0 +1,100 @@
+<div class="container mt-sm-4">
+  <app-alert-display></app-alert-display>
+  <p>
+    Current Date: {{currentDate | date}}
+  </p>
+  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-4">
+      <div class="card">
+        <div class="card-header">
+          User:
+          {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
+        </div>
+        <div class="card-body">
+          <table class="table table-responsive">
+            <tbody>
+              <tr>
+                <td>
+                  APN(s)
+                </td>
+                <td>
+                  <div *ngFor="let parcel of parcels"><a style="white-space: nowrap"
+                      routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Total APN Acreage
+                </td>
+                <td style="text-align: right">
+                  {{getTotalAPNAcreage()}}
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>
+                  Annual Groundwater Allocation (AF)
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.2-2'}}</span>
+                  <span *ngIf="!getAnnualAllocation()">Not available</span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+        </div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-header">
+          Water Use
+        </div>
+        <div class="card-body">
+          Estimated through {{getLastETReadingDate()}}*
+          <table class="table table-responsive table-condensed">
+            <thead>
+              <tr>
+                <th>APN</th>
+                <th style="text-align: right">Water Usage (Acre feet)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let parcel of parcels">
+                <td>
+                  <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getWaterConsumption(parcel)">{{getWaterConsumption(parcel) | number: '1.2-2'}}</span>
+                  <span *ngIf="!getWaterConsumption(parcel)">Not available</span>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>
+                  Estimated Available Supply (AF)
+                </td>
+                <td style="text-align: right">
+                  {{getEstimatedAvailableSupply()}}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8" *ngIf="parcels">
+      <div class="card">
+        <div class="card-header">
+          Location
+        </div>
+        <div class="card-body">
+          <parcel-map mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="500px">
+          </parcel-map>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="small">*Estimated water usage is based on satellite imagery and may not be accurate at the APN level.</p>
+</div>

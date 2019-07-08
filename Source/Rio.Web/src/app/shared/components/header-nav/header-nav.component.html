@@ -11,7 +11,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+                <a *ngIf="!isAuthenticated()" class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
+                <a *ngIf="isLandOwner()" class="nav-link" routerLink="/land-owner-dashboard" routerLinkActive="active">Home</a>
+                <a *ngIf="isAdministrator()" class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
             </li>
             <li class="nav-item" *ngIf="viewManage()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Trades</a>

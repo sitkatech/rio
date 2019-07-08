@@ -36,6 +36,6 @@ export class PostingDetailComponent implements OnInit {
     }
 
     public canEditCurrentPosting(): boolean {
-        return this.authenticationService.canAdmin() || this.posting.CreateUser.UserID == this.authenticationService.currentUser.UserID;
+        return this.authenticationService.isAdministrator() || this.posting.CreateUser.UserID == this.authenticationService.currentUser.UserID;
     }
 }

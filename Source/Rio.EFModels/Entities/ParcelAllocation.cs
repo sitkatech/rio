@@ -42,6 +42,17 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelAllocationDto>();
         }
 
+        public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            var parcelAllocations = dbContext.ParcelAllocation
+                .AsNoTracking()
+                .Where(x => parcelIDs.Contains(x.ParcelID));
+
+            return parcelAllocations.Any()
+                ? parcelAllocations.Select(x => x.AsDto()).ToList()
+                : new List<ParcelAllocationDto>();
+        }
+
         public static ParcelAllocationDto GetByParcelIDAndWaterYear(RioDbContext dbContext, int parcelID, int waterYear)
         {
             var parcelAllocation = dbContext.ParcelAllocation

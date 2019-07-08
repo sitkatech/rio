@@ -39,11 +39,11 @@ export class UserEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    // if (!this.authenticationService.canAdmin()) {
-    //   this.router.navigateByUrl("/not-found")
-    //     .then();
-    //   return;
-    // }
+    if (!this.authenticationService.isAdministrator()) {
+      this.router.navigateByUrl("/not-found")
+        .then();
+      return;
+    }
 
     this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
 

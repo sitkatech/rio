@@ -64,8 +64,7 @@ export class AuthenticationService {
     this.logout();
   }
 
-  public login()
-  {
+  public login() {
     this.oauthService.initImplicitFlow();
   }
 
@@ -77,11 +76,17 @@ export class AuthenticationService {
     });
   }
 
-  public canAdmin(): boolean {
+  public isLandOwner(): boolean {
     const role = this.currentUser && this.currentUser.Role
-        ? this.currentUser.Role.RoleID
-        : null;
-    return role === 1; // Admin; todo: need to add enums
-}
+      ? this.currentUser.Role.RoleID
+      : null;
+    return role === 2; // Landowner; todo: need to add enums
+  }
 
+  public isAdministrator(): boolean {
+    const role = this.currentUser && this.currentUser.Role
+      ? this.currentUser.Role.RoleID
+      : null;
+    return role === 1; // Admin; todo: need to add enums
+  }
 }

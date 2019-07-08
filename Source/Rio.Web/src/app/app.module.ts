@@ -25,6 +25,7 @@ import { PostingDetailComponent } from './pages/posting-detail/posting-detail.co
 import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
+import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/pa
     PostingDetailComponent,
     PostingEditComponent,
     ParcelDetailComponent,
-    ParcelEditAllocationComponent
+    ParcelEditAllocationComponent,
+    LandownerDashboardComponent
   ],
   imports: [
     AppRoutingModule,

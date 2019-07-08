@@ -60,6 +60,6 @@ export class UserInviteComponent implements OnInit {
     }
 
     public currentUserIsAdmin(): boolean {
-        return this.authenticationService.canAdmin();
+        return this.authenticationService.isAdministrator();
     }
 }

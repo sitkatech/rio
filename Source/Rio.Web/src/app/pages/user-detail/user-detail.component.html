@@ -10,6 +10,9 @@
     </ol>
 </nav>
 <div class="container mt-sm-4">
+    <div style="margin: 1rem 0 1rem 0;" *ngIf="canViewLandOwnerDashboard()">
+        <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/landowner-dashboard/{{user.UserID}}">View Landowner Dashboard</a>
+    </div>  
     <h2 style="display: inline-block">
         {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
     </h2>

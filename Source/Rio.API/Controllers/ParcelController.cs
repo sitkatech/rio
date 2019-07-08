@@ -49,7 +49,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/{parcelID}/getAllocationAndConsumption")]
         [ParcelManageFeature]
-        public ActionResult<ParcelDto> GetAllocationAndConsumption([FromRoute] int parcelID)
+        public ActionResult<List<ParcelAllocationAndConsumptionDto>> GetAllocationAndConsumption([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
@@ -60,25 +60,14 @@ namespace Rio.API.Controllers
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
             var waterYears = DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateTime.Now.Year);
-            var parcelAllocationAndConsumptionDtos = new List<ParcelAllocationAndConsumptionDto>();
-            foreach (var waterYear in waterYears)
-            {
-                var parcelAllocationAndConsumptionDto = new ParcelAllocationAndConsumptionDto() {WaterYear = waterYear};
-                var parcelAllocationDtoForThisYear = parcelAllocationDtos.SingleOrDefault(x => x.WaterYear == waterYear);
-                if (parcelAllocationDtoForThisYear != null)
-                {
-                    parcelAllocationAndConsumptionDto.AcreFeetAllocated = parcelAllocationDtoForThisYear.AcreFeetAllocated;
-                }
-                parcelAllocationAndConsumptionDto.MonthlyEvapotranspiration = parcelMonthlyEvapotranspirationDtos.Where(x => x.WaterYear == waterYear).ToList();
-                parcelAllocationAndConsumptionDtos.Add(parcelAllocationAndConsumptionDto);
-            }
+            var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, new List<ParcelDto>{parcelDto}, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
             return Ok(parcelAllocationAndConsumptionDtos);
         }
 
         [HttpPost("parcels/{parcelID}/updateAnnualAllocations")]
         [ParcelManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid Parcel Allocation Upsert JSON object from the Request Body.")]
-        public ActionResult<ParcelDto> UpdateParcelAllocation([FromRoute] int parcelID, [FromRoute] int waterYear, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
+        public ActionResult<List<ParcelAllocationAndConsumptionDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
@@ -91,8 +80,8 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updatedParcelDto = ParcelAllocation.Upsert(_dbContext, parcelID, parcelAllocationUpsertWrapperDto.ParcelAllocations);
-            return Ok(updatedParcelDto);
+            var updatedParcelAllocationDtos = ParcelAllocation.Upsert(_dbContext, parcelID, parcelAllocationUpsertWrapperDto.ParcelAllocations);
+            return Ok(updatedParcelAllocationDtos);
         }
 
 
