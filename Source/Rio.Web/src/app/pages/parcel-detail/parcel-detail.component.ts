@@ -37,7 +37,6 @@ export class ParcelDetailComponent implements OnInit {
               this.parcel = parcel instanceof Array
                   ? null
                   : parcel as ParcelDto;
-              this.parcel = parcel;
               this.parcelAllocationAndConsumptions = parcelAllocationAndConsumptions;
               this.cdr.detectChanges();
           });
@@ -50,7 +49,7 @@ export class ParcelDetailComponent implements OnInit {
   }
 
   public getConsumptionForMonth(parcelAllocationAndConsumption: ParcelAllocationAndConsumptionDto, month: number): string {
-    var a = parcelAllocationAndConsumption.MonthlyEvapotranspiration.find(x => x.WaterMonth == month);
-    return isNullOrUndefined(a) ? "" : a.EvapotranspirationRate.toFixed(2);
+    var monthlyEvapotranspiration = parcelAllocationAndConsumption.MonthlyEvapotranspiration.find(x => x.WaterMonth == month);
+    return isNullOrUndefined(monthlyEvapotranspiration) ? "" : monthlyEvapotranspiration.EvapotranspirationRate.toFixed(2);
   }
 }

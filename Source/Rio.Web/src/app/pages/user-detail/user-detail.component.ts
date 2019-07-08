@@ -54,7 +54,6 @@ export class UserDetailComponent implements OnInit {
     }
 
     public canViewLandOwnerDashboard(): boolean {
-        console.log(this.user.Role);
-        return this.currentUserIsAdmin() && this.user.Role.RoleDisplayName == RoleEnum.LandOwner;
+        return this.currentUserIsAdmin() && this.authenticationService.isLandOwner();
     }
 }

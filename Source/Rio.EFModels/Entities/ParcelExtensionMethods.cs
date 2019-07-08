@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
                 ParcelID = parcel.ParcelID,
                 ParcelNumber = parcel.ParcelNumber,
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
-                LandOwner = parcel.UserParcel.SingleOrDefault()?.User.AsSimpleDto()
+                LandOwner = parcel.UserParcel.OrderBy(x => x.UserID).FirstOrDefault()?.User.AsSimpleDto()
             };
         }
 
