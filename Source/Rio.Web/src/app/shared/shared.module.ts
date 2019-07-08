@@ -8,6 +8,7 @@ import { UnauthenticatedComponent } from './pages/unauthenticated/unauthenticate
 import { SubscriptionInsufficientComponent } from './pages/subscription-insufficient/subscription-insufficient.component';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { RouterModule } from '@angular/router';
+import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
 
 @NgModule({
     declarations: [
@@ -15,7 +16,8 @@ import { RouterModule } from '@angular/router';
         FooterComponent,        
         NotFoundComponent,
         UnauthenticatedComponent,
-        SubscriptionInsufficientComponent
+        SubscriptionInsufficientComponent,
+        ParcelDetailPopupComponent
     ],
     imports: [
         CommonModule,
@@ -29,6 +31,9 @@ import { RouterModule } from '@angular/router';
         FormsModule,
         NotFoundComponent,
         HeaderNavComponent
+    ],
+    entryComponents:[
+        ParcelDetailPopupComponent
     ]
 })
 export class SharedModule {

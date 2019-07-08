@@ -6,7 +6,6 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 
 @Component({
     selector: 'template-user-detail',
@@ -27,6 +26,8 @@ export class UserDetailComponent implements OnInit {
         private authenticationService: AuthenticationService,
         private cdr: ChangeDetectorRef
     ) {
+        // force route reload whenever params change;
+        this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     }
 
     ngOnInit() {

@@ -25,6 +25,8 @@ export class ParcelDetailComponent implements OnInit {
       private authenticationService: AuthenticationService,
       private cdr: ChangeDetectorRef
   ) {
+    // force route reload whenever params change;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit() {

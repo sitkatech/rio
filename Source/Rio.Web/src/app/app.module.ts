@@ -45,7 +45,7 @@ import { LandownerDashboardComponent } from './pages/landowner-dashboard/landown
     PostingEditComponent,
     ParcelDetailComponent,
     ParcelEditAllocationComponent,
-    LandownerDashboardComponent
+    LandownerDashboardComponent,
   ],
   imports: [
     AppRoutingModule,

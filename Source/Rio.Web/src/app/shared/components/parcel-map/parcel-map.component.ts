@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ChangeDetectionStrategy, ComponentFactoryResolver, Injector, ApplicationRef, ComponentRef } from '@angular/core';
 import { Feature, FeatureCollection, Polygon } from "geojson";
 import { environment } from "src/environments/environment";
 import { WfsService } from "../../services/wfs.service";
@@ -16,9 +16,10 @@ import {
     WMSOptions
 } from 'leaflet';
 import { forkJoin } from 'rxjs';
-import { UserDto } from '../../models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
+import { ParcelDetailPopupComponent } from '../parcel-detail-popup/parcel-detail-popup.component';
+import { CustomCompileService } from '../../services/custom-compile.service';
 
 @Component({
     selector: 'parcel-map',
@@ -60,6 +61,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Output()
     public onMapMoveEnd: EventEmitter<LeafletEvent> = new EventEmitter();
 
+    public component: any;
+
     public map: Map;
     public featureLayer: any;
     public control: Control.Layers;
@@ -69,7 +72,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
 
     constructor(
         private wfsService: WfsService,
-        private parcelService: ParcelService
+        private parcelService: ParcelService,
+        private appRef: ApplicationRef,
+        private compileService: CustomCompileService
     ) {
     }
 
@@ -121,6 +126,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                 this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
             });
         }
+
+        this.compileService.configure(this.appRef);
     }
 
     public ngAfterViewInit(): void {
@@ -166,17 +173,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                                     minWidth: 250,
                                 })
                                     .setLatLng(event.latlng)
-                                    .setContent(`
-<dl class="row mb-0">
-    <dt class="col-5 text-right">APN</dt>
-    <dd class="col-7">
-        <a href="/parcels/${feature.properties.ParcelID}" target="_blank">
-            ${feature.properties.ParcelNumber}
-            <span class="fas fa-external-link-alt"></span>
-        </a>
-    </dd>
-</dl>
-`
+                                    .setContent(this.compileService.compile(ParcelDetailPopupComponent, (c) => { c.instance.feature = feature;})
                                     )
                                     .openOn(self.map);
                             });
@@ -198,3 +195,4 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         this.afterSetControl.emit(this.control);
     }
 }
+
