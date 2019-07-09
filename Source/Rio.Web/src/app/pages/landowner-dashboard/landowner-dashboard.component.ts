@@ -42,7 +42,7 @@ export class LandownerDashboardComponent implements OnInit {
           ? null
           : user as UserDto;
         // TODO: scope it to current year for now
-        this.parcels = parcels.filter(x => x.WaterYear == this.currentDate.getFullYear());
+        this.parcels = parcels.filter(x => x.WaterYear == 2018);
         this.cdr.detectChanges();
       });
     }

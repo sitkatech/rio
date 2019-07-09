@@ -77,8 +77,12 @@ export class AuthenticationService {
   }
 
   public isLandOwner(): boolean {
-    const role = this.currentUser && this.currentUser.Role
-      ? this.currentUser.Role.RoleID
+    return this.isUserALandOwner(this.currentUser);
+  }
+
+  public isUserALandOwner(user: UserDto): boolean {
+    let role = user && user.Role
+      ? user.Role.RoleID
       : null;
     return role === 2; // Landowner; todo: need to add enums
   }

@@ -80,6 +80,7 @@
     <None Include="Scripts\LookupTables\dbo.PostingType.sql" />
     <Build Include="dbo\Tables\dbo.ParcelAllocation.sql" />
     <Build Include="dbo\Tables\dbo.ParcelMonthlyEvapotranspiration.sql" />
+    <None Include="Scripts\ReleaseScripts\0003 - PMET_Import.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

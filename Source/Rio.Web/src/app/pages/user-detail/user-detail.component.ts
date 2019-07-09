@@ -55,6 +55,7 @@ export class UserDetailComponent implements OnInit {
     }
 
     public canViewLandOwnerDashboard(): boolean {
-        return this.currentUserIsAdmin() && this.authenticationService.isLandOwner();
+        let isUserALandOwner = this.authenticationService.isUserALandOwner(this.user);
+        return this.currentUserIsAdmin() && isUserALandOwner;
     }
 }

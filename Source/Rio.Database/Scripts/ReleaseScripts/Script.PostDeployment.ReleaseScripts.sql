@@ -16,3 +16,6 @@ GO
 
 :r ".\0002 - Associating Users to Parcels.sql"
 GO
+
+:r ".\0003 - PMET_Import.sql"
+GO
