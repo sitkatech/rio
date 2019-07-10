@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" *ngIf="user">
     <ol class="breadcrumb">
         <li class="breadcrumb-item" aria-current="page">
             <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
@@ -9,7 +9,7 @@
         </li>
     </ol>
 </nav>
-<div class="container mt-sm-4">
+<div class="container mt-sm-4" *ngIf="user">
     <div style="margin: 1rem 0 1rem 0;" *ngIf="canViewLandOwnerDashboard()">
         <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/landowner-dashboard/{{user.UserID}}">View Landowner Dashboard</a>
     </div>  
