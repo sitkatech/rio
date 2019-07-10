@@ -15,7 +15,7 @@ namespace Rio.EFModels.Entities
                 PostingTypeID = postingUpsertDto.PostingTypeID, 
                 PostingDescription = postingUpsertDto.PostingDescription,
                 CreateUserID = postingUpsertDto.CreateUserID,
-                PostingDate = DateTime.Now,
+                PostingDate = DateTime.UtcNow,
                 Price = postingUpsertDto.Price,
                 Quantity = postingUpsertDto.Quantity
             };

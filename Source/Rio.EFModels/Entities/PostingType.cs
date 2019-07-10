@@ -28,7 +28,7 @@ namespace Rio.EFModels.Entities
 
     public enum PostingTypeEnum
     {
-        Buyer = 1,
-        Seller = 2
+        OfferToBuy = 1,
+        OfferToSell = 2
     }
 }

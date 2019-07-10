@@ -1,7 +1,7 @@
 ﻿MERGE INTO dbo.PostingType AS Target
 USING (VALUES
-(1, 'Buyer', 'Buyer'),
-(2, 'Seller', 'Seller')
+(1, 'OfferToBuy', 'Offer to Buy'),
+(2, 'OfferToSell', 'Offer to Sell')
 )
 AS Source (PostingTypeID, PostingTypeName, PostingTypeDisplayName)
 ON Target.PostingTypeID = Source.PostingTypeID
