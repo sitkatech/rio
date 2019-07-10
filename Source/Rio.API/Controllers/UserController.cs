@@ -198,7 +198,7 @@ namespace Rio.API.Controllers
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelIDs);
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
-            var waterYears = DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateTime.Now.Year);
+            var waterYears = DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
             var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, parcelDtos, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
             return Ok(parcelAllocationAndConsumptionDtos);
         }

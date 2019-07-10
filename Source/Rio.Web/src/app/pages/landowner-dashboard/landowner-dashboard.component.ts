@@ -70,7 +70,7 @@ export class LandownerDashboardComponent implements OnInit {
       let result = this.parcels.reduce(function (a, b) {
         return (a + b.ParcelAreaInAcres);
       }, 0);
-      return result.toFixed(2);
+      return result.toFixed(1);
     }
     return "Not available";
   }
@@ -107,7 +107,7 @@ export class LandownerDashboardComponent implements OnInit {
       let estimatedAvailableSupply = this.parcels.reduce((a, b) => {
         return (a + this.getWaterConsumption(b));
       }, 0);
-      return (annualAllocation - estimatedAvailableSupply).toFixed(2);
+      return (annualAllocation - estimatedAvailableSupply).toFixed(1);
     }
     return "Not available";
   }

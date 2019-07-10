@@ -35,17 +35,22 @@
               {{posting.PostingType.PostingTypeDisplayName}}
             </dd>
 
-            <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
+            <dt class="text-sm-right col-sm-5 col-xs-12">Quantity (ac-ft)</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{posting.Quantity}} AF
+              {{posting.Quantity}}
             </dd>
 
-            <dt class="text-sm-right col-sm-5 col-xs-12">Price</dt>
+            <dt class="text-sm-right col-sm-5 col-xs-12">Price ($/ac-ft)</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{posting.Price}} / AF
+              {{posting.Price}}
             </dd>
 
-            <dt class="text-sm-right col-sm-5 col-xs-12">Posting</dt>
+            <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{getTotalPrice(posting.Price) | currency : "USD" }}
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Description</dt>
             <dd class="col-sm-7 col-xs-12">
               {{posting.PostingDescription}}
             </dd>

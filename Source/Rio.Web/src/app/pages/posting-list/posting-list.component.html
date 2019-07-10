@@ -16,22 +16,25 @@
       <table class="table table-striped">
           <thead>
           <tr>
-            <th scope="col">Posting Date</th>
-            <th scope="col">Type</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Price</th>
-            <th scope="col">Posting</th>
-            <th scope="col">View/Contact</th>
+            <th>View/Contact</th>
+            <th>Posting Date</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Posting</th>
           </tr>
           </thead>
           <tbody>
           <tr *ngFor="let posting of postings">
-            <th scope="row">{{ posting.PostingDate | date:"short" }}</th>
-            <td>{{ posting.PostingType.PostingTypeDisplayName }}</td>
-            <td>{{ posting.Quantity }} AF</td>
-            <td>{{ posting.Price }} / AF</td>
-            <td>{{ posting.PostingDescription }}</td>
             <td><a class="btn btn-primary btn-sm" routerLink="/postings/{{posting.PostingID}}">View</a></td>
+            <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
+            <td style="white-space: nowrap">{{ posting.PostingType.PostingTypeDisplayName }}</td>
+            <td>{{ posting.Quantity }} AF</td>
+            <td style="white-space: nowrap">{{ posting.Price }} / AF</td>
+            <td>
+                {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
+                <a *ngIf="posting.PostingDescription.length > descriptionMaxLength" routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+            </td>
           </tr>
           </tbody>
       </table>

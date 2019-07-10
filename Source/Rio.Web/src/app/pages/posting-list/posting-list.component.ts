@@ -9,12 +9,9 @@ import { PostingService } from 'src/app/services/posting.service';
 })
 export class PostingListComponent implements OnInit {
 
+  descriptionMaxLength: number = 300;
   postings: PostingDto[];
-
-  displayInvitePostingDialog: boolean = false;
-
-  postingToEdit = {};
-  displayEditPostingDialog: boolean = false;
+  postingToEdit = {};  
 
   constructor(private cdr: ChangeDetectorRef, private postingService: PostingService) { }
 

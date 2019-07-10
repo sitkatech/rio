@@ -6,16 +6,7 @@ namespace Rio.API.Services
 {
     public static class DateUtilities
     {
-        public const int MinimumYear = 2017;
-        public const int MonthsInFiscalYear = 12;
-
-        public enum FiscalQuarter
-        {
-            First = 1,
-            Second = 2,
-            Third = 3,
-            Fourth = 4
-        }
+        public const int MinimumYear = 2016;
 
         public enum Month
         {
@@ -59,6 +50,13 @@ namespace Rio.API.Services
         {
             return Convert.ToDateTime((firstDate.IsDateAfter(secondDate)) ? firstDate : secondDate);
         }
+
+        public static int GetLatestWaterYear()
+        {
+            var currentYear = DateTime.Today.Year;
+            return DateTime.Today > new DateTime(currentYear, 11, 1) ? currentYear : currentYear - 1;
+        }
+
 
         public static bool IsTodayOnOrBeforeDate(this DateTime dateToCheck)
         {

@@ -10,6 +10,7 @@ import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
+import { isNullOrUndefined } from 'util';
 
 
 @Component({
@@ -53,7 +54,7 @@ export class PostingEditComponent implements OnInit {
       this.model.PostingTypeID = posting.PostingType.PostingTypeID;
       this.model.PostingDescription = posting.PostingDescription;
       this.model.Quantity = posting.Quantity;
-      this.model.Price = posting.Price;      
+      this.model.Price = posting.Price;
       this.cdr.detectChanges();
     });
   }
@@ -62,18 +63,25 @@ export class PostingEditComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     this.postingService.updatePosting(this.postingID, this.model)
-        .subscribe(response => {
-            this.isLoadingSubmit = false;
-            this.router.navigateByUrl("/postings/" + this.postingID).then(x => {
-                this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-            });
+      .subscribe(response => {
+        this.isLoadingSubmit = false;
+        this.router.navigateByUrl("/postings/" + this.postingID).then(x => {
+          this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+        });
+      }
+        ,
+        error => {
+          this.isLoadingSubmit = false;
+          this.cdr.detectChanges();
         }
-            ,
-            error => {
-                this.isLoadingSubmit = false;
-                this.cdr.detectChanges();
-            }
-        );
-}
+      );
+  }
 
+
+  public getTotalPrice(): number {
+    if (isNullOrUndefined(this.model.Price) || isNullOrUndefined(this.model.Quantity)) {
+      return null;
+    }
+    return this.model.Price * this.model.Quantity;
+  }
 }

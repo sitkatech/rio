@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
+import { isNullOrUndefined } from 'util';
 
 @Component({
     selector: 'template-posting-detail',
@@ -38,4 +39,9 @@ export class PostingDetailComponent implements OnInit {
     public canEditCurrentPosting(): boolean {
         return this.authenticationService.isAdministrator() || this.posting.CreateUser.UserID == this.authenticationService.currentUser.UserID;
     }
+
+    public getTotalPrice() : number
+    {
+      return this.posting.Price * this.posting.Quantity;
+    }  
 }

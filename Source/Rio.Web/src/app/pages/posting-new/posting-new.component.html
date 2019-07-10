@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">
-                            <label class="required">Quantity</label>
+                            <label class="required">Quantity (ac-ft)</label>
                         </div>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="Quantity" required
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">
-                            <label class="required">Price</label>
+                            <label class="required">Price ($/ac-ft)</label>
                         </div>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="Price" required
@@ -53,11 +53,21 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-2 control-label">
+                            <label>Total Price</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <span *ngIf="getTotalPrice()">{{getTotalPrice() | currency : "USD" }}</span>
+                            <span *ngIf="!getTotalPrice()">-</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
                             <label class="required">Description</label>
                         </div>
                         <div class="col-sm-10">
-                            <textarea class="form-control" name="PostingDescription" required
-                                [(ngModel)]="model.PostingDescription"></textarea>
+                            <p class="font-italic">Please include contact information</p>
+                            <textarea class="form-control" name="PostingDescription" required style="height: 200px"
+                            [(ngModel)]="model.PostingDescription"></textarea>
                         </div>
                     </div>
                 </div>
