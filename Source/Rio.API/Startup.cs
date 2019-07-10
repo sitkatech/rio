@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
 
@@ -32,7 +33,7 @@ namespace Rio.API
                     {
                         opt.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
                     }
-
+                    opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                     var resolver = opt.SerializerSettings.ContractResolver;
                     if (resolver != null)
                     {
