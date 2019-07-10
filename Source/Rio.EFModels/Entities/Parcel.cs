@@ -18,6 +18,16 @@ namespace Rio.EFModels.Entities
 
             return parcels;
         }
+        public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext)
+        {
+            var parcels = dbContext.UserParcel.Include(x => x.Parcel)
+                .AsNoTracking()
+                .OrderBy(x => x.Parcel.ParcelNumber)
+                .Select(x => x.Parcel.AsDto())
+                .AsEnumerable();
+
+            return parcels;
+        }
 
         public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID)
         {

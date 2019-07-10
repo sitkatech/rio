@@ -9,9 +9,10 @@
         Demonstration map showing that the parcel data has been imported into the system.
     </p>
 </div>
-<div class="container mt-sm-4">
+<div class="container mt-sm-4" *ngIf="parcels">
   <parcel-map
   mapID="parcelsMap"
-  mapHeight="500px">
+  [selectedParcelIDs]="getSelectedParcelIDs()"
+  mapHeight="600px">
   </parcel-map>
 </div>

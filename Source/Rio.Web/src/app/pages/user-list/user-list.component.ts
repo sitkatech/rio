@@ -8,23 +8,11 @@ import { UserDto } from 'src/app/shared/models';
     styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
-
     users: UserDto[];
-
-    displayInviteUserDialog: boolean = false;
-
-    userToEdit = {};
-    displayEditUserDialog: boolean = false;
 
     constructor(private cdr: ChangeDetectorRef, private userService: UserService) { }
 
     ngOnInit() {
-        setTimeout(() => {
-            this.getData();
-        });
-    }
-
-    getData() {
         this.userService.getUsers().subscribe(result => {
             this.users = result;
             this.cdr.detectChanges();

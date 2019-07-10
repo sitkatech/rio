@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
@@ -30,8 +28,8 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelDto>> List()
         {
-            var userDtos = Parcel.List(_dbContext);
-            return Ok(userDtos);
+            var parcelDtos = Parcel.List(_dbContext);
+            return Ok(parcelDtos);
         }
 
         [HttpGet("parcels/{parcelID}")]
@@ -92,6 +90,15 @@ namespace Rio.API.Controllers
         {
             var boundingBoxDto = Parcel.GetBoundingBoxByParcelIDs(_dbContext, parcelIDListDto.ParcelIDs);
             return Ok(boundingBoxDto);
+        }
+
+
+        [HttpGet("parcels/getParcelsWithLandOwners")]
+        [ParcelManageFeature]
+        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners()
+        {
+            var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext);
+            return Ok(parcelDtos);
         }
     }
 }
