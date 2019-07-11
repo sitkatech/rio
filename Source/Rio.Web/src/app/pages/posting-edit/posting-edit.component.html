@@ -42,15 +42,22 @@
               <label class="required">Quantity</label>
             </div>
             <div class="col-sm-10">
-              <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" />
+              <div class="input-group">
+                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" />
+                <span class="input-group-addon">ac-ft</span>
+              </div>
             </div>
           </div>
           <div class="form-group">
             <div class="col-sm-2 control-label">
-              <label class="required">Price</label>
+              <label class="required">Unit Price</label>
             </div>
             <div class="col-sm-10">
-              <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+              <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+                <span class="input-group-addon">per ac-ft</span>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -67,9 +74,8 @@
               <label class="required">Description</label>
             </div>
             <div class="col-sm-10">
-                <p class="font-italic">Please include contact information</p>
                 <textarea class="form-control" name="PostingDescription" required style="height: 200px"
-                [(ngModel)]="model.PostingDescription"></textarea>
+                [(ngModel)]="model.PostingDescription" placeholder="Please enter details of your posting, including contact information"></textarea>
             </div>
           </div>
         </div>

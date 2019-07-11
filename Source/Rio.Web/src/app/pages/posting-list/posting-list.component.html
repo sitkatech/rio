@@ -29,8 +29,8 @@
             <td><a class="btn btn-primary btn-sm" routerLink="/postings/{{posting.PostingID}}">View</a></td>
             <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
             <td style="white-space: nowrap">{{ posting.PostingType.PostingTypeDisplayName }}</td>
-            <td>{{ posting.Quantity }} AF</td>
-            <td style="white-space: nowrap">{{ posting.Price }} / AF</td>
+            <td>{{ posting.Quantity }} ac-ft</td>
+            <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
             <td>
                 {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
                 <a *ngIf="posting.PostingDescription.length > descriptionMaxLength" routerLink="/postings/{{posting.PostingID}}">[View More]</a>
