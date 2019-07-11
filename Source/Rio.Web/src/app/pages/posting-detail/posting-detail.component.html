@@ -35,14 +35,14 @@
               {{posting.PostingType.PostingTypeDisplayName}}
             </dd>
 
-            <dt class="text-sm-right col-sm-5 col-xs-12">Quantity (ac-ft)</dt>
+            <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{posting.Quantity}}
+              {{posting.Quantity}} ac-ft
             </dd>
 
-            <dt class="text-sm-right col-sm-5 col-xs-12">Price ($/ac-ft)</dt>
+            <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{posting.Price}}
+              {{posting.Price | currency: "USD" }} per ac-ft
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
