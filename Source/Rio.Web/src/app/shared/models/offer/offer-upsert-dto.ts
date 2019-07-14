@@ -4,4 +4,5 @@ export class OfferUpsertDto {
     Price: number;
     OfferNotes: string;
     OfferStatusID: number;
+  	TradeID: number;
 }
