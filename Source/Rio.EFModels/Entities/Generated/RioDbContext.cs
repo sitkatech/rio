@@ -18,15 +18,20 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
         public virtual DbSet<FileResource> FileResource { get; set; }
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
+        public virtual DbSet<Offer> Offer { get; set; }
+        public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
+        public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
         public virtual DbSet<RioPage> RioPage { get; set; }
         public virtual DbSet<RioPageImage> RioPageImage { get; set; }
         public virtual DbSet<RioPageType> RioPageType { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<Trade> Trade { get; set; }
+        public virtual DbSet<TradeStatus> TradeStatus { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserParcel> UserParcel { get; set; }
 
@@ -101,6 +106,44 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.FileResourceMimeTypeName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<Offer>(entity =>
+            {
+                entity.Property(e => e.OfferNotes).IsUnicode(false);
+
+                entity.HasOne(d => d.CreateUser)
+                    .WithMany(p => p.Offer)
+                    .HasForeignKey(d => d.CreateUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Offer_User_CreateUserID_UserID");
+
+                entity.HasOne(d => d.OfferStatus)
+                    .WithMany(p => p.Offer)
+                    .HasForeignKey(d => d.OfferStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Trade)
+                    .WithMany(p => p.Offer)
+                    .HasForeignKey(d => d.TradeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<OfferStatus>(entity =>
+            {
+                entity.HasIndex(e => e.OfferStatusDisplayName)
+                    .HasName("AK_OfferStatus_OfferStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.OfferStatusName)
+                    .HasName("AK_OfferStatus_OfferStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.OfferStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.OfferStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.OfferStatusName).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Parcel>(entity =>
             {
                 entity.HasIndex(e => e.ParcelNumber)
@@ -156,6 +199,23 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.Posting)
                     .HasForeignKey(d => d.PostingTypeID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<PostingStatus>(entity =>
+            {
+                entity.HasIndex(e => e.PostingStatusDisplayName)
+                    .HasName("AK_PostingStatus_PostingStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PostingStatusName)
+                    .HasName("AK_PostingStatus_PostingStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.PostingStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.PostingStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.PostingStatusName).IsUnicode(false);
             });
 
             modelBuilder.Entity<PostingType>(entity =>
@@ -235,6 +295,42 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.RoleDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.RoleName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Trade>(entity =>
+            {
+                entity.HasOne(d => d.CreateUser)
+                    .WithMany(p => p.Trade)
+                    .HasForeignKey(d => d.CreateUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Trade_User_CreateUserID_UserID");
+
+                entity.HasOne(d => d.Posting)
+                    .WithMany(p => p.Trade)
+                    .HasForeignKey(d => d.PostingID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.TradeStatus)
+                    .WithMany(p => p.Trade)
+                    .HasForeignKey(d => d.TradeStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<TradeStatus>(entity =>
+            {
+                entity.HasIndex(e => e.TradeStatusDisplayName)
+                    .HasName("AK_TradeStatus_TradeStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.TradeStatusName)
+                    .HasName("AK_TradeStatus_TradeStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.TradeStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.TradeStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.TradeStatusName).IsUnicode(false);
             });
 
             modelBuilder.Entity<User>(entity =>

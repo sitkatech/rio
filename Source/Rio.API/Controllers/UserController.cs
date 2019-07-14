@@ -109,7 +109,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("users/{userID}")]
-        [UserManageFeature]
+        [UserViewFeature]
         public ActionResult<UserDto> GetByUserID([FromRoute] int userID)
         {
             var userDto = Rio.EFModels.Entities.User.GetByUserID(_dbContext, userID);
@@ -172,7 +172,7 @@ namespace Rio.API.Controllers
 
 
         [HttpGet("users/{userID}/parcels")]
-        [UserManageFeature]
+        [UserViewFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByUserID([FromRoute] int userID)
         {
             var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
@@ -185,7 +185,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("users/{userID}/getParcelsAllocationAndConsumption")]
-        [UserManageFeature]
+        [UserViewFeature]
         public ActionResult<List<ParcelAllocationAndConsumptionDto>> ListParcelsAllocationAndConsumptionByUserID([FromRoute] int userID)
         {
             var parcelDtosEnumerable = Parcel.ListByUserID(_dbContext, userID);

@@ -10,7 +10,9 @@ namespace Rio.EFModels.Entities
         public User()
         {
             FileResource = new HashSet<FileResource>();
+            Offer = new HashSet<Offer>();
             Posting = new HashSet<Posting>();
+            Trade = new HashSet<Trade>();
             UserParcel = new HashSet<UserParcel>();
         }
 
@@ -47,7 +49,11 @@ namespace Rio.EFModels.Entities
         [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResource { get; set; }
         [InverseProperty("CreateUser")]
+        public virtual ICollection<Offer> Offer { get; set; }
+        [InverseProperty("CreateUser")]
         public virtual ICollection<Posting> Posting { get; set; }
+        [InverseProperty("CreateUser")]
+        public virtual ICollection<Trade> Trade { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<UserParcel> UserParcel { get; set; }
     }

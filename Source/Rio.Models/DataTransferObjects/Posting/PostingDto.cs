@@ -12,13 +12,6 @@ namespace Rio.Models.DataTransferObjects.Posting
         public decimal Price { get; set; }
         public string PostingDescription { get; set; }
 
-        public UserDto CreateUser { get; set; }
-
-        public static string GetListRoute => "postings";
-
-        public static string GetSingleRouteByPostingID(int postingID)
-        {
-            return $"postings/{postingID}";
-        }
+        public UserSimpleDto CreateUser { get; set; }
     }
 }

@@ -81,6 +81,14 @@
     <Build Include="dbo\Tables\dbo.ParcelAllocation.sql" />
     <Build Include="dbo\Tables\dbo.ParcelMonthlyEvapotranspiration.sql" />
     <None Include="Scripts\ReleaseScripts\0003 - PMET_Import.sql" />
+    <Build Include="dbo\Tables\dbo.Trade.sql" />
+    <Build Include="dbo\Tables\dbo.Offer.sql" />
+    <Build Include="dbo\Tables\dbo.OfferStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.OfferStatus.sql" />
+    <Build Include="dbo\Tables\dbo.PostingStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.PostingStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.TradeStatus.sql" />
+    <Build Include="dbo\Tables\dbo.TradeStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

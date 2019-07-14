@@ -13,7 +13,7 @@ namespace Rio.EFModels.Entities
                 PostingDescription = posting.PostingDescription,
                 Quantity = posting.Quantity,
                 Price = posting.Price,
-                CreateUser = posting.CreateUser.AsDto(),
+                CreateUser = posting.CreateUser.AsSimpleDto(),
                 PostingType = posting.PostingType.AsDto()
             };
         }

@@ -12,16 +12,16 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
                 <a *ngIf="!isAuthenticated()" class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
-                <a *ngIf="isLandOwner()" class="nav-link" routerLink="/land-owner-dashboard" routerLinkActive="active">Home</a>
+                <a *ngIf="isLandOwner()" class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active">Home</a>
                 <a *ngIf="isAdministrator()" class="nav-link" routerLink="/" routerLinkActive="active">Home</a>
             </li>
-            <li class="nav-item" *ngIf="viewManage()">
+            <li class="nav-item" *ngIf="isAuthenticated()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Trades</a>
             </li>
-            <li class="nav-item" *ngIf="viewManage()">
+            <li class="nav-item" *ngIf="isAuthenticated()">
                 <a class="nav-link" routerLink="/market-metrics" routerLinkActive="active">Market Metrics</a>
             </li>
-            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="viewManage()">
+            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
                     Manage
@@ -46,6 +46,9 @@
                     Welcome {{getUserName()}}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a routerLink="/landowner-dashboard" class="dropdown-item">
+                        My Dashboard
+                    </a>
                     <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
                 </div>
             </li>

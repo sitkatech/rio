@@ -5,6 +5,7 @@ import { UserDto } from '../shared/models';
 import { Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
+import { isNullOrUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
@@ -33,8 +34,6 @@ export class AuthenticationService {
     }
 
     const claims = this.oauthService.getIdentityClaims() as any;
-    console.log(claims);
-
     const currentUserGlobalID = claims.hasOwnProperty('sub') ? claims['sub'] : null
 
     if (!currentUserGlobalID) {

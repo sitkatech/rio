@@ -5,9 +5,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
-import { isNullOrUndefined } from 'util';
+import { TradeService } from 'src/app/services/trade.service';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -18,6 +18,7 @@ export class LandownerDashboardComponent implements OnInit {
 
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
+  public trades: Array<TradeWithMostRecentOfferDto>;
   public currentDate: Date;
 
   constructor(
@@ -25,33 +26,39 @@ export class LandownerDashboardComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private parcelService: ParcelService,
+    private tradeService: TradeService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef
   ) {
   }
 
   ngOnInit() {
-    const id = parseInt(this.route.snapshot.paramMap.get("id"));
-    if (id) {
+    let userID = parseInt(this.route.snapshot.paramMap.get("id"));
+    if (userID) {
       this.currentDate = (new Date());
       forkJoin(
-        this.userService.getUserFromUserID(id),
-        this.parcelService.getParcelAllocationAndConsumptionByUserID(id)
-      ).subscribe(([user, parcels]) => {
+        this.userService.getUserFromUserID(userID),
+        this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
+        this.tradeService.getActiveTradesForUser(userID)
+      ).subscribe(([user, parcels, trades]) => {
         this.user = user instanceof Array
           ? null
           : user as UserDto;
         // TODO: scope it to current year for now
         this.parcels = parcels.filter(x => x.WaterYear == 2018);
+        this.trades = trades;
         this.cdr.detectChanges();
       });
     }
     else {
+      userID = this.authenticationService.currentUser.UserID;
       forkJoin(
-        this.parcelService.getParcelsByUserID(this.authenticationService.currentUser.UserID)
-      ).subscribe(([parcels]) => {
+        this.parcelService.getParcelsByUserID(userID),
+        this.tradeService.getActiveTradesForUser(userID)
+      ).subscribe(([parcels, trades]) => {
         this.user = this.authenticationService.currentUser;
         this.parcels = parcels;
+        this.trades = trades;
         this.cdr.detectChanges();
       });
     }

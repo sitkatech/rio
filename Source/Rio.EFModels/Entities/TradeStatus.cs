@@ -1,0 +1,36 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Offer;
+
+namespace Rio.EFModels.Entities
+{
+    public partial class TradeStatus
+    {
+        public static IEnumerable<TradeStatusDto> List(RioDbContext dbContext)
+        {
+            var tradeStatusDtos = dbContext.TradeStatus
+                .AsNoTracking()
+                .Select(x => x.AsDto());
+
+            return tradeStatusDtos;
+        }
+
+        public static TradeStatusDto GetByTradeStatusID(RioDbContext dbContext, int tradeStatusID)
+        {
+            var tradeStatus = dbContext.TradeStatus
+                .AsNoTracking()
+                .SingleOrDefault(x => x.TradeStatusID == tradeStatusID);
+
+            return tradeStatus?.AsDto();
+        }
+    }
+
+    public enum TradeStatusEnum
+    {
+        Open = 1,
+        Accepted = 2,
+        Rejected = 3,
+        Rescinded = 4
+    }
+}

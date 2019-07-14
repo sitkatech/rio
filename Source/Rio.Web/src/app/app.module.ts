@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
 import { CookieModule } from 'ngx-cookie';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/auth-interceptor';
@@ -26,6 +26,8 @@ import { PostingEditComponent } from './pages/posting-edit/posting-edit.componen
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
+import { AuthenticationService } from './services/authentication.service';
+import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,7 @@ import { LandownerDashboardComponent } from './pages/landowner-dashboard/landown
     ParcelDetailComponent,
     ParcelEditAllocationComponent,
     LandownerDashboardComponent,
+    TradeDetailComponent,
   ],
   imports: [
     AppRoutingModule,

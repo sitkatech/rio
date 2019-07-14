@@ -18,3 +18,12 @@ GO
 
 :r .\dbo.PostingType.sql 
 GO
+
+:r .\dbo.OfferStatus.sql 
+GO
+
+:r .\dbo.PostingStatus.sql 
+GO
+
+:r .\dbo.TradeStatus.sql 
+GO

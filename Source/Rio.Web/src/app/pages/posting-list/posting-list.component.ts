@@ -16,12 +16,6 @@ export class PostingListComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef, private postingService: PostingService) { }
 
   ngOnInit() {
-      setTimeout(() => {
-          this.getData();
-      });
-  }
-
-  getData() {
       this.postingService.getPostings().subscribe(result => {
           this.postings = result;
           this.cdr.detectChanges();

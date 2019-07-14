@@ -37,11 +37,6 @@ export class HeaderNavComponent implements OnInit {
         return this.authenticationService.isAdministrator();
     }
 
-    public viewManage(): boolean {
-        return this.isLandOwner() || this.isAdministrator();
-    }
-
-
     public getUserName() {
         return this.authenticationService.currentUser ? this.authenticationService.currentUser.FullName
             : null;

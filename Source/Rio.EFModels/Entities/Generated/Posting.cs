@@ -7,6 +7,11 @@ namespace Rio.EFModels.Entities
 {
     public partial class Posting
     {
+        public Posting()
+        {
+            Trade = new HashSet<Trade>();
+        }
+
         public int PostingID { get; set; }
         public int PostingTypeID { get; set; }
         [Column(TypeName = "datetime")]
@@ -25,5 +30,7 @@ namespace Rio.EFModels.Entities
         [ForeignKey("PostingTypeID")]
         [InverseProperty("Posting")]
         public virtual PostingType PostingType { get; set; }
+        [InverseProperty("Posting")]
+        public virtual ICollection<Trade> Trade { get; set; }
     }
 }

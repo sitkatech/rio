@@ -3,8 +3,9 @@
   <p>
     Current Date: {{currentDate | date}}
   </p>
-  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
-    <div class="col-sm-12 col-md-4">
+
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
       <div class="card">
         <div class="card-header">
           User:
@@ -84,8 +85,36 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-8" *ngIf="parcels">
+    <div class="col-sm-12 col-md-8" *ngIf="trades">
       <div class="card">
+        <div class="card-header">
+          Trade Activity
+        </div>
+        <div class="card-body">
+          <p *ngIf="trades.length === 0">You have no trade activity.</p>
+          <table class="table table-striped" *ngIf="trades.length > 0">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Posting Date</th>
+                <th>Status</th>
+                <th>Quantity</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let trade of trades">
+                <td><a class="btn btn-primary btn-sm" routerLink="/trades/{{trade.TradeID}}">View</a></td>
+                <td style="white-space: nowrap">{{ trade.OfferDate | date:"short" }}</td>
+                <td style="white-space: nowrap">{{ trade.TradeStatus.TradeStatusDisplayName }}</td>
+                <td>{{ trade.Quantity }} ac-ft</td>
+                <td style="white-space: nowrap">{{ trade.Price | currency: "USD" }} per ac-ft</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="card-header">
           Location
         </div>
@@ -96,5 +125,5 @@
       </div>
     </div>
   </div>
-  <p class="small">*Estimated water usage is based on satellite imagery and may not be accurate at the APN level.</p>
+  <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery and may not be accurate at the APN level.</p>
 </div>

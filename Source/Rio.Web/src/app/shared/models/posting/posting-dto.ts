@@ -1,5 +1,5 @@
 import { PostingTypeDto } from '../postingType/postingType-dto';
-import { UserDto } from '../user/user-dto';
+import { UserSimpleDto } from '../user/user-simple-dto';
 
 export class PostingDto {
     PostingID: number;
@@ -11,7 +11,7 @@ export class PostingDto {
 
     PostingDate: Date;
 
-    CreateUser: UserDto;
+    CreateUser: UserSimpleDto;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

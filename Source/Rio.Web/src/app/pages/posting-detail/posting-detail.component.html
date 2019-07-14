@@ -1,20 +1,20 @@
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" *ngIf="posting">
   <ol class="breadcrumb">
     <li class="breadcrumb-item" aria-current="page">
       <a routerLink="/trades">Trades</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-        {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
+      {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
     </li>
   </ol>
 </nav>
-<div class="container mt-sm-4">
+<div class="container mt-sm-4" *ngIf="posting">
   <h2 style="display: inline-block">
     {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
-    <div class="col-sm-12">
+    <div class="col-sm-12 col-md-6">
       <div class="card">
         <div class="card-header">
           <a *ngIf="canEditCurrentPosting()" class="btn btn-primary btn-sm float-right"
@@ -47,7 +47,7 @@
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{getTotalPrice() | currency : "USD" }}
+              {{getTotalPrice(posting) | currency : "USD" }}
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Description</dt>
@@ -55,6 +55,129 @@
               {{posting.PostingDescription}}
             </dd>
           </dl>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+      <div class="card" *ngIf="!isPostingOwner && !isConfirmingTrade && !isCounterOffering">
+        <div class="card-header">
+          Your Offer
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="text-sm-right col-sm-5 col-xs-12">Purchase Quantity</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <span>{{model.Quantity}} ac-ft</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <span>{{model.Price | currency: "USD" }} per ac-ft</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{getTotalPrice(model) | currency : "USD" }}
+            </dd>
+          </dl>
+          <div class="text-center">
+            <button class="btn btn-primary btn-sm mr-1" *ngIf="offers.length == 0"
+              (click)="acceptCurrentOffer()">Confirm
+              Trade</button>
+            <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
+              *ngIf="!isPendingOffer()">Make Counter
+              Offer</button>
+            <button class="btn btn-primary btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Withdraw Offer</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="isCounterOffering && !isConfirmingTrade">
+        <div class="card-header">
+          Your Offer
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <div class="input-group">
+                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" />
+                <div class="input-group-append">
+                  <span class="input-group-text"> ac-ft</span>
+                </div>
+              </div>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">$</span>
+                </div>
+                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+                <div class="input-group-append">
+                  <span class="input-group-text"> per ac-ft</span>
+                </div>
+              </div>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{getTotalPrice(model) | currency : "USD" }}
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Notes</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <textarea class="form-control" name="OfferNotes" style="height: 200px"
+              [(ngModel)]="model.OfferNotes"></textarea>
+            </dd>
+          </dl>
+          <div class="text-center">
+            <button class="btn btn-primary btn-sm mr-1" (click)="isConfirmingTrade = true">Present Counter
+              Offer</button>
+            <button class="btn btn-primary btn-sm" (click)="cancelCounterOffer()">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" *ngIf="isConfirmingTrade">
+        <div class="card-header">
+          Confirm Your Trade
+        </div>
+        <div class="card-body">
+          <p *ngIf="!isRescindingTrade && !isRejectingTrade && !isCounterOffering">Please confirm your intent to execute
+            this trade
+            agreement.<br /><strong>This
+              action is final</strong> and
+            obligates you to complete the financial transaction according to the quantity and price specified here, and
+            will adjust your annual water allocation accordingly.</p>
+          <p *ngIf="isRescindingTrade">Please confirm you wish to rescind your current offer.</p>
+          <p *ngIf="isRejectingTrade">Please confirm you wish to reject further negotiations. You will no longer be able
+            to respond to the current Trade. You can however initiate new trades from the Postings page.</p>
+          <p *ngIf="isCounterOffering">Please confirm details of your counter-offer. The counter-offer will be presented
+            to the {{counterOfferRecipientType}}, who will have up to 5 days to review your offer.</p>
+          <dl class="row">
+            <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <span>{{model.Quantity}} ac-ft</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              <span>{{model.Price | currency: "USD" }} per ac-ft</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{getTotalPrice(model) | currency : "USD" }}
+            </dd>
+          </dl>
+          <div class="text-center">
+            <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()" [disabled]="isLoadingSubmit">
+              <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+              Continue
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
+          </div>
         </div>
       </div>
     </div>

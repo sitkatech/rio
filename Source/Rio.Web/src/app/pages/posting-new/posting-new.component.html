@@ -1,90 +1,102 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/trades">Trades</a>            
+            <a routerLink="/trades">Trades</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
             New Posting
         </li>
     </ol>
 </nav>
-<div class="container">
+<div class="container" *ngIf="postingTypes">
     <h2>New Posting</h2>
     <p class="lead">
-      Create a new offer to either buy or sell an allocation.
+        Create a new offer to either buy or sell an allocation.
     </p>
-</div>
-<div class="container my-sm-4">
     <app-alert-display></app-alert-display>
     <form (ngSubmit)="onSubmit(newPostingForm)" #newPostingForm="ngForm">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">
-                            <label class="required">Type</label>
-                        </div>
-                        <div class="col-sm-10">
-                            <select name="PostingTypeID" class="form-control" [(ngModel)]="model.PostingTypeID" required>
-                                <option value=""></option>
-                                <option *ngFor="let postingType of postingTypes" [value]="postingType.PostingTypeID">
-                                    {{postingType.PostingTypeDisplayName}}
-                                </option>
-                            </select>
-                        </div>
+        <div class="row mt-4">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-4 control-label">
+                        <label class="required">Type</label>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">
-                            <label class="required">Quantity (ac-ft)</label>
-                        </div>
-                        <div class="col-sm-10">
+                    <div class="col-sm-8">
+                        <select name="PostingTypeID" class="form-control" [(ngModel)]="model.PostingTypeID" required>
+                            <option value=""></option>
+                            <option *ngFor="let postingType of postingTypes" [value]="postingType.PostingTypeID">
+                                {{postingType.PostingTypeDisplayName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-4 control-label">
+                        <label class="required">Quantity</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="input-group">
                             <input type="number" class="form-control" name="Quantity" required
                                 [(ngModel)]="model.Quantity" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"> ac-ft</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">
-                            <label class="required">Price ($/ac-ft)</label>
-                        </div>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control" name="Price" required
-                                [(ngModel)]="model.Price" />
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-4 control-label">
+                        <label class="required">Unit Price</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"> per ac-ft</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">
-                            <label>Total Price</label>
-                        </div>
-                        <div class="col-sm-10">
-                            <span *ngIf="getTotalPrice()">{{getTotalPrice() | currency : "USD" }}</span>
-                            <span *ngIf="!getTotalPrice()">-</span>
-                        </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-4 control-label">
+                        <label>Total Price</label>
                     </div>
-                    <div class="form-group">
-                        <div class="col-sm-2 control-label">
-                            <label class="required">Description</label>
-                        </div>
-                        <div class="col-sm-10">
-                            <p class="font-italic">Please include contact information</p>
-                            <textarea class="form-control" name="PostingDescription" required style="height: 200px"
-                            [(ngModel)]="model.PostingDescription"></textarea>
-                        </div>
+                    <div class="col-sm-8">
+                        <span *ngIf="getTotalPrice()">{{getTotalPrice() | currency : "USD" }}</span>
+                        <span *ngIf="!getTotalPrice()">-</span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-4 control-label">
+                        <label class="required">Description</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <textarea class="form-control" name="PostingDescription" required style="height: 200px"
+                            [(ngModel)]="model.PostingDescription"
+                            placeholder="Please enter details of your posting, including contact information"></textarea>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row">
-            <hr />
-            <div class="col-xs-12 col-sm-2">
-                <i class="fas fa-bolt"></i> Required field
-            </div>
-            <div class="col-xs-12 col-sm-10 text-right">
-                <button type="submit" class="btn btn-primary"
-                    [disabled]="!newPostingForm.form.valid || isLoadingSubmit">
-                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                    Save
-                </button>
-                <a class="btn btn-secondary ml-1" routerLink="/trades">Cancel</a>
+            <div class="col-sm-6">
+                <hr />
+                <div class="row">
+                    <div class="col-sm-4">
+                        <i class="fas fa-bolt"></i> Required field
+                    </div>
+                    <div class="col-sm-8 text-right">
+                        <button type="submit" class="btn btn-primary"
+                            [disabled]="!newPostingForm.form.valid || isLoadingSubmit">
+                            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                            Save
+                        </button>
+                        <a class="btn btn-secondary ml-1" routerLink="/trades">Cancel</a>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
