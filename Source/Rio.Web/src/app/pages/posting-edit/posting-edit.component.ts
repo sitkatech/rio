@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
@@ -7,10 +7,11 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingUpdateDto } from 'src/app/shared/models/posting/posting-update-dto';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
-import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
+import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
 import { isNullOrUndefined } from 'util';
+import { UserDto } from 'src/app/shared/models';
 
 
 @Component({
@@ -19,7 +20,9 @@ import { isNullOrUndefined } from 'util';
   styleUrls: ['./posting-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PostingEditComponent implements OnInit {
+export class PostingEditComponent implements OnInit, OnDestroy {
+  private watchUserChangeSubscription: any;
+  private currentUser: UserDto;
 
   public postingID: number;
   public posting: PostingDto;
@@ -39,24 +42,33 @@ export class PostingEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.postingID = parseInt(this.route.snapshot.paramMap.get("id"));
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.postingID = parseInt(this.route.snapshot.paramMap.get("id"));
 
-    forkJoin(
-      this.postingService.getPostingFromPostingID(this.postingID),
-      this.postingTypeService.getPostingTypes()
-    ).subscribe(([posting, postingTypes]) => {
-      this.posting = posting instanceof Array
-        ? null
-        : posting as PostingDto;
+      forkJoin(
+        this.postingService.getPostingFromPostingID(this.postingID),
+        this.postingTypeService.getPostingTypes()
+      ).subscribe(([posting, postingTypes]) => {
+        this.posting = posting instanceof Array
+          ? null
+          : posting as PostingDto;
 
-      this.postingTypes = postingTypes;
-      this.model = new PostingUpdateDto();
-      this.model.PostingTypeID = posting.PostingType.PostingTypeID;
-      this.model.PostingDescription = posting.PostingDescription;
-      this.model.Quantity = posting.Quantity;
-      this.model.Price = posting.Price;
-      this.cdr.detectChanges();
+        this.postingTypes = postingTypes;
+        this.model = new PostingUpdateDto();
+        this.model.PostingTypeID = posting.PostingType.PostingTypeID;
+        this.model.PostingDescription = posting.PostingDescription;
+        this.model.Quantity = posting.Quantity;
+        this.model.Price = posting.Price;
+        this.cdr.detectChanges();
+      });
     });
+  }
+
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
   }
 
   onSubmit(editPostingForm: HTMLFormElement): void {
@@ -76,7 +88,6 @@ export class PostingEditComponent implements OnInit {
         }
       );
   }
-
 
   public getTotalPrice(): number {
     if (isNullOrUndefined(this.model.Price) || isNullOrUndefined(this.model.Quantity)) {

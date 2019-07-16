@@ -34,9 +34,7 @@ export class AppComponent {
         });
         
         this.configureAuthService().subscribe(() => {
-            this.oauthService.tryLogin().then(() => {
-                this.authenticationService.getAuthenticationUser();
-            });
+            this.oauthService.tryLogin();
         });
     }
 

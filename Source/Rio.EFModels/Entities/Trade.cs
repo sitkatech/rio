@@ -48,6 +48,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.CreateUser)
                 .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.TradeID == tradeID);
 

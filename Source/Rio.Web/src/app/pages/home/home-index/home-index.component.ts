@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
     selector: 'app-home-index',
@@ -8,17 +7,9 @@ import { OAuthService } from 'angular-oauth2-oidc';
 })
 export class HomeIndexComponent implements OnInit {
 
-    constructor(private authenticationService: OAuthService) {
+    constructor() {
     }
 
     public ngOnInit(): void {
-    }
-
-    public authenticated(): boolean {
-        return this.authenticationService.hasValidAccessToken();
-    }
-
-    public userCanEdit(): boolean {
-        return this.authenticationService.hasValidAccessToken();
     }
 }

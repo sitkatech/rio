@@ -1,6 +1,7 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { CookieStorageService } from '../../services/cookies/cookie-storage.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDto } from '../../models';
 
 @Component({
     selector: 'header-nav',
@@ -8,7 +9,10 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
     styleUrls: ['./header-nav.component.scss']
 })
 
-export class HeaderNavComponent implements OnInit {
+export class HeaderNavComponent implements OnInit, OnDestroy {
+    private watchUserChangeSubscription: any;
+    private currentUser: UserDto;
+
     windowWidth: number;
 
     @HostListener('window:resize', ['$event'])
@@ -23,6 +27,15 @@ export class HeaderNavComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+            this.currentUser = currentUser;
+        });
+    }
+
+    ngOnDestroy() {
+        this.watchUserChangeSubscription.unsubscribe();
+        this.authenticationService.dispose();
+        this.cdr.detach();
     }
 
     public isAuthenticated(): boolean {
@@ -30,15 +43,15 @@ export class HeaderNavComponent implements OnInit {
     }
 
     public isLandOwner(): boolean {
-        return this.authenticationService.isLandOwner();
+        return this.authenticationService.isUserALandOwner(this.currentUser);
     }
 
     public isAdministrator(): boolean {
-        return this.authenticationService.isAdministrator();
+        return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 
     public getUserName() {
-        return this.authenticationService.currentUser ? this.authenticationService.currentUser.FullName
+        return this.currentUser ? this.currentUser.FullName
             : null;
     }
 

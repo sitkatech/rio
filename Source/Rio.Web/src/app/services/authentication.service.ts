@@ -3,60 +3,50 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from './user/user.service';
 import { UserDto } from '../shared/models';
 import { Subject, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, filter } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { isNullOrUndefined } from 'util';
+import { Router, NavigationEnd } from '@angular/router';
+import { RoleEnum } from '../shared/models/enums/role.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  public currentUser: UserDto;
-  private personLoadedSubject = new Subject<UserDto>();
+  private currentUser: UserDto;
 
-  constructor(
-    private oauthService: OAuthService,
-    private cookieStorageService: CookieStorageService,
-    private userService: UserService,
-  ) {
+  private getUserObservable: any;
+
+  private _currentUserSetSubject = new Subject<UserDto>();
+  public currentUserSetObservable = this._currentUserSetSubject.asObservable();
+
+  constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private userService: UserService) {
+      this.router.events
+          .pipe(filter(e => e instanceof NavigationEnd))
+          .subscribe((e: NavigationEnd) => {
+              if (this.isAuthenticated()) {
+                  var claims = this.oauthService.getIdentityClaims();
+                  var globalID = claims["sub"];
+
+                  this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
+                      this.currentUser = result;
+                      this._currentUserSetSubject.next(this.currentUser);
+                  });
+
+              } else {
+                  this.currentUser = null;
+                  this._currentUserSetSubject.next(null);
+              }
+          });
+  }
+
+  dispose() {
+      this.getUserObservable.unsubscribe();
   }
 
   public isAuthenticated(): boolean {
     return this.oauthService.hasValidAccessToken();
-  }
-
-  public getAuthenticationUser(): void {
-    console.log("getting claims");
-    if (!this.isAuthenticated()) {
-      console.log("not authenticated");
-      return;
-    }
-
-    const claims = this.oauthService.getIdentityClaims() as any;
-    const currentUserGlobalID = claims.hasOwnProperty('sub') ? claims['sub'] : null
-
-    if (!currentUserGlobalID) {
-      return;
-    }
-
-    this.userService.getUserFromGlobalID(currentUserGlobalID)
-      .pipe(
-        map(response => {
-          const user: UserDto = response instanceof Array
-            ? null
-            : response as UserDto;
-          this.personLoadedSubject.next(user);
-          return user;
-        }),
-        catchError(err => {
-          this.handleUnauthorized();
-          return throwError(err);
-        }),
-      )
-      .subscribe(person => {
-        this.currentUser = person;
-      });
   }
 
   public handleUnauthorized(): void {
@@ -75,21 +65,17 @@ export class AuthenticationService {
     });
   }
 
-  public isLandOwner(): boolean {
-    return this.isUserALandOwner(this.currentUser);
-  }
-
   public isUserALandOwner(user: UserDto): boolean {
     let role = user && user.Role
       ? user.Role.RoleID
       : null;
-    return role === 2; // Landowner; todo: need to add enums
+    return role === RoleEnum.LandOwner;
   }
 
-  public isAdministrator(): boolean {
-    const role = this.currentUser && this.currentUser.Role
-      ? this.currentUser.Role.RoleID
+  public isUserAnAdministrator(user: UserDto): boolean {
+    const role = user && user.Role
+      ? user.Role.RoleID
       : null;
-    return role === 1; // Admin; todo: need to add enums
+    return role === RoleEnum.Admin;
   }
 }

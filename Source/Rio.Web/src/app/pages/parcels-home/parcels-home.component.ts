@@ -1,25 +1,39 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
+import { UserDto } from 'src/app/shared/models';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'rio-parcels-home',
   templateUrl: './parcels-home.component.html',
   styleUrls: ['./parcels-home.component.scss']
 })
-export class ParcelsHomeComponent implements OnInit {
+export class ParcelsHomeComponent implements OnInit, OnDestroy {
+  private watchUserChangeSubscription: any;
+  private currentUser: UserDto;
 
-  parcels: Array<ParcelDto>;
+  public parcels: Array<ParcelDto>;
 
-  constructor(private cdr: ChangeDetectorRef, private parcelService: ParcelService) { }
+  constructor(private cdr: ChangeDetectorRef,
+    private authenticationService: AuthenticationService,
+    private parcelService: ParcelService) { }
 
   ngOnInit() {
-    this.parcelService.getParcelsWithLandOwners().subscribe(result => {
-      this.parcels = result;
-      this.cdr.detectChanges();
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.parcelService.getParcelsWithLandOwners().subscribe(result => {
+        this.parcels = result;
+        this.cdr.detectChanges();
+      });
     });
   }
 
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
+  }
 
   public getSelectedParcelIDs(): Array<number> {
     return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, Input, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, Input, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { RoleService } from 'src/app/services/role/role.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -7,6 +7,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Router } from '@angular/router';
 import { RoleDto } from 'src/app/shared/models/role/role-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDto } from 'src/app/shared/models';
 
 
 
@@ -16,7 +17,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
     styleUrls: ['./user-invite.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserInviteComponent implements OnInit {
+export class UserInviteComponent implements OnInit, OnDestroy {
+    private watchUserChangeSubscription: any;
+    private currentUser: UserDto;
 
     public roles: Array<RoleDto>;
     public model: any = {};
@@ -25,10 +28,19 @@ export class UserInviteComponent implements OnInit {
     constructor(private cdr: ChangeDetectorRef, private router: Router, private userService: UserService, private roleService: RoleService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
 
     ngOnInit(): void {
-        this.roleService.getRoles().subscribe(result => {
-            this.roles = result;
-            this.cdr.detectChanges();
+        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+            this.currentUser = currentUser;
+            this.roleService.getRoles().subscribe(result => {
+                this.roles = result;
+                this.cdr.detectChanges();
+            });
         });
+    }
+
+    ngOnDestroy() {
+        this.watchUserChangeSubscription.unsubscribe();
+        this.authenticationService.dispose();
+        this.cdr.detach();
     }
 
     canInviteUser(): boolean {
@@ -41,11 +53,6 @@ export class UserInviteComponent implements OnInit {
         this.userService.inviteUser(this.model)
             .subscribe(response => {
                 this.isLoadingSubmit = false;
-                // if (response instanceof Array) {
-                //     this.alertService.pushAlert(new Alert("The form could not be submitted due to errors. Please correct the errors and try again.", AlertContext.Danger));
-                //     this.formErrors = response;
-                //     return;
-                // }
                 inviteUserForm.reset();
                 this.router.navigateByUrl("/users").then(x => {
                     this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
@@ -60,6 +67,6 @@ export class UserInviteComponent implements OnInit {
     }
 
     public currentUserIsAdmin(): boolean {
-        return this.authenticationService.isAdministrator();
+        return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 }

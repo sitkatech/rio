@@ -10,7 +10,7 @@
 </nav>
 <div class="container mt-sm-4" *ngIf="trade">
   <h2 style="display: inline-block">
-    Current Trade
+    Current Trade : Offer {{trade.TradeStatus.TradeStatusDisplayName}}
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
@@ -68,7 +68,7 @@
           <div class="text-center"
             *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
             <button class="btn btn-primary btn-sm mr-1" (click)="acceptCurrentOffer()"
-              *ngIf="!isCurrentOfferCreator">Confirm
+              *ngIf="!isCurrentOfferCreator">Accept Offer
               Trade</button>
             <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
               *ngIf="!isCurrentOfferCreator">Make Counter
@@ -77,7 +77,7 @@
               *ngIf="!isCurrentOfferCreator">Reject
               Trade</button>
             <button class="btn btn-primary btn-sm" (click)="rescindOffer()"
-              *ngIf="isCurrentOfferCreator">Withdraw Offer</button>
+              *ngIf="isCurrentOfferCreator">Rescind Offer</button>
           </div>
         </div>
 
@@ -165,7 +165,7 @@
             <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()"
             [disabled]="isLoadingSubmit">
               <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-              Continue
+              Confirm
             </button>
             <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
           </div>

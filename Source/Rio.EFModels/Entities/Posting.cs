@@ -17,7 +17,8 @@ namespace Rio.EFModels.Entities
                 CreateUserID = postingUpsertDto.CreateUserID,
                 PostingDate = DateTime.UtcNow,
                 Price = postingUpsertDto.Price,
-                Quantity = postingUpsertDto.Quantity
+                Quantity = postingUpsertDto.Quantity,
+                PostingStatusID = (int) PostingStatusEnum.Open
             };
 
             dbContext.Posting.Add(posting);
@@ -31,6 +32,7 @@ namespace Rio.EFModels.Entities
         {
             var postings = dbContext.Posting
                 .Include(x => x.PostingType)
+                .Include(x => x.PostingStatus)
                 .Include(x => x.CreateUser)
                 .AsNoTracking()
                 .OrderByDescending(x => x.PostingDate)
@@ -44,6 +46,7 @@ namespace Rio.EFModels.Entities
         {
             var posting = dbContext.Posting
                 .Include(x => x.PostingType)
+                .Include(x => x.PostingStatus)
                 .Include(x => x.CreateUser)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.PostingID == postingID);
@@ -61,6 +64,17 @@ namespace Rio.EFModels.Entities
             posting.Quantity = postingUpsertDto.Quantity;
             posting.Price = postingUpsertDto.Price;
             posting.PostingDescription = postingUpsertDto.PostingDescription;
+
+            dbContext.SaveChanges();
+            dbContext.Entry(posting).Reload();
+            return GetByPostingID(dbContext, postingID);
+        }
+        public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID, PostingUpdateStatusDto postingUpdateStatusDto)
+        {
+            var posting = dbContext.Posting
+                .Single(x => x.PostingID == postingID);
+
+            posting.PostingStatusID = postingUpdateStatusDto.PostingStatusID;
 
             dbContext.SaveChanges();
             dbContext.Entry(posting).Reload();

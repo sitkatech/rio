@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -13,7 +13,9 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
     styleUrls: ['./user-detail.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent implements OnInit, OnDestroy {
+    private watchUserChangeSubscription: any;
+    private currentUser: UserDto;
 
     public user: UserDto;
     public parcels: Array<ParcelDto>;
@@ -31,23 +33,32 @@ export class UserDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        const id = parseInt(this.route.snapshot.paramMap.get("id"));
-        if (id) {
-            forkJoin(
-                this.userService.getUserFromUserID(id),
-                this.parcelService.getParcelsByUserID(id)
-            ).subscribe(([user, parcels]) => {
-                this.user = user instanceof Array
-                    ? null
-                    : user as UserDto;
-                this.parcels = parcels;
-                this.cdr.detectChanges();
-            });
-        }
+        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+            this.currentUser = currentUser;
+            const id = parseInt(this.route.snapshot.paramMap.get("id"));
+            if (id) {
+                forkJoin(
+                    this.userService.getUserFromUserID(id),
+                    this.parcelService.getParcelsByUserID(id)
+                ).subscribe(([user, parcels]) => {
+                    this.user = user instanceof Array
+                        ? null
+                        : user as UserDto;
+                    this.parcels = parcels;
+                    this.cdr.detectChanges();
+                });
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.watchUserChangeSubscription.unsubscribe();
+        this.authenticationService.dispose();
+        this.cdr.detach();
     }
 
     public currentUserIsAdmin(): boolean {
-        return this.authenticationService.isAdministrator();
+        return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 
     public getSelectedParcelIDs(): Array<number> {
@@ -55,7 +66,6 @@ export class UserDetailComponent implements OnInit {
     }
 
     public canViewLandOwnerDashboard(): boolean {
-        let isUserALandOwner = this.authenticationService.isUserALandOwner(this.user);
-        return this.currentUserIsAdmin() && isUserALandOwner;
+        return this.currentUserIsAdmin();
     }
 }

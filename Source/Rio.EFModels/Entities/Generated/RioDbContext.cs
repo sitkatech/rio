@@ -195,6 +195,11 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Posting_User_CreateUserID_UserID");
 
+                entity.HasOne(d => d.PostingStatus)
+                    .WithMany(p => p.Posting)
+                    .HasForeignKey(d => d.PostingStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
                 entity.HasOne(d => d.PostingType)
                     .WithMany(p => p.Posting)
                     .HasForeignKey(d => d.PostingTypeID)

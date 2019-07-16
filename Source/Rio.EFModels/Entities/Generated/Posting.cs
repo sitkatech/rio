@@ -23,10 +23,14 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(2000)]
         public string PostingDescription { get; set; }
+        public int PostingStatusID { get; set; }
 
         [ForeignKey("CreateUserID")]
         [InverseProperty("Posting")]
         public virtual User CreateUser { get; set; }
+        [ForeignKey("PostingStatusID")]
+        [InverseProperty("Posting")]
+        public virtual PostingStatus PostingStatus { get; set; }
         [ForeignKey("PostingTypeID")]
         [InverseProperty("Posting")]
         public virtual PostingType PostingType { get; set; }

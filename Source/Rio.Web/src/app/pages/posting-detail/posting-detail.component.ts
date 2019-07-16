@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { PostingService } from 'src/app/services/posting.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -11,15 +11,20 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
-import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
+import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
+import { PostingUpdateStatusDto } from 'src/app/shared/models/posting/posting-update-status-dto';
+import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
+import { UserDto } from 'src/app/shared/models';
 
 @Component({
     selector: 'template-posting-detail',
     templateUrl: './posting-detail.component.html',
     styleUrls: ['./posting-detail.component.scss']
 })
-export class PostingDetailComponent implements OnInit {
+export class PostingDetailComponent implements OnInit, OnDestroy {
+    private watchUserChangeSubscription: any;
+    private currentUser: UserDto;
 
     public posting: PostingDto;
     public offers: Array<OfferDto>;
@@ -36,7 +41,7 @@ export class PostingDetailComponent implements OnInit {
     public originalPostingType: PostingTypeDto;
     public offerType: string;
     public counterOfferRecipientType: string;
-  
+
     constructor(
         private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
@@ -49,27 +54,36 @@ export class PostingDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
-        if (postingID) {
-            forkJoin(
-                this.postingService.getPostingFromPostingID(postingID),
-                this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
-            ).subscribe(([posting, offers]) => {
-                this.posting = posting instanceof Array
-                    ? null
-                    : posting as PostingDto;
+        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+            this.currentUser = currentUser;
+            const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
+            if (postingID) {
+                forkJoin(
+                    this.postingService.getPostingFromPostingID(postingID),
+                    this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
+                ).subscribe(([posting, offers]) => {
+                    this.posting = posting instanceof Array
+                        ? null
+                        : posting as PostingDto;
 
-                this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-                this.resetModelToPosting();
-                let currentUserID = this.authenticationService.currentUser.UserID;
-                this.isPostingOwner = this.posting.CreateUser.UserID === currentUserID;
-                this.originalPostingType = this.posting.PostingType;
-                this.offerType = this.isPostingOwner ?
-                  (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                  : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-                this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-                      });
-        }
+                    this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+                    this.resetModelToPosting();
+                    let currentUserID = this.currentUser.UserID;
+                    this.isPostingOwner = this.posting.CreateUser.UserID === currentUserID;
+                    this.originalPostingType = this.posting.PostingType;
+                    this.offerType = this.isPostingOwner ?
+                        (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                        : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+                    this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                });
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.watchUserChangeSubscription.unsubscribe();
+        this.authenticationService.dispose();
+        this.cdr.detach();
     }
 
     private resetModelToPosting() {
@@ -93,7 +107,11 @@ export class PostingDetailComponent implements OnInit {
     }
 
     public canEditCurrentPosting(): boolean {
-        return this.authenticationService.isAdministrator() || this.isPostingOwner;
+        return this.isPostingOpen() && (this.authenticationService.isUserAnAdministrator(this.currentUser) || this.isPostingOwner);
+    }
+
+    private isPostingOpen() {
+        return this.posting.PostingStatus.PostingStatusID === PostingStatusEnum.Open;
     }
 
     public getTotalPrice(posting: any): number {
@@ -105,13 +123,13 @@ export class PostingDetailComponent implements OnInit {
         this.isConfirmingTrade = true;
         this.model.OfferStatusID = OfferStatusEnum.Rescinded;
     }
-    
+
     public rejectOffer(): void {
         this.isRejectingTrade = true;
         this.isConfirmingTrade = true;
         this.model.OfferStatusID = OfferStatusEnum.Rejected;
     }
-        
+
     public acceptCurrentOffer(): void {
         this.isConfirmingTrade = true;
         this.model.OfferStatusID = OfferStatusEnum.Accepted;
@@ -129,6 +147,26 @@ export class PostingDetailComponent implements OnInit {
         this.model.OfferStatusID = OfferStatusEnum.Pending;
     }
 
+    public closePosting(): void {
+        this.isLoadingSubmit = true;
+        var postingUpdateStatusDto = new PostingUpdateStatusDto();
+        postingUpdateStatusDto.PostingStatusID = PostingStatusEnum.Closed;
+        this.postingService.closePosting(this.posting.PostingID, postingUpdateStatusDto)
+            .subscribe(response => {
+                this.isLoadingSubmit = false;
+                this.router.navigateByUrl("/landowner-dashboard").then(x => {
+                    this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+                });
+            }
+                ,
+                error => {
+                    this.isLoadingSubmit = false;
+                    this.cdr.detectChanges();
+                }
+            );
+    }
+
+
     public isPendingOffer(): boolean {
         return this.model.OfferID > 0;
     }
@@ -138,7 +176,7 @@ export class PostingDetailComponent implements OnInit {
         this.offerService.newOffer(this.posting.PostingID, this.model)
             .subscribe(response => {
                 this.isLoadingSubmit = false;
-                this.router.navigateByUrl("/trades/" + response.TradeID).then(x => {
+                this.router.navigateByUrl("/landowner-dashboard").then(x => {
                     this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
                 });
             }

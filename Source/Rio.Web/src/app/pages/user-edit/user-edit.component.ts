@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -19,7 +19,9 @@ import { UserUpdateDto } from 'src/app/shared/models/user/user-update-dto';
   styleUrls: ['./user-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserEditComponent implements OnInit {
+export class UserEditComponent implements OnInit, OnDestroy {
+  private watchUserChangeSubscription: any;
+  private currentUser: UserDto;
 
   public userID: number;
   public user: UserDto;
@@ -39,58 +41,67 @@ export class UserEditComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.authenticationService.isAdministrator()) {
-      this.router.navigateByUrl("/not-found")
-        .then();
-      return;
-    }
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
 
-    this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
+      if (!this.authenticationService.isUserAnAdministrator(this.currentUser)) {
+        this.router.navigateByUrl("/not-found")
+          .then();
+        return;
+      }
 
-    forkJoin(
-      this.userService.getUserFromUserID(this.userID),
-      this.roleService.getRoles()
-    ).subscribe(([user, roles]) => {
-      this.user = user instanceof Array
-        ? null
-        : user as UserDto;
+      this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
 
-      this.roles = roles.sort((a: RoleDto, b: RoleDto) => {
-        if (a.RoleDisplayName > b.RoleDisplayName)
-          return 1;
-        if (a.RoleDisplayName < b.RoleDisplayName)
-          return -1;
-        return 0;
+      forkJoin(
+        this.userService.getUserFromUserID(this.userID),
+        this.roleService.getRoles()
+      ).subscribe(([user, roles]) => {
+        this.user = user instanceof Array
+          ? null
+          : user as UserDto;
+
+        this.roles = roles.sort((a: RoleDto, b: RoleDto) => {
+          if (a.RoleDisplayName > b.RoleDisplayName)
+            return 1;
+          if (a.RoleDisplayName < b.RoleDisplayName)
+            return -1;
+          return 0;
+        });
+
+        this.model = new UserUpdateDto();
+        this.model.RoleID = user.Role.RoleID;
+
+        this.cdr.detectChanges();
       });
-
-      this.model = new UserUpdateDto();
-      this.model.RoleID = user.Role.RoleID;
-      
-      this.cdr.detectChanges();
     });
+  }
+
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
   }
 
   onSubmit(editUserForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
 
     this.userService.updateUser(this.userID, this.model)
-        .subscribe(response => {
-            this.isLoadingSubmit = false;
-            // if (response instanceof Array) {
-            //     this.alertService.pushAlert(new Alert("The form could not be submitted due to errors. Please correct the errors and try again.", AlertContext.Danger));
-            //     this.formErrors = response;
-            //     return;
-            // }
-            this.router.navigateByUrl("/users/" + this.userID).then(x => {
-                this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-            });
+      .subscribe(response => {
+        this.isLoadingSubmit = false;
+        // if (response instanceof Array) {
+        //     this.alertService.pushAlert(new Alert("The form could not be submitted due to errors. Please correct the errors and try again.", AlertContext.Danger));
+        //     this.formErrors = response;
+        //     return;
+        // }
+        this.router.navigateByUrl("/users/" + this.userID).then(x => {
+          this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+        });
+      }
+        ,
+        error => {
+          this.isLoadingSubmit = false;
+          this.cdr.detectChanges();
         }
-            ,
-            error => {
-                this.isLoadingSubmit = false;
-                this.cdr.detectChanges();
-            }
-        );
-}
-
+      );
+  }
 }

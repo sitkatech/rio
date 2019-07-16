@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -10,6 +10,7 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
+import { UserDto } from 'src/app/shared/models';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
@@ -17,7 +18,9 @@ import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/p
   styleUrls: ['./parcel-edit-allocation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ParcelEditAllocationComponent implements OnInit {
+export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
+  private watchUserChangeSubscription: any;
+  private currentUser: UserDto;
 
   public parcel: ParcelDto;
   public parcelAllocationAndConsumptions: Array<ParcelAllocationAndConsumptionDto>;
@@ -35,33 +38,42 @@ export class ParcelEditAllocationComponent implements OnInit {
   }
 
   ngOnInit() {
-    const id = parseInt(this.route.snapshot.paramMap.get("id"));
-    if (id) {
-      forkJoin(
-        this.parcelService.getParcelByParcelID(id),
-        this.parcelService.getParcelAllocationAndConsumption(id)
-      ).subscribe(([parcel, parcelAllocationAndConsumptions]) => {
-        this.parcel = parcel instanceof Array
-          ? null
-          : parcel as ParcelDto;
-        this.parcel = parcel;
-        this.parcelAllocationAndConsumptions = parcelAllocationAndConsumptions;
-        this.model = new ParcelAllocationUpsertWrapperDto();
-        this.model.ParcelAllocations =
-          this.parcelAllocationAndConsumptions.map(x => {
-            console.log(x);
-            let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
-            parcelAllocationUpsertDto.WaterYear = x.WaterYear;
-            parcelAllocationUpsertDto.AcreFeetAllocated = x.AcreFeetAllocated;
-            return parcelAllocationUpsertDto;
-          }
-          );
-        this.cdr.detectChanges();
-      });
-    }
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      const id = parseInt(this.route.snapshot.paramMap.get("id"));
+      if (id) {
+        forkJoin(
+          this.parcelService.getParcelByParcelID(id),
+          this.parcelService.getParcelAllocationAndConsumption(id)
+        ).subscribe(([parcel, parcelAllocationAndConsumptions]) => {
+          this.parcel = parcel instanceof Array
+            ? null
+            : parcel as ParcelDto;
+          this.parcel = parcel;
+          this.parcelAllocationAndConsumptions = parcelAllocationAndConsumptions;
+          this.model = new ParcelAllocationUpsertWrapperDto();
+          this.model.ParcelAllocations =
+            this.parcelAllocationAndConsumptions.map(x => {
+              console.log(x);
+              let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
+              parcelAllocationUpsertDto.WaterYear = x.WaterYear;
+              parcelAllocationUpsertDto.AcreFeetAllocated = x.AcreFeetAllocated;
+              return parcelAllocationUpsertDto;
+            }
+            );
+          this.cdr.detectChanges();
+        });
+      }
+    });
   }
 
-  onSubmit(editAllocationForm: HTMLFormElement): void {
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
+  }
+
+  public onSubmit(editAllocationForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
     this.parcelService.updateAnnualAllocations(this.parcel.ParcelID, this.model)
       .subscribe(response => {

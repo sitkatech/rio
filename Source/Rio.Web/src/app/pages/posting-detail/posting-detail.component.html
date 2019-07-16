@@ -4,13 +4,13 @@
       <a routerLink="/trades">Trades</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-      {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
+      Posting: {{posting.PostingType.PostingTypeDisplayName + " " + posting.Quantity}} ac-ft
     </li>
   </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="posting">
   <h2 style="display: inline-block">
-    {{(posting.PostingDate | date:'short') + " - " + posting.PostingType.PostingTypeDisplayName + " - " + posting.CreateUser.FullName}}
+    Posting: {{posting.PostingType.PostingTypeDisplayName + " " + posting.Quantity}} ac-ft
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
@@ -33,6 +33,11 @@
             <dt class="text-sm-right col-sm-5 col-xs-12">Type</dt>
             <dd class="col-sm-7 col-xs-12">
               {{posting.PostingType.PostingTypeDisplayName}}
+            </dd>
+
+            <dt class="text-sm-right col-sm-5 col-xs-12">Status</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.PostingStatus.PostingStatusDisplayName}}
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
@@ -59,7 +64,23 @@
       </div>
     </div>
     <div class="col-sm-12 col-md-6">
-      <div class="card" *ngIf="!isPostingOwner && !isConfirmingTrade && !isCounterOffering">
+      <div class="card" *ngIf="isPostingOwner">
+        <div class="card-header">
+          Your Actions
+        </div>
+        <div class="card-body" *ngIf="isPostingOpen()">
+          <p>This is your posting.  View any offers on your dashboard.</p>
+          <div class="text-center">
+            <a class="btn btn-primary btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
+            <button class="btn btn-primary btn-sm" (click)="closePosting()">Close Posting</button>
+          </div>
+        </div>
+        <div class="card-body" *ngIf="!isPostingOpen()">
+          <p>Your posting is closed.  No further actions are allowed.</p>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner && !isConfirmingTrade && !isCounterOffering">
         <div class="card-header">
           Your Offer
         </div>
@@ -82,12 +103,11 @@
           </dl>
           <div class="text-center">
             <button class="btn btn-primary btn-sm mr-1" *ngIf="offers.length == 0"
-              (click)="acceptCurrentOffer()">Confirm
-              Trade</button>
+              (click)="acceptCurrentOffer()">Accept Offer</button>
             <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
               *ngIf="!isPendingOffer()">Make Counter
               Offer</button>
-            <button class="btn btn-primary btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Withdraw Offer</button>
+            <button class="btn btn-primary btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Rescind Offer</button>
           </div>
         </div>
       </div>
@@ -174,7 +194,7 @@
           <div class="text-center">
             <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()" [disabled]="isLoadingSubmit">
               <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-              Continue
+              Confirm
             </button>
             <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
           </div>

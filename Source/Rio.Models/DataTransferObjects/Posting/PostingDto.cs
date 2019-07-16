@@ -13,5 +13,6 @@ namespace Rio.Models.DataTransferObjects.Posting
         public string PostingDescription { get; set; }
 
         public UserSimpleDto CreateUser { get; set; }
+        public PostingStatusDto PostingStatus { get; set; }
     }
 }

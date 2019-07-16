@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
 import { OfferDto } from 'src/app/shared/models/offer/offer-dto';
 import { OfferUpsertDto } from 'src/app/shared/models/offer/offer-upsert-dto';
@@ -12,15 +12,18 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { TradeService } from 'src/app/services/trade.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
-import { PostingTypeDto } from 'src/app/shared/models/postingType/postingType-dto';
+import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
+import { UserDto } from 'src/app/shared/models';
 
 @Component({
   selector: 'rio-trade-detail',
   templateUrl: './trade-detail.component.html',
   styleUrls: ['./trade-detail.component.scss']
 })
-export class TradeDetailComponent implements OnInit {
+export class TradeDetailComponent implements OnInit, OnDestroy {
+  private watchUserChangeSubscription: any;
+  private currentUser: UserDto;
 
   public trade: TradeDto;
   public offers: Array<OfferDto>;
@@ -55,10 +58,19 @@ export class TradeDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    const tradeID = parseInt(this.route.snapshot.paramMap.get("tradeID"));
-    if (tradeID) {
-      this.getData(tradeID);
-    }
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      const tradeID = parseInt(this.route.snapshot.paramMap.get("tradeID"));
+      if (tradeID) {
+        this.getData(tradeID);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
   }
 
   private getData(tradeID: number): void {
@@ -69,7 +81,7 @@ export class TradeDetailComponent implements OnInit {
       this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
       this.mostRecentOffer = this.offers[0];
       this.resetModelToMostRecentOffer();
-      let currentUserID = this.authenticationService.currentUser.UserID;
+      let currentUserID = this.currentUser.UserID;
       this.isTradeOwner = this.trade.CreateUser.UserID === currentUserID;
       this.isPostingOwner = this.trade.Posting.CreateUser.UserID === currentUserID;
       this.isCurrentOfferCreator = this.mostRecentOffer.CreateUser.UserID === currentUserID;
@@ -108,7 +120,7 @@ export class TradeDetailComponent implements OnInit {
 
   public getOfferType(offer: OfferDto): string {
     if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) {
-      if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell 
+      if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell
         && offer.CreateUser.UserID === this.trade.CreateUser.UserID) {
         return "Buyer Counter Offer";
       }
@@ -155,7 +167,7 @@ export class TradeDetailComponent implements OnInit {
     this.offerService.newOffer(this.trade.TradeID, this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        this.router.navigateByUrl(`/trades/${this.trade.TradeID}`)
+        this.router.navigateByUrl("/landowner-dashboard")
           .then(() => {
             this.getData(this.trade.TradeID);
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -8,13 +8,16 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { TradeService } from 'src/app/services/trade.service';
 import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
+import { isNullOrUndefined } from 'util';
 
 @Component({
   selector: 'rio-landowner-dashboard',
   templateUrl: './landowner-dashboard.component.html',
   styleUrls: ['./landowner-dashboard.component.scss']
 })
-export class LandownerDashboardComponent implements OnInit {
+export class LandownerDashboardComponent implements OnInit, OnDestroy {
+  public currentUser: UserDto;
+  private watchUserChangeSubscription: any;
 
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
@@ -33,39 +36,43 @@ export class LandownerDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    let userID = parseInt(this.route.snapshot.paramMap.get("id"));
-    if (userID) {
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+
       this.currentDate = (new Date());
-      forkJoin(
-        this.userService.getUserFromUserID(userID),
-        this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
-        this.tradeService.getActiveTradesForUser(userID)
-      ).subscribe(([user, parcels, trades]) => {
-        this.user = user instanceof Array
+      let userID = parseInt(this.route.snapshot.paramMap.get("id"));
+      if (userID) {
+        this.userService.getUserFromUserID(userID).subscribe(user => {
+          this.user = user instanceof Array
           ? null
           : user as UserDto;
+        });
+      }
+      else
+      {                
+        userID = this.currentUser.UserID;
+        this.user = this.currentUser;
+      }
+      forkJoin(
+        this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
+        this.tradeService.getActiveTradesForUser(userID)
+      ).subscribe(([parcels, trades]) => {
         // TODO: scope it to current year for now
         this.parcels = parcels.filter(x => x.WaterYear == 2018);
         this.trades = trades;
         this.cdr.detectChanges();
       });
-    }
-    else {
-      userID = this.authenticationService.currentUser.UserID;
-      forkJoin(
-        this.parcelService.getParcelsByUserID(userID),
-        this.tradeService.getActiveTradesForUser(userID)
-      ).subscribe(([parcels, trades]) => {
-        this.user = this.authenticationService.currentUser;
-        this.parcels = parcels;
-        this.trades = trades;
-        this.cdr.detectChanges();
-      });
-    }
+    });
+  }
+
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
   }
 
   public currentUserIsAdmin(): boolean {
-    return this.authenticationService.isAdministrator();
+    return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
   public getSelectedParcelIDs(): Array<number> {
@@ -77,7 +84,7 @@ export class LandownerDashboardComponent implements OnInit {
       let result = this.parcels.reduce(function (a, b) {
         return (a + b.ParcelAreaInAcres);
       }, 0);
-      return result.toFixed(1);
+      return result.toFixed(1) + " ac";
     }
     return "Not available";
   }

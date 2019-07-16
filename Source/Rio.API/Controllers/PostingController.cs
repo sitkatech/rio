@@ -83,6 +83,27 @@ namespace Rio.API.Controllers
             return Ok(updatedPostingDto);
         }
 
+
+        [HttpPut("postings/{postingID}/close")]
+        [PostingManageFeature]
+        [RequiresValidJSONBodyFilter("Could not parse a valid Posting Update Status JSON object from the Request Body.")]
+        public ActionResult<PostingDto> ClosePosting([FromRoute] int postingID, [FromBody] PostingUpdateStatusDto postingUpdateStatusDto)
+        {
+            var postingDto = Posting.GetByPostingID(_dbContext, postingID);
+            if (postingDto == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedPostingDto = Posting.UpdateStatus(_dbContext, postingID, postingUpdateStatusDto);
+            return Ok(updatedPostingDto);
+        }
+
         [HttpDelete("postings/{postingID}/delete")]
         [PostingManageFeature]
         public ActionResult DeletePosting([FromRoute] int postingID)
