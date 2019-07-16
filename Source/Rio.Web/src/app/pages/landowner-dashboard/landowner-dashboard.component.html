@@ -2,10 +2,7 @@
   <h2 style="display: inline-block">
     Landowner Dashboard - {{user.FullName}}
   </h2>
-  <app-alert-display></app-alert-display>
-  <p>
-    Current Date: {{currentDate | date}}
-  </p>
+  <app-alert-display></app-alert-display>  
 
   <div class="row mt-4">
     <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
