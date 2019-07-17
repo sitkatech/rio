@@ -40,6 +40,7 @@ namespace Rio.EFModels.Entities
             var users = dbContext.User
                 .Include(x => x.Role)
                 .AsNoTracking()
+                .Where(x => x.IsActive)
                 .OrderBy(x => x.Role.RoleID).ThenBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
