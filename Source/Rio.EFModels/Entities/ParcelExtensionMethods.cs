@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
@@ -37,8 +38,8 @@ namespace Rio.EFModels.Entities
                         parcelAllocationDtos.SingleOrDefault(x => x.ParcelID == parcelDto.ParcelID && x.WaterYear == waterYear);
                     if (parcelAllocationDtoForThisYear != null)
                     {
-                        parcelAllocationAndConsumptionDto.AcreFeetAllocated =
-                            parcelAllocationDtoForThisYear.AcreFeetAllocated;
+                        parcelAllocationAndConsumptionDto.AcreFeetAllocated = parcelAllocationDtoForThisYear.AcreFeetAllocated.HasValue ?
+                            Math.Round(parcelAllocationDtoForThisYear.AcreFeetAllocated.Value, 1) : (decimal?) null;
                     }
 
                     parcelAllocationAndConsumptionDto.MonthlyEvapotranspiration = parcelMonthlyEvapotranspirationDtos

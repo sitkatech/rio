@@ -93,7 +93,7 @@
             <tbody>
               <tr *ngFor="let parcelAllocationAndConsumption of parcelAllocationAndConsumptions">
                 <td>{{parcelAllocationAndConsumption.WaterYear}}</td>
-                <td style="text-align: right">{{parcelAllocationAndConsumption.AcreFeetAllocated ? parcelAllocationAndConsumption.AcreFeetAllocated : "-"}}</td>
+                <td style="text-align: right">{{parcelAllocationAndConsumption.AcreFeetAllocated ? (parcelAllocationAndConsumption.AcreFeetAllocated | number: '1.1-1') : "-"}}</td>
                 <td style="text-align: right">{{getConsumptionForYear(parcelAllocationAndConsumption)}}</td>
                 <td style="text-align: right" *ngFor="let month of months">{{getConsumptionForMonth(parcelAllocationAndConsumption, month)}}</td>
               </tr>
