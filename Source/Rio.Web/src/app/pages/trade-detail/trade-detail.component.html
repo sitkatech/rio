@@ -68,8 +68,7 @@
           <div class="text-center"
             *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
             <button class="btn btn-primary btn-sm mr-1" (click)="acceptCurrentOffer()"
-              *ngIf="!isCurrentOfferCreator">Accept Offer
-              Trade</button>
+              *ngIf="!isCurrentOfferCreator">Accept Offer</button>
             <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
               *ngIf="!isCurrentOfferCreator">Make Counter
               Offer</button>
