@@ -27,7 +27,9 @@ namespace Rio.EFModels.Entities
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,
-                OfferDate = mostRecentOffer.OfferDate
+                OfferDate = mostRecentOffer.OfferDate,
+                OfferCreateUserID = mostRecentOffer.CreateUserID,
+                Posting = trade.Posting.AsDto()
             };
         }
     }
