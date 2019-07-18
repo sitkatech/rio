@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.EFModels.Entities
@@ -69,6 +70,7 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(posting).Reload();
             return GetByPostingID(dbContext, postingID);
         }
+
         public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID, PostingUpdateStatusDto postingUpdateStatusDto)
         {
             var posting = dbContext.Posting
@@ -79,6 +81,22 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(posting).Reload();
             return GetByPostingID(dbContext, postingID);
+        }
+        public static int CalculateAcreFeetOfAcceptedTrades(RioDbContext dbContext, int postingID)
+        {
+            var acceptedTrades = dbContext.Trade
+                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.TradeStatus)
+                .Include(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .AsNoTracking()
+                .Where(x => x.PostingID == postingID && x.TradeStatusID == (int) TradeStatusEnum.Accepted)
+                .OrderByDescending(x => x.TradeDate)
+                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .AsEnumerable();
+            return acceptedTrades.Sum(x => x.Quantity);
         }
 
         public static void Delete(RioDbContext dbContext, int postingID)

@@ -40,18 +40,60 @@
                   {{getTotalAPNAcreage()}}
                 </td>
               </tr>
-            </tbody>
-            <tfoot>
               <tr>
-                <td>
-                  Annual Groundwater Allocation
+                <td style="white-space: nowrap">
+                  Annual Allocation
                 </td>
                 <td style="text-align: right">
                   <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
                 </td>
               </tr>
-            </tfoot>
+              <tr>
+                <td>
+                  Purchased
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Sold
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="!getSoldAcreFeet()" class="systemText">Not available</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Usage to Date
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getWaterUsageToDate()">{{getWaterUsageToDate() | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="!getWaterUsageToDate()" class="systemText">Not available</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Projected Need
+                </td>
+                <td style="text-align: right">
+                  <span class="systemText">Not yet implemented</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Surplus / Deficit
+                </td>
+                <td style="text-align: right">
+                  <span *ngIf="getEstimatedAvailableSupply()">{{getEstimatedAvailableSupply() | number: '1.1-1'}}
+                    ac-ft</span>
+                  <span *ngIf="!getEstimatedAvailableSupply()" class="systemText">Not available</span>
+                </td>
+              </tr>
           </table>
 
         </div>
@@ -81,18 +123,6 @@
                 </td>
               </tr>
             </tbody>
-            <tfoot>
-              <tr>
-                <td>
-                  Estimated Available Supply
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getEstimatedAvailableSupply()">{{getEstimatedAvailableSupply() | number: '1.1-1'}}
-                    ac-ft</span>
-                  <span *ngIf="!getEstimatedAvailableSupply()" class="systemText">Not available</span>
-                </td>
-              </tr>
-            </tfoot>
           </table>
         </div>
       </div>

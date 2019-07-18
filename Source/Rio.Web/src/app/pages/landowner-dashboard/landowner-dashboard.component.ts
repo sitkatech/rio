@@ -11,6 +11,7 @@ import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-w
 import { OfferStatusDto } from 'src/app/shared/models/offer/offer-status-dto';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
+import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -144,6 +145,29 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "12/31/2018"; //TODO: need to use the date from the latest monthly ET data
   }
 
+  private getTotalAcreFeetBoughtOrSold(postingTypeEnum: PostingTypeEnum): number {
+    const acceptedPurchases = this.trades.filter(x => x.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted
+      && ((this.currentUser.UserID == x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID === postingTypeEnum)
+        || (this.currentUser.UserID != x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID !== postingTypeEnum)
+      )
+    );
+    if (acceptedPurchases.length > 0) {
+      let result = acceptedPurchases.reduce(function (a, b) {
+        return (a + b.Quantity);
+      }, 0);
+      return result;
+    }
+    return null;
+  }
+
+  public getPurchasedAcreFeet(): number {
+    return this.getTotalAcreFeetBoughtOrSold(PostingTypeEnum.OfferToBuy);
+  }
+
+  public getSoldAcreFeet(): number {
+    return this.getTotalAcreFeetBoughtOrSold(PostingTypeEnum.OfferToSell);
+  }
+
   public getWaterConsumption(parcelAllocationAndConsumption: ParcelAllocationAndConsumptionDto): number {
     if (parcelAllocationAndConsumption.MonthlyEvapotranspiration.length > 0) {
       let result = parcelAllocationAndConsumption.MonthlyEvapotranspiration.reduce(function (a, b) {
@@ -154,15 +178,23 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  public getEstimatedAvailableSupply(): string {
-    let annualAllocation = this.getAnnualAllocation();
+  public getWaterUsageToDate(): number {
     let parcelsWithMonthlyEvaporations = this.parcels.filter(x => x.MonthlyEvapotranspiration.length > 0);
-    if (annualAllocation !== null || parcelsWithMonthlyEvaporations.length > 0) {
+    if (parcelsWithMonthlyEvaporations.length > 0) {
       let estimatedAvailableSupply = this.parcels.reduce((a, b) => {
         return (a + this.getWaterConsumption(b));
       }, 0);
-      return (annualAllocation - estimatedAvailableSupply).toFixed(1);
+      return estimatedAvailableSupply;
     }
-    return "Not available";
+    return null;
+  }
+
+  public getEstimatedAvailableSupply(): number {
+    let annualAllocation = this.getAnnualAllocation();
+    let estimatedAvailableSupply = this.getWaterUsageToDate();
+    if (annualAllocation !== null && estimatedAvailableSupply !== null) {
+      return annualAllocation - estimatedAvailableSupply;
+    }
+    return null;
   }
 }

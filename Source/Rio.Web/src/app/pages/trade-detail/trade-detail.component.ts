@@ -164,7 +164,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   public confirmTrade(): void {
     this.isLoadingSubmit = true;
-    this.offerService.newOffer(this.trade.TradeID, this.model)
+    this.offerService.newOffer(this.trade.Posting.PostingID, this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         this.router.navigateByUrl("/landowner-dashboard")

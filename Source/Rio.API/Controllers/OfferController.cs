@@ -6,6 +6,7 @@ using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
+using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Controllers
@@ -28,12 +29,38 @@ namespace Rio.API.Controllers
         [RequiresValidJSONBodyFilter("Could not parse a valid Offer New JSON object from the Request Body.")]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
+            var posting = Posting.GetByPostingID(_dbContext, postingID);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, userDto.UserID, offerUpsertDto);
+
+            // get current balance of posting
+            var acreFeetOfAcceptedTrades = Posting.CalculateAcreFeetOfAcceptedTrades(_dbContext, postingID);
+            if (posting.Quantity <= acreFeetOfAcceptedTrades)
+            {
+                Posting.UpdateStatus(_dbContext, postingID,
+                    new PostingUpdateStatusDto {PostingStatusID = (int) PostingStatusEnum.Closed});
+
+                // expire all other outstanding offers
+                var postingCreateUserID = posting.CreateUser.UserID;
+                var activeTradesForPosting = Trade.GetActiveTradesForUserID(_dbContext, postingCreateUserID);
+                foreach (var activeTrade in activeTradesForPosting)
+                {
+                    var offerStatus = activeTrade.OfferCreateUserID == postingCreateUserID
+                        ? OfferStatusEnum.Rescinded
+                        : OfferStatusEnum.Rejected;
+                    var offerUpsertDtoForRescindReject = new OfferUpsertDto();
+                    offerUpsertDtoForRescindReject.Price = activeTrade.Price;
+                    offerUpsertDtoForRescindReject.Quantity = activeTrade.Quantity;
+                    offerUpsertDtoForRescindReject.OfferStatusID = (int)offerStatus;
+                    offerUpsertDtoForRescindReject.OfferNotes = $"Offer {offerStatus} because original posting is now closed";
+                    Offer.CreateNew(_dbContext, postingID, postingCreateUserID, offerUpsertDtoForRescindReject);
+                }
+            }
+
             return Ok(offer);
         }
 

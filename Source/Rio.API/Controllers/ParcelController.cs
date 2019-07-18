@@ -84,7 +84,7 @@ namespace Rio.API.Controllers
 
 
         [HttpPost("parcels/getBoundingBox")]
-        [ParcelManageFeature]
+        [ParcelViewFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid Parcel ID List JSON object from the Request Body.")]
         public ActionResult<BoundingBoxDto> GetBoundingBoxByParcelIDs([FromBody] ParcelIDListDto parcelIDListDto)
         {
