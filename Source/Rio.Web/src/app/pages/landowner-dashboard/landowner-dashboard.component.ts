@@ -8,7 +8,6 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { TradeService } from 'src/app/services/trade.service';
 import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
-import { OfferStatusDto } from 'src/app/shared/models/offer/offer-status-dto';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
@@ -19,12 +18,15 @@ import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
   styleUrls: ['./landowner-dashboard.component.scss']
 })
 export class LandownerDashboardComponent implements OnInit, OnDestroy {
+  public waterYearToDisplay: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
+  public postingPanels : any;
 
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
   public trades: Array<TradeWithMostRecentOfferDto>;
+  public waterYears: Array<number>;
   public currentDate: Date;
 
   constructor(
@@ -41,6 +43,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+      this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
+      this.waterYearToDisplay = 2018; //TODO: get this from API
 
       this.currentDate = (new Date());
       let userID = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -59,11 +63,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
         this.tradeService.getActiveTradesForUser(userID)
       ).subscribe(([parcels, trades]) => {
-        // TODO: scope it to current year for now
-        this.parcels = parcels.filter(x => x.WaterYear == 2018);
+        this.parcels = parcels;
         this.trades = trades;
-        this.cdr.detectChanges();
+        this.postingPanels = Array.from(new Set(this.trades.map((item: TradeWithMostRecentOfferDto) => item.Posting.PostingID))).reduce((map, obj) => {
+          map[obj] = false;
+          return map;
+        }, {});
       });
+      this.cdr.detectChanges();
     });
   }
 
@@ -73,12 +80,28 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
+  public hideShowPanel(postingID: number) : boolean{
+    return this.postingPanels[postingID];
+  }
+
   public currentUserIsAdmin(): boolean {
     return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
+  public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
+    return this.trades.filter(x => (new Date(x.Posting.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
+  }
+
+  public getTradesGroupedByPostingForWaterYear(): any {
+    return this.getTradesForWaterYear().reduce(function (h, obj) {
+      h[obj.Posting.PostingID] = (h[obj.Posting.PostingID] || []).concat(obj);
+      return h;
+    }, {});
+  }
+
   public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
-    return this.trades !== undefined ? this.trades.filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
+    const tradesForWaterYear = this.getTradesForWaterYear();
+    return tradesForWaterYear !== undefined ? this.getTradesForWaterYear().filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
   }
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
@@ -116,13 +139,20 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return 5;
   }
 
+  public getParcelsForWaterYear() : Array<ParcelAllocationAndConsumptionDto>
+  {
+    return this.parcels.filter(x => x.WaterYear.toString() === this.waterYearToDisplay.toString());
+  }
+
   public getSelectedParcelIDs(): Array<number> {
-    return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
+    const parcelsForWaterYear = this.getParcelsForWaterYear();
+    return parcelsForWaterYear !== undefined ? this.getParcelsForWaterYear().map(p => p.ParcelID) : [];
   }
 
   public getTotalAPNAcreage(): string {
-    if (this.parcels.length > 0) {
-      let result = this.parcels.reduce(function (a, b) {
+    const parcelsForWaterYear = this.getParcelsForWaterYear();
+    if (parcelsForWaterYear.length > 0) {
+      let result = parcelsForWaterYear.reduce(function (a, b) {
         return (a + b.ParcelAreaInAcres);
       }, 0);
       return result.toFixed(1) + " ac";
@@ -131,7 +161,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAnnualAllocation(): number {
-    let parcelsWithAllocation = this.parcels.filter(p => p.AcreFeetAllocated !== null);
+    let parcelsWithAllocation = this.getParcelsForWaterYear().filter(p => p.AcreFeetAllocated !== null);
     if (parcelsWithAllocation.length > 0) {
       let result = parcelsWithAllocation.reduce(function (a, b) {
         return (a + b.AcreFeetAllocated);
@@ -142,14 +172,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getLastETReadingDate(): string {
-    return "12/31/2018"; //TODO: need to use the date from the latest monthly ET data
+    return "12/31/" + this.waterYearToDisplay; //TODO: need to use the date from the latest monthly ET data
   }
 
   private getTotalAcreFeetBoughtOrSold(postingTypeEnum: PostingTypeEnum): number {
-    const acceptedPurchases = this.trades.filter(x => x.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted
+    const acceptedPurchases = this.getTradesForWaterYear().filter(x => x.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted
       && ((this.currentUser.UserID == x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID === postingTypeEnum)
         || (this.currentUser.UserID != x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID !== postingTypeEnum)
-      )
+      )    
     );
     if (acceptedPurchases.length > 0) {
       let result = acceptedPurchases.reduce(function (a, b) {
@@ -179,9 +209,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getWaterUsageToDate(): number {
-    let parcelsWithMonthlyEvaporations = this.parcels.filter(x => x.MonthlyEvapotranspiration.length > 0);
+    let parcelsWithMonthlyEvaporations = this.getParcelsForWaterYear().filter(x => x.MonthlyEvapotranspiration.length > 0);
     if (parcelsWithMonthlyEvaporations.length > 0) {
-      let estimatedAvailableSupply = this.parcels.reduce((a, b) => {
+      let estimatedAvailableSupply = parcelsWithMonthlyEvaporations.reduce((a, b) => {
         return (a + this.getWaterConsumption(b));
       }, 0);
       return estimatedAvailableSupply;

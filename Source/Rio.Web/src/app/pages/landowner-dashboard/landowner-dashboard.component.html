@@ -1,11 +1,23 @@
 <div class="container mt-sm-4" *ngIf="user">
-  <h2 style="display: inline-block">
+  <div class="float-right">
+    <div class="row">
+      <div class="col-md-7" style="white-space: nowrap">Showing data for year </div>
+      <div class="col-md-5">
+        <select class="form-control" [(ngModel)]="waterYearToDisplay">
+          <ng-template ngFor let-waterYear [ngForOf]="waterYears">
+              <option value="{{waterYear}}">{{waterYear}}</option>
+          </ng-template>
+        </select>
+      </div>
+    </div>
+  </div>
+  <h2>
     Landowner Dashboard - {{user.FullName}}
   </h2>
   <app-alert-display></app-alert-display>
 
-  <div class="mt-2" *ngIf="getPendingTrades().length > 0">
-    <div class="alert alert-info" style="max-height: 160px; overflow: auto;">
+  <div class="mt-2" *ngIf="trades">
+    <div class="alert alert-info" style="max-height: 160px; overflow: auto;" *ngIf="getPendingTrades().length > 0">
       <ul>
         <li *ngFor="let pendingTrade of getPendingTrades()">
           <span *ngIf="doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
@@ -27,77 +39,117 @@
     <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
       <div class="card">
         <div class="card-header">
-          Water Budget Overview
+          Annual Water Budget Overview
         </div>
         <div class="card-body">
-          <table class="table table-responsive">
-            <tbody>
-              <tr>
-                <td>
-                  Total Parcel Area
-                </td>
-                <td style="text-align: right">
-                  {{getTotalAPNAcreage()}}
-                </td>
-              </tr>
-              <tr>
-                <td style="white-space: nowrap">
-                  Annual Allocation
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
-                  <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Purchased
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
-                  <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Sold
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}} ac-ft</span>
-                  <span *ngIf="!getSoldAcreFeet()" class="systemText">Not available</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Usage to Date
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getWaterUsageToDate()">{{getWaterUsageToDate() | number: '1.1-1'}} ac-ft</span>
-                  <span *ngIf="!getWaterUsageToDate()" class="systemText">Not available</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Projected Need
-                </td>
-                <td style="text-align: right">
-                  <span class="systemText">Not yet implemented</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Surplus / Deficit
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getEstimatedAvailableSupply()">{{getEstimatedAvailableSupply() | number: '1.1-1'}}
-                    ac-ft</span>
-                  <span *ngIf="!getEstimatedAvailableSupply()" class="systemText">Not available</span>
-                </td>
-              </tr>
-          </table>
+          <dl class="row">
+            <dt class="text-sm-right col-sm-6 col-xs-12">Allocation</dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
+              <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
+            </dd>
 
+            <dt class="text-sm-right col-sm-6 col-xs-12">Purchased</dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
+              <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-6 col-xs-12">Sold
+            </dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}} ac-ft</span>
+              <span *ngIf="!getSoldAcreFeet()" class="systemText">Not available</span>
+            </dd>
+          </dl>
+          <hr />
+          <dl class="row">
+            <dt class="text-sm-right col-sm-6 col-xs-12">
+              Usage to Date
+            </dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span *ngIf="getWaterUsageToDate()">{{getWaterUsageToDate() | number: '1.1-1'}} ac-ft</span>
+              <span *ngIf="!getWaterUsageToDate()" class="systemText">Not available</span>
+            </dd>
+
+            <dt class="text-sm-right col-sm-6 col-xs-12">Projected Need</dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span class="systemText">Coming soon</span>
+            </dd>
+          </dl>
+          <hr />
+          <dl class="row">
+            <dt class="text-sm-right col-sm-6 col-xs-12">Surplus / Deficit</dt>
+            <dd class="col-sm-6 col-xs-12">
+              <span class="systemText">Coming soon</span>
+            </dd>
+          </dl>
         </div>
       </div>
+    </div>
+    <div class="col-sm-12 col-md-8" *ngIf="trades">
+      <div class="card">
+        <div class="card-header">
+          Trade Activity
+        </div>
+        <div class="card-body table-responsive" style="max-height: 340px; overflow-y:scroll">
+          <p *ngIf="getTradesForWaterYear().length === 0">You have no trade activity.</p>
+          <table class="table table-condensed" *ngIf="getTradesForWaterYear().length > 0">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Posting Date</th>
+                <th>Status</th>
+                <th>Initial Quantity</th>
+                <th>Available Quantity</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-template ngFor let-posting [ngForOf]="getTradesGroupedByPostingForWaterYear() | keyvalue">
+                <tr>
+                  <td>
+                      <a style="cursor: pointer" class="collapsed" (click)="postingPanels[posting.key] = !postingPanels[posting.key]">
+                      <span *ngIf="!postingPanels[posting.key]" class="fas fa-plus"></span>
+                      <span *ngIf="postingPanels[posting.key]" class="fas fa-minus"></span>
+                      </a>
+                  </td>
+                  <td style="white-space: nowrap"><a
+                      routerLink="/postings/{{posting.key}}">{{ posting.value[0].Posting.PostingDate | date:"M/dd" }}</a>
+                  </td>
+                  <td style="white-space: nowrap">{{ posting.value[0].Posting.PostingStatus.PostingStatusDisplayName }}
+                  </td>
+                  <td>{{ posting.value[0].Quantity }} ac-ft</td>
+                  <td>{{ posting.value[0].Quantity }} ac-ft</td>
+                  <td style="white-space: nowrap">{{ posting.value[0].Price | currency: "USD" }} per ac-ft</td>
+                </tr>
+                <tr *ngIf="postingPanels[posting.key]">
+                  <td colspan="6">
+                    <table class="table table-condensed table-striped" *ngIf="posting.value.length > 0">
+                      <tbody>
+                        <tr *ngFor="let trade of posting.value">
+                          <td style="border: 0 none"><strong>Offer</strong></td>
+                          <td style="border: 0 none"><a
+                              routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"M/dd" }}</a></td>
+                          <td style="border: 0 none; white-space: nowrap">{{ trade.TradeStatus.TradeStatusDisplayName }}
+                          </td>
+                          <td style="border: 0 none">{{ trade.Quantity }} ac-ft</td>
+                          <td style="border: 0 none; white-space: nowrap">{{ trade.Price | currency: "USD" }} per ac-ft
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
       <div class="card mt-4">
         <div class="card-header">
           Water Use
@@ -112,7 +164,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let parcel of parcels">
+              <tr *ngFor="let parcel of getParcelsForWaterYear()">
                 <td>
                   <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
                 </td>
@@ -124,38 +176,13 @@
               </tr>
             </tbody>
           </table>
+          <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery
+            and may
+            not be accurate at the APN level.</p>
         </div>
       </div>
     </div>
     <div class="col-sm-12 col-md-8" *ngIf="trades">
-      <div class="card">
-        <div class="card-header">
-          Trade Activity
-        </div>
-        <div class="card-body">
-          <p *ngIf="trades.length === 0">You have no trade activity.</p>
-          <table class="table table-striped table-responsive" *ngIf="trades.length > 0">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Posting Date</th>
-                <th>Status</th>
-                <th>Quantity</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let trade of trades">
-                <td><a class="btn btn-primary btn-sm" routerLink="/trades/{{trade.TradeID}}">View</a></td>
-                <td style="white-space: nowrap">{{ trade.OfferDate | date:"short" }}</td>
-                <td style="white-space: nowrap">{{ trade.TradeStatus.TradeStatusDisplayName }}</td>
-                <td>{{ trade.Quantity }} ac-ft</td>
-                <td style="white-space: nowrap">{{ trade.Price | currency: "USD" }} per ac-ft</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
       <div class="card mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="card-header">
           Location
@@ -167,6 +194,4 @@
       </div>
     </div>
   </div>
-  <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery and may
-    not be accurate at the APN level.</p>
 </div>
