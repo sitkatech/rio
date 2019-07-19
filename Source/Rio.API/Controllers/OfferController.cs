@@ -42,7 +42,7 @@ namespace Rio.API.Controllers
             var postingStatusToUpdateTo = (int) PostingStatusEnum.Open;
             if (posting.Quantity <= acreFeetOfAcceptedTrades)
             {
-                postingStatusToUpdateTo = (int)PostingStatusEnum.Open;
+                postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
                 var postingCreateUserID = posting.CreateUser.UserID;
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);

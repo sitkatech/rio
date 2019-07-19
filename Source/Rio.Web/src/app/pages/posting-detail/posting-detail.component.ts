@@ -100,7 +100,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         else {
             // use the posting as the initial offer
             offer.Price = this.posting.Price;
-            offer.Quantity = this.posting.Quantity;
+            offer.Quantity = this.posting.AvailableQuantity;
         }
         offer.OfferStatusID = OfferStatusEnum.Pending;
         this.model = offer;

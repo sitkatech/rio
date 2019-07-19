@@ -40,7 +40,7 @@ namespace Rio.API.Controllers
         [PostingManageFeature]
         public ActionResult<IEnumerable<PostingDto>> List()
         {
-            var postingDtos = Posting.List(_dbContext);
+            var postingDtos = Posting.ListActive(_dbContext);
             return Ok(postingDtos);
         }
 
