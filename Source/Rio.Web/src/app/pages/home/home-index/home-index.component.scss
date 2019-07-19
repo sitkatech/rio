@@ -1,41 +1,9 @@
 .homepageJumbotronImage {
     background-size: cover;
     background-position: center center;
-    height: 300px;
+    height: 400px;
 }
 
 #homepageJumbotronImage1 {
-    background-image: url("/assets/DillonUnit.JPG");
-}
-
-#homepageJumbotronImage2 {
-    background-image: url("/assets/CoalCreek.JPG");
-}
-
-#homepageJumbotronImage3 {
-    background-image: url("/assets/ForestSalvage.jpg");
-}
-
-#homepageJumbotronImage4 {
-    background-image: url("/assets/ForestSula.jpg");
-}
-
-.launch-pad-links a {
-    width: 80%;
-}
-
-.launchPadAgreementLink {
-    background-color: rgb(112, 173, 71)
-}
-
-.launchPadCustomerLink {
-    background-color: rgb(225, 192, 0)
-}
-
-.launchPadTrustLandLink {
-    background-color: rgb(47, 85, 151)
-}
-
-.launchPadOfficeLink {
-    background-color: rgb(180, 199, 231)
+    background-image: url("/assets/main/home_image.jpg");
 }
