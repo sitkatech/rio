@@ -3,6 +3,7 @@ import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 
 @Component({
   selector: 'rio-posting-list',
@@ -33,5 +34,15 @@ export class PostingListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
+  }
+
+  public getPostingsToBuy() : Array<PostingDto>
+  {
+    return this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToBuy);
+  }
+
+  public getPostingsToSell() : Array<PostingDto>
+  {
+    return this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell);
   }
 }

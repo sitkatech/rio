@@ -1,43 +1,93 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Trades</li>
+        <li class="breadcrumb-item active" aria-current="page">Buy and Sell Water</li>
     </ol>
-  </nav>
-  <div class="container">
-      <div style="margin: 1rem 0 1rem 0;">
-          <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/new-posting">New Posting</a>
-      </div>  
-      <h2 style="display: inline-block">Sales Posting Board</h2>
-      <p class="lead">
-          A list of postings is shown in the grid below.
-      </p>
-  </div>
-  <div class="container mt-sm-4">
-      <table class="table table-striped table-responsive">
-          <thead>
-          <tr>
-            <th>View/Contact</th>
-            <th>Posting Date</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Posting</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let posting of postings">
-            <td><a class="btn btn-primary btn-sm" routerLink="/postings/{{posting.PostingID}}">View</a></td>
-            <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
-            <td style="white-space: nowrap">{{ posting.PostingType.PostingTypeDisplayName }}</td>
-            <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}</td>
-            <td>{{ posting.Quantity }} ac-ft</td>
-            <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
-            <td>
-                {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
-                <a *ngIf="posting.PostingDescription.length > descriptionMaxLength" routerLink="/postings/{{posting.PostingID}}">[View More]</a>
-            </td>
-          </tr>
-          </tbody>
-      </table>
-  </div>
+</nav>
+<div class="container">
+    <div style="margin: 1rem 0 1rem 0;">
+        <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/new-posting">New Posting</a>
+    </div>
+    <h2 style="display: inline-block">Buy and Sell Water</h2>
+    <div class="mt-4">
+        <ngb-tabset>
+            <ngb-tab title="Water for Sale">
+                <ng-template ngbTabContent>
+                    <div class="mt-4 table-responsive">
+                        <p *ngIf="getPostingsToSell().length === 0">There are currently no postings for sale.</p>
+                        <table class="table table-striped" *ngIf="getPostingsToSell().length > 0">
+                            <thead>
+                                <tr>
+                                    <th>View/Contact</th>
+                                    <th>Posting Date</th>
+                                    <th>Status</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Posting</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let posting of getPostingsToSell()">
+                                    <td><a class="btn btn-primary btn-sm"
+                                            routerLink="/postings/{{posting.PostingID}}">View</a>
+                                    </td>
+                                    <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
+                                    <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
+                                    </td>
+                                    <td>{{ posting.Quantity }} ac-ft</td>
+                                    <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
+                                    <td>
+                                        {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
+                                        <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
+                                            routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab title="Water to Buy">
+                <ng-template ngbTabContent>
+                    <div class="mt-4 table-responsive">
+                        <p *ngIf="getPostingsToBuy().length === 0">There are currently no postings to buy.</p>
+                        <table class="table table-striped" *ngIf="getPostingsToBuy().length > 0">
+                            <thead>
+                                <tr>
+                                    <th>View/Contact</th>
+                                    <th>Posting Date</th>
+                                    <th>Status</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Posting</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let posting of getPostingsToBuy()">
+                                    <td><a class="btn btn-primary btn-sm"
+                                            routerLink="/postings/{{posting.PostingID}}">View</a>
+                                    </td>
+                                    <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
+                                    <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
+                                    </td>
+                                    <td>{{ posting.Quantity }} ac-ft</td>
+                                    <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
+                                    <td>
+                                        {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
+                                        <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
+                                            routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab title="Get Help">
+                <ng-template ngbTabContent>
+                    <div class="mt-4">Content coming soon!</div>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</div>
