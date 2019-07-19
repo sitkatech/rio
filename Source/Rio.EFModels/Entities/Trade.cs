@@ -25,32 +25,30 @@ namespace Rio.EFModels.Entities
             return GetByTradeID(dbContext, trade.TradeID);
         }
 
-        public static IEnumerable<TradeWithMostRecentOfferDto> GetActiveTradesForUserID(RioDbContext dbContext, int userID)
+        public static IEnumerable<PostingWithTradesWithMostRecentOfferDto> GetTradeActivityForUserID(RioDbContext dbContext, int userID)
         {
-            var offers = dbContext.Trade
-                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.TradeStatus)
+            var offers = dbContext.Posting
+                .Include(x => x.Trade).ThenInclude(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
+                .Include(x => x.Trade).ThenInclude(x => x.CreateUser)
                 .Include(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .Include(x => x.PostingType)
+                .Include(x => x.PostingStatus)
                 .AsNoTracking()
-                .Where(x => x.CreateUserID == userID || x.Posting.CreateUserID == userID)
-                .OrderByDescending(x => x.TradeDate)
-                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .Where(x => x.CreateUserID == userID || x.Trade.Any(y => y.CreateUserID == userID))
+                .OrderByDescending(x => x.PostingDate)
+                .Select(x => x.AsPostingWithTradesWithMostRecentOfferDto())
                 .AsEnumerable();
 
             return offers;
         }
+
         public static IEnumerable<TradeWithMostRecentOfferDto> GetPendingTradesForPostingID(RioDbContext dbContext, int postingID)
         {
             var offers = dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .AsNoTracking()
                 .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Open && x.PostingID == postingID)
                 .OrderByDescending(x => x.TradeDate)
@@ -60,6 +58,32 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
+
+        public static IEnumerable<WaterYearTransactionDto> GetWaterYearTransactionsForUserID(RioDbContext dbContext, int userID)
+        {
+            var offers = dbContext.Trade
+                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.TradeStatus)
+                .Include(x => x.CreateUser)
+                .Include(x => x.Posting)
+                .AsNoTracking()
+                .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Accepted && (x.CreateUserID == userID || x.Posting.CreateUserID == userID))
+                .Select(x => x.AsTradeWithMostRecentOfferDto()).ToList();
+            var waterYearTransactionDtos = offers.GroupBy(x => x.OfferDate.Year).Select(x => new WaterYearTransactionDto
+            {
+                WaterYear = x.Key,
+                AcreFeetPurchased = x.Where(y =>
+                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToSell && y.CreateUser.UserID != userID) ||
+                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToBuy && y.CreateUser.UserID == userID)
+                    ).Sum(y => y.Quantity),
+                AcreFeetSold = x.Where(y =>
+                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToBuy && y.CreateUser.UserID != userID) ||
+                    (y.TradePostingTypeID == (int)PostingTypeEnum.OfferToSell && y.CreateUser.UserID == userID)
+                    ).Sum(y => y.Quantity)
+                });
+
+            return waterYearTransactionDtos;
+        }
         public static TradeDto GetByTradeID(RioDbContext dbContext, int tradeID)
         {
             var trade = dbContext.Trade

@@ -7,13 +7,13 @@ export class TradeWithMostRecentOfferDto {
     TradeID: number;
     CreateUser: UserSimpleDto;
     TradeStatus: TradeStatusDto;
-    OfferID: number;
+    TradePostingTypeID: number;
+    OfferPostingTypeID: number;
     Quantity: number;
     Price: number;
     OfferDate: Date;
     OfferCreateUserID: number;
     OfferStatus: OfferStatusDto;
-    Posting: PostingDto;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

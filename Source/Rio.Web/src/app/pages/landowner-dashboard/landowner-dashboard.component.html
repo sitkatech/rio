@@ -16,12 +16,12 @@
   </h2>
   <app-alert-display></app-alert-display>
 
-  <div class="mt-2" *ngIf="trades">
+  <div class="mt-2" *ngIf="postings">
     <div class="alert alert-info" style="max-height: 160px; overflow: auto;" *ngIf="getPendingTrades().length > 0">
       <ul>
         <li *ngFor="let pendingTrade of getPendingTrades()">
           <span *ngIf="doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-            You have submitted an offer to {{getPendingTradePostingType(pendingTrade)}} water. The
+            You have submitted an offer to {{getPendingTradePostingType(pendingTrade, true)}} water. The
             {{getRespondeeType(pendingTrade, true)}} has {{getDaysLeftToRespond(pendingTrade)}} days to respond.
             <a routerLink="/trades/{{pendingTrade.TradeID}}">[View offer details]</a>
           </span>
@@ -87,14 +87,14 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-8" *ngIf="trades">
+    <div class="col-sm-12 col-md-8" *ngIf="postings">
       <div class="card">
         <div class="card-header">
           Trade Activity
         </div>
         <div class="card-body table-responsive" style="max-height: 340px; overflow-y:scroll">
-          <p *ngIf="getTradesForWaterYear().length === 0">You have no trade activity.</p>
-          <table class="table table-condensed" *ngIf="getTradesForWaterYear().length > 0">
+          <p *ngIf="getPostingsForWaterYear().length === 0">You have no trade activity.</p>
+          <table class="table table-condensed" *ngIf="getPostingsForWaterYear().length > 0">
             <thead>
               <tr>
                 <th></th>
@@ -107,30 +107,30 @@
               </tr>
             </thead>
             <tbody>
-              <ng-template ngFor let-posting [ngForOf]="getTradesGroupedByPostingForWaterYear() | keyvalue">
+              <ng-template ngFor let-posting [ngForOf]="postings">
                 <tr>
                   <td>
-                      <a style="cursor: pointer" class="collapsed" (click)="postingPanels[posting.key] = !postingPanels[posting.key]">
-                      <span *ngIf="!postingPanels[posting.key]" class="fas fa-plus"></span>
-                      <span *ngIf="postingPanels[posting.key]" class="fas fa-minus"></span>
+                      <a style="cursor: pointer" class="collapsed" (click)="postingPanels[posting.PostingID] = !postingPanels[posting.PostingID]" *ngIf="posting.Trades.length > 0">
+                      <span *ngIf="!postingPanels[posting.PostingID]" class="fas fa-plus"></span>
+                      <span *ngIf="postingPanels[posting.PostingID]" class="fas fa-minus"></span>
                       </a>
                   </td>
                   <td style="white-space: nowrap"><a
-                      routerLink="/postings/{{posting.key}}">{{ posting.value[0].Posting.PostingDate | date:"M/dd" }}</a>
+                      routerLink="/postings/{{posting.PostingID}}">{{ posting.PostingDate | date:"M/dd" }}</a>
                   </td>
-                  <td style="white-space: nowrap">{{ posting.value[0].Posting.PostingType.PostingTypeDisplayName }}
+                  <td style="white-space: nowrap">{{ posting.PostingType.PostingTypeDisplayName }}
                   </td>
-                  <td style="white-space: nowrap">{{ posting.value[0].Posting.PostingStatus.PostingStatusDisplayName }}
+                  <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
                   </td>
-                  <td>{{ posting.value[0].Posting.Quantity }} ac-ft</td>
-                  <td>{{ posting.value[0].Posting.AvailableQuantity }} ac-ft</td>
-                  <td style="white-space: nowrap">{{ posting.value[0].Price | currency: "USD" }} per ac-ft</td>
+                  <td>{{ posting.Quantity }} ac-ft</td>
+                  <td>{{ posting.AvailableQuantity }} ac-ft</td>
+                  <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
                 </tr>
-                <tr *ngIf="postingPanels[posting.key]">
+                <tr *ngIf="postingPanels[posting.PostingID]">
                   <td colspan="6">
-                    <table class="table table-condensed table-striped" *ngIf="posting.value.length > 0">
+                    <table class="table table-condensed table-striped" *ngIf="posting.Trades.length > 0">
                       <tbody>
-                        <tr *ngFor="let trade of posting.value">
+                        <tr *ngFor="let trade of getTradesForPosting(posting)">
                           <td style="border: 0 none"><strong>Offer</strong></td>
                           <td style="border: 0 none"><a
                               routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"M/dd" }}</a></td>
@@ -185,7 +185,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-8" *ngIf="trades">
+    <div class="col-sm-12 col-md-8" *ngIf="parcels">
       <div class="card mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="card-header">
           Location

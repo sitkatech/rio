@@ -8,6 +8,7 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 
@@ -106,6 +107,14 @@ namespace Rio.API.Controllers
         {
             var userDtos = Rio.EFModels.Entities.User.List(_dbContext);
             return Ok(userDtos);
+        }
+
+        [HttpGet("yearly-transaction-summary/{userID}")]
+        [UserViewFeature]
+        public ActionResult<IEnumerable<WaterYearTransactionDto>> List([FromRoute] int userID)
+        {
+            var waterYearTransactionDtos = Trade.GetWaterYearTransactionsForUserID(_dbContext, userID);
+            return Ok(waterYearTransactionDtos);
         }
 
         [HttpGet("users/{userID}")]

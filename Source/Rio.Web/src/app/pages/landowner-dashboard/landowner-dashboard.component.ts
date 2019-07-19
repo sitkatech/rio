@@ -7,10 +7,12 @@ import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { TradeService } from 'src/app/services/trade.service';
-import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
+import { PostingWithTradesWithMostRecentOfferDto } from 'src/app/shared/models/posting/posting-with-trades-with-most-recent-offer-dto';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
+import { WaterYearTransactionDto } from 'src/app/shared/models/water-year-transaction-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -21,13 +23,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
-  public postingPanels : any;
+  public postingPanels: any;
 
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
-  public trades: Array<TradeWithMostRecentOfferDto>;
+  public postings: Array<PostingWithTradesWithMostRecentOfferDto>;
   public waterYears: Array<number>;
   public currentDate: Date;
+  public waterYearTransactions: Array<WaterYearTransactionDto>;
 
   constructor(
     private route: ActivatedRoute,
@@ -60,12 +63,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
       forkJoin(
         this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
-        this.tradeService.getActiveTradesForUser(userID)
-      ).subscribe(([parcels, trades]) => {
+        this.tradeService.getActiveTradesForUser(userID),
+        this.userService.getWaterYearAcresTransactedForUser(userID)
+      ).subscribe(([parcels, postings, waterYearTransactions]) => {
         this.parcels = parcels;
-        this.trades = trades;
-        this.postingPanels = Array.from(new Set(this.trades.map((item: TradeWithMostRecentOfferDto) => item.Posting.PostingID))).reduce((map, obj) => {
-          map[obj] = false;
+        this.postings = postings;
+        this.waterYearTransactions = waterYearTransactions;
+        this.postingPanels = postings.reduce((map, obj) => {
+          map[obj.PostingID] = false;
           return map;
         }, {});
       });
@@ -79,7 +84,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public hideShowPanel(postingID: number) : boolean{
+  public hideShowPanel(postingID: number): boolean {
     return this.postingPanels[postingID];
   }
 
@@ -87,51 +92,43 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
-  public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
-    return this.trades.filter(x => (new Date(x.Posting.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString())
-    .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+  public getPostingsForWaterYear(): Array<PostingWithTradesWithMostRecentOfferDto> {
+    return this.postings.filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
   }
 
-  public getTradesGroupedByPostingForWaterYear(): any {
-    return this.getTradesForWaterYear().reduce(function (h, obj) {
-      h[obj.Posting.PostingID] = (h[obj.Posting.PostingID] || []).concat(obj);
-      return h;
-    }, {});
+  public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
+    let finalArray = new Array<TradeWithMostRecentOfferDto>();
+    const postingsForWaterYear = this.postings.filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
+    postingsForWaterYear.forEach(x => {
+      x.Trades.forEach(y => {
+        finalArray.push(y);
+      });
+    });
+    return finalArray;
   }
 
   public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
     const tradesForWaterYear = this.getTradesForWaterYear();
-    return tradesForWaterYear !== undefined ? this.getTradesForWaterYear().filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
+    const pendingTrades = tradesForWaterYear !== undefined ? this.getTradesForWaterYear().filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
+    return pendingTrades;
   }
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
     return trade.OfferCreateUserID === this.currentUser.UserID;
   }
 
-  public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto): string {
-    const originalPostingUserIsCurrentUser = trade.Posting.CreateUser.UserID === this.currentUser.UserID;
-    const originalPostingTypeIsOfferToSell = trade.Posting.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell;
-    if (originalPostingUserIsCurrentUser) {
-      return originalPostingTypeIsOfferToSell ? "sell" : "purchase";
+  public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
+    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
+      return !isMostRecentOffererTheCurrentUser ? "purchase" : "sell";
     }
-    return originalPostingTypeIsOfferToSell ? "purchase" : "sell";
+    return isMostRecentOffererTheCurrentUser ? "purchase" : "sell";
   }
 
   public getRespondeeType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    const originalPostingUserIsCurrentUser = trade.Posting.CreateUser.UserID === this.currentUser.UserID;
-    const originalPostingTypeIsOfferToSell = trade.Posting.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell;
-    if (isMostRecentOffererTheCurrentUser) {
-      if (originalPostingUserIsCurrentUser) {
-        return originalPostingTypeIsOfferToSell ? "buyer" : "seller";
-      }
-      return originalPostingTypeIsOfferToSell ? "seller" : "buyer";
+    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
+      return !isMostRecentOffererTheCurrentUser ? "seller" : "buyer";
     }
-    else {
-      if (originalPostingUserIsCurrentUser) {
-        return originalPostingTypeIsOfferToSell ? "buyer" : "seller";
-      }
-      return originalPostingTypeIsOfferToSell ? "seller" : "buyer";
-    }
+    return isMostRecentOffererTheCurrentUser ? "seller" : "buyer";
   }
 
   public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
@@ -139,8 +136,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return 5;
   }
 
-  public getParcelsForWaterYear() : Array<ParcelAllocationAndConsumptionDto>
-  {
+  public getParcelsForWaterYear(): Array<ParcelAllocationAndConsumptionDto> {
     return this.parcels.filter(x => x.WaterYear.toString() === this.waterYearToDisplay.toString());
   }
 
@@ -176,16 +172,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private getTotalAcreFeetBoughtOrSold(postingTypeEnum: PostingTypeEnum): number {
-    const acceptedPurchases = this.getTradesForWaterYear().filter(x => x.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted
-      && ((this.currentUser.UserID == x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID === postingTypeEnum)
-        || (this.currentUser.UserID != x.Posting.CreateUser.UserID && x.Posting.PostingType.PostingTypeID !== postingTypeEnum)
-      )    
-    );
-    if (acceptedPurchases.length > 0) {
-      let result = acceptedPurchases.reduce(function (a, b) {
-        return (a + b.Quantity);
-      }, 0);
-      return result;
+    const waterYearTransaction = this.waterYearTransactions.find(x => x.WaterYear - 1 == this.waterYearToDisplay);
+    if (waterYearTransaction) {
+      if (postingTypeEnum === PostingTypeEnum.OfferToSell) {
+        return waterYearTransaction.AcreFeetSold;
+      }
+      return waterYearTransaction.AcreFeetPurchased;
     }
     return null;
   }
@@ -226,5 +218,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return annualAllocation - estimatedAvailableSupply;
     }
     return null;
+  }
+
+  public getTradesForPosting(posting: PostingWithTradesWithMostRecentOfferDto): Array<TradeWithMostRecentOfferDto> {    
+    return posting.Trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
   }
 }

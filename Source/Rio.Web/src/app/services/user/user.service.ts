@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
+import { WaterYearTransactionDto } from 'src/app/shared/models/water-year-transaction-dto';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-
     constructor(private apiService: ApiService) { }
 
     inviteUser(userInviteDto: any): Observable<UserDto>  {
@@ -27,6 +27,11 @@ export class UserService {
 
     getUserFromGlobalID(globalID: string): Observable<UserDto> {
         let route = `/user-claims/${globalID}`;
+        return this.apiService.getFromApi(route);
+    }
+
+    getWaterYearAcresTransactedForUser(userID: number): Observable<Array<WaterYearTransactionDto>> {
+        let route = `/yearly-transaction-summary/${userID}`;
         return this.apiService.getFromApi(route);
     }
 

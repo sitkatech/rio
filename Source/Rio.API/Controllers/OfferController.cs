@@ -75,11 +75,11 @@ namespace Rio.API.Controllers
             return Ok(offerDtos);
         }
 
-        [HttpGet("active-trades/{userID}")]
+        [HttpGet("trade-activity/{userID}")]
         [UserViewFeature]
         public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetActiveTradesForUser([FromRoute] int userID)
         {
-            var tradeWithMostRecentOfferDtos = Trade.GetActiveTradesForUserID(_dbContext, userID);
+            var tradeWithMostRecentOfferDtos = Trade.GetTradeActivityForUserID(_dbContext, userID);
             return Ok(tradeWithMostRecentOfferDtos);
         }
 
