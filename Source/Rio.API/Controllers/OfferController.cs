@@ -39,20 +39,20 @@ namespace Rio.API.Controllers
 
             // get current balance of posting
             var acreFeetOfAcceptedTrades = Posting.CalculateAcreFeetOfAcceptedTrades(_dbContext, postingID);
+            var postingStatusToUpdateTo = (int) PostingStatusEnum.Open;
             if (posting.Quantity <= acreFeetOfAcceptedTrades)
             {
-                Posting.UpdateStatus(_dbContext, postingID,
-                    new PostingUpdateStatusDto {PostingStatusID = (int) PostingStatusEnum.Closed});
-
+                postingStatusToUpdateTo = (int)PostingStatusEnum.Open;
                 // expire all other outstanding offers
                 var postingCreateUserID = posting.CreateUser.UserID;
-                var activeTradesForPosting = Trade.GetActiveTradesForUserID(_dbContext, postingCreateUserID);
+                var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
                     var offerStatus = activeTrade.OfferCreateUserID == postingCreateUserID
                         ? OfferStatusEnum.Rescinded
                         : OfferStatusEnum.Rejected;
                     var offerUpsertDtoForRescindReject = new OfferUpsertDto();
+                    offerUpsertDtoForRescindReject.TradeID = activeTrade.TradeID;
                     offerUpsertDtoForRescindReject.Price = activeTrade.Price;
                     offerUpsertDtoForRescindReject.Quantity = activeTrade.Quantity;
                     offerUpsertDtoForRescindReject.OfferStatusID = (int)offerStatus;
@@ -60,6 +60,8 @@ namespace Rio.API.Controllers
                     Offer.CreateNew(_dbContext, postingID, postingCreateUserID, offerUpsertDtoForRescindReject);
                 }
             }
+            Posting.UpdateStatus(_dbContext, postingID,
+                new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, posting.Quantity - acreFeetOfAcceptedTrades);
 
             return Ok(offer);
         }

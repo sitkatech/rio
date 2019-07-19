@@ -9,6 +9,7 @@ namespace Rio.Models.DataTransferObjects.Posting
         public PostingTypeDto PostingType { get; set; }
         public DateTime PostingDate { get; set; }
         public int Quantity { get; set; }
+        public int AvailableQuantity { get; set; }
         public decimal Price { get; set; }
         public string PostingDescription { get; set; }
 

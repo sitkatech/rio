@@ -19,6 +19,7 @@ namespace Rio.EFModels.Entities
                 PostingDate = DateTime.UtcNow,
                 Price = postingUpsertDto.Price,
                 Quantity = postingUpsertDto.Quantity,
+                AvailableQuantity = postingUpsertDto.Quantity,
                 PostingStatusID = (int) PostingStatusEnum.Open
             };
 
@@ -71,13 +72,17 @@ namespace Rio.EFModels.Entities
             return GetByPostingID(dbContext, postingID);
         }
 
-        public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID, PostingUpdateStatusDto postingUpdateStatusDto)
+        public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID,
+            PostingUpdateStatusDto postingUpdateStatusDto, int? availableQuantity)
         {
             var posting = dbContext.Posting
                 .Single(x => x.PostingID == postingID);
 
             posting.PostingStatusID = postingUpdateStatusDto.PostingStatusID;
-
+            if (availableQuantity.HasValue)
+            {
+                posting.AvailableQuantity = availableQuantity.Value;
+            }
             dbContext.SaveChanges();
             dbContext.Entry(posting).Reload();
             return GetByPostingID(dbContext, postingID);

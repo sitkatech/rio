@@ -100,7 +100,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var updatedPostingDto = Posting.UpdateStatus(_dbContext, postingID, postingUpdateStatusDto);
+            var updatedPostingDto = Posting.UpdateStatus(_dbContext, postingID, postingUpdateStatusDto, null);
             return Ok(updatedPostingDto);
         }
 

@@ -7,5 +7,6 @@
     Quantity int not null,
     Price money not null,
     PostingDescription varchar(2000) not null,
-    PostingStatusID int not null constraint FK_Posting_PostingStatus_PostingStatusID foreign key references dbo.PostingStatus(PostingStatusID)
+    PostingStatusID int not null constraint FK_Posting_PostingStatus_PostingStatusID foreign key references dbo.PostingStatus(PostingStatusID), 
+    AvailableQuantity int not null
 )

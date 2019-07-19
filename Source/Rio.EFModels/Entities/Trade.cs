@@ -42,6 +42,23 @@ namespace Rio.EFModels.Entities
 
             return offers;
         }
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetPendingTradesForPostingID(RioDbContext dbContext, int postingID)
+        {
+            var offers = dbContext.Trade
+                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.TradeStatus)
+                .Include(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .AsNoTracking()
+                .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Open && x.PostingID == postingID)
+                .OrderByDescending(x => x.TradeDate)
+                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .AsEnumerable();
+
+            return offers;
+        }
 
         public static TradeDto GetByTradeID(RioDbContext dbContext, int tradeID)
         {

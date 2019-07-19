@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
@@ -31,7 +31,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private userService: UserService,
     private parcelService: ParcelService,
     private tradeService: TradeService,
@@ -89,7 +88,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
-    return this.trades.filter(x => (new Date(x.Posting.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
+    return this.trades.filter(x => (new Date(x.Posting.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString())
+    .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
   }
 
   public getTradesGroupedByPostingForWaterYear(): any {

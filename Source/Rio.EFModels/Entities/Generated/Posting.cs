@@ -24,6 +24,7 @@ namespace Rio.EFModels.Entities
         [StringLength(2000)]
         public string PostingDescription { get; set; }
         public int PostingStatusID { get; set; }
+        public int AvailableQuantity { get; set; }
 
         [ForeignKey("CreateUserID")]
         [InverseProperty("Posting")]

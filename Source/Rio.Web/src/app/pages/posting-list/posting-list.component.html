@@ -3,7 +3,7 @@
         <li class="breadcrumb-item active" aria-current="page">Buy and Sell Water</li>
     </ol>
 </nav>
-<div class="container">
+<div class="container" *ngIf="postings">
     <div style="margin: 1rem 0 1rem 0;">
         <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/new-posting">New Posting</a>
     </div>
@@ -33,7 +33,7 @@
                                     <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
                                     <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
                                     </td>
-                                    <td>{{ posting.Quantity }} ac-ft</td>
+                                    <td>{{ posting.AvailableQuantity }} ac-ft</td>
                                     <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
                                     <td>
                                         {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}

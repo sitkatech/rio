@@ -9,6 +9,7 @@ export class PostingDto {
 
     PostingDescription: string;
     Quantity: number;
+    AvailableQuantity: number;
     Price: number;
 
     PostingDate: Date;

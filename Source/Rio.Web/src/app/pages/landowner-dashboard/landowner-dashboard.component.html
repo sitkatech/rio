@@ -99,6 +99,7 @@
               <tr>
                 <th></th>
                 <th>Posting Date</th>
+                <th>Type</th>
                 <th>Status</th>
                 <th>Initial Quantity</th>
                 <th>Available Quantity</th>
@@ -117,10 +118,12 @@
                   <td style="white-space: nowrap"><a
                       routerLink="/postings/{{posting.key}}">{{ posting.value[0].Posting.PostingDate | date:"M/dd" }}</a>
                   </td>
+                  <td style="white-space: nowrap">{{ posting.value[0].Posting.PostingType.PostingTypeDisplayName }}
+                  </td>
                   <td style="white-space: nowrap">{{ posting.value[0].Posting.PostingStatus.PostingStatusDisplayName }}
                   </td>
-                  <td>{{ posting.value[0].Quantity }} ac-ft</td>
-                  <td>{{ posting.value[0].Quantity }} ac-ft</td>
+                  <td>{{ posting.value[0].Posting.Quantity }} ac-ft</td>
+                  <td>{{ posting.value[0].Posting.AvailableQuantity }} ac-ft</td>
                   <td style="white-space: nowrap">{{ posting.value[0].Price | currency: "USD" }} per ac-ft</td>
                 </tr>
                 <tr *ngIf="postingPanels[posting.key]">
