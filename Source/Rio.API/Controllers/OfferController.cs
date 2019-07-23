@@ -34,13 +34,20 @@ namespace Rio.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            if (posting.AvailableQuantity < offerUpsertDto.Quantity)
+            {
+                ModelState.AddModelError("Quantity", "Exceeds remaining balance in posting");
+                return BadRequest(ModelState);
+            }
+
             var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, userDto.UserID, offerUpsertDto);
 
             // get current balance of posting
             var acreFeetOfAcceptedTrades = Posting.CalculateAcreFeetOfAcceptedTrades(_dbContext, postingID);
             var postingStatusToUpdateTo = (int) PostingStatusEnum.Open;
-            if (posting.Quantity <= acreFeetOfAcceptedTrades)
+            if (posting.Quantity == acreFeetOfAcceptedTrades)
             {
                 postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
