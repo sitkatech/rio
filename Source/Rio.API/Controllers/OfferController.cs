@@ -86,7 +86,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetActiveTradesForUser([FromRoute] int userID)
         {
-            var tradeWithMostRecentOfferDtos = Trade.GetTradeActivityForUserID(_dbContext, userID);
+            var tradeWithMostRecentOfferDtos = Trade.GetTradesForUserID(_dbContext, userID);
             return Ok(tradeWithMostRecentOfferDtos);
         }
 

@@ -58,6 +58,20 @@ namespace Rio.EFModels.Entities
 
             return postings;
         }
+        public static IEnumerable<PostingDto> ListByUserID(RioDbContext dbContext, int userID)
+        {
+            var postings = dbContext.Posting
+                .Include(x => x.PostingType)
+                .Include(x => x.PostingStatus)
+                .Include(x => x.CreateUser)
+                .AsNoTracking()
+                .Where(x => x.CreateUserID == userID)
+                .OrderByDescending(x => x.PostingDate)
+                .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return postings;
+        }
 
         public static PostingDto GetByPostingID(RioDbContext dbContext, int postingID)
         {

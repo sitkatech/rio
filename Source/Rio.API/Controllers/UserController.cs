@@ -10,6 +10,7 @@ using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Parcel;
+using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Controllers
@@ -211,5 +212,20 @@ namespace Rio.API.Controllers
             var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, parcelDtos, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
             return Ok(parcelAllocationAndConsumptionDtos);
         }
+
+        [HttpGet("users/{userID}/postings")]
+        [UserViewFeature]
+        public ActionResult<List<PostingDto>> ListPostingsByUserID([FromRoute] int userID)
+        {
+            var postingDtos = Posting.ListByUserID(_dbContext, userID);
+            if (postingDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(postingDtos);
+        }
+
+
     }
 }

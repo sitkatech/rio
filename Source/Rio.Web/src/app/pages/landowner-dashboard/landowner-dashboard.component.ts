@@ -13,6 +13,9 @@ import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { PostingWithTradesWithMostRecentOfferDto } from 'src/app/shared/models/posting/posting-with-trades-with-most-recent-offer-dto';
 import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
 import { WaterYearTransactionDto } from 'src/app/shared/models/water-year-transaction-dto';
+import { PostingService } from 'src/app/services/posting.service';
+import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
+import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -27,14 +30,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
-  public postings: Array<PostingWithTradesWithMostRecentOfferDto>;
+  public postings: Array<PostingDto>;
+  public trades: Array<TradeWithMostRecentOfferDto>;
   public waterYears: Array<number>;
   public currentDate: Date;
   public waterYearTransactions: Array<WaterYearTransactionDto>;
+  private tradeStatusIDs: TradeStatusEnum[];
+  private postingStatusIDs: PostingStatusEnum[];
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
+    private postingService: PostingService,
     private parcelService: ParcelService,
     private tradeService: TradeService,
     private authenticationService: AuthenticationService,
@@ -47,6 +54,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
       this.waterYearToDisplay = 2018; //TODO: get this from API
+      this.tradeStatusIDs = [TradeStatusEnum.Open];
+      this.postingStatusIDs = [PostingStatusEnum.Open];
 
       this.currentDate = (new Date());
       let userID = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -63,11 +72,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
       forkJoin(
         this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
+        this.postingService.getPostingsByUserID(userID),
         this.tradeService.getActiveTradesForUser(userID),
         this.userService.getWaterYearAcresTransactedForUser(userID)
-      ).subscribe(([parcels, postings, waterYearTransactions]) => {
+      ).subscribe(([parcels, postings, trades, waterYearTransactions]) => {
         this.parcels = parcels;
         this.postings = postings;
+        this.trades = trades;
         this.waterYearTransactions = waterYearTransactions;
         this.postingPanels = postings.reduce((map, obj) => {
           map[obj.PostingID] = false;
@@ -88,23 +99,38 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.postingPanels[postingID];
   }
 
+  public toggleTradeStatusShown(): void {
+    if(this.tradeStatusIDs.length === 1)
+    {
+      this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Open, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
+    }
+    else
+    {
+      this.tradeStatusIDs = [TradeStatusEnum.Open];
+    }
+  }
+
+  public togglePostingStatusShown(): void {
+    if(this.postingStatusIDs.length === 1)
+    {
+      this.postingStatusIDs = [PostingStatusEnum.Open, PostingStatusEnum.Closed];
+    }
+    else
+    {
+      this.postingStatusIDs = [PostingStatusEnum.Open];
+    }
+  }
+
   public currentUserIsAdmin(): boolean {
     return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
-  public getPostingsForWaterYear(): Array<PostingWithTradesWithMostRecentOfferDto> {
-    return this.postings.filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
+  public getPostingsForWaterYear(): Array<PostingDto> {
+    return this.postings.filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID));
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
-    let finalArray = new Array<TradeWithMostRecentOfferDto>();
-    const postingsForWaterYear = this.postings.filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString());
-    postingsForWaterYear.forEach(x => {
-      x.Trades.forEach(y => {
-        finalArray.push(y);
-      });
-    });
-    return finalArray;
+    return this.trades.filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID));
   }
 
   public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
@@ -115,6 +141,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
     return trade.OfferCreateUserID === this.currentUser.UserID;
+  }
+
+  public getTradeDescription(trade: TradeWithMostRecentOfferDto): string {
+    return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Buying " : "Selling " : trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling " : "Buying ") + " " + trade.Quantity + " ac-ft";
   }
 
   public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
