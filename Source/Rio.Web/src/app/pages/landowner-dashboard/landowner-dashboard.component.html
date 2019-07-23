@@ -102,7 +102,7 @@
           Trade Activity
         </div>
         <div class="card-body table-responsive" style="max-height: 300px; overflow-y:scroll">
-          <p *ngIf="getTradesForWaterYear().length === 0">You have no trade activity.</p>
+          <p *ngIf="getTradesForWaterYear().length === 0">{{getNoTradesMessage()}}</p>
           <table class="table table-condensed table-striped" *ngIf="getTradesForWaterYear().length > 0">
             <thead>
               <tr>
@@ -141,7 +141,7 @@
           Postings
         </div>
         <div class="card-body table-responsive" style="max-height: 200px; overflow-y:scroll">
-          <p *ngIf="getPostingsForWaterYear().length === 0">You have no postings.</p>
+          <p *ngIf="getPostingsForWaterYear().length === 0">{{getNoPostingsMessage()}}</p>
           <table class="table table-condensed table-striped" *ngIf="getPostingsForWaterYear().length > 0">
             <thead>
               <tr>

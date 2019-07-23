@@ -121,6 +121,28 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  public getNoTradesMessage(): string {
+    if(this.tradeStatusIDs.length === 1)
+    {
+      return "You have no open trades.";
+    }
+    else
+    {
+      return "You have no trade activity.";
+    }
+  }
+
+  public getNoPostingsMessage(): string {
+    if(this.postingStatusIDs.length === 1)
+    {
+      return "You have no open postings.";
+    }
+    else
+    {
+      return "You have no posting activity.";
+    }
+  }
+
   public currentUserIsAdmin(): boolean {
     return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
