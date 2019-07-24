@@ -75,32 +75,6 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-
-        public static IEnumerable<WaterYearTransactionDto> GetWaterYearTransactionsForUserID(RioDbContext dbContext, int userID)
-        {
-            var offers = dbContext.Trade
-                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting)
-                .AsNoTracking()
-                .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Accepted && (x.CreateUserID == userID || x.Posting.CreateUserID == userID))
-                .Select(x => x.AsTradeWithMostRecentOfferDto()).ToList();
-            var waterYearTransactionDtos = offers.GroupBy(x => x.OfferDate.Year).Select(x => new WaterYearTransactionDto
-            {
-                WaterYear = x.Key,
-                AcreFeetPurchased = x.Where(y =>
-                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToSell && y.CreateUser.UserID != userID) ||
-                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToBuy && y.CreateUser.UserID == userID)
-                    ).Sum(y => y.Quantity),
-                AcreFeetSold = x.Where(y =>
-                    (y.TradePostingTypeID == (int) PostingTypeEnum.OfferToBuy && y.CreateUser.UserID != userID) ||
-                    (y.TradePostingTypeID == (int)PostingTypeEnum.OfferToSell && y.CreateUser.UserID == userID)
-                    ).Sum(y => y.Quantity)
-                });
-
-            return waterYearTransactionDtos;
-        }
         public static TradeDto GetByTradeID(RioDbContext dbContext, int tradeID)
         {
             var trade = dbContext.Trade

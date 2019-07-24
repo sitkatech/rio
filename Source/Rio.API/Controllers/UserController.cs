@@ -12,6 +12,7 @@ using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
+using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
@@ -108,14 +109,6 @@ namespace Rio.API.Controllers
         {
             var userDtos = Rio.EFModels.Entities.User.List(_dbContext);
             return Ok(userDtos);
-        }
-
-        [HttpGet("yearly-transaction-summary/{userID}")]
-        [UserViewFeature]
-        public ActionResult<IEnumerable<WaterYearTransactionDto>> List([FromRoute] int userID)
-        {
-            var waterYearTransactionDtos = Trade.GetWaterYearTransactionsForUserID(_dbContext, userID);
-            return Ok(waterYearTransactionDtos);
         }
 
         [HttpGet("users/{userID}")]
@@ -226,6 +219,17 @@ namespace Rio.API.Controllers
             return Ok(postingDtos);
         }
 
+        [HttpGet("users/{userID}/water-transfers")]
+        [UserViewFeature]
+        public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int userID)
+        {
+            var waterTransferDtos = WaterTransfer.ListByUserID(_dbContext, userID);
+            if (waterTransferDtos == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(waterTransferDtos);
+        }
     }
 }

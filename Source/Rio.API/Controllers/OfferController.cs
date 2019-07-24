@@ -29,13 +29,13 @@ namespace Rio.API.Controllers
         [RequiresValidJSONBodyFilter("Could not parse a valid Offer New JSON object from the Request Body.")]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
-            var posting = Posting.GetByPostingID(_dbContext, postingID);
+            var postingDto = Posting.GetByPostingID(_dbContext, postingID);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (posting.AvailableQuantity < offerUpsertDto.Quantity)
+            if (postingDto.AvailableQuantity < offerUpsertDto.Quantity)
             {
                 ModelState.AddModelError("Quantity", "Exceeds remaining balance in posting");
                 return BadRequest(ModelState);
@@ -44,14 +44,30 @@ namespace Rio.API.Controllers
             var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, userDto.UserID, offerUpsertDto);
 
+            // update trades status if needed
+            if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Accepted)
+            {
+                var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
+                // write a water transfer record
+                WaterTransfer.CreateNew(_dbContext, offer, tradeDto, postingDto);
+            }
+            else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
+            {
+                Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
+            }
+            else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
+            {
+                Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
+            }
+
             // get current balance of posting
             var acreFeetOfAcceptedTrades = Posting.CalculateAcreFeetOfAcceptedTrades(_dbContext, postingID);
             var postingStatusToUpdateTo = (int) PostingStatusEnum.Open;
-            if (posting.Quantity == acreFeetOfAcceptedTrades)
+            if (postingDto.Quantity == acreFeetOfAcceptedTrades)
             {
                 postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
-                var postingCreateUserID = posting.CreateUser.UserID;
+                var postingCreateUserID = postingDto.CreateUser.UserID;
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
@@ -68,7 +84,7 @@ namespace Rio.API.Controllers
                 }
             }
             Posting.UpdateStatus(_dbContext, postingID,
-                new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, posting.Quantity - acreFeetOfAcceptedTrades);
+                new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, postingDto.Quantity - acreFeetOfAcceptedTrades);
 
             return Ok(offer);
         }

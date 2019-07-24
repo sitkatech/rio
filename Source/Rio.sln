@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rio.Models", "Rio.Models\Ri
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose\docker-compose.dcproj", "{4ADC0EA7-5D32-4AEC-B818-FCC266A4E6F6}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "db-docker-compose", "Rio.Database\docker-compose\db-docker-compose.dcproj", "{6F52EA2C-114E-4F5A-B649-40CFFEFE0B4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{4ADC0EA7-5D32-4AEC-B818-FCC266A4E6F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ADC0EA7-5D32-4AEC-B818-FCC266A4E6F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ADC0EA7-5D32-4AEC-B818-FCC266A4E6F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F52EA2C-114E-4F5A-B649-40CFFEFE0B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F52EA2C-114E-4F5A-B649-40CFFEFE0B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F52EA2C-114E-4F5A-B649-40CFFEFE0B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F52EA2C-114E-4F5A-B649-40CFFEFE0B4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

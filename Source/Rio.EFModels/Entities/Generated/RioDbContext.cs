@@ -34,6 +34,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserParcel> UserParcel { get; set; }
+        public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -382,6 +383,23 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.UserParcel)
                     .HasForeignKey(d => d.UserID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WaterTransfer>(entity =>
+            {
+                entity.Property(e => e.Notes).IsUnicode(false);
+
+                entity.HasOne(d => d.ReceivingUser)
+                    .WithMany(p => p.WaterTransferReceivingUser)
+                    .HasForeignKey(d => d.ReceivingUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WaterTransfer_User_ReceivingUserID_UserID");
+
+                entity.HasOne(d => d.TransferringUser)
+                    .WithMany(p => p.WaterTransferTransferringUser)
+                    .HasForeignKey(d => d.TransferringUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WaterTransfer_User_TransferringUserID_UserID");
             });
         }
     }

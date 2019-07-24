@@ -10,7 +10,7 @@
     <h2 style="display: inline-block">Buy and Sell Water</h2>
     <div class="mt-4">
         <ngb-tabset>
-            <ngb-tab title="Water for Sale">
+            <ngb-tab title="Offers to Sell Water">
                 <ng-template ngbTabContent>
                     <div class="mt-4 table-responsive">
                         <p *ngIf="getPostingsToSell().length === 0">There are currently no postings for sale.</p>
@@ -47,7 +47,7 @@
 
                 </ng-template>
             </ngb-tab>
-            <ngb-tab title="Water to Buy">
+            <ngb-tab title="Offers to Buy Water">
                 <ng-template ngbTabContent>
                     <div class="mt-4 table-responsive">
                         <p *ngIf="getPostingsToBuy().length === 0">There are currently no postings to buy.</p>

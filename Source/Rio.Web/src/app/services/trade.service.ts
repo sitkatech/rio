@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { TradeDto } from '../shared/models/offer/trade-dto';
-import { PostingWithTradesWithMostRecentOfferDto } from '../shared/models/posting/posting-with-trades-with-most-recent-offer-dto';
 import { TradeWithMostRecentOfferDto } from '../shared/models/offer/trade-with-most-recent-offer-dto';
 
 @Injectable({

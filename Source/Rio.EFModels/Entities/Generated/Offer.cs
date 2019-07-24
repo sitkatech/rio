@@ -7,6 +7,11 @@ namespace Rio.EFModels.Entities
 {
     public partial class Offer
     {
+        public Offer()
+        {
+            WaterTransfer = new HashSet<WaterTransfer>();
+        }
+
         public int OfferID { get; set; }
         public int TradeID { get; set; }
         [Column(TypeName = "datetime")]
@@ -28,5 +33,7 @@ namespace Rio.EFModels.Entities
         [ForeignKey("TradeID")]
         [InverseProperty("Offer")]
         public virtual Trade Trade { get; set; }
+        [InverseProperty("Offer")]
+        public virtual ICollection<WaterTransfer> WaterTransfer { get; set; }
     }
 }

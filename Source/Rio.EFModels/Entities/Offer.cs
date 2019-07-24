@@ -31,20 +31,6 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(offer).Reload();
 
-            // update trades status if needed
-            if (offer.OfferStatusID == (int)OfferStatusEnum.Accepted)
-            {
-                Trade.Update(dbContext, offer.TradeID, TradeStatusEnum.Accepted);
-            }
-            else if (offer.OfferStatusID == (int)OfferStatusEnum.Rejected)
-            {
-                Trade.Update(dbContext, offer.TradeID, TradeStatusEnum.Rejected);
-            }
-            else if (offer.OfferStatusID == (int)OfferStatusEnum.Rescinded)
-            {
-                Trade.Update(dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
-            }
-
             return GetByOfferID(dbContext, offer.OfferID);
         }
 

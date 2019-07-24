@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { WaterYearTransactionDto } from 'src/app/shared/models/water-year-transaction-dto';
+import { WaterTransferDto } from 'src/app/shared/models/water-year-transaction-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -30,8 +30,8 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
-    getWaterYearAcresTransactedForUser(userID: number): Observable<Array<WaterYearTransactionDto>> {
-        let route = `/yearly-transaction-summary/${userID}`;
+    getWaterTransfersByUserID(userID: number): Observable<Array<WaterTransferDto>> {
+        let route = `/users/${userID}/water-transfers`;
         return this.apiService.getFromApi(route);
     }
 
