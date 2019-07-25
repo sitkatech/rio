@@ -11,7 +11,8 @@ export const environment = {
     scope: 'openid all_claims keystone',
     sessionChecksEnabled: true,
     logoutUrl: 'https://keystone.sitkatech.com/core/connect/endsession',
-    postLogoutRedirectUri: window.location.origin + '/'
+    postLogoutRedirectUri: window.location.origin + '/',
+    waitForTokenInMsec: 500
   },
   geoserverMapServiceUrl: 'https://rio-geoserver.yachats.sitkatech.com/geoserver/Rio'
 };
