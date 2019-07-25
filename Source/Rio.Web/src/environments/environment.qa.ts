@@ -7,11 +7,11 @@ export const environment = {
   keystoneAuthConfiguration: {
     clientId: 'Rio',
     issuer: 'https://qa.keystone.sitkatech.com/core',
-    redirectUri: window.location.origin + '/',
+    redirectUri: window.location.origin + '/landowner-dashboard',
     scope: 'openid all_claims keystone',
     sessionChecksEnabled: true,
     logoutUrl: 'https://qa.keystone.sitkatech.com/core/connect/endsession',
-    postLogoutRedirectUri: ''
+    postLogoutRedirectUri: window.location.origin + '/'
   },
   geoserverMapServiceUrl: 'https://rio-geoserver.qa.sycan.sitkatech.com/geoserver/Rio'
 };

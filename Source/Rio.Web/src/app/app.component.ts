@@ -34,11 +34,7 @@ export class AppComponent {
         });
         
         this.configureAuthService().subscribe(() => {
-            this.oauthService.tryLogin({
-                onTokenReceived: context => {
-                    this.router.navigateByUrl("/landowner-dashboard");
-                }
-            });
+            this.oauthService.tryLogin();
         });
     }
 

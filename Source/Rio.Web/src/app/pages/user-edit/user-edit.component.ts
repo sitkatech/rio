@@ -88,11 +88,6 @@ export class UserEditComponent implements OnInit, OnDestroy {
     this.userService.updateUser(this.userID, this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        // if (response instanceof Array) {
-        //     this.alertService.pushAlert(new Alert("The form could not be submitted due to errors. Please correct the errors and try again.", AlertContext.Danger));
-        //     this.formErrors = response;
-        //     return;
-        // }
         this.router.navigateByUrl("/users/" + this.userID).then(x => {
           this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
         });
