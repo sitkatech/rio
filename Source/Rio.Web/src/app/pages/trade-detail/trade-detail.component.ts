@@ -120,12 +120,11 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   public getOfferType(offer: OfferDto): string {
     if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) {
-      if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell
-        && offer.CreateUser.UserID === this.trade.CreateUser.UserID) {
-        return "Buyer Counter Offer";
+      if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell) {
+        return offer.CreateUser.UserID === this.trade.CreateUser.UserID ? "Buyer Counter Offer" : "Seller Counter Offer";
       }
       else {
-        return "Seller Counter Offer";
+        return offer.CreateUser.UserID === this.trade.CreateUser.UserID ? "Seller Counter Offer" : "Buyer Counter Offer";
       }
     }
     else {

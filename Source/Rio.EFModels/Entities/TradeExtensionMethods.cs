@@ -30,14 +30,13 @@ namespace Rio.EFModels.Entities
                 OfferDate = mostRecentOffer.OfferDate,
                 OfferCreateUserID = mostRecentOffer.CreateUserID
             };
-            if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell &&
-                trade.Posting.CreateUserID == mostRecentOffer.CreateUserID)
+            if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
             {
-                tradeWithMostRecentOfferDto.OfferPostingTypeID = (int) PostingTypeEnum.OfferToSell;
+                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateUserID == mostRecentOffer.CreateUserID ? (int) PostingTypeEnum.OfferToSell : (int)PostingTypeEnum.OfferToBuy;
             }
             else
             {
-                tradeWithMostRecentOfferDto.OfferPostingTypeID = (int) PostingTypeEnum.OfferToBuy;
+                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateUserID == mostRecentOffer.CreateUserID ? (int)PostingTypeEnum.OfferToBuy : (int)PostingTypeEnum.OfferToSell;
             }
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)

@@ -155,18 +155,34 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Buying " : "Selling " : trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling " : "Buying ") + " " + trade.Quantity + " ac-ft";
   }
 
-  public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
-      return !isMostRecentOffererTheCurrentUser ? "purchase" : "sell";
+  public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
+    let offerType = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "purchase";
+    let respondee = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
+    return "You have submitted an offer to " + offerType + " " + trade.Quantity + " ac-ft of water. The " + respondee + " has " + this.getDaysLeftToRespond(trade) + " days to respond.";
+  }
+
+  public getOfferThatDoesNotBelongToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
+    if(trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell)
+    {
+      return "A seller is awaiting your response to their offer to sell " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
-    return isMostRecentOffererTheCurrentUser ? "purchase" : "sell";
+    return "A buyer is awaiting your response to their offer to purchase " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
+  }
+
+  public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
+    if(isMostRecentOffererTheCurrentUser)
+    {
+      return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buy" : "sell";
+    }
+    return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "buy";
   }
 
   public getRespondeeType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
-      return !isMostRecentOffererTheCurrentUser ? "seller" : "buyer";
+    if(isMostRecentOffererTheCurrentUser)
+    {
+      return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
     }
-    return isMostRecentOffererTheCurrentUser ? "seller" : "buyer";
+    return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "seller" : "buyer";
   }
 
   public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
