@@ -19,7 +19,7 @@
         If the user does not already have an account they will receive an email with a link to verify their
         account. Clicking this link will display a Keystone webpage where the user can set their password.</p>
 </div>
-<div class="container my-sm-4">
+<div class="container my-sm-4" *ngIf="model">
     <app-alert-display></app-alert-display>
     <form (ngSubmit)="onSubmit(inviteUserForm)" #inviteUserForm="ngForm">
         <div class="row">
@@ -76,7 +76,7 @@
             </div>
             <div class="col-xs-12 col-sm-10 text-right">
                 <button type="submit" class="btn btn-primary"
-                    [disabled]="!inviteUserForm.form.valid || isLoadingSubmit">
+                    [disabled]="isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Invite
                 </button>

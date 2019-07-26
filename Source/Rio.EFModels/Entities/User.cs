@@ -70,6 +70,17 @@ namespace Rio.EFModels.Entities
             return userDto;
         }
 
+        public static UserDto GetByEmail(RioDbContext dbContext, string email)
+        {
+            var user = dbContext.User
+                .Include(x => x.Role)
+                .AsNoTracking()
+                .SingleOrDefault(x => x.Email == email);
+
+            var userDto = user?.AsDto();
+            return userDto;
+        }
+
         public static UserDto UpdateUserEntity(RioDbContext dbContext, int userID, UserUpsertDto userEditDto)
         {
             if (!userEditDto.RoleID.HasValue)
@@ -82,6 +93,19 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID);
 
             user.RoleID = userEditDto.RoleID.Value;
+            user.UpdateDate = DateTime.UtcNow;
+
+            dbContext.SaveChanges();
+            dbContext.Entry(user).Reload();
+            return GetByUserID(dbContext, userID);
+        }
+
+        public static UserDto UpdateUserGuid(RioDbContext dbContext, int userID, Guid userGuid)
+        {
+            var user = dbContext.User
+                .Single(x => x.UserID == userID);
+
+            user.UserGuid = userGuid;
             user.UpdateDate = DateTime.UtcNow;
 
             dbContext.SaveChanges();

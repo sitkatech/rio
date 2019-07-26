@@ -4,10 +4,12 @@ import { RoleService } from 'src/app/services/role/role.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RoleDto } from 'src/app/shared/models/role/role-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
+import { forkJoin } from 'rxjs';
+import { UserInviteDto } from 'src/app/shared/models/user/user-invite-dto';
 
 
 
@@ -22,10 +24,12 @@ export class UserInviteComponent implements OnInit, OnDestroy {
     private currentUser: UserDto;
 
     public roles: Array<RoleDto>;
-    public model: any = {};
+    public model: UserInviteDto;
     public isLoadingSubmit: boolean = false;
 
-    constructor(private cdr: ChangeDetectorRef, private router: Router, private userService: UserService, private roleService: RoleService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
+    constructor(private cdr: ChangeDetectorRef, 
+        private route: ActivatedRoute,
+        private router: Router, private userService: UserService, private roleService: RoleService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
 
     ngOnInit(): void {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -34,6 +38,27 @@ export class UserInviteComponent implements OnInit, OnDestroy {
                 this.roles = result;
                 this.cdr.detectChanges();
             });
+
+            this.model = new UserInviteDto();
+
+            const userID = parseInt(this.route.snapshot.paramMap.get("userID"));
+            if (userID) {
+                forkJoin(
+                    this.userService.getUserFromUserID(userID)
+                ).subscribe(([user]) => {
+                    if(user.UserGuid === null)
+                    {
+                        let userToInvite = user instanceof Array
+                            ? null
+                            : user as UserDto;
+                        this.model.Email = userToInvite.Email;
+                        this.model.FirstName = userToInvite.FirstName;
+                        this.model.LastName = userToInvite.LastName;
+                        this.model.RoleID = userToInvite.Role.RoleID;
+                        this.cdr.detectChanges();
+                    }
+                });
+            }
         });
     }
 

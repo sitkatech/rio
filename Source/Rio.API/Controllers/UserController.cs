@@ -8,7 +8,6 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
@@ -83,9 +82,10 @@ namespace Rio.API.Controllers
             }
 
             var keystoneUser = response.Payload.Claims;
-            var existingUser = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, keystoneUser.UserGuid);
+            var existingUser = Rio.EFModels.Entities.User.GetByEmail(_dbContext, inviteDto.Email);
             if (existingUser != null)
             {
+                existingUser = Rio.EFModels.Entities.User.UpdateUserGuid(_dbContext, existingUser.UserID, keystoneUser.UserGuid);
                 return Ok(existingUser);
             }
 
