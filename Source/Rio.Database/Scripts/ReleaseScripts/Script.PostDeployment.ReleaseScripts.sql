@@ -19,3 +19,6 @@ GO
 
 :r ".\0003 - PMET_Import.sql"
 GO
+
+:r ".\0004 - Adding User Parcels part two.sql"
+GO

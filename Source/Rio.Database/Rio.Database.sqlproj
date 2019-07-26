@@ -90,6 +90,7 @@
     <None Include="Scripts\LookupTables\dbo.TradeStatus.sql" />
     <Build Include="dbo\Tables\dbo.TradeStatus.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransfer.sql" />
+    <None Include="Scripts\ReleaseScripts\0004 - Adding User Parcels part two.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />
