@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
@@ -44,8 +45,11 @@ namespace Rio.API
                     }
                 });
 
+            services.Configure<RioConfiguration>(Configuration);
 
-            var keystoneHost = Configuration["KEYSTONE_HOST"];
+            var rioConfiguration = services.BuildServiceProvider().GetService<IOptions<RioConfiguration>>().Value;
+
+            var keystoneHost = rioConfiguration.KEYSTONE_HOST;
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme).AddIdentityServerAuthentication(options =>
             {
                 options.Authority = keystoneHost;
@@ -55,7 +59,7 @@ namespace Rio.API
                 options.SupportedTokens = SupportedTokens.Jwt;
             });
 
-            var connectionString = Configuration["RIO_DB_CONNECTION_STRING"];
+            var connectionString = rioConfiguration.RIO_DB_CONNECTION_STRING;
             services.AddDbContext<RioDbContext>(c => { c.UseSqlServer(connectionString, x => x.UseNetTopologySuite()); });
 
             services.AddSingleton(Configuration);
@@ -63,6 +67,7 @@ namespace Rio.API
 
             services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost.Replace("core", "")));
 
+            services.AddTransient(x => new SitkaSmtpClientService(rioConfiguration));
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));

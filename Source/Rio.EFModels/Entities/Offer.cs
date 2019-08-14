@@ -12,7 +12,7 @@ namespace Rio.EFModels.Entities
         {
             if (!offerUpsertDto.TradeID.HasValue)
             {
-                var trade = Entities.Trade.CreateNew(dbContext, postingID, userID);
+                var trade = Trade.CreateNew(dbContext, postingID, userID);
                 offerUpsertDto.TradeID = trade.TradeID;
             }
 
