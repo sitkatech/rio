@@ -28,6 +28,7 @@ import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/pa
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { AuthenticationService } from './services/authentication.service';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
+import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TradeDetailComponent } from './pages/trade-detail/trade-detail.componen
     ParcelEditAllocationComponent,
     LandownerDashboardComponent,
     TradeDetailComponent,
+    ConfirmTransferComponent,
   ],
   imports: [
     AppRoutingModule,
