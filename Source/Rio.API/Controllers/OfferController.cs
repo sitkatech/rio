@@ -92,120 +92,24 @@ namespace Rio.API.Controllers
                 var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
                 // write a water transfer record
                 WaterTransfer.CreateNew(_dbContext, offer, tradeDto, postingDto);
-                var messageBody = $@"Your offer to trade water has been accepted.
-<ul>
-    <li><strong>Buyer:</strong> {buyer.FullName} ({buyer.Email})</li>
-    <li><strong>Seller:</strong> {seller.FullName} ({seller.Email})</li>
-    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
-    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
-    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
-</ul>
-To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
-<br /><br />
-<a href=""{rioUrl}/confirm-transfer/{currentTrade.TradeID}"">Confirm Transfer</a>
-<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
-<br /><br />
-***
-<br /><br />
-You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
-<br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
-                var mailMessage = new MailMessage
-                { 
-                    IsBodyHtml = true,
-                    Subject = "Trade Accepted",
-                    Body = messageBody,
-                    From = new MailAddress("AppAlerts-LT@sitkatech.com", "")
-                };
-                mailMessage.To.Add(new MailAddress(buyer.Email, buyer.FullName));
-                mailMessage.To.Add(new MailAddress(seller.Email, seller.FullName));
+                var mailMessage = GenerateAcceptedOfferEmail(buyer, seller, offer, rioUrl, currentTrade);
                 smtpClient.Send(mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
-                var messageBody = $@"Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
-<br /><br />
-<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
-<br /><br />
-***
-<br /><br />
-You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
-<br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
-                var toUser = offer.CreateUser.UserID == postingDto.CreateUser.UserID ? currentTrade.CreateUser : offer.CreateUser;
-                var mailMessage = new MailMessage
-                {
-                    IsBodyHtml = true,
-                    Subject = "Trade Rejected",
-                    Body = messageBody,
-                    From = new MailAddress("AppAlerts-LT@sitkatech.com", "")
-                };
-                mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+                var mailMessage = GenerateRejectedOfferEmail(offerAction, rioUrl, offer, postingDto);
                 smtpClient.Send(mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
-                var messageBody = $@"An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
-<br /><br />
-<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
-<br /><br />
-***
-<br /><br />
-You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
-<br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
-                var toUser = offer.CreateUser.UserID == postingDto.CreateUser.UserID ? currentTrade.CreateUser : offer.CreateUser;
-                var mailMessage = new MailMessage
-                {
-                    IsBodyHtml = true,
-                    Subject = "Trade Rescinded",
-                    Body = messageBody,
-                    From = new MailAddress("AppAlerts-LT@sitkatech.com", "")
-                };
-                mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+                var mailMessage = GenerateRescindedOfferEmail(offerAction, rioUrl, offer, postingDto);
                 smtpClient.Send(mailMessage);
             }
             else
             {
-                var messageBody = $@"An offer to {offerAction} water has presented for you to review. 
-<br /><br />
-<a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
-<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
-<br /><br />
-***
-<br /><br />
-You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
-<br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
-                var toUser = offer.CreateUser.UserID == postingDto.CreateUser.UserID ? currentTrade.CreateUser : offer.CreateUser;
-                var mailMessage = new MailMessage
-                {
-                    IsBodyHtml = true,
-                    Subject = "New offer to review",
-                    Body = messageBody,
-                    From = new MailAddress("AppAlerts-LT@sitkatech.com", "")
-                };
-                mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+                var mailMessage = GeneratePendingOfferEmail(offerAction, rioUrl, currentTrade, offer, postingDto);
                 smtpClient.Send(mailMessage);
             }
 
@@ -236,6 +140,113 @@ Phone: (661) 589-6045<br />
                 new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, postingDto.Quantity - acreFeetOfAcceptedTrades);
 
             return Ok(offer);
+        }
+
+        private static MailMessage GenerateAcceptedOfferEmail(UserSimpleDto buyer, UserSimpleDto seller, OfferDto offer,
+            string rioUrl, TradeDto currentTrade)
+        {
+            var messageBody = $@"Your offer to trade water has been accepted.
+<ul>
+    <li><strong>Buyer:</strong> {buyer.FullName} ({buyer.Email})</li>
+    <li><strong>Seller:</strong> {seller.FullName} ({seller.Email})</li>
+    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
+    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
+    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
+</ul>
+To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
+<br /><br />
+<a href=""{rioUrl}/confirm-transfer/{currentTrade.TradeID}"">Confirm Transfer</a>
+{GetDefaultEmailSignature()}";
+            var mailMessage = new MailMessage
+            {
+                IsBodyHtml = true,
+                Subject = "Trade Accepted",
+                Body = messageBody,
+                From = GetDefaultEmailFrom()
+            };
+            mailMessage.To.Add(new MailAddress(buyer.Email, buyer.FullName));
+            mailMessage.To.Add(new MailAddress(seller.Email, seller.FullName));
+            return mailMessage;
+        }
+
+        private static MailMessage GenerateRejectedOfferEmail(string offerAction, string rioUrl, OfferDto offer,
+            PostingDto posting)
+        {
+            var messageBody =
+                $@"Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+<br /><br />
+<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
+{GetDefaultEmailSignature()}";
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var mailMessage = new MailMessage
+            {
+                IsBodyHtml = true,
+                Subject = "Trade Rejected",
+                Body = messageBody,
+                From = GetDefaultEmailFrom()
+            };
+            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            return mailMessage;
+        }
+
+        private static MailMessage GenerateRescindedOfferEmail(string offerAction, string rioUrl, OfferDto offer,
+            PostingDto posting)
+        {
+            var messageBody =
+                $@"An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+<br /><br />
+<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
+{GetDefaultEmailSignature()}";
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var mailMessage = new MailMessage
+            {
+                IsBodyHtml = true,
+                Subject = "Trade Rescinded",
+                Body = messageBody,
+                From = GetDefaultEmailFrom()
+            };
+            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            return mailMessage;
+        }
+
+        private static MailMessage GeneratePendingOfferEmail(string offerAction, string rioUrl, TradeDto currentTrade,
+            OfferDto offer, PostingDto posting)
+        {
+            var messageBody = $@"An offer to {offerAction} water has presented for you to review. 
+<br /><br />
+<a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
+{GetDefaultEmailSignature()}";
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var mailMessage = new MailMessage
+            {
+                IsBodyHtml = true,
+                Subject = "New offer to review",
+                Body = messageBody,
+                From = GetDefaultEmailFrom()
+            };
+            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            return mailMessage;
+        }
+
+        private static string GetDefaultEmailSignature()
+        {
+            const string defaultEmailSignature = @"<br /><br />
+Respectfully, the RRB WSD Water Trading Platform team
+<br /><br />
+***
+<br /><br />
+You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
+<br /><br />
+P.O. Box 20820<br />
+Bakersfield, CA 93390-0820<br />
+Phone: (661) 589-6045<br />
+<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
+            return defaultEmailSignature;
+        }
+
+        private static MailAddress GetDefaultEmailFrom()
+        {
+            return new MailAddress("AppAlerts-LT@sitkatech.com", "RRB Water Trading Platform");
         }
 
         [HttpGet("current-user-active-offers/{postingID}")]
