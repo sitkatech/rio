@@ -34,13 +34,13 @@ namespace Rio.API.Controllers
         [RequiresValidJSONBodyFilter("Could not parse a valid Offer New JSON object from the Request Body.")]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
-            var postingDto = Posting.GetByPostingID(_dbContext, postingID);
+            var posting = Posting.GetByPostingID(_dbContext, postingID);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if ((postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell) && (postingDto.AvailableQuantity < offerUpsertDto.Quantity))
+            if ((posting.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell) && (posting.AvailableQuantity < offerUpsertDto.Quantity))
             {
                 ModelState.AddModelError("Quantity", "Exceeds remaining balance in posting");
                 return BadRequest(ModelState);
@@ -50,40 +50,6 @@ namespace Rio.API.Controllers
             var offer = Offer.CreateNew(_dbContext, postingID, userDto.UserID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var currentTrade = Trade.GetByTradeID(_dbContext, offer.TradeID);
-            string offerAction;
-            UserSimpleDto buyer;
-            UserSimpleDto seller;
-            if (currentTrade.CreateUser.UserID == offer.CreateUser.UserID)
-            {
-                if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = postingDto.CreateUser;
-                    seller = offer.CreateUser;
-                    offerAction = "sell";
-                }
-                else
-                {
-                    buyer = offer.CreateUser;
-                    seller = postingDto.CreateUser;
-                    offerAction = "buy";
-                }
-            }
-            else
-            {
-                if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToBuy)
-                {
-                    seller = postingDto.CreateUser;
-                    buyer = offer.CreateUser;
-                    offerAction = "buy";
-                }
-                else
-                {
-                    seller = postingDto.CreateUser;
-                    buyer = offer.CreateUser;
-                    offerAction = "sell";
-                }
-            }
-
             var rioUrl = _rioWebUrl;
 
             // update trades status if needed
@@ -91,36 +57,36 @@ namespace Rio.API.Controllers
             {
                 var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
                 // write a water transfer record
-                WaterTransfer.CreateNew(_dbContext, offer, tradeDto, postingDto);
-                var mailMessage = GenerateAcceptedOfferEmail(buyer, seller, offer, rioUrl, currentTrade);
+                WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
+                var mailMessage = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting);
                 smtpClient.Send(mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
-                var mailMessage = GenerateRejectedOfferEmail(offerAction, rioUrl, offer, postingDto);
+                var mailMessage = GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting);
                 smtpClient.Send(mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
-                var mailMessage = GenerateRescindedOfferEmail(offerAction, rioUrl, offer, postingDto);
+                var mailMessage = GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting);
                 smtpClient.Send(mailMessage);
             }
             else
             {
-                var mailMessage = GeneratePendingOfferEmail(offerAction, rioUrl, currentTrade, offer, postingDto);
+                var mailMessage = GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting);
                 smtpClient.Send(mailMessage);
             }
 
             // get current balance of posting
             var acreFeetOfAcceptedTrades = Posting.CalculateAcreFeetOfAcceptedTrades(_dbContext, postingID);
             var postingStatusToUpdateTo = (int) PostingStatusEnum.Open;
-            if (postingDto.Quantity == acreFeetOfAcceptedTrades)
+            if (posting.Quantity == acreFeetOfAcceptedTrades)
             {
                 postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
-                var postingCreateUserID = postingDto.CreateUser.UserID;
+                var postingCreateUserID = posting.CreateUser.UserID;
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
@@ -137,14 +103,42 @@ namespace Rio.API.Controllers
                 }
             }
             Posting.UpdateStatus(_dbContext, postingID,
-                new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, postingDto.Quantity - acreFeetOfAcceptedTrades);
+                new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, posting.Quantity - acreFeetOfAcceptedTrades);
 
             return Ok(offer);
         }
 
-        private static MailMessage GenerateAcceptedOfferEmail(UserSimpleDto buyer, UserSimpleDto seller, OfferDto offer,
-            string rioUrl, TradeDto currentTrade)
+        private static MailMessage GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer, TradeDto currentTrade, PostingDto posting)
         {
+            UserSimpleDto buyer;
+            UserSimpleDto seller;
+            if (currentTrade.CreateUser.UserID == posting.CreateUser.UserID)
+            {
+                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
+                {
+                    buyer = posting.CreateUser;
+                    seller = currentTrade.CreateUser;
+                }
+                else
+                {
+                    buyer = currentTrade.CreateUser;
+                    seller = posting.CreateUser;
+                }
+            }
+            else
+            {
+                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
+                {
+                    buyer = posting.CreateUser;
+                    seller = currentTrade.CreateUser;
+                }
+                else
+                {
+                    buyer = currentTrade.CreateUser;
+                    seller = posting.CreateUser;
+                }
+            }
+
             var messageBody = $@"Your offer to trade water has been accepted.
 <ul>
     <li><strong>Buyer:</strong> {buyer.FullName} ({buyer.Email})</li>
@@ -169,15 +163,20 @@ To finalize this transaction, the buyer and seller must complete payment and any
             return mailMessage;
         }
 
-        private static MailMessage GenerateRejectedOfferEmail(string offerAction, string rioUrl, OfferDto offer,
+        private static MailMessage GenerateRejectedOfferEmail(string rioUrl, OfferDto offer,
+            TradeDto currentTrade,
             PostingDto posting)
         {
+            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+                ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell"
+                : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy";
+
             var messageBody =
                 $@"Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
                 IsBodyHtml = true,
@@ -189,15 +188,20 @@ To finalize this transaction, the buyer and seller must complete payment and any
             return mailMessage;
         }
 
-        private static MailMessage GenerateRescindedOfferEmail(string offerAction, string rioUrl, OfferDto offer,
+        private static MailMessage GenerateRescindedOfferEmail(string rioUrl, OfferDto offer,
+            TradeDto currentTrade,
             PostingDto posting)
         {
+            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+                ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
+                : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
+
             var messageBody =
                 $@"An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
                 IsBodyHtml = true,
@@ -209,14 +213,18 @@ To finalize this transaction, the buyer and seller must complete payment and any
             return mailMessage;
         }
 
-        private static MailMessage GeneratePendingOfferEmail(string offerAction, string rioUrl, TradeDto currentTrade,
+        private static MailMessage GeneratePendingOfferEmail(string rioUrl, TradeDto currentTrade,
             OfferDto offer, PostingDto posting)
         {
+            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+                ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
+                : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
+
             var messageBody = $@"An offer to {offerAction} water has presented for you to review. 
 <br /><br />
 <a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? offer.CreateUser : posting.CreateUser;
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
                 IsBodyHtml = true,
