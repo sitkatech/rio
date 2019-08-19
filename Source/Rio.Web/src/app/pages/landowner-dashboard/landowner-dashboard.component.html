@@ -52,22 +52,23 @@
                 <span *ngIf="!showPurchasedDetails" class="fas fa-plus"></span>
                 <span *ngIf="showPurchasedDetails" class="fas fa-minus"></span>
               </a>
-              Purchased</dt>
+              Purchased
+            </dt>
             <dd class="col-sm-6 col-xs-12">
               <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
               <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
             </dd>
 
             <ng-template ngFor let-waterTransfer [ngForOf]="getPurchasedWaterTransfersForWaterYear()" *ngIf="showPurchasedDetails">
-            <dd class="text-sm-right col-sm-6 col-xs-12">{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
-            <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
+              <dd class="text-sm-right col-sm-6 col-xs-12"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
+              <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
             </ng-template>
 
             <dt class="text-sm-right col-sm-6 col-xs-12">
               <a style="cursor: pointer" class="collapsed" (click)="showSoldDetails = !showSoldDetails" *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
                 <span *ngIf="!showSoldDetails" class="fas fa-plus"></span>
                 <span *ngIf="showSoldDetails" class="fas fa-minus"></span>
-              </a>    
+              </a>
               Sold
             </dt>
             <dd class="col-sm-6 col-xs-12">
@@ -76,10 +77,11 @@
             </dd>
 
             <ng-template ngFor let-waterTransfer [ngForOf]="getSoldWaterTransfersForWaterYear()" *ngIf="showSoldDetails">
-                <dd class="text-sm-right col-sm-6 col-xs-12">{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
-                <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
-            </ng-template>    
+              <dd class="text-sm-right col-sm-6 col-xs-12"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
+              <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
+            </ng-template>            
           </dl>
+          <p class="systemText" *ngIf="showSoldDetails || showPurchasedDetails">* denotes a pending transaction</p>
           <hr />
           <dl class="row">
             <dt class="text-sm-right col-sm-6 col-xs-12">

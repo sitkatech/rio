@@ -237,6 +237,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getWaterTransfersForWaterYear().filter(x => x.ReceivingUser.UserID === this.currentUser.UserID);
   }
 
+  public isWaterTransferPending(waterTransfer : WaterTransferDto) {
+    return true;
+  }
+
   public getPurchasedAcreFeet(): number {
     const waterTransfersForWaterYear = this.getPurchasedWaterTransfersForWaterYear();
     if (waterTransfersForWaterYear.length > 0) {

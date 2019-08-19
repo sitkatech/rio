@@ -8,6 +8,8 @@ export class WaterTransferDto {
     TransferringUser: UserSimpleDto;
     ReceivingUser: UserSimpleDto;
     Notes: string;
+    ConfirmedByReceivingUser: boolean;
+    ConfirmedByTransferringUser: boolean;
 
     constructor(obj?: any) {
         Object.assign(this, obj);
