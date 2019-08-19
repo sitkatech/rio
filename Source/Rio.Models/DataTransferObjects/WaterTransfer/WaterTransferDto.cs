@@ -11,6 +11,8 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public decimal? AcreFeetTransferred { get; set; }
         public UserSimpleDto TransferringUser { get; set; }
         public UserSimpleDto ReceivingUser { get; set; }
+        public bool ConfirmedByTransferringUser { get; set; }
+        public bool ConfirmedByReceivingUser { get; set; }
         public string Notes { get; set; }
     }
 }

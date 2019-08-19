@@ -58,25 +58,28 @@ namespace Rio.API.Controllers
                 var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
                 // write a water transfer record
                 WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
-                var mailMessage = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting);
-                smtpClient.Send(mailMessage);
+                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting);
+                foreach (var mailMessage in mailMessages)
+                {
+                    SendEmailMessage(smtpClient, mailMessage);
+                }
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
                 var mailMessage = GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting);
-                smtpClient.Send(mailMessage);
+                SendEmailMessage(smtpClient, mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
                 var mailMessage = GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting);
-                smtpClient.Send(mailMessage);
+                SendEmailMessage(smtpClient, mailMessage);
             }
             else
             {
                 var mailMessage = GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting);
-                smtpClient.Send(mailMessage);
+                SendEmailMessage(smtpClient, mailMessage);
             }
 
             // get current balance of posting
@@ -108,7 +111,16 @@ namespace Rio.API.Controllers
             return Ok(offer);
         }
 
-        private static MailMessage GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer, TradeDto currentTrade, PostingDto posting)
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        {
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = GetDefaultEmailFrom();
+            AddReplyToEmail(mailMessage);
+            AddAdminsAsBccRecipientsToEmail(mailMessage);
+            smtpClient.Send(mailMessage);
+        }
+
+        private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer, TradeDto currentTrade, PostingDto posting)
         {
             UserSimpleDto buyer;
             UserSimpleDto seller;
@@ -139,6 +151,7 @@ namespace Rio.API.Controllers
                 }
             }
 
+            var mailMessages = new List<MailMessage>();
             var messageBody = $@"Your offer to trade water has been accepted.
 <ul>
     <li><strong>Buyer:</strong> {buyer.FullName} ({buyer.Email})</li>
@@ -151,16 +164,18 @@ To finalize this transaction, the buyer and seller must complete payment and any
 <br /><br />
 <a href=""{rioUrl}/confirm-transfer/{currentTrade.TradeID}"">Confirm Transfer</a>
 {GetDefaultEmailSignature()}";
-            var mailMessage = new MailMessage
+            var mailTos = new List<UserSimpleDto> {buyer, seller};
+            foreach (var mailTo in mailTos)
             {
-                IsBodyHtml = true,
-                Subject = "Trade Accepted",
-                Body = messageBody,
-                From = GetDefaultEmailFrom()
-            };
-            mailMessage.To.Add(new MailAddress(buyer.Email, buyer.FullName));
-            mailMessage.To.Add(new MailAddress(seller.Email, seller.FullName));
-            return mailMessage;
+                var mailMessage = new MailMessage
+                {
+                    Subject = "Trade Accepted",
+                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                };
+                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+                mailMessages.Add(mailMessage);
+            }
+            return mailMessages;
         }
 
         private static MailMessage GenerateRejectedOfferEmail(string rioUrl, OfferDto offer,
@@ -171,18 +186,19 @@ To finalize this transaction, the buyer and seller must complete payment and any
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy";
 
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var messageBody =
-                $@"Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+                $@"
+Hello {toUser.FullName},
+<br /><br />
+Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
-                IsBodyHtml = true,
                 Subject = "Trade Rejected",
-                Body = messageBody,
-                From = GetDefaultEmailFrom()
+                Body = messageBody
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
             return mailMessage;
@@ -196,18 +212,19 @@ To finalize this transaction, the buyer and seller must complete payment and any
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
 
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var messageBody =
-                $@"An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+                $@"
+Hello {toUser.FullName},
+<br /><br />
+An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
-                IsBodyHtml = true,
                 Subject = "Trade Rescinded",
-                Body = messageBody,
-                From = GetDefaultEmailFrom()
+                Body = messageBody
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
             return mailMessage;
@@ -219,21 +236,36 @@ To finalize this transaction, the buyer and seller must complete payment and any
             var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
-
-            var messageBody = $@"An offer to {offerAction} water has presented for you to review. 
+            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
+            var messageBody =
+                $@"
+Hello {toUser.FullName},
+<br /><br />
+An offer to {offerAction} water has been presented for your review. 
 <br /><br />
 <a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
 {GetDefaultEmailSignature()}";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
             var mailMessage = new MailMessage
             {
-                IsBodyHtml = true,
                 Subject = "New offer to review",
-                Body = messageBody,
-                From = GetDefaultEmailFrom()
+                Body = messageBody
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
             return mailMessage;
+        }
+
+        private static void AddReplyToEmail(MailMessage mailMessage)
+        {
+            mailMessage.ReplyToList.Add("admin@rrbwsd.com");
+        }
+
+        private void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage)
+        {
+            var admins = Rio.EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin);
+            foreach (var admin in admins)
+            {
+                mailMessage.Bcc.Add(admin.Email);
+            }
         }
 
         private static string GetDefaultEmailSignature()
@@ -243,7 +275,7 @@ Respectfully, the RRB WSD Water Trading Platform team
 <br /><br />
 ***
 <br /><br />
-You have received this email because you are a registered user of the Water Trading Platform within the Rosedale-Rio Bravo Water Storage District. 
+You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Trading Platform. 
 <br /><br />
 P.O. Box 20820<br />
 Bakersfield, CA 93390-0820<br />
@@ -254,7 +286,7 @@ Phone: (661) 589-6045<br />
 
         private static MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress("AppAlerts-LT@sitkatech.com", "RRB Water Trading Platform");
+            return new MailAddress("donotreply@sitkatech.com", "RRB Water Trading Platform");
         }
 
         [HttpGet("current-user-active-offers/{postingID}")]

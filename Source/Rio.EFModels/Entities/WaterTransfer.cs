@@ -15,7 +15,10 @@ namespace Rio.EFModels.Entities
             {
                 OfferID = offerDto.OfferID,
                 AcreFeetTransferred = offerDto.Quantity,
-                TransferDate = offerDto.OfferDate
+                TransferDate = offerDto.OfferDate,
+                ConfirmedByReceivingUser = false,
+                ConfirmedByTransferringUser = false
+                
             };
 
             if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell)

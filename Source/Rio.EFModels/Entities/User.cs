@@ -41,7 +41,20 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Role)
                 .AsNoTracking()
                 .Where(x => x.IsActive)
-                .OrderBy(x => x.Role.RoleID).ThenBy(x => x.FirstName).ThenBy(x => x.LastName)
+                .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
+                .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return users;
+        }
+
+        public static IEnumerable<UserDto> ListByRole(RioDbContext dbContext, RoleEnum roleEnum)
+        {
+            var users = dbContext.User
+                .Include(x => x.Role)
+                .AsNoTracking()
+                .Where(x => x.IsActive && x.RoleID == (int) roleEnum)
+                .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
 

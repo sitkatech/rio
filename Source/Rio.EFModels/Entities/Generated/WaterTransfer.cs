@@ -17,6 +17,8 @@ namespace Rio.EFModels.Entities
         public int? OfferID { get; set; }
         [StringLength(2000)]
         public string Notes { get; set; }
+        public bool ConfirmedByTransferringUser { get; set; }
+        public bool ConfirmedByReceivingUser { get; set; }
 
         [ForeignKey("OfferID")]
         [InverseProperty("WaterTransfer")]

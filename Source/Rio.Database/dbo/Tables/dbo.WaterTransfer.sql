@@ -6,6 +6,8 @@
     TransferringUserID int not null constraint FK_WaterTransfer_User_TransferringUserID_UserID foreign key references dbo.[User](UserID),
     ReceivingUserID int not null constraint FK_WaterTransfer_User_ReceivingUserID_UserID foreign key references dbo.[User](UserID),
     OfferID int null constraint FK_WaterTransfer_Offer_OfferID foreign key references dbo.Offer(OfferID),
-    Notes varchar(2000) null
+    Notes varchar(2000) null,
+    [ConfirmedByTransferringUser] bit not null,
+    [ConfirmedByReceivingUser] bit not null
 )
 GO

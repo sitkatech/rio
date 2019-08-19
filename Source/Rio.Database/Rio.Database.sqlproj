@@ -110,4 +110,7 @@
     <Build Include="dbo\Tables\dbo.UserParcel.sql" />
     <None Include="Scripts\ReleaseScripts\0002 - Associating Users to Parcels.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Rio.Database.refactorlog" />
+  </ItemGroup>
 </Project>

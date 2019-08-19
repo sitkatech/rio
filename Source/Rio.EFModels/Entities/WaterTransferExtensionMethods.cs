@@ -14,6 +14,8 @@ namespace Rio.EFModels.Entities
                 AcreFeetTransferred = waterTransfer.AcreFeetTransferred,
                 TransferringUser = waterTransfer.TransferringUser.AsSimpleDto(),
                 ReceivingUser = waterTransfer.ReceivingUser.AsSimpleDto(),
+                ConfirmedByTransferringUser = waterTransfer.ConfirmedByTransferringUser,
+                ConfirmedByReceivingUser = waterTransfer.ConfirmedByReceivingUser,
                 Notes = waterTransfer.Notes
             };
         }
