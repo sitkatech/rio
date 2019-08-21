@@ -8,6 +8,7 @@ namespace Rio.EFModels.Entities
         {
             return new WaterTransferDto()
             {
+                WaterTransferID = waterTransfer.WaterTransferID,
                 OfferID = waterTransfer.OfferID,
                 TransferDate = waterTransfer.TransferDate,
                 TransferYear = waterTransfer.TransferDate.Year,

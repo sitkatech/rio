@@ -11,6 +11,7 @@ using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
+using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
@@ -57,8 +58,8 @@ namespace Rio.API.Controllers
             {
                 var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
                 // write a water transfer record
-                WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
-                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting);
+                var waterTransfer = WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
+                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -120,7 +121,8 @@ namespace Rio.API.Controllers
             smtpClient.Send(mailMessage);
         }
 
-        private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer, TradeDto currentTrade, PostingDto posting)
+        private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer,
+            TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
         {
             UserSimpleDto buyer;
             UserSimpleDto seller;
@@ -162,7 +164,7 @@ namespace Rio.API.Controllers
 </ul>
 To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
 <br /><br />
-<a href=""{rioUrl}/confirm-transfer/{currentTrade.TradeID}"">Confirm Transfer</a>
+<a href=""{rioUrl}/confirm-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
 {GetDefaultEmailSignature()}";
             var mailTos = new List<UserSimpleDto> {buyer, seller};
             foreach (var mailTo in mailTos)

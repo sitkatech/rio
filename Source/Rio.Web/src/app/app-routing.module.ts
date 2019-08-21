@@ -22,7 +22,7 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "trades/:tradeID", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "confirm-transfer/:tradeID", component: ConfirmTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "confirm-transfer/:waterTransferID", component: ConfirmTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:id/edit", component: PostingEditComponent, canActivate: [UnauthenticatedAccessGuard] },

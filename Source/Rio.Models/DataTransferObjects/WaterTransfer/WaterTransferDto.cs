@@ -5,6 +5,7 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
 {
     public class WaterTransferDto
     {
+        public int WaterTransferID { get; set; }
         public int? OfferID { get; set; }
         public DateTime TransferDate { get; set; }
         public int TransferYear { get; set; }

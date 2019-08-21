@@ -1,72 +1,73 @@
-<nav aria-label="breadcrumb" *ngIf="trade">
+<nav aria-label="breadcrumb" *ngIf="waterTransfer">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item" aria-current="page">
-        <a routerLink="/trades">Buy and Sell Water</a>
-      </li>
-      <li class="breadcrumb-item active" aria-current="page">
-        Confirm Transfer
-      </li>
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/trades">Buy and Sell Water</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Confirm Transfer
+        </li>
     </ol>
-  </nav>
-  <div class="container mt-sm-4" *ngIf="trade">
+</nav>
+<div class="container mt-sm-4" *ngIf="waterTransfer">
     <h2 style="display: inline-block">
-      Confirm Transfer
+        Confirm Transfer
     </h2>
     <app-alert-display></app-alert-display>
     <div class="row mt-4">
-      <div class="col-sm-12 col-md-6">
-        <div class="card">
-          <div class="card-header">
-            Accepted Offer
-          </div>
-          <div class="card-body">
-            <dl class="row">
-              <dt class="text-sm-right col-sm-5 col-xs-12">Trade Date</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{mostRecentOffer.OfferDate | date:'short'}}
-              </dd>
-  
-              <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{mostRecentOffer.Quantity}} ac-ft
-              </dd>
-  
-              <dt class="text-sm-right col-sm-5 col-xs-12">Status</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{trade.TradeStatus.TradeStatusDisplayName}}
-              </dd>
-  
-              <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{mostRecentOffer.Price | currency: "USD" }} per ac-ft
-              </dd>
-  
-              <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{getTotalPrice(mostRecentOffer) | currency : "USD" }}
-              </dd>
-  
-              <dt class="text-sm-right col-sm-5 col-xs-12">Notes</dt>
-              <dd class="col-sm-7 col-xs-12">
-                {{mostRecentOffer.OfferNotes}}
-              </dd>
-            </dl>
-          </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Transfer Details
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Date</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{waterTransfer.TransferDate | date:'short'}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{waterTransfer.AcreFeetTransferred}} ac-ft
+                        </dd>
+                    </dl>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col-sm-12 col-md-6" *ngIf="isPostingOwner || isTradeOwner">
-        <div class="card" *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
-          <div class="card-header">
-            Your Actions
-          </div>
-          <div class="card-body" *ngIf="isTradeNotOpen()">
-            <p>Please confirm your transfer</p>
-          </div>
-  
-          <div class="card-body">
-              Coming Soon!
-          </div>  
+        <div class="col-sm-12 col-md-6" *ngIf="canConfirm()">
+            <div class="card" *ngIf="!isConfirmingTransfer">
+                <div class="card-header">
+                    Your Actions
+                </div>
+                <div class="card-body">
+                    <p>Please confirm your transfer</p>
+                </div>
+
+                <div class="card-body">
+                    <div class="text-center" *ngIf="!isConfirmingTransfer">
+                        <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm Transfer</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card" *ngIf="isConfirmingTransfer">
+                <div class="card-header">
+                    Confirm Your Transfer
+                </div>
+                <div class="card-body">
+                    <p>
+                    By clicking this button you confirm that all terms and conditions of the transfer have been met. By confirming transaction you are authorizing RRB WSD to transfer 
+                    {{waterTransfer.AcreFeetTransferred}} acre-feet of water according {{confirmAction}} your annual allocation. This action cannot be undone. Proceed?
+                    </p>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-sm mr-1" (click)="submitConfirmation()"
+                            [disabled]="isLoadingSubmit">
+                            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                            Confirm
+                        </button>
+                        <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>

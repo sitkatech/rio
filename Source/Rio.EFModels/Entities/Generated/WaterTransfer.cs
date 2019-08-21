@@ -19,6 +19,7 @@ namespace Rio.EFModels.Entities
         public string Notes { get; set; }
         public bool ConfirmedByTransferringUser { get; set; }
         public bool ConfirmedByReceivingUser { get; set; }
+        public int? TradeID { get; set; }
 
         [ForeignKey("OfferID")]
         [InverseProperty("WaterTransfer")]
@@ -26,6 +27,9 @@ namespace Rio.EFModels.Entities
         [ForeignKey("ReceivingUserID")]
         [InverseProperty("WaterTransferReceivingUser")]
         public virtual User ReceivingUser { get; set; }
+        [ForeignKey("TradeID")]
+        [InverseProperty("WaterTransfer")]
+        public virtual Trade Trade { get; set; }
         [ForeignKey("TransferringUserID")]
         [InverseProperty("WaterTransferTransferringUser")]
         public virtual User TransferringUser { get; set; }

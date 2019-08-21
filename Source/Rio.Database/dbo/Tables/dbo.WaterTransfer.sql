@@ -8,6 +8,7 @@
     OfferID int null constraint FK_WaterTransfer_Offer_OfferID foreign key references dbo.Offer(OfferID),
     Notes varchar(2000) null,
     [ConfirmedByTransferringUser] bit not null,
-    [ConfirmedByReceivingUser] bit not null
+    [ConfirmedByReceivingUser] bit not null, 
+    [TradeID] INT NULL constraint FK_WaterTransfer_Trade_TradeID foreign key references dbo.Trade(TradeID)
 )
 GO

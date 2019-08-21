@@ -26,7 +26,6 @@ import { PostingEditComponent } from './pages/posting-edit/posting-edit.componen
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
-import { AuthenticationService } from './services/authentication.service';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 

@@ -17,8 +17,8 @@ namespace Rio.EFModels.Entities
                 AcreFeetTransferred = offerDto.Quantity,
                 TransferDate = offerDto.OfferDate,
                 ConfirmedByReceivingUser = false,
-                ConfirmedByTransferringUser = false
-                
+                ConfirmedByTransferringUser = false,
+                TradeID = tradeDto.TradeID
             };
 
             if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
