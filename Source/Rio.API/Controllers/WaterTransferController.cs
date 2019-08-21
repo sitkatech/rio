@@ -35,5 +35,27 @@ namespace Rio.API.Controllers
 
             return Ok(waterTransferDto);
         }
+
+        [HttpPost("water-transfers/{waterTransferID}/confirm")]
+        [OfferManageFeature]
+        public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferConfirmDto waterTransferConfirmDto)
+        {
+            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            if (waterTransferDto == null)
+            {
+                return NotFound();
+            }
+
+            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferConfirmDto, waterTransferDto);
+            validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferConfirmDto);
+            return Ok(waterTransferDto);
+        }
     }
 }

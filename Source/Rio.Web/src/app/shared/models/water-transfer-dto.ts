@@ -1,6 +1,7 @@
 import { UserSimpleDto } from './user/user-simple-dto';
 
 export class WaterTransferDto {
+    WaterTransferID: number;
     OfferID: number;
     TransferDate: Date;
     TransferYear: number;

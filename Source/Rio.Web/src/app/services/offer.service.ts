@@ -29,5 +29,5 @@ export class OfferService {
     newOffer(postingID: number, offerNewDto: OfferUpsertDto): Observable<OfferDto>  {
       let route = `/offers/new/${postingID}`;
       return this.apiService.postToApi(route, offerNewDto);
-  }
+    }
 }

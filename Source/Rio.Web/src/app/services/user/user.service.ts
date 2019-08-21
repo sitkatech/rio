@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { WaterTransferDto } from 'src/app/shared/models/water-year-transaction-dto';
+import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 
 @Injectable({
     providedIn: 'root'

@@ -86,8 +86,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.TradeID == tradeID);
 
-            var tradeDto = trade?.AsDto();
-            return tradeDto;
+            return trade?.AsDto();
         }
 
         public static TradeDto Update(RioDbContext dbContext, int tradeID, TradeStatusEnum tradeStatusEnum)
@@ -100,13 +99,6 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(trade).Reload();
             return GetByTradeID(dbContext, tradeID);
-        }
-
-        public static void Delete(RioDbContext dbContext, int tradeID)
-        {
-            var trade = dbContext.Trade
-                .Single(x => x.TradeID == tradeID);
-            dbContext.Trade.Remove(trade);
         }
     }
 }

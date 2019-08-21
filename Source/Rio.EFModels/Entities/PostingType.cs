@@ -18,11 +18,11 @@ namespace Rio.EFModels.Entities
 
         public static PostingTypeDto GetByPostingTypeID(RioDbContext dbContext, int postingTypeID)
         {
-            var role = dbContext.PostingType
+            var postingType = dbContext.PostingType
                 .AsNoTracking()
                 .SingleOrDefault(x => x.PostingTypeID == postingTypeID);
 
-            return role?.AsDto();
+            return postingType?.AsDto();
         }
     }
 

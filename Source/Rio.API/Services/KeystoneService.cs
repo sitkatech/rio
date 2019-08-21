@@ -115,7 +115,7 @@ namespace Rio.API.Services
 
             var content = new StringContent(JsonConvert.SerializeObject(inviteModel), Encoding.UTF8, "application/json");
             var response = client.PostAsync($"{_baseUrl}api/v1/invite", content).Result;
-            return ProcessRepsonse<KeystoneNewUserModel>(response);
+            return ProcessResponse<KeystoneNewUserModel>(response);
         }
 
         private HttpClient CreateClientWithAuthHeader()
@@ -136,7 +136,7 @@ namespace Rio.API.Services
 
             var response = client.GetAsync($"{_baseUrl}api/v1/profile").Result;
 
-            return ProcessRepsonse<KeystoneProfileModel>(response);
+            return ProcessResponse<KeystoneProfileModel>(response);
         }
 
         private static KeystoneApiResponse<T> ParseError<T>(HttpResponseMessage response)
@@ -154,7 +154,7 @@ namespace Rio.API.Services
             }
         }
 
-        private static KeystoneApiResponse<T> ProcessRepsonse<T>(HttpResponseMessage response)
+        private static KeystoneApiResponse<T> ProcessResponse<T>(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
             {

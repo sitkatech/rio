@@ -75,27 +75,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.OfferID == offerID);
 
-            var offerDto = offer?.AsDto();
-            return offerDto;
-        }
-
-        public static OfferDto Update(RioDbContext dbContext, int offerID, int offerStatusID)
-        {
-            var offer = dbContext.Offer
-                .Single(x => x.OfferID == offerID);
-
-            offer.OfferStatusID = offerStatusID;
-
-            dbContext.SaveChanges();
-            dbContext.Entry(offer).Reload();
-            return GetByOfferID(dbContext, offerID);
-        }
-
-        public static void Delete(RioDbContext dbContext, int offerID)
-        {
-            var offer = dbContext.Offer
-                .Single(x => x.OfferID == offerID);
-            dbContext.Offer.Remove(offer);
+            return offer?.AsDto();
         }
     }
 }

@@ -82,10 +82,10 @@ namespace Rio.API.Controllers
             }
 
             var keystoneUser = response.Payload.Claims;
-            var existingUser = Rio.EFModels.Entities.User.GetByEmail(_dbContext, inviteDto.Email);
+            var existingUser = EFModels.Entities.User.GetByEmail(_dbContext, inviteDto.Email);
             if (existingUser != null)
             {
-                existingUser = Rio.EFModels.Entities.User.UpdateUserGuid(_dbContext, existingUser.UserID, keystoneUser.UserGuid);
+                existingUser = EFModels.Entities.User.UpdateUserGuid(_dbContext, existingUser.UserID, keystoneUser.UserGuid);
                 return Ok(existingUser);
             }
 
@@ -107,7 +107,7 @@ namespace Rio.API.Controllers
         [UserManageFeature]
         public ActionResult<IEnumerable<UserDto>> List()
         {
-            var userDtos = Rio.EFModels.Entities.User.List(_dbContext);
+            var userDtos = EFModels.Entities.User.List(_dbContext);
             return Ok(userDtos);
         }
 
@@ -115,7 +115,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<UserDto> GetByUserID([FromRoute] int userID)
         {
-            var userDto = Rio.EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
             if (userDto == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace Rio.API.Controllers
         [RequiresValidJSONBodyFilter("Could not parse a valid User Upsert JSON object from the Request Body.")]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
         {
-            var userDto = Rio.EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
             if (userDto == null)
             {
                 return NotFound();

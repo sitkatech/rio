@@ -27,16 +27,5 @@ namespace Rio.EFModels.Entities
                 ? parcelMonthlyEvapotranspirations.Select(x => x.AsDto()).ToList()
                 : new List<ParcelMonthlyEvapotranspirationDto>();
         }
-
-        public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelIDAndWaterYear(RioDbContext dbContext, int parcelID, int waterYear)
-        {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration
-                .AsNoTracking()
-                .Where(x => x.ParcelID == parcelID && x.WaterYear == waterYear);
-
-            return parcelMonthlyEvapotranspirations.Any()
-                ? parcelMonthlyEvapotranspirations.Select(x => x.AsDto()).ToList()
-                : new List<ParcelMonthlyEvapotranspirationDto>();
-        }
     }
 }

@@ -82,8 +82,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.PostingID == postingID);
 
-            var postingDto = posting?.AsDto();
-            return postingDto;
+            return posting?.AsDto();
         }
 
         public static PostingDto Update(RioDbContext dbContext, int postingID, PostingUpsertDto postingUpsertDto)
@@ -116,6 +115,7 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(posting).Reload();
             return GetByPostingID(dbContext, postingID);
         }
+
         public static int CalculateAcreFeetOfAcceptedTrades(RioDbContext dbContext, int postingID)
         {
             var acceptedTrades = dbContext.Trade

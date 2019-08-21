@@ -68,8 +68,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.UserID == userID);
 
-            var userDto = user?.AsDto();
-            return userDto;
+            return user?.AsDto();
         }
 
         public static UserDto GetByUserGuid(RioDbContext dbContext, Guid userGuid)
@@ -79,8 +78,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.UserGuid == userGuid);
 
-            var userDto = user?.AsDto();
-            return userDto;
+            return user?.AsDto();
         }
 
         public static UserDto GetByEmail(RioDbContext dbContext, string email)
@@ -90,8 +88,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.Email == email);
 
-            var userDto = user?.AsDto();
-            return userDto;
+            return user?.AsDto();
         }
 
         public static UserDto UpdateUserEntity(RioDbContext dbContext, int userID, UserUpsertDto userEditDto)

@@ -52,22 +52,5 @@ namespace Rio.EFModels.Entities
                 ? parcelAllocations.Select(x => x.AsDto()).ToList()
                 : new List<ParcelAllocationDto>();
         }
-
-        public static ParcelAllocationDto GetByParcelIDAndWaterYear(RioDbContext dbContext, int parcelID, int waterYear)
-        {
-            var parcelAllocation = dbContext.ParcelAllocation
-                .AsNoTracking()
-                .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == waterYear);
-
-            var parcelAllocationDto = parcelAllocation?.AsDto();
-            return parcelAllocationDto;
-        }
-
-        public static void Delete(RioDbContext dbContext, int parcelAllocationID)
-        {
-            var parcelAllocation = dbContext.ParcelAllocation
-                .Single(x => x.ParcelAllocationID == parcelAllocationID);
-            dbContext.ParcelAllocation.Remove(parcelAllocation);
-        }
     }
 }

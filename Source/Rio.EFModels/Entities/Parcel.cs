@@ -47,18 +47,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
-            var parcelDto = parcel?.AsDto();
-            return parcelDto;
-        }
-
-        public static ParcelDto GetByParcelNumber(RioDbContext dbContext, string parcelNumber)
-        {
-            var parcel = dbContext.Parcel
-                .AsNoTracking()
-                .SingleOrDefault(x => x.ParcelNumber == parcelNumber);
-
-            var parcelDto = parcel?.AsDto();
-            return parcelDto;
+            return parcel?.AsDto();
         }
 
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)

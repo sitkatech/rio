@@ -168,7 +168,6 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         this.isLoadingSubmit = false;
         this.router.navigateByUrl("/landowner-dashboard")
           .then(() => {
-            this.getData(this.trade.TradeID);
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });
       }
