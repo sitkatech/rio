@@ -238,7 +238,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public isWaterTransferPending(waterTransfer : WaterTransferDto) {
-    return true;
+    return !waterTransfer.ConfirmedByReceivingUser || !waterTransfer.ConfirmedByTransferringUser;
   }
 
   public getPurchasedAcreFeet(): number {
