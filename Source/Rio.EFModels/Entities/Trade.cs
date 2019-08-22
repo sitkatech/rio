@@ -25,24 +25,6 @@ namespace Rio.EFModels.Entities
             return GetByTradeID(dbContext, trade.TradeID);
         }
 
-        public static IEnumerable<PostingWithTradesWithMostRecentOfferDto> GetTradeActivityForUserID(RioDbContext dbContext, int userID)
-        {
-            var offers = dbContext.Posting
-                .Include(x => x.Trade).ThenInclude(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.CreateUser)
-                .Include(x => x.CreateUser)
-                .Include(x => x.PostingType)
-                .Include(x => x.PostingStatus)
-                .AsNoTracking()
-                .Where(x => x.CreateUserID == userID || x.Trade.Any(y => y.CreateUserID == userID))
-                .OrderByDescending(x => x.PostingDate)
-                .Select(x => x.AsPostingWithTradesWithMostRecentOfferDto())
-                .AsEnumerable();
-
-            return offers;
-        }
-
         public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForUserID(RioDbContext dbContext, int userID)
         {
             var offers = dbContext.Trade

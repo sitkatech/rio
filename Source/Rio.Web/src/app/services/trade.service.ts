@@ -11,7 +11,7 @@ export class TradeService {
 
     constructor(private apiService: ApiService) { }
 
-    getActiveTradesForUser(userID: number): Observable<TradeWithMostRecentOfferDto[]> {
+    getTradeActivityForUser(userID: number): Observable<TradeWithMostRecentOfferDto[]> {
         let route = `/trade-activity/${userID}`;
         return this.apiService.getFromApi(route);
     }

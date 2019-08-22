@@ -267,7 +267,7 @@ An offer to {offerAction} water has been presented for your review.
 
         [HttpGet("trade-activity/{userID}")]
         [UserViewFeature]
-        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetActiveTradesForUser([FromRoute] int userID)
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForUser([FromRoute] int userID)
         {
             var tradeWithMostRecentOfferDtos = Trade.GetTradesForUserID(_dbContext, userID);
             return Ok(tradeWithMostRecentOfferDtos);

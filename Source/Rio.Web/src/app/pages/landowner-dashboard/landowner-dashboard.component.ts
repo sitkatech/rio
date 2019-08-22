@@ -75,7 +75,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       forkJoin(
         this.parcelService.getParcelAllocationAndConsumptionByUserID(userID),
         this.postingService.getPostingsByUserID(userID),
-        this.tradeService.getActiveTradesForUser(userID),
+        this.tradeService.getTradeActivityForUser(userID),
         this.userService.getWaterTransfersByUserID(userID),
       ).subscribe(([parcels, postings, trades, waterTransfers]) => {
         this.parcels = parcels;
@@ -149,6 +149,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
     return trade.OfferCreateUserID === this.currentUser.UserID;
+  }
+
+  public getTradeStatus(trade: TradeWithMostRecentOfferDto): string {
+    return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? "You " : "They ")+ trade.TradeStatus.TradeStatusDisplayName.toLowerCase();
   }
 
   public getTradeDescription(trade: TradeWithMostRecentOfferDto): string {
