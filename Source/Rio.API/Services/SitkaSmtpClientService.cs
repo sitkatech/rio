@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
+using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Services
 {
@@ -89,7 +90,7 @@ namespace Rio.API.Services
         private MailMessage AlterMessageIfInRedirectMode(MailMessage realMailMessage)
         {
             var redirectEmail = _rioConfiguration.SITKA_EMAIL_REDIRECT;
-            var isInRedirectMode = !string.IsNullOrWhiteSpace(redirectEmail);
+            var isInRedirectMode = !String.IsNullOrWhiteSpace(redirectEmail);
 
             if (!isInRedirectMode)
             {
@@ -111,7 +112,7 @@ namespace Rio.API.Services
             var separator = newline + "\t";
 
             var toExpected = addresses.Aggregate(String.Empty, (s, mailAddress) => s + Environment.NewLine + "\t" + mailAddress.ToString());
-            if (!string.IsNullOrWhiteSpace(toExpected))
+            if (!String.IsNullOrWhiteSpace(toExpected))
             {
                 var toAppend =
                     $"{newline}{separator}Actual {addressType}:{(realMailMessage.IsBodyHtml ? toExpected.HtmlEncodeWithBreaks() : toExpected)}";
@@ -153,7 +154,41 @@ Subject: {mm.Subject}
 
         private static string FlattenMailAddresses(IEnumerable<MailAddress> addresses)
         {
-            return string.Join("; ", addresses.Select(x => x.ToString()));
+            return String.Join("; ", addresses.Select(x => x.ToString()));
+        }
+
+        public static void AddReplyToEmail(MailMessage mailMessage)
+        {
+            mailMessage.ReplyToList.Add("admin@rrbwsd.com");
+        }
+
+        public static string GetDefaultEmailSignature()
+        {
+            const string defaultEmailSignature = @"<br /><br />
+Respectfully, the RRB WSD Water Trading Platform team
+<br /><br />
+***
+<br /><br />
+You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Trading Platform. 
+<br /><br />
+P.O. Box 20820<br />
+Bakersfield, CA 93390-0820<br />
+Phone: (661) 589-6045<br />
+<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
+            return defaultEmailSignature;
+        }
+
+        public static MailAddress GetDefaultEmailFrom()
+        {
+            return new MailAddress("donotreply@sitkatech.com", "RRB Water Trading Platform");
+        }
+
+        public static void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)
+        {
+            foreach (var admin in admins)
+            {
+                mailMessage.Bcc.Add(admin.Email);
+            }
         }
     }
 }

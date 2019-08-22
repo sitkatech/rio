@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net.Mail;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
@@ -55,7 +57,43 @@ namespace Rio.API.Controllers
             }
 
             WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferConfirmDto);
+
+            var mailMessage = GenerateConfirmTransferEmail(waterTransferDto, waterTransferConfirmDto.WaterTransferType);
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            SendEmailMessage(smtpClient, mailMessage);
             return Ok(waterTransferDto);
+        }
+
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        {
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            smtpClient.Send(mailMessage);
+        }
+
+        private static MailMessage GenerateConfirmTransferEmail(WaterTransferDto waterTransfer, int waterTransferType)
+        {
+            var receivingUser = waterTransfer.ReceivingUser;
+            var transferringUser = waterTransfer.TransferringUser;
+            var mailTo = waterTransferType == (int)WaterTransferTypeEnum.Receiving ? receivingUser : transferringUser;
+            var messageBody = $@"Hello {mailTo.FullName},<br /><br />
+You have confirmed the following transaction:
+<ul>
+    <li><strong>To:</strong> {receivingUser.FullName} ({receivingUser.Email})</li>
+    <li><strong>From:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
+    <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
+</ul>
+<br /><br />
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+            var mailMessage = new MailMessage
+            {
+                Subject = "Water Transfer Confirmed",
+                Body = messageBody
+            };
+            mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+            return mailMessage;
         }
     }
 }

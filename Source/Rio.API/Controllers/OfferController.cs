@@ -115,9 +115,9 @@ namespace Rio.API.Controllers
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = GetDefaultEmailFrom();
-            AddReplyToEmail(mailMessage);
-            AddAdminsAsBccRecipientsToEmail(mailMessage);
+            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
             smtpClient.Send(mailMessage);
         }
 
@@ -165,7 +165,7 @@ namespace Rio.API.Controllers
 To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
 <br /><br />
 <a href=""{rioUrl}/confirm-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
-{GetDefaultEmailSignature()}";
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailTos = new List<UserSimpleDto> {buyer, seller};
             foreach (var mailTo in mailTos)
             {
@@ -196,7 +196,7 @@ Hello {toUser.FullName},
 Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-{GetDefaultEmailSignature()}";
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = "Trade Rejected",
@@ -222,7 +222,7 @@ Hello {toUser.FullName},
 An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-{GetDefaultEmailSignature()}";
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = "Trade Rescinded",
@@ -246,7 +246,7 @@ Hello {toUser.FullName},
 An offer to {offerAction} water has been presented for your review. 
 <br /><br />
 <a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
-{GetDefaultEmailSignature()}";
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = "New offer to review",
@@ -254,41 +254,6 @@ An offer to {offerAction} water has been presented for your review.
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
             return mailMessage;
-        }
-
-        private static void AddReplyToEmail(MailMessage mailMessage)
-        {
-            mailMessage.ReplyToList.Add("admin@rrbwsd.com");
-        }
-
-        private void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage)
-        {
-            var admins = Rio.EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin);
-            foreach (var admin in admins)
-            {
-                mailMessage.Bcc.Add(admin.Email);
-            }
-        }
-
-        private static string GetDefaultEmailSignature()
-        {
-            const string defaultEmailSignature = @"<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
-<br /><br />
-***
-<br /><br />
-You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Trading Platform. 
-<br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
-            return defaultEmailSignature;
-        }
-
-        private static MailAddress GetDefaultEmailFrom()
-        {
-            return new MailAddress("donotreply@sitkatech.com", "RRB Water Trading Platform");
         }
 
         [HttpGet("current-user-active-offers/{postingID}")]
