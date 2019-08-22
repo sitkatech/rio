@@ -41,9 +41,6 @@
                 </div>
                 <div class="card-body">
                     <p>Please confirm your transfer</p>
-                </div>
-
-                <div class="card-body">
                     <div class="text-center" *ngIf="!isConfirmingTransfer">
                         <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm Transfer</button>
                     </div>
@@ -66,6 +63,16 @@
                         </button>
                         <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6" *ngIf="!canConfirm()">
+            <div class="card">
+                <div class="card-header">
+                    Your Actions
+                </div>
+                <div class="card-body">
+                    <p>This transfer has already been confirmed.</p>
                 </div>
             </div>
         </div>
