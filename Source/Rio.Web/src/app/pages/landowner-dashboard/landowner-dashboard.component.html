@@ -191,40 +191,35 @@
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-12" *ngIf="parcels && parcels.length > 0">
       <div class="card mt-4">
         <div class="card-header">
           Water Use
         </div>
         <div class="card-body">
-          Estimated through {{getLastETReadingDate()}}*
-          <table class="table table-responsive table-condensed">
-            <thead>
-              <tr>
-                <th>APN</th>
-                <th style="text-align: right; white-space: nowrap;">Water Usage</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let parcel of getParcelsForWaterYear()">
-                <td>
-                  <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
-                </td>
-                <td style="text-align: right">
-                  <span *ngIf="getWaterConsumption(parcel)">{{getWaterConsumption(parcel) | number: '1.1-1'}}
-                    ac-ft</span>
-                  <span *ngIf="!getWaterConsumption(parcel)" class="systemText">Not available</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <ngx-charts-bar-vertical
+          [view]="view"
+          [scheme]="colorScheme"
+          [results]="single"
+          [gradient]="gradient"
+          [xAxis]="showXAxis"
+          [yAxis]="showYAxis"
+          [legend]="showLegend"
+          [showXAxisLabel]="showXAxisLabel"
+          [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel"
+          [yAxisLabel]="yAxisLabel"
+          (select)="onSelect($event)">
+        </ngx-charts-bar-vertical>
           <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery
             and may
             not be accurate at the APN level.</p>
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-8" *ngIf="parcels">
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-12" *ngIf="parcels">
       <div class="card mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="card-header">
           Parcel Map

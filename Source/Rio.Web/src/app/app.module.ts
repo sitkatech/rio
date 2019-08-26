@@ -29,6 +29,10 @@ import { LandownerDashboardComponent } from './pages/landowner-dashboard/landown
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 
+
+import { FormsModule } from '@angular/forms';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 @NgModule({
   declarations: [
     AlertDisplayComponent,
@@ -59,7 +63,10 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
     RouterModule,
     OAuthModule.forRoot(),
     CookieModule.forRoot(),
-    SharedModule.forRoot()
+    SharedModule.forRoot(),
+    FormsModule,
+    NgxChartsModule,
+    BrowserAnimationsModule 
   ],  
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
