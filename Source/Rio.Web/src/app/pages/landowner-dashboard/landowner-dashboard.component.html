@@ -197,23 +197,7 @@
           Water Use
         </div>
         <div class="card-body">
-          <ngx-charts-bar-vertical-stacked
-          [view]="view"
-          [scheme]="colorScheme"
-          [results]="multi"
-          [gradient]="gradient"
-          [xAxis]="showXAxis"
-          [yAxis]="showYAxis"
-          [legend]="showLegend"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          (select)="onSelect($event)">
-        </ngx-charts-bar-vertical-stacked>
-          <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery
-            and may
-            not be accurate at the APN level.</p>
+          <rio-landowner-water-use-chart></rio-landowner-water-use-chart>
         </div>
       </div>
     </div>

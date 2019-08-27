@@ -1,0 +1,31 @@
+<div class="row">
+        <div class="col-sm-8">
+          <ngx-charts-bar-vertical-stacked
+            [view]="view"
+            [scheme]="colorScheme"
+            [results]="multi"
+            [gradient]="gradient"
+            [xAxis]="showXAxis"
+            [yAxis]="showYAxis"
+            [legend]="false"
+            [legendPosition]="'right'"
+            [showXAxisLabel]="showXAxisLabel"
+            [showYAxisLabel]="showYAxisLabel" 
+            [xAxisLabel]="xAxisLabel"
+            [yAxisLabel]="yAxisLabel"
+            (select)="onSelect($event)">
+          </ngx-charts-bar-vertical-stacked>
+        </div>
+        <div class="col-sm-4">
+          <ngx-charts-legend class="chart-legend"
+            [data]="chartNames"
+            [title]="'Legend Title'"
+            [colors]="colors"
+            (labelActivate)="legendLabelActivate($event)"
+            (labelDeactivate)="legendLabelDeactivate($event)">
+          </ngx-charts-legend>
+        </div>
+      </div>
+      <p class="small" *ngIf="parcels && parcels.length > 0">
+          *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+      </p>

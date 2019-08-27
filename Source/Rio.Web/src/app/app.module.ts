@@ -32,6 +32,7 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
 
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     LandownerDashboardComponent,
     TradeDetailComponent,
     ConfirmTransferComponent,
+    LandownerWaterUseChartComponent,
   ],
   imports: [
     AppRoutingModule,
