@@ -15,6 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
+import { MultiSeriesEntry } from 'src/app/shared/models/multi-series';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   public showPurchasedDetails: boolean;
   public showSoldDetails: boolean;
-
+  
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
   public postings: Array<PostingDto>;
@@ -38,6 +39,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterTransfers: Array<WaterTransferDto>;
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
+
+  private waterUsageData : MultiSeriesEntry[];
 
   constructor(
     private route: ActivatedRoute,

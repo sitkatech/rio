@@ -25,7 +25,7 @@
             <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[View offer details]</a>
           </span>
           <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-            {{getOfferThatDoesNotBelongToYouNotificationText(pendingTrade)}}            
+            {{getOfferThatDoesNotBelongToYouNotificationText(pendingTrade)}}
             <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[Respond to this offer]</a>
           </span>
         </li>
@@ -48,7 +48,9 @@
             </dd>
 
             <dt class="text-sm-right col-sm-6 col-xs-12">
-              <a style="cursor: pointer; font-weight: normal" class="collapsed" (click)="showPurchasedDetails = !showPurchasedDetails" *ngIf="getPurchasedWaterTransfersForWaterYear().length > 0">
+              <a style="cursor: pointer; font-weight: normal" class="collapsed"
+                (click)="showPurchasedDetails = !showPurchasedDetails"
+                *ngIf="getPurchasedWaterTransfersForWaterYear().length > 0">
                 <span *ngIf="!showPurchasedDetails" class="fas fa-plus"></span>
                 <span *ngIf="showPurchasedDetails" class="fas fa-minus"></span>
               </a>
@@ -59,13 +61,17 @@
               <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
             </dd>
 
-            <ng-template ngFor let-waterTransfer [ngForOf]="getPurchasedWaterTransfersForWaterYear()" *ngIf="showPurchasedDetails">
-              <dd class="text-sm-right col-sm-6 col-xs-12"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
+            <ng-template ngFor let-waterTransfer [ngForOf]="getPurchasedWaterTransfersForWaterYear()"
+              *ngIf="showPurchasedDetails">
+              <dd class="text-sm-right col-sm-6 col-xs-12"><span
+                  *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}
+              </dd>
               <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
             </ng-template>
 
             <dt class="text-sm-right col-sm-6 col-xs-12">
-              <a style="cursor: pointer" class="collapsed" (click)="showSoldDetails = !showSoldDetails" *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
+              <a style="cursor: pointer" class="collapsed" (click)="showSoldDetails = !showSoldDetails"
+                *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
                 <span *ngIf="!showSoldDetails" class="fas fa-plus"></span>
                 <span *ngIf="showSoldDetails" class="fas fa-minus"></span>
               </a>
@@ -76,10 +82,13 @@
               <span *ngIf="!getSoldAcreFeet()" class="systemText">-</span>
             </dd>
 
-            <ng-template ngFor let-waterTransfer [ngForOf]="getSoldWaterTransfersForWaterYear()" *ngIf="showSoldDetails">
-              <dd class="text-sm-right col-sm-6 col-xs-12"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}</dd>
+            <ng-template ngFor let-waterTransfer [ngForOf]="getSoldWaterTransfersForWaterYear()"
+              *ngIf="showSoldDetails">
+              <dd class="text-sm-right col-sm-6 col-xs-12"><span
+                  *ngIf="isWaterTransferPending(waterTransfer)">*</span>{{waterTransfer.TransferDate | date:"MM/dd"}}
+              </dd>
               <dd class="col-sm-6 col-xs-12">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft</dd>
-            </ng-template>            
+            </ng-template>
           </dl>
           <p class="systemText" *ngIf="showSoldDetails || showPurchasedDetails">* denotes a pending transaction</p>
           <hr />
@@ -134,7 +143,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let trade of getTradesForWaterYear()">
-                <td style="border: 0 none"><a routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
+                <td style="border: 0 none"><a
+                    routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
                 <td style="border: 0 none; white-space: nowrap">{{getTradeStatus(trade)}}</td>
                 <td style="border: 0 none">{{getTradeDescription(trade)}}</td>
                 <td style="border: 0 none; white-space: nowrap; text-align: right">
@@ -194,10 +204,14 @@
     <div class="col-sm-12 col-md-12" *ngIf="parcels && parcels.length > 0">
       <div class="card mt-4">
         <div class="card-header">
-          Water Use
+          {{waterYearToDisplay}} Monthly Water Use, Volume (AF)
         </div>
         <div class="card-body">
-          <rio-landowner-water-use-chart></rio-landowner-water-use-chart>
+          <rio-landowner-water-use-chart [waterUsageData]="waterUsageData"></rio-landowner-water-use-chart>
+
+          <p class="small" *ngIf="parcels && parcels.length > 0">
+            *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+          </p>
         </div>
       </div>
     </div>
