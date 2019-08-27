@@ -15,45 +15,172 @@ export var single = [
   
   export var multi = [
     {
-      "name": "Germany",
+      "name": "January",
       "series": [
         {
-          "name": "2010",
-          "value": 7300000
+          "name": "Parcel 249 20 200",
+          "value": 1
         },
         {
-          "name": "2011",
-          "value": 8940000
+          "name": "Parcel 249 20 201",
+          "value": 1
+        }
+      ]
+    },
+    
+    {
+      "name": "February",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 3
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 2
+        }
+      ]
+    },
+    
+    {
+      "name": "March",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 9
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 6
+        }
+      ]
+    },
+    
+    {
+      "name": "April",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 13
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 12
+        }
+      ]
+    },
+    
+    {
+      "name": "May",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 15
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 15
+        }
+      ]
+    },
+    
+    {
+      "name": "June",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 20
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 19
+        }
+      ]
+    },
+    
+    {
+      "name": "July",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 25
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 20
+        }
+      ]
+    },
+    
+    {
+      "name": "August",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 25
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 20
+        }
+      ]
+    },
+    
+    {
+      "name": "September",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 15
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 15
+        }
+      ]
+    },
+    
+    {
+      "name": "October",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 13
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 10
+        }
+      ]
+    },
+    
+    {
+      "name": "November",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 25
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 10
+        }
+      ]
+    },
+    
+    {
+      "name": "December",
+      "series": [
+        {
+          "name": "Parcel 249 20 200",
+          "value": 13
+        },
+        {
+          "name": "Parcel 249 20 201",
+          "value": 15
         }
       ]
     },
   
-    {
-      "name": "USA",
-      "series": [
-        {
-          "name": "2010",
-          "value": 7870000
-        },
-        {
-          "name": "2011",
-          "value": 8270000
-        }
-      ]
-    },
-  
-    {
-      "name": "France",
-      "series": [
-        {
-          "name": "2010",
-          "value": 5000002
-        },
-        {
-          "name": "2011",
-          "value": 5800000
-        }
-      ]
-    }
   ];
   

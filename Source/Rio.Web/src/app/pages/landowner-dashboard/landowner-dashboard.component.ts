@@ -20,6 +20,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { single } from './data';
+import { multi } from './data';
+
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -72,6 +74,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {
     Object.assign(this, { single })
+    Object.assign(this, { multi })
   }
 
   ngOnInit() {

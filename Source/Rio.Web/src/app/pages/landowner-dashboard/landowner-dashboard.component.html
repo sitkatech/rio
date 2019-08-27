@@ -197,10 +197,10 @@
           Water Use
         </div>
         <div class="card-body">
-          <ngx-charts-bar-vertical
+          <ngx-charts-bar-vertical-stacked
           [view]="view"
           [scheme]="colorScheme"
-          [results]="single"
+          [results]="multi"
           [gradient]="gradient"
           [xAxis]="showXAxis"
           [yAxis]="showYAxis"
@@ -210,7 +210,7 @@
           [xAxisLabel]="xAxisLabel"
           [yAxisLabel]="yAxisLabel"
           (select)="onSelect($event)">
-        </ngx-charts-bar-vertical>
+        </ngx-charts-bar-vertical-stacked>
           <p class="small" *ngIf="parcels && parcels.length > 0">*Estimated water usage is based on satellite imagery
             and may
             not be accurate at the APN level.</p>
