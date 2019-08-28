@@ -5,7 +5,7 @@ import { ColorHelper, SeriesHorizontal } from '@swimlane/ngx-charts';
 import { single } from './data';
 import { multi } from './data';
 
-import {MultiSeriesEntry} from 'src/app/shared/models/multi-series';
+import {MultiSeriesEntry} from 'src/app/shared/models/water-usage-dto';
 
 @Component({
   selector: 'rio-landowner-water-use-chart',
@@ -16,6 +16,8 @@ import {MultiSeriesEntry} from 'src/app/shared/models/multi-series';
 export class LandownerWaterUseChartComponent implements OnInit {
 
   @Input() waterUsageData: MultiSeriesEntry[];
+
+  private fake: {name:string, series: {name:string, value?: string | number}[]}[]
 
   public activeEntries: any[];
   public chartData: MultiSeriesEntry[];

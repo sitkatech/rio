@@ -15,7 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MultiSeriesEntry } from 'src/app/shared/models/multi-series';
+import { MultiSeriesEntry, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
 
 
 @Component({
@@ -40,7 +40,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
 
-  private waterUsageData : MultiSeriesEntry[];
+  private waterUsage : WaterUsageDto[]
 
   constructor(
     private route: ActivatedRoute,
@@ -81,11 +81,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
         this.userService.getWaterTransfersByUserID(userID),
+        //this.userService.getWaterUsageByUserID(userID)
       ).subscribe(([parcels, postings, trades, waterTransfers]) => {
         this.parcels = parcels;
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
+        //this.waterUsage = waterUsage
       });
       this.cdr.detectChanges();
     });
