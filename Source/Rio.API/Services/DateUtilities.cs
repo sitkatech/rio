@@ -239,5 +239,10 @@ namespace Rio.API.Services
         {
             return Enumerable.Range(startYear, (endYear - startYear) + 1).ToList();
         }
+
+        public static List<int> GetWaterYears()
+        {
+            return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
+        }
     }
 }

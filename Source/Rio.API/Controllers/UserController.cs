@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NetTopologySuite.Noding;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
@@ -12,6 +13,7 @@ using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {
@@ -230,6 +232,49 @@ namespace Rio.API.Controllers
             }
 
             return Ok(waterTransferDtos);
+        }
+
+        [HttpGet("users/{userID}/water-usages")]
+        [UserViewFeature]
+        public ActionResult<List<WaterUsageDto>> ListWaterUsagesByUserID([FromRoute] int userID)
+        {
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
+            var parcelIDs = parcelDtos.Select(x=>x.ParcelID).ToList();
+
+            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
+
+            var waterUsageDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterYear).Select(x =>
+                new WaterUsageDto {Year = x.Key, WaterUsage = GetMonthlyWaterUsageDtos(x, parcelDtos)});
+
+            return Ok(waterUsageDtos);
+        }
+
+        private List<MonthlyWaterUsageDto> GetMonthlyWaterUsageDtos(
+            IGrouping<int, ParcelMonthlyEvapotranspirationDto> parcelMonthlyEvapotranspirationDtos,
+            IEnumerable<ParcelDto> parcelDtos)
+        {
+            var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterMonth).Select(x =>
+                    new MonthlyWaterUsageDto()
+                    {
+                        Month = ((DateUtilities.Month) x.Key).ToString(), WaterUsageByParcel = GetWaterUsageByParcel(x, parcelDtos)
+                    })
+                .ToList();
+
+            return monthlyWaterUsageDtos;
+        }
+
+        private List<ParcelWaterUsageDto> GetWaterUsageByParcel(
+            IGrouping<int, ParcelMonthlyEvapotranspirationDto> parcelMonthlyEvapotranspirationDtos,
+            IEnumerable<ParcelDto> parcelDtos)
+        {
+            var parcelWaterUsageDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.ParcelID).Select(groupedByParcel =>
+                new ParcelWaterUsageDto
+                {
+                    ParcelNumber = parcelDtos.Single(parcel => parcel.ParcelID == groupedByParcel.Key).ParcelNumber,
+                    WaterUsageInAcreFeet = groupedByParcel.Sum(x => x.EvapotranspirationRate)
+                }).ToList();
+
+            return parcelWaterUsageDtos;
         }
     }
 }

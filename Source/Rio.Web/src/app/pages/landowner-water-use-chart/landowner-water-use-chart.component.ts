@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 
-import { ColorHelper, SeriesHorizontal } from '@swimlane/ngx-charts';
+import { ColorHelper } from '@swimlane/ngx-charts';
 
 import { single } from './data';
 import { multi } from './data';
@@ -16,8 +16,6 @@ import {MultiSeriesEntry} from 'src/app/shared/models/water-usage-dto';
 export class LandownerWaterUseChartComponent implements OnInit {
 
   @Input() waterUsageData: MultiSeriesEntry[];
-
-  private fake: {name:string, series: {name:string, value?: string | number}[]}[]
 
   public activeEntries: any[];
   public chartData: MultiSeriesEntry[];
@@ -49,11 +47,8 @@ export class LandownerWaterUseChartComponent implements OnInit {
      // Get chartNames
 
     this.chartData = multi;
-    //  this.chartNames = this.chartData.map((d: any) => d.name);
-    //  console.log(this.chartNames);
-    this.chartNames = ["Parcel 249 20 200", "Parcel 249 20 201"]
-     // Convert hex colors to ColorHelper for consumption by legend
-     this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.chartNames, this.colorScheme);
+    this.chartNames = ["Parcel 249 20 200", "Parcel 249 20 201"];
+         this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.chartNames, this.colorScheme);
   }
 
   public legendLabelActivate(item: any): void {

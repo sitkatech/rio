@@ -2,7 +2,7 @@
 
 namespace Rio.Models.DataTransferObjects
 {
-    class WaterUsageDto
+    public class WaterUsageDto
     {
         public int Year { get; set; }
         public List<MonthlyWaterUsageDto> WaterUsage { get; set; }
@@ -17,6 +17,6 @@ namespace Rio.Models.DataTransferObjects
     public class ParcelWaterUsageDto
     {
         public string ParcelNumber { get; set; }
-        public double WaterUsageInAcreFeet { get; set; }
+        public decimal WaterUsageInAcreFeet { get; set; }
     }
 }
