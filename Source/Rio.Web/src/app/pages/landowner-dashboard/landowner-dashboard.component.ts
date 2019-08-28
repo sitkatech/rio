@@ -15,7 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MultiSeriesEntry, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, WaterUsageDto, MonthlyWaterUsageDto } from 'src/app/shared/models/water-usage-dto';
 
 
 @Component({
@@ -32,6 +32,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
+  public parcelNumbers: string[];
   public postings: Array<PostingDto>;
   public trades: Array<TradeWithMostRecentOfferDto>;
   public waterYears: Array<number>;
@@ -81,13 +82,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
         this.userService.getWaterTransfersByUserID(userID),
-        //this.userService.getWaterUsageByUserID(userID)
-      ).subscribe(([parcels, postings, trades, waterTransfers]) => {
+        this.userService.getWaterUsageByUserID(userID)
+      ).subscribe(([parcels, postings, trades, waterTransfers, waterUsage]) => {
         this.parcels = parcels;
+        this.parcelNumbers = parcels.map(x=>x.ParcelNumber);
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
-        //this.waterUsage = waterUsage
+        this.waterUsage = waterUsage;
       });
       this.cdr.detectChanges();
     });
@@ -299,5 +301,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return annualAllocation - estimatedAvailableSupply;
     }
     return null;
+  }
+
+  public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
+    let waterUsageForSelectedYear =  this.waterUsage.find(x=>x.Year == this.waterYearToDisplay).WaterUsage;
+    return waterUsageForSelectedYear.map(x=> new MonthlyWaterUsageDto(x).toMultiSeriesEntry());
   }
 }

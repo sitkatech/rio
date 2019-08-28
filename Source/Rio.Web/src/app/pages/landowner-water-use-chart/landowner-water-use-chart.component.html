@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-sm-9">
-        <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="chartData"
+        <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="waterUsageData"
             [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="false"
             [activeEntries]='activeEntries' [legendPosition]="'right'" [showXAxisLabel]="showXAxisLabel"
             [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
@@ -8,7 +8,7 @@
         </ngx-charts-bar-vertical-stacked>
     </div>
     <div class="col-sm-3">
-        <ngx-charts-legend class="chart-legend" [data]="chartNames" [title]="false" [colors]="colors"
+        <ngx-charts-legend class="chart-legend" [data]="parcelNumbers" [title]="false" [colors]="colors"
             (labelActivate)="legendLabelActivate($event)" (labelDeactivate)="legendLabelDeactivate($event)">
         </ngx-charts-legend>
     </div>

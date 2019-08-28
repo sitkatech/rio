@@ -1,6 +1,10 @@
 export class WaterUsageDto {
     Year: number;
     WaterUsage: MonthlyWaterUsageDto[]
+
+    constructor(obj?:any){
+        Object.assign(this,obj);
+    }
 }
 
 export class MonthlyWaterUsageDto{
@@ -8,13 +12,17 @@ export class MonthlyWaterUsageDto{
 
     WaterUsageByParcel: {
         ParcelNumber: string;
-        WaterUsageInAcreFeet?: number | string;
+        WaterUsageInAcreFeet: number;
     }[];
+
+    constructor(obj?: any){
+        Object.assign(this,obj);
+    }
 
     // boilerplate reshaper to ngx-charts format
     public toMultiSeriesEntry() : MultiSeriesEntry {
         return new MultiSeriesEntry(this.Month, this.WaterUsageByParcel.map(x=> {
-            let y: SeriesEntry;
+            let y = new SeriesEntry();
             y.name = x.ParcelNumber;
             y.value = x.WaterUsageInAcreFeet
             return y;
@@ -22,7 +30,7 @@ export class MonthlyWaterUsageDto{
     }
 }
 
-type SeriesEntry = {
+class SeriesEntry  {
     name: string;
     value? : number | string;
 };
@@ -30,6 +38,7 @@ type SeriesEntry = {
 export class MultiSeriesEntry {
     name:string;
     series: SeriesEntry[];
+
     constructor(name:string, series: {name:string, value? : number | string}[]){
         this.name = name;
         this.series = series;

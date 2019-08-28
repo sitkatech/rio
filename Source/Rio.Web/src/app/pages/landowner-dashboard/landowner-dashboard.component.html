@@ -207,7 +207,7 @@
           {{waterYearToDisplay}} Monthly Water Use, Volume (AF)
         </div>
         <div class="card-body">
-          <rio-landowner-water-use-chart [waterUsageData]="waterUsageData"></rio-landowner-water-use-chart>
+          <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers"></rio-landowner-water-use-chart>
 
           <p class="small" *ngIf="parcels && parcels.length > 0">
             *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.

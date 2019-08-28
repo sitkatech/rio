@@ -2,10 +2,9 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 
 import { ColorHelper } from '@swimlane/ngx-charts';
 
-import { single } from './data';
-import { multi } from './data';
-
 import {MultiSeriesEntry} from 'src/app/shared/models/water-usage-dto';
+
+import * as ColorScheme from 'color-scheme';
 
 @Component({
   selector: 'rio-landowner-water-use-chart',
@@ -16,15 +15,13 @@ import {MultiSeriesEntry} from 'src/app/shared/models/water-usage-dto';
 export class LandownerWaterUseChartComponent implements OnInit {
 
   @Input() waterUsageData: MultiSeriesEntry[];
+  @Input() parcelNumbers: string[];
 
   public activeEntries: any[];
   public chartData: MultiSeriesEntry[];
-  public chartNames: string[];
-  public colors: ColorHelper;
-  public colorScheme = { domain: ['#0000FF', '#008000'] }; // Custom color scheme in hex
 
-  single: any[];
-  multi: any[];
+  public colors: ColorHelper;
+  public colorScheme: {domain: string[]};
 
   view: any[] = [700, 400];
 
@@ -39,16 +36,19 @@ export class LandownerWaterUseChartComponent implements OnInit {
   xAxisLabel = 'Month';
 
   constructor() {
-    Object.assign(this, { single });
-    Object.assign(this, { multi });
   }
 
   ngOnInit() {
-     // Get chartNames
 
-    this.chartData = multi;
-    this.chartNames = ["Parcel 249 20 200", "Parcel 249 20 201"];
-         this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.chartNames, this.colorScheme);
+    let scheme = new ColorScheme;
+    scheme.from_hue(21).scheme('triade').variation('soft');
+    let colorList = (scheme.colors() as string[]).slice(0, this.parcelNumbers.length - 1).map(x=>`#${x}`);
+    console.log(scheme.colors());
+    console.log(this.parcelNumbers);
+    
+    this.colorScheme = {domain: colorList };
+    this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.parcelNumbers, this.colorScheme);
+    throw Error("had to do it to ya");
   }
 
   public legendLabelActivate(item: any): void {

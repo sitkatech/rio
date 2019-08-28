@@ -234,7 +234,7 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDtos);
         }
 
-        [HttpGet("users/{userID}/water-usages")]
+        [HttpGet("users/{userID}/water-usage")]
         [UserViewFeature]
         public ActionResult<List<WaterUsageDto>> ListWaterUsagesByUserID([FromRoute] int userID)
         {
