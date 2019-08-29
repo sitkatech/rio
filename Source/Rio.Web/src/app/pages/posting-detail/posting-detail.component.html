@@ -165,11 +165,11 @@
         </div>
         <div class="card-body">
           <p *ngIf="!isRescindingTrade && !isRejectingTrade && !isCounterOffering">Please confirm your intent to execute
-            this trade
-            agreement.<br /><strong>This
-              action is final</strong> and
-            obligates you to complete the financial transaction according to the quantity and price specified here, and
-            will adjust your annual water allocation accordingly.</p>
+            this trade agreement.<br />
+            <strong>This action is final</strong> and obligates you to complete the financial 
+            transaction according to the quantity and price specified here. You will receive email confirmation of the 
+            pending trade, including the contact information of the other party. After the financial transaction is complete 
+            and acknowledged by both parties your annual water allocation will be adjusted accordingly.</p>
           <p *ngIf="isRescindingTrade">Please confirm you wish to rescind your current offer.</p>
           <p *ngIf="isRejectingTrade">Please confirm you wish to reject further negotiations. You will no longer be able
             to respond to the current Trade. You can however initiate new trades from the Postings page.</p>
