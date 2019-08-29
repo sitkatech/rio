@@ -40,7 +40,7 @@
                     Your Actions
                 </div>
                 <div class="card-body">
-                    <p>Please confirm your transfer</p>
+                    <p>After terms of the transaction are complete, use the button below to finalize your transfer. </p>
                     <div class="text-center" *ngIf="!isConfirmingTransfer">
                         <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm Transfer</button>
                     </div>
@@ -52,8 +52,8 @@
                 </div>
                 <div class="card-body">
                     <p>
-                    By clicking this button you confirm that all terms and conditions of the transfer have been met. By confirming transaction you are authorizing RRB WSD to transfer 
-                    {{waterTransfer.AcreFeetTransferred}} acre-feet of water according {{confirmAction}} your annual allocation. This action cannot be undone. Proceed?
+                    By clicking this button you confirm that all terms and conditions of the transfer have been met. By confirming the transaction you are authorizing RRB WSD to transfer 
+                    <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{confirmAction}} your annual allocation. This action cannot be undone. Proceed?
                     </p>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitConfirmation()"
