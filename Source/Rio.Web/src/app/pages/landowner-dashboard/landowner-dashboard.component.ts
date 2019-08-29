@@ -43,6 +43,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private waterUsage : WaterUsageDto[];
   private waterUsageChartData: {Year: number, ChartData: MultiSeriesEntry[]}[];
+  private showMonthlyWaterUseChart: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,6 +57,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.showMonthlyWaterUseChart = true;
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
@@ -316,5 +318,17 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
     return this.waterUsageChartData.find(x=>x.Year == this.waterYearToDisplay).ChartData;
+  }
+
+  public toggleChartToDisplay() : void {
+    this.showMonthlyWaterUseChart = !this.showMonthlyWaterUseChart;
+  }
+
+  public shouldShowMonthlyWaterUseChart() : boolean{
+    return this.showMonthlyWaterUseChart ;
+  }
+
+  public shouldShowAllocationChart() : boolean{
+    return !this.showMonthlyWaterUseChart; 
   }
 }

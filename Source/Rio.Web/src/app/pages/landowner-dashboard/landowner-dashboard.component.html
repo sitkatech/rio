@@ -204,11 +204,26 @@
     <div class="col-sm-12 col-md-12" *ngIf="parcels && parcels.length > 0">
       <div class="card mt-4">
         <div class="card-header">
-          {{waterYearToDisplay}} Monthly Water Use, Volume (AF)
+          <div class="float-right">
+            <label class="switch">
+              <input type="checkbox" (change)="toggleChartToDisplay()" />
+              <div class="slider round">
+                <span class="off">Usage</span>
+                <span class="on">Allocation</span>
+              </div>
+            </label>
+          </div>
+          <span *ngIf="shouldShowMonthlyWaterUseChart()">{{waterYearToDisplay}} Monthly Water Use, Volume (AF)</span>
+          <span *ngIf="shouldShowAllocationChart()">{{waterYearToDisplay}} Annual Allocation </span>
         </div>
         <div class="card-body">
-          <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers"></rio-landowner-water-use-chart>
-
+          <div *ngIf="shouldShowMonthlyWaterUseChart()">
+            <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers">
+            </rio-landowner-water-use-chart>
+          </div>
+          <div *ngIf="shouldShowAllocationChart()">
+            Lol, this is where the chart SHOULD be lol
+          </div>
           <p class="small" *ngIf="parcels && parcels.length > 0">
             *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
           </p>
