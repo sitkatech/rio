@@ -30,7 +30,7 @@ export class MonthlyWaterUsageDto{
     }
 }
 
-class SeriesEntry  {
+export class SeriesEntry  {
     name: string;
     value? : number | string;
 };

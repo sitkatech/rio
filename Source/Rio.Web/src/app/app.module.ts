@@ -33,8 +33,9 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
-import {ComboChartTestComponent} from './pages/combo-chart-test/combo-chart-test.component'
+import { ComboChartTestComponent } from './pages/combo-chart-test/combo-chart-test.component'
 import { ComboSeriesVerticalComponent, ComboChartComponent } from './shared/components/combo-chart';
+import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { ComboSeriesVerticalComponent, ComboChartComponent } from './shared/comp
     LandownerWaterUseChartComponent,
     ComboChartComponent,
     ComboChartTestComponent,
-    ComboSeriesVerticalComponent
+    ComboSeriesVerticalComponent,
+    LandownerWaterAllocationChartComponent
   ],
   imports: [
     AppRoutingModule,

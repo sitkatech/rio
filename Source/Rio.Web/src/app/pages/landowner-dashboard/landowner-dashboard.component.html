@@ -208,8 +208,8 @@
             <label class="switch">
               <input type="checkbox" (change)="toggleChartToDisplay()" />
               <div class="slider round">
-                <span class="off">Usage</span>
-                <span class="on">Allocation</span>
+                <span class="off">Monthly</span>
+                <span class="on">Overview</span>
               </div>
             </label>
           </div>
@@ -222,7 +222,9 @@
             </rio-landowner-water-use-chart>
           </div>
           <div *ngIf="shouldShowAllocationChart()">
-            Lol, this is where the chart SHOULD be lol
+            <rio-landowner-water-allocation-chart [annualAllocation]="getAnnualAllocation()">
+
+            </rio-landowner-water-allocation-chart>
           </div>
           <p class="small" *ngIf="parcels && parcels.length > 0">
             *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
