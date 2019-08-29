@@ -41,7 +41,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
 
-  private waterUsage : WaterUsageDto[]
+  private waterUsage : WaterUsageDto[];
+  private waterUsageChartData: {Year: number, ChartData: MultiSeriesEntry[]}[];
 
   constructor(
     private route: ActivatedRoute,
@@ -90,6 +91,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.trades = trades;
         this.waterTransfers = waterTransfers;
         this.waterUsage = waterUsage;
+
+        this.waterUsageChartData = waterUsage.map(x=>{
+          return {
+            Year: x.Year,
+            //FIXME: Relying on methods on DTOs is not great. This one just gently reshapes the return value of the API call for the charting library--in future we should actually return the correct shape from the API, or at least shape the data before it comes back from the UserService
+            ChartData: x.WaterUsage.map(y=> new MonthlyWaterUsageDto(y).toMultiSeriesEntry())
+          }
+        });
+
       });
       this.cdr.detectChanges();
     });
@@ -304,7 +314,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
-    let waterUsageForSelectedYear =  this.waterUsage.find(x=>x.Year == this.waterYearToDisplay).WaterUsage;
-    return waterUsageForSelectedYear.map(x=> new MonthlyWaterUsageDto(x).toMultiSeriesEntry());
+    return this.waterUsageChartData.find(x=>x.Year == this.waterYearToDisplay).ChartData;
   }
 }
