@@ -86,12 +86,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.userService.getWaterUsageByUserID(userID)
       ).subscribe(([parcels, postings, trades, waterTransfers, waterUsage]) => {
         this.parcels = parcels;
-        this.parcelNumbers = parcels.map(x=>x.ParcelNumber);
+        this.parcelNumbers = Array.from(new Set(parcels.map(x=>x.ParcelNumber)));
+        
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
         this.waterUsage = waterUsage;
-
+        
         this.waterUsageChartData = waterUsage.map(x=>{
           return {
             Year: x.Year,

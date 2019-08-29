@@ -45,18 +45,9 @@ export class LandownerWaterUseChartComponent implements OnInit {
 
     const numOfParcels = this.parcelNumbers.length;
 
-    //colorList = palette('mpn65', numOfParcels).map(x=>`#${x}`);
-
-    // let scheme = new ColorScheme;
+    colorList = palette('mpn65', numOfParcels).map(x=>`#${x}`);
     
-    // scheme.from_hue(21).scheme('triade').variation('soft');
-    
-    // let colorList = (scheme.colors() as string[]).slice(0, this.parcelNumbers.length - 1).map(x=>`#${x}`);
-    // console.log(scheme.colors());
-    // console.log(this.parcelNumbers);
-
-    
-    this.colorScheme = {domain: ["#ff0029", "#377eb8", "#66a61e", "#984ea3", "#00d2d5", "#ff7f00", "#af8d00", "#7f80cd", "#b3e900", "#c42e60", "#a65628", "#f781bf", "#8dd3c7", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#fccde5", "#bc80bd", "#ffed6f", "#c4eaff"] };
+    this.colorScheme = {domain: colorList};
     this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.parcelNumbers, this.colorScheme);
   }
 

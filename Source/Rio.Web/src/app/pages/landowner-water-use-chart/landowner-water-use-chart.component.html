@@ -4,7 +4,7 @@
             [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="false"
             [activeEntries]='activeEntries' [legendPosition]="'right'" [showXAxisLabel]="showXAxisLabel"
             [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
-            (select)="onSelect($event)" [tooltipDisabled]="true">
+            (select)="onSelect($event)" [tooltipDisabled]="true" [noBarWhenZero]="false">
         </ngx-charts-bar-vertical-stacked>
     </div>
     <div class="col-sm-3">
