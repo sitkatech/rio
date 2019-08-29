@@ -18,6 +18,7 @@ import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/pa
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
+import { ComboChartTestComponent } from './pages/combo-chart-test/combo-chart-test.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: "landowner-dashboard", component: LandownerDashboardComponent },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: 'combo-chart-test', component: ComboChartTestComponent },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
   { path: "not-found", component: NotFoundComponent },

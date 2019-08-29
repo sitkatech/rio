@@ -33,6 +33,8 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
+import {ComboChartTestComponent} from './pages/combo-chart-test/combo-chart-test.component'
+import { ComboSeriesVerticalComponent, ComboChartComponent } from './shared/components/combo-chart';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,9 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     TradeDetailComponent,
     ConfirmTransferComponent,
     LandownerWaterUseChartComponent,
+    ComboChartComponent,
+    ComboChartTestComponent,
+    ComboSeriesVerticalComponent
   ],
   imports: [
     AppRoutingModule,
