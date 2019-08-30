@@ -15,7 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MultiSeriesEntry, WaterUsageDto, MonthlyWaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, SeriesEntry, MonthlyWaterUsageDto, WaterUsageOverviewDto } from 'src/app/shared/models/water-usage-dto';
 
 
 @Component({
@@ -41,9 +41,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
 
-  private waterUsage : WaterUsageDto[];
   private waterUsageChartData: {Year: number, ChartData: MultiSeriesEntry[]}[];
+  private waterUsageOverview: WaterUsageOverviewDto;
   private showMonthlyWaterUseChart: boolean;
+  private historicWaterUsageSeries: MultiSeriesEntry[];
 
   constructor(
     private route: ActivatedRoute,
@@ -85,15 +86,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
         this.userService.getWaterTransfersByUserID(userID),
-        this.userService.getWaterUsageByUserID(userID)
-      ).subscribe(([parcels, postings, trades, waterTransfers, waterUsage]) => {
+        this.userService.getWaterUsageByUserID(userID),
+        this.userService.getWaterUsageOverviewByUserID(userID)
+      ).subscribe(([parcels, postings, trades, waterTransfers, waterUsage, waterUsageOverview]) => {
         this.parcels = parcels;
         this.parcelNumbers = Array.from(new Set(parcels.map(x=>x.ParcelNumber)));
         
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
-        this.waterUsage = waterUsage;
         
         this.waterUsageChartData = waterUsage.map(x=>{
           return {
@@ -103,6 +104,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           }
         });
 
+        this.waterUsageOverview = waterUsageOverview;
+        console.log(waterUsageOverview);
+        this.historicWaterUsageSeries = [new MultiSeriesEntry("Historic", waterUsageOverview.Historic)];
       });
       this.cdr.detectChanges();
     });
@@ -318,6 +322,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
     return this.waterUsageChartData.find(x=>x.Year == this.waterYearToDisplay).ChartData;
+  }
+
+  public getCumulativeWaterUsageForWaterYear(): SeriesEntry[]{
+    let whatever = this.waterUsageOverview.Current.find(x=>x.Year == this.waterYearToDisplay);
+    return whatever.CumulativeWaterUsage;
   }
 
   public toggleChartToDisplay() : void {

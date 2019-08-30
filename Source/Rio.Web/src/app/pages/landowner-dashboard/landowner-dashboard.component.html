@@ -222,7 +222,9 @@
             </rio-landowner-water-use-chart>
           </div>
           <div *ngIf="shouldShowAllocationChart()">
-            <rio-landowner-water-allocation-chart [annualAllocation]="getAnnualAllocation()">
+            <rio-landowner-water-allocation-chart [annualAllocation]="getAnnualAllocation()"
+              [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
+              [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
 
             </rio-landowner-water-allocation-chart>
           </div>

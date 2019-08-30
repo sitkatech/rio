@@ -9,6 +9,12 @@ import { barChart } from '../combo-chart-test/combo-chart-test.component';
 })
 export class LandownerWaterAllocationChartComponent implements OnInit {
   @Input() annualAllocation: number;
+  @Input() currentCumulativeWaterUsage: SeriesEntry[];
+
+  @Input() historicCumulativeWaterUsage: MultiSeriesEntry[];
+
+  fake: MultiSeriesEntry[] = [];
+
   usageData: {
     Historic: MultiSeriesEntry[],
     Current: SeriesEntry[]
@@ -52,109 +58,104 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
       Historic: this.lineChartSeries,
       Current: this.barChart 
     };
+    this.fake = this.lineChartSeries;
+    
   }
 
-  lineChartSeries = [
+  public lineChartSeries = [
     {
-      name: 'Tablets',
-      series: [
-        {
-          name: 'USA',
-          value: 50
-        },
-        {
-          value: 80,
-          name: 'United Kingdom'
-        },
-        {
-          value: 85,
-          name: 'France'
-        },
-        {
-          value: 90,
-          name: 'Japan'
-        },
-        {
-          value: 100,
-          name: 'China'
-        }
-      ]
-    },
-    {
-      name: 'Cell Phones',
-      series: [
-        {
-          value: 10,
-          name: 'USA'
-        },
-        {
-          value: 20,
-          name: 'United Kingdom'
-        },
-        {
-          value: 30,
-          name: 'France'
-        },
-        {
-          value: 40,
-          name: 'Japan'
-        },
-        {
-          value: 10,
-          name: 'China'
-        }
-      ]
-    },
-    {
-      name: 'Computers',
-      series: [
-        {
-          value: 2,
-          name: 'USA',
-
-        },
-        {
-          value: 4,
-          name: 'United Kingdom'
-        },
-        {
-          value: 20,
-          name: 'France'
-        },
-        {
-          value: 30,
-          name: 'Japan'
-        },
-        {
-          value: 35,
-          name: 'China'
-        }
-      ]
+        name: "Historic",
+        series: [
+            {
+                name: "January",
+                value: 25.1508
+            },
+            {
+                name: "February",
+                value: 66.7681
+            },
+            {
+                name: "March",
+                value: 151.13046666666668
+            },
+            {
+                name: "April",
+                value: 299.2504666666667
+            },
+            {
+                name: "May",
+                value: 479.4572
+            },
+            {
+                name: "June",
+                value: 697.6318
+            },
+            {
+                name: "July",
+                value: 937.4668333333333
+            },
+            {
+                name: "August",
+                value: 1129.9448
+            },
+            {
+                name: "September",
+                value: 1255.4465333333333
+            },
+            {
+                name: "October",
+                value: 1332.2960333333333
+            },
+            {
+                name: "November",
+                value: 1372.5892666666666
+            },
+            {
+                name: "December",
+                value: 1400.199
+            }
+        ]
     }
   ];
 
-  barChart = [
+  public barChart = [
     {
-      name: 'USA',
-      value: 50000
+      name: "January", value: 12.9587
     },
     {
-      name: 'United Kingdom',
-      value: 30000
+      name: "February", value: 44.1887
     },
     {
-      name: 'France',
-      value: 10000
+      name: "March", value: 128.5509
     },
     {
-      name: 'Japan',
-      value: 5000
+      name: "April", value: 256.7861
     },
     {
-      name: 'China',
-      value: 500
+      name: "May", value: 427.8011
+    },
+    {
+      name: "June", value: 645.4448
+    },
+    {
+      name: "July", value: 874.671
+    },
+    {
+      name: "August", value: 1048.7093
+    },
+    {
+      name: "September", value: 1159.8971
+    },
+    {
+      name: "October", value: 1220.4909
+    },
+    {
+      name: "November", value: 1245.5619
+    },
+    {
+      name: "December", value: 1259.7252
     }
-  ];
+];
 
 
 }
