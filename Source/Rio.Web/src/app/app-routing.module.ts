@@ -7,7 +7,7 @@ import { HomeIndexComponent } from './pages/home/home-index/home-index.component
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
-import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
+import { ManagerDashboardComponent } from './pages/manager-dashboard/manager-dashboard.component';
 import { UserEditComponent } from './pages/user-edit/user-edit.component';
 import { PostingListComponent } from './pages/posting-list/posting-list.component';
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
@@ -18,6 +18,7 @@ import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/pa
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
+import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -27,7 +28,7 @@ const routes: Routes = [
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:id/edit", component: PostingEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "parcels", component: ParcelsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id/edit-annual-allocation", component: ParcelEditAllocationComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "landowner-dashboard/:id", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "landowner-dashboard", component: LandownerDashboardComponent },
+  { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },

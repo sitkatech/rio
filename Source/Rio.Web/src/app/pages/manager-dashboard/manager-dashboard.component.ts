@@ -5,11 +5,11 @@ import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
-  selector: 'rio-parcels-home',
-  templateUrl: './parcels-home.component.html',
-  styleUrls: ['./parcels-home.component.scss']
+  selector: 'rio-manager-dashboard',
+  templateUrl: './manager-dashboard.component.html',
+  styleUrls: ['./manager-dashboard.component.scss']
 })
-export class ParcelsHomeComponent implements OnInit, OnDestroy {
+export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 

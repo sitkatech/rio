@@ -5,6 +5,7 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
 import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
+import { ParcelWithWaterUsageDto } from 'src/app/shared/models/parcel/parcel-with-water-usage-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,11 @@ export class ParcelService {
 
   getParcelsWithLandOwners(): Observable<Array<ParcelDto>> {
     let route = `/parcels/getParcelsWithLandOwners`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getParcelsWithWaterUsage(): Observable<Array<ParcelWithWaterUsageDto>> {
+    let route = `/parcels/getParcelsWithWaterUsage`;
     return this.apiService.getFromApi(route);
   }
 }

@@ -16,7 +16,7 @@ import { RouterModule } from '@angular/router';
 import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
-import { ParcelsHomeComponent } from './pages/parcels-home/parcels-home.component';
+import { ManagerDashboardComponent } from './pages/manager-dashboard/manager-dashboard.component';
 import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
 import { UserEditComponent } from './pages/user-edit/user-edit.component';
 import { PostingListComponent } from './pages/posting-list/posting-list.component';
@@ -28,6 +28,11 @@ import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/pa
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
+import { AgGridModule } from 'ag-grid-angular';
+import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
+import { DecimalPipe } from '@angular/common';
+import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer/link-renderer.component';
+import { LandOwnerLinkRendererComponent } from './shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
 
 
 import { FormsModule } from '@angular/forms';
@@ -43,7 +48,7 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     UserInviteComponent,
     UserDetailComponent,
     MarketMetricsHomeComponent,
-    ParcelsHomeComponent,
+    ManagerDashboardComponent,
     ParcelMapComponent,
     UserEditComponent,
     PostingListComponent,
@@ -55,6 +60,7 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     LandownerDashboardComponent,
     TradeDetailComponent,
     ConfirmTransferComponent,
+    ParcelListComponent,
     LandownerWaterUseChartComponent,
   ],
   imports: [
@@ -68,11 +74,14 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     SharedModule.forRoot(),
     FormsModule,
     NgxChartsModule,
-    BrowserAnimationsModule 
+    BrowserAnimationsModule,
+    AgGridModule.withComponents([])
   ],  
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    DecimalPipe
   ],
+  entryComponents: [LinkRendererComponent, LandOwnerLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
