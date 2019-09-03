@@ -6,6 +6,7 @@ export class WaterTransferDto {
     TransferDate: Date;
     TransferYear: number;
     AcreFeetTransferred: number;
+    UnitPrice: number;
     TransferringUser: UserSimpleDto;
     ReceivingUser: UserSimpleDto;
     Notes: string;

@@ -28,8 +28,17 @@ namespace Rio.EFModels.Entities
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,
                 OfferDate = mostRecentOffer.OfferDate,
-                OfferCreateUserID = mostRecentOffer.CreateUserID
+                OfferCreateUserID = mostRecentOffer.CreateUserID,
+                IsConfirmed = false,
+                WaterTransferID = null
             };
+            var waterTransfer = mostRecentOffer.WaterTransfer.SingleOrDefault();
+            if (waterTransfer != null)
+            {
+                tradeWithMostRecentOfferDto.WaterTransferID = waterTransfer.WaterTransferID;
+                tradeWithMostRecentOfferDto.IsConfirmed = waterTransfer.ConfirmedByTransferringUser && waterTransfer.ConfirmedByReceivingUser;
+            }
+
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
             {
                 tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateUserID == mostRecentOffer.CreateUserID ? (int) PostingTypeEnum.OfferToSell : (int)PostingTypeEnum.OfferToBuy;

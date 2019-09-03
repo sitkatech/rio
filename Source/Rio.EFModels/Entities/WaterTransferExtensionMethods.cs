@@ -13,6 +13,7 @@ namespace Rio.EFModels.Entities
                 TransferDate = waterTransfer.TransferDate,
                 TransferYear = waterTransfer.TransferDate.Year,
                 AcreFeetTransferred = waterTransfer.AcreFeetTransferred,
+                UnitPrice = waterTransfer.Offer?.Price,
                 TransferringUser = waterTransfer.TransferringUser.AsSimpleDto(),
                 ReceivingUser = waterTransfer.ReceivingUser.AsSimpleDto(),
                 ConfirmedByTransferringUser = waterTransfer.ConfirmedByTransferringUser,

@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System.Collections.Generic;
+using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
@@ -56,11 +58,17 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferConfirmDto);
+            waterTransferDto = WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferConfirmDto);
+            if (waterTransferDto.ConfirmedByReceivingUser && waterTransferDto.ConfirmedByTransferringUser)
+            {
+                var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, waterTransferConfirmDto.WaterTransferType);
+                foreach (var mailMessage in mailMessages)
+                {
+                    SendEmailMessage(smtpClient, mailMessage);
+                }
+            }
 
-            var mailMessage = GenerateConfirmTransferEmail(waterTransferDto, waterTransferConfirmDto.WaterTransferType);
-            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            SendEmailMessage(smtpClient, mailMessage);
             return Ok(waterTransferDto);
         }
 
@@ -73,27 +81,32 @@ namespace Rio.API.Controllers
             smtpClient.Send(mailMessage);
         }
 
-        private static MailMessage GenerateConfirmTransferEmail(WaterTransferDto waterTransfer, int waterTransferType)
+        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer, int waterTransferType)
         {
             var receivingUser = waterTransfer.ReceivingUser;
             var transferringUser = waterTransfer.TransferringUser;
-            var mailTo = waterTransferType == (int)WaterTransferTypeEnum.Receiving ? receivingUser : transferringUser;
-            var messageBody = $@"Hello {mailTo.FullName},<br /><br />
-You have confirmed the following transaction:
+            var mailMessages = new List<MailMessage>();
+            var messageBody = $@"The buyer and seller have both confirmed this transaction, and your annual water allocation has been updated.
 <ul>
-    <li><strong>To:</strong> {receivingUser.FullName} ({receivingUser.Email})</li>
-    <li><strong>From:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
+    <li><strong>Buyer:</strong> {receivingUser.FullName} ({receivingUser.Email})</li>
+    <li><strong>Seller:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
+<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation , which has not been updated to reflect this trade.
 <br /><br />
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
-            var mailMessage = new MailMessage
+            var mailTos = new List<UserSimpleDto> { receivingUser, transferringUser };
+            foreach (var mailTo in mailTos)
             {
-                Subject = "Water Transfer Confirmed",
-                Body = messageBody
-            };
-            mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
-            return mailMessage;
+                var mailMessage = new MailMessage
+                {
+                    Subject = "Water Transfer Confirmed",
+                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                };
+                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+                mailMessages.Add(mailMessage);
+            }
+            return mailMessages;
         }
     }
 }
