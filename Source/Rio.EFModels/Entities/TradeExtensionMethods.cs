@@ -28,7 +28,7 @@ namespace Rio.EFModels.Entities
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,
                 OfferDate = mostRecentOffer.OfferDate,
-                OfferCreateUserID = mostRecentOffer.CreateUserID,
+                OfferCreateUser = mostRecentOffer.CreateUser.AsSimpleDto(),
                 IsConfirmed = false,
                 WaterTransferID = null
             };

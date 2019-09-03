@@ -12,7 +12,7 @@ namespace Rio.Models.DataTransferObjects.Offer
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public DateTime OfferDate { get; set; }
-        public int OfferCreateUserID { get; set; }
+        public UserSimpleDto OfferCreateUser { get; set; }
         public OfferStatusDto OfferStatus { get; set; }
         public int TradePostingTypeID { get; set; }
         public bool IsConfirmed { get; set; }

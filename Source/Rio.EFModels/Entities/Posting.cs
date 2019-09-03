@@ -120,6 +120,7 @@ namespace Rio.EFModels.Entities
         {
             var acceptedTrades = dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer)
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateUser)
                 .Include(x => x.Posting)

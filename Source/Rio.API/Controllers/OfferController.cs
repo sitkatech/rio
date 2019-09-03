@@ -94,7 +94,7 @@ namespace Rio.API.Controllers
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
-                    var offerStatus = activeTrade.OfferCreateUserID == postingCreateUserID
+                    var offerStatus = activeTrade.OfferCreateUser.UserID == postingCreateUserID
                         ? OfferStatusEnum.Rescinded
                         : OfferStatusEnum.Rejected;
                     var offerUpsertDtoForRescindReject = new OfferUpsertDto();

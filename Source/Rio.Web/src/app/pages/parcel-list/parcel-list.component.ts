@@ -28,7 +28,6 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.parcelService.getParcelsWithWaterUsage().subscribe(result => {
-        console.log(result);
         this.rowData = result;
         this.cdr.detectChanges();
       });

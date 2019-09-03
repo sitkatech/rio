@@ -12,7 +12,7 @@ export class TradeWithMostRecentOfferDto {
     Quantity: number;
     Price: number;
     OfferDate: Date;
-    OfferCreateUserID: number;
+    OfferCreateUser: UserSimpleDto;
     OfferStatus: OfferStatusDto;
     IsConfirmed: boolean;
     WaterTransferID: number;
