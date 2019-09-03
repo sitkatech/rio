@@ -14,6 +14,8 @@ export class TradeWithMostRecentOfferDto {
     OfferDate: Date;
     OfferCreateUserID: number;
     OfferStatus: OfferStatusDto;
+    IsConfirmed: boolean;
+    WaterTransferID: number;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

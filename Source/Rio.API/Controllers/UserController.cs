@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NetTopologySuite.Noding;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;

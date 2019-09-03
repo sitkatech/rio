@@ -9,6 +9,8 @@ import { SubscriptionInsufficientComponent } from './pages/subscription-insuffic
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
+import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-renderer.component';
+import { LandOwnerLinkRendererComponent } from './components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
 
 @NgModule({
     declarations: [
@@ -17,7 +19,9 @@ import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/par
         NotFoundComponent,
         UnauthenticatedComponent,
         SubscriptionInsufficientComponent,
-        ParcelDetailPopupComponent
+        ParcelDetailPopupComponent,
+        LinkRendererComponent,
+        LandOwnerLinkRendererComponent
     ],
     imports: [
         CommonModule,

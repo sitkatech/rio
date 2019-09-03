@@ -62,6 +62,10 @@ export class ConfirmTransferComponent implements OnInit, OnDestroy {
     });
   }
 
+  public getTotalPrice(waterTransfer: WaterTransferDto): number {
+    return waterTransfer.UnitPrice * waterTransfer.AcreFeetTransferred;
+  }
+  
   public canConfirm(): boolean {
     return (this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByReceivingUser === false) ||
     (this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByTransferringUser === false);

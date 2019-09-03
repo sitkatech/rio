@@ -26,10 +26,35 @@
                             {{waterTransfer.TransferDate | date:'short'}}
                         </dd>
 
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Buyer</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{waterTransfer.ReceivingUser.FullName}}<br />
+                            <a
+                                href="mailto:{{waterTransfer.ReceivingUser.Email}}">{{waterTransfer.ReceivingUser.Email}}</a>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Seller</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{waterTransfer.TransferringUser.FullName}}<br />
+                            <a
+                                href="mailto:{{waterTransfer.TransferringUser.Email}}">{{waterTransfer.TransferringUser.Email}}</a>
+                        </dd>
+
                         <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
                         <dd class="col-sm-7 col-xs-12">
                             {{waterTransfer.AcreFeetTransferred}} ac-ft
                         </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{waterTransfer.UnitPrice | currency: "USD" }} per ac-ft
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{getTotalPrice(waterTransfer) | currency : "USD" }}
+                        </dd>
+
                     </dl>
                 </div>
             </div>
@@ -42,7 +67,8 @@
                 <div class="card-body">
                     <p>After terms of the transaction are complete, use the button below to finalize your transfer. </p>
                     <div class="text-center" *ngIf="!isConfirmingTransfer">
-                        <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm Transfer</button>
+                        <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm
+                            Transfer</button>
                     </div>
                 </div>
             </div>
@@ -52,8 +78,10 @@
                 </div>
                 <div class="card-body">
                     <p>
-                    By clicking this button you confirm that all terms and conditions of the transfer have been met. By confirming the transaction you are authorizing RRB WSD to transfer 
-                    <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{confirmAction}} your annual allocation. This action cannot be undone. Proceed?
+                        By clicking this button you confirm that all terms and conditions of the transfer have been met.
+                        By confirming the transaction you are authorizing RRB WSD to transfer
+                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{confirmAction}} your
+                        annual allocation. This action cannot be undone. Proceed?
                     </p>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitConfirmation()"

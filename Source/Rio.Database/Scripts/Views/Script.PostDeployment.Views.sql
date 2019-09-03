@@ -11,4 +11,7 @@ Post-Deployment Script Template
 */
 
 :r .\dbo.vGeoServerAllParcels.sql
+
+:r .\dbo.vAllParcelsWithAnnualWaterUsage.sql
+
 GO

@@ -162,7 +162,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
     return this.trades
-    .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID))
+    .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && !x.IsConfirmed)))
     .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
   }
 
@@ -177,7 +177,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradeStatus(trade: TradeWithMostRecentOfferDto): string {
-    return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? "You " : "They ")+ trade.TradeStatus.TradeStatusDisplayName.toLowerCase();
+    return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? "You " : "They ") + trade.TradeStatus.TradeStatusDisplayName.toLowerCase();
   }
 
   public getTradeDescription(trade: TradeWithMostRecentOfferDto): string {

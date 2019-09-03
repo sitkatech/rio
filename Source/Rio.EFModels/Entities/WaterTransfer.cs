@@ -45,6 +45,7 @@ namespace Rio.EFModels.Entities
             var waterTransfers = dbContext.WaterTransfer
                 .Include(x => x.TransferringUser)
                 .Include(x => x.ReceivingUser)
+                .Include(x => x.Offer)
                 .AsNoTracking()
                 .Where(x => x.ReceivingUserID == userID || x.TransferringUserID == userID)
                 .OrderByDescending(x => x.TransferDate)
@@ -58,6 +59,7 @@ namespace Rio.EFModels.Entities
             var waterTransfer = dbContext.WaterTransfer
                 .Include(x => x.TransferringUser)
                 .Include(x => x.ReceivingUser)
+                .Include(x => x.Offer)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.WaterTransferID == waterTransferID);
 

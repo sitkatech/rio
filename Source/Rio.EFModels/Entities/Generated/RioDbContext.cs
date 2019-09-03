@@ -35,6 +35,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserParcel> UserParcel { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
+        public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -401,6 +402,8 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_WaterTransfer_User_TransferringUserID_UserID");
             });
+
+            modelBuilder.Query<ParcelWithAnnualWaterUsage>().ToView("vAllParcelsWithAnnualWaterUsage");
         }
     }
 }
