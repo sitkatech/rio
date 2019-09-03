@@ -5,7 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
 import { ParcelNumberLinkRendererComponent } from 'src/app/shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
-import { LandOwnerLinkRendererComponent } from 'src/app/shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
+import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -56,7 +56,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         { headerName: 'Area in Acres', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true },
         { headerName: 'Included in Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true },
         {
-          headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: LandOwnerLinkRendererComponent,
+          headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: UserLinkRendererComponent,
           cellRendererParams: { inRouterLink: "/users/" },
           filterValueGetter: function (params: any) {
             if (params.data.LandOwner) {

@@ -22,7 +22,6 @@ namespace Rio.EFModels.Entities
             var tradeWithMostRecentOfferDto = new TradeWithMostRecentOfferDto()
             {
                 TradeID = trade.TradeID,
-                CreateUser = trade.CreateUser.AsSimpleDto(),
                 TradeStatus = trade.TradeStatus.AsDto(),
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,
@@ -32,6 +31,7 @@ namespace Rio.EFModels.Entities
                 IsConfirmed = false,
                 WaterTransferID = null
             };
+
             var waterTransfer = mostRecentOffer.WaterTransfer.SingleOrDefault();
             if (waterTransfer != null)
             {
@@ -51,10 +51,14 @@ namespace Rio.EFModels.Entities
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
             {
                 tradeWithMostRecentOfferDto.TradePostingTypeID = (int) PostingTypeEnum.OfferToBuy;
+                tradeWithMostRecentOfferDto.Buyer = trade.CreateUser.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Seller = trade.Posting.CreateUser.AsSimpleDto();
             }
             else
             {
                 tradeWithMostRecentOfferDto.TradePostingTypeID = (int) PostingTypeEnum.OfferToSell;
+                tradeWithMostRecentOfferDto.Buyer = trade.Posting.CreateUser.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Seller = trade.CreateUser.AsSimpleDto();
             }
 
             return tradeWithMostRecentOfferDto;

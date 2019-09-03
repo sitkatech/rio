@@ -30,9 +30,9 @@ import { TradeDetailComponent } from './pages/trade-detail/trade-detail.componen
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 import { AgGridModule } from 'ag-grid-angular';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { ParcelNumberLinkRendererComponent } from './shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
-import { LandOwnerLinkRendererComponent } from './shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
+import { UserLinkRendererComponent } from './shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
 
 
 import { FormsModule } from '@angular/forms';
@@ -80,9 +80,9 @@ import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trad
   ],  
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    DecimalPipe
+    DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [ParcelNumberLinkRendererComponent, LandOwnerLinkRendererComponent, TradeDateLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

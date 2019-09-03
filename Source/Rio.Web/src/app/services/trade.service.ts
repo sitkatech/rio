@@ -11,6 +11,11 @@ export class TradeService {
 
     constructor(private apiService: ApiService) { }
 
+    getAllTradeActivity(): Observable<TradeWithMostRecentOfferDto[]> {
+        let route = `/all-trade-activity`;
+        return this.apiService.getFromApi(route);
+    }
+
     getTradeActivityForUser(userID: number): Observable<TradeWithMostRecentOfferDto[]> {
         let route = `/trade-activity/${userID}`;
         return this.apiService.getFromApi(route);

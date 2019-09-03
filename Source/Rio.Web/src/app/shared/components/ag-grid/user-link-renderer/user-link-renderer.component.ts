@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { AgRendererComponent } from 'ag-grid-angular';
 
 @Component({
-  selector: 'rio-land-owner-link-renderer',
-  templateUrl: './land-owner-link-renderer.component.html',
-  styleUrls: ['./land-owner-link-renderer.component.scss']
+  selector: 'rio-user-link-renderer',
+  templateUrl: './user-link-renderer.component.html',
+  styleUrls: ['./user-link-renderer.component.scss']
 })
 
-export class LandOwnerLinkRendererComponent implements AgRendererComponent {
+export class UserLinkRendererComponent implements AgRendererComponent {
   params: any;    
 
   agInit(params: any): void {

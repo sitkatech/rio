@@ -265,6 +265,14 @@ An offer to {offerAction} water has been presented for your review.
             return Ok(offerDtos);
         }
 
+        [HttpGet("all-trade-activity")]
+        [UserViewFeature]
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivity()
+        {
+            var tradeWithMostRecentOfferDtos = Trade.GetAllTrades(_dbContext);
+            return Ok(tradeWithMostRecentOfferDtos);
+        }
+
         [HttpGet("trade-activity/{userID}")]
         [UserViewFeature]
         public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForUser([FromRoute] int userID)
