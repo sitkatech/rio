@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
 import { ParcelNumberLinkRendererComponent } from './components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { LandOwnerLinkRendererComponent } from './components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
+import { TradeDateLinkRendererComponent } from './components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { LandOwnerLinkRendererComponent } from './components/ag-grid/land-owner-
         SubscriptionInsufficientComponent,
         ParcelDetailPopupComponent,
         ParcelNumberLinkRendererComponent,
-        LandOwnerLinkRendererComponent
+        LandOwnerLinkRendererComponent,
+        TradeDateLinkRendererComponent
     ],
     imports: [
         CommonModule,

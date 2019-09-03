@@ -38,6 +38,7 @@ import { LandOwnerLinkRendererComponent } from './shared/components/ag-grid/land
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
+import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,7 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe
   ],
-  entryComponents: [ParcelNumberLinkRendererComponent, LandOwnerLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, LandOwnerLinkRendererComponent, TradeDateLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
