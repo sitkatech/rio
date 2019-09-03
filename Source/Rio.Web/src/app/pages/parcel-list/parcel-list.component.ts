@@ -4,7 +4,7 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
-import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { ParcelNumberLinkRendererComponent } from 'src/app/shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { LandOwnerLinkRendererComponent } from 'src/app/shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
 
 @Component({
@@ -22,7 +22,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private parcelService: ParcelService,
-    private decimalPipe: DecimalPipe) {}
+    private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -34,36 +34,55 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
       let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
-        { headerName: 'APN', field: 'ParcelNumber', cellRendererFramework: LinkRendererComponent, cellRendererParams: {inRouterLink: "/parcels/" }, sortable: true, filter: true },
-        { headerName: 'Area in Acres', field: 'ParcelAreaInAcres', valueFormatter: function(params) { return _decimalPipe.transform(params.value, '1.1-1');}, sortable: true, filter: true },
-        { headerName: 'Included in Pilot?', valueGetter: function(params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true },
-        { headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: LandOwnerLinkRendererComponent, 
-        cellRendererParams: {inRouterLink: "/users/" }, 
-        filterValueGetter: function (params: any) { 
-          if(params.data.LandOwner)
-          {
-            return params.data.LandOwner.FullName;
-          }
-          return null;
+        {
+          headerName: 'APN', valueGetter: function (params: any) {
+            return { ParcelNumber: params.data.ParcelNumber, ParcelID: params.data.ParcelID };
+          }, cellRendererFramework: ParcelNumberLinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/parcels/" },
+          filterValueGetter: function (params: any) {
+            return params.data.ParcelNumber;
+          },
+          comparator: function (id1: any, id2: any) {
+            if (id1.ParcelNumber < id2.ParcelNumber) {
+              return -1;
+            }
+            if (id1.ParcelNumber > id2.ParcelNumber) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true
         },
-        comparator: function (id1: any, id2: any) {
-          let landOwnerName1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-          let landOwnerName2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-          if (landOwnerName1 < landOwnerName2) {
-            return -1;
-          }
-          if (landOwnerName1 > landOwnerName2) {
-            return 1;
-          }
-          return 0;
+        { headerName: 'Area in Acres', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true },
+        { headerName: 'Included in Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true },
+        {
+          headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: LandOwnerLinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/users/" },
+          filterValueGetter: function (params: any) {
+            if (params.data.LandOwner) {
+              return params.data.LandOwner.FullName;
+            }
+            return null;
+          },
+          comparator: function (id1: any, id2: any) {
+            let landOwnerName1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
+            let landOwnerName2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
+            if (landOwnerName1 < landOwnerName2) {
+              return -1;
+            }
+            if (landOwnerName1 > landOwnerName2) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true
         },
-        sortable: true, filter: true },
-        { headerName: '2018', field: 'WaterUsageFor2018', valueFormatter: function(params) { return _decimalPipe.transform(params.value, '1.1-1');}, sortable: true, filter: true },
-        { headerName: '2017', field: 'WaterUsageFor2017', valueFormatter: function(params) { return _decimalPipe.transform(params.value, '1.1-1');}, sortable: true, filter: true },
-        { headerName: '2016', field: 'WaterUsageFor2016', valueFormatter: function(params) { return _decimalPipe.transform(params.value, '1.1-1');}, sortable: true, filter: true },
+        { headerName: '2018', field: 'WaterUsageFor2018', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true },
+        { headerName: '2017', field: 'WaterUsageFor2017', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true },
+        { headerName: '2016', field: 'WaterUsageFor2016', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true },
       ];
-    
-    
+
+
     });
   }
 

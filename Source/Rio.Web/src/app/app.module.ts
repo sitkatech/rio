@@ -31,7 +31,7 @@ import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-trans
 import { AgGridModule } from 'ag-grid-angular';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { DecimalPipe } from '@angular/common';
-import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer/link-renderer.component';
+import { ParcelNumberLinkRendererComponent } from './shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { LandOwnerLinkRendererComponent } from './shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
 
 
@@ -81,7 +81,7 @@ import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-cha
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe
   ],
-  entryComponents: [LinkRendererComponent, LandOwnerLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, LandOwnerLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LinkRendererComponent } from './link-renderer.component';
+import { ParcelNumberLinkRendererComponent } from './parcel-number-link-renderer.component';
 
 describe('LinkRendererComponent', () => {
-  let component: LinkRendererComponent;
-  let fixture: ComponentFixture<LinkRendererComponent>;
+  let component: ParcelNumberLinkRendererComponent;
+  let fixture: ComponentFixture<ParcelNumberLinkRendererComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LinkRendererComponent ]
+      declarations: [ ParcelNumberLinkRendererComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LinkRendererComponent);
+    fixture = TestBed.createComponent(ParcelNumberLinkRendererComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
