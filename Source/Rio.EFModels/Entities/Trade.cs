@@ -46,7 +46,7 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-        private static IQueryable<Trade> GetTradeWithOfferDetailsImpl(RioDbContext dbContext)
+        public static IQueryable<Trade> GetTradeWithOfferDetailsImpl(RioDbContext dbContext)
         {
             return dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
