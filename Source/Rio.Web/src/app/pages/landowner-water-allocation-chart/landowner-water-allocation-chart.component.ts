@@ -6,10 +6,7 @@ import { SeriesEntry, MultiSeriesEntry } from 'src/app/shared/models/water-usage
   styleUrls: ['./landowner-water-allocation-chart.component.scss']
 })
 export class LandownerWaterAllocationChartComponent implements OnInit {
-
-  
-  @Input() annualAllocation: number;
-
+  @Input() annualAllocationSeries: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
 
@@ -30,7 +27,8 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
   innerPadding = '10%';
   animations: boolean = true;
   seriesDomain = ["Historic", "Current", "Annual Allocation"];
-yDomain = [0, 2000];
+
+  yDomain = [0, 2000];
 
   lineChartScheme = {
     name: 'coolthree',
@@ -45,25 +43,7 @@ yDomain = [0, 2000];
     group: 'Ordinal',
     domain: ['#7aa3e5']
   };
-  annualAllocationSeries: any;
 
   constructor() { }
-
-  ngOnInit() {
-    this.annualAllocationSeries = {
-      name: "Annual Allocation",
-      series: ["January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"].map(x=>{return {name:x, value:1750}})
-    }
-  }
+  ngOnInit() {}
 }
