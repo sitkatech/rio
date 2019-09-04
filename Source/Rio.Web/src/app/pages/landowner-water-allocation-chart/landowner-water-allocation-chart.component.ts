@@ -22,14 +22,14 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
     name: 'coolthree',
     selectable: true,
     group: 'Ordinal',
-    domain: ['#01579b', '#a8385d', '#7aa3e5'] //7aa3e5
+    domain: ['#636363', '#01579b', '#d66f00'] 
   };
 
   comboBarScheme = {
     name: 'singleLightBlue',
     selectable: true,
     group: 'Ordinal',
-    domain: ['#7aa3e5']
+    domain: ['#d66f00']
   };
 
   constructor() { }
