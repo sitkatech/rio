@@ -15,7 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MultiSeriesEntry, SeriesEntry, MonthlyWaterUsageDto, WaterUsageOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, SeriesEntry, MonthlyWaterUsageDto, WaterUsageOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
 
 
 @Component({
@@ -46,6 +46,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private showMonthlyWaterUseChart: boolean;
   private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualAllocationChartData: {Year: number, ChartData:MultiSeriesEntry}[];
+  private allocationChartRange: number[];
 
   constructor(
     private route: ActivatedRoute,
@@ -96,41 +97,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
-        
-        this.waterUsageChartData = waterUsage.map(x=>{
-          return {
-            Year: x.Year,
-            //FIXME: Relying on methods on DTOs is not great. This one just gently reshapes the return value of the API call for the charting library--in future we should actually return the correct shape from the API, or at least shape the data before it comes back from the UserService
-            ChartData: x.WaterUsage.map(y=> new MonthlyWaterUsageDto(y).toMultiSeriesEntry())
-          }
-        });
 
-        this.annualAllocationChartData = this.waterYears.map(x=>{
-          const months = ["January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December"];
-          return {
-            Year: x,
-            ChartData: {
-              name: "Annual Allocation",
-              series: months.map(y=>{return {name:y, value:this.getAnnualAllocationForSpecificWaterYear(x)}})
-            }
-          }
-        })
-
-        console.log(this.annualAllocationChartData);
-
-        this.waterUsageOverview = waterUsageOverview;
-        this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
+        this.initializeCharts(waterUsage, waterUsageOverview);
       });
       this.cdr.detectChanges();
     });
@@ -357,6 +325,55 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return annualAllocation - estimatedAvailableSupply;
     }
     return null;
+  }
+
+  
+  initializeCharts(waterUsage: WaterUsageDto[], waterUsageOverview: WaterUsageOverviewDto) {
+    
+    this.waterUsageChartData = waterUsage.map(x => {
+      return {
+        Year: x.Year,
+        //FIXME: Relying on methods on DTOs is not great. This one just gently reshapes the return value of the API call for the charting library--in future we should actually return the correct shape from the API, or at least shape the data before it comes back from the UserService
+        ChartData: x.WaterUsage.map(y=> new MonthlyWaterUsageDto(y).toMultiSeriesEntry())
+      }
+    });
+
+
+    let values = [];
+    for (const fart of waterUsageOverview.Current){
+      for (const fartAgain of fart.CumulativeWaterUsage){
+        values.push(fartAgain.value);
+      }
+
+    }
+
+    this.annualAllocationChartData = this.waterYears.map(x=>{
+      const allocation = this.getAnnualAllocationForSpecificWaterYear(x);
+      values.push(allocation);
+      const months = ["January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"];
+      return {
+        Year: x,
+        ChartData: {
+          name: "Annual Allocation",
+          series: months.map(y => { return { name: y, value: allocation } })
+        }
+      }
+    })
+
+    this.allocationChartRange = [0,  1.2 * Math.max(...values)];
+    this.waterUsageOverview = waterUsageOverview;
+    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
   }
 
   public getWaterUsageForWaterYear() : MultiSeriesEntry[] {

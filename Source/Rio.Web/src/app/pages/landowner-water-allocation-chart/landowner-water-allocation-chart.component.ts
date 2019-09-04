@@ -12,23 +12,11 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
 
   fake: MultiSeriesEntry[] = [];
 
-  view: any[] = [700, 400];
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
-  showLegend = true;
-  legendTitle = 'Legend';
-  legendPosition = 'right';
-  showXAxisLabel = true;
-  showYAxisLabel = true;
-  yAxisLabel = 'Volume (acre-feet)';
-  xAxisLabel = 'Month';
-  showGridLines = true;
-  innerPadding = '10%';
-  animations: boolean = true;
+  view: any[] = [755, 400];
+  
   seriesDomain = ["Historic", "Current", "Annual Allocation"];
 
-  yDomain = [0, 2000];
+  @Input() yDomain;
 
   lineChartScheme = {
     name: 'coolthree',

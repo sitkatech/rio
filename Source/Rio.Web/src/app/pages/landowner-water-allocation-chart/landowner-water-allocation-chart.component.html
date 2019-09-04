@@ -1,15 +1,14 @@
 <div style="overflow-x:scroll;">
     <div class="row" style="min-width:920px;">
-        <div class="col-sm-12" style=" margin-bottom:3.5rem;">
+        <div class="col-sm-12">
             <combo-chart-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
-                [currentCumulativeWaterUsageSeries]="currentCumulativeWaterUsage" [animations]="animations"
-                [historicCumulativeWaterUsageSeries]="historicCumulativeWaterUsage" [yAxisTickFormatting]="yLeftTickFormat"
+                [currentCumulativeWaterUsageSeries]="currentCumulativeWaterUsage" [animations]="true"
+                [historicCumulativeWaterUsageSeries]="historicCumulativeWaterUsage" 
                 [annualAllocationSeries]="annualAllocationSeries"
-                [yLeftAxisScaleFactor]="yLeftAxisScale" [yRightAxisScaleFactor]="yRightAxisScale"
-                [yRightAxisTickFormatting]="yRightTickFormat" [gradient]="gradient" [xAxis]="showXAxis"
-                [yAxis]="showYAxis" [legend]="showLegend" [legendTitle]="legendTitle" [legendPosition]="legendPosition"
-                [showGridLines]="showGridLines" [showXAxisLabel]="false" [showYAxisLabel]="true"
-                [showRightYAxisLabel]="false" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                [gradient]="true" [xAxis]="true"
+                [yAxis]="true" [legend]="true" [legendTitle]="''" [legendPosition]="'right'"
+                [showGridLines]="true" [showXAxisLabel]="false" [showYAxisLabel]="true"
+                [showRightYAxisLabel]="false" [yAxisLabel]="'Volume (AF)'"
                 [tooltipDisabled]="true" [seriesDomain]="seriesDomain" [yDomain]="yDomain">
             </combo-chart-component>
         </div>
