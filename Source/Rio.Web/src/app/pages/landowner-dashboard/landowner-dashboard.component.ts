@@ -48,6 +48,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualAllocationChartData: {Year: number, ChartData:MultiSeriesEntry}[];
   private allocationChartRange: number[];
+  historicAverageAnnualUsage: string | number;
 
   constructor(
     private route: ActivatedRoute,
@@ -380,6 +381,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.allocationChartRange = [0,  1.2 * Math.max(...values)];
     this.waterUsageOverview = waterUsageOverview;
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
+    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x=>x.name == "December").value as number).toFixed(1);
   }
 
   public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
