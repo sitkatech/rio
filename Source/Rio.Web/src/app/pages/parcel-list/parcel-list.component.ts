@@ -17,7 +17,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   private currentUser: UserDto;
 
   public rowData = [];
-  columnDefs: ColDef[];
+  columnDefs: any;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
