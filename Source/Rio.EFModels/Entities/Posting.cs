@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.EFModels.Entities
@@ -32,11 +31,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<PostingDto> List(RioDbContext dbContext)
         {
-            var postings = dbContext.Posting
-                .Include(x => x.PostingType)
-                .Include(x => x.PostingStatus)
-                .Include(x => x.CreateUser)
-                .AsNoTracking()
+            var postings = GetPostingImpl(dbContext)
                 .OrderByDescending(x => x.PostingDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
@@ -46,11 +41,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<PostingDto> ListActive(RioDbContext dbContext)
         {
-            var postings = dbContext.Posting
-                .Include(x => x.PostingType)
-                .Include(x => x.PostingStatus)
-                .Include(x => x.CreateUser)
-                .AsNoTracking()
+            var postings = GetPostingImpl(dbContext)
                 .Where(x => x.PostingStatusID == (int) PostingStatusEnum.Open)
                 .OrderByDescending(x => x.PostingDate)
                 .Select(x => x.AsDto())
@@ -58,13 +49,19 @@ namespace Rio.EFModels.Entities
 
             return postings;
         }
-        public static IEnumerable<PostingDto> ListByUserID(RioDbContext dbContext, int userID)
+
+        private static IQueryable<Posting> GetPostingImpl(RioDbContext dbContext)
         {
-            var postings = dbContext.Posting
+            return dbContext.Posting
                 .Include(x => x.PostingType)
                 .Include(x => x.PostingStatus)
                 .Include(x => x.CreateUser)
-                .AsNoTracking()
+                .AsNoTracking();
+        }
+
+        public static IEnumerable<PostingDto> ListByUserID(RioDbContext dbContext, int userID)
+        {
+            var postings = GetPostingImpl(dbContext)
                 .Where(x => x.CreateUserID == userID)
                 .OrderByDescending(x => x.PostingDate)
                 .Select(x => x.AsDto())
@@ -75,13 +72,7 @@ namespace Rio.EFModels.Entities
 
         public static PostingDto GetByPostingID(RioDbContext dbContext, int postingID)
         {
-            var posting = dbContext.Posting
-                .Include(x => x.PostingType)
-                .Include(x => x.PostingStatus)
-                .Include(x => x.CreateUser)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.PostingID == postingID);
-
+            var posting = GetPostingImpl(dbContext).SingleOrDefault(x => x.PostingID == postingID);
             return posting?.AsDto();
         }
 
@@ -118,13 +109,7 @@ namespace Rio.EFModels.Entities
 
         public static int CalculateAcreFeetOfAcceptedTrades(RioDbContext dbContext, int postingID)
         {
-            var acceptedTrades = dbContext.Trade
-                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer)
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting)
-                .AsNoTracking()
+            var acceptedTrades = Rio.EFModels.Entities.Trade.GetTradeWithOfferDetailsImpl(dbContext)
                 .Where(x => x.PostingID == postingID && x.TradeStatusID == (int) TradeStatusEnum.Accepted)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())

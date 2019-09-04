@@ -9,6 +9,7 @@ import { ColDef } from 'ag-grid-community';
 import { TradeDateLinkRendererComponent } from 'src/app/shared/components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
+import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -53,12 +54,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             },
             filterParams: {
               // provide comparator function
-              comparator: function (filterLocalDateAtMidnight, cellValue) {
+              comparator: function (filterLocalDate, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
-                var dateParts = dateAsString.split("/");
-                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[0]) - 1, Number(dateParts[1]));
-                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                var cellDate = Date.parse(dateAsString);
+                const filterLocalDateAtMidnight = filterLocalDate.getTime();
+                if (filterLocalDateAtMidnight == cellDate) {
                   return 0;
                 }
                 if (cellDate < filterLocalDateAtMidnight) {
@@ -99,7 +100,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             },
             sortable: true, filter: true
           },
-          { headerName: 'Status', field: 'TradeStatus.TradeStatusDisplayName', sortable: true, filter: true },
+          { headerName: 'Status', 
+            valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && !params.data.IsConfirmed ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
+            sortable: true, filter: true, width: 240 },
           {
             headerName: 'Buyer', field: 'Buyer', cellRendererFramework: UserLinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
@@ -117,7 +120,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: true
+            sortable: true, filter: true, width: 150
           },
           {
             headerName: 'Seller', field: 'Seller', cellRendererFramework: UserLinkRendererComponent,
@@ -138,8 +141,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             },
             sortable: true, filter: true
           },
-          { headerName: 'Quantity', field: 'Quantity', sortable: true, filter: true },
-          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true },
+          { headerName: 'Qty', field: 'Quantity', sortable: true, filter: true, width: 140 },
+          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 150 },
         ];
         this.rowData = trades;
       });
