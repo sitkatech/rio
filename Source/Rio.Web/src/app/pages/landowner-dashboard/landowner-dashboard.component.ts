@@ -16,6 +16,7 @@ import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { MultiSeriesEntry, SeriesEntry, MonthlyWaterUsageDto, WaterUsageOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
 
 
 @Component({
@@ -261,24 +262,27 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "12/31/" + this.waterYearToDisplay; //TODO: need to use the date from the latest monthly ET data
   }
 
-  private getWaterTransfersForWaterYear() {
-    return this.waterTransfers.filter(x => x.TransferYear - 1 == this.waterYearToDisplay);
+  private getWaterTransfersForWaterYear(year?: number) {
+    if (!year){
+      year = this.waterYearToDisplay
+    }
+    return this.waterTransfers.filter(x => x.TransferYear - 1 == year);
   }
 
-  public getSoldWaterTransfersForWaterYear() {
-    return this.getWaterTransfersForWaterYear().filter(x => x.TransferringUser.UserID === this.currentUser.UserID);
+  public getSoldWaterTransfersForWaterYear(year?: number) {
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.TransferringUser.UserID === this.currentUser.UserID);
   }
 
-  public getPurchasedWaterTransfersForWaterYear() {
-    return this.getWaterTransfersForWaterYear().filter(x => x.ReceivingUser.UserID === this.currentUser.UserID);
+  public getPurchasedWaterTransfersForWaterYear(year?: number) {
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.ReceivingUser.UserID === this.currentUser.UserID);
   }
 
   public isWaterTransferPending(waterTransfer : WaterTransferDto) {
     return !waterTransfer.ConfirmedByReceivingUser || !waterTransfer.ConfirmedByTransferringUser;
   }
 
-  public getPurchasedAcreFeet(): number {
-    const waterTransfersForWaterYear = this.getPurchasedWaterTransfersForWaterYear();
+  public getPurchasedAcreFeet(year?: number): number {
+    const waterTransfersForWaterYear = this.getPurchasedWaterTransfersForWaterYear(year);
     if (waterTransfersForWaterYear.length > 0) {
       return waterTransfersForWaterYear.reduce(function (a, b) {
         return (a + b.AcreFeetTransferred);
@@ -287,8 +291,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  public getSoldAcreFeet(): number {
-    const waterTransfersForWaterYear = this.getSoldWaterTransfersForWaterYear();
+  public getSoldAcreFeet(year?: number): number {
+    const waterTransfersForWaterYear = this.getSoldWaterTransfersForWaterYear(year);
     if (waterTransfersForWaterYear.length > 0) {
       return waterTransfersForWaterYear.reduce(function (a, b) {
         return (a + b.AcreFeetTransferred);
@@ -340,16 +344,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
 
     let values = [];
-    for (const fart of waterUsageOverview.Current){
-      for (const fartAgain of fart.CumulativeWaterUsage){
-        values.push(fartAgain.value);
+    for (const series of waterUsageOverview.Current){
+      for (const entry of series.CumulativeWaterUsage){
+        values.push(entry.value);
       }
-
     }
 
     this.annualAllocationChartData = this.waterYears.map(x=>{
       const allocation = this.getAnnualAllocationForSpecificWaterYear(x);
-      values.push(allocation);
+      const sold = this.getSoldAcreFeet(x);
+      const purchased = this.getPurchasedAcreFeet(x);
+
+      values.push(allocation + purchased - sold);
       const months = ["January",
       "February",
       "March",
@@ -366,7 +372,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         Year: x,
         ChartData: {
           name: "Annual Allocation",
-          series: months.map(y => { return { name: y, value: allocation } })
+          series: months.map(y => { return { name: y, value: allocation + purchased - sold } })
         }
       }
     })
