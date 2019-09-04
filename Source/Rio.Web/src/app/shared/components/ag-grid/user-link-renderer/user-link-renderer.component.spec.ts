@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LandOwnerLinkRendererComponent } from './land-owner-link-renderer.component';
+import { UserLinkRendererComponent } from './user-link-renderer.component';
 
 describe('LandOwnerRendererComponent', () => {
-  let component: LandOwnerLinkRendererComponent;
-  let fixture: ComponentFixture<LandOwnerLinkRendererComponent>;
+  let component: UserLinkRendererComponent;
+  let fixture: ComponentFixture<UserLinkRendererComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LandOwnerLinkRendererComponent ]
+      declarations: [ UserLinkRendererComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LandOwnerLinkRendererComponent);
+    fixture = TestBed.createComponent(UserLinkRendererComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

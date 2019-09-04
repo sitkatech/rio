@@ -25,15 +25,19 @@ namespace Rio.EFModels.Entities
             return GetByTradeID(dbContext, trade.TradeID);
         }
 
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetAllTrades(RioDbContext dbContext)
+        {
+            var offers = GetTradeWithOfferDetailsImpl(dbContext)
+                .OrderByDescending(x => x.TradeDate)
+                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .AsEnumerable();
+
+            return offers;
+        }
+
         public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForUserID(RioDbContext dbContext, int userID)
         {
-            var offers = dbContext.Trade
-                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer)
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting)
-                .AsNoTracking()
+            var offers = GetTradeWithOfferDetailsImpl(dbContext)
                 .Where(x => x.CreateUserID == userID || x.Posting.CreateUserID == userID)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())
@@ -42,14 +46,21 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-        public static IEnumerable<TradeWithMostRecentOfferDto> GetPendingTradesForPostingID(RioDbContext dbContext, int postingID)
+        private static IQueryable<Trade> GetTradeWithOfferDetailsImpl(RioDbContext dbContext)
         {
-            var offers = dbContext.Trade
+            return dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer)
+                .Include(x => x.Offer).ThenInclude(x => x.CreateUser)
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateUser)
-                .Include(x => x.Posting)
-                .AsNoTracking()
+                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .AsNoTracking();
+        }
+
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetPendingTradesForPostingID(RioDbContext dbContext, int postingID)
+        {
+            var offers = GetTradeWithOfferDetailsImpl(dbContext)
                 .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Open && x.PostingID == postingID)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())

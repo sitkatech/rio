@@ -94,7 +94,7 @@ namespace Rio.API.Controllers
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
-                    var offerStatus = activeTrade.OfferCreateUserID == postingCreateUserID
+                    var offerStatus = activeTrade.OfferCreateUser.UserID == postingCreateUserID
                         ? OfferStatusEnum.Rescinded
                         : OfferStatusEnum.Rejected;
                     var offerUpsertDtoForRescindReject = new OfferUpsertDto();
@@ -263,6 +263,14 @@ An offer to {offerAction} water has been presented for your review.
             var userDto = GetCurrentUser();
             var offerDtos = Offer.GetActiveOffersFromPostingIDAndUserID(_dbContext, postingID, userDto.UserID);
             return Ok(offerDtos);
+        }
+
+        [HttpGet("all-trade-activity")]
+        [UserViewFeature]
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivity()
+        {
+            var tradeWithMostRecentOfferDtos = Trade.GetAllTrades(_dbContext);
+            return Ok(tradeWithMostRecentOfferDtos);
         }
 
         [HttpGet("trade-activity/{userID}")]

@@ -30,14 +30,15 @@ import { TradeDetailComponent } from './pages/trade-detail/trade-detail.componen
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 import { AgGridModule } from 'ag-grid-angular';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
-import { DecimalPipe } from '@angular/common';
-import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer/link-renderer.component';
-import { LandOwnerLinkRendererComponent } from './shared/components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
+import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { ParcelNumberLinkRendererComponent } from './shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
+import { UserLinkRendererComponent } from './shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
 
 
 import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
+import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 import { ComboSeriesVerticalComponent, ComboChartComponent } from './shared/components/combo-chart';
 import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
 
@@ -84,9 +85,9 @@ import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-
   ],  
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    DecimalPipe
+    DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [LinkRendererComponent, LandOwnerLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

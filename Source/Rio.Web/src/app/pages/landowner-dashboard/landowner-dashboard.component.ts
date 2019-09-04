@@ -167,7 +167,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
-    return trade.OfferCreateUserID === this.currentUser.UserID;
+    return trade.OfferCreateUser.UserID === this.currentUser.UserID;
   }
 
   public getTradeStatus(trade: TradeWithMostRecentOfferDto): string {

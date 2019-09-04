@@ -1,18 +1,34 @@
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-      <li class="breadcrumb-item active" aria-current="page">Manager Dashboard</li>
-  </ol>
-</nav>
-<div class="container">
-    <h2 style="display: inline-block">Manager Dashboard</h2>
-    <p class="lead">
-        
-    </p>
-</div>
-<div class="container mt-sm-4" *ngIf="parcels">
-  <parcel-map
-  mapID="parcelsMap"
-  [selectedParcelIDs]="getSelectedParcelIDs()"
-  mapHeight="600px">
-  </parcel-map>
+<div class="container mt-sm-4" *ngIf="currentUser">
+  <h2>
+    Manager Dashboard - {{currentUser.FullName}}
+  </h2>
+  <app-alert-display></app-alert-display>
+
+  <div class="row mt-4">
+    <div class="col-sm-12" *ngIf="rowData">
+      <div class="card">
+        <div class="card-header">
+          Trade Activity
+        </div>
+        <div class="card-body table-responsive">
+          <ag-grid-angular style="width: 100%; height: 400px;" class="ag-theme-material" [rowData]="rowData"
+            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100">
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-sm-4" *ngIf="parcels">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          Parcels
+        </div>
+        <div class="card-body table-responsive">
+          <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="600px">
+          </parcel-map>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

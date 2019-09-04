@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AgRendererComponent } from 'ag-grid-angular';
 
 @Component({
-  selector: 'rio-land-owner-link-renderer',
-  templateUrl: './land-owner-link-renderer.component.html',
-  styleUrls: ['./land-owner-link-renderer.component.scss']
+  selector: 'rio-trade-date-link-renderer',
+  templateUrl: './trade-date-link-renderer.component.html',
+  styleUrls: ['./trade-date-link-renderer.component.scss']
 })
-
-export class LandOwnerLinkRendererComponent implements AgRendererComponent {
+export class TradeDateLinkRendererComponent implements AgRendererComponent {    
   params: any;    
 
   agInit(params: any): void {

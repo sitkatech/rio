@@ -9,8 +9,9 @@ import { SubscriptionInsufficientComponent } from './pages/subscription-insuffic
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
-import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-renderer.component';
-import { LandOwnerLinkRendererComponent } from './components/ag-grid/land-owner-link-renderer/land-owner-link-renderer.component';
+import { ParcelNumberLinkRendererComponent } from './components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
+import { UserLinkRendererComponent } from './components/ag-grid/user-link-renderer/user-link-renderer.component';
+import { TradeDateLinkRendererComponent } from './components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 
 @NgModule({
     declarations: [
@@ -20,8 +21,9 @@ import { LandOwnerLinkRendererComponent } from './components/ag-grid/land-owner-
         UnauthenticatedComponent,
         SubscriptionInsufficientComponent,
         ParcelDetailPopupComponent,
-        LinkRendererComponent,
-        LandOwnerLinkRendererComponent
+        ParcelNumberLinkRendererComponent,
+        UserLinkRendererComponent,
+        TradeDateLinkRendererComponent
     ],
     imports: [
         CommonModule,

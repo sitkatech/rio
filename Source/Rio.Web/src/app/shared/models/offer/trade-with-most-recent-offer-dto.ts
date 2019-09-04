@@ -5,15 +5,16 @@ import { PostingDto } from '../posting/posting-dto';
 
 export class TradeWithMostRecentOfferDto {
     TradeID: number;
-    CreateUser: UserSimpleDto;
     TradeStatus: TradeStatusDto;
     TradePostingTypeID: number;
     OfferPostingTypeID: number;
     Quantity: number;
     Price: number;
     OfferDate: Date;
-    OfferCreateUserID: number;
+    OfferCreateUser: UserSimpleDto;
     OfferStatus: OfferStatusDto;
+    Buyer: UserSimpleDto;
+    Seller: UserSimpleDto;
     IsConfirmed: boolean;
     WaterTransferID: number;
 
