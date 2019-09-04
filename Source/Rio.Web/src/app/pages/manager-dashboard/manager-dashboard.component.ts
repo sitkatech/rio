@@ -79,7 +79,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: 'agDateColumnFilter', width: 150
+            sortable: true, filter: 'agDateColumnFilter'
           },
           {
             headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: UserLinkRendererComponent,
@@ -98,7 +98,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: true, width: 150
+            sortable: true, filter: true
           },
           { headerName: 'Status', 
             valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && !params.data.IsConfirmed ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
@@ -139,10 +139,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: true, width: 160
+            sortable: true, filter: true
           },
-          { headerName: 'Qty', field: 'Quantity', sortable: true, filter: true, width: 100 },
-          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 110 },
+          { headerName: 'Qty', field: 'Quantity', sortable: true, filter: true, width: 140 },
+          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 150 },
         ];
         this.rowData = trades;
       });
