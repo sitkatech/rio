@@ -2,8 +2,9 @@
     <div class="row" style="min-width:920px;">
         <div class="col-sm-12" style=" margin-bottom:3.5rem;">
             <combo-chart-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
-                [results]="currentCumulativeWaterUsage" [animations]="animations"
-                [lineChart]="historicCumulativeWaterUsage" [yAxisTickFormatting]="yLeftTickFormat"
+                [currentCumulativeWaterUsageSeries]="currentCumulativeWaterUsage" [animations]="animations"
+                [historicCumulativeWaterUsageSeries]="historicCumulativeWaterUsage" [yAxisTickFormatting]="yLeftTickFormat"
+                [annualAllocationSeries]="annualAllocationSeries"
                 [yLeftAxisScaleFactor]="yLeftAxisScale" [yRightAxisScaleFactor]="yRightAxisScale"
                 [yRightAxisTickFormatting]="yRightTickFormat" [gradient]="gradient" [xAxis]="showXAxis"
                 [yAxis]="showYAxis" [legend]="showLegend" [legendTitle]="legendTitle" [legendPosition]="legendPosition"

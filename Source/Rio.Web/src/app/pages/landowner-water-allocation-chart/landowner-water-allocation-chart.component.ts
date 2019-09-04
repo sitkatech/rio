@@ -1,7 +1,5 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { SeriesEntry, MultiSeriesEntry } from 'src/app/shared/models/water-usage-dto';
-import { barChart } from '../combo-chart-test/combo-chart-test.component';
-
 @Component({
   selector: 'rio-landowner-water-allocation-chart',
   templateUrl: './landowner-water-allocation-chart.component.html',
@@ -31,14 +29,14 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
   showGridLines = true;
   innerPadding = '10%';
   animations: boolean = true;
-  seriesDomain = ["Historic", "Current"];
+  seriesDomain = ["Historic", "Current", "Annual Allocation"];
 yDomain = [0, 2000];
 
   lineChartScheme = {
     name: 'coolthree',
     selectable: true,
     group: 'Ordinal',
-    domain: ['#01579b', '#7aa3e5', '#a8385d', '#00bfa5']
+    domain: ['#01579b', '#a8385d', '#7aa3e5'] //7aa3e5
   };
 
   comboBarScheme = {
@@ -47,9 +45,25 @@ yDomain = [0, 2000];
     group: 'Ordinal',
     domain: ['#7aa3e5']
   };
+  annualAllocationSeries: any;
 
   constructor() { }
 
   ngOnInit() {
+    this.annualAllocationSeries = {
+      name: "Annual Allocation",
+      series: ["January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"].map(x=>{return {name:x, value:1750}})
+    }
   }
 }

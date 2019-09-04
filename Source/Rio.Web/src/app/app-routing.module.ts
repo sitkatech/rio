@@ -19,7 +19,6 @@ import { LandownerDashboardComponent } from './pages/landowner-dashboard/landown
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
-import { ComboChartTestComponent } from './pages/combo-chart-test/combo-chart-test.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -40,7 +39,6 @@ const routes: Routes = [
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: 'combo-chart-test', component: ComboChartTestComponent },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
   { path: "not-found", component: NotFoundComponent },

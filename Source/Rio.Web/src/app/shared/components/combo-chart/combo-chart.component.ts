@@ -54,7 +54,7 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
           [yOrient]="'left'"
           [showGridLines]="true"
           [showLabel]="true"
-          [labelText]="'Volume (AF)'"
+          [labelText]="yAxisLabel"
           (dimensionsChanged)="updateYAxisWidth($event)"
         ></svg:g>
         <svg:g
@@ -62,8 +62,8 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
           [xScale]="xScale"
           [yScale]="yScale"
           [colors]="colors"
-          [series]="results"
-          [seriesLine]="[lineChart]"
+          [series]="currentCumulativeWaterUsageSeries"
+          [seriesLine]="[historicCumulativeWaterUsageSeries]"
           [dims]="dims"
           [gradient]="true"
           tooltipDisabled="true"
@@ -81,7 +81,21 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
               [xScale]="xScaleLine"
               [yScale]="yScale"
               [colors]="colorsLine"
-              [data]="lineChart"
+              [data]="historicCumulativeWaterUsageSeries"
+              [activeEntries]="activeEntries"
+              [scaleType]="scaleType"
+              [curve]="curve"
+              [rangeFillOpacity]="rangeFillOpacity"
+              [animations]="animations"
+            />
+        </svg:g>
+        <svg:g>
+            <svg:g
+              ngx-charts-line-series
+              [xScale]="xScaleLine"
+              [yScale]="yScale"
+              [colors]="colorsLine"
+              [data]="annualAllocationSeries"
               [activeEntries]="activeEntries"
               [scaleType]="scaleType"
               [curve]="curve"
@@ -119,7 +133,9 @@ export class ComboChartComponent extends BaseChartComponent {
   @Input() roundDomains: boolean = false;
   @Input() colorSchemeLine: any[];
   @Input() autoScale;
-  @Input() lineChart: any;
+  @Input() historicCumulativeWaterUsageSeries: any;
+  @Input() currentCumulativeWaterUsageSeries: any;
+  @Input() annualAllocationSeries: any;
   @Input() yLeftAxisScaleFactor: any;
   @Input() yRightAxisScaleFactor: any;
   @Input() rangeFillOpacity: number;
@@ -201,7 +217,6 @@ export class ComboChartComponent extends BaseChartComponent {
     }
 
     this.yDomainLine = this.getYDomainLine();
-    //this.seriesDomain = this.getSeriesDomain();
 
     this.xScaleLine = this.getXScaleLine(this.xDomainLine, this.dims.width);
     this.yScaleLine = this.getYScaleLine(this.yDomainLine, this.dims.height);
@@ -218,12 +233,6 @@ export class ComboChartComponent extends BaseChartComponent {
       this.deactivate.emit({ value: entry, entries: [] });
     }
     this.activeEntries = [];
-  }
-
-  @HostListener('mouseleave')
-  hideCircles(): void {
-    this.hoveredVertical = null;
-    this.deactivateAll();
   }
 
   updateHoveredVertical(item): void {
@@ -267,8 +276,8 @@ export class ComboChartComponent extends BaseChartComponent {
   getXDomainLine(): any[] {
     let values = [];
 
-    //for (const results of this.lineChart) {
-      for (const d of this.lineChart.series) {
+    //for (const currentCumulativeWaterUsageSeries of this.historicCumulativeWaterUsageSeries) {
+      for (const d of this.historicCumulativeWaterUsageSeries.series) {
         if (!values.includes(d.name)) {
           values.push(d.name);
         }
@@ -298,8 +307,8 @@ export class ComboChartComponent extends BaseChartComponent {
   getYDomainLine(): any[] {
     const domain = [];
 
-    //for (const results of this.lineChart) {
-      for (const d of this.lineChart.series) {
+    //for (const currentCumulativeWaterUsageSeries of this.historicCumulativeWaterUsageSeries) {
+      for (const d of this.historicCumulativeWaterUsageSeries.series) {
         if (domain.indexOf(d.value) < 0) {
           domain.push(d.value);
         }
@@ -380,7 +389,7 @@ export class ComboChartComponent extends BaseChartComponent {
   }
 
   getXDomain(): any[] {
-    return this.results.map(d => d.name);
+    return this.currentCumulativeWaterUsageSeries.map(d => d.name);
   }
 
   onClick(data) {
@@ -409,7 +418,7 @@ export class ComboChartComponent extends BaseChartComponent {
     if (opts.scaleType === 'ordinal') {
       opts.domain = this.seriesDomain;
       opts.colors = this.colorsLine;
-      opts.title = this.legendTitle;
+      //opts.title = this.legendTitle;
     } else {
       opts.domain = this.seriesDomain;
       opts.colors = this.colors.scale;
