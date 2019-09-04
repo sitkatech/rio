@@ -44,7 +44,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private waterUsageChartData: {Year: number, ChartData: MultiSeriesEntry[]}[];
   private waterUsageOverview: WaterUsageOverviewDto;
   private showMonthlyWaterUseChart: boolean;
-  private historicWaterUsageSeries: MultiSeriesEntry[];
+  private historicCumulativeWaterUsage: MultiSeriesEntry;
 
   constructor(
     private route: ActivatedRoute,
@@ -104,9 +104,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           }
         });
 
+        console.log(waterUsageOverview)
         this.waterUsageOverview = waterUsageOverview;
-        this.historicWaterUsageSeries = [new MultiSeriesEntry("Historic", waterUsageOverview.Historic)];
-        console.log(this.historicWaterUsageSeries);
+        this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
       });
       this.cdr.detectChanges();
     });
@@ -325,8 +325,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[]{
-    let whatever = this.waterUsageOverview.Current.find(x=>x.Year == this.waterYearToDisplay);
-    return whatever.CumulativeWaterUsage;
+    let currentYearData = this.waterUsageOverview.Current.find(x=>x.Year == this.waterYearToDisplay);
+    return currentYearData.CumulativeWaterUsage;
   }
 
   public toggleChartToDisplay() : void {

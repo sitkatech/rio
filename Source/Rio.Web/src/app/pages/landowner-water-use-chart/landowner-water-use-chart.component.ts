@@ -27,16 +27,6 @@ export class LandownerWaterUseChartComponent implements OnInit {
 
   view: any[] = [700, 400];
 
-  // options
-  showXAxis = true;
-  showYAxis = true;
-  gradient = false;
-  showLegend = true;
-  showXAxisLabel = true;
-  yAxisLabel = 'Volume (AF)';
-  showYAxisLabel = true;
-  xAxisLabel = 'Month';
-
   constructor() {
   }
 

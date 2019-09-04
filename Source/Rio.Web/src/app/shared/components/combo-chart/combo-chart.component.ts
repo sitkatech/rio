@@ -42,36 +42,19 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
       <svg:g [attr.transform]="transform" class="bar-chart chart">
         <svg:g
           ngx-charts-x-axis
-          *ngIf="xAxis"
           [xScale]="xScale"
           [dims]="dims"
-          [showLabel]="showXAxisLabel"
-          [labelText]="xAxisLabel"
-          [tickFormatting]="xAxisTickFormatting"
+          [showLabel]="false"
           (dimensionsChanged)="updateXAxisHeight($event)"
         ></svg:g>
         <svg:g
           ngx-charts-y-axis
-          *ngIf="yAxis"
           [yScale]="yScale"
           [dims]="dims"
-          [yOrient]="yOrientLeft"
-          [showGridLines]="showGridLines"
-          [showLabel]="showYAxisLabel"
-          [labelText]="yAxisLabel"
-          [tickFormatting]="yAxisTickFormatting"
-          (dimensionsChanged)="updateYAxisWidth($event)"
-        ></svg:g>
-        <svg:g
-          ngx-charts-y-axis
-          *ngIf="yAxis"
-          [yScale]="yScaleLine"
-          [dims]="dims"
-          [yOrient]="yOrientRight"
-          [showGridLines]="showGridLines"
-          [showLabel]="showRightYAxisLabel"
-          [labelText]="yAxisLabelRight"
-          [tickFormatting]="yRightAxisTickFormatting"
+          [yOrient]="'left'"
+          [showGridLines]="true"
+          [showLabel]="true"
+          [labelText]="'Volume (AF)'"
           (dimensionsChanged)="updateYAxisWidth($event)"
         ></svg:g>
         <svg:g
@@ -80,63 +63,31 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
           [yScale]="yScale"
           [colors]="colors"
           [series]="results"
-          [seriesLine]="lineChart"
+          [seriesLine]="[lineChart]"
           [dims]="dims"
-          [gradient]="gradient"
+          [gradient]="true"
           tooltipDisabled="true"
           [activeEntries]="activeEntries"
-          [animations]="animations"
-          [noBarWhenZero]="noBarWhenZero"
-          (activate)="onActivate($event)"
-          (deactivate)="onDeactivate($event)"
+          [animations]="true"
+          [noBarWhenZero]="true"
           (bandwidth)="updateLineWidth($event)"
           (select)="onClick($event)"
         ></svg:g>
       </svg:g>
       <svg:g [attr.transform]="transform" class="line-chart chart">
         <svg:g>
-          <svg:g *ngFor="let series of lineChart; trackBy: trackBy">
             <svg:g
               ngx-charts-line-series
               [xScale]="xScaleLine"
-              [yScale]="yScaleLine"
+              [yScale]="yScale"
               [colors]="colorsLine"
-              [data]="series"
+              [data]="lineChart"
               [activeEntries]="activeEntries"
               [scaleType]="scaleType"
               [curve]="curve"
               [rangeFillOpacity]="rangeFillOpacity"
               [animations]="animations"
             />
-          </svg:g>
-          <svg:g
-            ngx-charts-tooltip-area
-            *ngIf="!tooltipDisabled"
-            [dims]="dims"
-            [xSet]="xSet"
-            [xScale]="xScaleLine"
-            [yScale]="yScaleLine"
-            [results]="combinedSeries"
-            [colors]="colorsLine"
-            [tooltipDisabled]="tooltipDisabled"
-            (hover)="updateHoveredVertical($event)"
-          />
-          <svg:g *ngFor="let series of lineChart">
-            <svg:g
-              ngx-charts-circle-series
-              [xScale]="xScaleLine"
-              [yScale]="yScaleLine"
-              [colors]="colorsLine"
-              [data]="series"
-              [scaleType]="scaleType"
-              [visibleValue]="hoveredVertical"
-              [activeEntries]="activeEntries"
-              [tooltipDisabled]="tooltipDisabled"
-              (select)="onClick($event, series)"
-              (activate)="onActivate($event)"
-              (deactivate)="onDeactivate($event)"
-            />
-          </svg:g>
         </svg:g>
       </svg:g>
     </ngx-charts-chart>
@@ -174,6 +125,9 @@ export class ComboChartComponent extends BaseChartComponent {
   @Input() rangeFillOpacity: number;
   @Input() animations: boolean = true;
   @Input() noBarWhenZero: boolean = true;
+  @Input() yAxisRight: boolean = false;
+  @Input() seriesDomain: string[];
+  @Input() yDomain: number[];
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() deactivate: EventEmitter<any> = new EventEmitter();
@@ -187,7 +141,6 @@ export class ComboChartComponent extends BaseChartComponent {
   xScale: any;
   yScale: any;
   xDomain: any;
-  yDomain: any;
   transform: string;
   colors: ColorHelper;
   colorsLine: ColorHelper;
@@ -200,14 +153,12 @@ export class ComboChartComponent extends BaseChartComponent {
   yScaleLine;
   xDomainLine;
   yDomainLine;
-  seriesDomain;
   scaledAxis;
   combinedSeries;
   xSet;
   filteredDomain;
   hoveredVertical;
   yOrientLeft = 'left';
-  yOrientRight = 'right';
   legendSpacing = 0;
   bandwidth;
   barPadding = 8;
@@ -250,7 +201,7 @@ export class ComboChartComponent extends BaseChartComponent {
     }
 
     this.yDomainLine = this.getYDomainLine();
-    this.seriesDomain = this.getSeriesDomain();
+    //this.seriesDomain = this.getSeriesDomain();
 
     this.xScaleLine = this.getXScaleLine(this.xDomainLine, this.dims.width);
     this.yScaleLine = this.getYScaleLine(this.yDomainLine, this.dims.height);
@@ -286,15 +237,6 @@ export class ComboChartComponent extends BaseChartComponent {
     this.xScaleLine = this.getXScaleLine(this.xDomainLine, this.dims.width);
   }
 
-  getSeriesDomain(): any[] {
-    this.combinedSeries = this.lineChart.slice(0);
-    this.combinedSeries.push({
-      name: this.yAxisLabel,
-      series: this.results
-    });
-    return this.combinedSeries.map(d => d.name);
-  }
-
   isDate(value): boolean {
     if (value instanceof Date) {
       return true;
@@ -325,13 +267,13 @@ export class ComboChartComponent extends BaseChartComponent {
   getXDomainLine(): any[] {
     let values = [];
 
-    for (const results of this.lineChart) {
-      for (const d of results.series) {
+    //for (const results of this.lineChart) {
+      for (const d of this.lineChart.series) {
         if (!values.includes(d.name)) {
           values.push(d.name);
         }
       }
-    }
+    //}
 
     this.scaleType = this.getScaleType(values);
     let domain = [];
@@ -356,8 +298,8 @@ export class ComboChartComponent extends BaseChartComponent {
   getYDomainLine(): any[] {
     const domain = [];
 
-    for (const results of this.lineChart) {
-      for (const d of results.series) {
+    //for (const results of this.lineChart) {
+      for (const d of this.lineChart.series) {
         if (domain.indexOf(d.value) < 0) {
           domain.push(d.value);
         }
@@ -372,7 +314,7 @@ export class ComboChartComponent extends BaseChartComponent {
           }
         }
       }
-    }
+    //}
 
     let min = Math.min(...domain);
     const max = Math.max(...domain);
@@ -430,7 +372,7 @@ export class ComboChartComponent extends BaseChartComponent {
   }
 
   getYScale(): any {
-    this.yDomain = this.getYDomain();
+    this.yDomain = this.yDomain;
     const scale = scaleLinear()
       .range([this.dims.height, 0])
       .domain(this.yDomain);
@@ -439,18 +381,6 @@ export class ComboChartComponent extends BaseChartComponent {
 
   getXDomain(): any[] {
     return this.results.map(d => d.name);
-  }
-
-  getYDomain() {
-    const values = this.results.map(d => d.value);
-    const min = Math.min(0, ...values);
-    const max = Math.max(...values);
-    if (this.yLeftAxisScaleFactor) {
-      const minMax = this.yLeftAxisScaleFactor(min, max);
-      return [Math.min(0, minMax.min), minMax.max];
-    } else {
-      return [min, max];
-    }
   }
 
   onClick(data) {

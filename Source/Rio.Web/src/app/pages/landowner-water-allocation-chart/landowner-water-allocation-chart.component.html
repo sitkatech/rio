@@ -1,15 +1,16 @@
-<div class="row">
-    <div class="col-sm-12">
-        <p>
-            Lol, this is where the chart SHOULD be lol! instead you just get this smock-up</p>
-        <combo-chart-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
-            [results]="barChart" [animations]="animations" [lineChart]="lineChartSeries"
-            [yAxisTickFormatting]="yLeftTickFormat" [yLeftAxisScaleFactor]="yLeftAxisScale"
-            [yRightAxisScaleFactor]="yRightAxisScale" [yRightAxisTickFormatting]="yRightTickFormat"
-            [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis" [legend]="showLegend"
-            [legendTitle]="legendTitle" [legendPosition]="legendPosition" [showGridLines]="showGridLines"
-            [showXAxisLabel]="false" [showYAxisLabel]="true" [showRightYAxisLabel]="false"
-            [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [yAxisLabelRight]="yAxisLabelRight">
-        </combo-chart-component>
+<div style="overflow-x:scroll;">
+    <div class="row" style="min-width:920px;">
+        <div class="col-sm-12" style=" margin-bottom:3.5rem;">
+            <combo-chart-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
+                [results]="currentCumulativeWaterUsage" [animations]="animations"
+                [lineChart]="historicCumulativeWaterUsage" [yAxisTickFormatting]="yLeftTickFormat"
+                [yLeftAxisScaleFactor]="yLeftAxisScale" [yRightAxisScaleFactor]="yRightAxisScale"
+                [yRightAxisTickFormatting]="yRightTickFormat" [gradient]="gradient" [xAxis]="showXAxis"
+                [yAxis]="showYAxis" [legend]="showLegend" [legendTitle]="legendTitle" [legendPosition]="legendPosition"
+                [showGridLines]="showGridLines" [showXAxisLabel]="false" [showYAxisLabel]="true"
+                [showRightYAxisLabel]="false" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+                [tooltipDisabled]="true" [seriesDomain]="seriesDomain" [yDomain]="yDomain">
+            </combo-chart-component>
+        </div>
     </div>
 </div>
