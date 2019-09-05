@@ -15,7 +15,8 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MultiSeriesEntry, SeriesEntry, MonthlyWaterUsageDto, WaterUsageOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { MonthlyWaterUsageDto, WaterUsageOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
 
 

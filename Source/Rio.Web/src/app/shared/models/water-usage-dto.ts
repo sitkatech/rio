@@ -1,3 +1,5 @@
+import { MultiSeriesEntry, SeriesEntry } from './series-entry';
+
 export class WaterUsageDto {
     Year: number;
     WaterUsage: MonthlyWaterUsageDto[]
@@ -27,21 +29,6 @@ export class MonthlyWaterUsageDto {
             y.value = x.WaterUsageInAcreFeet
             return y;
         }));
-    }
-}
-
-export class SeriesEntry {
-    name: string;
-    value?: number | string;
-};
-
-export class MultiSeriesEntry {
-    name: string;
-    series: SeriesEntry[];
-
-    constructor(name: string, series: { name: string, value?: number | string }[]) {
-        this.name = name;
-        this.series = series;
     }
 }
 

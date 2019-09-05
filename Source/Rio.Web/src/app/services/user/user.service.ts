@@ -3,7 +3,8 @@ import { UserDto } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterUsageDto, MultiSeriesEntry, SeriesEntry, WaterUsageOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterUsageDto, WaterUsageOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 
 @Injectable({
     providedIn: 'root'

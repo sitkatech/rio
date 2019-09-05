@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { SeriesEntry, MultiSeriesEntry } from 'src/app/shared/models/water-usage-dto';
+import { SeriesEntry, MultiSeriesEntry } from "src/app/shared/models/series-entry";
 @Component({
   selector: 'rio-landowner-water-allocation-chart',
   templateUrl: './landowner-water-allocation-chart.component.html',

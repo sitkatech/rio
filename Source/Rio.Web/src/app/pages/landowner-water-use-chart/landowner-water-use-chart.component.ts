@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 
 import { ColorHelper } from '@swimlane/ngx-charts';
 
-import {MultiSeriesEntry} from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry } from "src/app/shared/models/series-entry";
 
 import * as ColorScheme from 'color-scheme';
 import * as palette from 'google-palette';
