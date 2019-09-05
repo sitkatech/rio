@@ -8,86 +8,109 @@
         <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/new-posting">New Posting</a>
     </div>
     <h2 style="display: inline-block">Buy and Sell Water</h2>
-    <div class="mt-4">
-        <ngb-tabset>
-            <ngb-tab title="Offers to Sell Water">
-                <ng-template ngbTabContent>
-                    <div class="mt-4 table-responsive">
-                        <p *ngIf="getPostingsToSell().length === 0">There are currently no postings for sale.</p>
-                        <table class="table table-striped" *ngIf="getPostingsToSell().length > 0">
-                            <thead>
-                                <tr>
-                                    <th>View/Contact</th>
-                                    <th>Posting Date</th>
-                                    <th>Status</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Posting</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let posting of getPostingsToSell()">
-                                    <td><a class="btn btn-primary btn-sm"
-                                            routerLink="/postings/{{posting.PostingID}}">View</a>
-                                    </td>
-                                    <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
-                                    <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
-                                    </td>
-                                    <td>{{ posting.AvailableQuantity }} ac-ft</td>
-                                    <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
-                                    <td>
-                                        {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
-                                        <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
-                                            routerLink="/postings/{{posting.PostingID}}">[View More]</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+    <p class="lead">
+        There are currently {{postings.length}} active postings, with a total of {{getAcreFeetToSell()}} ac-ft on offer to sell and {{getAcreFeetToBuy()}} ac-ft seeking to buy.
+        Click a posting to see details and make an offer, or <a routerLink="/new-posting">create a new posting</a> to advertise your intent to buy/sell
+        water
+    </p>
+</div>
+<div class="container mt-4">
+    <ngb-tabset>
+        <ngb-tab title="Offers to Sell Water">
+            <ng-template ngbTabContent>
+                <div class="mt-4 table-responsive">
+                    <p *ngIf="getPostingsToSell().length === 0">There are currently no postings for sale.</p>
+                    <table class="table table-striped" *ngIf="getPostingsToSell().length > 0">
+                        <thead>
+                            <tr>
+                                <th>View/Contact</th>
+                                <th>Posting Date</th>
+                                <th>Status</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Posting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let posting of getPostingsToSell()">
+                                <td><a class="btn btn-primary btn-sm"
+                                        routerLink="/postings/{{posting.PostingID}}">View</a>
+                                </td>
+                                <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
+                                <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
+                                </td>
+                                <td>{{ posting.AvailableQuantity }} ac-ft</td>
+                                <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
+                                <td>
+                                    {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
+                                    <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
+                                        routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Offers to Buy Water">
-                <ng-template ngbTabContent>
-                    <div class="mt-4 table-responsive">
-                        <p *ngIf="getPostingsToBuy().length === 0">There are currently no postings to buy.</p>
-                        <table class="table table-striped" *ngIf="getPostingsToBuy().length > 0">
-                            <thead>
-                                <tr>
-                                    <th>View/Contact</th>
-                                    <th>Posting Date</th>
-                                    <th>Status</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Posting</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let posting of getPostingsToBuy()">
-                                    <td><a class="btn btn-primary btn-sm"
-                                            routerLink="/postings/{{posting.PostingID}}">View</a>
-                                    </td>
-                                    <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
-                                    <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
-                                    </td>
-                                    <td>{{ posting.Quantity }} ac-ft</td>
-                                    <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
-                                    <td>
-                                        {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
-                                        <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
-                                            routerLink="/postings/{{posting.PostingID}}">[View More]</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </ng-template>
-            </ngb-tab>
-            <ngb-tab title="Get Help">
-                <ng-template ngbTabContent>
-                    <div class="mt-4">Content coming soon!</div>
-                </ng-template>
-            </ngb-tab>
-        </ngb-tabset>
-    </div>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Offers to Buy Water">
+            <ng-template ngbTabContent>
+                <div class="mt-4 table-responsive">
+                    <p *ngIf="getPostingsToBuy().length === 0">There are currently no postings to buy.</p>
+                    <table class="table table-striped" *ngIf="getPostingsToBuy().length > 0">
+                        <thead>
+                            <tr>
+                                <th>View/Contact</th>
+                                <th>Posting Date</th>
+                                <th>Status</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Posting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let posting of getPostingsToBuy()">
+                                <td><a class="btn btn-primary btn-sm"
+                                        routerLink="/postings/{{posting.PostingID}}">View</a>
+                                </td>
+                                <td style="white-space: nowrap">{{ posting.PostingDate | date:"short" }}</td>
+                                <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
+                                </td>
+                                <td>{{ posting.Quantity }} ac-ft</td>
+                                <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
+                                <td>
+                                    {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
+                                    <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
+                                        routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab title="Get Help">
+            <ng-template ngbTabContent>
+                <div class="mt-4">
+                    <p>
+                        The RRB Water Trading Platform is currently in pilot / test phase. No actual transaction
+                        will occur, all postings and trades are for testing purposes only.
+                    </p>
+                    <p>
+                        For more information please contact the Rosedale-Rio Bravo Water Storage District:
+                    </p>
+                    <dl>
+                        <dt>Phone:</dt>
+                        <dd>661.589.6045</dd>
+                        <dt>Email:</dt>
+                        <dd><a href="mailto:admin@rrbwsd.com">admin@rrbwsd.com</a></dd>
+                        <dt>Physical Address:</dt>
+                        <dd>849 Allen Road, Bakersfield, CA 93314</dd>
+                        <dt>Mailing Address:</dt>
+                        <dd>P.O. Box 20820, Bakersfield, CA 93390-0820</dd>
+                    </dl>
+                </div>
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
 </div>
