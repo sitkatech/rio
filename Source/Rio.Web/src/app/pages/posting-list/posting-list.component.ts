@@ -45,4 +45,18 @@ export class PostingListComponent implements OnInit, OnDestroy {
   {
     return this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell);
   }
+
+  public getAcreFeetToSell() : number
+  {
+    return this.getPostingsToSell().reduce(function (a, b) {
+      return (a + b.AvailableQuantity);
+    }, 0);
+  }
+
+  public getAcreFeetToBuy() : number
+  {
+    return this.getPostingsToBuy().reduce(function (a, b) {
+      return (a + b.AvailableQuantity);
+    }, 0);
+  }
 }
