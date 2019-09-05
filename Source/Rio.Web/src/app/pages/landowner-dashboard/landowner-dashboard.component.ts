@@ -156,9 +156,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
-    return this.trades
+    return this.trades ? 
+     this.trades
     .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && !x.IsConfirmed)))
-    .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+    .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
   public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
