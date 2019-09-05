@@ -13,6 +13,7 @@ using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.WaterUsage;
 
 namespace Rio.API.Controllers
 {

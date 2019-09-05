@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Rio.Models.DataTransferObjects
+namespace Rio.Models.DataTransferObjects.WaterUsage
 {
     public class WaterUsageByParcelDto
     {
