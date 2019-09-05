@@ -15,7 +15,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { MonthlyWaterUsageDto, WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
 
@@ -339,8 +339,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.waterUsageChartData = waterUsage.map(x => {
       return {
         Year: x.Year,
-        //FIXME: Relying on methods on DTOs is not great. This one just gently reshapes the return value of the API call for the charting library--in future we should actually return the correct shape from the API, or at least shape the data before it comes back from the UserService
-        ChartData: x.WaterUsage.map(y=> new MonthlyWaterUsageDto(y).toMultiSeriesEntry())
+        ChartData: x.WaterUsage
       }
     });
 
