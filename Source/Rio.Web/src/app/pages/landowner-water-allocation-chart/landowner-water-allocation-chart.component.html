@@ -1,7 +1,7 @@
 <div style="overflow-x:scroll;">
     <div class="row" style="min-width:920px;">
         <div class="col-sm-12">
-            <combo-chart-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
+            <rio-allocation-chart-impl-component [view]="view" [scheme]="comboBarScheme" [colorSchemeLine]="lineChartScheme"
                 [currentCumulativeWaterUsageSeries]="currentCumulativeWaterUsage" [animations]="true"
                 [historicCumulativeWaterUsageSeries]="historicCumulativeWaterUsage" 
                 [annualAllocationSeries]="annualAllocationSeries"
@@ -10,7 +10,7 @@
                 [showGridLines]="true" [showXAxisLabel]="false" [showYAxisLabel]="true"
                 [showRightYAxisLabel]="false" [yAxisLabel]="'Volume (AF)'"
                 [tooltipDisabled]="true" [seriesDomain]="seriesDomain" [yDomain]="yDomain">
-            </combo-chart-component>
+            </rio-allocation-chart-impl-component>
         </div>
     </div>
 </div>

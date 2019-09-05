@@ -39,7 +39,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
 import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
-import { ComboChartComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
+import { AllocationChartImplComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
 import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/combo-series-vertical.component'
 import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
 
@@ -66,7 +66,7 @@ import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-
     ConfirmTransferComponent,
     ParcelListComponent,
     LandownerWaterUseChartComponent,
-    ComboChartComponent,
+    AllocationChartImplComponent,
     ComboSeriesVerticalComponent,
     LandownerWaterAllocationChartComponent
   ],

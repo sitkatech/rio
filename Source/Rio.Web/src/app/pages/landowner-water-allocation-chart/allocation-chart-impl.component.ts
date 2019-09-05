@@ -27,12 +27,12 @@ import { area, line, curveLinear } from 'd3-shape';
 import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
 
 @Component({
-  selector: 'combo-chart-component',
+  selector: 'rio-allocation-chart-impl-component',
   templateUrl: './allocation-chart-impl.component.html',
   styleUrls: ['./allocation-chart-impl.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ComboChartComponent extends BaseChartComponent {
+export class AllocationChartImplComponent extends BaseChartComponent {
   @Input() curve: any = curveLinear;
   @Input() legend = false;
   @Input() legendTitle: string = 'Legend';
