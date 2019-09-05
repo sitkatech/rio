@@ -28,85 +28,8 @@ import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
 
 @Component({
   selector: 'combo-chart-component',
-  template: `
-    <ngx-charts-chart
-      [view]="[width + legendSpacing, height]"
-      [showLegend]="legend"
-      [legendOptions]="legendOptions"
-      [activeEntries]="activeEntries"
-      [animations]="animations"
-      (legendLabelClick)="onClick($event)"
-      (legendLabelActivate)="onActivate($event)"
-      (legendLabelDeactivate)="onDeactivate($event)"
-    >
-      <svg:g [attr.transform]="transform" class="bar-chart chart">
-        <svg:g
-          ngx-charts-x-axis
-          [xScale]="xScale"
-          [dims]="dims"
-          [showLabel]="false"
-          (dimensionsChanged)="updateXAxisHeight($event)"
-        ></svg:g>
-        <svg:g
-          ngx-charts-y-axis
-          [yScale]="yScale"
-          [dims]="dims"
-          [yOrient]="'left'"
-          [showGridLines]="true"
-          [showLabel]="true"
-          [labelText]="yAxisLabel"
-          (dimensionsChanged)="updateYAxisWidth($event)"
-        ></svg:g>
-        <svg:g
-          ngx-combo-charts-series-vertical
-          [xScale]="xScale"
-          [yScale]="yScale"
-          [colors]="colors"
-          [series]="currentCumulativeWaterUsageSeries"
-          [seriesLine]="[historicCumulativeWaterUsageSeries]"
-          [dims]="dims"
-          [gradient]="true"
-          tooltipDisabled="true"
-          [activeEntries]="activeEntries"
-          [animations]="true"
-          [noBarWhenZero]="true"
-          (bandwidth)="updateLineWidth($event)"
-          (select)="onClick($event)"
-        ></svg:g>
-      </svg:g>
-      <svg:g [attr.transform]="transform" class="line-chart chart">
-        <svg:g>
-            <svg:g
-              ngx-charts-line-series
-              [xScale]="xScaleLine"
-              [yScale]="yScale"
-              [colors]="colorsLine"
-              [data]="historicCumulativeWaterUsageSeries"
-              [activeEntries]="activeEntries"
-              [scaleType]="scaleType"
-              [curve]="curve"
-              [rangeFillOpacity]="rangeFillOpacity"
-              [animations]="animations"
-            />
-        </svg:g>
-        <svg:g>
-            <svg:g
-              ngx-charts-line-series
-              [xScale]="xScaleLine"
-              [yScale]="yScale"
-              [colors]="colorsLine"
-              [data]="annualAllocationSeries"
-              [activeEntries]="activeEntries"
-              [scaleType]="scaleType"
-              [curve]="curve"
-              [rangeFillOpacity]="rangeFillOpacity"
-              [animations]="animations"
-            />
-        </svg:g>
-      </svg:g>
-    </ngx-charts-chart>
-  `,
-  styleUrls: ['./combo-chart.component.scss'],
+  templateUrl: './allocation-chart-impl.component.html',
+  styleUrls: ['./allocation-chart-impl.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class ComboChartComponent extends BaseChartComponent {
