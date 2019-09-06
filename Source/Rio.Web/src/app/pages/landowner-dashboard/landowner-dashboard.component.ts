@@ -67,7 +67,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
       this.waterYearToDisplay = 2018; //TODO: get this from API
-      this.tradeStatusIDs = [TradeStatusEnum.Open];
+      this.tradeStatusIDs = [TradeStatusEnum.Countered];
       this.postingStatusIDs = [PostingStatusEnum.Open];
       this.showPurchasedDetails = false;
       this.showSoldDetails = false;
@@ -114,10 +114,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public toggleTradeStatusShown(): void {
     if (this.tradeStatusIDs.length === 1) {
-      this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Open, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
+      this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Countered, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
     }
     else {
-      this.tradeStatusIDs = [TradeStatusEnum.Open];
+      this.tradeStatusIDs = [TradeStatusEnum.Countered];
     }
   }
 
