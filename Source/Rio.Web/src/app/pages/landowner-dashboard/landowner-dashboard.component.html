@@ -139,10 +139,13 @@
                 <td style="border: 0 none"><a
                     routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
                 <td style="border: 0 none; white-space: nowrap">
-                  <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}" *ngIf="trade.WaterTransferID && (!trade.IsConfirmedByBuyer || !trade.IsConfirmedBySeller)">
+                  <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}"
+                    *ngIf="trade.WaterTransferID && (!trade.IsConfirmedByBuyer || !trade.IsConfirmedBySeller)">
                     <span [innerHTML]="getTradeConfirmationStatus(trade)"></span>
                   </a>
-                  <span *ngIf="!trade.WaterTransferID || (trade.IsConfirmedByBuyer && IsConfirmedBySeller)">{{getTradeStatus(trade)}}</span></td>
+                  <span
+                    *ngIf="!trade.WaterTransferID || (trade.IsConfirmedByBuyer && IsConfirmedBySeller)">{{getTradeStatus(trade)}}</span>
+                </td>
                 <td style="border: 0 none">{{getTradeDescription(trade)}}</td>
                 <td style="border: 0 none; white-space: nowrap; text-align: right">
                   {{ trade.Price * trade.Quantity | currency: "USD" }}
@@ -197,35 +200,30 @@
       </div>
     </div>
   </div>
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-12" *ngIf="parcels && parcels.length > 0">
-      <div class="card mt-4">
+  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-12">
+      <div class="card">
         <div class="card-header">
-          <div class="float-right">
-            <label class="switch">
-              <input type="checkbox" (change)="toggleChartToDisplay()" />
-              <div class="slider round">
-                <span class="off">Overview</span>
-                <span class="on">Monthly</span>
-              </div>
-            </label>
-          </div>
-          <span *ngIf="shouldShowMonthlyWaterUseChart()">{{waterYearToDisplay}} Monthly Water Use, Volume (AF)</span>
-          <span *ngIf="shouldShowAllocationChart()">{{waterYearToDisplay}} Annual Allocation </span>
+          {{waterYearToDisplay}} Annual Allocation
         </div>
         <div class="card-body">
-          <div *ngIf="shouldShowMonthlyWaterUseChart()">
-            <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers">
-            </rio-landowner-water-use-chart>
-          </div>
-          <div *ngIf="shouldShowAllocationChart()">
-            <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
-              [yDomain]="allocationChartRange"
-              [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
-              [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
-
-            </rio-landowner-water-allocation-chart>
-          </div>
+          <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
+            [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
+            [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
+          </rio-landowner-water-allocation-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-12">
+      <div class="card">
+        <div class="card-header">
+          {{waterYearToDisplay}} Monthly Water Use, Volume (AF)
+        </div>
+        <div class="card-body">
+          <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers">
+          </rio-landowner-water-use-chart>
           <p class="small" *ngIf="parcels && parcels.length > 0">
             *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
           </p>
@@ -233,7 +231,7 @@
       </div>
     </div>
   </div>
-  <div class="row mt-4">
+  <div class="row mt-4 mb-4">
     <div class="col-sm-12 col-md-12" *ngIf="parcels">
       <div class="card mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="card-header">
