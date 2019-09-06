@@ -17,7 +17,6 @@ import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
-import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
 
 
 @Component({
@@ -63,7 +62,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.showMonthlyWaterUseChart = true;
+    this.showMonthlyWaterUseChart = false;
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
