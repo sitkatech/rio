@@ -8,5 +8,8 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public decimal? WaterUsageFor2016 { get; set; }
         public decimal? WaterUsageFor2017 { get; set; }
         public decimal? WaterUsageFor2018 { get; set; }
+        public decimal? AllocationFor2016 { get; set; }
+        public decimal? AllocationFor2017 { get; set; }
+        public decimal? AllocationFor2018 { get; set; }
     }
 }

@@ -22,7 +22,10 @@ namespace Rio.EFModels.Entities
                         ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                         WaterUsageFor2016 = parcel.WaterUsageFor2016,
                         WaterUsageFor2017 = parcel.WaterUsageFor2017,
-                        WaterUsageFor2018 = parcel.WaterUsageFor2018
+                        WaterUsageFor2018 = parcel.WaterUsageFor2018,
+                        AllocationFor2016 = parcel.AllocationFor2016,
+                        AllocationFor2017 = parcel.AllocationFor2017,
+                        AllocationFor2018 = parcel.AllocationFor2018
                     };
                     if (parcel.UserID.HasValue)
                     {

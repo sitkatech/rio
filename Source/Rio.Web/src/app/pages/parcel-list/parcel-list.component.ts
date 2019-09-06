@@ -54,10 +54,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
                 }
                 return 0;
               },
-              sortable: true, filter: true, width: 120
+              sortable: true, filter: true, width: 100
             },
-            { headerName: 'Area in Acres', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 170 },
-            { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 150 },
+            { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
+            { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 100 },
             {
               headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: UserLinkRendererComponent,
               cellRendererParams: { inRouterLink: "/users/" },
@@ -78,16 +78,29 @@ export class ParcelListComponent implements OnInit, OnDestroy {
                 }
                 return 0;
               },
-              sortable: true, filter: true
+              sortable: true, filter: true, width: 170
             }
           ]
         },
         {
-          headerName: 'Water Usage',
+          headerName: '2018 Water Data (acre-feet)',
           children: [
-            { headerName: '2018', field: 'WaterUsageFor2018', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 150 },
-            { headerName: '2017', field: 'WaterUsageFor2017', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 150 },
-            { headerName: '2016', field: 'WaterUsageFor2016', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 150 }
+            { headerName: 'Allocation', field: 'AllocationFor2018', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
+            { headerName: 'Usage', field: 'WaterUsageFor2018', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
+          ]
+        },
+        {
+          headerName: '2017 Water Data (acre-feet)',
+          children: [
+            { headerName: 'Allocation', field: 'AllocationFor2017', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
+            { headerName: 'Usage', field: 'WaterUsageFor2017', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
+          ]
+        },
+        {
+          headerName: '2016 Water Data (acre-feet)',
+          children: [
+            { headerName: 'Allocation', field: 'AllocationFor2016', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
+            { headerName: 'Usage', field: 'WaterUsageFor2016', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 100 },
           ]
         }
       ];

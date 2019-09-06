@@ -11,5 +11,29 @@
 @import "scss/_forms.scss";
 @import "scss/_custom-bootstrap.scss";
 
-@import "~ag-grid-community/dist/styles/ag-grid.css";
-@import "~ag-grid-community/dist/styles/ag-theme-material.css";
+// begin ag-grid settings
+$grid-size: 4px;
+$font-size: 12px;
+$secondary-font-size: 13px;
+$header-icon-size: 13px;
+$cell-horizontal-padding: 12px;
+$tooltip-padding: 0px;
+$header-background-color: #448AC6;
+$header-foreground-color: #fff;
+
+// changes the default icon color
+$icon-color: #fff;
+
+// changes the selected checkbox check mark color
+$accent-color: #0077f9;
+$hover-color: cornsilk;
+
+$ag-range-selected-color-1: rgb(250, 235, 215);
+$ag-range-selected-color-2: darken($ag-range-selected-color-1, 10%);
+$ag-range-selected-color-3: darken($ag-range-selected-color-1, 20%);
+$ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
+
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+
+// end ag-grid settings

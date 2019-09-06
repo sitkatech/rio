@@ -79,30 +79,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: 'agDateColumnFilter'
-          },
-          {
-            headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: UserLinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/users/" },
-            filterValueGetter: function (params: any) {
-              return params.data.OfferCreateUser.FullName;
-            },
-            comparator: function (id1: any, id2: any) {
-              let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-              let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-              if (user1 < user2) {
-                return -1;
-              }
-              if (user1 > user2) {
-                return 1;
-              }
-              return 0;
-            },
-            sortable: true, filter: true
+            sortable: true, filter: 'agDateColumnFilter', width: 140
           },
           { headerName: 'Status', 
             valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && !params.data.IsConfirmed ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
-            sortable: true, filter: true, width: 240 },
+            sortable: true, filter: true, width: 200 },
           {
             headerName: 'Buyer', field: 'Buyer', cellRendererFramework: UserLinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
@@ -120,7 +101,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: true, width: 150
+            sortable: true, filter: true, width: 155
           },
           {
             headerName: 'Seller', field: 'Seller', cellRendererFramework: UserLinkRendererComponent,
@@ -139,10 +120,29 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
               return 0;
             },
-            sortable: true, filter: true
+            sortable: true, filter: true, width: 155
           },
-          { headerName: 'Qty', field: 'Quantity', sortable: true, filter: true, width: 140 },
-          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 150 },
+          { headerName: 'Quantity (acre-feet)', field: 'Quantity', sortable: true, filter: true, width: 160 },
+          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
+          {
+            headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: UserLinkRendererComponent,
+            cellRendererParams: { inRouterLink: "/users/" },
+            filterValueGetter: function (params: any) {
+              return params.data.OfferCreateUser.FullName;
+            },
+            comparator: function (id1: any, id2: any) {
+              let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
+              let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
+              if (user1 < user2) {
+                return -1;
+              }
+              if (user1 > user2) {
+                return 1;
+              }
+              return 0;
+            },
+            sortable: true, filter: true, width: 155
+          },
         ];
         this.rowData = trades;
       });
