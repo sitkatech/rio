@@ -42,11 +42,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<WaterTransferDto> ListByUserID(RioDbContext dbContext, int userID)
         {
-            var waterTransfers = dbContext.WaterTransfer
-                .Include(x => x.TransferringUser)
-                .Include(x => x.ReceivingUser)
-                .Include(x => x.Offer)
-                .AsNoTracking()
+            var waterTransfers = GetWaterTransfersImpl(dbContext)
                 .Where(x => x.ReceivingUserID == userID || x.TransferringUserID == userID)
                 .OrderByDescending(x => x.TransferDate)
                 .Select(x => x.AsDto())
@@ -54,15 +50,19 @@ namespace Rio.EFModels.Entities
 
             return waterTransfers;
         }
-        public static WaterTransferDto GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
+
+        private static IQueryable<WaterTransfer> GetWaterTransfersImpl(RioDbContext dbContext)
         {
-            var waterTransfer = dbContext.WaterTransfer
+            return dbContext.WaterTransfer
                 .Include(x => x.TransferringUser)
                 .Include(x => x.ReceivingUser)
                 .Include(x => x.Offer)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.WaterTransferID == waterTransferID);
+                .AsNoTracking();
+        }
 
+        public static WaterTransferDto GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
+        {
+            var waterTransfer = GetWaterTransfersImpl(dbContext).SingleOrDefault(x => x.WaterTransferID == waterTransferID);
             return waterTransfer?.AsDto();
         }
 

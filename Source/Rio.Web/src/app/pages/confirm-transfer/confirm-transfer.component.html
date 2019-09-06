@@ -94,7 +94,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6" *ngIf="!canConfirm()">
+        <div class="col-sm-12 col-md-6" *ngIf="isBuyerOrSeller() && !canConfirm()">
             <div class="card">
                 <div class="card-header">
                     Your Actions

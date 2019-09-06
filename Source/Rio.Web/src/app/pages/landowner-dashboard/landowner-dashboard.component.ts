@@ -30,7 +30,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   public showPurchasedDetails: boolean;
   public showSoldDetails: boolean;
-  
+
   public user: UserDto;
   public parcels: Array<ParcelAllocationAndConsumptionDto>;
   public parcelNumbers: string[];
@@ -42,11 +42,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
 
-  private waterUsageChartData: {Year: number, ChartData: MultiSeriesEntry[]}[];
+  private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] }[];
   private waterUsageOverview: WaterAllocationOverviewDto;
   private showMonthlyWaterUseChart: boolean;
   private historicCumulativeWaterUsage: MultiSeriesEntry;
-  private annualAllocationChartData: {Year: number, ChartData:MultiSeriesEntry}[];
+  private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
   private allocationChartRange: number[];
   historicAverageAnnualUsage: string | number;
 
@@ -94,8 +94,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.userService.getWaterUsageOverviewByUserID(userID)
       ).subscribe(([parcels, postings, trades, waterTransfers, waterUsage, waterUsageOverview]) => {
         this.parcels = parcels;
-        this.parcelNumbers = Array.from(new Set(parcels.map(x=>x.ParcelNumber)));
-        
+        this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
+
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
@@ -150,15 +150,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getPostingsForWaterYear(): Array<PostingDto> {
     return this.postings
-    .filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
-    .sort((a, b) => a.PostingDate > b.PostingDate ? -1 : a.PostingDate < b.PostingDate ? 1 : 0);
+      .filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
+      .sort((a, b) => a.PostingDate > b.PostingDate ? -1 : a.PostingDate < b.PostingDate ? 1 : 0);
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
-    return this.trades ? 
-     this.trades
-    .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && !x.IsConfirmed)))
-    .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+    return this.trades ?
+      this.trades
+        .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsConfirmedByBuyer || !x.IsConfirmedBySeller))))
+        .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
   public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
@@ -168,7 +168,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
-    return trade.OfferCreateUser.UserID === this.currentUser.UserID;
+    return trade.OfferCreateUser.UserID === this.user.UserID;
   }
 
   public getTradeStatus(trade: TradeWithMostRecentOfferDto): string {
@@ -186,27 +186,36 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getOfferThatDoesNotBelongToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
-    if(trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell)
-    {
+    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
       return "A seller is awaiting your response to their offer to sell " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
     return "A buyer is awaiting your response to their offer to purchase " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
   }
 
   public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if(isMostRecentOffererTheCurrentUser)
-    {
+    if (isMostRecentOffererTheCurrentUser) {
       return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buy" : "sell";
     }
     return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "buy";
   }
 
   public getRespondeeType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if(isMostRecentOffererTheCurrentUser)
-    {
+    if (isMostRecentOffererTheCurrentUser) {
       return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
     }
     return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "seller" : "buyer";
+  }
+
+  public getTradeConfirmationStatus(trade: TradeWithMostRecentOfferDto): string {
+    // You will only be calling this function if the trade has not been confirmed by both parties, so should never really hit this
+    // but protecting it just in case
+    if (trade.IsConfirmedBySeller && trade.IsConfirmedByBuyer) {
+      return "Accepted";
+    }
+    if ((trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID)) {
+      return "You have already confirmed this transfer.<br />The other party must still confirm<br />before the water is transferred";
+    }
+    return "Awaiting Payment Confirmation";
   }
 
   public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
@@ -218,7 +227,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels.filter(x => x.WaterYear.toString() === this.waterYearToDisplay.toString());
   }
 
-  public getParcelsForSpecificWaterYear(year: number){
+  public getParcelsForSpecificWaterYear(year: number) {
     return this.parcels.filter(x => x.WaterYear.toString() === year.toString());
   }
 
@@ -249,7 +258,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  public getAnnualAllocationForSpecificWaterYear(year:number): number{
+  public getAnnualAllocationForSpecificWaterYear(year: number): number {
     let parcelsWithAllocation = this.getParcelsForSpecificWaterYear(year).filter(p => p.AcreFeetAllocated !== null);
     if (parcelsWithAllocation.length > 0) {
       let result = parcelsWithAllocation.reduce(function (a, b) {
@@ -265,21 +274,21 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private getWaterTransfersForWaterYear(year?: number) {
-    if (!year){
+    if (!year) {
       year = this.waterYearToDisplay
     }
     return this.waterTransfers.filter(x => x.TransferYear - 1 == year);
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.TransferringUser.UserID === this.currentUser.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.TransferringUser.UserID === this.user.UserID);
   }
 
   public getPurchasedWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.ReceivingUser.UserID === this.currentUser.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.ReceivingUser.UserID === this.user.UserID);
   }
 
-  public isWaterTransferPending(waterTransfer : WaterTransferDto) {
+  public isWaterTransferPending(waterTransfer: WaterTransferDto) {
     return !waterTransfer.ConfirmedByReceivingUser || !waterTransfer.ConfirmedByTransferringUser;
   }
 
@@ -333,9 +342,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  
+
   initializeCharts(waterUsage: WaterUsageDto[], waterUsageOverview: WaterAllocationOverviewDto) {
-    
+
     this.waterUsageChartData = waterUsage.map(x => {
       return {
         Year: x.Year,
@@ -345,30 +354,30 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
 
     let values = [];
-    for (const series of waterUsageOverview.Current){
-      for (const entry of series.CumulativeWaterUsage){
+    for (const series of waterUsageOverview.Current) {
+      for (const entry of series.CumulativeWaterUsage) {
         values.push(entry.value);
       }
     }
 
-    this.annualAllocationChartData = this.waterYears.map(x=>{
+    this.annualAllocationChartData = this.waterYears.map(x => {
       const allocation = this.getAnnualAllocationForSpecificWaterYear(x);
       const sold = this.getSoldAcreFeet(x);
       const purchased = this.getPurchasedAcreFeet(x);
 
       values.push(allocation + purchased - sold);
       const months = ["January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"];
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"];
       return {
         Year: x,
         ChartData: {
@@ -378,34 +387,34 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     })
 
-    this.allocationChartRange = [0,  1.2 * Math.max(...values)];
+    this.allocationChartRange = [0, 1.2 * Math.max(...values)];
     this.waterUsageOverview = waterUsageOverview;
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x=>x.name == "December").value as number).toFixed(1);
+    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == "December").value as number).toFixed(1);
   }
 
-  public getWaterUsageForWaterYear() : MultiSeriesEntry[] {
-    return this.waterUsageChartData.find(x=>x.Year == this.waterYearToDisplay).ChartData;
+  public getWaterUsageForWaterYear(): MultiSeriesEntry[] {
+    return this.waterUsageChartData.find(x => x.Year == this.waterYearToDisplay).ChartData;
   }
 
-  public getCumulativeWaterUsageForWaterYear(): SeriesEntry[]{
-    let currentYearData = this.waterUsageOverview.Current.find(x=>x.Year == this.waterYearToDisplay);
+  public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
+    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay);
     return currentYearData.CumulativeWaterUsage;
   }
 
-  public getAnnualAllocationSeries() : MultiSeriesEntry {
-    return this.annualAllocationChartData.find(x=>x.Year == this.waterYearToDisplay).ChartData
+  public getAnnualAllocationSeries(): MultiSeriesEntry {
+    return this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay).ChartData
   }
 
-  public toggleChartToDisplay() : void {
+  public toggleChartToDisplay(): void {
     this.showMonthlyWaterUseChart = !this.showMonthlyWaterUseChart;
   }
 
-  public shouldShowMonthlyWaterUseChart() : boolean{
-    return this.showMonthlyWaterUseChart ;
+  public shouldShowMonthlyWaterUseChart(): boolean {
+    return this.showMonthlyWaterUseChart;
   }
 
-  public shouldShowAllocationChart() : boolean{
-    return !this.showMonthlyWaterUseChart; 
+  public shouldShowAllocationChart(): boolean {
+    return !this.showMonthlyWaterUseChart;
   }
 }

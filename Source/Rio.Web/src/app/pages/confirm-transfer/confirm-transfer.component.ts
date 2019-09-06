@@ -71,6 +71,10 @@ export class ConfirmTransferComponent implements OnInit, OnDestroy {
     (this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByTransferringUser === false);
   }
 
+  public isBuyerOrSeller(): boolean {
+    return this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID || this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID;
+  }
+
   public confirmTransfer(): void {
     this.isConfirmingTransfer = true;
   }

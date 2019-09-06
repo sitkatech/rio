@@ -139,8 +139,10 @@
                 <td style="border: 0 none"><a
                     routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
                 <td style="border: 0 none; white-space: nowrap">
-                  <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}" *ngIf="trade.WaterTransferID && !trade.IsConfirmed">Awaiting Payment Confirmation</a>
-                  <span *ngIf="!trade.WaterTransferID || trade.IsConfirmed">{{getTradeStatus(trade)}}</span></td>
+                  <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}" *ngIf="trade.WaterTransferID && (!trade.IsConfirmedByBuyer || !trade.IsConfirmedBySeller)">
+                    <span [innerHTML]="getTradeConfirmationStatus(trade)"></span>
+                  </a>
+                  <span *ngIf="!trade.WaterTransferID || (trade.IsConfirmedByBuyer && IsConfirmedBySeller)">{{getTradeStatus(trade)}}</span></td>
                 <td style="border: 0 none">{{getTradeDescription(trade)}}</td>
                 <td style="border: 0 none; white-space: nowrap; text-align: right">
                   {{ trade.Price * trade.Quantity | currency: "USD" }}

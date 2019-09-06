@@ -15,7 +15,8 @@ export class TradeWithMostRecentOfferDto {
     OfferStatus: OfferStatusDto;
     Buyer: UserSimpleDto;
     Seller: UserSimpleDto;
-    IsConfirmed: boolean;
+    IsConfirmedByBuyer: boolean;
+    IsConfirmedBySeller: boolean;
     WaterTransferID: number;
 
     constructor(obj?: any) {

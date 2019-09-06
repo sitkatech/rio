@@ -17,7 +17,8 @@ namespace Rio.Models.DataTransferObjects.Offer
         public UserSimpleDto Buyer { get; set; }
         public UserSimpleDto Seller { get; set; }
         public int TradePostingTypeID { get; set; }
-        public bool IsConfirmed { get; set; }
+        public bool IsConfirmedByBuyer { get; set; }
+        public bool IsConfirmedBySeller { get; set; }
         public int? WaterTransferID { get; set; }
     }
 }
