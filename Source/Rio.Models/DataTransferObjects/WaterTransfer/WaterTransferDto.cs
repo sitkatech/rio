@@ -9,7 +9,7 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public int? OfferID { get; set; }
         public DateTime TransferDate { get; set; }
         public int TransferYear { get; set; }
-        public decimal? AcreFeetTransferred { get; set; }
+        public int AcreFeetTransferred { get; set; }
         public decimal? UnitPrice { get; set; }
         public UserSimpleDto TransferringUser { get; set; }
         public UserSimpleDto ReceivingUser { get; set; }

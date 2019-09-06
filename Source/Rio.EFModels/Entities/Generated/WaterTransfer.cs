@@ -10,8 +10,7 @@ namespace Rio.EFModels.Entities
         public int WaterTransferID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime TransferDate { get; set; }
-        [Column(TypeName = "decimal(10, 4)")]
-        public decimal? AcreFeetTransferred { get; set; }
+        public int AcreFeetTransferred { get; set; }
         public int TransferringUserID { get; set; }
         public int ReceivingUserID { get; set; }
         public int? OfferID { get; set; }
