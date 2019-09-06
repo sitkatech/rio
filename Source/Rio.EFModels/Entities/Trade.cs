@@ -15,7 +15,7 @@ namespace Rio.EFModels.Entities
                 PostingID = postingID,
                 CreateUserID = userID,
                 TradeDate = DateTime.UtcNow,
-                TradeStatusID = (int) TradeStatusEnum.Open
+                TradeStatusID = (int) TradeStatusEnum.Countered
             };
 
             dbContext.Trade.Add(trade);
@@ -61,7 +61,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<TradeWithMostRecentOfferDto> GetPendingTradesForPostingID(RioDbContext dbContext, int postingID)
         {
             var offers = GetTradeWithOfferDetailsImpl(dbContext)
-                .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Open && x.PostingID == postingID)
+                .Where(x => x.TradeStatusID == (int) TradeStatusEnum.Countered && x.PostingID == postingID)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())
                 .AsEnumerable();

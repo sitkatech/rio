@@ -111,7 +111,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   public isTradeNotOpen(): boolean {
-    return this.trade.TradeStatus.TradeStatusID !== TradeStatusEnum.Open;
+    return this.trade.TradeStatus.TradeStatusID !== TradeStatusEnum.Countered;
   }
 
   public getTotalPrice(offer: any): number {

@@ -1,6 +1,6 @@
 ﻿MERGE INTO dbo.TradeStatus AS Target
 USING (VALUES
-(1, 'Open', 'Open'),
+(1, 'Countered', 'Countered'),
 (2, 'Accepted', 'Accepted'),
 (3, 'Rejected', 'Rejected'),
 (4, 'Rescinded', 'Rescinded')

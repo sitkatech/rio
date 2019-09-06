@@ -41,7 +41,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Trade)
                 .Include(x => x.CreateUser)
                 .AsNoTracking()
-                .Where(x => x.Trade.PostingID == postingID && x.CreateUserID == userID && x.Trade.TradeStatusID == (int) TradeStatusEnum.Open)
+                .Where(x => x.Trade.PostingID == postingID && x.CreateUserID == userID && x.Trade.TradeStatusID == (int) TradeStatusEnum.Countered)
                 .OrderByDescending(x => x.OfferDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
