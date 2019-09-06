@@ -204,16 +204,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "seller" : "buyer";
   }
 
-  public getTradeConfirmationStatus(trade: TradeWithMostRecentOfferDto): string {
-    // You will only be calling this function if the trade has not been confirmed by both parties, so should never really hit this
-    // but protecting it just in case
-    if (trade.IsConfirmedBySeller && trade.IsConfirmedByBuyer) {
-      return "Accepted";
-    }
-    if ((trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID)) {
-      return "You have already confirmed this transfer.<br />The other party must still confirm<br />before the water is transferred";
-    }
-    return "Awaiting Payment Confirmation";
+  public isTradeConfirmedByUser(trade: TradeWithMostRecentOfferDto) {
+    return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID);
+  }
+
+  public isTradeConfirmedByBothParties(trade: TradeWithMostRecentOfferDto) {
+    return trade.IsConfirmedByBuyer && trade.IsConfirmedBySeller;
   }
 
   public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {

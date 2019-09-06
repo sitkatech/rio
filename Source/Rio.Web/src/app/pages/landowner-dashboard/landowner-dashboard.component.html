@@ -140,11 +140,11 @@
                     routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
                 <td style="border: 0 none; white-space: nowrap">
                   <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}"
-                    *ngIf="trade.WaterTransferID && (!trade.IsConfirmedByBuyer || !trade.IsConfirmedBySeller)">
-                    <span [innerHTML]="getTradeConfirmationStatus(trade)"></span>
+                    *ngIf="trade.WaterTransferID && !isTradeConfirmedByUser(trade)">
+                    Awaiting Payment Confirmation
                   </a>
-                  <span
-                    *ngIf="!trade.WaterTransferID || (trade.IsConfirmedByBuyer && IsConfirmedBySeller)">{{getTradeStatus(trade)}}</span>
+                  <span *ngIf="trade.WaterTransferID && isTradeConfirmedByUser(trade) && !isTradeConfirmedByBothParties(trade)">You have already confirmed this transfer.<br />The other party must still confirm<br />before the water is transferred</span>
+                  <span *ngIf="!trade.WaterTransferID || isTradeConfirmedByBothParties(trade)">{{getTradeStatus(trade)}}</span>
                 </td>
                 <td style="border: 0 none">{{getTradeDescription(trade)}}</td>
                 <td style="border: 0 none; white-space: nowrap; text-align: right">
