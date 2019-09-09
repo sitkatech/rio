@@ -59,6 +59,10 @@ export class ConfirmTransferComponent implements OnInit, OnDestroy {
         : waterTransfer as WaterTransferDto;
       this.isConfirmingTransfer = false;
       this.confirmAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
+      if(!this.canConfirm())
+      {
+        this.router.navigateByUrl("/trades/" + waterTransfer.TradeID)
+      }
     });
   }
 

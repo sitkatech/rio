@@ -1,4 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.Offer;
+﻿using System.Linq;
+using Rio.Models.DataTransferObjects.Offer;
 
 namespace Rio.EFModels.Entities
 {
@@ -6,7 +7,7 @@ namespace Rio.EFModels.Entities
     {
         public static OfferDto AsDto(this Offer offer)
         {
-            return new OfferDto()
+            var offerDto = new OfferDto()
             {
                 OfferID = offer.OfferID,
                 OfferDate = offer.OfferDate,
@@ -15,8 +16,20 @@ namespace Rio.EFModels.Entities
                 Price = offer.Price,
                 CreateUser = offer.CreateUser.AsSimpleDto(),
                 OfferStatus = offer.OfferStatus.AsDto(),
-                TradeID = offer.TradeID
+                TradeID = offer.TradeID,
+                ConfirmedByTransferringUser = false,
+                ConfirmedByReceivingUser = false
             };
+            var waterTransfer = offer.WaterTransfer.SingleOrDefault();
+            if (waterTransfer != null)
+            {
+                offerDto.ConfirmedByTransferringUser = waterTransfer.ConfirmedByTransferringUser;
+                offerDto.DateConfirmedByTransferringUser = waterTransfer.DateConfirmedByTransferringUser;
+                offerDto.ConfirmedByReceivingUser = waterTransfer.ConfirmedByReceivingUser;
+                offerDto.DateConfirmedByReceivingUser = waterTransfer.DateConfirmedByReceivingUser;
+            }
+
+            return offerDto;
         }
     }
 }

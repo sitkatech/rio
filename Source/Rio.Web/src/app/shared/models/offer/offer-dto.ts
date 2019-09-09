@@ -10,6 +10,10 @@ export class OfferDto {
     CreateUser: UserSimpleDto;
     OfferStatus: OfferStatusDto;
     TradeID: number;
+    ConfirmedByTransferringUser: boolean;
+    DateConfirmedByTransferringUser: Date;
+    ConfirmedByReceivingUser: boolean;
+    DateConfirmedByReceivingUser: Date;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

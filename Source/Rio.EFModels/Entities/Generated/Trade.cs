@@ -10,7 +10,6 @@ namespace Rio.EFModels.Entities
         public Trade()
         {
             Offer = new HashSet<Offer>();
-            WaterTransfer = new HashSet<WaterTransfer>();
         }
 
         public int TradeID { get; set; }
@@ -31,7 +30,5 @@ namespace Rio.EFModels.Entities
         public virtual TradeStatus TradeStatus { get; set; }
         [InverseProperty("Trade")]
         public virtual ICollection<Offer> Offer { get; set; }
-        [InverseProperty("Trade")]
-        public virtual ICollection<WaterTransfer> WaterTransfer { get; set; }
     }
 }

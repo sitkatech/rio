@@ -60,23 +60,22 @@
           Your Actions
         </div>
         <div class="card-body" *ngIf="isTradeNotOpen()">
-          <p>This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}.  There are no further actions.</p>
+          <p>This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
         </div>
 
         <div class="card-body" *ngIf="!isTradeNotOpen()">
-          <p>The current offer is still pending a response from the {{counterOfferRecipientType}}.  Here are your available actions:</p>
-          <div class="text-center"
-            *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
+          <p>The current offer is still pending a response from the {{counterOfferRecipientType}}. Here are your
+            available actions:</p>
+          <div class="text-center" *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
             <button class="btn btn-primary btn-sm mr-1" (click)="acceptCurrentOffer()"
               *ngIf="!isCurrentOfferCreator">Accept Offer</button>
             <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
               *ngIf="!isCurrentOfferCreator">Make Counter
               Offer</button>
-            <button class="btn btn-primary btn-sm mr-1" (click)="rejectOffer()"
-              *ngIf="!isCurrentOfferCreator">Reject
+            <button class="btn btn-primary btn-sm mr-1" (click)="rejectOffer()" *ngIf="!isCurrentOfferCreator">Reject
               Trade</button>
-            <button class="btn btn-primary btn-sm" (click)="rescindOffer()"
-              *ngIf="isCurrentOfferCreator">Rescind Offer</button>
+            <button class="btn btn-primary btn-sm" (click)="rescindOffer()" *ngIf="isCurrentOfferCreator">Rescind
+              Offer</button>
           </div>
         </div>
 
@@ -118,7 +117,7 @@
             <dt class="text-sm-right col-sm-5 col-xs-12">Notes</dt>
             <dd class="col-sm-7 col-xs-12">
               <textarea class="form-control" name="OfferNotes" style="height: 200px"
-              [(ngModel)]="model.OfferNotes"></textarea>
+                [(ngModel)]="model.OfferNotes"></textarea>
             </dd>
 
           </dl>
@@ -134,7 +133,8 @@
           Confirm Your Trade
         </div>
         <div class="card-body">
-          <p *ngIf="!isRescindingTrade && !isRejectingTrade && !isCounterOffering">Please confirm your intent to execute this trade
+          <p *ngIf="!isRescindingTrade && !isRejectingTrade && !isCounterOffering">Please confirm your intent to execute
+            this trade
             agreement.<br /><strong>This
               action is final</strong> and
             obligates you to complete the financial transaction according to the quantity and price specified here, and
@@ -161,8 +161,7 @@
             </dd>
           </dl>
           <div class="text-center">
-            <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()"
-            [disabled]="isLoadingSubmit">
+            <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()" [disabled]="isLoadingSubmit">
               <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
               Confirm
             </button>
@@ -179,6 +178,15 @@
           Offer History
         </div>
         <div class="card-body">
+          <ng-template ngFor let-confirmation [ngForOf]="getConfirmations()">
+            <div class="row">
+              <div class="col-sm-12">
+                <strong>Confirmed by {{confirmation.ConfirmationType}}
+                  ({{confirmation.ConfirmationDate | date: "short"}})</strong>
+              </div>
+            </div>
+            <hr />
+          </ng-template>
 
           <ng-template ngFor let-offer [ngForOf]="offers">
             <div class="row">

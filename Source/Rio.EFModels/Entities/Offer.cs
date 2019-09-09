@@ -36,11 +36,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<OfferDto> GetActiveOffersFromPostingIDAndUserID(RioDbContext dbContext, int postingID, int userID)
         {
-            var offers = dbContext.Offer
-                .Include(x => x.OfferStatus)
-                .Include(x => x.Trade)
-                .Include(x => x.CreateUser)
-                .AsNoTracking()
+            var offers = GetOffersImpl(dbContext)
                 .Where(x => x.Trade.PostingID == postingID && x.CreateUserID == userID && x.Trade.TradeStatusID == (int) TradeStatusEnum.Countered)
                 .OrderByDescending(x => x.OfferDate)
                 .Select(x => x.AsDto())
@@ -51,12 +47,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<OfferDto> GetByTradeID(RioDbContext dbContext, int tradeID)
         {
-            var offers = dbContext.Offer
-                .Include(x => x.OfferStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.CreateUser)
-                .Include(x => x.CreateUser)
-                .AsNoTracking()
+            var offers = GetOffersImpl(dbContext)
                 .Where(x => x.TradeID == tradeID)
                 .OrderByDescending(x => x.OfferDate)
                 .Select(x => x.AsDto())
@@ -65,16 +56,20 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-        public static OfferDto GetByOfferID(RioDbContext dbContext, int offerID)
+        private static IQueryable<Offer> GetOffersImpl(RioDbContext dbContext)
         {
-            var offer = dbContext.Offer
+            return dbContext.Offer
                 .Include(x => x.OfferStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.CreateUser)
                 .Include(x => x.CreateUser)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.OfferID == offerID);
+                .Include(x => x.WaterTransfer)
+                .AsNoTracking();
+        }
 
+        public static OfferDto GetByOfferID(RioDbContext dbContext, int offerID)
+        {
+            var offer = GetOffersImpl(dbContext).SingleOrDefault(x => x.OfferID == offerID);
             return offer?.AsDto();
         }
     }

@@ -390,6 +390,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.Notes).IsUnicode(false);
 
+                entity.HasOne(d => d.Offer)
+                    .WithMany(p => p.WaterTransfer)
+                    .HasForeignKey(d => d.OfferID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
                 entity.HasOne(d => d.ReceivingUser)
                     .WithMany(p => p.WaterTransferReceivingUser)
                     .HasForeignKey(d => d.ReceivingUserID)

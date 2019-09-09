@@ -13,5 +13,9 @@ namespace Rio.Models.DataTransferObjects.Offer
         public UserSimpleDto CreateUser { get; set; }
         public OfferStatusDto OfferStatus { get; set; }
         public int TradeID { get; set; }
+        public bool ConfirmedByTransferringUser { get; set; }
+        public DateTime? DateConfirmedByTransferringUser { get; set; }
+        public bool ConfirmedByReceivingUser { get; set; }
+        public DateTime? DateConfirmedByReceivingUser { get; set; }
     }
 }

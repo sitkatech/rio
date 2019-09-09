@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
@@ -18,8 +19,7 @@ namespace Rio.EFModels.Entities
                 AcreFeetTransferred = offerDto.Quantity,
                 TransferDate = offerDto.OfferDate,
                 ConfirmedByReceivingUser = false,
-                ConfirmedByTransferringUser = false,
-                TradeID = tradeDto.TradeID
+                ConfirmedByTransferringUser = false
             };
 
             if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
@@ -56,7 +56,7 @@ namespace Rio.EFModels.Entities
             return dbContext.WaterTransfer
                 .Include(x => x.TransferringUser)
                 .Include(x => x.ReceivingUser)
-                .Include(x => x.Offer)
+                .Include(x => x.Offer).ThenInclude(x => x.Trade)
                 .AsNoTracking();
         }
 
@@ -85,20 +85,22 @@ namespace Rio.EFModels.Entities
 
         public static WaterTransferDto Confirm(RioDbContext dbContext, int waterTransferID, WaterTransferConfirmDto waterTransferConfirmDto)
         {
-            var user = dbContext.WaterTransfer
+            var waterTransfer = dbContext.WaterTransfer
                 .Single(x => x.WaterTransferID == waterTransferID);
 
             if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Receiving)
             {
-                user.ConfirmedByReceivingUser = true;
+                waterTransfer.ConfirmedByReceivingUser = true;
+                waterTransfer.DateConfirmedByReceivingUser = DateTime.Now;
             }
             if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Transferring)
             {
-                user.ConfirmedByTransferringUser = true;
+                waterTransfer.ConfirmedByTransferringUser = true;
+                waterTransfer.DateConfirmedByTransferringUser = DateTime.Now;
             }
 
             dbContext.SaveChanges();
-            dbContext.Entry(user).Reload();
+            dbContext.Entry(waterTransfer).Reload();
             return GetByWaterTransferID(dbContext, waterTransferID);
         }
     }

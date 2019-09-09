@@ -15,6 +15,7 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { UserDto } from 'src/app/shared/models';
+import { WaterConfirmationDto } from 'src/app/shared/models/water-confirmation-dto';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -43,6 +44,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public originalPostingType: PostingTypeDto;
   public offerType: string;
   public counterOfferRecipientType: string;
+  public confirmations: Array<WaterConfirmationDto>;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -97,7 +99,21 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.isRejectingTrade = false;
       this.isRescindingTrade = false;
 
-
+      this.confirmations = [];
+      if(this.mostRecentOffer.ConfirmedByReceivingUser)
+      {
+        let waterConfirmation = new WaterConfirmationDto()
+        waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByReceivingUser; 
+        waterConfirmation.ConfirmationType = "Buyer";
+        this.confirmations.push(waterConfirmation)
+      }
+      if(this.mostRecentOffer.ConfirmedByTransferringUser)
+      {
+        let waterConfirmation = new WaterConfirmationDto()
+        waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByTransferringUser; 
+        waterConfirmation.ConfirmationType = "Seller";
+        this.confirmations.push(waterConfirmation)
+      }
     });
   }
 
@@ -108,6 +124,11 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     offer.Quantity = this.mostRecentOffer.Quantity;
     offer.OfferStatusID = OfferStatusEnum.Pending;
     this.model = offer;
+  }
+
+  public getConfirmations() : Array<WaterConfirmationDto>
+  {
+    return this.confirmations.sort((a, b) => a.ConfirmationType > b.ConfirmationType ? -1 : a.ConfirmationType < b.ConfirmationType ? 1 : 0);
   }
 
   public isTradeNotOpen(): boolean {

@@ -17,8 +17,12 @@ namespace Rio.EFModels.Entities
                 TransferringUser = waterTransfer.TransferringUser.AsSimpleDto(),
                 ReceivingUser = waterTransfer.ReceivingUser.AsSimpleDto(),
                 ConfirmedByTransferringUser = waterTransfer.ConfirmedByTransferringUser,
+                DateConfirmedByTransferringUser = waterTransfer.DateConfirmedByTransferringUser,
                 ConfirmedByReceivingUser = waterTransfer.ConfirmedByReceivingUser,
-                Notes = waterTransfer.Notes
+                DateConfirmedByReceivingUser = waterTransfer.DateConfirmedByReceivingUser,
+                Notes = waterTransfer.Notes,
+                // ReSharper disable once PossibleNullReferenceException
+                TradeID = waterTransfer.Offer.TradeID
             };
         }
     }
