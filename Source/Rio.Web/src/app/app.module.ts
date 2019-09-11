@@ -42,6 +42,7 @@ import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trad
 import { AllocationChartImplComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
 import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/combo-series-vertical.component'
 import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
+import { LandownerDashboardLinkRendererComponent } from './shared/components/ag-grid/landowner-dashboard-link-renderer/landowner-dashboard-link-renderer.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,7 @@ import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent, LandownerDashboardLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

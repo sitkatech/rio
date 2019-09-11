@@ -12,6 +12,7 @@ import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/par
 import { ParcelNumberLinkRendererComponent } from './components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { UserLinkRendererComponent } from './components/ag-grid/user-link-renderer/user-link-renderer.component';
 import { TradeDateLinkRendererComponent } from './components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
+import { LandownerDashboardLinkRendererComponent } from './components/ag-grid/landowner-dashboard-link-renderer/landowner-dashboard-link-renderer.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { TradeDateLinkRendererComponent } from './components/ag-grid/trade-date-
         ParcelDetailPopupComponent,
         ParcelNumberLinkRendererComponent,
         UserLinkRendererComponent,
-        TradeDateLinkRendererComponent
+        TradeDateLinkRendererComponent,
+        LandownerDashboardLinkRendererComponent
     ],
     imports: [
         CommonModule,
