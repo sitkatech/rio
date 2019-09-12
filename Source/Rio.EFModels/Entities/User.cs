@@ -35,24 +35,35 @@ namespace Rio.EFModels.Entities
             return GetByUserID(dbContext, user.UserID);
         }
 
-        public static IEnumerable<UserDto> List(RioDbContext dbContext)
+        public static IEnumerable<UserDetailedDto> List(RioDbContext dbContext)
         {
-            var users = dbContext.User
-                .Include(x => x.Role)
-                .AsNoTracking()
-                .Where(x => x.IsActive)
-                .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
-                .Select(x => x.AsDto())
-                .AsEnumerable();
-
-            return users;
+            // right now we are assuming a parcel can only be associated to one user
+            var parcels = dbContext.UserDetaileds.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList()
+                .Select(user =>
+                {
+                    var userDetailedDto = new UserDetailedDto()
+                    {
+                        UserID = user.UserID,
+                        UserGuid = user.UserGuid,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        LoginName = user.LoginName,
+                        RoleID = user.RoleID,
+                        RoleDisplayName = user.RoleDisplayName,
+                        Phone = user.Phone,
+                        HasActiveTrades = user.HasActiveTrades,
+                        AcreFeetOfWaterPurchased = user.AcreFeetOfWaterPurchased,
+                        AcreFeetOfWaterSold = user.AcreFeetOfWaterSold,
+                    };
+                    return userDetailedDto;
+                }).ToList();
+            return parcels;
         }
 
         public static IEnumerable<UserDto> ListByRole(RioDbContext dbContext, RoleEnum roleEnum)
         {
-            var users = dbContext.User
-                .Include(x => x.Role)
-                .AsNoTracking()
+            var users = GetUserImpl(dbContext)
                 .Where(x => x.IsActive && x.RoleID == (int) roleEnum)
                 .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => x.AsDto())
@@ -63,31 +74,28 @@ namespace Rio.EFModels.Entities
 
         public static UserDto GetByUserID(RioDbContext dbContext, int userID)
         {
-            var user = dbContext.User
-                .Include(x => x.Role)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.UserID == userID);
-
+            var user = GetUserImpl(dbContext).SingleOrDefault(x => x.UserID == userID);
             return user?.AsDto();
         }
 
         public static UserDto GetByUserGuid(RioDbContext dbContext, Guid userGuid)
         {
-            var user = dbContext.User
-                .Include(x => x.Role)
-                .AsNoTracking()
+            var user = GetUserImpl(dbContext)
                 .SingleOrDefault(x => x.UserGuid == userGuid);
 
             return user?.AsDto();
         }
 
+        private static IQueryable<User> GetUserImpl(RioDbContext dbContext)
+        {
+            return dbContext.User
+                .Include(x => x.Role)
+                .AsNoTracking();
+        }
+
         public static UserDto GetByEmail(RioDbContext dbContext, string email)
         {
-            var user = dbContext.User
-                .Include(x => x.Role)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.Email == email);
-
+            var user = GetUserImpl(dbContext).SingleOrDefault(x => x.Email == email);
             return user?.AsDto();
         }
 
@@ -126,17 +134,6 @@ namespace Rio.EFModels.Entities
         public static List<ErrorMessage> ValidateUpdate(RioDbContext dbContext, UserUpsertDto userEditDto, int userID)
         {
             var result = new List<ErrorMessage>();
-
-            //if (string.IsNullOrWhiteSpace(userEditDto.FirstName))
-            //{
-            //    result.Add(new ErrorMessage() { Type = "First Name", Message = "First Name is required." });
-            //}
-
-            //if (string.IsNullOrWhiteSpace(userEditDto.LastName))
-            //{
-            //    result.Add(new ErrorMessage() { Type = "Last Name", Message = "Last Name is required." });
-            //}
-
             if (!userEditDto.RoleID.HasValue)
             {
                 result.Add(new ErrorMessage() { Type = "Role ID", Message = "Role ID is required." });

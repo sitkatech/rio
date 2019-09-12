@@ -14,4 +14,6 @@ Post-Deployment Script Template
 
 :r .\dbo.vAllParcelsWithAnnualWaterUsage.sql
 
+:r .\dbo.vUserDetailed.sql
+
 GO

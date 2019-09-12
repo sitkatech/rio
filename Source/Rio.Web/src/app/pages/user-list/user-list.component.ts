@@ -5,6 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ColDef } from 'ag-grid-community';
 import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
 import { LandownerDashboardLinkRendererComponent } from 'src/app/shared/components/ag-grid/landowner-dashboard-link-renderer/landowner-dashboard-link-renderer.component';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
     selector: 'rio-user-list',
@@ -14,18 +15,17 @@ import { LandownerDashboardLinkRendererComponent } from 'src/app/shared/componen
 export class UserListComponent implements OnInit, OnDestroy {
     private watchUserChangeSubscription: any;
     private currentUser: UserDto;
-    public users: UserDto[];
 
     public rowData = [];
     columnDefs: ColDef[];  
 
-    constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private userService: UserService) { }
+    constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private userService: UserService, private decimalPipe: DecimalPipe) { }
 
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
             this.userService.getUsers().subscribe(users => {
-                this.cdr.detectChanges();
+                let _decimalPipe = this.decimalPipe;
 
                 this.columnDefs = [
                     { headerName: '', field: 'UserID', cellRendererFramework: LandownerDashboardLinkRendererComponent, sortable: false, filter: false, width: 40 },
@@ -56,9 +56,11 @@ export class UserListComponent implements OnInit, OnDestroy {
                         sortable: true, filter: true
                       },
                     { headerName: 'Email', field: 'Email', sortable: true, filter: true },
-                    { headerName: 'Phone', field: 'Phone', sortable: true, filter: true },
-                    { headerName: 'Role', field: 'Role.RoleDisplayName', sortable: true, filter: true },
-                  ];
+                    { headerName: 'Role', field: 'RoleDisplayName', sortable: true, filter: true, width: 100 },
+                    { headerName: 'Has Active Trades?', valueGetter: function (params) { return params.data.HasActiveTrades ? "Yes" : "No"; }, sortable: true, filter: true, width: 160 },
+                    { headerName: 'Water Purchased (ac-ft)', field: 'AcreFeetOfWaterPurchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 200 },
+                    { headerName: 'Water Sold (ac-ft)', field: 'AcreFeetOfWaterSold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 160 },
+                ];
                   this.rowData = users;
             });
         });
