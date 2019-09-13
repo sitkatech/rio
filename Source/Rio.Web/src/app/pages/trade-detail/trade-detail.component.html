@@ -28,7 +28,7 @@
 
             <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{mostRecentOffer.Quantity}} ac-ft
+              {{mostRecentOffer.Quantity | number: "1.0"}} ac-ft
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Status</dt>
@@ -60,7 +60,11 @@
           Your Actions
         </div>
         <div class="card-body" *ngIf="isTradeNotOpen()">
-          <p>This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
+          <p *ngIf="!canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
+          <p *ngIf="canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}, and is awaiting confirmation.</p>
+          <div class="text-center" *ngIf="canConfirmTransfer()">
+            <a class="btn btn-primary btn-sm" routerLink="/confirm-transfer/{{mostRecentOffer.WaterTransferID}}">Confirm Transfer</a>       
+          </div>
         </div>
 
         <div class="card-body" *ngIf="!isTradeNotOpen()">
@@ -147,7 +151,7 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              <span>{{model.Quantity}} ac-ft</span>
+              <span>{{model.Quantity | number: "1.0"}} ac-ft</span>
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
@@ -180,9 +184,17 @@
         <div class="card-body">
           <ng-template ngFor let-confirmation [ngForOf]="getConfirmations()">
             <div class="row">
-              <div class="col-sm-12">
+              <div class="col-md-4 col-sm-12">
                 <strong>Confirmed by {{confirmation.ConfirmationType}}
                   ({{confirmation.ConfirmationDate | date: "short"}})</strong>
+              </div>
+              <div class="col-md-8 col-sm-12">
+                <dl class="row">
+                  <dd class="col-sm-5 col-xs-12">Transaction Confirmed</dd>
+                  <dd class="col-sm-7 col-xs-12">
+                    {{confirmation.ConfirmedBy.FullName}} ({{confirmation.ConfirmedBy.Email}})
+                  </dd>
+                </dl>
               </div>
             </div>
             <hr />
@@ -197,7 +209,7 @@
                 <dl class="row">
                   <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
                   <dd class="col-sm-7 col-xs-12">
-                    {{offer.Quantity}} ac-ft
+                    {{offer.Quantity | number: "1.0"}} ac-ft
                   </dd>
 
                   <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
@@ -215,6 +227,17 @@
                     {{offer.OfferNotes}}
                   </dd>
                 </dl>
+                <dl class="row" *ngIf="isOfferAccepted(offer)">
+                  <dt class="text-sm-right col-sm-5 col-xs-12">Buyer</dt>
+                  <dd class="col-sm-7 col-xs-12">
+                    {{buyer.FullName}} ({{buyer.Email}})
+                  </dd>
+
+                  <dt class="text-sm-right col-sm-5 col-xs-12">Seller</dt>
+                  <dd class="col-sm-7 col-xs-12">
+                    {{seller.FullName}} ({{seller.Email}})
+                  </dd>
+                </dl>
               </div>
             </div>
             <hr />
@@ -227,7 +250,7 @@
               <dl class="row">
                 <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
                 <dd class="col-sm-7 col-xs-12">
-                  {{trade.Posting.Quantity}} ac-ft
+                  {{trade.Posting.Quantity | number: "1.0"}} ac-ft
                 </dd>
 
                 <dt class="text-sm-right col-sm-5 col-xs-12">Type</dt>

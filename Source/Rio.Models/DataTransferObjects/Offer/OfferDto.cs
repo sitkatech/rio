@@ -17,5 +17,6 @@ namespace Rio.Models.DataTransferObjects.Offer
         public DateTime? DateConfirmedByTransferringUser { get; set; }
         public bool ConfirmedByReceivingUser { get; set; }
         public DateTime? DateConfirmedByReceivingUser { get; set; }
+        public int? WaterTransferID { get; set; }
     }
 }

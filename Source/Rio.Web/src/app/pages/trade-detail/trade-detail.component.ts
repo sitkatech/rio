@@ -16,6 +16,7 @@ import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { UserDto } from 'src/app/shared/models';
 import { WaterConfirmationDto } from 'src/app/shared/models/water-confirmation-dto';
+import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -45,6 +46,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public offerType: string;
   public counterOfferRecipientType: string;
   public confirmations: Array<WaterConfirmationDto>;
+  public buyer: UserSimpleDto;
+  public seller: UserSimpleDto;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -92,6 +95,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
         : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
       this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+      this.buyer = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? this.trade.Posting.CreateUser : this.trade.CreateUser;
+      this.seller = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell ? this.trade.Posting.CreateUser : this.trade.CreateUser;
 
       // reset the action states to initial (false) state
       this.isCounterOffering = false;
@@ -105,6 +110,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         let waterConfirmation = new WaterConfirmationDto()
         waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByReceivingUser; 
         waterConfirmation.ConfirmationType = "Buyer";
+        waterConfirmation.ConfirmedBy = this.buyer;
         this.confirmations.push(waterConfirmation)
       }
       if(this.mostRecentOffer.ConfirmedByTransferringUser)
@@ -112,6 +118,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         let waterConfirmation = new WaterConfirmationDto()
         waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByTransferringUser; 
         waterConfirmation.ConfirmationType = "Seller";
+        waterConfirmation.ConfirmedBy = this.seller;
         this.confirmations.push(waterConfirmation)
       }
     });
@@ -128,11 +135,20 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   public getConfirmations() : Array<WaterConfirmationDto>
   {
-    return this.confirmations.sort((a, b) => a.ConfirmationType > b.ConfirmationType ? -1 : a.ConfirmationType < b.ConfirmationType ? 1 : 0);
+    return this.confirmations.sort((a, b) => a.ConfirmationDate > b.ConfirmationDate ? -1 : a.ConfirmationDate < b.ConfirmationDate ? 1 : 0);
+  }
+
+  public canConfirmTransfer(): boolean {
+    return (this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.ConfirmedByReceivingUser) || 
+    (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.ConfirmedByTransferringUser);
   }
 
   public isTradeNotOpen(): boolean {
     return this.trade.TradeStatus.TradeStatusID !== TradeStatusEnum.Countered;
+  }
+
+  public isOfferAccepted(offer: OfferDto): boolean {
+    return offer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted;
   }
 
   public getTotalPrice(offer: any): number {

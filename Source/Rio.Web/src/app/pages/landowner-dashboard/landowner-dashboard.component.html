@@ -197,8 +197,8 @@
                 </td>
                 <td style="white-space: nowrap">{{ posting.PostingStatus.PostingStatusDisplayName }}
                 </td>
-                <td>{{ posting.Quantity }} ac-ft</td>
-                <td>{{ posting.AvailableQuantity }} ac-ft</td>
+                <td>{{ posting.Quantity | number: "1.0" }} ac-ft</td>
+                <td>{{ posting.AvailableQuantity | number: "1.0" }} ac-ft</td>
                 <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
               </tr>
             </tbody>

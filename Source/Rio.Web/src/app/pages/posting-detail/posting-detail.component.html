@@ -4,13 +4,15 @@
       <a routerLink="/trades">Buy and Sell Water</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-      Posting: {{posting.PostingType.PostingTypeDisplayName + " " + posting.Quantity}} ac-ft
+      Posting: {{posting.PostingType.PostingTypeDisplayName}}
+      {{posting.Quantity | number: "1.0"}} ac-ft
     </li>
   </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="posting">
   <h2 style="display: inline-block">
-    Posting: {{posting.PostingType.PostingTypeDisplayName + " " + posting.Quantity}} ac-ft
+    Posting: {{posting.PostingType.PostingTypeDisplayName}}
+    {{posting.Quantity | number: "1.0"}} ac-ft
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
@@ -42,7 +44,7 @@
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              {{posting.Quantity}} ac-ft
+              {{posting.Quantity | number: "1.0"}} ac-ft
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
@@ -88,7 +90,7 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">Purchase Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              <span>{{model.Quantity}} ac-ft</span>
+              <span>{{model.Quantity | number: "1.0"}} ac-ft</span>
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
@@ -178,7 +180,7 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
-              <span>{{model.Quantity}} ac-ft</span>
+              <span>{{model.Quantity | number: "1.0"}} ac-ft</span>
             </dd>
 
             <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>

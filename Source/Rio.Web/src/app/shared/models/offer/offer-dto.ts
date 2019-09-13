@@ -14,6 +14,7 @@ export class OfferDto {
     DateConfirmedByTransferringUser: Date;
     ConfirmedByReceivingUser: boolean;
     DateConfirmedByReceivingUser: Date;
+    WaterTransferID: number;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

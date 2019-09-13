@@ -27,6 +27,7 @@ namespace Rio.EFModels.Entities
                 offerDto.DateConfirmedByTransferringUser = waterTransfer.DateConfirmedByTransferringUser;
                 offerDto.ConfirmedByReceivingUser = waterTransfer.ConfirmedByReceivingUser;
                 offerDto.DateConfirmedByReceivingUser = waterTransfer.DateConfirmedByReceivingUser;
+                offerDto.WaterTransferID = waterTransfer.WaterTransferID;
             }
 
             return offerDto;
