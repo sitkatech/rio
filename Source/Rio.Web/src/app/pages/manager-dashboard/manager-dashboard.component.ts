@@ -82,7 +82,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: true, filter: 'agDateColumnFilter', width: 140
           },
           { headerName: 'Status', 
-            valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && !params.data.IsConfirmed ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
+            valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && (!params.data.IsConfirmedByBuyer || !params.data.IsConfirmedBySeller) ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
             sortable: true, filter: true, width: 200 },
           {
             headerName: 'Buyer', field: 'Buyer', cellRendererFramework: UserLinkRendererComponent,
@@ -123,7 +123,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: true, filter: true, width: 155
           },
           { headerName: 'Quantity (acre-feet)', field: 'Quantity', sortable: true, filter: true, width: 160 },
-          { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
+          { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
+          { headerName: 'Total Price', valueGetter: function(params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
           {
             headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: UserLinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
