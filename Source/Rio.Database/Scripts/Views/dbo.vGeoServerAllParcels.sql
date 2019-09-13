@@ -13,9 +13,14 @@ select          p.ParcelID as PrimaryKey,
                 p.OwnerCity,
                 p.ParcelAreaInSquareFeet,
                 p.ParcelAreaInAcres,
-                p.ParcelGeometry
+                p.ParcelGeometry,
+                u.UserID,
+                u.FirstName + ' ' + u.LastName as LandOwnerFullName
                 
-    FROM        dbo.Parcel p
+FROM        dbo.Parcel p
+left join   dbo.UserParcel up on p.ParcelID = up.ParcelID
+left join   dbo.[User] u on up.UserID = u.UserID
+
 GO
 /*
 select * from dbo.vGeoServerAllParcels

@@ -6,3 +6,11 @@
         </a>
     </dd>
 </dl>
+<dl class="row mb-0" *ngIf="feature.properties.LandOwnerFullName">
+    <dt class="col-5 text-right">Land Owner</dt>
+    <dd class="col-7">
+        <a routerLink="/landowner-dashboard/{{feature.properties.UserID}}" (click)="detectChanges()">
+            {{feature.properties.LandOwnerFullName}}
+        </a>
+    </dd>
+</dl>
