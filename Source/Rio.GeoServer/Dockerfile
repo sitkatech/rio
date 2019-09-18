@@ -1,5 +1,5 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-ARG IMAGE_VERSION=9-jdk11-openjdk
+ARG IMAGE_VERSION=8.0-jre8
 
 FROM tomcat:$IMAGE_VERSION
 
@@ -19,10 +19,10 @@ ARG WAR_URL=http://downloads.sourceforge.net/project/geoserver/GeoServer/${GS_VE
 ARG COMMUNITY_MODULES=true
 
 ## Maximum Memory that Java can allocate
-ARG MAXIMUM_MEMORY="4G"
+ARG MAXIMUM_MEMORY="2G"
 
 ## Initial Memory that Java can allocate
-ARG INITIAL_MEMORY="2G"
+ARG INITIAL_MEMORY="1G"
 
 RUN set -e \
     export DEBIAN_FRONTEND=noninteractive \
@@ -32,7 +32,7 @@ RUN set -e \
     apt-get install -y fonts-cantarell lmodern ttf-aenigma ttf-georgewilliams ttf-bitstream-vera ttf-sjfonts tv-fonts \
         build-essential libapr1-dev libssl-dev default-jdk \
     # Set JAVA_HOME to /usr/lib/jvm/default-java and link it to OpenJDK installation
-    && ln -s /usr/lib/jvm/java-11-openjdk-amd64 /usr/lib/jvm/default-java \
+    && ln -s /usr/lib/jvm/java-8-openjdk-amd64 /usr/lib/jvm/default-java \
     && (echo "Yes, do as I say!" | apt-get remove --force-yes login) \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
