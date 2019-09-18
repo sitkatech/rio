@@ -375,7 +375,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return {
         Year: x,
         ChartData: {
-          name: "Annual Allocation",
+          name: "Annual Supply (Allocation +/- Trades)",
           series: months.map(y => { return { name: y, value: allocation + purchased - sold } })
         }
       }
@@ -383,7 +383,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
     this.allocationChartRange = [0, 1.2 * Math.max(...values)];
     this.waterUsageOverview = waterUsageOverview;
-    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Historic", waterUsageOverview.Historic);
+    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
     this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == "December").value as number).toFixed(1);
   }
 

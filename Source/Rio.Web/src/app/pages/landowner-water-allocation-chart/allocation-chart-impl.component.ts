@@ -140,6 +140,13 @@ export class AllocationChartImplComponent extends BaseChartComponent {
     }
 
     this.yDomainLine = this.getYDomainLine();
+    this.combinedSeries = [];
+    this.combinedSeries.push(this.annualAllocationSeries);
+    this.combinedSeries.push(this.historicCumulativeWaterUsageSeries);
+    this.combinedSeries.push({
+      name: "Monthly Usage",
+      series: this.currentCumulativeWaterUsageSeries
+    });
 
     this.xScaleLine = this.getXScaleLine(this.xDomainLine, this.dims.width);
     this.yScaleLine = this.getYScaleLine(this.yDomainLine, this.dims.height);

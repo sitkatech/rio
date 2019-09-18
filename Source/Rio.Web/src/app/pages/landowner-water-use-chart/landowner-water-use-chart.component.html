@@ -1,17 +1,14 @@
-<div style="overflow-x:scroll; ">
-    <div class="row" style="min-width:920px;">
-        <div class="col-xs-9">
-            <ngx-charts-bar-vertical-stacked [view]="view" [scheme]="colorScheme" [results]="waterUsageData"
-                [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="false"
-                [activeEntries]='activeEntries' [legendPosition]="'right'" [showXAxisLabel]="false"
-                [showYAxisLabel]="true"  [yAxisLabel]="'Volume (acre-feet)'"
-                [tooltipDisabled]="true" [noBarWhenZero]="false">
-            </ngx-charts-bar-vertical-stacked>
-        </div>
-        <div class="col-xs-3">
-            <ngx-charts-legend class="chart-legend" [data]="parcelNumbers" [title]="false" [colors]="colors"
-                (labelActivate)="legendLabelActivate($event)" (labelDeactivate)="legendLabelDeactivate($event)">
-            </ngx-charts-legend>
-        </div>
+<div class="row">
+    <div class="col-sm-9">
+        <ngx-charts-bar-vertical-stacked [scheme]="colorScheme" [results]="waterUsageData"
+            [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="false" [activeEntries]='activeEntries'
+            [legendPosition]="'right'" [showXAxisLabel]="false" [showYAxisLabel]="true"
+            [yAxisLabel]="'Volume (acre-feet)'" [tooltipDisabled]="false" [noBarWhenZero]="false">
+        </ngx-charts-bar-vertical-stacked>
+    </div>
+    <div class="col-sm-3">
+        <ngx-charts-legend class="chart-legend" [data]="parcelNumbers" [title]="false" [colors]="colors"
+            (labelActivate)="legendLabelActivate($event)" (labelDeactivate)="legendLabelDeactivate($event)">
+        </ngx-charts-legend>
     </div>
 </div>

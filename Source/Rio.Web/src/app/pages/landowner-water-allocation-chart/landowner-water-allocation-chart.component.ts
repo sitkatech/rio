@@ -14,7 +14,7 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
 
   view: any[] = [755, 400];
   
-  seriesDomain = ["Historic Average Consumption (2016-2018)", "Monthly Usage", "Annual Supply (Allocation +/- Trades)"];
+  seriesDomain = ["Monthly Usage", "Average Consumption (All Years)", "Annual Supply (Allocation +/- Trades)"];
 
   @Input() yDomain;
 

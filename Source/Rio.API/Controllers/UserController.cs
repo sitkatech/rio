@@ -271,7 +271,7 @@ namespace Rio.API.Controllers
                 new ParcelWaterUsageDto
                 {
                     ParcelNumber = parcelDtos.Single(parcel => parcel.ParcelID == groupedByParcel.Key).ParcelNumber,
-                    WaterUsageInAcreFeet = groupedByParcel.Sum(x => x.EvapotranspirationRate)
+                    WaterUsageInAcreFeet = Math.Round(groupedByParcel.Sum(x => x.EvapotranspirationRate), 1)
                 }).ToList();
 
             return parcelWaterUsageDtos;
@@ -299,7 +299,7 @@ namespace Rio.API.Controllers
         private List<CumulativeWaterUsageByMonthDto> GetHistoricWaterUsageOverview(List<CumulativeWaterUsageByMonthDto> waterUsageOverviewDtos)
         {
             var monthlyWaterUsageOverviewDtos = waterUsageOverviewDtos.GroupBy(x => x.Month).Select(x => new CumulativeWaterUsageByMonthDto
-                {Month = x.Key, CumulativeWaterUsageInAcreFeet = x.Average(y => y.CumulativeWaterUsageInAcreFeet)});
+                {Month = x.Key, CumulativeWaterUsageInAcreFeet = Math.Round(x.Average(y => y.CumulativeWaterUsageInAcreFeet), 1)});
 
             return monthlyWaterUsageOverviewDtos.ToList();
         }
@@ -316,7 +316,7 @@ namespace Rio.API.Controllers
                 var grouping = parcelMonthlyEvapotranspirationGroupedByMonth.Single(x => x.Key == i);
 
                 cumulativeTotal += grouping.Sum(x => x.EvapotranspirationRate);
-                var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto() { Month = ((DateUtilities.Month)i).ToString(), CumulativeWaterUsageInAcreFeet = cumulativeTotal};
+                var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto() { Month = ((DateUtilities.Month)i).ToString(), CumulativeWaterUsageInAcreFeet = Math.Round(cumulativeTotal, 1)};
 
                 monthlyWaterUsageOverviewDtos.Add(monthlyWaterUsageOverviewDto);
             }
