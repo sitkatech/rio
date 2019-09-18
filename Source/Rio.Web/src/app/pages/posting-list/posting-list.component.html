@@ -42,9 +42,11 @@
                                 <td>{{ posting.AvailableQuantity }} ac-ft</td>
                                 <td style="white-space: nowrap">{{ posting.Price | currency: "USD" }} per ac-ft</td>
                                 <td>
+                                    <div *ngIf="posting.PostingDescription">
                                     {{ posting.PostingDescription.substring(0, descriptionMaxLength) }}
                                     <a *ngIf="posting.PostingDescription.length > descriptionMaxLength"
                                         routerLink="/postings/{{posting.PostingID}}">[View More]</a>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

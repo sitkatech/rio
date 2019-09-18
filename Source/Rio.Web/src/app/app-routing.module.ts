@@ -12,7 +12,6 @@ import { UserEditComponent } from './pages/user-edit/user-edit.component';
 import { PostingListComponent } from './pages/posting-list/posting-list.component';
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
-import { PostingEditComponent } from './pages/posting-edit/posting-edit.component';
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
@@ -26,7 +25,6 @@ const routes: Routes = [
   { path: "confirm-transfer/:waterTransferID", component: ConfirmTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "postings/:id/edit", component: PostingEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard] },

@@ -38,12 +38,12 @@ export class PostingListComponent implements OnInit, OnDestroy {
 
   public getPostingsToBuy() : Array<PostingDto>
   {
-    return this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToBuy);
+    return this.postings ? this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToBuy) : [];
   }
 
   public getPostingsToSell() : Array<PostingDto>
   {
-    return this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell);
+    return this.postings ? this.postings.filter(x => x.PostingType.PostingTypeID === PostingTypeEnum.OfferToSell) : [];
   }
 
   public getAcreFeetToSell() : number

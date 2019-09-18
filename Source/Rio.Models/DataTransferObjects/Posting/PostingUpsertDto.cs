@@ -11,7 +11,7 @@ namespace Rio.Models.DataTransferObjects.Posting
         public int Quantity { get; set; }
         [Required]
         public decimal Price { get; set; }
-        [Required]
+
         public string PostingDescription { get; set; }
         [Required]
         public int CreateUserID { get; set; }

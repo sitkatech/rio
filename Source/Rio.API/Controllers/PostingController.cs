@@ -57,33 +57,6 @@ namespace Rio.API.Controllers
             return Ok(postingDto);
         }
 
-        [HttpPut("postings/{postingID}/update")]
-        [PostingManageFeature]
-        [RequiresValidJSONBodyFilter("Could not parse a valid Posting Upsert JSON object from the Request Body.")]
-        public ActionResult<PostingDto> UpdatePosting([FromRoute] int postingID, [FromBody] PostingUpsertDto postingUpsertDto)
-        {
-            var postingDto = Posting.GetByPostingID(_dbContext, postingID);
-            if (postingDto == null)
-            {
-                return NotFound();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var role = PostingType.GetByPostingTypeID(_dbContext, postingUpsertDto.PostingTypeID);
-            if (role == null)
-            {
-                return NotFound($"Could not find a Posting Type with the ID {postingUpsertDto.PostingTypeID}");
-            }
-
-            var updatedPostingDto = Posting.Update(_dbContext, postingID, postingUpsertDto);
-            return Ok(updatedPostingDto);
-        }
-
-
         [HttpPut("postings/{postingID}/close")]
         [PostingManageFeature]
         [RequiresValidJSONBodyFilter("Could not parse a valid Posting Update Status JSON object from the Request Body.")]

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { PostingDto } from '../shared/models/posting/posting-dto';
-import { PostingUpdateDto } from '../shared/models/posting/posting-update-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -34,10 +33,5 @@ export class PostingService {
     closePosting(postingID: number, postingUpdateStatusDto: any): Observable<PostingDto> {
         let route = `/postings/${postingID}/close`;
         return this.apiService.putToApi(route, postingUpdateStatusDto);
-    }
-
-    updatePosting(postingID: number, postingUpdateDto: PostingUpdateDto): Observable<PostingDto>  {
-        let route = `/postings/${postingID}/update`;
-        return this.apiService.putToApi(route, postingUpdateDto);
     }
 }

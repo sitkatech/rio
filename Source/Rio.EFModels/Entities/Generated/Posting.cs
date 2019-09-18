@@ -20,7 +20,6 @@ namespace Rio.EFModels.Entities
         public int Quantity { get; set; }
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
-        [Required]
         [StringLength(2000)]
         public string PostingDescription { get; set; }
         public int PostingStatusID { get; set; }
