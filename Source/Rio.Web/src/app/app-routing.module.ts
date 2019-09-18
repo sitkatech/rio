@@ -16,13 +16,13 @@ import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.compo
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
-import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
+import { RegisterTransferComponent } from './pages/register-transfer/register-transfer.component';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "trades/:tradeID", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "confirm-transfer/:waterTransferID", component: ConfirmTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "register-transfer/:waterTransferID", component: RegisterTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },

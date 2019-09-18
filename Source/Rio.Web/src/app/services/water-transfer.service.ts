@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { WaterTransferDto } from '../shared/models/water-transfer-dto';
-import { WaterTransferConfirmDto } from '../shared/models/water-transfer-confirm-dto';
+import { WaterTransferRegisterDto } from '../shared/models/water-transfer-register-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -16,8 +16,8 @@ export class WaterTransferService {
       return this.apiService.getFromApi(route);
   }
 
-  public confirmTransfer(waterTransferID: number, waterTransferConfirmDto: WaterTransferConfirmDto): Observable<WaterTransferDto>  {
-    let route = `/water-transfers/${waterTransferID}/confirm`;
-    return this.apiService.postToApi(route, waterTransferConfirmDto);
+  public registerTransfer(waterTransferID: number, waterTransferRegisterDto: WaterTransferRegisterDto): Observable<WaterTransferDto>  {
+    let route = `/water-transfers/${waterTransferID}/register`;
+    return this.apiService.postToApi(route, waterTransferRegisterDto);
   }
 }

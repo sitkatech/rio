@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConfirmTransferComponent } from './confirm-transfer.component';
+import { RegisterTransferComponent as RegisterTransferComponent } from './register-transfer.component';
 
 describe('ConfirmTransferComponent', () => {
-  let component: ConfirmTransferComponent;
-  let fixture: ComponentFixture<ConfirmTransferComponent>;
+  let component: RegisterTransferComponent;
+  let fixture: ComponentFixture<RegisterTransferComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmTransferComponent ]
+      declarations: [ RegisterTransferComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmTransferComponent);
+    fixture = TestBed.createComponent(RegisterTransferComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

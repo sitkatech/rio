@@ -164,7 +164,7 @@ namespace Rio.API.Controllers
 </ul>
 To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
 <br /><br />
-<a href=""{rioUrl}/confirm-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
+<a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailTos = new List<UserSimpleDto> {buyer, seller};
             foreach (var mailTo in mailTos)

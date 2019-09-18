@@ -1,4 +1,4 @@
-export class WaterTransferConfirmDto {
+export class WaterTransferRegisterDto {
     WaterTransferType: number;
     ConfirmingUserID: number;
 

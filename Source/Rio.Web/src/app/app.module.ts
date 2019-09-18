@@ -26,7 +26,7 @@ import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.compo
 import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
-import { ConfirmTransferComponent } from './pages/confirm-transfer/confirm-transfer.component';
+import { RegisterTransferComponent } from './pages/register-transfer/register-transfer.component';
 import { AgGridModule } from 'ag-grid-angular';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
@@ -62,7 +62,7 @@ import { LandownerDashboardLinkRendererComponent } from './shared/components/ag-
     ParcelEditAllocationComponent,
     LandownerDashboardComponent,
     TradeDetailComponent,
-    ConfirmTransferComponent,
+    RegisterTransferComponent,
     ParcelListComponent,
     LandownerWaterUseChartComponent,
     AllocationChartImplComponent,

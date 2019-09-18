@@ -63,7 +63,7 @@
           <p *ngIf="!canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
           <p *ngIf="canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}, and is awaiting confirmation.</p>
           <div class="text-center" *ngIf="canConfirmTransfer()">
-            <a class="btn btn-primary btn-sm" routerLink="/confirm-transfer/{{mostRecentOffer.WaterTransferID}}">Confirm Transfer</a>       
+            <a class="btn btn-primary btn-sm" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}">Confirm Transfer</a>       
           </div>
         </div>
 

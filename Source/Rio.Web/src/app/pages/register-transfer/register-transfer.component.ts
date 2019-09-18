@@ -5,18 +5,18 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterTransferConfirmDto } from 'src/app/shared/models/water-transfer-confirm-dto';
+import { WaterTransferRegisterDto } from 'src/app/shared/models/water-transfer-register-dto';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 
 @Component({
-  selector: 'rio-confirm-transfer',
-  templateUrl: './confirm-transfer.component.html',
-  styleUrls: ['./confirm-transfer.component.scss']
+  selector: 'rio-register-transfer',
+  templateUrl: './register-transfer.component.html',
+  styleUrls: ['./register-transfer.component.scss']
 })
-export class ConfirmTransferComponent implements OnInit, OnDestroy {
+export class RegisterTransferComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDto;
@@ -89,10 +89,10 @@ export class ConfirmTransferComponent implements OnInit, OnDestroy {
 
   public submitConfirmation(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferConfirmDto();
+    let model = new WaterTransferRegisterDto();
     model.ConfirmingUserID = this.currentUser.UserID;
     model.WaterTransferType = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Receiving : WaterTransferTypeEnum.Transferring;
-    this.waterTransferService.confirmTransfer(this.waterTransfer.WaterTransferID, model)
+    this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         this.router.navigateByUrl("/landowner-dashboard")

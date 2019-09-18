@@ -150,7 +150,7 @@
                 <td style="border: 0 none"><a
                     routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
                 <td style="border: 0 none; white-space: nowrap">
-                  <a routerLink="/confirm-transfer/{{trade.WaterTransferID}}"
+                  <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
                     *ngIf="trade.WaterTransferID && !isTradeConfirmedByUser(trade)">
                     Awaiting Payment Confirmation
                   </a>

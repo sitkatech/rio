@@ -40,7 +40,7 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
-        [HttpPost("water-transfers/{waterTransferID}/confirm")]
+        [HttpPost("water-transfers/{waterTransferID}/register")]
         [OfferManageFeature]
         public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferConfirmDto waterTransferConfirmDto)
         {
