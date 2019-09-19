@@ -21,7 +21,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDto;
   public isConfirmingTransfer: boolean = false;
-  public confirmAction: string;
+  public registerAction: string;
   public isLoadingSubmit: boolean = false;
 
   constructor(
@@ -58,8 +58,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
         ? null
         : waterTransfer as WaterTransferDto;
       this.isConfirmingTransfer = false;
-      this.confirmAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
-      if(!this.canConfirm())
+      this.registerAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
+      if(!this.canRegister())
       {
         this.router.navigateByUrl("/trades/" + waterTransfer.TradeID)
       }
@@ -70,7 +70,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     return waterTransfer.UnitPrice * waterTransfer.AcreFeetTransferred;
   }
   
-  public canConfirm(): boolean {
+  public canRegister(): boolean {
     return (this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByReceivingUser === false) ||
     (this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByTransferringUser === false);
   }
@@ -79,7 +79,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     return this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID || this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID;
   }
 
-  public confirmTransfer(): void {
+  public registerTransfer(): void {
     this.isConfirmingTransfer = true;
   }
 

@@ -67,27 +67,27 @@
                 <div class="card-body">
                     <p>After terms of the transaction are complete, use the button below to finalize your transfer. </p>
                     <div class="text-center" *ngIf="!isConfirmingTransfer">
-                        <button class="btn btn-primary btn-sm mr-1" (click)="confirmTransfer()">Confirm
+                        <button class="btn btn-primary btn-sm mr-1" (click)="registerTransfer()">Confirm
                             Transfer</button>
                     </div>
                 </div>
             </div>
             <div class="card" *ngIf="isConfirmingTransfer">
                 <div class="card-header">
-                    Confirm Your Transfer
+                    Register Your Transfer
                 </div>
                 <div class="card-body">
                     <p>
                         By clicking this button you confirm that all terms and conditions of the transfer have been met.
                         By confirming the transaction you are authorizing RRB WSD to transfer
-                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{confirmAction}} your
+                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{registerAction}} your
                         annual allocation. This action cannot be undone. Proceed?
                     </p>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitConfirmation()"
                             [disabled]="isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                            Confirm
+                            Confirm and Register Trade with RRB
                         </button>
                         <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
                     </div>
@@ -100,7 +100,7 @@
                     Your Actions
                 </div>
                 <div class="card-body">
-                    <p>This transfer has already been confirmed.</p>
+                    <p>This transfer has already been registered.</p>
                 </div>
             </div>
         </div>
