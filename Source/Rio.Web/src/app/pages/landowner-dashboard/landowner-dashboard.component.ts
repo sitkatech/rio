@@ -306,6 +306,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  public getTotalSupply(): number {
+    return this.getAnnualAllocation() + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
+  }
+
+  public getCurrentAvailableWater(): number {
+    return this.getTotalSupply() - this.getWaterUsageToDate();
+  }
+
   public getWaterConsumption(parcelAllocationAndConsumption: ParcelAllocationAndConsumptionDto): number {
     if (parcelAllocationAndConsumption.MonthlyEvapotranspiration.length > 0) {
       let result = parcelAllocationAndConsumption.MonthlyEvapotranspiration.reduce(function (a, b) {
