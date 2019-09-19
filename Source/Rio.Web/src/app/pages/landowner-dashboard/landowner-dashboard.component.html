@@ -37,25 +37,25 @@
     <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
       <div class="card">
         <div class="card-header">
-          Annual Water Budget Overview (ac-ft)
+          Annual Water Budget Overview
         </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-borderless">
               <tr>
-                <th class="text-sm-right pb-0 mb-0">Allocation</th>
+                <th class="text-sm-left pb-0 mb-0">Allocation</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}}</span>
+                  <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Your annual allocated water budget</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0">
                   <a style="cursor: pointer" class="collapsed small"
                     (click)="showPurchasedDetails = !showPurchasedDetails"
                     *ngIf="getPurchasedWaterTransfersForWaterYear().length > 0">
@@ -65,27 +65,31 @@
                   Purchased
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}}</span>
+                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
                 </td>
               </tr>
-              <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
-                  <small>Water supply you have purchased this year</small>
-                </td>
-              </tr>
-              <ng-template ngFor let-waterTransfer [ngForOf]="getPurchasedWaterTransfersForWaterYear()"
-                *ngIf="showPurchasedDetails">
+              <ng-container *ngIf="showPurchasedDetails">
                 <tr>
+                  <td colspan="2">
+                    <hr class="p-0 m-0" />
+                  </td>
+                </tr>
+                <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
                       routerLink="/trades/{{waterTransfer.TradeID}}">{{waterTransfer.TransferDate | date:"MM/dd"}}</a>
                   </th>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}}
+                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
                   </td>
                 </tr>
-              </ng-template>
+              </ng-container>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Water supply you have purchased this year</small>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
                   <a style="cursor: pointer" class="collapsed small" (click)="showSoldDetails = !showSoldDetails"
                     *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
                     <span *ngIf="!showSoldDetails" class="fas fa-plus text-muted"></span>
@@ -94,35 +98,39 @@
                   Sold
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}}</span>
+                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getSoldAcreFeet()" class="systemText">-</span>
                 </td>
               </tr>
-              <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
-                  <small>Water supply you have sold this year</small>
-                </td>
-              </tr>
-              <ng-template ngFor let-waterTransfer [ngForOf]="getSoldWaterTransfersForWaterYear()"
-                *ngIf="showSoldDetails">
+              <ng-container *ngIf="showSoldDetails">
                 <tr>
+                  <td colspan="2">
+                    <hr class="p-0 m-0" />
+                  </td>
+                </tr>
+                <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
                       routerLink="/trades/{{waterTransfer.TradeID}}">{{waterTransfer.TransferDate | date:"MM/dd"}}</a>
                   </th>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}}
+                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
                   </td>
                 </tr>
-              </ng-template>
+              </ng-container>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">
-                  Total Supply
-                </th>
-                <td class="text-sm-right pb-0 mb-0">
-                  <span>{{getTotalSupply() | number: '1.1-1'}}</span>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Water supply you have sold this year</small>
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
+                <th class="text-sm-left pb-0 mb-0">
+                  Total Supply
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  <span>{{getTotalSupply() | number: '1.1-1'}} ac-ft</span>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold</small>
                 </td>
               </tr>
@@ -138,39 +146,39 @@
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0">
                   Usage to Date
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getWaterUsageToDate()">{{getWaterUsageToDate() | number: '1.1-1'}}</span>
+                  <span *ngIf="getWaterUsageToDate()">{{getWaterUsageToDate() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getWaterUsageToDate()" class="systemText">Not available</span>
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
-                  <small>Total water used this year as measured by OpenET</small>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Total usage this year as measured by OpenET</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">Current Available</th>
+                <th class="text-sm-left pb-0 mb-0">Current Available</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{getCurrentAvailableWater() | number: '1.1-1'}}
+                  {{getCurrentAvailableWater() | number: '1.1-1'}} ac-ft
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold – Usage to Date</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-right pb-0 mb-0">Average Consumption</th>
+                <th class="text-sm-left pb-0 mb-0">Average Usage</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{historicAverageAnnualUsage}}
+                  {{historicAverageAnnualUsage}} ac-ft
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-center pt-0 mt-0">
-                  <small>Average annual water used based on all available OpenET data</small>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Average usage from all years of OpenET data</small>
                 </td>
               </tr>
             </table>
