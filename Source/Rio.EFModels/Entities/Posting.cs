@@ -123,5 +123,34 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.PostingID == postingID);
             dbContext.Posting.Remove(posting);
         }
+
+        public static IEnumerable<PostingDetailedDto> ListDetailed(RioDbContext dbContext)
+        {
+            // right now we are assuming a parcel can only be associated to one user
+            var parcels = dbContext.PostingDetaileds.OrderByDescending(x => x.PostingDate).ToList()
+                .Select(posting =>
+                {
+                    var userDetailedDto = new PostingDetailedDto()
+                    {
+                        PostingID = posting.PostingID,
+                        PostingDate = posting.PostingDate,
+                        PostingTypeID = posting.PostingTypeID,
+                        PostingTypeDisplayName = posting.PostingTypeDisplayName,
+                        PostingStatusID = posting.PostingStatusID,
+                        PostingStatusDisplayName = posting.PostingStatusDisplayName,
+                        PostedByUserID = posting.PostedByUserID,
+                        PostedByFirstName = posting.PostedByFirstName,
+                        PostedByLastName = posting.PostedByLastName,
+                        PostedByEmail = posting.PostedByEmail,
+                        Price = posting.Price,
+                        Quantity = posting.Quantity,
+                        AvailableQuantity = posting.AvailableQuantity,
+                        NumberOfOffers = posting.NumberOfOffers,
+                    };
+                    return userDetailedDto;
+                }).ToList();
+            return parcels;
+        }
+
     }
 }

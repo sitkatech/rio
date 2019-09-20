@@ -37,6 +37,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
         public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
         public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
+        public virtual DbQuery<PostingDetailed> PostingDetaileds { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -411,6 +412,7 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Query<ParcelWithAnnualWaterUsage>().ToView("vAllParcelsWithAnnualWaterUsage");
             modelBuilder.Query<UserDetailed>().ToView("vUserDetailed");
+            modelBuilder.Query<PostingDetailed>().ToView("vPostingDetailed");
         }
     }
 }

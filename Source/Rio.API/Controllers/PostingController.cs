@@ -95,5 +95,13 @@ namespace Rio.API.Controllers
             Posting.Delete(_dbContext, postingID);
             return Ok();
         }
+
+        [HttpGet("postings-activity")]
+        [PostingManageFeature]
+        public ActionResult<IEnumerable<PostingDetailedDto>> ListDetailed()
+        {
+            var postingDetailedDtos = Posting.ListDetailed(_dbContext);
+            return Ok(postingDetailedDtos);
+        }
     }
 }

@@ -16,4 +16,6 @@ Post-Deployment Script Template
 
 :r .\dbo.vUserDetailed.sql
 
+:r .\dbo.vPostingDetailed.sql
+
 GO

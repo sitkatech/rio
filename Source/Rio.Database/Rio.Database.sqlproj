@@ -93,6 +93,7 @@
     <None Include="Scripts\ReleaseScripts\0004 - Adding User Parcels part two.sql" />
     <None Include="Scripts\Views\dbo.vAllParcelsWithAnnualWaterUsage.sql" />
     <None Include="Scripts\Views\dbo.vUserDetailed.sql" />
+    <None Include="Scripts\Views\dbo.vPostingDetailed.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

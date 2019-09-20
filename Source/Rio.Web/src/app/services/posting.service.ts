@@ -34,4 +34,9 @@ export class PostingService {
         let route = `/postings/${postingID}/close`;
         return this.apiService.putToApi(route, postingUpdateStatusDto);
     }
+
+    getPostingsDetailed(): Observable<PostingDto[]> {
+        let route = `/postings-activity`;
+        return this.apiService.getFromApi(route);
+    }
 }
