@@ -159,12 +159,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
-  public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
-    const tradesForWaterYear = this.getTradesForWaterYear();
-    const pendingTrades = tradesForWaterYear !== undefined ? this.getTradesForWaterYear().filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
-    return pendingTrades;
-  }
-
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
     return trade.OfferCreateUser.UserID === this.user.UserID;
   }
@@ -177,44 +171,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Buying " : "Selling " : trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling " : "Buying ") + " " + trade.Quantity + " ac-ft";
   }
 
-  public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
-    let offerType = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "purchase";
-    let respondee = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
-    return "You have submitted an offer to " + offerType + " " + trade.Quantity + " ac-ft of water. The " + respondee + " has " + this.getDaysLeftToRespond(trade) + " days to respond.";
-  }
-
-  public getOfferThatDoesNotBelongToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
-    if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
-      return "A seller is awaiting your response to their offer to sell " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
-    }
-    return "A buyer is awaiting your response to their offer to purchase " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
-  }
-
-  public getPendingTradePostingType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if (isMostRecentOffererTheCurrentUser) {
-      return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buy" : "sell";
-    }
-    return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "buy";
-  }
-
-  public getRespondeeType(trade: TradeWithMostRecentOfferDto, isMostRecentOffererTheCurrentUser: boolean): string {
-    if (isMostRecentOffererTheCurrentUser) {
-      return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
-    }
-    return trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "seller" : "buyer";
-  }
-
   public isTradeConfirmedByUser(trade: TradeWithMostRecentOfferDto) {
     return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID);
   }
 
   public isTradeConfirmedByBothParties(trade: TradeWithMostRecentOfferDto) {
     return trade.IsConfirmedByBuyer && trade.IsConfirmedBySeller;
-  }
-
-  public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
-    //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
-    return 5;
   }
 
   public getParcelsForWaterYear(): Array<ParcelAllocationAndConsumptionDto> {

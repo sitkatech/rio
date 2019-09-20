@@ -5,14 +5,16 @@
     <a routerLink="/" routerLinkActive="active" class="navbar-brand nav-link">
         Water Trading Platform
     </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
                 <a class="nav-link" routerLink="/" routerLinkActive="active" *ngIf="!isAuthenticated()">Home</a>
-                <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active" *ngIf="isAuthenticated()">Home</a>
+                <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
+                    *ngIf="isAuthenticated()">Home</a>
             </li>
             <li class="nav-item" *ngIf="isAuthenticated()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Buy and Sell Water</a>
@@ -57,3 +59,21 @@
         </ul>
     </div>
 </nav>
+
+<div *ngIf="getPendingTrades().length > 0">
+    <div class="alert alert-secondary mb-0" style="max-height: 160px; overflow: auto;">
+        <ul class="m-0 p-0">
+            <li *ngFor="let pendingTrade of getPendingTrades()" style="list-style: none">
+                <span class="fas fa-exclamation-circle"></span>
+                <span *ngIf="doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
+                    {{getOfferThatBelongsToYouNotificationText(pendingTrade)}}
+                    <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[View offer details]</a>
+                </span>
+                <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
+                    {{getOfferThatDoesNotBelongToYouNotificationText(pendingTrade)}}
+                    <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[Respond to this offer]</a>
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>

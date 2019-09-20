@@ -13,6 +13,13 @@ abbr[data-original-title] {
   text-decoration-color: $info;
 }
 
+.breadcrumb
+{
+  border-width: 1px 0px 1px 0px;
+  border-style: solid;
+  border-color: #e9eeef;
+  background-color: #fff;
+}
 // Breadcrumb active text contrast increase
 .breadcrumb-item.active {
   color: #474D52;

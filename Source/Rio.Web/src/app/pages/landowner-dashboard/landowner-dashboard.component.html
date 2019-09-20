@@ -16,23 +16,6 @@
   </h2>
   <app-alert-display></app-alert-display>
 
-  <div class="mt-2">
-    <div class="alert alert-info" style="max-height: 160px; overflow: auto;" *ngIf="getPendingTrades().length > 0">
-      <ul class="m-0 p-0">
-        <li *ngFor="let pendingTrade of getPendingTrades()" style="list-style: circle">
-          <span *ngIf="doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-            {{getOfferThatBelongsToYouNotificationText(pendingTrade)}}
-            <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[View offer details]</a>
-          </span>
-          <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-            {{getOfferThatDoesNotBelongToYouNotificationText(pendingTrade)}}
-            <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[Respond to this offer]</a>
-          </span>
-        </li>
-      </ul>
-    </div>
-  </div>
-
   <div class="row mt-4">
     <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
       <div class="card">
