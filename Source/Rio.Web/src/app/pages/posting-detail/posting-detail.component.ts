@@ -166,6 +166,9 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
             );
     }
 
+    public isOfferFormValid(): boolean {
+        return this.model.Price > 0 && this.model.Quantity > 0;
+    }
 
     public isPendingOffer(): boolean {
         return this.model.OfferID > 0;
@@ -187,5 +190,4 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                 }
             );
     }
-
 }

@@ -73,4 +73,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
     }
     return this.model.Price * this.model.Quantity;
   }
+
+  public isOfferFormValid(): boolean {
+      return this.model.Price > 0 && this.model.Quantity > 0 && this.model.PostingTypeID > 0;
+  }
 }

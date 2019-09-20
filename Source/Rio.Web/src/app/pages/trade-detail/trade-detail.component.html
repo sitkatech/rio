@@ -61,9 +61,9 @@
         </div>
         <div class="card-body" *ngIf="isTradeNotOpen()">
           <p *ngIf="!canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
-          <p *ngIf="canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}, and is awaiting confirmation.</p>
+          <p *ngIf="canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}, and is awaiting registration.</p>
           <div class="text-center" *ngIf="canConfirmTransfer()">
-            <a class="btn btn-primary btn-sm" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}">Confirm Transfer</a>       
+            <a class="btn btn-primary btn-sm" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}">Register Transfer</a>       
           </div>
         </div>
 
@@ -93,7 +93,7 @@
             <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
               <div class="input-group">
-                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" />
+                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" min="1" step="1" />
                 <div class="input-group-append">
                   <span class="input-group-text"> ac-ft</span>
                 </div>
@@ -106,7 +106,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">$</span>
                 </div>
-                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" min="1" step=".01" />
                 <div class="input-group-append">
                   <span class="input-group-text"> per ac-ft</span>
                 </div>
@@ -126,7 +126,7 @@
 
           </dl>
           <div class="text-center">
-            <button class="btn btn-primary btn-sm mr-1" (click)="isConfirmingTrade = true">Present Counter
+            <button class="btn btn-primary btn-sm mr-1" (click)="isConfirmingTrade = true" [disabled]="!isOfferFormValid()">Present Counter
               Offer</button>
             <button class="btn btn-primary btn-sm" (click)="cancelCounterOffer()">Cancel</button>
           </div>

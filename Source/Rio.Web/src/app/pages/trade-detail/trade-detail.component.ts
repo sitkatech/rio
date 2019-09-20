@@ -139,8 +139,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   public canConfirmTransfer(): boolean {
-    return (this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.ConfirmedByReceivingUser) || 
-    (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.ConfirmedByTransferringUser);
+    return this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && ((this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.ConfirmedByReceivingUser) || 
+    (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.ConfirmedByTransferringUser));
   }
 
   public isTradeNotOpen(): boolean {
@@ -214,5 +214,9 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         }
       );
+  }
+
+  public isOfferFormValid(): boolean {
+    return this.model.Price > 0 && this.model.Quantity > 0;
   }
 }

@@ -8,8 +8,10 @@ namespace Rio.Models.DataTransferObjects.Posting
         [Required]
         public int PostingTypeID { get; set; }
         [Required]
+        [Range(1, 100000000)]
         public int Quantity { get; set; }
         [Required]
+        [Range(1, 100000000)]
         public decimal Price { get; set; }
 
         public string PostingDescription { get; set; }

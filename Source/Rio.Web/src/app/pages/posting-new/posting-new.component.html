@@ -37,7 +37,7 @@
                     <div class="col-sm-8">
                         <div class="input-group">
                             <input type="number" class="form-control" name="Quantity" required
-                                [(ngModel)]="model.Quantity" />
+                                [(ngModel)]="model.Quantity" min="1" step="1" />
                             <div class="input-group-append">
                                 <span class="input-group-text"> ac-ft</span>
                             </div>
@@ -53,7 +53,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">$</span>
                             </div>
-                            <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" />
+                            <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" min="1" step=".01" />
                             <div class="input-group-append">
                                 <span class="input-group-text"> per ac-ft</span>
                             </div>
@@ -90,7 +90,7 @@
                     </div>
                     <div class="col-sm-8 text-right">
                         <button type="submit" class="btn btn-primary"
-                            [disabled]="!newPostingForm.form.valid || isLoadingSubmit">
+                            [disabled]="!isOfferFormValid() || isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Save
                         </button>

@@ -41,7 +41,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if ((posting.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell) && (posting.AvailableQuantity < offerUpsertDto.Quantity))
+            if ((posting.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell) && (offerUpsertDto.OfferStatusID == (int) OfferStatusEnum.Pending || offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Accepted) && posting.AvailableQuantity < offerUpsertDto.Quantity)
             {
                 ModelState.AddModelError("Quantity", "Exceeds remaining balance in posting");
                 return BadRequest(ModelState);
