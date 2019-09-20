@@ -20,7 +20,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDto;
-  public isConfirmingTransfer: boolean = false;
+  public isRegisteringTransfer: boolean = false;
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
 
@@ -57,7 +57,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       this.waterTransfer = waterTransfer instanceof Array
         ? null
         : waterTransfer as WaterTransferDto;
-      this.isConfirmingTransfer = false;
+      this.isRegisteringTransfer = false;
       this.registerAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
       if(!this.canRegister())
       {
@@ -80,14 +80,14 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public registerTransfer(): void {
-    this.isConfirmingTransfer = true;
+    this.isRegisteringTransfer = true;
   }
 
-  public cancelConfirmation(): void {
-    this.isConfirmingTransfer = false;
+  public cancelRegistration(): void {
+    this.isRegisteringTransfer = false;
   }
 
-  public submitConfirmation(): void {
+  public submitRegistration(): void {
     this.isLoadingSubmit = true;
     let model = new WaterTransferRegisterDto();
     model.ConfirmingUserID = this.currentUser.UserID;

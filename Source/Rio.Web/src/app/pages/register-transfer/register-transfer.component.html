@@ -59,20 +59,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6" *ngIf="canConfirm()">
-            <div class="card" *ngIf="!isConfirmingTransfer">
+        <div class="col-sm-12 col-md-6" *ngIf="canRegister()">
+            <div class="card" *ngIf="!isRegisteringTransfer">
                 <div class="card-header">
                     Your Actions
                 </div>
                 <div class="card-body">
                     <p>After terms of the transaction are complete, use the button below to finalize your transfer. </p>
-                    <div class="text-center" *ngIf="!isConfirmingTransfer">
-                        <button class="btn btn-primary btn-sm mr-1" (click)="registerTransfer()">Confirm
+                    <div class="text-center" *ngIf="!isRegisteringTransfer">
+                        <button class="btn btn-primary btn-sm mr-1" (click)="registerTransfer()">Register
                             Transfer</button>
                     </div>
                 </div>
             </div>
-            <div class="card" *ngIf="isConfirmingTransfer">
+            <div class="card" *ngIf="isRegisteringTransfer">
                 <div class="card-header">
                     Register Your Transfer
                 </div>
@@ -84,17 +84,17 @@
                         annual allocation. This action cannot be undone. Proceed?
                     </p>
                     <div class="text-center">
-                        <button class="btn btn-primary btn-sm mr-1" (click)="submitConfirmation()"
+                        <button class="btn btn-primary btn-sm mr-1" (click)="submitRegistation()"
                             [disabled]="isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Confirm and Register Trade with RRB
                         </button>
-                        <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
+                        <button class="btn btn-primary btn-sm" (click)="cancelRegistration()">Cancel</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6" *ngIf="isBuyerOrSeller() && !canConfirm()">
+        <div class="col-sm-12 col-md-6" *ngIf="isBuyerOrSeller() && !canRegister()">
             <div class="card">
                 <div class="card-header">
                     Your Actions

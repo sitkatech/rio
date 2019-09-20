@@ -171,11 +171,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Buying " : "Selling " : trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling " : "Buying ") + " " + trade.Quantity + " ac-ft";
   }
 
-  public isTradeConfirmedByUser(trade: TradeWithMostRecentOfferDto) {
+  public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
     return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID);
   }
 
-  public isTradeConfirmedByBothParties(trade: TradeWithMostRecentOfferDto) {
+  public isTradeRegisteredByBothParties(trade: TradeWithMostRecentOfferDto) {
     return trade.IsConfirmedByBuyer && trade.IsConfirmedBySeller;
   }
 

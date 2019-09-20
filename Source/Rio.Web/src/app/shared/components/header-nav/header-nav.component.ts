@@ -82,7 +82,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
-        const pendingTrades = this.trades !== undefined ? this.trades.filter(p => p.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) : [];
+        const pendingTrades = this.trades !== undefined ? this.trades.filter(tr => this.isTradePending(tr)
+            || (tr.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && !this.isTradeRegisteredByUser(tr))) : [];
         return pendingTrades;
     }
 
@@ -103,6 +104,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return "A buyer is awaiting your response to their offer to purchase " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
 
+    public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
+        return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.currentUser.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.currentUser.UserID);
+    }
+    
+    public isTradePending(trade: TradeWithMostRecentOfferDto) {
+        return trade.OfferStatus.OfferStatusID === OfferStatusEnum.Pending;
+      }
+    
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
         //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
         return 5;

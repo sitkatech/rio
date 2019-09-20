@@ -63,16 +63,25 @@
 <div *ngIf="getPendingTrades().length > 0">
     <div class="alert alert-secondary mb-0" style="max-height: 160px; overflow: auto;">
         <ul class="m-0 p-0">
-            <li *ngFor="let pendingTrade of getPendingTrades()" style="list-style: none">
+            <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
                 <span class="fas fa-exclamation-circle"></span>
-                <span *ngIf="doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-                    {{getOfferThatBelongsToYouNotificationText(pendingTrade)}}
-                    <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[View offer details]</a>
-                </span>
-                <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(pendingTrade)">
-                    {{getOfferThatDoesNotBelongToYouNotificationText(pendingTrade)}}
-                    <a class="small" routerLink="/trades/{{pendingTrade.TradeID}}">[Respond to this offer]</a>
-                </span>
+                <ng-container *ngIf="!isTradeRegisteredByUser(trade) && !isTradePending(trade)">
+                    You have a transfer that needs to be registered
+                    <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
+                    *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade)">
+                    [Register transfer]
+                </a>
+                </ng-container>
+                <ng-container *ngIf="isTradePending(trade)">
+                    <span *ngIf="doesMostRecentOfferBelongToCurrentUser(trade)">
+                        {{getOfferThatBelongsToYouNotificationText(trade)}}
+                        <a class="small" routerLink="/trades/{{trade.TradeID}}">[View offer details]</a>
+                    </span>
+                    <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(trade)">
+                        {{getOfferThatDoesNotBelongToYouNotificationText(trade)}}
+                        <a class="small" routerLink="/trades/{{trade.TradeID}}">[Respond to this offer]</a>
+                    </span>
+                </ng-container>
             </li>
         </ul>
     </div>
