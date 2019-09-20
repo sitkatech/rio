@@ -5,6 +5,7 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.API.Controllers
@@ -94,6 +95,14 @@ namespace Rio.API.Controllers
 
             Posting.Delete(_dbContext, postingID);
             return Ok();
+        }
+
+        [HttpGet("postings/{postingID}/trades")]
+        [PostingManageFeature]
+        public ActionResult<TradeDto> GetTradesByPostingID([FromRoute] int postingID)
+        {
+            var tradeDto = Trade.GetTradesByPostingID(_dbContext, postingID);
+            return Ok(tradeDto);
         }
 
         [HttpGet("postings-activity")]

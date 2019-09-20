@@ -11,6 +11,8 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { PostingService } from 'src/app/services/posting.service';
+import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
+import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -153,7 +155,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.trades = trades;
 
         this.postingsGridColumnDefs = [
-          {
+            { headerName: '', valueGetter: 
+              function (params: any) {
+                if(params.data.NumberOfOffers === 0 && params.data.PostingStatusID === PostingStatusEnum.Open)
+                {
+                  return params.data.PostingID;
+                }
+                return null;
+              }
+            , cellRendererFramework: FontAwesomeIconLinkRendererComponent, 
+            cellRendererParams: { inRouterLink: "/delete-posting", fontawesomeIconName: 'trash' },
+            sortable: false, filter: false, width: 30 },
+            {
             headerName: 'Date', valueGetter: function (params: any) {
               return { OfferDate: params.data.PostingDate, TradeID: params.data.PostingID };
             }, cellRendererFramework: TradeDateLinkRendererComponent,

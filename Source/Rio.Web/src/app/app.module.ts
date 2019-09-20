@@ -41,7 +41,8 @@ import { TradeDateLinkRendererComponent } from './shared/components/ag-grid/trad
 import { AllocationChartImplComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
 import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/combo-series-vertical.component'
 import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
-import { LandownerDashboardLinkRendererComponent } from './shared/components/ag-grid/landowner-dashboard-link-renderer/landowner-dashboard-link-renderer.component';
+import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
+import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { LandownerDashboardLinkRendererComponent } from './shared/components/ag-
     LandownerWaterUseChartComponent,
     AllocationChartImplComponent,
     ComboSeriesVerticalComponent,
-    LandownerWaterAllocationChartComponent
+    LandownerWaterAllocationChartComponent,
+    PostingDeleteComponent
   ],
   imports: [
     AppRoutingModule,
@@ -87,7 +89,7 @@ import { LandownerDashboardLinkRendererComponent } from './shared/components/ag-
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent, LandownerDashboardLinkRendererComponent],
+  entryComponents: [ParcelNumberLinkRendererComponent, UserLinkRendererComponent, TradeDateLinkRendererComponent, FontAwesomeIconLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,88 @@
+<nav aria-label="breadcrumb" *ngIf="posting">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/trades">Buy and Sell Water</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Delete Posting: {{posting.PostingType.PostingTypeDisplayName}}
+            {{posting.Quantity | number: "1.0"}} ac-ft
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4" *ngIf="posting">
+    <h2 style="display: inline-block">
+        Posting: {{posting.PostingType.PostingTypeDisplayName}}
+        {{posting.Quantity | number: "1.0"}} ac-ft
+    </h2>
+    <app-alert-display></app-alert-display>
+    <div class="row mt-4">
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Details
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Posting Date</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.PostingDate | date:'short'}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Type</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.PostingType.PostingTypeDisplayName}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Status</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.PostingStatus.PostingStatusDisplayName}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.Quantity | number: "1.0"}} ac-ft
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.Price | currency: "USD" }} per ac-ft
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{getTotalPrice(posting) | currency : "USD" }}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Description</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{posting.PostingDescription}}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Confirm Your Deletion
+                </div>
+                <div class="card-body">
+                    <ng-container *ngIf="canDeleteCurrentPosting()">
+                    <p>Are you sure you want to delete this posting?</p>
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-sm mr-1" (click)="deletePosting()"
+                            [disabled]="isLoadingSubmit">
+                            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                            Confirm Deletion
+                        </button>
+                        <a class="btn btn-primary btn-sm" routerLink="/manager-dashboard">Cancel</a>
+                    </div>
+                    </ng-container>
+                    <p *ngIf="!canDeleteCurrentPosting()">
+                        This posting cannot be deleted because there have been offers made to this posting.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

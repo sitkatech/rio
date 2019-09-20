@@ -83,6 +83,21 @@ namespace Rio.EFModels.Entities
             return trade?.AsDto();
         }
 
+
+        public static IEnumerable<TradeDto> GetTradesByPostingID(RioDbContext dbContext, int postingID)
+        {
+            var trades = dbContext.Trade
+                .Include(x => x.TradeStatus)
+                .Include(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .AsNoTracking()
+                .Where(x => x.PostingID == postingID).Select(x => x.AsDto());
+
+            return trades;
+        }
+
         public static TradeDto Update(RioDbContext dbContext, int tradeID, TradeStatusEnum tradeStatusEnum)
         {
             var trade = dbContext.Trade

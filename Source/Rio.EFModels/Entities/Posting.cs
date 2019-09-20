@@ -122,6 +122,7 @@ namespace Rio.EFModels.Entities
             var posting = dbContext.Posting
                 .Single(x => x.PostingID == postingID);
             dbContext.Posting.Remove(posting);
+            dbContext.SaveChanges();
         }
 
         public static IEnumerable<PostingDetailedDto> ListDetailed(RioDbContext dbContext)

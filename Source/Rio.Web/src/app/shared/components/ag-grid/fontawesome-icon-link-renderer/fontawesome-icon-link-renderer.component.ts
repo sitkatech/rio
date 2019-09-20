@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AgRendererComponent } from 'ag-grid-angular';
 
 @Component({
-  selector: 'rio-landowner-dashboard-link-renderer',
-  templateUrl: './landowner-dashboard-link-renderer.component.html',
-  styleUrls: ['./landowner-dashboard-link-renderer.component.scss']
+  selector: 'rio-fontawesome-icon-link-renderer',
+  templateUrl: './fontawesome-icon-link-renderer.component.html',
+  styleUrls: ['./fontawesome-icon-link-renderer.component.scss']
 })
-export class LandownerDashboardLinkRendererComponent implements AgRendererComponent {
+export class FontAwesomeIconLinkRendererComponent implements AgRendererComponent {
   params: any;    
 
   agInit(params: any): void {

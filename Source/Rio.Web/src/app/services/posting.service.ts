@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { PostingDto } from '../shared/models/posting/posting-dto';
+import { TradeDto } from '../shared/models/offer/trade-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -35,8 +36,18 @@ export class PostingService {
         return this.apiService.putToApi(route, postingUpdateStatusDto);
     }
 
+    deletePosting(postingID: number): any {
+        let route = `/postings/${postingID}/delete`;
+        return this.apiService.deleteToApi(route);
+    }
+
     getPostingsDetailed(): Observable<PostingDto[]> {
         let route = `/postings-activity`;
+        return this.apiService.getFromApi(route);
+    }
+
+    getTradesFromPostingID(postingID: number): Observable<TradeDto[]> {
+        let route = `/postings/${postingID}/trades`;
         return this.apiService.getFromApi(route);
     }
 }

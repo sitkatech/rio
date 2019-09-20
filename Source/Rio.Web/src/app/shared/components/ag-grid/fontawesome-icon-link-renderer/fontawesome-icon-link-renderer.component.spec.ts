@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LandownerDashboardLinkRendererComponent } from './landowner-dashboard-link-renderer.component';
+import { FontAwesomeIconLinkRendererComponent } from './fontawesome-icon-link-renderer.component';
 
 describe('LandownerDashboardLinkRendererComponent', () => {
-  let component: LandownerDashboardLinkRendererComponent;
-  let fixture: ComponentFixture<LandownerDashboardLinkRendererComponent>;
+  let component: FontAwesomeIconLinkRendererComponent;
+  let fixture: ComponentFixture<FontAwesomeIconLinkRendererComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LandownerDashboardLinkRendererComponent ]
+      declarations: [ FontAwesomeIconLinkRendererComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LandownerDashboardLinkRendererComponent);
+    fixture = TestBed.createComponent(FontAwesomeIconLinkRendererComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

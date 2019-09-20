@@ -89,6 +89,28 @@ export class ApiService {
             );
     }
 
+    deleteToApi(relativeRoute: string): Observable<any> {
+
+        this.busyService.setBusy(true);
+        if (relativeRoute.startsWith('/')) {
+            relativeRoute = relativeRoute.substring(1, relativeRoute.length);
+        }
+        const baseRoute = this.apiRoute.getRoute();
+        const route = `${baseRoute}/${relativeRoute}`;
+
+        return this.http.delete(route)
+            .pipe(
+                map((response: any) => {
+                    return this.handleResponse(response);
+                }),
+                catchError((error: any) => {
+                    return this.handleError(error);
+                })
+            );
+    }
+
+
+
     handleResponse(response: any): Observable<any> {
         this.busyService.setBusy(false);
         return response;

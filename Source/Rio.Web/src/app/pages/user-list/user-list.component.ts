@@ -4,7 +4,7 @@ import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ColDef } from 'ag-grid-community';
 import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
-import { LandownerDashboardLinkRendererComponent } from 'src/app/shared/components/ag-grid/landowner-dashboard-link-renderer/landowner-dashboard-link-renderer.component';
+import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -28,7 +28,9 @@ export class UserListComponent implements OnInit, OnDestroy {
                 let _decimalPipe = this.decimalPipe;
 
                 this.columnDefs = [
-                    { headerName: '', field: 'UserID', cellRendererFramework: LandownerDashboardLinkRendererComponent, sortable: false, filter: false, width: 40 },
+                    { headerName: '', field: 'UserID', cellRendererFramework: FontAwesomeIconLinkRendererComponent, 
+                    cellRendererParams: { inRouterLink: "/landowner-dashboard", fontawesomeIconName: 'tasks' },
+                    sortable: false, filter: false, width: 40 },
                     {
                         headerName: 'Name', valueGetter: function(params) {
                             return {
