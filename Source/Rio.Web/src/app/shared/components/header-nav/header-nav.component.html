@@ -64,7 +64,7 @@
     <div class="alert alert-secondary mb-0" style="max-height: 160px; overflow: auto;">
         <ul class="m-0 p-0">
             <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
-                <span class="fas fa-exclamation-circle"></span>
+                <span class="fas fa-exclamation-circle" style="color: orangered"></span>
                 <ng-container *ngIf="!isTradeRegisteredByUser(trade) && !isTradePending(trade)">
                     You have a transfer that needs to be registered
                     <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
