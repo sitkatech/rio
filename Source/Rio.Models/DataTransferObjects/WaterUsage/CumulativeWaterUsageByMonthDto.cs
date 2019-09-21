@@ -8,6 +8,6 @@ namespace Rio.Models.DataTransferObjects.WaterUsage
         [JsonProperty("name")]
         public string Month { get; set; }
         [JsonProperty("value")]
-        public decimal CumulativeWaterUsageInAcreFeet { get; set; }
+        public decimal? CumulativeWaterUsageInAcreFeet { get; set; }
     }
 }
