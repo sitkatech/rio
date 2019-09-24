@@ -4,7 +4,6 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
-import { ParcelNumberLinkRendererComponent } from 'src/app/shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 
 @Component({
@@ -39,17 +38,17 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           children: [
             {
               headerName: 'APN', valueGetter: function (params: any) {
-                return { ParcelNumber: params.data.ParcelNumber, ParcelID: params.data.ParcelID };
-              }, cellRendererFramework: ParcelNumberLinkRendererComponent,
+                return { LinkDisplay: params.data.ParcelNumber, LinkValue: params.data.ParcelID };
+              }, cellRendererFramework: LinkRendererComponent,
               cellRendererParams: { inRouterLink: "/parcels/" },
               filterValueGetter: function (params: any) {
                 return params.data.ParcelNumber;
               },
               comparator: function (id1: any, id2: any) {
-                if (id1.ParcelNumber < id2.ParcelNumber) {
+                if (id1.LinkDisplay < id2.LinkDisplay) {
                   return -1;
                 }
-                if (id1.ParcelNumber > id2.ParcelNumber) {
+                if (id1.LinkDisplay > id2.LinkDisplay) {
                   return 1;
                 }
                 return 0;
@@ -60,7 +59,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 100 },
             {
               headerName: 'Land Owner', valueGetter: function (params: any) {
-                return { LinkValue: params.data.LandOwner.UserID, LinkDisplay: params.data.LandOwner.FullName };
+                return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.UserID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.FullName };
               }, cellRendererFramework: LinkRendererComponent,
               cellRendererParams: { inRouterLink: "/users/" },
               filterValueGetter: function (params: any) {

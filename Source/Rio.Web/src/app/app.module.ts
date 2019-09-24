@@ -30,7 +30,6 @@ import { RegisterTransferComponent } from './pages/register-transfer/register-tr
 import { AgGridModule } from 'ag-grid-angular';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
-import { ParcelNumberLinkRendererComponent } from './shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
 import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer/link-renderer.component';
 
 
@@ -88,7 +87,7 @@ import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.co
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [ParcelNumberLinkRendererComponent, LinkRendererComponent, FontAwesomeIconLinkRendererComponent],
+  entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
