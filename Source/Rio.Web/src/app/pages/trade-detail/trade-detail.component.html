@@ -4,13 +4,13 @@
       <a routerLink="/trades">Buy and Sell Water</a>
     </li>
     <li class="breadcrumb-item active" aria-current="page">
-      Current Trade
+      Trade {{trade.TradeNumber}}
     </li>
   </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="trade">
   <h2 style="display: inline-block">
-    Current Trade : Offer {{trade.TradeStatus.TradeStatusDisplayName}}
+    Trade {{trade.TradeNumber}} : Offer {{trade.TradeStatus.TradeStatusDisplayName}}
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">

@@ -6,6 +6,7 @@ namespace Rio.Models.DataTransferObjects.Offer
     public class TradeWithMostRecentOfferDto
     {
         public int TradeID { get; set; }
+        public string TradeNumber { get; set; }
         public UserSimpleDto CreateUser { get; set; }
         public int OfferPostingTypeID { get; set; }
         public TradeStatusDto TradeStatus { get; set; }

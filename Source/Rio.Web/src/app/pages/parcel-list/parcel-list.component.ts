@@ -5,7 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
 import { ColDef } from 'ag-grid-community';
 import { ParcelNumberLinkRendererComponent } from 'src/app/shared/components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
-import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -59,27 +59,26 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
             { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 100 },
             {
-              headerName: 'Land Owner', field: 'LandOwner', cellRendererFramework: UserLinkRendererComponent,
+              headerName: 'Land Owner', valueGetter: function (params: any) {
+                return { LinkValue: params.data.LandOwner.UserID, LinkDisplay: params.data.LandOwner.FullName };
+              }, cellRendererFramework: LinkRendererComponent,
               cellRendererParams: { inRouterLink: "/users/" },
               filterValueGetter: function (params: any) {
-                if (params.data.LandOwner) {
-                  return params.data.LandOwner.FullName;
-                }
-                return null;
+                return params.data.Buyer.FullName;
               },
               comparator: function (id1: any, id2: any) {
-                let landOwnerName1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-                let landOwnerName2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-                if (landOwnerName1 < landOwnerName2) {
+                let link1 = id1.LinkDisplay;
+                let link2 = id2.LinkDisplay;
+                if (link1 < link2) {
                   return -1;
                 }
-                if (landOwnerName1 > landOwnerName2) {
+                if (link1 > link2) {
                   return 1;
                 }
                 return 0;
               },
               sortable: true, filter: true, width: 170
-            }
+            },
           ]
         },
         {

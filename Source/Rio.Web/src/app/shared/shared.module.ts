@@ -10,8 +10,7 @@ import { NgProgressModule } from '@ngx-progressbar/core';
 import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
 import { ParcelNumberLinkRendererComponent } from './components/ag-grid/parcel-number-link-renderer/parcel-number-link-renderer.component';
-import { UserLinkRendererComponent } from './components/ag-grid/user-link-renderer/user-link-renderer.component';
-import { TradeDateLinkRendererComponent } from './components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
+import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-renderer.component';
 import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 
 @NgModule({
@@ -23,8 +22,7 @@ import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fonta
         SubscriptionInsufficientComponent,
         ParcelDetailPopupComponent,
         ParcelNumberLinkRendererComponent,
-        UserLinkRendererComponent,
-        TradeDateLinkRendererComponent,
+        LinkRendererComponent,
         FontAwesomeIconLinkRendererComponent
     ],
     imports: [

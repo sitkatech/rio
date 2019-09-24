@@ -12,7 +12,7 @@ export class WaterTransferDto {
     Notes: string;
     ConfirmedByReceivingUser: boolean;
     ConfirmedByTransferringUser: boolean;
-    TradeID: number;
+    TradeNumber: string;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

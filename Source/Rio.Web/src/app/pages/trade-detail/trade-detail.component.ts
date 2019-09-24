@@ -65,9 +65,9 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      const tradeID = parseInt(this.route.snapshot.paramMap.get("tradeID"));
-      if (tradeID) {
-        this.getData(tradeID);
+      const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
+      if (tradeNumber) {
+        this.getData(tradeNumber);
       }
     });
   }
@@ -78,8 +78,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  private getData(tradeID: number): void {
-    forkJoin(this.tradeService.getTradeFromTradeID(tradeID), this.offerService.getOffersFromTradeID(tradeID)).subscribe(([trade, offers]) => {
+  private getData(tradeNumber: string): void {
+    forkJoin(this.tradeService.getTradeFromTradeNumber(tradeNumber), this.offerService.getOffersFromTradeNumber(tradeNumber)).subscribe(([trade, offers]) => {
       this.trade = trade instanceof Array
         ? null
         : trade as TradeDto;

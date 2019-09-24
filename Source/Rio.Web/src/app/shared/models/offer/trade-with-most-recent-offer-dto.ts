@@ -1,10 +1,10 @@
 import { UserSimpleDto } from '../user/user-simple-dto';
 import { TradeStatusDto } from './trade-status-dto';
 import { OfferStatusDto } from './offer-status-dto';
-import { PostingDto } from '../posting/posting-dto';
 
 export class TradeWithMostRecentOfferDto {
     TradeID: number;
+    TradeNumber: string;
     TradeStatus: TradeStatusDto;
     TradePostingTypeID: number;
     OfferPostingTypeID: number;

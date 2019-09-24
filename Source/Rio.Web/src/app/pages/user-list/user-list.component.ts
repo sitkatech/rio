@@ -3,7 +3,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ColDef } from 'ag-grid-community';
-import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { DecimalPipe } from '@angular/common';
 
@@ -32,31 +32,26 @@ export class UserListComponent implements OnInit, OnDestroy {
                     cellRendererParams: { inRouterLink: "/landowner-dashboard", fontawesomeIconName: 'tasks' },
                     sortable: false, filter: false, width: 40 },
                     {
-                        headerName: 'Name', valueGetter: function(params) {
-                            return {
-                                FirstName: params.data.FirstName,
-                                LastName: params.data.LastName,
-                                FullName: params.data.FullName,
-                                UserID: params.data.UserID
-                            }
-                        }, cellRendererFramework: UserLinkRendererComponent,
-                        cellRendererParams: { inRouterLink: "/users/" },
-                        filterValueGetter: function (params: any) {
-                          return params.data.FullName;
-                        },
-                        comparator: function (id1: any, id2: any) {
-                          let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-                          let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-                          if (user1 < user2) {
-                            return -1;
-                          }
-                          if (user1 > user2) {
-                            return 1;
-                          }
-                          return 0;
-                        },
-                        sortable: true, filter: true
+                      headerName: 'Name', valueGetter: function (params: any) {
+                        return { LinkValue: params.data.UserID, LinkDisplay: params.data.FullName };
+                      }, cellRendererFramework: LinkRendererComponent,
+                      cellRendererParams: { inRouterLink: "/users/" },
+                      filterValueGetter: function (params: any) {
+                        return params.data.FullName;
                       },
+                      comparator: function (id1: any, id2: any) {
+                        let link1 = id1.LinkDisplay;
+                        let link2 = id2.LinkDisplay;
+                        if (link1 < link2) {
+                          return -1;
+                        }
+                        if (link1 > link2) {
+                          return 1;
+                        }
+                        return 0;
+                      },
+                      sortable: true, filter: true, width: 170
+                    },
                     { headerName: 'Email', field: 'Email', sortable: true, filter: true },
                     { headerName: 'Role', field: 'RoleDisplayName', sortable: true, filter: true, width: 100 },
                     { headerName: 'Has Active Trades?', valueGetter: function (params) { return params.data.HasActiveTrades ? "Yes" : "No"; }, sortable: true, filter: true, width: 160 },

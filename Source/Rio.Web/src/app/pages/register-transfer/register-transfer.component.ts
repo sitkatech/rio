@@ -61,7 +61,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       this.registerAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
       if(!this.canRegister())
       {
-        this.router.navigateByUrl("/trades/" + waterTransfer.TradeID)
+        this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
       }
     });
   }

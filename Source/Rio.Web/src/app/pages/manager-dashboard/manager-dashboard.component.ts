@@ -6,9 +6,8 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { forkJoin } from 'rxjs';
 import { ColDef } from 'ag-grid-community';
-import { TradeDateLinkRendererComponent } from 'src/app/shared/components/ag-grid/trade-date-link-renderer/trade-date-link-renderer.component';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { UserLinkRendererComponent } from 'src/app/shared/components/ag-grid/user-link-renderer/user-link-renderer.component';
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { PostingService } from 'src/app/services/posting.service';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
@@ -52,10 +51,30 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         let _datePipe = this.datePipe;
         this.tradesGridColumnDefs = [
           {
-            headerName: 'Date', valueGetter: function (params: any) {
-              return { OfferDate: params.data.OfferDate, TradeID: params.data.TradeID };
-            }, cellRendererFramework: TradeDateLinkRendererComponent,
+            headerName: 'Trade', valueGetter: function (params: any) {
+              return { LinkValue: params.data.TradeNumber, LinkDisplay: params.data.TradeNumber };
+            }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/trades/" },
+            filterValueGetter: function (params: any) {
+              return params.data.LinkValue;
+            },
+            comparator: function (id1: any, id2: any) {
+              let link1 = id1.LinkDisplay;
+              let link2 = id2.LinkDisplay;
+              if (link1 < link2) {
+                return -1;
+              }
+              if (link1 > link2) {
+                return 1;
+              }
+              return 0;
+            },
+            sortable: true, filter: true, width: 140
+          },
+          {
+            headerName: 'Date', field: 'OfferDate', valueFormatter: function(params) {
+              return _datePipe.transform(params.value, "short")
+            },
             filterValueGetter: function (params: any) {
               return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
             },
@@ -78,10 +97,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
               }
             },            
             comparator: function (id1: any, id2: any) {
-              if (id1.OfferDate < id2.OfferDate) {
+              if (id1.value < id2.value) {
                 return -1;
               }
-              if (id1.OfferDate > id2.OfferDate) {
+              if (id1.value > id2.value) {
                 return 1;
               }
               return 0;
@@ -92,18 +111,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && (!params.data.IsConfirmedByBuyer || !params.data.IsConfirmedBySeller) ? "Awaiting Payment Confirmation" : params.data.TradeStatus.TradeStatusDisplayName; }, 
             sortable: true, filter: true, width: 200 },
           {
-            headerName: 'Buyer', field: 'Buyer', cellRendererFramework: UserLinkRendererComponent,
+            headerName: 'Buyer', valueGetter: function (params: any) {
+              return { LinkValue: params.data.Buyer.UserID, LinkDisplay: params.data.Buyer.FullName };
+            }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
             filterValueGetter: function (params: any) {
               return params.data.Buyer.FullName;
             },
             comparator: function (id1: any, id2: any) {
-              let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-              let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-              if (user1 < user2) {
+              let link1 = id1.LinkDisplay;
+              let link2 = id2.LinkDisplay;
+              if (link1 < link2) {
                 return -1;
               }
-              if (user1 > user2) {
+              if (link1 > link2) {
                 return 1;
               }
               return 0;
@@ -111,18 +132,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: true, filter: true, width: 155
           },
           {
-            headerName: 'Seller', field: 'Seller', cellRendererFramework: UserLinkRendererComponent,
+            headerName: 'Seller', valueGetter: function (params: any) {
+              return { LinkValue: params.data.Seller.UserID, LinkDisplay: params.data.Seller.FullName };
+            }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
             filterValueGetter: function (params: any) {
-              return params.data.Seller.FullName;
+              return params.data.Buyer.FullName;
             },
             comparator: function (id1: any, id2: any) {
-              let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-              let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-              if (user1 < user2) {
+              let link1 = id1.LinkDisplay;
+              let link2 = id2.LinkDisplay;
+              if (link1 < link2) {
                 return -1;
               }
-              if (user1 > user2) {
+              if (link1 > link2) {
                 return 1;
               }
               return 0;
@@ -133,7 +156,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
           { headerName: 'Total Price', valueGetter: function(params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
           {
-            headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: UserLinkRendererComponent,
+            headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
             filterValueGetter: function (params: any) {
               return params.data.OfferCreateUser.FullName;
@@ -168,11 +191,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: false, filter: false, width: 30 },
             {
             headerName: 'Date', valueGetter: function (params: any) {
-              return { OfferDate: params.data.PostingDate, TradeID: params.data.PostingID };
-            }, cellRendererFramework: TradeDateLinkRendererComponent,
+              return { LinkValue: params.data.PostingID, LinkDisplay: _datePipe.transform(params.data.PostingDate, "short"), PostingDate: params.data.PostingDate };
+            }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/postings/" },
             filterValueGetter: function (params: any) {
-              return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
+              return _datePipe.transform(params.data.PostingDate, "M/d/yyyy");
             },
             filterParams: {
               // provide comparator function
@@ -207,7 +230,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             headerName: 'Posted By', 
             valueGetter: function (params: any) {
               return { UserID: params.data.PostedByUserID, FullName: params.data.PostedByFullName };
-            }, cellRendererFramework: UserLinkRendererComponent,
+            }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },
             filterValueGetter: function (params: any) {
               return params.data.PostedByFullName;

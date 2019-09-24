@@ -4,6 +4,7 @@ import { PostingDto } from '../posting/posting-dto';
 
 export class TradeDto {
     TradeID: number;
+    TradeNumber: string;
     CreateUser: UserSimpleDto;
     TradeStatus: TradeStatusDto;
     Posting: PostingDto;

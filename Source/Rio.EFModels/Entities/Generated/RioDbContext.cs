@@ -308,6 +308,8 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<Trade>(entity =>
             {
+                entity.Property(e => e.TradeNumber).IsUnicode(false);
+
                 entity.HasOne(d => d.CreateUser)
                     .WithMany(p => p.Trade)
                     .HasForeignKey(d => d.CreateUserID)

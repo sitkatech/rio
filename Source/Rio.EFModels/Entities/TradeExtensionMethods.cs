@@ -10,6 +10,7 @@ namespace Rio.EFModels.Entities
             return new TradeDto()
             {
                 TradeID = trade.TradeID,
+                TradeNumber = trade.TradeNumber,
                 CreateUser = trade.CreateUser.AsSimpleDto(),
                 TradeStatus = trade.TradeStatus.AsDto(),
                 Posting = trade.Posting.AsDto()
@@ -22,6 +23,7 @@ namespace Rio.EFModels.Entities
             var tradeWithMostRecentOfferDto = new TradeWithMostRecentOfferDto()
             {
                 TradeID = trade.TradeID,
+                TradeNumber = trade.TradeNumber,
                 TradeStatus = trade.TradeStatus.AsDto(),
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,

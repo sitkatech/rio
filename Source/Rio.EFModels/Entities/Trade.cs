@@ -18,6 +18,10 @@ namespace Rio.EFModels.Entities
                 TradeStatusID = (int) TradeStatusEnum.Countered
             };
 
+            // we need to calculate the trade number
+            var existingTradesForTheYearCount = dbContext.Trade.AsNoTracking().Count(x => x.TradeDate.Year == trade.TradeDate.Year);
+            trade.TradeNumber = $"{trade.TradeDate.Year}-{existingTradesForTheYearCount + 1:D4}";
+
             dbContext.Trade.Add(trade);
             dbContext.SaveChanges();
             dbContext.Entry(trade).Reload();
@@ -71,30 +75,32 @@ namespace Rio.EFModels.Entities
 
         public static TradeDto GetByTradeID(RioDbContext dbContext, int tradeID)
         {
-            var trade = dbContext.Trade
+            var trade = GetTradeImpl(dbContext).SingleOrDefault(x => x.TradeID == tradeID);
+            return trade?.AsDto();
+        }
+
+        private static IQueryable<Trade> GetTradeImpl(RioDbContext dbContext)
+        {
+            return dbContext.Trade
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateUser)
                 .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .AsNoTracking()
-                .SingleOrDefault(x => x.TradeID == tradeID);
+                .AsNoTracking();
+        }
 
+
+        public static TradeDto GetByTradeNumber(RioDbContext dbContext, string tradeNumber)
+        {
+            var trade = GetTradeImpl(dbContext).SingleOrDefault(x => x.TradeNumber == tradeNumber);
             return trade?.AsDto();
         }
 
 
         public static IEnumerable<TradeDto> GetTradesByPostingID(RioDbContext dbContext, int postingID)
         {
-            var trades = dbContext.Trade
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .AsNoTracking()
-                .Where(x => x.PostingID == postingID).Select(x => x.AsDto());
-
+            var trades = GetTradeImpl(dbContext).Where(x => x.PostingID == postingID).Select(x => x.AsDto());
             return trades;
         }
 

@@ -22,7 +22,7 @@ import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.co
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "trades/:tradeID", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "trades/:tradeNumber", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "register-transfer/:waterTransferID", component: RegisterTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },

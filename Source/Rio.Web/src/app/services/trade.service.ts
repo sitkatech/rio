@@ -21,8 +21,8 @@ export class TradeService {
         return this.apiService.getFromApi(route);
     }
 
-    getTradeFromTradeID(tradeID: number): Observable<TradeDto> {
-        let route = `/trades/${tradeID}`;
+    getTradeFromTradeNumber(tradeNumber: string): Observable<TradeDto> {
+        let route = `/trades/${tradeNumber}`;
         return this.apiService.getFromApi(route);
     }
 }

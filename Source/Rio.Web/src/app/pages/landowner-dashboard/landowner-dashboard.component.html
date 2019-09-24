@@ -26,19 +26,19 @@
           <div class="table-responsive">
             <table class="table table-sm table-borderless">
               <tr>
-                <th class="text-sm-left pb-0 mb-0">Allocation</th>
+                <th class="text-sm-left pb-0 mb-0" colspan="2">Allocation</th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
                   <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Your annual allocated water budget</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0" colspan="2">
                   <a style="cursor: pointer" class="collapsed small"
                     (click)="showPurchasedDetails = !showPurchasedDetails"
                     *ngIf="getPurchasedWaterTransfersForWaterYear().length > 0">
@@ -54,25 +54,26 @@
               </tr>
               <ng-container *ngIf="showPurchasedDetails">
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
                 <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeID}}">{{waterTransfer.TransferDate | date:"MM/dd"}}</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
                   </th>
+                  <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
                   <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
                   </td>
                 </tr>
               </ng-container>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Water supply you have purchased this year</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0" colspan="2">
                   <a style="cursor: pointer" class="collapsed small" (click)="showSoldDetails = !showSoldDetails"
                     *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
                     <span *ngIf="!showSoldDetails" class="fas fa-plus text-muted"></span>
@@ -87,25 +88,26 @@
               </tr>
               <ng-container *ngIf="showSoldDetails">
                 <tr>
-                  <td colspan="2">
+                  <td colspan="3">
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
                 <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeID}}">{{waterTransfer.TransferDate | date:"MM/dd"}}</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
                   </th>
+                  <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
                   <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
                   </td>
                 </tr>
               </ng-container>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Water supply you have sold this year</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0" colspan="2">
                   Total Supply
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
@@ -113,23 +115,23 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold</small>
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="3">
                   <small class="systemText" *ngIf="showSoldDetails || showPurchasedDetails">* denotes a pending
                     transaction</small>
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="3">
                   <hr />
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">
+                <th class="text-sm-left pb-0 mb-0" colspan="2">
                   Usage to Date
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
@@ -138,29 +140,29 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Total usage this year as measured by OpenET</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">Current Available</th>
+                <th class="text-sm-left pb-0 mb-0" colspan="2">Current Available</th>
                 <td class="text-sm-right pb-0 mb-0">
                   {{getCurrentAvailableWater() | number: '1.1-1'}} ac-ft
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold – Usage to Date</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0">Average Usage</th>
+                <th class="text-sm-left pb-0 mb-0" colspan="2">Average Usage</th>
                 <td class="text-sm-right pb-0 mb-0">
                   {{historicAverageAnnualUsage}} ac-ft
                 </td>
               </tr>
               <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
+                <td colspan="3" class="text-left pt-0 mt-0">
                   <small>Average usage from all years of OpenET data</small>
                 </td>
               </tr>
@@ -188,6 +190,7 @@
           <table class="table table-condensed table-striped" *ngIf="getTradesForWaterYear().length > 0">
             <thead>
               <tr>
+                <th>Trade</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Description</th>
@@ -197,11 +200,12 @@
             <tbody>
               <tr *ngFor="let trade of getTradesForWaterYear()">
                 <td style="border: 0 none"><a
-                    routerLink="/trades/{{trade.TradeID}}">{{ trade.OfferDate | date:"short" }}</a></td>
+                    routerLink="/trades/{{trade.TradeNumber}}">{{ trade.TradeNumber }}</a></td>
+                <td style="border: 0 none">{{ trade.OfferDate | date: "MM/dd" }}</td>
                 <td style="border: 0 none; white-space: nowrap">
                   <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
                     *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade)">
-                    Awaiting Registration of Transfer
+                    Awaiting Registration
                   </a>
                   <span
                     *ngIf="trade.WaterTransferID && isTradeRegisteredByUser(trade) && !isTradeRegisteredByBothParties(trade)">You

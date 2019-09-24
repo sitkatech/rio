@@ -45,10 +45,10 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-        public static IEnumerable<OfferDto> GetByTradeID(RioDbContext dbContext, int tradeID)
+        public static IEnumerable<OfferDto> GetByTradeNumber(RioDbContext dbContext, string tradeNumber)
         {
             var offers = GetOffersImpl(dbContext)
-                .Where(x => x.TradeID == tradeID)
+                .Where(x => x.Trade.TradeNumber == tradeNumber)
                 .OrderByDescending(x => x.OfferDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();

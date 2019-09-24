@@ -36,12 +36,13 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
-            forkJoin(
-                this.tradeService.getTradeActivityForUser(currentUser.UserID),
-            ).subscribe(([trades]) => {
-                this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
-            });
-
+            if (currentUser) {
+                forkJoin(
+                    this.tradeService.getTradeActivityForUser(currentUser.UserID),
+                ).subscribe(([trades]) => {
+                    this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+                });
+            }
         });
     }
 
@@ -107,11 +108,11 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
         return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.currentUser.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.currentUser.UserID);
     }
-    
+
     public isTradePending(trade: TradeWithMostRecentOfferDto) {
         return trade.OfferStatus.OfferStatusID === OfferStatusEnum.Pending;
-      }
-    
+    }
+
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
         //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
         return 5;

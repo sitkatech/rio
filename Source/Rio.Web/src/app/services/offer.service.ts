@@ -21,8 +21,8 @@ export class OfferService {
         return this.apiService.getFromApi(route);
     }
 
-    getOffersFromTradeID(tradeID: number): Observable<OfferDto[]> {
-        let route = `/trades/${tradeID}/offers`;
+    getOffersFromTradeNumber(tradeNumber: string): Observable<OfferDto[]> {
+        let route = `/trades/${tradeNumber}/offers`;
         return this.apiService.getFromApi(route);
     }
 

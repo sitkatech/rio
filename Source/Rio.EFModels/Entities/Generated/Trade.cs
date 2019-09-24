@@ -18,6 +18,8 @@ namespace Rio.EFModels.Entities
         public DateTime TradeDate { get; set; }
         public int TradeStatusID { get; set; }
         public int CreateUserID { get; set; }
+        [StringLength(50)]
+        public string TradeNumber { get; set; }
 
         [ForeignKey("CreateUserID")]
         [InverseProperty("Trade")]

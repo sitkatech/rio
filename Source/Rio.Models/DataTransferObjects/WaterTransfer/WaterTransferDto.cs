@@ -18,6 +18,6 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public bool ConfirmedByReceivingUser { get; set; }
         public DateTime? DateConfirmedByReceivingUser { get; set; }
         public string Notes { get; set; }
-        public int TradeID { get; set; }
+        public string TradeNumber { get; set; }
     }
 }

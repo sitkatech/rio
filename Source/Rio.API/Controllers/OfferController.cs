@@ -171,7 +171,7 @@ To finalize this transaction, the buyer and seller must complete payment and any
             {
                 var mailMessage = new MailMessage
                 {
-                    Subject = "Trade Accepted",
+                    Subject = $"Trade {currentTrade.TradeNumber} Accepted",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
@@ -199,7 +199,7 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
-                Subject = "Trade Rejected",
+                Subject = $"Trade {currentTrade.TradeNumber} Rejected",
                 Body = messageBody
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
@@ -225,7 +225,7 @@ An offer to {offerAction} water was rescinded by the other party. You can see de
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
-                Subject = "Trade Rescinded",
+                Subject = $"Trade {currentTrade.TradeNumber} Rescinded",
                 Body = messageBody
             };
             mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
@@ -245,7 +245,7 @@ Hello {toUser.FullName},
 <br /><br />
 An offer to {offerAction} water has been presented for your review. 
 <br /><br />
-<a href=""{rioUrl}/trades/{currentTrade.TradeID}"">Respond to this offer</a>
+<a href=""{rioUrl}/trades/{currentTrade.TradeNumber}"">Respond to this offer</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
@@ -281,19 +281,19 @@ An offer to {offerAction} water has been presented for your review.
             return Ok(tradeWithMostRecentOfferDtos);
         }
 
-        [HttpGet("trades/{tradeID}")]
+        [HttpGet("trades/{tradeNumber}")]
         [OfferManageFeature]
-        public ActionResult<TradeDto> GetTradeByTradeID([FromRoute] int tradeID)
+        public ActionResult<TradeDto> GetTradeByTradeNumber([FromRoute] string tradeNumber)
         {
-            var tradeDto = Trade.GetByTradeID(_dbContext, tradeID);
+            var tradeDto = Trade.GetByTradeNumber(_dbContext, tradeNumber);
             return Ok(tradeDto);
         }
 
-        [HttpGet("trades/{tradeID}/offers")]
+        [HttpGet("trades/{tradeNumber}/offers")]
         [OfferManageFeature]
-        public ActionResult<IEnumerable<OfferDto>> GetOffersByTradeID([FromRoute] int tradeID)
+        public ActionResult<IEnumerable<OfferDto>> GetOffersByTradeNumber([FromRoute] string tradeNumber)
         {
-            var offerDtos = Offer.GetByTradeID(_dbContext, tradeID);
+            var offerDtos = Offer.GetByTradeNumber(_dbContext, tradeNumber);
             return Ok(offerDtos);
         }
 

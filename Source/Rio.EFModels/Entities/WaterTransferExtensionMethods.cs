@@ -22,7 +22,7 @@ namespace Rio.EFModels.Entities
                 DateConfirmedByReceivingUser = waterTransfer.DateConfirmedByReceivingUser,
                 Notes = waterTransfer.Notes,
                 // ReSharper disable once PossibleNullReferenceException
-                TradeID = waterTransfer.Offer.TradeID
+                TradeNumber = waterTransfer.Offer.Trade.TradeNumber
             };
         }
     }
