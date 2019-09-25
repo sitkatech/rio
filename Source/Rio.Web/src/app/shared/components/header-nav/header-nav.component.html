@@ -66,7 +66,7 @@
             <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
                 <span class="fas fa-exclamation-circle" style="color: orangered"></span>
                 <ng-container *ngIf="!isTradeRegisteredByUser(trade) && !isTradePending(trade)">
-                    You have a transfer that needs to be registered
+                    Trade {{trade.TradeNumber}} needs to be registered
                     <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
                     *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade)">
                     [Register transfer]
@@ -75,11 +75,11 @@
                 <ng-container *ngIf="isTradePending(trade)">
                     <span *ngIf="doesMostRecentOfferBelongToCurrentUser(trade)">
                         {{getOfferThatBelongsToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeID}}">[View offer details]</a>
+                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[View offer details]</a>
                     </span>
                     <span *ngIf="!doesMostRecentOfferBelongToCurrentUser(trade)">
                         {{getOfferThatDoesNotBelongToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeID}}">[Respond to this offer]</a>
+                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[Respond to this offer]</a>
                     </span>
                 </ng-container>
             </li>

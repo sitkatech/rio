@@ -95,14 +95,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
         let offerType = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "sell" : "purchase";
         let respondee = trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell ? "buyer" : "seller";
-        return "You have submitted an offer to " + offerType + " " + trade.Quantity + " ac-ft of water. The " + respondee + " has " + this.getDaysLeftToRespond(trade) + " days to respond.";
+        return "Trade " + trade.TradeNumber + " - You have submitted an offer to " + offerType + " water. The " + respondee + " has " + this.getDaysLeftToRespond(trade) + " days to respond.";
     }
 
     public getOfferThatDoesNotBelongToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
         if (trade.OfferPostingTypeID === PostingTypeEnum.OfferToSell) {
-            return "A seller is awaiting your response to their offer to sell " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
+            return "Trade " + trade.TradeNumber + " - A seller is awaiting your response to their offer to sell water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
         }
-        return "A buyer is awaiting your response to their offer to purchase " + trade.Quantity + " ac-ft of water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
+        return "Trade " + trade.TradeNumber + " - A buyer is awaiting your response to their offer to purchase water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
 
     public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
