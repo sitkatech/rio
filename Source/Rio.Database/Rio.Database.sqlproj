@@ -94,6 +94,9 @@
     <None Include="Scripts\Views\dbo.vAllParcelsWithAnnualWaterUsage.sql" />
     <None Include="Scripts\Views\dbo.vUserDetailed.sql" />
     <None Include="Scripts\Views\dbo.vPostingDetailed.sql" />
+    <Build Include="dbo\Tables\dbo.WaterTransferType.sql" />
+    <Build Include="dbo\Tables\dbo.WaterTransferParcel.sql" />
+    <None Include="Scripts\LookupTables\dbo.WaterTransferType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

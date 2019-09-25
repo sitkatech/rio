@@ -7,6 +7,11 @@ namespace Rio.EFModels.Entities
 {
     public partial class WaterTransfer
     {
+        public WaterTransfer()
+        {
+            WaterTransferParcel = new HashSet<WaterTransferParcel>();
+        }
+
         public int WaterTransferID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime TransferDate { get; set; }
@@ -32,5 +37,7 @@ namespace Rio.EFModels.Entities
         [ForeignKey("TransferringUserID")]
         [InverseProperty("WaterTransferTransferringUser")]
         public virtual User TransferringUser { get; set; }
+        [InverseProperty("WaterTransfer")]
+        public virtual ICollection<WaterTransferParcel> WaterTransferParcel { get; set; }
     }
 }

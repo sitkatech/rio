@@ -199,7 +199,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let trade of getTradesForWaterYear()">
-                <td style="border: 0 none"><a
+                <td style="border: 0 none; white-space: nowrap"><a
                     routerLink="/trades/{{trade.TradeNumber}}">{{ trade.TradeNumber }}</a></td>
                 <td style="border: 0 none">{{ trade.OfferDate | date: "MM/dd" }}</td>
                 <td style="border: 0 none; white-space: nowrap">

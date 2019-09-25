@@ -8,50 +8,50 @@
         </li>
     </ol>
 </nav>
-<div class="container mt-sm-4" *ngIf="waterTransfer">
+<div class="container mt-md-4" *ngIf="waterTransfer">
     <h2 style="display: inline-block">
         Register Transfer
     </h2>
     <app-alert-display></app-alert-display>
     <div class="row mt-4">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-4">
             <div class="card">
                 <div class="card-header">
                     Transfer Details
                 </div>
                 <div class="card-body">
                     <dl class="row">
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Date</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Date</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{waterTransfer.TransferDate | date:'short'}}
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Buyer</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Buyer</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{waterTransfer.ReceivingUser.FullName}}<br />
-                            <a
-                                href="mailto:{{waterTransfer.ReceivingUser.Email}}">{{waterTransfer.ReceivingUser.Email}}</a>
+                            <small><a
+                                    href="mailto:{{waterTransfer.ReceivingUser.Email}}">{{waterTransfer.ReceivingUser.Email}}</a></small>
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Seller</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Seller</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{waterTransfer.TransferringUser.FullName}}<br />
-                            <a
-                                href="mailto:{{waterTransfer.TransferringUser.Email}}">{{waterTransfer.TransferringUser.Email}}</a>
+                            <small><a
+                                    href="mailto:{{waterTransfer.TransferringUser.Email}}">{{waterTransfer.TransferringUser.Email}}</a></small>
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Quantity</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Quantity</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{waterTransfer.AcreFeetTransferred}} ac-ft
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Unit Price</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{waterTransfer.UnitPrice | currency: "USD" }} per ac-ft
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Total Price</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-md-right col-md-4 col-sm-12">Total Price</dt>
+                        <dd class="col-md-8 col-sm-12">
                             {{getTotalPrice(waterTransfer) | currency : "USD" }}
                         </dd>
 
@@ -59,28 +59,46 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6" *ngIf="canRegister()">
-            <div class="card" *ngIf="!isRegisteringTransfer">
+        <div class="col-sm-12 col-md-8" *ngIf="canRegister()">
+            <div class="card" *ngIf="!isRegisteringTransfer && !haveParcelsBeenIdentified">
                 <div class="card-header">
-                    Your Actions
+                    Identify Parcels
                 </div>
                 <div class="card-body">
+                    <p>
+                        Identify the parcels that you will be transferring water to/from.
+                    </p>
+                    <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels"
+                        [visibleParcelIDs]="visibleParcelIDs" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
+                        <div>
+                            <div class="float-right">
+                                <button [disabled]="!isParcelPickerValid() || isLoadingSubmit"
+                                    type="submit" class="btn btn-primary" (click)="onSubmitParcels()">
+                                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </rio-parcel-picker>
+                </div>
+            </div>
+            <div class="card" *ngIf="haveParcelsBeenIdentified">
+                <div class="card-header">
+                    Register Your Transfer
+                </div>
+                <div class="card-body" *ngIf="!isRegisteringTransfer">
                     <p>After terms of the transaction are complete, use the button below to finalize your transfer. </p>
                     <div class="text-center" *ngIf="!isRegisteringTransfer">
                         <button class="btn btn-primary btn-sm mr-1" (click)="registerTransfer()">Register
                             Transfer</button>
                     </div>
                 </div>
-            </div>
-            <div class="card" *ngIf="isRegisteringTransfer">
-                <div class="card-header">
-                    Register Your Transfer
-                </div>
-                <div class="card-body">
+                <div class="card-body" *ngIf="isRegisteringTransfer">
                     <p>
                         By clicking this button you confirm that all terms and conditions of the transfer have been met.
                         By confirming the transaction you are authorizing RRB WSD to transfer
-                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{registerAction}} your
+                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{registerAction}}
+                        your
                         annual allocation. This action cannot be undone. Proceed?
                     </p>
                     <div class="text-center">

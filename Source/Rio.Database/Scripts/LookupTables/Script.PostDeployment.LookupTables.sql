@@ -27,3 +27,6 @@ GO
 
 :r .\dbo.TradeStatus.sql 
 GO
+
+:r .\dbo.WaterTransferType.sql 
+GO

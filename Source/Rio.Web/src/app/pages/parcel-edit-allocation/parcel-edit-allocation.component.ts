@@ -54,7 +54,6 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
           this.model = new ParcelAllocationUpsertWrapperDto();
           this.model.ParcelAllocations =
             this.parcelAllocationAndConsumptions.map(x => {
-              console.log(x);
               let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
               parcelAllocationUpsertDto.WaterYear = x.WaterYear;
               parcelAllocationUpsertDto.AcreFeetAllocated = x.AcreFeetAllocated;

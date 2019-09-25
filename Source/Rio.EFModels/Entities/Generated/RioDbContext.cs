@@ -35,6 +35,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserParcel> UserParcel { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
+        public virtual DbSet<WaterTransferParcel> WaterTransferParcel { get; set; }
+        public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
         public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
         public virtual DbQuery<PostingDetailed> PostingDetaileds { get; set; }
@@ -410,6 +412,41 @@ namespace Rio.EFModels.Entities
                     .HasForeignKey(d => d.TransferringUserID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_WaterTransfer_User_TransferringUserID_UserID");
+            });
+
+            modelBuilder.Entity<WaterTransferParcel>(entity =>
+            {
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.WaterTransferParcel)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.WaterTransfer)
+                    .WithMany(p => p.WaterTransferParcel)
+                    .HasForeignKey(d => d.WaterTransferID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.WaterTransferType)
+                    .WithMany(p => p.WaterTransferParcel)
+                    .HasForeignKey(d => d.WaterTransferTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WaterTransferType>(entity =>
+            {
+                entity.HasIndex(e => e.WaterTransferTypeDisplayName)
+                    .HasName("AK_WaterTransferType_WaterTransferTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.WaterTransferTypeName)
+                    .HasName("AK_WaterTransferType_WaterTransferTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.WaterTransferTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.WaterTransferTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
             });
 
             modelBuilder.Query<ParcelWithAnnualWaterUsage>().ToView("vAllParcelsWithAnnualWaterUsage");

@@ -70,12 +70,12 @@ namespace Rio.EFModels.Entities
         {
             var result = new List<ErrorMessage>();
 
-            if(waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Transferring && waterTransferConfirmDto.ConfirmingUserID != waterTransferDto.TransferringUser.UserID)
+            if(waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Selling && waterTransferConfirmDto.ConfirmingUserID != waterTransferDto.TransferringUser.UserID)
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match transferring user." });
             }
 
-            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Receiving && waterTransferConfirmDto.ConfirmingUserID != waterTransferDto.ReceivingUser.UserID)
+            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Buying && waterTransferConfirmDto.ConfirmingUserID != waterTransferDto.ReceivingUser.UserID)
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match receiving user." });
             }
@@ -88,12 +88,12 @@ namespace Rio.EFModels.Entities
             var waterTransfer = dbContext.WaterTransfer
                 .Single(x => x.WaterTransferID == waterTransferID);
 
-            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Receiving)
+            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Buying)
             {
                 waterTransfer.ConfirmedByReceivingUser = true;
                 waterTransfer.DateConfirmedByReceivingUser = DateTime.Now;
             }
-            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Transferring)
+            if (waterTransferConfirmDto.WaterTransferType == (int) WaterTransferTypeEnum.Selling)
             {
                 waterTransfer.ConfirmedByTransferringUser = true;
                 waterTransfer.DateConfirmedByTransferringUser = DateTime.Now;

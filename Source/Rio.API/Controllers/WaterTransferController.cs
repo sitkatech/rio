@@ -72,6 +72,41 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
+        [HttpGet("water-transfers/{waterTransferID}/parcels")]
+        [OfferManageFeature]
+        public ActionResult<List<WaterTransferParcelDto>> GetParcelsForWaterTransferID([FromRoute] int waterTransferID)
+        {
+            var waterTransferParcelDtos = WaterTransferParcel.ListByWaterTransferID(_dbContext, waterTransferID);
+            if (waterTransferParcelDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(waterTransferParcelDtos);
+        }
+
+        [HttpPost("water-transfers/{waterTransferID}/selectParcels")]
+        [OfferManageFeature]
+        public ActionResult<WaterTransferDto> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferParcelsWrapperDto waterTransferParcelsWrapperDto)
+        {
+            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            if (waterTransferDto == null)
+            {
+                return NotFound();
+            }
+
+            var validationMessages = WaterTransferParcel.ValidateParcels(waterTransferParcelsWrapperDto.WaterTransferParcels, waterTransferDto);
+            validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var waterTransferParcelDtos = WaterTransferParcel.SaveParcels(_dbContext, waterTransferID, waterTransferParcelsWrapperDto.WaterTransferParcels);
+            return Ok(waterTransferParcelDtos);
+        }
+
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;

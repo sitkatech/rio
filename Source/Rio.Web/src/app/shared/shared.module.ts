@@ -11,6 +11,8 @@ import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
 import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-renderer.component';
 import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
+import { ParcelPickerComponent } from './components/parcel-picker/parcel-picker.component';
+import { ParcelMapComponent } from './components/parcel-map/parcel-map.component';
 
 @NgModule({
     declarations: [
@@ -19,9 +21,11 @@ import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fonta
         NotFoundComponent,
         UnauthenticatedComponent,
         SubscriptionInsufficientComponent,
+        ParcelMapComponent,
         ParcelDetailPopupComponent,
         LinkRendererComponent,
-        FontAwesomeIconLinkRendererComponent
+        FontAwesomeIconLinkRendererComponent,
+        ParcelPickerComponent
     ],
     imports: [
         CommonModule,
@@ -34,6 +38,8 @@ import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fonta
         CommonModule,
         FormsModule,
         NotFoundComponent,
+        ParcelMapComponent,
+        ParcelPickerComponent,
         HeaderNavComponent
     ],
     entryComponents:[

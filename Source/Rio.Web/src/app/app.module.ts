@@ -17,7 +17,6 @@ import { UserInviteComponent } from './pages/user-invite/user-invite.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 import { MarketMetricsHomeComponent } from './pages/market-metrics-home/market-metrics-home.component';
 import { ManagerDashboardComponent } from './pages/manager-dashboard/manager-dashboard.component';
-import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
 import { UserEditComponent } from './pages/user-edit/user-edit.component';
 import { PostingListComponent } from './pages/posting-list/posting-list.component';
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
@@ -41,6 +40,7 @@ import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/co
 import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
 import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
+import { ParcelMapComponent } from './shared/components/parcel-map/parcel-map.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +52,6 @@ import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.co
     UserDetailComponent,
     MarketMetricsHomeComponent,
     ManagerDashboardComponent,
-    ParcelMapComponent,
     UserEditComponent,
     PostingListComponent,
     PostingNewComponent,

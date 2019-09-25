@@ -32,6 +32,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public mapID: string = '';
 
     @Input()
+    public visibleParcelIDs: Array<number> = [];
+
+    @Input()
     public selectedParcelIDs: Array<number> = [];
 
     @Input()
@@ -52,6 +55,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Input()
     public defaultFitBoundsOptions?: FitBoundsOptions = null;
 
+    @Input()
+    public selectedParcelLayerName: string = 'Selected Parcels';
+
     @Output()
     public afterSetControl: EventEmitter<Control.Layers> = new EventEmitter();
 
@@ -65,10 +71,11 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
 
     public map: Map;
     public featureLayer: any;
-    public control: Control.Layers;
+    public layerControl: Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
     boundingBox: BoundingBoxDto;
+    private selectedParcelLayer: any;
 
     constructor(
         private wfsService: WfsService,
@@ -98,36 +105,53 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             }),
         }, this.tileLayers);
 
+        let parcelsWMSOptions = ({
+            layers: "Rio:AllParcels",
+            transparent: true,
+            format: "image/png",
+            tiled: true,
+        } as WMSOptions);
+        if (this.visibleParcelIDs.length > 0) {
+            parcelsWMSOptions.cql_filter = this.createParcelMapFilter(this.visibleParcelIDs);
+            this.fitBoundsToSelectedParcels(this.visibleParcelIDs);
+        }
         this.overlayLayers = Object.assign({
-            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", {
-                layers: "Rio:AllParcels",
-                transparent: true,
-                format: "image/png",
-                tiled: true,
-            } as WMSOptions)
+            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", parcelsWMSOptions)
         }, this.overlayLayers);
 
-        if (this.selectedParcelIDs.length > 0) {
-            this.overlayLayers = Object.assign({
-                "My Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", {
-                    layers: "Rio:AllParcels",
-                    transparent: true,
-                    format: "image/png",
-                    tiled: true,
-                    styles: "parcel_yellow",
-                    cql_filter: "ParcelID in (" + this.selectedParcelIDs.join(',') + ")"
-                } as WMSOptions)
-            }, this.overlayLayers);
+        this.compileService.configure(this.appRef);
+    }
 
-            forkJoin(
-                this.parcelService.getBoundingBoxByParcelIDs(this.selectedParcelIDs)
-            ).subscribe(([boundingBox]) => {
-                this.boundingBox = boundingBox;
-                this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
-            });
+    public updateSelectedParcelsOverlayLayer(parcelIDs: Array<number>) {
+        if (this.selectedParcelLayer) {
+            this.layerControl.removeLayer(this.selectedParcelLayer);
+            this.map.removeLayer(this.selectedParcelLayer);
         }
 
-        this.compileService.configure(this.appRef);
+        var wmsParameters = {
+            layers: "Rio:AllParcels",
+            transparent: true,
+            format: "image/png",
+            tiled: true,
+            styles: "parcel_yellow",
+            cql_filter: this.createParcelMapFilter(parcelIDs)
+        };
+
+        this.selectedParcelLayer = tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsParameters);
+        this.layerControl.addOverlay(this.selectedParcelLayer, this.selectedParcelLayerName);
+
+        this.selectedParcelLayer.addTo(this.map).bringToFront();
+    }
+
+    private fitBoundsToSelectedParcels(parcelIDs: Array<number>) {
+        this.parcelService.getBoundingBoxByParcelIDs(parcelIDs).subscribe(boundingBox => {
+            this.boundingBox = boundingBox;
+            this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
+        });
+    }
+
+    private createParcelMapFilter(parcelIDs: Array<number>): any {
+        return "ParcelID in (" + parcelIDs.join(',') + ")";
     }
 
     public ngAfterViewInit(): void {
@@ -153,6 +177,11 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
 
         this.setControl();
 
+        if (this.selectedParcelIDs.length > 0) {
+            this.updateSelectedParcelsOverlayLayer(this.selectedParcelIDs);
+            this.fitBoundsToSelectedParcels(this.selectedParcelIDs);
+        }
+
         if (!this.disableDefaultClick) {
             const wfsService = this.wfsService;
             const self = this;
@@ -173,7 +202,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                                     minWidth: 250,
                                 })
                                     .setLatLng(event.latlng)
-                                    .setContent(this.compileService.compile(ParcelDetailPopupComponent, (c) => { c.instance.feature = feature;})
+                                    .setContent(this.compileService.compile(ParcelDetailPopupComponent, (c) => { c.instance.feature = feature; })
                                     )
                                     .openOn(self.map);
                             });
@@ -183,16 +212,12 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     }
 
     public setControl(): void {
-        this.control = new Control.Layers(this.tileLayers, this.overlayLayers)
+        this.layerControl = new Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         if (this.displayparcelsLayerOnLoad) {
             this.overlayLayers["Parcels"].addTo(this.map);
         }
-        if (this.selectedParcelIDs.length > 0) {
-            const myParcelsLayer = this.overlayLayers["My Parcels"];
-            myParcelsLayer.addTo(this.map);
-        }
-        this.afterSetControl.emit(this.control);
+        this.afterSetControl.emit(this.layerControl);
     }
 }
 

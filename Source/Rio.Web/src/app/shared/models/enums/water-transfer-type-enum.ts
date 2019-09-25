@@ -1,4 +1,4 @@
 export enum WaterTransferTypeEnum {
-    Receiving = 1,
-    Transferring = 2,
+    Buying = 1,
+    Selling = 2,
 }
