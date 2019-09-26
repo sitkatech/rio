@@ -95,17 +95,36 @@
                 </div>
                 <div class="card-body">
                     <p>
-                        By clicking this button you confirm that all terms and conditions of the transfer have been met.
-                        By confirming the transaction you are authorizing RRB WSD to transfer
-                        <strong>{{waterTransfer.AcreFeetTransferred}} acre-feet</strong> of water {{registerAction}}
-                        your
-                        annual allocation. This action cannot be undone. Proceed?
+                        By clicking "Confirm and Register Transfer" I hereby represent, acknowledge and confirm the
+                        following:
                     </p>
+                    <small>
+                        <ul>
+                            <li>A confirmed transfer is irrevocable. I hereby confirm and represent to Rosedale-Rio
+                                Bravo Water Storage District (Rosedale) that all terms and conditions of the
+                                transaction/transfer are complete.</li>
+                            <li>I am hereby directing Rosedale to implement the transaction by accounting for the same
+                                in its records of groundwater use associated with the Seller’s parcel(s) that are
+                                involved in the transaction. Rosedale will not implement the transaction until it is
+                                confirmed by both the Buyer and Seller. Confirmation of a transaction is the
+                                responsibility of both the Buyer and Seller. Rosedale has no obligation to contact
+                                either Buyer or Seller to obtain further confirmation of the transaction.</li>
+                            <li>With respect to this transaction, I have not acted on the advice of Rosedale (including
+                                its employees, directors, agents, attorneys or other consultants). I hereby release
+                                Rosedale, its employees, directors, agents, attorneys or other consultants, from any
+                                costs, claims, losses, recoveries, deficiencies, injuries, liabilities, penalties, and
+                                the like, that may arise from the transaction. I shall indemnify and hold harmless
+                                Rosedale, its employees, directors, agents, attorneys or other consultants against and
+                                from any and all costs, claims, losses, recoveries, deficiencies, injuries, liabilities,
+                                legal or administrative proceedings, and penalties, including attorney’s fees and
+                                disbursements, arising from or relating to the transaction.</li>
+                        </ul>
+                    </small>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitRegistration()"
                             [disabled]="isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                            Confirm and Register Trade with RRB
+                            Confirm and Register Transfer
                         </button>
                         <button class="btn btn-primary btn-sm" (click)="cancelRegistration()">Cancel</button>
                     </div>
