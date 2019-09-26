@@ -155,7 +155,10 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public isParcelPickerValid(): boolean {
     if (this.parcelPicker) {
-      return this.parcelPicker.getTotalEntered() === this.waterTransfer.AcreFeetTransferred;
+      const totalEqualsTransferAmount = this.parcelPicker.getTotalEntered() === this.waterTransfer.AcreFeetTransferred;
+      const parcelsWithAcreFeetTransferered = this.parcelPicker.selectedParcels.filter(x => x.AcreFeetTransferred > 0);
+      const everyParcelHasTransferAmountEntered = parcelsWithAcreFeetTransferered.length === this.parcelPicker.selectedParcels.length;
+      return totalEqualsTransferAmount && everyParcelHasTransferAmountEntered;
     }
     return false;
   }
