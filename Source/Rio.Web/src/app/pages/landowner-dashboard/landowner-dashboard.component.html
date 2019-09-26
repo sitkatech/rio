@@ -48,7 +48,7 @@
                   Purchased
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="getPurchasedAcreFeet()">{{getPurchasedAcreFeet() | number: '1.0-0'}} ac-ft</span>
                   <span *ngIf="!getPurchasedAcreFeet()" class="systemText">-</span>
                 </td>
               </tr>
@@ -63,7 +63,7 @@
                       routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
                   </th>
                   <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.0-0'}} ac-ft
                   </td>
                 </tr>
               </ng-container>
@@ -82,7 +82,7 @@
                   Sold
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="getSoldAcreFeet()">{{getSoldAcreFeet() | number: '1.0-0'}} ac-ft</span>
                   <span *ngIf="!getSoldAcreFeet()" class="systemText">-</span>
                 </td>
               </tr>
@@ -97,7 +97,7 @@
                       routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
                   </th>
                   <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.0-0'}} ac-ft
                   </td>
                 </tr>
               </ng-container>

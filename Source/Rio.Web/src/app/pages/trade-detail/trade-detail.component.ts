@@ -112,10 +112,10 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
       this.waterTransferRegistrations = [];
       if (this.mostRecentOffer.WaterTransferID) {
-
-        this.waterTransferService.getWaterTransferRegistrationsFromWaterTransferID(this.mostRecentOffer.WaterTransferID).subscribe(result => {
-          this.waterTransferRegistrations = result.sort((a, b) => a.RegisteredDate > b.RegisteredDate ? -1 : a.RegisteredDate < b.RegisteredDate ? 1 : 0);
-        })
+        this.waterTransferService.getWaterTransferRegistrationsFromWaterTransferID(this.mostRecentOffer.WaterTransferID)
+        .subscribe(result => {
+          this.waterTransferRegistrations = result.filter(x => x.DateRegistered !== null).sort((a, b) => a.DateRegistered > b.DateRegistered ? -1 : a.DateRegistered < b.DateRegistered ? 1 : 0);
+        });
       }
     });
   }
@@ -202,8 +202,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
           .then(() => {
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });
-      }
-        ,
+      },
         error => {
           this.isLoadingSubmit = false;
           this.cdr.detectChanges();

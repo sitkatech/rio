@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="col-sm-12 col-md-8" *ngIf="canRegister()">
-            <div class="card" *ngIf="!isRegisteringTransfer && !haveParcelsBeenIdentified">
+            <div class="card" *ngIf="!isRegisteringTransfer">
                 <div class="card-header">
                     Select Parcels Associated with this Transfer
                 </div>
@@ -89,8 +89,11 @@
                     </rio-parcel-picker>
                 </div>
             </div>
-            <div class="card" *ngIf="haveParcelsBeenIdentified">
-                <div class="card-body" *ngIf="isRegisteringTransfer">
+            <div class="card" *ngIf="isRegisteringTransfer">
+                <div class="card-header">
+                    Register Your Transfer
+                </div>
+                <div class="card-body">
                     <p>
                         By clicking this button you confirm that all terms and conditions of the transfer have been met.
                         By confirming the transaction you are authorizing RRB WSD to transfer

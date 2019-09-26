@@ -10,28 +10,30 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
+            // get the registration record
             var waterTransferRegistration = dbContext.WaterTransferRegistration.Single(x =>
                 x.WaterTransferID == waterTransferID && x.WaterTransferTypeID == waterTransferRegistrationDto.WaterTransferTypeID);
 
+            // delete existing parcels registered
+            var existingWaterTransferRegistrationParcels = dbContext.WaterTransferRegistrationParcel.Where(x => x.WaterTransferRegistrationID == waterTransferRegistration.WaterTransferRegistrationID);
+            if (existingWaterTransferRegistrationParcels.Any())
+            {
+                dbContext.WaterTransferRegistrationParcel.RemoveRange(existingWaterTransferRegistrationParcels);
+                dbContext.SaveChanges();
+            }
 
             foreach (var waterTransferParcelDto in waterTransferRegistrationDto.WaterTransferRegistrationParcels)
             {
-                var waterTransferRegistrationParcel = dbContext.WaterTransferRegistrationParcel
-                    .SingleOrDefault(x => x.WaterTransferRegistrationID == waterTransferID && x.ParcelID == waterTransferParcelDto.ParcelID);
-
-                if (waterTransferRegistrationParcel == null)
+                var waterTransferRegistrationParcel = new WaterTransferRegistrationParcel
                 {
-                    waterTransferRegistrationParcel = new WaterTransferRegistrationParcel
-                    {
-                        WaterTransferRegistrationID = waterTransferRegistration.WaterTransferRegistrationID,
-                        ParcelID = waterTransferParcelDto.ParcelID
-                    };
-                    dbContext.WaterTransferRegistrationParcel.Add(waterTransferRegistrationParcel);
-                }
-                waterTransferRegistrationParcel.AcreFeetTransferred = waterTransferParcelDto.AcreFeetTransferred;
+                    WaterTransferRegistrationID = waterTransferRegistration.WaterTransferRegistrationID,
+                    ParcelID = waterTransferParcelDto.ParcelID,
+                    AcreFeetTransferred = waterTransferParcelDto.AcreFeetTransferred
+                };
+                dbContext.WaterTransferRegistrationParcel.Add(waterTransferRegistrationParcel);
             }
-            dbContext.SaveChanges();
 
+            dbContext.SaveChanges();
             return ListByWaterTransferRegistrationID(dbContext, waterTransferRegistration.WaterTransferRegistrationID);
         }
 

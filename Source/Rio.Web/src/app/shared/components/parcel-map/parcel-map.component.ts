@@ -38,7 +38,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public visibleParcelIDs: Array<number> = [];
 
     @Input()
-    public selectedParcelStyle: string = 'parcel_yellow';
+    public selectedParcelStyle: string = 'parcel_blue';
 
     @Input()
     public selectedParcelIDs: Array<number> = [];

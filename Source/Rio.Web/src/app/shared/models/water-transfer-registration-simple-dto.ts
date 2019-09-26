@@ -1,7 +1,7 @@
 import { UserSimpleDto } from './user/user-simple-dto';
 
 export class WaterTransferRegistrationSimpleDto {
-    RegisteredDate: Date;
+    DateRegistered: Date;
     WaterTransferTypeID: number;
     User: UserSimpleDto;
 

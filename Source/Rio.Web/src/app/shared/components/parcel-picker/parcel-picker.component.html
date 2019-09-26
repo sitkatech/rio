@@ -1,14 +1,14 @@
-<parcel-map #parcelsMap mapID="parcelsMap" mapHeight="500px" [zoomMapToDefaultExtent]="false" [visibleParcelIDs]="visibleParcelIDs" visibleParcelStyle="parcel_yellow"
-    [disableDefaultClick]="true" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelLayerName" selectedParcelStyle="parcel_orange">
+<parcel-map #parcelsMap mapID="parcelsMap" mapHeight="500px" [zoomMapToDefaultExtent]="false" [visibleParcelIDs]="visibleParcelIDs" visibleParcelStyle="parcel_blue"
+    [disableDefaultClick]="true" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelLayerName" selectedParcelStyle="parcel_yellow">
 </parcel-map>
 
 <div class="col-lg-12 m-2">
     <div id="selectedParcelsListContainer" class="table-responsive">
-        <table id="selectedParcelsList" class="table">
+        <table id="selectedParcelsList" class="table table-borderless">
             <thead>
                 <tr>
-                    <th class="text-right">APN</th>
-                    <th class="text-right">Volume to Transfer</th>
+                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">APN</th>
+                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">Volume to Transfer</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,7 +19,7 @@
                 </tr>
                 <tr *ngFor="let selectedParcel of selectedParcels">
                     <td class="text-right">
-                        <a (click)="removeParcel(selectedParcel.ParcelID)"><span class="fa fa-trash-alt text-muted"></span></a>                                
+                        <a (click)="removeParcel(selectedParcel.ParcelID)" style="cursor: pointer"><span class="fa fa-trash-alt text-muted"></span></a>                                
                         {{selectedParcel.ParcelNumber}}
                     </td>
                     <td class="text-right"><input type="number" style="width: 80px" min="1" step="1" [(ngModel)]="selectedParcel.AcreFeetTransferred" required /></td>
@@ -27,21 +27,21 @@
             </tbody>
             <tfoot *ngIf="selectedParcels?.length">
                 <tr>
-                    <td class="text-right">Total Allocated</td>
-                    <td class="text-right">
-                        {{getTotalEntered() | number: '1.1-1'}} ac-ft
-                    </td>
+                    <th style="border-top: 2px solid #dee2e6" class="text-right">Total Allocated</th>
+                    <th style="border-top: 2px solid #dee2e6" class="text-right">
+                        {{getTotalEntered() | number: '1.0-0'}} ac-ft
+                    </th>
                 </tr>
                 <tr>
-                    <td class="text-right">Remaining</td>
-                    <td class="text-right">
-                        {{getQuantityNeeded() | number: '1.1-1'}} ac-ft
-                    </td>
-                </tr>
-                <tr>
-                    <th class="text-right">Total Transfer Volume</th>
+                    <th class="text-right">Remaining</th>
                     <th class="text-right">
-                        {{maxTotalQuantity | number: '1.1-1'}} ac-ft
+                        {{getQuantityNeeded() | number: '1.0-0'}} ac-ft
+                    </th>
+                </tr>
+                <tr>
+                    <th style="border-bottom: 2px solid #dee2e6" class="text-right">Total Transfer Volume</th>
+                    <th style="border-bottom: 2px solid #dee2e6" class="text-right">
+                        {{maxTotalQuantity | number: '1.0-0'}} ac-ft
                     </th>
                 </tr>
             </tfoot>
