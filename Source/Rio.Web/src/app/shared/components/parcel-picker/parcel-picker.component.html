@@ -22,7 +22,11 @@
                         <a (click)="removeParcel(selectedParcel.ParcelID)" style="cursor: pointer"><span class="fa fa-trash-alt text-muted"></span></a>                                
                         {{selectedParcel.ParcelNumber}}
                     </td>
-                    <td class="text-right"><input type="number" style="width: 80px" min="1" step="1" [(ngModel)]="selectedParcel.AcreFeetTransferred" required /></td>
+                    <td class="text-right">
+                        <span *ngIf="selectedParcels.length === 1">{{selectedParcel.AcreFeetTransferred | number: '1.0-0'}}</span>
+                        <input *ngIf="selectedParcels.length > 1" type="number" style="width: 80px" min="1" step="1" [(ngModel)]="selectedParcel.AcreFeetTransferred" required />
+                        ac-ft
+                    </td>
                 </tr>
             </tbody>
             <tfoot *ngIf="selectedParcels?.length">

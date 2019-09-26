@@ -86,6 +86,14 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
                 let parcelToAdd = new WaterTransferRegistrationParcelDto();
                 parcelToAdd.ParcelID = feature.properties.ParcelID;
                 parcelToAdd.ParcelNumber = feature.properties.ParcelNumber;
+                if(this.selectedParcels.length === 0)
+                {
+                    parcelToAdd.AcreFeetTransferred = this.maxTotalQuantity;
+                }
+                else if(this.selectedParcels.length === 1)
+                {
+                    this.selectedParcels[0].AcreFeetTransferred = null;
+                }
                 this.selectedParcels.push(parcelToAdd);
             }
             this.updateSelectedParcelLayer();
@@ -101,6 +109,10 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
             parcel.ParcelID === parcelIDToRemove);
         if (selectedParcelIndex !== -1) {
             this.selectedParcels.splice(selectedParcelIndex, 1);
+            if(this.selectedParcels.length === 1)
+            {
+                this.selectedParcels[0].AcreFeetTransferred = this.maxTotalQuantity;
+            }
         }
         this.updateSelectedParcelLayer();
     }
