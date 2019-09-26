@@ -25,14 +25,14 @@
                 </Rule>
                 <Rule>
                     <Name>Label</Name>
-                    <MaxScaleDenominator>5000</MaxScaleDenominator>
+                    <MaxScaleDenominator>40000</MaxScaleDenominator>
                     <TextSymbolizer>
                         <Label>
                             <ogc:PropertyName>ParcelNumber</ogc:PropertyName>
                         </Label>
                         <Font>
                             <CssParameter name="font-family">Arial</CssParameter>
-                            <CssParameter name="font-size">14</CssParameter>
+                            <CssParameter name="font-size">10</CssParameter>
                             <CssParameter name="font-weight">bold</CssParameter>
                             <CssParameter name="font-style">italic</CssParameter>
                         </Font>
