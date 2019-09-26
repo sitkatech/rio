@@ -5,15 +5,14 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterTransferRegisterDto } from 'src/app/shared/models/water-transfer-register-dto';
+import { WaterTransferRegistrationDto } from 'src/app/shared/models/water-transfer-registration-dto';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { WaterTransferParcelDto } from 'src/app/shared/models/water-transfer-parcel-dto';
-import { WaterTransferParcelsWrapperDto } from 'src/app/shared/models/water-transfer-parcels-wrapper-dto.';
 import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/parcel-picker.component';
+import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
 
 @Component({
   selector: 'rio-register-transfer',
@@ -27,7 +26,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public isRegisteringTransfer: boolean = false;
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
-  public selectedParcels: Array<WaterTransferParcelDto> = [];
+  public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
   public visibleParcelIDs: Array<number> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
@@ -68,20 +67,20 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     forkJoin(
       this.waterTransferService.getWaterTransferFromWaterTransferID(waterTransferID),
       this.parcelService.getParcelsByUserID(this.currentUser.UserID),
-      this.waterTransferService.getParcelsForWaterTransferID(waterTransferID),
+      this.waterTransferService.getParcelsForWaterTransferIDAndUserID(waterTransferID, this.currentUser.UserID),
     )
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
           : waterTransfer as WaterTransferDto;
-        this.waterTransferType = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
+        this.waterTransferType = this.waterTransfer.Buyer.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
         this.isRegisteringTransfer = false;
-        this.registerAction = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? "to" : "from";
+        this.registerAction = this.waterTransfer.Buyer.UserID === this.currentUser.UserID ? "to" : "from";
         if (!this.canRegister()) {
           this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
         }
         this.visibleParcelIDs = visibleParcels !== undefined ? visibleParcels.map(p => p.ParcelID) : [];
-        this.selectedParcels = selectedParcels.filter(x => x.WaterTransferTypeID === this.waterTransferType);
+        this.selectedParcels = selectedParcels;
         this.haveParcelsBeenIdentified = this.selectedParcels.length > 0;
       });
   }
@@ -91,27 +90,24 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public canRegister(): boolean {
-    return (this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByReceivingUser === false) ||
-      (this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID && this.waterTransfer.ConfirmedByTransferringUser === false);
+    return (this.waterTransfer.Buyer.UserID === this.currentUser.UserID && this.waterTransfer.RegisteredByBuyer === false) ||
+      (this.waterTransfer.Seller.UserID === this.currentUser.UserID && this.waterTransfer.RegisteredBySeller === false);
   }
 
   public isBuyerOrSeller(): boolean {
-    return this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID || this.waterTransfer.TransferringUser.UserID === this.currentUser.UserID;
-  }
-
-  public registerTransfer(): void {
-    this.isRegisteringTransfer = true;
+    return this.waterTransfer.Buyer.UserID === this.currentUser.UserID || this.waterTransfer.Seller.UserID === this.currentUser.UserID;
   }
 
   public cancelRegistration(): void {
+    this.haveParcelsBeenIdentified = false;
     this.isRegisteringTransfer = false;
   }
 
   public submitRegistration(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferRegisterDto();
-    model.ConfirmingUserID = this.currentUser.UserID;
-    model.WaterTransferType = this.waterTransferType;
+    let model = new WaterTransferRegistrationDto();
+    model.UserID = this.currentUser.UserID;
+    model.WaterTransferTypeID = this.waterTransferType;
     this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
@@ -130,22 +126,22 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public onSubmitParcels(): void {
     this.isLoadingSubmit = true;
-    const waterTransferParcelsWrapperDto = new WaterTransferParcelsWrapperDto();
-    const waterTransferType = this.waterTransfer.ReceivingUser.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
-    let waterTransferParcels = this.parcelPicker.selectedParcels.map(p => {
-      let waterTransferParcelDto = new WaterTransferParcelDto();
+    const waterTransferRegistrationDto = new WaterTransferRegistrationDto();
+    waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
+    let waterTransferRegistrationParcels = this.parcelPicker.selectedParcels.map(p => {
+      let waterTransferParcelDto = new WaterTransferRegistrationParcelDto();
       waterTransferParcelDto.ParcelID = p.ParcelID;
       waterTransferParcelDto.AcreFeetTransferred = p.AcreFeetTransferred;
-      waterTransferParcelDto.WaterTransferTypeID = waterTransferType;
       return waterTransferParcelDto;
     });
-    waterTransferParcelsWrapperDto.WaterTransferParcels = waterTransferParcels;
+    waterTransferRegistrationDto.WaterTransferRegistrationParcels = waterTransferRegistrationParcels;
 
-    this.waterTransferService.selectParcelsForWaterTransferID(this.waterTransfer.WaterTransferID, waterTransferParcelsWrapperDto)
+    this.waterTransferService.selectParcelsForWaterTransferID(this.waterTransfer.WaterTransferID, waterTransferRegistrationDto)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
         this.haveParcelsBeenIdentified = true;
+        this.isRegisteringTransfer = true;
       }
         ,
         error => {

@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public WaterTransferType()
         {
-            WaterTransferParcel = new HashSet<WaterTransferParcel>();
+            WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
         public int WaterTransferTypeID { get; set; }
@@ -21,6 +21,6 @@ namespace Rio.EFModels.Entities
         public string WaterTransferTypeDisplayName { get; set; }
 
         [InverseProperty("WaterTransferType")]
-        public virtual ICollection<WaterTransferParcel> WaterTransferParcel { get; set; }
+        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistration { get; set; }
     }
 }

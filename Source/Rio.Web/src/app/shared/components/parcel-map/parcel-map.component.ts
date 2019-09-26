@@ -32,7 +32,13 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public mapID: string = '';
 
     @Input()
+    public visibleParcelStyle: string = 'parcel';
+
+    @Input()
     public visibleParcelIDs: Array<number> = [];
+
+    @Input()
+    public selectedParcelStyle: string = 'parcel_yellow';
 
     @Input()
     public selectedParcelIDs: Array<number> = [];
@@ -76,6 +82,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public overlayLayers: { [key: string]: any } = {};
     boundingBox: BoundingBoxDto;
     private selectedParcelLayer: any;
+    private defaultParcelsWMSOptions: WMSOptions;
 
     constructor(
         private wfsService: WfsService,
@@ -105,12 +112,14 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             }),
         }, this.tileLayers);
 
-        let parcelsWMSOptions = ({
+        this.defaultParcelsWMSOptions = ({
             layers: "Rio:AllParcels",
             transparent: true,
             format: "image/png",
-            tiled: true,
+            tiled: true
         } as WMSOptions);
+
+        let parcelsWMSOptions = Object.assign({styles: this.visibleParcelStyle}, this.defaultParcelsWMSOptions);
         if (this.visibleParcelIDs.length > 0) {
             parcelsWMSOptions.cql_filter = this.createParcelMapFilter(this.visibleParcelIDs);
             this.fitBoundsToSelectedParcels(this.visibleParcelIDs);
@@ -128,15 +137,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             this.map.removeLayer(this.selectedParcelLayer);
         }
 
-        var wmsParameters = {
-            layers: "Rio:AllParcels",
-            transparent: true,
-            format: "image/png",
-            tiled: true,
-            styles: "parcel_yellow",
-            cql_filter: this.createParcelMapFilter(parcelIDs)
-        };
-
+        var wmsParameters = Object.assign({styles: this.selectedParcelStyle, cql_filter: this.createParcelMapFilter(parcelIDs)}, this.defaultParcelsWMSOptions);
         this.selectedParcelLayer = tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsParameters);
         this.layerControl.addOverlay(this.selectedParcelLayer, this.selectedParcelLayerName);
 

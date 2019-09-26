@@ -7,11 +7,11 @@ export class WaterTransferDto {
     TransferYear: number;
     AcreFeetTransferred: number;
     UnitPrice: number;
-    TransferringUser: UserSimpleDto;
-    ReceivingUser: UserSimpleDto;
+    Seller: UserSimpleDto;
+    Buyer: UserSimpleDto;
     Notes: string;
-    ConfirmedByReceivingUser: boolean;
-    ConfirmedByTransferringUser: boolean;
+    RegisteredByBuyer: boolean;
+    RegisteredBySeller: boolean;
     TradeNumber: string;
 
     constructor(obj?: any) {

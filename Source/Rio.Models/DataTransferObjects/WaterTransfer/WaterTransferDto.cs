@@ -11,12 +11,12 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public int TransferYear { get; set; }
         public int AcreFeetTransferred { get; set; }
         public decimal? UnitPrice { get; set; }
-        public UserSimpleDto TransferringUser { get; set; }
-        public UserSimpleDto ReceivingUser { get; set; }
-        public bool ConfirmedByTransferringUser { get; set; }
-        public DateTime? DateConfirmedByTransferringUser { get; set; }
-        public bool ConfirmedByReceivingUser { get; set; }
-        public DateTime? DateConfirmedByReceivingUser { get; set; }
+        public UserSimpleDto Seller { get; set; }
+        public UserSimpleDto Buyer { get; set; }
+        public bool RegisteredBySeller { get; set; }
+        public DateTime? DateRegisteredBySeller { get; set; }
+        public bool RegisteredByBuyer { get; set; }
+        public DateTime? DateRegisteredByBuyer { get; set; }
         public string Notes { get; set; }
         public string TradeNumber { get; set; }
     }

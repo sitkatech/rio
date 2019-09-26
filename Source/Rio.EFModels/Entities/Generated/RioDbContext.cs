@@ -35,7 +35,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserParcel> UserParcel { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
-        public virtual DbSet<WaterTransferParcel> WaterTransferParcel { get; set; }
+        public virtual DbSet<WaterTransferRegistration> WaterTransferRegistration { get; set; }
+        public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
         public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
@@ -400,35 +401,36 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.WaterTransfer)
                     .HasForeignKey(d => d.OfferID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.ReceivingUser)
-                    .WithMany(p => p.WaterTransferReceivingUser)
-                    .HasForeignKey(d => d.ReceivingUserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_WaterTransfer_User_ReceivingUserID_UserID");
-
-                entity.HasOne(d => d.TransferringUser)
-                    .WithMany(p => p.WaterTransferTransferringUser)
-                    .HasForeignKey(d => d.TransferringUserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_WaterTransfer_User_TransferringUserID_UserID");
             });
 
-            modelBuilder.Entity<WaterTransferParcel>(entity =>
+            modelBuilder.Entity<WaterTransferRegistration>(entity =>
             {
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.WaterTransferParcel)
-                    .HasForeignKey(d => d.ParcelID)
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.WaterTransferRegistration)
+                    .HasForeignKey(d => d.UserID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.WaterTransfer)
-                    .WithMany(p => p.WaterTransferParcel)
+                    .WithMany(p => p.WaterTransferRegistration)
                     .HasForeignKey(d => d.WaterTransferID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.WaterTransferType)
-                    .WithMany(p => p.WaterTransferParcel)
+                    .WithMany(p => p.WaterTransferRegistration)
                     .HasForeignKey(d => d.WaterTransferTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WaterTransferRegistrationParcel>(entity =>
+            {
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.WaterTransferRegistrationParcel)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.WaterTransferRegistration)
+                    .WithMany(p => p.WaterTransferRegistrationParcel)
+                    .HasForeignKey(d => d.WaterTransferRegistrationID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 

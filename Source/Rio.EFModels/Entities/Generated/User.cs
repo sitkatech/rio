@@ -14,8 +14,7 @@ namespace Rio.EFModels.Entities
             Posting = new HashSet<Posting>();
             Trade = new HashSet<Trade>();
             UserParcel = new HashSet<UserParcel>();
-            WaterTransferReceivingUser = new HashSet<WaterTransfer>();
-            WaterTransferTransferringUser = new HashSet<WaterTransfer>();
+            WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
         public int UserID { get; set; }
@@ -58,9 +57,7 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<Trade> Trade { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<UserParcel> UserParcel { get; set; }
-        [InverseProperty("ReceivingUser")]
-        public virtual ICollection<WaterTransfer> WaterTransferReceivingUser { get; set; }
-        [InverseProperty("TransferringUser")]
-        public virtual ICollection<WaterTransfer> WaterTransferTransferringUser { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistration { get; set; }
     }
 }

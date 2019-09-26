@@ -40,9 +40,22 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
+        [HttpGet("water-transfers/{waterTransferID}/registrations")]
+        [OfferManageFeature]
+        public ActionResult<List<WaterTransferRegistrationSimpleDto>> GetWaterTransferRegistrationsByWaterTransferID([FromRoute] int waterTransferID)
+        {
+            var waterTransferRegistrationSimpleDtos = WaterTransferRegistration.GetByWaterTransferID(_dbContext, waterTransferID);
+            if (waterTransferRegistrationSimpleDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(waterTransferRegistrationSimpleDtos);
+        }
+
         [HttpPost("water-transfers/{waterTransferID}/register")]
         [OfferManageFeature]
-        public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferConfirmDto waterTransferConfirmDto)
+        public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
             if (waterTransferDto == null)
@@ -50,7 +63,7 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferConfirmDto, waterTransferDto);
+            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationDto, waterTransferDto);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
 
             if (!ModelState.IsValid)
@@ -58,11 +71,11 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            waterTransferDto = WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferConfirmDto);
-            if (waterTransferDto.ConfirmedByReceivingUser && waterTransferDto.ConfirmedByTransferringUser)
+            waterTransferDto = WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferRegistrationDto);
+            if (waterTransferDto.RegisteredByBuyer && waterTransferDto.RegisteredBySeller)
             {
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, waterTransferConfirmDto.WaterTransferType);
+                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, waterTransferRegistrationDto.WaterTransferTypeID);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -72,30 +85,29 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
-        [HttpGet("water-transfers/{waterTransferID}/parcels")]
+        [HttpGet("water-transfers/{waterTransferID}/parcels/{userID}")]
         [OfferManageFeature]
-        public ActionResult<List<WaterTransferParcelDto>> GetParcelsForWaterTransferID([FromRoute] int waterTransferID)
+        public ActionResult<List<WaterTransferRegistrationParcelDto>> GetParcelsForWaterTransferID([FromRoute] int waterTransferID, [FromRoute] int userID)
         {
-            var waterTransferParcelDtos = WaterTransferParcel.ListByWaterTransferID(_dbContext, waterTransferID);
-            if (waterTransferParcelDtos == null)
+            var waterTransferRegistrationParcelDtos = WaterTransferRegistrationParcel.ListByWaterTransferIDAndUserID(_dbContext, waterTransferID, userID);
+            if (waterTransferRegistrationParcelDtos == null)
             {
                 return NotFound();
             }
 
-            return Ok(waterTransferParcelDtos);
+            return Ok(waterTransferRegistrationParcelDtos);
         }
 
         [HttpPost("water-transfers/{waterTransferID}/selectParcels")]
         [OfferManageFeature]
-        public ActionResult<WaterTransferDto> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferParcelsWrapperDto waterTransferParcelsWrapperDto)
+        public ActionResult<List<WaterTransferDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
             if (waterTransferDto == null)
             {
                 return NotFound();
             }
-
-            var validationMessages = WaterTransferParcel.ValidateParcels(waterTransferParcelsWrapperDto.WaterTransferParcels, waterTransferDto);
+            var validationMessages = WaterTransferRegistrationParcel.ValidateParcels(waterTransferRegistrationDto.WaterTransferRegistrationParcels, waterTransferDto);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
 
             if (!ModelState.IsValid)
@@ -103,8 +115,8 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var waterTransferParcelDtos = WaterTransferParcel.SaveParcels(_dbContext, waterTransferID, waterTransferParcelsWrapperDto.WaterTransferParcels);
-            return Ok(waterTransferParcelDtos);
+            var waterTransferRegistrationParcelDtos = WaterTransferRegistrationParcel.SaveParcels(_dbContext, waterTransferID, waterTransferRegistrationDto);
+            return Ok(waterTransferRegistrationParcelDtos);
         }
 
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
@@ -118,10 +130,10 @@ namespace Rio.API.Controllers
 
         private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer, int waterTransferType)
         {
-            var receivingUser = waterTransfer.ReceivingUser;
-            var transferringUser = waterTransfer.TransferringUser;
+            var receivingUser = waterTransfer.Buyer;
+            var transferringUser = waterTransfer.Seller;
             var mailMessages = new List<MailMessage>();
-            var messageBody = $@"The buyer and seller have both confirmed this transaction, and your annual water allocation has been updated.
+            var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water allocation has been updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingUser.FullName} ({receivingUser.Email})</li>
     <li><strong>Seller:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
@@ -135,7 +147,7 @@ namespace Rio.API.Controllers
             {
                 var mailMessage = new MailMessage
                 {
-                    Subject = "Water Transfer Confirmed",
+                    Subject = "Water Transfer Registered",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));

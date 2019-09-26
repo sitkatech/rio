@@ -63,7 +63,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.CreateUser)
                 .Include(x => x.CreateUser)
-                .Include(x => x.WaterTransfer)
+                .Include(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.User)
                 .AsNoTracking();
         }
 

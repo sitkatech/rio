@@ -30,8 +30,8 @@ namespace Rio.EFModels.Entities
                 Quantity = mostRecentOffer.Quantity,
                 OfferDate = mostRecentOffer.OfferDate,
                 OfferCreateUser = mostRecentOffer.CreateUser.AsSimpleDto(),
-                IsConfirmedByBuyer = false,
-                IsConfirmedBySeller = false,
+                IsRegisteredByBuyer = false,
+                IsRegisteredBySeller = false,
                 WaterTransferID = null
             };
 
@@ -39,8 +39,11 @@ namespace Rio.EFModels.Entities
             if (waterTransfer != null)
             {
                 tradeWithMostRecentOfferDto.WaterTransferID = waterTransfer.WaterTransferID;
-                tradeWithMostRecentOfferDto.IsConfirmedByBuyer = waterTransfer.ConfirmedByReceivingUser;
-                tradeWithMostRecentOfferDto.IsConfirmedBySeller = waterTransfer.ConfirmedByTransferringUser;
+                var sellerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Selling);
+                var buyerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Buying);
+
+                tradeWithMostRecentOfferDto.IsRegisteredByBuyer = buyerRegistration.DateRegistered.HasValue;
+                tradeWithMostRecentOfferDto.IsRegisteredBySeller = sellerRegistration.DateRegistered.HasValue;
             }
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)

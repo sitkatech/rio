@@ -182,17 +182,17 @@
           Offer History
         </div>
         <div class="card-body">
-          <ng-template ngFor let-confirmation [ngForOf]="getConfirmations()">
+          <ng-template ngFor let-waterTransferRegistration [ngForOf]="waterTransferRegistrations">
             <div class="row">
               <div class="col-md-4 col-sm-12">
-                <strong>Confirmed by {{confirmation.ConfirmationType}}
-                  ({{confirmation.ConfirmationDate | date: "short"}})</strong>
+                <strong>Registered by {{getWaterTransferRegistrationType(waterTransferRegistration.WaterTransferTypeID)}}
+                  ({{waterTransferRegistration.RegisteredDate | date: "short"}})</strong>
               </div>
               <div class="col-md-8 col-sm-12">
                 <dl class="row">
-                  <dd class="col-sm-5 col-xs-12">Transaction Confirmed</dd>
+                  <dd class="col-sm-5 col-xs-12">Transaction Registered</dd>
                   <dd class="col-sm-7 col-xs-12">
-                    {{confirmation.ConfirmedBy.FullName}} ({{confirmation.ConfirmedBy.Email}})
+                    {{waterTransferRegistration.User.FullName}} ({{waterTransferRegistration.User.Email}})
                   </dd>
                 </dl>
               </div>

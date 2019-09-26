@@ -1,4 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.WaterTransfer;
+﻿using System.Linq;
+using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.EFModels.Entities
 {
@@ -6,6 +7,9 @@ namespace Rio.EFModels.Entities
     {
         public static WaterTransferDto AsDto(this WaterTransfer waterTransfer)
         {
+            var sellerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Selling);
+            var buyerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Buying);
+
             return new WaterTransferDto()
             {
                 WaterTransferID = waterTransfer.WaterTransferID,
@@ -14,12 +18,12 @@ namespace Rio.EFModels.Entities
                 TransferYear = waterTransfer.TransferDate.Year,
                 AcreFeetTransferred = waterTransfer.AcreFeetTransferred,
                 UnitPrice = waterTransfer.Offer?.Price,
-                TransferringUser = waterTransfer.TransferringUser.AsSimpleDto(),
-                ReceivingUser = waterTransfer.ReceivingUser.AsSimpleDto(),
-                ConfirmedByTransferringUser = waterTransfer.ConfirmedByTransferringUser,
-                DateConfirmedByTransferringUser = waterTransfer.DateConfirmedByTransferringUser,
-                ConfirmedByReceivingUser = waterTransfer.ConfirmedByReceivingUser,
-                DateConfirmedByReceivingUser = waterTransfer.DateConfirmedByReceivingUser,
+                Seller = sellerRegistration.User.AsSimpleDto(),
+                RegisteredBySeller = sellerRegistration.DateRegistered.HasValue,
+                DateRegisteredBySeller = sellerRegistration.DateRegistered,
+                Buyer = buyerRegistration.User.AsSimpleDto(),
+                RegisteredByBuyer = buyerRegistration.DateRegistered.HasValue,
+                DateRegisteredByBuyer = buyerRegistration.DateRegistered,
                 Notes = waterTransfer.Notes,
                 // ReSharper disable once PossibleNullReferenceException
                 TradeNumber = waterTransfer.Offer.Trade.TradeNumber

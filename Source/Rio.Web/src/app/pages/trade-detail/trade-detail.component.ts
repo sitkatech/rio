@@ -15,8 +15,10 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { UserDto } from 'src/app/shared/models';
-import { WaterConfirmationDto } from 'src/app/shared/models/water-confirmation-dto';
+import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/models/water-transfer-registration-simple-dto';
 import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
+import { WaterTransferService } from 'src/app/services/water-transfer.service';
+import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -45,7 +47,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public originalPostingType: PostingTypeDto;
   public offerType: string;
   public counterOfferRecipientType: string;
-  public confirmations: Array<WaterConfirmationDto>;
+  public waterTransferRegistrations: Array<WaterTransferRegistrationSimpleDto>;
   public buyer: UserSimpleDto;
   public seller: UserSimpleDto;
 
@@ -55,6 +57,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private offerService: OfferService,
     private tradeService: TradeService,
+    private waterTransferService: WaterTransferService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService
   ) {
@@ -79,7 +82,10 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   private getData(tradeNumber: string): void {
-    forkJoin(this.tradeService.getTradeFromTradeNumber(tradeNumber), this.offerService.getOffersFromTradeNumber(tradeNumber)).subscribe(([trade, offers]) => {
+    forkJoin(
+      this.tradeService.getTradeFromTradeNumber(tradeNumber),
+      this.offerService.getOffersFromTradeNumber(tradeNumber)
+    ).subscribe(([trade, offers]) => {
       this.trade = trade instanceof Array
         ? null
         : trade as TradeDto;
@@ -104,22 +110,12 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.isRejectingTrade = false;
       this.isRescindingTrade = false;
 
-      this.confirmations = [];
-      if(this.mostRecentOffer.ConfirmedByReceivingUser)
-      {
-        let waterConfirmation = new WaterConfirmationDto()
-        waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByReceivingUser; 
-        waterConfirmation.ConfirmationType = "Buyer";
-        waterConfirmation.ConfirmedBy = this.buyer;
-        this.confirmations.push(waterConfirmation)
-      }
-      if(this.mostRecentOffer.ConfirmedByTransferringUser)
-      {
-        let waterConfirmation = new WaterConfirmationDto()
-        waterConfirmation.ConfirmationDate = this.mostRecentOffer.DateConfirmedByTransferringUser; 
-        waterConfirmation.ConfirmationType = "Seller";
-        waterConfirmation.ConfirmedBy = this.seller;
-        this.confirmations.push(waterConfirmation)
+      this.waterTransferRegistrations = [];
+      if (this.mostRecentOffer.WaterTransferID) {
+
+        this.waterTransferService.getWaterTransferRegistrationsFromWaterTransferID(this.mostRecentOffer.WaterTransferID).subscribe(result => {
+          this.waterTransferRegistrations = result.sort((a, b) => a.RegisteredDate > b.RegisteredDate ? -1 : a.RegisteredDate < b.RegisteredDate ? 1 : 0);
+        })
       }
     });
   }
@@ -133,14 +129,13 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     this.model = offer;
   }
 
-  public getConfirmations() : Array<WaterConfirmationDto>
-  {
-    return this.confirmations.sort((a, b) => a.ConfirmationDate > b.ConfirmationDate ? -1 : a.ConfirmationDate < b.ConfirmationDate ? 1 : 0);
+  public getWaterTransferRegistrationType(waterTransferTypeID: number): string {
+    return waterTransferTypeID === WaterTransferTypeEnum.Buying ? "Buyer" : "Seller";
   }
 
   public canConfirmTransfer(): boolean {
-    return this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && ((this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.ConfirmedByReceivingUser) || 
-    (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.ConfirmedByTransferringUser));
+    return this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && ((this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.RegisteredByBuyer) ||
+      (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.RegisteredBySeller));
   }
 
   public isTradeNotOpen(): boolean {

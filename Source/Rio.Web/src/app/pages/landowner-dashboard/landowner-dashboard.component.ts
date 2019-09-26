@@ -155,7 +155,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
     return this.trades ?
       this.trades
-        .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsConfirmedByBuyer || !x.IsConfirmedBySeller))))
+        .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsRegisteredByBuyer || !x.IsRegisteredBySeller))))
         .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
@@ -172,11 +172,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
-    return (trade.IsConfirmedByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsConfirmedBySeller && trade.Seller.UserID === this.user.UserID);
+    return (trade.IsRegisteredByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsRegisteredBySeller && trade.Seller.UserID === this.user.UserID);
   }
 
   public isTradeRegisteredByBothParties(trade: TradeWithMostRecentOfferDto) {
-    return trade.IsConfirmedByBuyer && trade.IsConfirmedBySeller;
+    return trade.IsRegisteredByBuyer && trade.IsRegisteredBySeller;
   }
 
   public getParcelsForWaterYear(): Array<ParcelAllocationAndConsumptionDto> {
@@ -237,15 +237,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.TransferringUser.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.Seller.UserID === this.user.UserID);
   }
 
   public getPurchasedWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.ReceivingUser.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.Buyer.UserID === this.user.UserID);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDto) {
-    return !waterTransfer.ConfirmedByReceivingUser || !waterTransfer.ConfirmedByTransferringUser;
+    return !waterTransfer.RegisteredByBuyer || !waterTransfer.RegisteredBySeller;
   }
 
   public getPurchasedAcreFeet(year?: number): number {

@@ -95,8 +95,9 @@
     <None Include="Scripts\Views\dbo.vUserDetailed.sql" />
     <None Include="Scripts\Views\dbo.vPostingDetailed.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferType.sql" />
-    <Build Include="dbo\Tables\dbo.WaterTransferParcel.sql" />
+    <Build Include="dbo\Tables\dbo.WaterTransferRegistrationParcel.sql" />
     <None Include="Scripts\LookupTables\dbo.WaterTransferType.sql" />
+    <Build Include="dbo\Tables\dbo.WaterTransferRegistration.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

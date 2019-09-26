@@ -108,7 +108,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: true, filter: 'agDateColumnFilter', width: 140
           },
           { headerName: 'Status', 
-            valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && (!params.data.IsConfirmedByBuyer || !params.data.IsConfirmedBySeller) ? "Awaiting Registration" : params.data.TradeStatus.TradeStatusDisplayName; }, 
+            valueGetter: function(params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && (!params.data.IsRegisteredByBuyer || !params.data.IsRegisteredBySeller) ? "Awaiting Registration" : params.data.TradeStatus.TradeStatusDisplayName; }, 
             sortable: true, filter: true, width: 200 },
           {
             headerName: 'Buyer', valueGetter: function (params: any) {

@@ -10,10 +10,10 @@ export class OfferDto {
     CreateUser: UserSimpleDto;
     OfferStatus: OfferStatusDto;
     TradeID: number;
-    ConfirmedByTransferringUser: boolean;
-    DateConfirmedByTransferringUser: Date;
-    ConfirmedByReceivingUser: boolean;
-    DateConfirmedByReceivingUser: Date;
+    RegisteredBySeller: boolean;
+    DateRegisteredBySeller: Date;
+    RegisteredByBuyer: boolean;
+    DateRegisteredByBuyer: Date;
     WaterTransferID: number;
 
     constructor(obj?: any) {

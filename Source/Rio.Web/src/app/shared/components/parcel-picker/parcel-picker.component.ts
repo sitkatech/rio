@@ -6,7 +6,7 @@ import { GeoJSON, LeafletMouseEvent, TileLayer } from "leaflet";
 import { ParcelMapComponent } from '../parcel-map/parcel-map.component';
 import { WfsService } from '../../services/wfs.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { WaterTransferParcelDto } from '../../models/water-transfer-parcel-dto';
+import { WaterTransferRegistrationParcelDto } from '../../models/water-transfer-registration-parcel-dto';
 
 
 @Component({
@@ -20,7 +20,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     public visibleParcelIDs: Array<number> = [];
 
     @Input("selectedParcels")
-    public selectedParcels: Array<WaterTransferParcelDto> = [];
+    public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
 
     @Input("maxTotalQuantity")
     public maxTotalQuantity: number;
@@ -78,12 +78,12 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     public toggleParcel(feature: Feature): void {
         const selectedParcelID = feature.properties.ParcelID;
         if (this.visibleParcelIDs.includes(selectedParcelID)) {
-            const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferParcelDto) =>
+            const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) =>
                 parcel.ParcelID === selectedParcelID);
             if (selectedParcelIndex !== -1) {
                 this.selectedParcels.splice(selectedParcelIndex, 1);
             } else {
-                let parcelToAdd = new WaterTransferParcelDto();
+                let parcelToAdd = new WaterTransferRegistrationParcelDto();
                 parcelToAdd.ParcelID = feature.properties.ParcelID;
                 parcelToAdd.ParcelNumber = feature.properties.ParcelNumber;
                 this.selectedParcels.push(parcelToAdd);
@@ -97,7 +97,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     }
 
     public removeParcel(parcelIDToRemove: number): void {
-        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferParcelDto) =>
+        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) =>
             parcel.ParcelID === parcelIDToRemove);
         if (selectedParcelIndex !== -1) {
             this.selectedParcels.splice(selectedParcelIndex, 1);

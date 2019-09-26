@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { WaterTransferDto } from '../shared/models/water-transfer-dto';
-import { WaterTransferRegisterDto } from '../shared/models/water-transfer-register-dto';
-import { WaterTransferParcelDto } from '../shared/models/water-transfer-parcel-dto';
-import { WaterTransferParcelsWrapperDto } from '../shared/models/water-transfer-parcels-wrapper-dto.';
+import { WaterTransferRegistrationDto } from '../shared/models/water-transfer-registration-dto';
+import { WaterTransferRegistrationParcelDto } from '../shared/models/water-transfer-registration-parcel-dto';
+import { WaterTransferRegistrationSimpleDto } from '../shared/models/water-transfer-registration-simple-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -18,18 +18,23 @@ export class WaterTransferService {
       return this.apiService.getFromApi(route);
   }
 
-  public getParcelsForWaterTransferID(waterTransferID: number): Observable<Array<WaterTransferParcelDto>> {
-      let route = `/water-transfers/${waterTransferID}/parcels`;
+  public getWaterTransferRegistrationsFromWaterTransferID(waterTransferID: number): Observable<Array<WaterTransferRegistrationSimpleDto>> {
+      let route = `/water-transfers/${waterTransferID}/registrations`;
       return this.apiService.getFromApi(route);
   }
 
-  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferParcelsWrapperDto: WaterTransferParcelsWrapperDto): Observable<WaterTransferParcelDto> {
+  public getParcelsForWaterTransferIDAndUserID(waterTransferID: number, userID: number): Observable<Array<WaterTransferRegistrationParcelDto>> {
+      let route = `/water-transfers/${waterTransferID}/parcels/${userID}`;
+      return this.apiService.getFromApi(route);
+  }
+
+  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferParcelsWrapperDto: WaterTransferRegistrationDto): Observable<WaterTransferRegistrationParcelDto> {
     let route = `/water-transfers/${waterTransferID}/selectParcels`;
     return this.apiService.postToApi(route, waterTransferParcelsWrapperDto);
   }
 
-  public registerTransfer(waterTransferID: number, waterTransferRegisterDto: WaterTransferRegisterDto): Observable<WaterTransferDto>  {
+  public registerTransfer(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferDto>  {
     let route = `/water-transfers/${waterTransferID}/register`;
-    return this.apiService.postToApi(route, waterTransferRegisterDto);
+    return this.apiService.postToApi(route, waterTransferRegistrationDto);
   }
 }
