@@ -53,8 +53,7 @@ namespace Rio.API.Services
 
         public static int GetLatestWaterYear()
         {
-            var currentYear = DateTime.Today.Year;
-            return DateTime.Today > new DateTime(currentYear, 11, 1) ? currentYear : currentYear - 1;
+            return DateTime.Today.Year;
         }
 
 

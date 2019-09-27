@@ -253,7 +253,7 @@ namespace Rio.API.Controllers
             IGrouping<int, ParcelMonthlyEvapotranspirationDto> parcelMonthlyEvapotranspirationDtos,
             IEnumerable<ParcelDto> parcelDtos)
         {
-            var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterMonth).Select(x =>
+            var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterMonth).OrderBy(x => x.Key).Select(x =>
                     new MonthlyWaterUsageDto()
                     {
                         Month = ((DateUtilities.Month) x.Key).ToString(), WaterUsageByParcel = GetWaterUsageByParcel(x, parcelDtos)

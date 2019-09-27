@@ -28,8 +28,8 @@
               <tr>
                 <th class="text-sm-left pb-0 mb-0" colspan="2">Allocation</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span *ngIf="getAnnualAllocation()">{{getAnnualAllocation() | number: '1.1-1'}} ac-ft</span>
-                  <span *ngIf="!getAnnualAllocation()" class="systemText">Not available</span>
+                  <span *ngIf="getAnnualAllocation(waterYearToDisplay)">{{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} ac-ft</span>
+                  <span *ngIf="!getAnnualAllocation(waterYearToDisplay)" class="systemText">Not available</span>
                 </td>
               </tr>
               <tr>

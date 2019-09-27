@@ -63,8 +63,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.waterYears = [2018, 2017, 2016]; //TODO: get this from API
-      this.waterYearToDisplay = 2018; //TODO: get this from API
+      this.waterYears = [2019, 2018, 2017, 2016]; //TODO: get this from API
+      this.waterYearToDisplay = 2019; //TODO: get this from API
       this.tradeStatusIDs = [TradeStatusEnum.Countered];
       this.postingStatusIDs = [PostingStatusEnum.Open];
       this.showPurchasedDetails = false;
@@ -179,21 +179,16 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return trade.IsRegisteredByBuyer && trade.IsRegisteredBySeller;
   }
 
-  public getParcelsForWaterYear(): Array<ParcelAllocationAndConsumptionDto> {
-    return this.parcels.filter(x => x.WaterYear.toString() === this.waterYearToDisplay.toString());
-  }
-
-  public getParcelsForSpecificWaterYear(year: number) {
+  public getParcelsForWaterYear(year: number): Array<ParcelAllocationAndConsumptionDto> {
     return this.parcels.filter(x => x.WaterYear.toString() === year.toString());
   }
 
   public getSelectedParcelIDs(): Array<number> {
-    const parcelsForWaterYear = this.getParcelsForWaterYear();
-    return parcelsForWaterYear !== undefined ? this.getParcelsForWaterYear().map(p => p.ParcelID) : [];
+    return Array.from(new Set(this.parcels.map((item: any) => item.ParcelID)));
   }
 
   public getTotalAPNAcreage(): string {
-    const parcelsForWaterYear = this.getParcelsForWaterYear();
+    const parcelsForWaterYear = this.getParcelsForWaterYear(this.waterYearToDisplay);
     if (parcelsForWaterYear.length > 0) {
       let result = parcelsForWaterYear.reduce(function (a, b) {
         return (a + b.ParcelAreaInAcres);
@@ -203,19 +198,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "Not available";
   }
 
-  public getAnnualAllocation(): number {
-    let parcelsWithAllocation = this.getParcelsForWaterYear().filter(p => p.AcreFeetAllocated !== null);
-    if (parcelsWithAllocation.length > 0) {
-      let result = parcelsWithAllocation.reduce(function (a, b) {
-        return (a + b.AcreFeetAllocated);
-      }, 0);
-      return result;
-    }
-    return null;
-  }
-
-  public getAnnualAllocationForSpecificWaterYear(year: number): number {
-    let parcelsWithAllocation = this.getParcelsForSpecificWaterYear(year).filter(p => p.AcreFeetAllocated !== null);
+  public getAnnualAllocation(year: number): number {
+    let parcelsWithAllocation = this.getParcelsForWaterYear(this.waterYearToDisplay).filter(p => p.AcreFeetAllocated !== null);
     if (parcelsWithAllocation.length > 0) {
       let result = parcelsWithAllocation.reduce(function (a, b) {
         return (a + b.AcreFeetAllocated);
@@ -233,7 +217,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     if (!year) {
       year = this.waterYearToDisplay
     }
-    return this.waterTransfers.filter(x => x.TransferYear - 1 == year);
+    return this.waterTransfers.filter(x => x.TransferYear == year);
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
@@ -269,7 +253,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalSupply(): number {
-    return this.getAnnualAllocation() + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
+    return this.getAnnualAllocation(this.waterYearToDisplay) + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
   }
 
   public getCurrentAvailableWater(): number {
@@ -287,7 +271,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getWaterUsageToDate(): number {
-    let parcelsWithMonthlyEvaporations = this.getParcelsForWaterYear().filter(x => x.MonthlyEvapotranspiration.length > 0);
+    let parcelsWithMonthlyEvaporations = this.getParcelsForWaterYear(this.waterYearToDisplay).filter(x => x.MonthlyEvapotranspiration.length > 0);
     if (parcelsWithMonthlyEvaporations.length > 0) {
       let estimatedAvailableSupply = parcelsWithMonthlyEvaporations.reduce((a, b) => {
         return (a + this.getWaterConsumption(b));
@@ -298,7 +282,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getEstimatedAvailableSupply(): number {
-    let annualAllocation = this.getAnnualAllocation();
+    let annualAllocation = this.getAnnualAllocation(this.waterYearToDisplay);
     let estimatedAvailableSupply = this.getWaterUsageToDate();
     if (annualAllocation !== null && estimatedAvailableSupply !== null) {
       return annualAllocation - estimatedAvailableSupply;
@@ -325,7 +309,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     this.annualAllocationChartData = this.waterYears.map(x => {
-      const allocation = this.getAnnualAllocationForSpecificWaterYear(x);
+      const allocation = this.getAnnualAllocation(x);
       const sold = this.getSoldAcreFeet(x);
       const purchased = this.getPurchasedAcreFeet(x);
 
