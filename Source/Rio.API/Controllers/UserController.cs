@@ -332,5 +332,13 @@ namespace Rio.API.Controllers
 
             return monthlyWaterUsageOverviewDtos;
         }
+
+        [HttpGet("landowner-usage-report/{year}")]
+        [UserManageFeature]
+        public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
+        {
+            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
+            return Ok(landownerUsageReportDtos);
+        }
     }
 }

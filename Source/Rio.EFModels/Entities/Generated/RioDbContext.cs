@@ -41,6 +41,7 @@ namespace Rio.EFModels.Entities
         public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
         public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
         public virtual DbQuery<PostingDetailed> PostingDetaileds { get; set; }
+        public virtual DbQuery<LandownerUsageReport> LandownerUsageReports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

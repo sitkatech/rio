@@ -10,14 +10,6 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-:r .\LookupTables\Script.PostDeployment.LookupTables.sql
-GO
+:r .\dbo.pLandOwnerUsageReport.sql
 
-:r .\Views\Script.PostDeployment.Views.sql
-GO
-
-:r .\Procs\Script.PostDeployment.Procs.sql
-GO
-
-:r .\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql
 GO

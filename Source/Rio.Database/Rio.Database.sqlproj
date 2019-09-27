@@ -64,6 +64,7 @@
     <Folder Include="Scripts\LookupTables" />
     <Folder Include="Scripts\ReleaseScripts" />
     <Folder Include="Scripts\Views" />
+    <Folder Include="Scripts\Procs" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\dbo.RioPage.sql" />
@@ -98,6 +99,8 @@
     <Build Include="dbo\Tables\dbo.WaterTransferRegistrationParcel.sql" />
     <None Include="Scripts\LookupTables\dbo.WaterTransferType.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferRegistration.sql" />
+    <None Include="Scripts\Procs\dbo.pLandOwnerUsageReport.sql" />
+    <None Include="Scripts\Procs\Script.PostDeployment.Procs.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

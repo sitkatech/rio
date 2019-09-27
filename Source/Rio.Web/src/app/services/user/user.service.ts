@@ -51,4 +51,9 @@ export class UserService {
         let route = `/users/${userID}/water-usage-overview`;
         return this.apiService.getFromApi(route);
     }
+
+    getLandowneUsageReportByYear(year: number): Observable<UserDto[]> {
+        let route = `/landowner-usage-report/${year}`;
+        return this.apiService.getFromApi(route);
+    }
 }
