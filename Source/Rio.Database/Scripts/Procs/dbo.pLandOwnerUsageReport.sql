@@ -21,8 +21,8 @@ from
 			sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as Purchased,
 			sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as Sold,
 			sum(pme.EvapotranspirationRate) as UsageToDate,
-			count(post.PostingID) as NumberOfPostings,
-			count(tr.TradeID) as NumberOfTrades,
+			count(distinct post.PostingID) as NumberOfPostings,
+			count(distinct tr.TradeID) as NumberOfTrades,
 			mrtr.TradeNumber
 	from dbo.[User] u
 	left join dbo.UserParcel up on u.UserID = up.UserID

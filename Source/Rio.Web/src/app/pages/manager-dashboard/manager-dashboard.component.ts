@@ -129,21 +129,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: 'agDateColumnFilter', width: 140
       },
       {
-        headerName: 'Posted By',
-        valueGetter: function (params: any) {
-          return { UserID: params.data.PostedByUserID, FullName: params.data.PostedByFullName };
+        headerName: 'Posted By', valueGetter: function (params: any) {
+          return { LinkValue: params.data.PostedByUserID, LinkDisplay: params.data.PostedByFullName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
           return params.data.PostedByFullName;
         },
         comparator: function (id1: any, id2: any) {
-          let user1 = id1 ? id1.PostedByLastName + ", " + id1.PostedByFirstName : '';
-          let user2 = id2 ? id2.PostedByLastName + ", " + id2.PostedByFirstName : '';
-          if (user1 < user2) {
+          let link1 = id1.LinkDisplay;
+          let link2 = id2.LinkDisplay;
+          if (link1 < link2) {
             return -1;
           }
-          if (user1 > user2) {
+          if (link1 > link2) {
             return 1;
           }
           return 0;
@@ -273,18 +272,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {
-        headerName: 'Posted By', field: 'OfferCreateUser', cellRendererFramework: LinkRendererComponent,
+        headerName: 'Posted By', valueGetter: function (params: any) {
+          return { LinkValue: params.data.OfferCreateUser.UserID, LinkDisplay: params.data.OfferCreateUser.FullName };
+        }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
           return params.data.OfferCreateUser.FullName;
         },
         comparator: function (id1: any, id2: any) {
-          let user1 = id1 ? id1.LastName + ", " + id1.FirstName : '';
-          let user2 = id2 ? id2.LastName + ", " + id2.FirstName : '';
-          if (user1 < user2) {
+          let link1 = id1.LinkDisplay;
+          let link2 = id2.LinkDisplay;
+          if (link1 < link2) {
             return -1;
           }
-          if (user1 > user2) {
+          if (link1 > link2) {
             return 1;
           }
           return 0;
@@ -347,7 +348,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 160
       },
       { headerName: '# of Trades', field: 'NumberOfTrades', sortable: true, filter: true, width: 120 },
-      { headerName: '# of Postings', field: 'NumberOfTrades', sortable: true, filter: true, width: 120 },
+      { headerName: '# of Postings', field: 'NumberOfPostings', sortable: true, filter: true, width: 120 },
     ];
     this.landownerUsageReports = landownerUsageReport;
   }
