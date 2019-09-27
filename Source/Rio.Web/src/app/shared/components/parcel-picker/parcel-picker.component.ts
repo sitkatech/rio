@@ -82,6 +82,10 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
                 parcel.ParcelID === selectedParcelID);
             if (selectedParcelIndex !== -1) {
                 this.selectedParcels.splice(selectedParcelIndex, 1);
+                if(this.selectedParcels.length === 1)
+                {
+                    this.selectedParcels[0].AcreFeetTransferred = this.maxTotalQuantity;
+                }
             } else {
                 let parcelToAdd = new WaterTransferRegistrationParcelDto();
                 parcelToAdd.ParcelID = feature.properties.ParcelID;
