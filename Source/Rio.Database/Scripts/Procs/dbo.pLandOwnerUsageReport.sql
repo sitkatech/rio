@@ -17,12 +17,12 @@ a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
 (
-	select u.UserID, u.FirstName, u.LastName, u.Email, pa.Allocation,
-			wts.Purchased,
-			wts.Sold,
-			pme.UsageToDate,
-			post.NumberOfPostings,
-			tr.NumberOfTrades
+	select u.UserID, u.FirstName, u.LastName, u.Email, isnull(pa.Allocation, 0) as Allocation,
+			isnull(wts.Purchased, 0) as Purchased,
+			isnull(wts.Sold, 0) as Sold,
+			isnull(pme.UsageToDate, 0) as UsageToDate,
+			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
+			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
 	from dbo.[User] u
 	left join
 	(
