@@ -148,14 +148,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getPostingsForWaterYear(): Array<PostingDto> {
     return this.postings
-      .filter(x => (new Date(x.PostingDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
+      .filter(x => (new Date(x.PostingDate).getFullYear()).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
       .sort((a, b) => a.PostingDate > b.PostingDate ? -1 : a.PostingDate < b.PostingDate ? 1 : 0);
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
     return this.trades ?
       this.trades
-        .filter(x => (new Date(x.OfferDate).getFullYear() - 1).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsRegisteredByBuyer || !x.IsRegisteredBySeller))))
+        .filter(x => (new Date(x.OfferDate).getFullYear()).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsRegisteredByBuyer || !x.IsRegisteredBySeller))))
         .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
