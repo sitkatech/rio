@@ -43,6 +43,11 @@
               {{posting.Quantity | number: "1.0"}} ac-ft
             </dd>
 
+            <dt class="text-sm-right col-sm-5 col-xs-12">Remaining Balance</dt>
+            <dd class="col-sm-7 col-xs-12">
+              {{posting.AvailableQuantity | number: "1.0"}} ac-ft
+            </dd>
+
             <dt class="text-sm-right col-sm-5 col-xs-12">Unit Price</dt>
             <dd class="col-sm-7 col-xs-12">
               {{posting.Price | currency: "USD" }} per ac-ft
