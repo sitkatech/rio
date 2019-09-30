@@ -19,6 +19,7 @@ import { TradeDetailComponent } from './pages/trade-detail/trade-detail.componen
 import { RegisterTransferComponent } from './pages/register-transfer/register-transfer.component';
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
+import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -35,12 +36,13 @@ const routes: Routes = [
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "landowner-dashboard/:id", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "landowner-dashboard", component: LandownerDashboardComponent },
+  { path: "landowner-dashboard", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
+  { path: "login-callback", component: LoginCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },
   { path: 'unauthenticated', component: UnauthenticatedComponent },

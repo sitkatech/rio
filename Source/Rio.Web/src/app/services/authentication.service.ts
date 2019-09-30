@@ -22,27 +22,27 @@ export class AuthenticationService {
   public currentUserSetObservable = this._currentUserSetSubject.asObservable();
 
   constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private userService: UserService) {
-      this.router.events
-          .pipe(filter(e => e instanceof NavigationEnd))
-          .subscribe((e: NavigationEnd) => {
-              if (this.isAuthenticated()) {
-                  var claims = this.oauthService.getIdentityClaims();
-                  var globalID = claims["sub"];
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        if (this.isAuthenticated()) {
+          var claims = this.oauthService.getIdentityClaims();
+          var globalID = claims["sub"];
 
-                  this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
-                      this.currentUser = result;
-                      this._currentUserSetSubject.next(this.currentUser);
-                  });
-
-              } else {
-                  this.currentUser = null;
-                  this._currentUserSetSubject.next(null);
-              }
+          this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
+            this.currentUser = result;
+            this._currentUserSetSubject.next(this.currentUser);
           });
+
+        } else {
+          this.currentUser = null;
+          this._currentUserSetSubject.next(null);
+        }
+      });
   }
 
   dispose() {
-      this.getUserObservable.unsubscribe();
+    this.getUserObservable.unsubscribe();
   }
 
   public isAuthenticated(): boolean {
@@ -54,6 +54,11 @@ export class AuthenticationService {
   }
 
   public login() {
+    // add in our default redirect url if none is set
+    var redirectUrl = sessionStorage.getItem("authRedirectUrl");
+    if (!redirectUrl) {
+      sessionStorage["authRedirectUrl"] = "/landowner-dashboard";
+    }
     this.oauthService.initImplicitFlow();
   }
 

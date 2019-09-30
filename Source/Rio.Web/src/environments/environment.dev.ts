@@ -7,7 +7,7 @@ export const environment = {
   keystoneAuthConfiguration: {
     clientId: 'Rio',
     issuer: 'https://qa.keystone.sitkatech.com/core',
-    redirectUri: window.location.origin + '/landowner-dashboard',
+    redirectUri: window.location.origin + '/login-callback',
     scope: 'openid all_claims keystone',
     sessionChecksEnabled: true,
     logoutUrl: 'https://qa.keystone.sitkatech.com/core/connect/endsession',
