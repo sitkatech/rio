@@ -69,7 +69,7 @@ from
 ) a
 left join
 (
-	select th.TradeID, th.TradeNumber, th.UserID, th.TransactionDate, rank() over(partition by th.UserID order by th.TransactionDate desc) as Ranking
+	select th.TradeID, th.TradeNumber, th.UserID, th.TransactionDate, rank() over(partition by th.UserID order by th.TransactionDate desc, th.TradeNumber desc) as Ranking
 	from
 	(
 		select t.TradeID, t.TradeNumber, t.CreateUserID as UserID, coalesce(p.PostingDate, t.TradeDate, o.OfferDate) as TransactionDate
