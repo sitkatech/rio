@@ -139,7 +139,7 @@ namespace Rio.API.Controllers
     <li><strong>Seller:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation , which has not been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
 <br /><br />
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
             var mailTos = new List<UserSimpleDto> { receivingUser, transferringUser };
