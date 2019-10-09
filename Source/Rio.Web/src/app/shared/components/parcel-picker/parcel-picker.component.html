@@ -7,43 +7,35 @@
         <table id="selectedParcelsList" class="table table-borderless">
             <thead>
                 <tr>
+                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6">
+                        <button class="mr-1 btn btn-sm btn-secondary" (click)="selectAllParcels()" [disabled]="visibleParcelIDs.length === selectedParcels.length">Select All</button>
+                        <button class="mr-1 btn btn-sm btn-secondary" (click)="removeAllParcels()" [disabled]="selectedParcels.length === 0">Remove All</button>
+                        <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
+                    </th>
                     <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">APN</th>
                     <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">Volume to Transfer</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngIf="!selectedParcels?.length">
-                    <td colspan="2">
+                    <td colspan="3">
                         No Parcels have been selected yet.
                     </td>
                 </tr>
                 <tr *ngFor="let selectedParcel of selectedParcels">
-                    <td class="text-right">
+                    <td colspan="2" class="text-right">
                         <a (click)="removeParcel(selectedParcel.ParcelID)" style="cursor: pointer"><span class="fa fa-trash-alt text-muted"></span></a>                                
                         {{selectedParcel.ParcelNumber}}
                     </td>
                     <td class="text-right">
-                        <span *ngIf="selectedParcels.length === 1">{{selectedParcel.AcreFeetTransferred | number: '1.0-0'}}</span>
-                        <input *ngIf="selectedParcels.length > 1" type="number" style="width: 80px" min="1" step="1" [(ngModel)]="selectedParcel.AcreFeetTransferred" required />
+                        {{selectedParcel.AcreFeetTransferred | number: '1.0-0'}}
                         ac-ft
                     </td>
                 </tr>
             </tbody>
             <tfoot *ngIf="selectedParcels?.length">
                 <tr>
-                    <th style="border-top: 2px solid #dee2e6" class="text-right">Total Allocated</th>
-                    <th style="border-top: 2px solid #dee2e6" class="text-right">
-                        {{getTotalEntered() | number: '1.0-0'}} ac-ft
-                    </th>
-                </tr>
-                <tr>
-                    <th class="text-right">Remaining</th>
-                    <th class="text-right">
-                        {{getQuantityNeeded() | number: '1.0-0'}} ac-ft
-                    </th>
-                </tr>
-                <tr>
-                    <th style="border-bottom: 2px solid #dee2e6" class="text-right">Total Transfer Volume</th>
+                    <th colspan="2" style="border-bottom: 2px solid #dee2e6" class="text-right">Total Transfer Volume</th>
                     <th style="border-bottom: 2px solid #dee2e6" class="text-right">
                         {{maxTotalQuantity | number: '1.0-0'}} ac-ft
                     </th>

@@ -76,7 +76,7 @@
                         transfer volume to those parcels.
                     </p>
                     <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels"
-                        [visibleParcelIDs]="visibleParcelIDs" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
+                        [visibleParcels]="visibleParcels" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
                         <div>
                             <div class="float-right">
                                 <button [disabled]="!isParcelPickerValid() || isLoadingSubmit" type="submit"

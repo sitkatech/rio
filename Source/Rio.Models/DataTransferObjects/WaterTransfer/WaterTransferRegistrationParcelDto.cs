@@ -9,5 +9,6 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public string ParcelNumber { get; set; }
         [Required]
         public int AcreFeetTransferred { get; set; }
+        public double? ParcelAreaInAcres { get; set; }
     }
 }

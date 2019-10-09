@@ -4,6 +4,7 @@ export class WaterTransferRegistrationDto {
     WaterTransferTypeID: number;
     UserID: number;
     WaterTransferRegistrationParcels: Array<WaterTransferRegistrationParcelDto>;
+    DateRegistered: Date;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

@@ -13,6 +13,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/parcel-picker.component';
 import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
+import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 
 @Component({
   selector: 'rio-register-transfer',
@@ -27,7 +28,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
   public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
-  public visibleParcelIDs: Array<number> = [];
+  public visibleParcels: Array<ParcelDto> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
 
@@ -79,7 +80,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
         if (!this.canRegister()) {
           this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
         }
-        this.visibleParcelIDs = visibleParcels !== undefined ? visibleParcels.map(p => p.ParcelID) : [];
+        this.visibleParcels = visibleParcels !== undefined ? visibleParcels : [];
         this.selectedParcels = selectedParcels;
         this.haveParcelsBeenIdentified = this.selectedParcels.length > 0;
       });
@@ -128,14 +129,14 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.isLoadingSubmit = true;
     const waterTransferRegistrationDto = new WaterTransferRegistrationDto();
     waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
+    waterTransferRegistrationDto.UserID = this.currentUser.UserID;
     let waterTransferRegistrationParcels = this.parcelPicker.selectedParcels.map(p => {
       let waterTransferParcelDto = new WaterTransferRegistrationParcelDto();
       waterTransferParcelDto.ParcelID = p.ParcelID;
-      waterTransferParcelDto.AcreFeetTransferred = p.AcreFeetTransferred;
+      waterTransferParcelDto.AcreFeetTransferred = Math.round(p.AcreFeetTransferred);
       return waterTransferParcelDto;
     });
     waterTransferRegistrationDto.WaterTransferRegistrationParcels = waterTransferRegistrationParcels;
-
     this.waterTransferService.selectParcelsForWaterTransferID(this.waterTransfer.WaterTransferID, waterTransferRegistrationDto)
       .subscribe(response => {
         this.isLoadingSubmit = false;
@@ -155,10 +156,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public isParcelPickerValid(): boolean {
     if (this.parcelPicker) {
-      const totalEqualsTransferAmount = this.parcelPicker.getTotalEntered() === this.waterTransfer.AcreFeetTransferred;
-      const parcelsWithAcreFeetTransferered = this.parcelPicker.selectedParcels.filter(x => x.AcreFeetTransferred > 0);
-      const everyParcelHasTransferAmountEntered = parcelsWithAcreFeetTransferered.length === this.parcelPicker.selectedParcels.length;
-      return totalEqualsTransferAmount && everyParcelHasTransferAmountEntered;
+      return this.parcelPicker.selectedParcels.length > 0;
     }
     return false;
   }

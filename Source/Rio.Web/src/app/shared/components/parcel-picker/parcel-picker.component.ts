@@ -7,6 +7,7 @@ import { ParcelMapComponent } from '../parcel-map/parcel-map.component';
 import { WfsService } from '../../services/wfs.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { WaterTransferRegistrationParcelDto } from '../../models/water-transfer-registration-parcel-dto';
+import { ParcelDto } from '../../models/parcel/parcel-dto';
 
 
 @Component({
@@ -16,8 +17,8 @@ import { WaterTransferRegistrationParcelDto } from '../../models/water-transfer-
 })
 export class ParcelPickerComponent implements OnInit, AfterViewInit {
 
-    @Input("visibleParcelIDs")
-    public visibleParcelIDs: Array<number> = [];
+    @Input("visibleParcels")
+    public visibleParcels: Array<ParcelDto> = [];
 
     @Input("selectedParcels")
     public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
@@ -32,6 +33,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     public parcelMap: ParcelMapComponent;
 
     public selectedParcelLayerName: string = 'Selected Parcels';
+    public visibleParcelIDs: Array<number> = [];
 
     constructor(
         private wfsService: WfsService,
@@ -40,6 +42,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     }
 
     public ngOnInit(): void {
+        this.visibleParcelIDs = this.visibleParcels.map(p => p.ParcelID);
     }
 
     public ngAfterViewInit(): void {
@@ -59,10 +62,10 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
         return this.selectedParcels !== undefined ? this.selectedParcels.map(p => p.ParcelID) : [];
     }
 
-    public getTotalEntered(): number {
+    public getTotalParcelAreaAcres(): number {
         if (this.selectedParcels.length > 0) {
             let result = this.selectedParcels.reduce(function (a, b) {
-                const acreFeet = b.AcreFeetTransferred ? b.AcreFeetTransferred : 0;
+                const acreFeet = b.ParcelAreaInAcres ? b.ParcelAreaInAcres : 0;
                 return (a + acreFeet);
             }, 0);
             return result;
@@ -70,54 +73,60 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
         return 0;
     }
 
-    public getQuantityNeeded(): number {
-        let totalEntered = this.getTotalEntered();
-        return this.maxTotalQuantity - totalEntered;
-    }
-
     public toggleParcel(feature: Feature): void {
         const selectedParcelID = feature.properties.ParcelID;
         if (this.visibleParcelIDs.includes(selectedParcelID)) {
-            const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) =>
-                parcel.ParcelID === selectedParcelID);
-            if (selectedParcelIndex !== -1) {
-                this.selectedParcels.splice(selectedParcelIndex, 1);
-                if(this.selectedParcels.length === 1)
-                {
-                    this.selectedParcels[0].AcreFeetTransferred = this.maxTotalQuantity;
-                }
-            } else {
+            if(!this.removeParcelIfSelected(selectedParcelID))
+            {
                 let parcelToAdd = new WaterTransferRegistrationParcelDto();
                 parcelToAdd.ParcelID = feature.properties.ParcelID;
                 parcelToAdd.ParcelNumber = feature.properties.ParcelNumber;
-                if(this.selectedParcels.length === 0)
-                {
-                    parcelToAdd.AcreFeetTransferred = this.maxTotalQuantity;
-                }
-                else if(this.selectedParcels.length === 1)
-                {
-                    this.selectedParcels[0].AcreFeetTransferred = null;
-                }
+                parcelToAdd.ParcelAreaInAcres = feature.properties.ParcelAreaInAcres;
                 this.selectedParcels.push(parcelToAdd);
             }
             this.updateSelectedParcelLayer();
         }
     }
 
-    private updateSelectedParcelLayer() {
-        this.parcelMap.updateSelectedParcelsOverlayLayer(this.getSelectedParcelIDs());
+    public removeParcel(parcelIDToRemove: number): void {
+        this.removeParcelIfSelected(parcelIDToRemove);
+        this.updateSelectedParcelLayer();
     }
 
-    public removeParcel(parcelIDToRemove: number): void {
-        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) =>
-            parcel.ParcelID === parcelIDToRemove);
+    public removeAllParcels(): void {
+        this.selectedParcels = [];
+        this.updateSelectedParcelLayer();
+    }
+
+    public selectAllParcels(): void {
+        this.selectedParcels = this.visibleParcels.map(p => {
+            let parcelToAdd = new WaterTransferRegistrationParcelDto();
+            parcelToAdd.ParcelID = p.ParcelID;
+            parcelToAdd.ParcelNumber = p.ParcelNumber;
+            parcelToAdd.ParcelAreaInAcres = p.ParcelAreaInAcres;
+            return parcelToAdd
+        });
+        this.updateSelectedParcelLayer();
+    }
+
+    private removeParcelIfSelected(parcelIDToRemove: number) : boolean {
+        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) => parcel.ParcelID === parcelIDToRemove);
         if (selectedParcelIndex !== -1) {
             this.selectedParcels.splice(selectedParcelIndex, 1);
-            if(this.selectedParcels.length === 1)
-            {
-                this.selectedParcels[0].AcreFeetTransferred = this.maxTotalQuantity;
-            }
+            return true;
         }
-        this.updateSelectedParcelLayer();
+        return false;
+    }
+
+    private updateSelectedParcelLayer() {
+        this.parcelMap.updateSelectedParcelsOverlayLayer(this.getSelectedParcelIDs());
+        this.calculateAreaTransferredForParcels();
+    }
+
+    private calculateAreaTransferredForParcels() {
+        const totalSelectedParcelArea = this.getTotalParcelAreaAcres();
+        this.selectedParcels.forEach(p => {
+            p.AcreFeetTransferred = p.ParcelAreaInAcres / totalSelectedParcelArea * this.maxTotalQuantity;
+        });
     }
 }
