@@ -28,9 +28,9 @@ export class WaterTransferService {
       return this.apiService.getFromApi(route);
   }
 
-  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferParcelsWrapperDto: WaterTransferRegistrationDto): Observable<WaterTransferRegistrationParcelDto> {
+  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferRegistrationParcelDto> {
     let route = `/water-transfers/${waterTransferID}/selectParcels`;
-    return this.apiService.postToApi(route, waterTransferParcelsWrapperDto);
+    return this.apiService.postToApi(route, waterTransferRegistrationDto);
   }
 
   public registerTransfer(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferDto>  {

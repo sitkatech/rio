@@ -1,1 +1,1 @@
-<a [routerLink]="[params.inRouterLink, params.value.LinkValue]" *ngIf="params">{{params.value.LinkDisplay}}</a>
+<a [routerLink]="[params.inRouterLink, params.value.LinkValue]" *ngIf="params" [className]="params.value.CssClasses">{{params.value.LinkDisplay}}</a>

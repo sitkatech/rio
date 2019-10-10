@@ -20,6 +20,7 @@ import { RegisterTransferComponent } from './pages/register-transfer/register-tr
 import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
+import { HelpComponent } from './pages/help/help.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -42,6 +43,7 @@ const routes: Routes = [
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard] },
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
+  { path: "help", component: HelpComponent },
   { path: "login-callback", component: LoginCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },

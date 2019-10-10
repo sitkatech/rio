@@ -41,6 +41,7 @@ import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-
 import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
+import { HelpComponent } from './pages/help/help.component';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { LoginCallbackComponent } from './pages/login-callback/login-callback.co
     ComboSeriesVerticalComponent,
     LandownerWaterAllocationChartComponent,
     PostingDeleteComponent,
-    LoginCallbackComponent
+    LoginCallbackComponent,
+    HelpComponent
   ],
   imports: [
     AppRoutingModule,
