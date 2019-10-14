@@ -2,10 +2,10 @@
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Rio.API
 {
@@ -13,35 +13,34 @@ namespace Rio.API
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
-        }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+            var host = new HostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseKestrel(options =>
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    options.Listen(IPAddress.Any, 80);
-
-                    // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
-                    if (env == EnvironmentName.Development)
-                    {
-                        options.Listen(IPAddress.Any, 443, configure =>
+                    webBuilder.UseKestrel(serverOptions =>
                         {
-                            var httpsConnectionAdapterOptions = new HttpsConnectionAdapterOptions()
-                            {
-                                ClientCertificateMode = ClientCertificateMode.AllowCertificate,
-                                ServerCertificate = new X509Certificate2("api-dev.rio.org.pfx", "password#1"),
-                                ClientCertificateValidation = (certificate2, chain, arg3) => true
-                            };
+                            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                            serverOptions.Listen(IPAddress.Any, 80);
 
-                            configure.UseHttps(httpsConnectionAdapterOptions);
-                        });
-                    }
+                            // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
+                            if (env == Microsoft.Extensions.Hosting.Environments.Development)
+                            {
+                                serverOptions.Listen(IPAddress.Any, 443, configure =>
+                                {
+                                    var httpsConnectionAdapterOptions = new HttpsConnectionAdapterOptions()
+                                    {
+                                        ClientCertificateMode = ClientCertificateMode.AllowCertificate,
+                                        ServerCertificate = new X509Certificate2("api-dev.rio.org.pfx", "password#1"),
+                                        ClientCertificateValidation = (certificate2, chain, arg3) => true
+                                    };
+
+                                    configure.UseHttps(httpsConnectionAdapterOptions);
+                                });
+                            }
+                        })
+                        .UseIISIntegration()
+                        .UseStartup<Startup>();
                 })
-                .UseStartup<Startup>()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     // delete all default configuration providers
@@ -56,6 +55,10 @@ namespace Rio.API
                     {
                         config.AddJsonFile(secretPath);
                     }
-                });
+                })
+                .Build();
+
+            host.Run();
+        }
     }
 }

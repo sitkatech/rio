@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
-using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.Posting;
@@ -32,7 +31,6 @@ namespace Rio.API.Controllers
 
         [HttpPost("/users/invite")]
         [UserManageFeature]
-        [RequiresValidJSONBodyFilter("Could not parse a valid User Invite JSON object from the Request Body.")]
         public IActionResult InviteUser([FromBody] UserInviteDto inviteDto)
         {
             if (inviteDto.RoleID.HasValue)
@@ -146,7 +144,6 @@ namespace Rio.API.Controllers
 
         [HttpPut("users/{userID}")]
         [UserManageFeature]
-        [RequiresValidJSONBodyFilter("Could not parse a valid User Upsert JSON object from the Request Body.")]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);

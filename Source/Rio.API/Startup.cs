@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -15,8 +16,8 @@ namespace Rio.API
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _environment;
-        public Startup(IHostingEnvironment environment, IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Configuration = configuration;
             _environment = environment;
@@ -27,8 +28,7 @@ namespace Rio.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .AddJsonOptions(opt =>
+            services.AddControllers().AddNewtonsoftJson(opt =>
                 {
                     if (!_environment.IsProduction())
                     {
@@ -74,7 +74,7 @@ namespace Rio.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -87,6 +87,7 @@ namespace Rio.API
                 app.UseHsts();
             }
 
+            app.UseRouting();
             app.UseCors(policy =>
             {
                 //TODO: don't allow all origins
@@ -97,8 +98,12 @@ namespace Rio.API
             });
 
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+            });
         }
     }
 }

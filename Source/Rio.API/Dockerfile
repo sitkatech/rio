@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 
 COPY ./Rio.Models ./Rio.Models
@@ -7,7 +7,7 @@ COPY ./Rio.API ./Rio.API
 
 RUN dotnet publish ./Rio.API/Rio.API.csproj -c Release -o /app
 
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS final
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app
 COPY --from=build /app /app
 RUN ls -la

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
-using Rio.API.Services.Filter;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
@@ -32,7 +31,6 @@ namespace Rio.API.Controllers
 
         [HttpPost("/offers/new/{postingID}")]
         [OfferManageFeature]
-        [RequiresValidJSONBodyFilter("Could not parse a valid Offer New JSON object from the Request Body.")]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
             var posting = Posting.GetByPostingID(_dbContext, postingID);
