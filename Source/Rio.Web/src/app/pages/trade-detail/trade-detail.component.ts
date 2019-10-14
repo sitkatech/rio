@@ -19,6 +19,7 @@ import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/models/water-
 import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
+import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -114,7 +115,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       if (this.mostRecentOffer.WaterTransferID) {
         this.waterTransferService.getWaterTransferRegistrationsFromWaterTransferID(this.mostRecentOffer.WaterTransferID)
         .subscribe(result => {
-          this.waterTransferRegistrations = result.filter(x => x.DateRegistered !== null).sort((a, b) => a.DateRegistered > b.DateRegistered ? -1 : a.DateRegistered < b.DateRegistered ? 1 : 0);
+          this.waterTransferRegistrations = result.filter(x => x.WaterTransferRegistrationStatusID !== WaterTransferRegistrationStatusEnum.Pending).sort((a, b) => a.StatusDate > b.StatusDate ? -1 : a.StatusDate < b.StatusDate ? 1 : 0);
         });
       }
     });
@@ -133,9 +134,46 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     return waterTransferTypeID === WaterTransferTypeEnum.Buying ? "Buyer" : "Seller";
   }
 
+  public getWaterTransferRegistrationStatus(waterTransferRegistrationStatusID: number): string {
+    switch(waterTransferRegistrationStatusID)
+    {
+      case WaterTransferRegistrationStatusEnum.Registered:
+        return "Registered";
+      case WaterTransferRegistrationStatusEnum.Canceled:
+        return "Canceled";
+      default:
+        return "Pending"
+    }
+  }
+
+  public getTradeStatus(trade: TradeDto): string {
+    if(this.isCanceled())
+    {
+      return "Transaction Canceled";
+    }
+    return "Offer " + trade.TradeStatus.TradeStatusDisplayName;
+  }
+
   public canConfirmTransfer(): boolean {
-    return this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && ((this.currentUser.UserID === this.buyer.UserID && !this.mostRecentOffer.RegisteredByBuyer) ||
-      (this.currentUser.UserID === this.seller.UserID && !this.mostRecentOffer.RegisteredBySeller));
+    return !this.isCanceled() && this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted 
+    && ((this.currentUser.UserID === this.buyer.UserID && !this.isRegistered(WaterTransferTypeEnum.Buying)) ||
+      (this.currentUser.UserID === this.seller.UserID && !this.isRegistered(WaterTransferTypeEnum.Selling)));
+  }
+
+  private isCanceled() {
+    if(this.waterTransferRegistrations.length > 0)
+    {
+      return this.waterTransferRegistrations.filter(x => x.IsCanceled).length > 0;
+    }
+    return false;
+  }
+
+  private isRegistered(waterTransferType: WaterTransferTypeEnum) {
+    if(this.waterTransferRegistrations.length > 0)
+    {
+      return this.waterTransferRegistrations.filter(x => x.WaterTransferTypeID === waterTransferType && x.IsRegistered).length > 0;
+    }
+    return false;
   }
 
   public isTradeNotOpen(): boolean {

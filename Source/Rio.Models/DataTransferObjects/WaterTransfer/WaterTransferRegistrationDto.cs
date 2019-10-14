@@ -10,7 +10,8 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public int WaterTransferTypeID { get; set; }
         [Required]
         public int UserID { get; set; }
-        public DateTime? DateRegistered { get; set; }
+        public int? WaterTransferRegistrationStatusID { get; set; }
+        public DateTime? StatusDate { get; set; }
         public List<WaterTransferRegistrationParcelDto> WaterTransferRegistrationParcels { get; set; }
     }
 }

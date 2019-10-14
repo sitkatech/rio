@@ -17,8 +17,16 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<WaterTransferRegistrationSimpleDto> GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
         {
             var waterTransferRegistrations = GetWaterTransferRegistrationsImpl(dbContext).Where(x => x.WaterTransferID == waterTransferID);
-            return waterTransferRegistrations.Select(x => new WaterTransferRegistrationSimpleDto {DateRegistered = x.DateRegistered, User = x.User.AsSimpleDto(), WaterTransferTypeID = x.WaterTransferTypeID})
-                .AsEnumerable();
+            return waterTransferRegistrations.Select(x => x.AsSimpleDto()).AsEnumerable();
         }
+
+        public bool IsPending =>
+            WaterTransferRegistrationStatusID == (int) WaterTransferRegistrationStatusEnum.Pending;
+
+        public bool IsRegistered =>
+            WaterTransferRegistrationStatusID == (int) WaterTransferRegistrationStatusEnum.Registered;
+
+        public bool IsCanceled =>
+            WaterTransferRegistrationStatusID == (int) WaterTransferRegistrationStatusEnum.Canceled;
     }
 }

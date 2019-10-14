@@ -82,12 +82,12 @@ left join
 		join dbo.Trade t on o.TradeID = t.TradeID
 		join dbo.Posting p on t.PostingID = p.PostingID
 		union
-		select t.TradeID, t.TradeNumber, wtr.UserID, wtr.DateRegistered as TransactionDate
+		select t.TradeID, t.TradeNumber, wtr.UserID, wtr.StatusDate as TransactionDate
 		from dbo.WaterTransferRegistration wtr
 		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID
 		join dbo.Offer o on wt.OfferID = o.OfferID
 		join dbo.Trade t on o.TradeID = t.TradeID
-		where wtr.DateRegistered is not null
+		where wtr.StatusDate is not null
 	) th
 ) mrtr on a.UserID = mrtr.UserID and mrtr.Ranking = 1
 

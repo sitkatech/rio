@@ -71,11 +71,11 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            waterTransferDto = WaterTransfer.Confirm(_dbContext, waterTransferID, waterTransferRegistrationDto);
-            if (waterTransferDto.RegisteredByBuyer && waterTransferDto.RegisteredBySeller)
+            waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto, WaterTransferRegistrationStatusEnum.Registered);
+            if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, waterTransferRegistrationDto.WaterTransferTypeID);
+                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -84,6 +84,39 @@ namespace Rio.API.Controllers
 
             return Ok(waterTransferDto);
         }
+
+        [HttpPost("/water-transfers/{waterTransferID}/cancel")]
+        [OfferManageFeature]
+        public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
+        {
+            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            if (waterTransferDto == null)
+            {
+                return NotFound();
+            }
+
+            var validationMessages = WaterTransfer.ValidateCancelTransfer(waterTransferRegistrationDto, waterTransferDto);
+            validationMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto,
+                WaterTransferRegistrationStatusEnum.Canceled);
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateCancelTransferEmail(_rioWebUrl, waterTransferDto,
+                waterTransferRegistrationDto.WaterTransferTypeID);
+            foreach (var mailMessage in mailMessages)
+            {
+                SendEmailMessage(smtpClient, mailMessage);
+            }
+
+            return Ok(waterTransferDto);
+        }
+
+
 
         [HttpGet("water-transfers/{waterTransferID}/parcels/{userID}")]
         [OfferManageFeature]
@@ -128,10 +161,10 @@ namespace Rio.API.Controllers
             smtpClient.Send(mailMessage);
         }
 
-        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer, int waterTransferType)
+        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer)
         {
-            var receivingUser = waterTransfer.Buyer;
-            var transferringUser = waterTransfer.Seller;
+            var receivingUser = waterTransfer.BuyerRegistration.User;
+            var transferringUser = waterTransfer.SellerRegistration.User;
             var mailMessages = new List<MailMessage>();
             var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water allocation has been updated.
 <ul>
@@ -148,6 +181,33 @@ namespace Rio.API.Controllers
                 var mailMessage = new MailMessage
                 {
                     Subject = "Water Transfer Registered",
+                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                };
+                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+                mailMessages.Add(mailMessage);
+            }
+            return mailMessages;
+        }
+        private static List<MailMessage> GenerateCancelTransferEmail(string rioUrl, WaterTransferDto waterTransfer, int waterTransferType)
+        {
+            var receivingUser = waterTransfer.BuyerRegistration.User;
+            var transferringUser = waterTransfer.SellerRegistration.User;
+            var mailMessages = new List<MailMessage>();
+            var messageBody = $@"This transaction has been canceled, and your annual water allocation will not be updated.
+<ul>
+    <li><strong>Buyer:</strong> {receivingUser.FullName} ({receivingUser.Email})</li>
+    <li><strong>Seller:</strong> {transferringUser.FullName} ({transferringUser.Email})</li>
+    <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
+</ul>
+<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
+<br /><br />
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+            var mailTos = new List<UserSimpleDto> { receivingUser, transferringUser };
+            foreach (var mailTo in mailTos)
+            {
+                var mailMessage = new MailMessage
+                {
+                    Subject = "Water Transfer Canceled",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));

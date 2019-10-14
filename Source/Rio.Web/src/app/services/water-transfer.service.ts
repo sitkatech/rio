@@ -10,7 +10,6 @@ import { WaterTransferRegistrationSimpleDto } from '../shared/models/water-trans
     providedIn: 'root'
 })
 export class WaterTransferService {
-
   constructor(private apiService: ApiService) { }
 
   public getWaterTransferFromWaterTransferID(waterTransferID: number): Observable<WaterTransferDto> {
@@ -35,6 +34,11 @@ export class WaterTransferService {
 
   public registerTransfer(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferDto>  {
     let route = `/water-transfers/${waterTransferID}/register`;
+    return this.apiService.postToApi(route, waterTransferRegistrationDto);
+  }
+  
+  public cancelTrade(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferDto> {
+    let route = `/water-transfers/${waterTransferID}/cancel`;
     return this.apiService.postToApi(route, waterTransferRegistrationDto);
   }
 }

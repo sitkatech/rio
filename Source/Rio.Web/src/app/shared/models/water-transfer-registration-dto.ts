@@ -3,8 +3,9 @@ import { WaterTransferRegistrationParcelDto } from './water-transfer-registratio
 export class WaterTransferRegistrationDto {
     WaterTransferTypeID: number;
     UserID: number;
+    WaterTransferRegistrationStatusID: number;
+    StatusDate: Date;
     WaterTransferRegistrationParcels: Array<WaterTransferRegistrationParcelDto>;
-    DateRegistered: Date;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

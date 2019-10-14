@@ -28,16 +28,16 @@
 
                         <dt class="text-md-right col-md-4 col-sm-12">Buyer</dt>
                         <dd class="col-md-8 col-sm-12">
-                            {{waterTransfer.Buyer.FullName}}<br />
+                            {{waterTransfer.BuyerRegistration.User.FullName}}<br />
                             <small><a
-                                    href="mailto:{{waterTransfer.Buyer.Email}}">{{waterTransfer.Buyer.Email}}</a></small>
+                                    href="mailto:{{waterTransfer.BuyerRegistration.User.Email}}">{{waterTransfer.BuyerRegistration.User.Email}}</a></small>
                         </dd>
 
                         <dt class="text-md-right col-md-4 col-sm-12">Seller</dt>
                         <dd class="col-md-8 col-sm-12">
-                            {{waterTransfer.Seller.FullName}}<br />
+                            {{waterTransfer.SellerRegistration.User.FullName}}<br />
                             <small><a
-                                    href="mailto:{{waterTransfer.Seller.Email}}">{{waterTransfer.Seller.Email}}</a></small>
+                                    href="mailto:{{waterTransfer.SellerRegistration.User.Email}}">{{waterTransfer.SellerRegistration.User.Email}}</a></small>
                         </dd>
 
                         <dt class="text-md-right col-md-4 col-sm-12">Quantity</dt>
@@ -54,8 +54,32 @@
                         <dd class="col-md-8 col-sm-12">
                             {{getTotalPrice(waterTransfer) | currency : "USD" }}
                         </dd>
-
                     </dl>
+                </div>
+            </div>
+            <div class="mt-2" *ngIf="canCancelTrade()">
+                <small class="cancelTradeTitle">
+                    <a class="collapsed" data-toggle="collapse" href="#cancelTradePanel" role="button" aria-expanded="false"
+                        aria-controls="cancelTradePanel">
+                        What if I am unable to complete this transaction?
+                    </a>
+                </small>
+                <div class="mt-1 collapse" id="cancelTradePanel">
+                    <div class="card">
+                        <div class="card-header">
+                            Cancel this Trade
+                        </div>
+                        <div class="card-body">
+                            <p>Need some intro text</p>
+                            <div class="float-right">
+                                <button [disabled]="isLoadingSubmit" type="submit" class="btn btn-primary"
+                                    (click)="cancelTrade()">
+                                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                                    Cancel Trade
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

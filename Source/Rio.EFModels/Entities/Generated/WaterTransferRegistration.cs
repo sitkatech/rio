@@ -16,8 +16,9 @@ namespace Rio.EFModels.Entities
         public int WaterTransferID { get; set; }
         public int WaterTransferTypeID { get; set; }
         public int UserID { get; set; }
+        public int WaterTransferRegistrationStatusID { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? DateRegistered { get; set; }
+        public DateTime StatusDate { get; set; }
 
         [ForeignKey("UserID")]
         [InverseProperty("WaterTransferRegistration")]
@@ -25,6 +26,9 @@ namespace Rio.EFModels.Entities
         [ForeignKey("WaterTransferID")]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransfer WaterTransfer { get; set; }
+        [ForeignKey("WaterTransferRegistrationStatusID")]
+        [InverseProperty("WaterTransferRegistration")]
+        public virtual WaterTransferRegistrationStatus WaterTransferRegistrationStatus { get; set; }
         [ForeignKey("WaterTransferTypeID")]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransferType WaterTransferType { get; set; }

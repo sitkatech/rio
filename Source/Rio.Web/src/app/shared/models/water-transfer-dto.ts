@@ -1,4 +1,5 @@
 import { UserSimpleDto } from './user/user-simple-dto';
+import { WaterTransferRegistrationSimpleDto } from './water-transfer-registration-simple-dto';
 
 export class WaterTransferDto {
     WaterTransferID: number;
@@ -7,11 +8,9 @@ export class WaterTransferDto {
     TransferYear: number;
     AcreFeetTransferred: number;
     UnitPrice: number;
-    Seller: UserSimpleDto;
-    Buyer: UserSimpleDto;
+    BuyerRegistration: WaterTransferRegistrationSimpleDto;
+    SellerRegistration: WaterTransferRegistrationSimpleDto;
     Notes: string;
-    RegisteredByBuyer: boolean;
-    RegisteredBySeller: boolean;
     TradeNumber: string;
 
     constructor(obj?: any) {

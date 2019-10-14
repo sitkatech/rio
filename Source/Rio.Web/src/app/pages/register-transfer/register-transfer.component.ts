@@ -14,6 +14,8 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/parcel-picker.component';
 import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
+import { TradeService } from 'src/app/services/trade.service';
+
 
 @Component({
   selector: 'rio-register-transfer',
@@ -40,6 +42,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private waterTransferService: WaterTransferService,
+    private tradeService: TradeService,
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService
@@ -74,9 +77,9 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
           : waterTransfer as WaterTransferDto;
-        this.waterTransferType = this.waterTransfer.Buyer.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
+        this.waterTransferType = this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
         this.isRegisteringTransfer = false;
-        this.registerAction = this.waterTransfer.Buyer.UserID === this.currentUser.UserID ? "to" : "from";
+        this.registerAction = this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID ? "to" : "from";
         if (!this.canRegister()) {
           this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
         }
@@ -91,12 +94,17 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public canRegister(): boolean {
-    return (this.waterTransfer.Buyer.UserID === this.currentUser.UserID && this.waterTransfer.RegisteredByBuyer === false) ||
-      (this.waterTransfer.Seller.UserID === this.currentUser.UserID && this.waterTransfer.RegisteredBySeller === false);
+    return !this.isCanceled() &&    
+    (this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID && !this.waterTransfer.BuyerRegistration.IsRegistered) ||
+      (this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID && !this.waterTransfer.SellerRegistration.IsRegistered);
+  }
+
+  private isCanceled() {
+    return this.waterTransfer.BuyerRegistration.IsCanceled || this.waterTransfer.SellerRegistration.IsCanceled;
   }
 
   public isBuyerOrSeller(): boolean {
-    return this.waterTransfer.Buyer.UserID === this.currentUser.UserID || this.waterTransfer.Seller.UserID === this.currentUser.UserID;
+    return this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID || this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID;
   }
 
   public cancelRegistration(): void {
@@ -152,6 +160,35 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         }
       );
+  }
+
+  public cancelTrade(): void {
+    this.isLoadingSubmit = true;
+    let model = new WaterTransferRegistrationDto();
+    model.UserID = this.currentUser.UserID;
+    model.WaterTransferTypeID = this.waterTransferType;
+    this.waterTransferService.cancelTrade(this.waterTransfer.WaterTransferID, model)
+      .subscribe(response => {
+        this.isLoadingSubmit = false;
+        this.router.navigateByUrl("/trades/" + this.waterTransfer.TradeNumber)
+          .then(() => {
+            this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+          });
+      }
+        ,
+        error => {
+          new Alert("There was a problem submitting the parcels for this registration.",
+            AlertContext.Danger);
+          this.isLoadingSubmit = false;
+          this.cdr.detectChanges();
+        }
+      );
+  }
+
+  public canCancelTrade(): boolean {
+    return this.isBuyerOrSeller()
+      && !this.waterTransfer.BuyerRegistration.IsRegistered
+      && !this.waterTransfer.SellerRegistration.IsRegistered;
   }
 
   public isParcelPickerValid(): boolean {

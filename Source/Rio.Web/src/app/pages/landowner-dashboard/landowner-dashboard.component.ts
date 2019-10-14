@@ -155,7 +155,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
     return this.trades ?
       this.trades
-        .filter(x => (new Date(x.OfferDate).getFullYear()).toString() === this.waterYearToDisplay.toString() && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && (!x.IsRegisteredByBuyer || !x.IsRegisteredBySeller))))
+        .filter(x => (new Date(x.OfferDate).getFullYear()).toString() === this.waterYearToDisplay.toString() 
+        && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID) 
+        || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted 
+          && !this.isTradeCanceled(x) && (x.BuyerRegistration.IsPending || x.SellerRegistration.IsPending))))
         .sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
   }
 
@@ -171,12 +174,16 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return (this.doesMostRecentOfferBelongToCurrentUser(trade) ? trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Buying " : "Selling " : trade.OfferPostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling " : "Buying ") + " " + trade.Quantity + " ac-ft";
   }
 
+  public isTradeCanceled(trade: TradeWithMostRecentOfferDto) {
+    return trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
+  }
+
   public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
-    return (trade.IsRegisteredByBuyer && trade.Buyer.UserID === this.user.UserID) || (trade.IsRegisteredBySeller && trade.Seller.UserID === this.user.UserID);
+    return (trade.BuyerRegistration.IsRegistered && trade.Buyer.UserID === this.user.UserID) || (trade.SellerRegistration.IsRegistered && trade.Seller.UserID === this.user.UserID);
   }
 
   public isTradeRegisteredByBothParties(trade: TradeWithMostRecentOfferDto) {
-    return trade.IsRegisteredByBuyer && trade.IsRegisteredBySeller;
+    return trade.BuyerRegistration.IsRegistered && trade.SellerRegistration.IsRegistered;
   }
 
   public getParcelsForWaterYear(year: number): Array<ParcelAllocationAndConsumptionDto> {
@@ -221,15 +228,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.Seller.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.SellerRegistration.User.UserID === this.user.UserID);
   }
 
   public getPurchasedWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.Buyer.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.BuyerRegistration.User.UserID === this.user.UserID);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDto) {
-    return !waterTransfer.RegisteredByBuyer || !waterTransfer.RegisteredBySeller;
+    return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
   public getPurchasedAcreFeet(year?: number): number {

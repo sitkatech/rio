@@ -68,10 +68,10 @@
         <ul class="m-0 p-0">
             <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
                 <span class="fas fa-exclamation-circle" style="color: orangered"></span>
-                <ng-container *ngIf="!isTradeRegisteredByUser(trade) && !isTradePending(trade)">
+                <ng-container *ngIf="isTradePendingRegistrationForUser(trade) && !isTradePending(trade)">
                     Trade {{trade.TradeNumber}} needs to be registered
                     <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
-                    *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade)">
+                    *ngIf="trade.WaterTransferID && isTradePendingRegistrationForUser(trade)">
                     [Register transfer]
                 </a>
                 </ng-container>

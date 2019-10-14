@@ -37,6 +37,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
         public virtual DbSet<WaterTransferRegistration> WaterTransferRegistration { get; set; }
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
+        public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
         public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
@@ -416,6 +417,11 @@ namespace Rio.EFModels.Entities
                     .HasForeignKey(d => d.WaterTransferID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
+                entity.HasOne(d => d.WaterTransferRegistrationStatus)
+                    .WithMany(p => p.WaterTransferRegistration)
+                    .HasForeignKey(d => d.WaterTransferRegistrationStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
                 entity.HasOne(d => d.WaterTransferType)
                     .WithMany(p => p.WaterTransferRegistration)
                     .HasForeignKey(d => d.WaterTransferTypeID)
@@ -433,6 +439,23 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.WaterTransferRegistrationParcel)
                     .HasForeignKey(d => d.WaterTransferRegistrationID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WaterTransferRegistrationStatus>(entity =>
+            {
+                entity.HasIndex(e => e.WaterTransferRegistrationStatusDisplayName)
+                    .HasName("AK_WaterTransferRegistrationStatus_WaterTransferRegistrationStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.WaterTransferRegistrationStatusName)
+                    .HasName("AK_WaterTransferRegistrationStatus_WaterTransferRegistrationStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.WaterTransferRegistrationStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.WaterTransferRegistrationStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.WaterTransferRegistrationStatusName).IsUnicode(false);
             });
 
             modelBuilder.Entity<WaterTransferType>(entity =>

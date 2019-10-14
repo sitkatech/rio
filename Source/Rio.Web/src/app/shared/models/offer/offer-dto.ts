@@ -10,10 +10,6 @@ export class OfferDto {
     CreateUser: UserSimpleDto;
     OfferStatus: OfferStatusDto;
     TradeID: number;
-    RegisteredBySeller: boolean;
-    DateRegisteredBySeller: Date;
-    RegisteredByBuyer: boolean;
-    DateRegisteredByBuyer: Date;
     WaterTransferID: number;
 
     constructor(obj?: any) {

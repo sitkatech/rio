@@ -23,12 +23,16 @@ namespace Rio.EFModels.Entities
             var waterTransferRegistrationBuyer = new WaterTransferRegistration()
             {
                 WaterTransfer = waterTransfer,
-                WaterTransferTypeID = (int) WaterTransferTypeEnum.Buying
+                WaterTransferTypeID = (int) WaterTransferTypeEnum.Buying,
+                StatusDate = DateTime.Now,
+                WaterTransferRegistrationStatusID = (int)WaterTransferRegistrationStatusEnum.Pending
             };
             var waterTransferRegistrationSeller = new WaterTransferRegistration()
             {
                 WaterTransfer = waterTransfer,
-                WaterTransferTypeID = (int) WaterTransferTypeEnum.Selling
+                WaterTransferTypeID = (int) WaterTransferTypeEnum.Selling,
+                StatusDate = DateTime.Now,
+                WaterTransferRegistrationStatusID = (int) WaterTransferRegistrationStatusEnum.Pending
             };
 
             if (postingDto.PostingType.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
@@ -80,12 +84,12 @@ namespace Rio.EFModels.Entities
         {
             var result = new List<ErrorMessage>();
 
-            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && waterTransferRegistrationDto.UserID != waterTransferDto.Seller.UserID)
+            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && waterTransferRegistrationDto.UserID != waterTransferDto.SellerRegistration.User.UserID)
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match seller." });
             }
 
-            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && waterTransferRegistrationDto.UserID != waterTransferDto.Buyer.UserID)
+            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && waterTransferRegistrationDto.UserID != waterTransferDto.BuyerRegistration.User.UserID)
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match buyer." });
             }
@@ -93,14 +97,41 @@ namespace Rio.EFModels.Entities
             return result;
         }
 
-        public static WaterTransferDto Confirm(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public static WaterTransferDto ChangeWaterRegistrationStatus(RioDbContext dbContext, int waterTransferID,
+            WaterTransferRegistrationDto waterTransferRegistrationDto,
+            WaterTransferRegistrationStatusEnum waterTransferRegistrationStatusEnum)
         {
             var waterTransferRegistration = dbContext.WaterTransferRegistration
-                .Single(x => x.WaterTransferID == waterTransferID && x.WaterTransferTypeID == waterTransferRegistrationDto.WaterTransferTypeID);
-            waterTransferRegistration.DateRegistered = DateTime.Now;
+                .Single(x =>
+                    x.WaterTransferID == waterTransferID &&
+                    x.WaterTransferTypeID == waterTransferRegistrationDto.WaterTransferTypeID);
+            waterTransferRegistration.WaterTransferRegistrationStatusID = (int) waterTransferRegistrationStatusEnum;
+            waterTransferRegistration.StatusDate = DateTime.Now;
             dbContext.SaveChanges();
             dbContext.Entry(waterTransferRegistration).Reload();
             return GetByWaterTransferID(dbContext, waterTransferID);
+        }
+
+        public static List<ErrorMessage> ValidateCancelTransfer(WaterTransferRegistrationDto waterTransferRegistrationDto, WaterTransferDto waterTransferDto)
+        {
+            var result = new List<ErrorMessage>();
+
+            if(waterTransferDto.BuyerRegistration.IsRegistered || waterTransferDto.SellerRegistration.IsRegistered)
+            {
+                result.Add(new ErrorMessage() { Message = "Cannot cancel transfer because one of the parties has already registered this transfer." });
+            }
+
+            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && waterTransferRegistrationDto.UserID != waterTransferDto.SellerRegistration.User.UserID)
+            {
+                result.Add(new ErrorMessage() { Message = "Canceling user does not match seller." });
+            }
+
+            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && waterTransferRegistrationDto.UserID != waterTransferDto.BuyerRegistration.User.UserID)
+            {
+                result.Add(new ErrorMessage() { Message = "Canceling user does not match buyer." });
+            }
+
+            return result;
         }
     }
 }

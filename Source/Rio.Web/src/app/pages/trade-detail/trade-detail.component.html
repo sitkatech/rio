@@ -10,7 +10,7 @@
 </nav>
 <div class="container mt-sm-4" *ngIf="trade">
   <h2 style="display: inline-block">
-    Trade {{trade.TradeNumber}} : Offer {{trade.TradeStatus.TradeStatusDisplayName}}
+    Trade {{trade.TradeNumber}} : {{getTradeStatus(trade)}}
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
@@ -185,12 +185,12 @@
           <ng-template ngFor let-waterTransferRegistration [ngForOf]="waterTransferRegistrations">
             <div class="row">
               <div class="col-md-4 col-sm-12">
-                <strong>Registered by {{getWaterTransferRegistrationType(waterTransferRegistration.WaterTransferTypeID)}}
-                  ({{waterTransferRegistration.DateRegistered | date: "short"}})</strong>
+                <strong>{{getWaterTransferRegistrationStatus(waterTransferRegistration.WaterTransferRegistrationStatusID)}} by {{getWaterTransferRegistrationType(waterTransferRegistration.WaterTransferTypeID)}}
+                  ({{waterTransferRegistration.StatusDate | date: "short"}})</strong>
               </div>
               <div class="col-md-8 col-sm-12">
                 <dl class="row">
-                  <dd class="col-sm-5 col-xs-12">Transaction Registered</dd>
+                  <dd class="col-sm-5 col-xs-12">Transaction {{getWaterTransferRegistrationStatus(waterTransferRegistration.WaterTransferRegistrationStatusID)}}</dd>
                   <dd class="col-sm-7 col-xs-12">
                     {{waterTransferRegistration.User.FullName}} ({{waterTransferRegistration.User.Email}})
                   </dd>

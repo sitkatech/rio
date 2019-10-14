@@ -18,12 +18,8 @@ namespace Rio.EFModels.Entities
                 TransferYear = waterTransfer.TransferDate.Year,
                 AcreFeetTransferred = waterTransfer.AcreFeetTransferred,
                 UnitPrice = waterTransfer.Offer?.Price,
-                Seller = sellerRegistration.User.AsSimpleDto(),
-                RegisteredBySeller = sellerRegistration.DateRegistered.HasValue,
-                DateRegisteredBySeller = sellerRegistration.DateRegistered,
-                Buyer = buyerRegistration.User.AsSimpleDto(),
-                RegisteredByBuyer = buyerRegistration.DateRegistered.HasValue,
-                DateRegisteredByBuyer = buyerRegistration.DateRegistered,
+                SellerRegistration = sellerRegistration.AsSimpleDto(),
+                BuyerRegistration = buyerRegistration.AsSimpleDto(),
                 Notes = waterTransfer.Notes,
                 // ReSharper disable once PossibleNullReferenceException
                 TradeNumber = waterTransfer.Offer.Trade.TradeNumber

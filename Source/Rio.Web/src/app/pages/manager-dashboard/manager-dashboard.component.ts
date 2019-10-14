@@ -223,7 +223,23 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Status',
-        valueGetter: function (params) { return params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted && (!params.data.IsRegisteredByBuyer || !params.data.IsRegisteredBySeller) ? "Awaiting Registration" : params.data.TradeStatus.TradeStatusDisplayName; },
+        valueGetter: function (params) { 
+          if(params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted)
+          {
+            if(params.data.BuyerRegistration.IsCanceled || params.data.SellerRegistration.IsCanceled)
+            {
+              return "Transaction Canceled";
+            }
+            else if(!params.data.BuyerRegistration.IsRegistered || !params.data.SellerRegistration.IsRegistered)
+            {
+              return "Awaiting Registration";
+            }
+            else
+            {
+              return params.data.TradeStatus.TradeStatusDisplayName;
+            }
+          }
+          return params.data.TradeStatus.TradeStatusDisplayName; },
         sortable: true, filter: true, width: 200
       },
       {

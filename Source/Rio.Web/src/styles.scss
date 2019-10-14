@@ -1,7 +1,8 @@
 @import "scss/_variables.scss";
 
-// import Bootstrap and Kendo AFTER variables
+// import Bootstrap AFTER variables
 @import "~bootstrap/scss/bootstrap";
+@import "~font-awesome/css/font-awesome.css";
 
 @import "scss/_grids.scss";
 @import "~leaflet/dist/leaflet.css";

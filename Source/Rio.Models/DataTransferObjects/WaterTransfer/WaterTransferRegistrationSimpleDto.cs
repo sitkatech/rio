@@ -1,15 +1,16 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.Models.DataTransferObjects.WaterTransfer
 {
     public class WaterTransferRegistrationSimpleDto
     {
-        [Required]
         public int WaterTransferTypeID { get; set; }
-        [Required]
         public UserSimpleDto User { get; set; }
-        public DateTime? DateRegistered { get; set; }
+        public int WaterTransferRegistrationStatusID { get; set; }
+        public DateTime StatusDate { get; set; }
+        public bool IsRegistered { get; set; }
+        public bool IsCanceled { get; set; }
+        public bool IsPending { get; set; }
     }
 }

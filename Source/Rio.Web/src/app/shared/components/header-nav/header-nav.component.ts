@@ -84,7 +84,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
         const pendingTrades = this.trades !== undefined ? this.trades.filter(tr => this.isTradePending(tr)
-            || (tr.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && !this.isTradeRegisteredByUser(tr))) : [];
+            || (tr.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && this.isTradePendingRegistrationForUser(tr))) : [];
         return pendingTrades;
     }
 
@@ -105,8 +105,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return "Trade " + trade.TradeNumber + " - A buyer is awaiting your response to their offer to purchase water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
 
-    public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
-        return (trade.IsRegisteredByBuyer && trade.Buyer.UserID === this.currentUser.UserID) || (trade.IsRegisteredBySeller && trade.Seller.UserID === this.currentUser.UserID);
+    public isTradePendingRegistrationForUser(trade: TradeWithMostRecentOfferDto) {
+        let isCanceled =  trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
+        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.UserID === this.currentUser.UserID) 
+        || (trade.SellerRegistration.IsPending && trade.Seller.UserID === this.currentUser.UserID));
     }
 
     public isTradePending(trade: TradeWithMostRecentOfferDto) {

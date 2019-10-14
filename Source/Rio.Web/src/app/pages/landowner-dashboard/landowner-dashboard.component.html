@@ -204,9 +204,10 @@
                 <td style="border: 0 none">{{ trade.OfferDate | date: "MM/dd" }}</td>
                 <td style="border: 0 none; white-space: nowrap">
                   <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
-                    *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade)">
+                    *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade )&& !isTradeCanceled(trade)">
                     Awaiting Registration
                   </a>
+                  <span *ngIf="trade.WaterTransferID && isTradeCanceled(trade)">Canceled</span>
                   <span
                     *ngIf="trade.WaterTransferID && isTradeRegisteredByUser(trade) && !isTradeRegisteredByBothParties(trade)">You
                     have already registered this transfer.<br />The other party must still register<br />before the

@@ -11,7 +11,21 @@ namespace Rio.EFModels.Entities
             {
                 UserID = waterTransferRegistration.UserID,
                 WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
-                DateRegistered = waterTransferRegistration.DateRegistered
+                StatusDate = waterTransferRegistration.StatusDate
+            };
+        }
+
+        public static WaterTransferRegistrationSimpleDto AsSimpleDto(this WaterTransferRegistration waterTransferRegistration)
+        {
+            return new WaterTransferRegistrationSimpleDto
+            {
+                User = waterTransferRegistration.User.AsSimpleDto(),
+                WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
+                WaterTransferRegistrationStatusID = waterTransferRegistration.WaterTransferRegistrationStatusID,
+                StatusDate = waterTransferRegistration.StatusDate,
+                IsRegistered = waterTransferRegistration.IsRegistered,
+                IsCanceled = waterTransferRegistration.IsCanceled,
+                IsPending = waterTransferRegistration.IsPending
             };
         }
 

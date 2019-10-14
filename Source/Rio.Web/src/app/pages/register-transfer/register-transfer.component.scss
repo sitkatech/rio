@@ -1,0 +1,10 @@
+.cancelTradeTitle a:before {
+    font-family:Fontawesome;
+    content:'\f077';
+    font-size:10px;
+    font-weight:300;
+}
+.cancelTradeTitle a.collapsed:before {
+    font-family:Fontawesome;
+    content:'\f078';
+}
