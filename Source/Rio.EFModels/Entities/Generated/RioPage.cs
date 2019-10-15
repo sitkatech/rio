@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             RioPageImage = new HashSet<RioPageImage>();
         }
 
+        [Key]
         public int RioPageID { get; set; }
         public int RioPageTypeID { get; set; }
         public string RioPageContent { get; set; }

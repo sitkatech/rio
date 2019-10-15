@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             Posting = new HashSet<Posting>();
         }
 
+        [Key]
         public int PostingStatusID { get; set; }
         [Required]
         [StringLength(100)]

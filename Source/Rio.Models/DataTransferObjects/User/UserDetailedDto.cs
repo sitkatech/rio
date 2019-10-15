@@ -17,8 +17,8 @@ namespace Rio.Models.DataTransferObjects.User
         public int RoleID { get; set; }
         public string RoleDisplayName { get; set; }
 
-        public bool HasActiveTrades { get; set; }
-        public int AcreFeetOfWaterPurchased { get; set; }
-        public int AcreFeetOfWaterSold { get; set; }
+        public bool? HasActiveTrades { get; set; }
+        public int? AcreFeetOfWaterPurchased { get; set; }
+        public int? AcreFeetOfWaterSold { get; set; }
     }
 }

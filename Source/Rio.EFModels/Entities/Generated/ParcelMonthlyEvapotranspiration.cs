@@ -7,6 +7,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelMonthlyEvapotranspiration
     {
+        [Key]
         public int ParcelMonthlyEvapotranspirationID { get; set; }
         public int ParcelID { get; set; }
         public int WaterYear { get; set; }
@@ -14,7 +15,7 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "decimal(10, 4)")]
         public decimal EvapotranspirationRate { get; set; }
 
-        [ForeignKey("ParcelID")]
+        [ForeignKey(nameof(ParcelID))]
         [InverseProperty("ParcelMonthlyEvapotranspiration")]
         public virtual Parcel Parcel { get; set; }
     }

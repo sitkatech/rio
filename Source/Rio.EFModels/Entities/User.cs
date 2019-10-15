@@ -38,7 +38,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<UserDetailedDto> List(RioDbContext dbContext)
         {
             // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.UserDetaileds.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList()
+            var parcels = dbContext.vUserDetailed.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList()
                 .Select(user =>
                 {
                     var userDetailedDto = new UserDetailedDto()

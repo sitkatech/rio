@@ -12,7 +12,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<ParcelWithWaterUsageDto> ListWithWaterUsage(RioDbContext dbContext)
         {
             // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.ParcelWithAnnualWaterUsages.OrderBy(x => x.ParcelNumber).ToList()
+            var parcels = dbContext.vAllParcelsWithAnnualWaterUsage.OrderBy(x => x.ParcelNumber).ToList()
                 .Select(parcel =>
                 {
                     var parcelWithWaterUsageDto = new ParcelWithWaterUsageDto()
@@ -79,7 +79,8 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
-            return new BoundingBoxDto(parcels.Select(x => x.ParcelGeometry));
+            var geometries = parcels.Select(x => x.ParcelGeometry).ToList();
+            return new BoundingBoxDto(geometries);
         }
     }
 }

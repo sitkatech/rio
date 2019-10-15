@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             FileResource = new HashSet<FileResource>();
         }
 
+        [Key]
         public int FileResourceMimeTypeID { get; set; }
         [Required]
         [StringLength(100)]

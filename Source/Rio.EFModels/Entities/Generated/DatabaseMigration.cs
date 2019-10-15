@@ -7,6 +7,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class DatabaseMigration
     {
+        [Key]
         public int DatabaseMigrationNumber { get; set; }
         [Required]
         [StringLength(500)]

@@ -7,14 +7,15 @@ namespace Rio.EFModels.Entities
 {
     public partial class UserParcel
     {
+        [Key]
         public int UserParcelID { get; set; }
         public int UserID { get; set; }
         public int ParcelID { get; set; }
 
-        [ForeignKey("ParcelID")]
+        [ForeignKey(nameof(ParcelID))]
         [InverseProperty("UserParcel")]
         public virtual Parcel Parcel { get; set; }
-        [ForeignKey("UserID")]
+        [ForeignKey(nameof(UserID))]
         [InverseProperty("UserParcel")]
         public virtual User User { get; set; }
     }

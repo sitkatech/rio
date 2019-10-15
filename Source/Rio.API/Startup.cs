@@ -32,7 +32,7 @@ namespace Rio.API
                 {
                     if (!_environment.IsProduction())
                     {
-                        opt.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+                        opt.SerializerSettings.Formatting = Formatting.Indented;
                     }
                     opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
                     var resolver = opt.SerializerSettings.ContractResolver;

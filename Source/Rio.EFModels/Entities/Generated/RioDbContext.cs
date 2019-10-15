@@ -39,10 +39,11 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
-        public virtual DbQuery<ParcelWithAnnualWaterUsage> ParcelWithAnnualWaterUsages { get; set; }
-        public virtual DbQuery<UserDetailed> UserDetaileds { get; set; }
-        public virtual DbQuery<PostingDetailed> PostingDetaileds { get; set; }
-        public virtual DbQuery<LandownerUsageReport> LandownerUsageReports { get; set; }
+        public virtual DbSet<vAllParcelsWithAnnualWaterUsage> vAllParcelsWithAnnualWaterUsage { get; set; }
+        public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
+        public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
+        public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
+        public virtual DbSet<LandownerUsageReport> LandownerUsageReports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -50,8 +51,6 @@ namespace Rio.EFModels.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
-
             modelBuilder.Entity<DatabaseMigration>(entity =>
             {
                 entity.HasKey(e => e.DatabaseMigrationNumber)
@@ -475,9 +474,79 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
             });
 
-            modelBuilder.Query<ParcelWithAnnualWaterUsage>().ToView("vAllParcelsWithAnnualWaterUsage");
-            modelBuilder.Query<UserDetailed>().ToView("vUserDetailed");
-            modelBuilder.Query<PostingDetailed>().ToView("vPostingDetailed");
+            modelBuilder.Entity<vAllParcelsWithAnnualWaterUsage>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vAllParcelsWithAnnualWaterUsage");
+
+                entity.Property(e => e.Email).IsUnicode(false);
+
+                entity.Property(e => e.FirstName).IsUnicode(false);
+
+                entity.Property(e => e.LastName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerAllParcels>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerAllParcels");
+
+                entity.Property(e => e.LandOwnerFullName).IsUnicode(false);
+
+                entity.Property(e => e.OwnerAddress).IsUnicode(false);
+
+                entity.Property(e => e.OwnerCity).IsUnicode(false);
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vPostingDetailed>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vPostingDetailed");
+
+                entity.Property(e => e.PostedByEmail).IsUnicode(false);
+
+                entity.Property(e => e.PostedByFirstName).IsUnicode(false);
+
+                entity.Property(e => e.PostedByLastName).IsUnicode(false);
+
+                entity.Property(e => e.PostingStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.PostingTypeDisplayName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vUserDetailed>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vUserDetailed");
+
+                entity.Property(e => e.Company).IsUnicode(false);
+
+                entity.Property(e => e.Email).IsUnicode(false);
+
+                entity.Property(e => e.FirstName).IsUnicode(false);
+
+                entity.Property(e => e.LastName).IsUnicode(false);
+
+                entity.Property(e => e.LoginName).IsUnicode(false);
+
+                entity.Property(e => e.Phone).IsUnicode(false);
+
+                entity.Property(e => e.RoleDisplayName).IsUnicode(false);
+            });
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

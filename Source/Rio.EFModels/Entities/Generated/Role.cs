@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             User = new HashSet<User>();
         }
 
+        [Key]
         public int RoleID { get; set; }
         [Required]
         [StringLength(100)]

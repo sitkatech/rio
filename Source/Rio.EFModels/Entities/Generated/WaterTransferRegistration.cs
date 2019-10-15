@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistrationParcel = new HashSet<WaterTransferRegistrationParcel>();
         }
 
+        [Key]
         public int WaterTransferRegistrationID { get; set; }
         public int WaterTransferID { get; set; }
         public int WaterTransferTypeID { get; set; }
@@ -20,16 +21,16 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime StatusDate { get; set; }
 
-        [ForeignKey("UserID")]
+        [ForeignKey(nameof(UserID))]
         [InverseProperty("WaterTransferRegistration")]
         public virtual User User { get; set; }
-        [ForeignKey("WaterTransferID")]
+        [ForeignKey(nameof(WaterTransferID))]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransfer WaterTransfer { get; set; }
-        [ForeignKey("WaterTransferRegistrationStatusID")]
+        [ForeignKey(nameof(WaterTransferRegistrationStatusID))]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransferRegistrationStatus WaterTransferRegistrationStatus { get; set; }
-        [ForeignKey("WaterTransferTypeID")]
+        [ForeignKey(nameof(WaterTransferTypeID))]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransferType WaterTransferType { get; set; }
         [InverseProperty("WaterTransferRegistration")]

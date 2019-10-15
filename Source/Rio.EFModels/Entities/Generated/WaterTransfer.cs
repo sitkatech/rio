@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
+        [Key]
         public int WaterTransferID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime TransferDate { get; set; }
@@ -20,7 +21,7 @@ namespace Rio.EFModels.Entities
         [StringLength(2000)]
         public string Notes { get; set; }
 
-        [ForeignKey("OfferID")]
+        [ForeignKey(nameof(OfferID))]
         [InverseProperty("WaterTransfer")]
         public virtual Offer Offer { get; set; }
         [InverseProperty("WaterTransfer")]

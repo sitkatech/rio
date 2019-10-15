@@ -1,27 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Rio.Models.DataTransferObjects.Posting
+namespace Rio.EFModels.Entities
 {
-    public class PostingDetailedDto
+    public partial class vPostingDetailed
     {
-        public PostingDetailedDto()
-        {
-        }
-
         public int PostingID { get; set; }
+        [Column(TypeName = "datetime")]
         public DateTime PostingDate { get; set; }
         public int PostingTypeID { get; set; }
+        [Required]
+        [StringLength(100)]
         public string PostingTypeDisplayName { get; set; }
-
         public int PostingStatusID { get; set; }
+        [Required]
+        [StringLength(100)]
         public string PostingStatusDisplayName { get; set; }
-
         public int? PostedByUserID { get; set; }
+        [StringLength(100)]
         public string PostedByFirstName { get; set; }
+        [StringLength(100)]
         public string PostedByLastName { get; set; }
+        [StringLength(255)]
         public string PostedByEmail { get; set; }
-        public string PostedByFullName => PostedByFirstName + " " + PostedByLastName;
-
+        [Column(TypeName = "money")]
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public int AvailableQuantity { get; set; }

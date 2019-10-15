@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
+        [Key]
         public int WaterTransferTypeID { get; set; }
         [Required]
         [StringLength(50)]

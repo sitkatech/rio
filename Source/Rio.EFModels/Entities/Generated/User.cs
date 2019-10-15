@@ -17,6 +17,7 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
+        [Key]
         public int UserID { get; set; }
         public Guid? UserGuid { get; set; }
         [Required]
@@ -44,7 +45,7 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string Company { get; set; }
 
-        [ForeignKey("RoleID")]
+        [ForeignKey(nameof(RoleID))]
         [InverseProperty("User")]
         public virtual Role Role { get; set; }
         [InverseProperty("CreateUser")]

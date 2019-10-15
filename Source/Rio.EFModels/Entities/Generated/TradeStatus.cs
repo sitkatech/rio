@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             Trade = new HashSet<Trade>();
         }
 
+        [Key]
         public int TradeStatusID { get; set; }
         [Required]
         [StringLength(100)]

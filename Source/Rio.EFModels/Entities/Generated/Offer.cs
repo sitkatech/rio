@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             WaterTransfer = new HashSet<WaterTransfer>();
         }
 
+        [Key]
         public int OfferID { get; set; }
         public int TradeID { get; set; }
         [Column(TypeName = "datetime")]
@@ -24,13 +25,13 @@ namespace Rio.EFModels.Entities
         public string OfferNotes { get; set; }
         public int CreateUserID { get; set; }
 
-        [ForeignKey("CreateUserID")]
-        [InverseProperty("Offer")]
+        [ForeignKey(nameof(CreateUserID))]
+        [InverseProperty(nameof(User.Offer))]
         public virtual User CreateUser { get; set; }
-        [ForeignKey("OfferStatusID")]
+        [ForeignKey(nameof(OfferStatusID))]
         [InverseProperty("Offer")]
         public virtual OfferStatus OfferStatus { get; set; }
-        [ForeignKey("TradeID")]
+        [ForeignKey(nameof(TradeID))]
         [InverseProperty("Offer")]
         public virtual Trade Trade { get; set; }
         [InverseProperty("Offer")]

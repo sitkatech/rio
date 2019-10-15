@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 
 namespace Rio.Models.DataTransferObjects
@@ -31,11 +30,11 @@ namespace Rio.Models.DataTransferObjects
         }
 
 
-        public BoundingBoxDto(IEnumerable<IGeometry> geometries) : this(geometries.SelectMany(BoundingBoxDto.GetPointsFromDbGeometry).ToList())
+        public BoundingBoxDto(IEnumerable<Geometry> geometries) : this(geometries.SelectMany(GetPointsFromDbGeometry).ToList())
         {
         }
 
-        public static List<Point> GetPointsFromDbGeometry(IGeometry geometry)
+        public static List<Point> GetPointsFromDbGeometry(Geometry geometry)
         {
             var pointList = new List<Point>();
             var envelope = geometry.EnvelopeInternal;

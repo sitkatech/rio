@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             Trade = new HashSet<Trade>();
         }
 
+        [Key]
         public int PostingID { get; set; }
         public int PostingTypeID { get; set; }
         [Column(TypeName = "datetime")]
@@ -25,13 +26,13 @@ namespace Rio.EFModels.Entities
         public int PostingStatusID { get; set; }
         public int AvailableQuantity { get; set; }
 
-        [ForeignKey("CreateUserID")]
-        [InverseProperty("Posting")]
+        [ForeignKey(nameof(CreateUserID))]
+        [InverseProperty(nameof(User.Posting))]
         public virtual User CreateUser { get; set; }
-        [ForeignKey("PostingStatusID")]
+        [ForeignKey(nameof(PostingStatusID))]
         [InverseProperty("Posting")]
         public virtual PostingStatus PostingStatus { get; set; }
-        [ForeignKey("PostingTypeID")]
+        [ForeignKey(nameof(PostingTypeID))]
         [InverseProperty("Posting")]
         public virtual PostingType PostingType { get; set; }
         [InverseProperty("Posting")]

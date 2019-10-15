@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 
 namespace Rio.EFModels.Entities
 {
@@ -16,13 +16,14 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistrationParcel = new HashSet<WaterTransferRegistrationParcel>();
         }
 
+        [Key]
         public int ParcelID { get; set; }
         [Required]
         [StringLength(20)]
         public string ParcelNumber { get; set; }
         [Required]
         [Column(TypeName = "geometry")]
-        public IGeometry ParcelGeometry { get; set; }
+        public Geometry ParcelGeometry { get; set; }
         [Required]
         [StringLength(100)]
         public string OwnerName { get; set; }

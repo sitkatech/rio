@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
             Offer = new HashSet<Offer>();
         }
 
+        [Key]
         public int OfferStatusID { get; set; }
         [Required]
         [StringLength(100)]

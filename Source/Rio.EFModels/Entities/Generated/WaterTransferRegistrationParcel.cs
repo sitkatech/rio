@@ -7,15 +7,16 @@ namespace Rio.EFModels.Entities
 {
     public partial class WaterTransferRegistrationParcel
     {
+        [Key]
         public int WaterTransferRegistrationParcelID { get; set; }
         public int WaterTransferRegistrationID { get; set; }
         public int ParcelID { get; set; }
         public int AcreFeetTransferred { get; set; }
 
-        [ForeignKey("ParcelID")]
+        [ForeignKey(nameof(ParcelID))]
         [InverseProperty("WaterTransferRegistrationParcel")]
         public virtual Parcel Parcel { get; set; }
-        [ForeignKey("WaterTransferRegistrationID")]
+        [ForeignKey(nameof(WaterTransferRegistrationID))]
         [InverseProperty("WaterTransferRegistrationParcel")]
         public virtual WaterTransferRegistration WaterTransferRegistration { get; set; }
     }
