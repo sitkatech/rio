@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
         <DockerComposeProjectPath>docker-compose\docker-compose.dcproj</DockerComposeProjectPath>
     </PropertyGroup>
 
@@ -40,16 +40,6 @@
         <None Remove="tsconfig.json" />
         <None Remove="tslint.json" />
         <None Remove="workspace.code-workspace" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Rewrite" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>

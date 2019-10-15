@@ -5,15 +5,16 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace Rio.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         public IConfiguration Configuration { get; set; }
 
-        public Startup(IHostingEnvironment environment)
+        public Startup(IWebHostEnvironment environment)
         {
             var currentDirectory = Directory.GetCurrentDirectory();
             var builder = new ConfigurationBuilder()
@@ -33,7 +34,7 @@ namespace Rio.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime applicationLifetime)
         {
             if (env.IsDevelopment())
             {
