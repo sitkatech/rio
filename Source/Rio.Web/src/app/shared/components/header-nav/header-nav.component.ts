@@ -106,6 +106,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public isTradePendingRegistrationForUser(trade: TradeWithMostRecentOfferDto) {
+        if(!trade.BuyerRegistration && !trade.SellerRegistration)
+        {
+            return false;
+        }
         let isCanceled =  trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
         return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.UserID === this.currentUser.UserID) 
         || (trade.SellerRegistration.IsPending && trade.Seller.UserID === this.currentUser.UserID));
