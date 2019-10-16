@@ -96,21 +96,16 @@
 
                     <p>
                         Before registering the water transfer, you must identify the parcels you intend to transfer
-                        water to/from. Use the map to click the parcels involved in this transfer, then allocate the
-                        transfer volume to those parcels.
+                        water to/from. Use the map to click the parcels involved in this transfer or use the "Select All" button.
+                        The transfer volume will be allocated proportionally across your selected parcels.
                     </p>
                     <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels"
                         [visibleParcels]="visibleParcels" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
-                        <hr />
-                        <div class="mt-2">
-                            <div class="float-right">
-                                <button [disabled]="!isParcelPickerValid() || isLoadingSubmit" type="submit"
-                                    class="btn btn-primary" (click)="onSubmitParcels()">
-                                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                                    Next <i class="fas fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <button [disabled]="!isParcelPickerValid() || isLoadingSubmit" type="submit"
+                            class="btn btn-primary" (click)="onSubmitParcels()">
+                            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
                     </rio-parcel-picker>
                 </div>
             </div>
@@ -145,9 +140,13 @@
                                 disbursements, arising from or relating to the transaction.</li>
                         </ul>
                     </small>
+                    <dl class="row">
+                        <dt class="col-md-7">Type your Full Name before Registering the Transfer</dt>
+                        <dd class="col-md-5"><input type="text" [(ngModel)]="confirmedFullName" /></dd>
+                    </dl>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitRegistration()"
-                            [disabled]="isLoadingSubmit">
+                            [disabled]="!isFullNameConfirmed() || isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Confirm and Register Transfer
                         </button>

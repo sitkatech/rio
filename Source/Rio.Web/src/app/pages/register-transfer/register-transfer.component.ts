@@ -33,6 +33,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public visibleParcels: Array<ParcelDto> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
+  public confirmedFullName: string;
 
   @ViewChild("parcelPicker", { static: false })
   public parcelPicker: ParcelPickerComponent;
@@ -107,9 +108,14 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     return this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID || this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID;
   }
 
+  public isFullNameConfirmed(): boolean {
+    return this.confirmedFullName.toLowerCase() === this.currentUser.FullName.toLowerCase();
+  }
+
   public cancelRegistration(): void {
     this.haveParcelsBeenIdentified = false;
     this.isRegisteringTransfer = false;
+    this.confirmedFullName = null;
   }
 
   public submitRegistration(): void {

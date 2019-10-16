@@ -1,7 +1,12 @@
-<div class="float-right m-2">
-    <button class="mr-1 btn btn-sm btn-secondary" (click)="selectAllParcels()" [disabled]="visibleParcelIDs.length === selectedParcels.length">Select All</button>
-    <button class="mr-1 btn btn-sm btn-secondary" (click)="removeAllParcels()" [disabled]="selectedParcels.length === 0">Remove All</button>
-    <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
+<div class="row m-2">
+    <div class="col-md-8">
+        <button class="mr-1 btn btn-sm btn-secondary" (click)="selectAllParcels()" [disabled]="visibleParcelIDs.length === selectedParcels.length">Select All</button>
+        <button class="mr-1 btn btn-sm btn-secondary" (click)="removeAllParcels()" [disabled]="selectedParcels.length === 0">Remove All</button>
+        <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
+    </div>
+    <div class="col-md-4 text-right">
+        <ng-content></ng-content>
+    </div>
 </div>
 
 <parcel-map #parcelsMap mapID="parcelsMap" mapHeight="500px" [zoomMapToDefaultExtent]="false" [visibleParcelIDs]="visibleParcelIDs" visibleParcelStyle="parcel_blue_with_apn"
@@ -39,5 +44,4 @@
             <dd class="col-md-3 offset-md-3 text-right">{{maxTotalQuantity | number: '1.0-0'}} ac-ft</dd>
         </dl>
     </div>
-    <ng-content></ng-content>
 </div>
