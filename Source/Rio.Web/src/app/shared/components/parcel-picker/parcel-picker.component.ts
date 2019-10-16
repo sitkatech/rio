@@ -34,6 +34,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
 
     public selectedParcelLayerName: string = 'Selected Parcels';
     public visibleParcelIDs: Array<number> = [];
+    public isLoadingSubmit: boolean = false;
 
     @Output() onSubmit = new EventEmitter();
 

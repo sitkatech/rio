@@ -153,7 +153,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public onSubmitParcels(): void {
-    this.isLoadingSubmit = true;
+    this.parcelPicker.isLoadingSubmit = true;
     const waterTransferRegistrationDto = new WaterTransferRegistrationDto();
     waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
     waterTransferRegistrationDto.UserID = this.currentUser.UserID;
@@ -166,7 +166,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     waterTransferRegistrationDto.WaterTransferRegistrationParcels = waterTransferRegistrationParcels;
     this.waterTransferService.selectParcelsForWaterTransferID(this.waterTransfer.WaterTransferID, waterTransferRegistrationDto)
       .subscribe(response => {
-        this.isLoadingSubmit = false;
+        this.parcelPicker.isLoadingSubmit = false;
         this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
         this.haveParcelsBeenIdentified = true;
         this.isRegisteringTransfer = true;
@@ -175,7 +175,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
         error => {
           new Alert("There was a problem submitting the parcels for this registration.",
             AlertContext.Danger);
-          this.isLoadingSubmit = false;
+          this.parcelPicker.isLoadingSubmit = false;
           this.cdr.detectChanges();
         }
       );
