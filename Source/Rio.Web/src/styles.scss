@@ -37,4 +37,8 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 
+.ag-paging-panel .ag-icon
+{
+    color: rgba(0, 0, 0, 0.54);
+}
 // end ag-grid settings

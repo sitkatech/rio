@@ -63,7 +63,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
               }, cellRendererFramework: LinkRendererComponent,
               cellRendererParams: { inRouterLink: "/users/" },
               filterValueGetter: function (params: any) {
-                return params.data.Buyer.FullName;
+                return (params.data.LandOwner) ? params.data.LandOwner.FullName : null;
               },
               comparator: function (id1: any, id2: any) {
                 let link1 = id1.LinkDisplay;
