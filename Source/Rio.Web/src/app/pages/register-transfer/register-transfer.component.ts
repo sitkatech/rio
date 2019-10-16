@@ -33,7 +33,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public visibleParcels: Array<ParcelDto> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
-  public confirmedFullName: string;
+  public confirmedFullNameForCancelation: string;
+  public confirmedFullNameForRegistration: string;
 
   @ViewChild("parcelPicker", { static: false })
   public parcelPicker: ParcelPickerComponent;
@@ -108,14 +109,26 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     return this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID || this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID;
   }
 
-  public isFullNameConfirmed(): boolean {
-    return this.confirmedFullName.toLowerCase() === this.currentUser.FullName.toLowerCase();
+  public isFullNameConfirmedForCancelation(): boolean {
+    if(this.confirmedFullNameForCancelation)
+    {
+      return this.confirmedFullNameForCancelation.toLowerCase() === this.currentUser.FullName.toLowerCase();
+    }
+    return false;
+  }
+
+  public isFullNameConfirmedForRegistration(): boolean {
+    if(this.confirmedFullNameForRegistration)
+    {
+      return this.confirmedFullNameForRegistration.toLowerCase() === this.currentUser.FullName.toLowerCase();
+    }
+    return false;
   }
 
   public cancelRegistration(): void {
     this.haveParcelsBeenIdentified = false;
     this.isRegisteringTransfer = false;
-    this.confirmedFullName = null;
+    this.confirmedFullNameForRegistration = null;
   }
 
   public submitRegistration(): void {
@@ -195,12 +208,5 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     return this.isBuyerOrSeller()
       && !this.waterTransfer.BuyerRegistration.IsRegistered
       && !this.waterTransfer.SellerRegistration.IsRegistered;
-  }
-
-  public isParcelPickerValid(): boolean {
-    if (this.parcelPicker) {
-      return this.parcelPicker.selectedParcels.length > 0;
-    }
-    return false;
   }
 }

@@ -60,7 +60,7 @@
             <div class="mt-2" *ngIf="canCancelTrade()">
                 <small class="cancelTradeTitle">
                     <a class="collapsed" data-toggle="collapse" href="#cancelTradePanel" role="button" aria-expanded="false"
-                        aria-controls="cancelTradePanel">
+                        aria-controls="cancelTradePanel" (click)="confirmedFullNameForCancelation = null">
                         What if I am unable to complete this transaction?
                     </a>
                 </small>
@@ -71,8 +71,12 @@
                         </div>
                         <div class="card-body">
                             <p>Need some intro text</p>
-                            <div class="float-right">
-                                <button [disabled]="isLoadingSubmit" type="submit" class="btn btn-primary"
+                            <dl class="text-center">
+                                <dt>Type your Full Name to confirm the Cancelation of this Transfer</dt>
+                                <dd><input type="text" [(ngModel)]="confirmedFullNameForCancelation" /></dd>
+                            </dl>            
+                            <div class="text-center">
+                                <button [disabled]="!isFullNameConfirmedForCancelation() || isLoadingSubmit" type="submit" class="btn btn-sm btn-primary"
                                     (click)="cancelTrade()">
                                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                                     Cancel Trade
@@ -99,13 +103,8 @@
                         water to/from. Use the map to click the parcels involved in this transfer or use the "Select All" button.
                         The transfer volume will be allocated proportionally across your selected parcels.
                     </p>
-                    <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels"
+                    <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels" (onSubmit)="onSubmitParcels()"
                         [visibleParcels]="visibleParcels" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
-                        <button [disabled]="!isParcelPickerValid() || isLoadingSubmit" type="submit"
-                            class="btn btn-primary" (click)="onSubmitParcels()">
-                            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                            Next <i class="fas fa-chevron-right"></i>
-                        </button>
                     </rio-parcel-picker>
                 </div>
             </div>
@@ -142,11 +141,11 @@
                     </small>
                     <dl class="row">
                         <dt class="col-md-7">Type your Full Name before Registering the Transfer</dt>
-                        <dd class="col-md-5"><input type="text" [(ngModel)]="confirmedFullName" /></dd>
+                        <dd class="col-md-5"><input type="text" [(ngModel)]="confirmedFullNameForRegistration" /></dd>
                     </dl>
                     <div class="text-center">
                         <button class="btn btn-primary btn-sm mr-1" (click)="submitRegistration()"
-                            [disabled]="!isFullNameConfirmed() || isLoadingSubmit">
+                            [disabled]="!isFullNameConfirmedForRegistration() || isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Confirm and Register Transfer
                         </button>

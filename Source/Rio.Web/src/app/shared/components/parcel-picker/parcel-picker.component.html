@@ -5,7 +5,11 @@
         <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
     </div>
     <div class="col-md-4 text-right">
-        <ng-content></ng-content>
+        <button [disabled]="!isParcelPickerValid()" type="submit"
+            class="btn btn-primary" (click)="onClickNext()">
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Next <i class="fas fa-chevron-right"></i>
+        </button>
     </div>
 </div>
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 
 import { Feature, FeatureCollection } from "geojson";
 import * as L from "leaflet";
@@ -34,6 +34,8 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
 
     public selectedParcelLayerName: string = 'Selected Parcels';
     public visibleParcelIDs: Array<number> = [];
+
+    @Output() onSubmit = new EventEmitter();
 
     constructor(
         private wfsService: WfsService,
@@ -129,4 +131,12 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
             p.AcreFeetTransferred = p.ParcelAreaInAcres / totalSelectedParcelArea * this.maxTotalQuantity;
         });
     }
+
+    public isParcelPickerValid(): boolean {
+        return this.selectedParcels.length > 0;
+    }    
+
+    public onClickNext() {
+        this.onSubmit.emit();
+    } 
 }
