@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages';
-import { HeaderNavComponent, FooterComponent } from './components';
+import { HeaderNavComponent } from './components';
 import { UnauthenticatedComponent } from './pages/unauthenticated/unauthenticated.component';
 import { SubscriptionInsufficientComponent } from './pages/subscription-insufficient/subscription-insufficient.component';
 import { NgProgressModule } from '@ngx-progressbar/core';
@@ -17,7 +17,6 @@ import { ParcelMapComponent } from './components/parcel-map/parcel-map.component
 @NgModule({
     declarations: [
         HeaderNavComponent,
-        FooterComponent,        
         NotFoundComponent,
         UnauthenticatedComponent,
         SubscriptionInsufficientComponent,

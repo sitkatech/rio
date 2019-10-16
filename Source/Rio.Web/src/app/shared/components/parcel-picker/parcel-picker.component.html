@@ -1,47 +1,43 @@
+<div class="float-right m-2">
+    <button class="mr-1 btn btn-sm btn-secondary" (click)="selectAllParcels()" [disabled]="visibleParcelIDs.length === selectedParcels.length">Select All</button>
+    <button class="mr-1 btn btn-sm btn-secondary" (click)="removeAllParcels()" [disabled]="selectedParcels.length === 0">Remove All</button>
+    <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
+</div>
+
 <parcel-map #parcelsMap mapID="parcelsMap" mapHeight="500px" [zoomMapToDefaultExtent]="false" [visibleParcelIDs]="visibleParcelIDs" visibleParcelStyle="parcel_blue_with_apn"
     [disableDefaultClick]="true" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelLayerName" selectedParcelStyle="parcel_yellow">
 </parcel-map>
 
 <div class="col-lg-12 m-2">
-    <div id="selectedParcelsListContainer" class="table-responsive">
-        <table id="selectedParcelsList" class="table table-borderless">
-            <thead>
-                <tr>
-                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6">
-                        <button class="mr-1 btn btn-sm btn-secondary" (click)="selectAllParcels()" [disabled]="visibleParcelIDs.length === selectedParcels.length">Select All</button>
-                        <button class="mr-1 btn btn-sm btn-secondary" (click)="removeAllParcels()" [disabled]="selectedParcels.length === 0">Remove All</button>
-                        <small>[{{selectedParcels.length}} out of {{visibleParcelIDs.length}} selected]</small>
-                    </th>
-                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">APN</th>
-                    <th style="border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6" class="text-right">Volume to Transfer</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngIf="!selectedParcels?.length">
-                    <td colspan="3">
-                        No Parcels have been selected yet.
-                    </td>
-                </tr>
-                <tr *ngFor="let selectedParcel of selectedParcels">
-                    <td colspan="2" class="text-right">
-                        <a (click)="removeParcel(selectedParcel.ParcelID)" style="cursor: pointer"><span class="fa fa-trash-alt text-muted"></span></a>                                
-                        {{selectedParcel.ParcelNumber}}
-                    </td>
-                    <td class="text-right">
-                        {{selectedParcel.AcreFeetTransferred | number: '1.0-0'}}
-                        ac-ft
-                    </td>
-                </tr>
-            </tbody>
-            <tfoot *ngIf="selectedParcels?.length">
-                <tr>
-                    <th colspan="2" style="border-bottom: 2px solid #dee2e6" class="text-right">Total Transfer Volume</th>
-                    <th style="border-bottom: 2px solid #dee2e6" class="text-right">
-                        {{maxTotalQuantity | number: '1.0-0'}} ac-ft
-                    </th>
-                </tr>
-            </tfoot>
-        </table>
-        <ng-content></ng-content>
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-md-5 text-left">APN</dt>
+            <dt class="col-md-3 offset-md-3 text-right">Volume to Transfer</dt>
+        </dl>
+        <hr />
+        <p *ngIf="!selectedParcels?.length">
+                No Parcels have been selected yet.
+        </p>
+        <div style="max-height: 350px; overflow-y: auto; overflow-x: hidden;">
+            <dl class="row" *ngFor="let selectedParcel of selectedParcels">
+                <dt class="col-md-5 text-left">
+                    <a (click)="removeParcel(selectedParcel.ParcelID)" style="cursor: pointer"><span class="fa fa-trash-alt text-muted"></span></a>                                
+                    {{selectedParcel.ParcelNumber}}
+                </dt>
+                <dd class="col-md-3 offset-md-3 text-right">
+                    {{selectedParcel.AcreFeetTransferred | number: '1.0-0'}}
+                    ac-ft
+                </dd>
+            </dl>
+        </div>
     </div>
+    <div *ngIf="selectedParcels?.length">
+        <hr />
+        <dl class="row">
+            <dt class="col-md-5">Total Transfer Volume</dt>
+            <dd class="col-md-3 offset-md-3 text-right">{{maxTotalQuantity | number: '1.0-0'}} ac-ft</dd>
+        </dl>
+    </div>
+    <ng-content></ng-content>
 </div>

@@ -101,7 +101,8 @@
                     </p>
                     <rio-parcel-picker #parcelPicker [selectedParcels]="selectedParcels"
                         [visibleParcels]="visibleParcels" [maxTotalQuantity]="waterTransfer.AcreFeetTransferred">
-                        <div>
+                        <hr />
+                        <div class="mt-2">
                             <div class="float-right">
                                 <button [disabled]="!isParcelPickerValid() || isLoadingSubmit" type="submit"
                                     class="btn btn-primary" (click)="onSubmitParcels()">
