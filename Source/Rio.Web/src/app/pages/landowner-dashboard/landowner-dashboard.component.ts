@@ -224,7 +224,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     if (!year) {
       year = this.waterYearToDisplay
     }
-    return this.waterTransfers.filter(x => x.TransferYear == year);
+    return this.waterTransfers.filter(x => x.TransferYear == year && !x.BuyerRegistration.IsCanceled && !x.SellerRegistration.IsCanceled);
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
