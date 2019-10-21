@@ -12,4 +12,6 @@ Post-Deployment Script Template
 
 :r .\dbo.pLandOwnerUsageReport.sql
 
+:r .\dbo.pParcelAllocationAndUsage.sql
+
 GO

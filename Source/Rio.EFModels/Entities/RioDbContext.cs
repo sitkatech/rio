@@ -7,6 +7,7 @@ namespace Rio.EFModels.Entities
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LandownerUsageReport>().HasNoKey();
+            modelBuilder.Entity<ParcelAllocationAndUsage>().HasNoKey();
         }
     }
 }

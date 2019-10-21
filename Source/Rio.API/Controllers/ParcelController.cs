@@ -28,7 +28,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelDto>> List()
         {
-            var parcelDtos = Parcel.ListWithWaterUsage(_dbContext);
+            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, 2019);
             return Ok(parcelDtos);
         }
 

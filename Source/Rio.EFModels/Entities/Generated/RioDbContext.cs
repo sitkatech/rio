@@ -40,11 +40,11 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
-        public virtual DbSet<vAllParcelsWithAnnualWaterUsage> vAllParcelsWithAnnualWaterUsage { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
         public virtual DbSet<LandownerUsageReport> LandownerUsageReports { get; set; }
+        public virtual DbSet<ParcelAllocationAndUsage> ParcelAllocationAndUsages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -495,21 +495,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WaterTransferTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<vAllParcelsWithAnnualWaterUsage>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToView("vAllParcelsWithAnnualWaterUsage");
-
-                entity.Property(e => e.Email).IsUnicode(false);
-
-                entity.Property(e => e.FirstName).IsUnicode(false);
-
-                entity.Property(e => e.LastName).IsUnicode(false);
-
-                entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
             modelBuilder.Entity<vGeoServerAllParcels>(entity =>
