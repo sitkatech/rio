@@ -101,8 +101,10 @@ namespace Rio.API
             app.UseAuthorization();
             app.UseHttpsRedirection();
 
-            app.UseEndpoints(endpoints => {
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
