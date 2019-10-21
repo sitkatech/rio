@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { UserDto } from 'src/app/shared/models';
@@ -13,6 +13,7 @@ import { PostingService } from 'src/app/services/posting.service';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { UserService } from 'src/app/services/user/user.service';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -20,6 +21,7 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./manager-dashboard.component.scss']
 })
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('landOwnerUsageReportGrid', {static: false}) landOwnerUsageReportGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
 
@@ -48,15 +50,17 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.waterYearToDisplay = 2019;
+      this.waterYearToDisplay = (new Date()).getFullYear();
 
       forkJoin(
         this.parcelService.getParcelsWithLandOwners(),
         this.tradeService.getAllTradeActivity(),
         this.postingService.getPostingsDetailed(),
-        this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay),
-      ).subscribe(([parcels, trades, postings, landownerUsageReport]) => {
+        this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay), 
+        this.parcelService.getWaterYears()
+      ).subscribe(([parcels, trades, postings, landownerUsageReport, waterYears]) => {
         this.parcels = parcels;
+        this.waterYears = waterYears;
         this.initializeTradeActivityGrid(trades);
         this.initializePostingActivityGrid(postings);
         this.initializeLandownerUsageReportGrid(landownerUsageReport);
@@ -371,5 +375,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: '# of Postings', field: 'NumberOfPostings', sortable: true, filter: true, width: 120 },
     ];
     this.landownerUsageReports = landownerUsageReport;
+  }
+
+  public updateLandownerUsageReportData(){
+    this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
+        this.landOwnerUsageReportGrid.api.setRowData(result);
+    });
   }
 }
