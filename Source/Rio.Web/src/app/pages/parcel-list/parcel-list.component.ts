@@ -1,10 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { forkJoin } from 'rxjs';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -12,9 +14,14 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
   styleUrls: ['./parcel-list.component.scss']
 })
 export class ParcelListComponent implements OnInit, OnDestroy {
+  @ViewChild('parcelsGrid', {static: false}) parcelsGrid: AgGridAngular;
+
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
+  public waterYears: Array<number> = [];
+  public waterYearToDisplay: number;
+  public gridOptions: GridOptions;
   public rowData = [];
   columnDefs: any;
 
@@ -25,9 +32,12 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.parcelService.getParcelsWithWaterUsage().subscribe(result => {
-        this.rowData = result;
+      this.waterYearToDisplay = (new Date()).getFullYear();
+      forkJoin(this.parcelService.getParcelsWithWaterUsage(this.waterYearToDisplay), this.parcelService.getWaterYears()).subscribe(([parcelsWithWaterUsage, waterYears]) => {
+        this.rowData = parcelsWithWaterUsage;
+        this.waterYears = waterYears;
         this.cdr.detectChanges();
       });
 
@@ -89,5 +99,11 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
+  }
+
+  public updateGridData(){
+    this.parcelService.getParcelsWithWaterUsage(this.waterYearToDisplay).subscribe(result => {
+        this.parcelsGrid.api.setRowData(result);
+    });
   }
 }

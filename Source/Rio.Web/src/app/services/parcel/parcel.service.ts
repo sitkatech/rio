@@ -55,8 +55,8 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsWithWaterUsage(): Observable<Array<ParcelWithWaterUsageDto>> {
-    let route = `/parcels/getParcelsWithWaterUsage`;
+  getParcelsWithWaterUsage(year: number): Observable<Array<ParcelWithWaterUsageDto>> {
+    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
 }

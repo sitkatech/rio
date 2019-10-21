@@ -24,11 +24,11 @@ namespace Rio.API.Controllers
             _keystoneService = keystoneService;
         }
 
-        [HttpGet("parcels/getParcelsWithWaterUsage")]
+        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
         [ParcelManageFeature]
-        public ActionResult<IEnumerable<ParcelDto>> List()
+        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, 2019);
+            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
             return Ok(parcelDtos);
         }
 
