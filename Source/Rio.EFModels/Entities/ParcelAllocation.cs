@@ -9,17 +9,27 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelAllocationDto> Upsert(RioDbContext dbContext, int parcelID, List<ParcelAllocationUpsertDto> parcelAllocationUpsertDtos)
         {
+            //// delete existing parcels registered
+            //var existingWaterTransferRegistrationParcels = dbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == waterTransferRegistration.WaterTransferRegistrationID);
+            //if (existingWaterTransferRegistrationParcels.Any())
+            //{
+            //    dbContext.WaterTransferRegistrationParcel.RemoveRange(existingWaterTransferRegistrationParcels);
+            //    dbContext.SaveChanges();
+            //}
+
+
             foreach (var parcelAllocationUpsertDto in parcelAllocationUpsertDtos)
             {
                 var parcelAllocation = dbContext.ParcelAllocation
-                    .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == parcelAllocationUpsertDto.WaterYear);
+                    .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
 
                 if (parcelAllocation == null)
                 {
                     parcelAllocation = new ParcelAllocation
                     {
                         ParcelID = parcelID,
-                        WaterYear = parcelAllocationUpsertDto.WaterYear
+                        WaterYear = parcelAllocationUpsertDto.WaterYear,
+                        ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID
                     };
                     dbContext.ParcelAllocation.Add(parcelAllocation);
                 }

@@ -103,6 +103,8 @@
     <None Include="Scripts\Procs\Script.PostDeployment.Procs.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferRegistrationStatus.sql" />
     <None Include="Scripts\LookupTables\dbo.WaterTransferRegistrationStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ParcelAllocationType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ParcelAllocationType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

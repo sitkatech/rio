@@ -35,7 +35,8 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">Land Owner</dt>
             <dd class="col-sm-7 col-xs-12">
-              <a *ngIf="parcel.LandOwner?.FullName" routerLink="/users/{{parcel.LandOwner?.UserID}}">{{parcel.LandOwner?.FullName}}</a>
+              <a *ngIf="parcel.LandOwner?.FullName"
+                routerLink="/users/{{parcel.LandOwner?.UserID}}">{{parcel.LandOwner?.FullName}}</a>
               <em *ngIf="!parcel.LandOwner?.FullName" class="text-muted">Not Set</em>
             </dd>
           </dl>
@@ -70,35 +71,51 @@
         </div>
         <div class="card-body">
           <p>All data is in units of acre-feet</p>
-          <table class="table table-striped table-condensed table-responsive">
-            <thead>
-              <tr>
-                <th>Year</th>
-                <th style="text-align: right">Allocation</th>
-                <th style="text-align: right">Total Usage</th>
-                <th style="text-align: right">Jan</th>
-                <th style="text-align: right">Feb</th>
-                <th style="text-align: right">Mar</th>
-                <th style="text-align: right">Apr</th>
-                <th style="text-align: right">May</th>
-                <th style="text-align: right">Jun</th>
-                <th style="text-align: right">Jul</th>
-                <th style="text-align: right">Aug</th>
-                <th style="text-align: right">Sep</th>
-                <th style="text-align: right">Oct</th>
-                <th style="text-align: right">Nov</th>
-                <th style="text-align: right">Dec</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let parcelAllocationAndConsumption of parcelAllocationAndConsumptions">
-                <td>{{parcelAllocationAndConsumption.WaterYear}}</td>
-                <td style="text-align: right">{{parcelAllocationAndConsumption.AcreFeetAllocated ? (parcelAllocationAndConsumption.AcreFeetAllocated | number: '1.1-1') : "-"}}</td>
-                <td style="text-align: right">{{getConsumptionForYear(parcelAllocationAndConsumption)}}</td>
-                <td style="text-align: right" *ngFor="let month of months">{{getConsumptionForMonth(parcelAllocationAndConsumption, month)}}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th style="text-align: right">Project Water</th>
+                  <th style="text-align: right">Reconciliation</th>
+                  <th style="text-align: right">Native Yield</th>
+                  <th style="text-align: right">Stored Water</th>
+                  <th style="text-align: right">Total Allocation</th>
+                  <th style="text-align: right">Total Usage</th>
+                  <th style="text-align: right">Jan</th>
+                  <th style="text-align: right">Feb</th>
+                  <th style="text-align: right">Mar</th>
+                  <th style="text-align: right">Apr</th>
+                  <th style="text-align: right">May</th>
+                  <th style="text-align: right">Jun</th>
+                  <th style="text-align: right">Jul</th>
+                  <th style="text-align: right">Aug</th>
+                  <th style="text-align: right">Sep</th>
+                  <th style="text-align: right">Oct</th>
+                  <th style="text-align: right">Nov</th>
+                  <th style="text-align: right">Dec</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let waterYear of waterYears">
+                  <td>{{waterYear}}</td>
+                  <td style="text-align: right">
+                    {{getProjectWaterForYear(waterYear)}}</td>
+                  <td style="text-align: right">
+                    {{getReconciliationForYear(waterYear)}}</td>
+                  <td style="text-align: right">
+                    {{getNativeYieldForYear(waterYear)}}</td>
+                  <td style="text-align: right">
+                    {{getStoredWaterForYear(waterYear)}}</td>
+                  <td style="text-align: right">
+                    {{getTotalAllocationForYear(waterYear)}}</td>
+                  <td style="text-align: right">{{getConsumptionForYear(waterYear)}}</td>
+                  <td style="text-align: right" *ngFor="let month of months">
+                    {{getConsumptionForYearAndMonth(waterYear, month)}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

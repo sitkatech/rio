@@ -4,22 +4,25 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { isNullOrUndefined } from 'util';
 import { UserDto } from 'src/app/shared/models';
+import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
+import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
 
 @Component({
   selector: 'template-parcel-detail',
   templateUrl: './parcel-detail.component.html',
-  styleUrls: ['./parcel-detail.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./parcel-detail.component.scss']
 })
 export class ParcelDetailComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
+  public waterYears: Array<number>;
   public parcel: ParcelDto;
-  public parcelAllocationAndConsumptions: Array<ParcelAllocationAndConsumptionDto>;
+  public parcelAllocations: Array<ParcelAllocationDto>;
+  public waterUsage: Array<ParcelMonthlyEvapotranspirationDto>;
   public months: number[];
 
   constructor(
@@ -41,13 +44,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       if (id) {
         forkJoin(
           this.parcelService.getParcelByParcelID(id),
-          this.parcelService.getParcelAllocationAndConsumption(id)
-        ).subscribe(([parcel, parcelAllocationAndConsumptions]) => {
+          this.parcelService.getParcelAllocations(id),
+          this.parcelService.getWaterUsage(id),
+          this.parcelService.getWaterYears()
+        ).subscribe(([parcel, parcelAllocations, waterUsage, waterYears]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
-          this.parcelAllocationAndConsumptions = parcelAllocationAndConsumptions.sort((a, b) => a.WaterYear > b.WaterYear ? -1 : a.WaterYear < b.WaterYear ? 1 : 0);
-          this.cdr.detectChanges();
+          this.parcelAllocations = parcelAllocations;
+          this.waterUsage = waterUsage;
+          this.waterYears = waterYears;
         });
       }
       this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -64,13 +70,47 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
   }
 
-  public getConsumptionForMonth(parcelAllocationAndConsumption: ParcelAllocationAndConsumptionDto, month: number): string {
-    var monthlyEvapotranspiration = parcelAllocationAndConsumption.MonthlyEvapotranspiration.find(x => x.WaterMonth == month);
+  public getConsumptionForYearAndMonth(year: number, month: number): string {
+    var monthlyEvapotranspiration = this.waterUsage.find(x => x.WaterYear === year && x.WaterMonth === month);
     return isNullOrUndefined(monthlyEvapotranspiration) ? "-" : monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1);
   }
 
-  public getConsumptionForYear(parcelAllocationAndConsumption: ParcelAllocationAndConsumptionDto): string {
-    var monthlyEvapotranspiration = parcelAllocationAndConsumption.MonthlyEvapotranspiration;
+  public getProjectWaterForYear(year: number): string {
+    return this.getAllocationForYearByType(ParcelAllocationTypeEnum.ProjectWater, year);
+  }
+
+  public getReconciliationForYear(year: number): string {
+    return this.getAllocationForYearByType(ParcelAllocationTypeEnum.Reconciliation, year);
+  }
+
+  public getNativeYieldForYear(year: number): string {
+    return this.getAllocationForYearByType(ParcelAllocationTypeEnum.NativeYield, year);
+  }
+
+  public getStoredWaterForYear(year: number): string {
+    return this.getAllocationForYearByType(ParcelAllocationTypeEnum.StoredWater, year);
+  }
+
+  public getTotalAllocationForYear(year: number): string {
+    var parcelAllocationsForYear = this.parcelAllocations.filter(x => x.WaterYear === year);
+    if (parcelAllocationsForYear.length > 0) {
+      let result = parcelAllocationsForYear.reduce(function (a, b) {
+        return (a + b.AcreFeetAllocated);
+      }, 0);
+      return result.toFixed(1);
+    }
+    else {
+      return "-";
+    }
+  }
+
+  private getAllocationForYearByType(parcelAllocationTypeEnum: ParcelAllocationTypeEnum, year: number): string {
+    var parcelAllocation = this.parcelAllocations.find(x => x.WaterYear === year && x.ParcelAllocationTypeID === parcelAllocationTypeEnum);
+    return parcelAllocation ? parcelAllocation.AcreFeetAllocated.toFixed(1) : "-";
+  }
+
+  public getConsumptionForYear(year: number): string {
+    var monthlyEvapotranspiration = this.waterUsage.filter(x => x.WaterYear === year);
     if (monthlyEvapotranspiration.length > 0) {
       let result = monthlyEvapotranspiration.reduce(function (a, b) {
         return (a + b.EvapotranspirationRate);

@@ -1,7 +1,8 @@
-export class ParcelAllocationUpsertDto {
+export class ParcelAllocationDto {
+    ParcelID: number;
     WaterYear: number;
-    AcreFeetAllocated: number;
     ParcelAllocationTypeID: number;
+    AcreFeetAllocated: number;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

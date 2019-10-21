@@ -12,6 +12,7 @@ using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.WaterUsage;
 
 namespace Rio.API.Controllers
@@ -186,9 +187,9 @@ namespace Rio.API.Controllers
             return Ok(parcelDtos);
         }
 
-        [HttpGet("users/{userID}/getParcelsAllocationAndConsumption")]
+        [HttpGet("users/{userID}/getParcelsAllocations")]
         [UserViewFeature]
-        public ActionResult<List<ParcelAllocationAndConsumptionDto>> ListParcelsAllocationAndConsumptionByUserID([FromRoute] int userID)
+        public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByUserID([FromRoute] int userID)
         {
             var parcelDtosEnumerable = Parcel.ListByUserID(_dbContext, userID);
             if (parcelDtosEnumerable == null)
@@ -199,10 +200,7 @@ namespace Rio.API.Controllers
             var parcelDtos = parcelDtosEnumerable.ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelIDs);
-            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
-            var waterYears = DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
-            var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, parcelDtos, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
-            return Ok(parcelAllocationAndConsumptionDtos);
+            return Ok(parcelAllocationDtos);
         }
 
         [HttpGet("users/{userID}/postings")]
@@ -235,8 +233,8 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByUserID([FromRoute] int userID)
         {
-            var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
-            var parcelIDs = parcelDtos.Select(x=>x.ParcelID).ToList();
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID).ToList();
+            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
 

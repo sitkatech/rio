@@ -22,6 +22,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
+        public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
@@ -171,14 +172,36 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ParcelAllocation>(entity =>
             {
-                entity.HasIndex(e => new { e.ParcelID, e.WaterYear })
+                entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.ParcelAllocationTypeID })
                     .HasName("AK_ParcelAllocation_ParcelID_WaterYear")
                     .IsUnique();
+
+                entity.HasOne(d => d.ParcelAllocationType)
+                    .WithMany(p => p.ParcelAllocation)
+                    .HasForeignKey(d => d.ParcelAllocationTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Parcel)
                     .WithMany(p => p.ParcelAllocation)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelAllocationType>(entity =>
+            {
+                entity.HasIndex(e => e.ParcelAllocationTypeDisplayName)
+                    .HasName("AK_ParcelAllocationType_ParcelAllocationTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ParcelAllocationTypeName)
+                    .HasName("AK_ParcelAllocationType_ParcelAllocationTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.ParcelAllocationTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.ParcelAllocationTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>

@@ -7,6 +7,7 @@ using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.API.Controllers
 {
@@ -44,9 +45,9 @@ namespace Rio.API.Controllers
             return Ok(parcelDto);
         }
 
-        [HttpGet("parcels/{parcelID}/getAllocationAndConsumption")]
+        [HttpGet("parcels/{parcelID}/getAllocations")]
         [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationAndConsumptionDto>> GetAllocationAndConsumption([FromRoute] int parcelID)
+        public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
@@ -55,15 +56,33 @@ namespace Rio.API.Controllers
             }
 
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
+            return Ok(parcelAllocationDtos);
+        }
+
+        [HttpGet("getWaterYears")]
+        [ParcelManageFeature]
+        public ActionResult<List<ParcelAllocationDto>> GetWaterYears()
+        {
+            return Ok(DateUtilities.GetWaterYears());
+        }
+
+        [HttpGet("parcels/{parcelID}/getWaterUsage")]
+        [ParcelManageFeature]
+        public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
+        {
+            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            if (parcelDto == null)
+            {
+                return NotFound();
+            }
+
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
-            var waterYears = DateUtilities.GetWaterYears();
-            var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, new List<ParcelDto>{parcelDto}, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
-            return Ok(parcelAllocationAndConsumptionDtos);
+            return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
         [HttpPost("parcels/{parcelID}/updateAnnualAllocations")]
         [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationAndConsumptionDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
+        public ActionResult<List<ParcelAllocationDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
