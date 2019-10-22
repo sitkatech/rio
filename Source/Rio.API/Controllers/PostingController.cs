@@ -9,7 +9,8 @@ using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.API.Controllers
 {
-    public class PostingController : Controller
+    [ApiController]
+    public class PostingController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<PostingController> _logger;

@@ -6,8 +6,9 @@ using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Role;
 
 namespace Rio.API.Controllers
-{
-    public class RoleController : Controller
+{ 
+    [ApiController]
+    public class RoleController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<RoleController> _logger;

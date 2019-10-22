@@ -17,7 +17,8 @@ using Rio.Models.DataTransferObjects.WaterUsage;
 
 namespace Rio.API.Controllers
 {
-    public class UserController : Controller
+    [ApiController]
+    public class UserController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<UserController> _logger;

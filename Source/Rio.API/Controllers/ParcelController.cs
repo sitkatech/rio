@@ -7,11 +7,11 @@ using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Rio.API.Controllers
 {
-    public class ParcelController : Controller
+    [ApiController]
+    public class ParcelController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<ParcelController> _logger;
@@ -61,7 +61,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("getWaterYears")]
         [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationDto>> GetWaterYears()
+        public ActionResult<List<int>> GetWaterYears()
         {
             return Ok(DateUtilities.GetWaterYears());
         }

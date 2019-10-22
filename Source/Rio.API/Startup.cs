@@ -71,7 +71,7 @@ namespace Rio.API
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +87,7 @@ namespace Rio.API
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseCors(policy =>
@@ -100,8 +101,11 @@ namespace Rio.API
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHttpsRedirection();
-            app.UseMvc();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
