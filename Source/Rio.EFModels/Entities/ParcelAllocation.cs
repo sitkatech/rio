@@ -9,14 +9,13 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelAllocationDto> Upsert(RioDbContext dbContext, int parcelID, List<ParcelAllocationUpsertDto> parcelAllocationUpsertDtos)
         {
-            //// delete existing parcels registered
-            //var existingWaterTransferRegistrationParcels = dbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == waterTransferRegistration.WaterTransferRegistrationID);
-            //if (existingWaterTransferRegistrationParcels.Any())
-            //{
-            //    dbContext.WaterTransferRegistrationParcel.RemoveRange(existingWaterTransferRegistrationParcels);
-            //    dbContext.SaveChanges();
-            //}
-
+            // delete existing parcel allocations
+            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x => x.ParcelID == parcelID);
+            if (existingParcelAllocations.Any())
+            {
+                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.SaveChanges();
+            }
 
             foreach (var parcelAllocationUpsertDto in parcelAllocationUpsertDtos)
             {
