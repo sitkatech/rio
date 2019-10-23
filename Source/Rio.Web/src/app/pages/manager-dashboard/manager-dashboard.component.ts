@@ -22,6 +22,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 })
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('landOwnerUsageReportGrid', {static: false}) landOwnerUsageReportGrid: AgGridAngular;
+  @ViewChild('tradeActivityGrid', {static: false}) tradeActivityGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
 
@@ -352,7 +353,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Current Available', field: 'CurrentAvailable', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       {
         headerName: 'Most Recent Trade', valueGetter: function (params: any) {
-          return { LinkValue: params.data.TradeNumber, LinkDisplay: params.data.TradeNumber };
+          return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/trades/" },
         filterValueGetter: function (params: any) {
@@ -381,5 +382,39 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
         this.landOwnerUsageReportGrid.api.setRowData(result);
     });
+  }
+
+  public exportLandOwnerUsageReportToCsv() {
+    this.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv');
+  }
+
+  public exportTradeActivityToCsv() {
+    this.exportGridToCsv(this.landOwnerUsageReportGrid, 'tradeActivity.csv');
+  }
+
+  private exportGridToCsv(grid: AgGridAngular, fileName: string) {
+    var params = {
+      skipHeader: false,
+      columnGroups: false,
+      skipFooters: true,
+      skipGroups: true,
+      skipPinnedTop: true,
+      skipPinnedBottom: true,
+      allColumns: true,
+      onlySelected: false,
+      suppressQuotes: false,
+      fileName: fileName,
+      processCellCallback: function(p) {
+        if(p.column.colDef.cellRendererFramework)
+        {
+          return p.value.LinkDisplay;
+        }
+        else
+        {
+          return p.value;
+        }
+      }
+    }
+    grid.api.exportDataAsCsv(params);
   }
 }
