@@ -7,6 +7,7 @@ import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/p
 import { ParcelWithWaterUsageDto } from 'src/app/shared/models/parcel/parcel-with-water-usage-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
+import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,11 @@ export class ParcelService {
 
   updateAnnualAllocations(parcelID: number, model: ParcelAllocationUpsertWrapperDto): Observable<any[]>  {
     let route = `/parcels/${parcelID}/updateAnnualAllocations`;
+    return this.apiService.postToApi(route, model);
+  }
+  
+  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto): Observable<any[]>  {
+    let route = `/parcels/bulkSetAnnualParcelAllocation`;
     return this.apiService.postToApi(route, model);
   }
   

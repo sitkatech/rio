@@ -42,6 +42,7 @@ import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-gri
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
+import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-allocation/parcel-bulk-set-allocation.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { HelpComponent } from './pages/help/help.component';
     LandownerWaterAllocationChartComponent,
     PostingDeleteComponent,
     LoginCallbackComponent,
-    HelpComponent
+    HelpComponent,
+    ParcelBulkSetAllocationComponent
   ],
   imports: [
     AppRoutingModule,

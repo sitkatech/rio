@@ -39,6 +39,30 @@ namespace Rio.EFModels.Entities
 
             return ListByParcelID(dbContext, parcelID);
         }
+        public static void BulkSetAllocation(RioDbContext dbContext, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        {
+            // delete existing parcel allocations
+            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
+            if (existingParcelAllocations.Any())
+            {
+                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.SaveChanges();
+            }
+
+            var parcels = dbContext.Parcel.AsNoTracking().OrderBy(x => x.ParcelID).ToList();
+            foreach (var parcel in parcels)
+            {
+                var parcelAllocation = new ParcelAllocation
+                {
+                    ParcelID = parcel.ParcelID,
+                    WaterYear = parcelAllocationUpsertDto.WaterYear,
+                    ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID,
+                    AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated * (decimal) parcel.ParcelAreaInAcres
+                };
+                dbContext.ParcelAllocation.Add(parcelAllocation);
+            }
+            dbContext.SaveChanges();
+        }
 
         public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {

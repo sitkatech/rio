@@ -1,16 +1,7 @@
 <div class="container mt-sm-4" *ngIf="currentUser">
-  <div class="float-right">
-      <div class="row">
-          <div class="col-sm-4 control-label">
-              Year
-          </div>
-          <div class="col-sm-8">
-              <select [(ngModel)]="waterYearToDisplay" (change)="updateLandownerUsageReportData()" class="form-control">
-                  <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
-              </select>
-          </div>
-      </div>
-  </div>        
+  <div style="margin: 1rem 0 1rem 0;">
+      <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/parcels/bulk-set-allocation">Set Allocation for All Parcels</a>
+  </div>
   <h2 style="display: inline-block;">
     Manager Dashboard - {{currentUser.FullName}}
   </h2>
@@ -20,11 +11,30 @@
     <div class="col-sm-12" *ngIf="trades">
       <div class="card">
         <div class="card-header">
-          Landowner Usage Report
+          <div class="row">
+            <div class="col-sm-8">
+              Landowner Usage Report
+            </div>
+            <div class="col-sm-4">
+              <div class="row">
+                <div class="col-sm-4 offset-sm-4 text-right">
+                  Year
+                </div>
+                <div class="col-sm-4">
+                  <select [(ngModel)]="waterYearToDisplay" (change)="updateLandownerUsageReportData()"
+                    class="form-control">
+                    <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
         <div class="card-body table-responsive">
-          <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham" [rowData]="landownerUsageReports"
-            [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
+          <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
+            [rowData]="landownerUsageReports" [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true"
+            [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
       </div>

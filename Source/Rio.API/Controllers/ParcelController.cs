@@ -99,6 +99,19 @@ namespace Rio.API.Controllers
             return Ok(updatedParcelAllocationDtos);
         }
 
+        [HttpPost("parcels/bulkSetAnnualParcelAllocation")]
+        [ParcelManageFeature]
+        public ActionResult BulkSetAnnualParcelAllocation([FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
+            return Ok();
+        }
+
 
         [HttpPost("parcels/getBoundingBox")]
         [ParcelViewFeature]
