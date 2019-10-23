@@ -5,7 +5,7 @@ import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { forkJoin } from 'rxjs';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, CsvExportParams } from 'ag-grid-community';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
@@ -14,6 +14,7 @@ import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { UserService } from 'src/app/services/user/user.service';
 import { AgGridAngular } from 'ag-grid-angular';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -21,8 +22,10 @@ import { AgGridAngular } from 'ag-grid-angular';
   styleUrls: ['./manager-dashboard.component.scss']
 })
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('landOwnerUsageReportGrid', {static: false}) landOwnerUsageReportGrid: AgGridAngular;
-  @ViewChild('tradeActivityGrid', {static: false}) tradeActivityGrid: AgGridAngular;
+  @ViewChild('landOwnerUsageReportGrid', { static: false }) landOwnerUsageReportGrid: AgGridAngular;
+  @ViewChild('tradeActivityGrid', { static: false }) tradeActivityGrid: AgGridAngular;
+  @ViewChild('postingsGrid', { static: false }) postingsGrid: AgGridAngular;
+
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
 
@@ -40,6 +43,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
+    private utilityFunctionsService: UtilityFunctionsService,
     private tradeService: TradeService,
     private parcelService: ParcelService,
     private postingService: PostingService,
@@ -57,7 +61,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.parcelService.getParcelsWithLandOwners(),
         this.tradeService.getAllTradeActivity(),
         this.postingService.getPostingsDetailed(),
-        this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay), 
+        this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay),
         this.parcelService.getWaterYears()
       ).subscribe(([parcels, trades, postings, landownerUsageReport, waterYears]) => {
         this.parcels = parcels;
@@ -228,23 +232,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Status',
-        valueGetter: function (params) { 
-          if(params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted)
-          {
-            if(params.data.BuyerRegistration.IsCanceled || params.data.SellerRegistration.IsCanceled)
-            {
+        valueGetter: function (params) {
+          if (params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted) {
+            if (params.data.BuyerRegistration.IsCanceled || params.data.SellerRegistration.IsCanceled) {
               return "Transaction Canceled";
             }
-            else if(!params.data.BuyerRegistration.IsRegistered || !params.data.SellerRegistration.IsRegistered)
-            {
+            else if (!params.data.BuyerRegistration.IsRegistered || !params.data.SellerRegistration.IsRegistered) {
               return "Awaiting Registration";
             }
-            else
-            {
+            else {
               return params.data.TradeStatus.TradeStatusDisplayName;
             }
           }
-          return params.data.TradeStatus.TradeStatusDisplayName; },
+          return params.data.TradeStatus.TradeStatusDisplayName;
+        },
         sortable: true, filter: true, width: 200
       },
       {
@@ -317,7 +318,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.trades = trades;
   }
 
-  private initializeLandownerUsageReportGrid(landownerUsageReport: any, ): void {
+  private initializeLandownerUsageReportGrid(landownerUsageReport: any): void {
     let _decimalPipe = this.decimalPipe;
 
     this.landownerUsageReportGridColumnDefs = [
@@ -378,43 +379,32 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.landownerUsageReports = landownerUsageReport;
   }
 
-  public updateLandownerUsageReportData(){
+  public updateLandownerUsageReportData() {
     this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
-        this.landOwnerUsageReportGrid.api.setRowData(result);
+      this.landOwnerUsageReportGrid.api.setRowData(result);
     });
   }
 
   public exportLandOwnerUsageReportToCsv() {
-    this.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv');
+    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv', null);
   }
 
   public exportTradeActivityToCsv() {
-    this.exportGridToCsv(this.landOwnerUsageReportGrid, 'tradeActivity.csv');
+    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'tradeActivity.csv', null);
   }
 
-  private exportGridToCsv(grid: AgGridAngular, fileName: string) {
-    var params = {
-      skipHeader: false,
-      columnGroups: false,
-      skipFooters: true,
-      skipGroups: true,
-      skipPinnedTop: true,
-      skipPinnedBottom: true,
-      allColumns: true,
-      onlySelected: false,
-      suppressQuotes: false,
-      fileName: fileName,
-      processCellCallback: function(p) {
-        if(p.column.colDef.cellRendererFramework)
-        {
-          return p.value.LinkDisplay;
-        }
-        else
-        {
-          return p.value;
-        }
-      }
-    }
-    grid.api.exportDataAsCsv(params);
+  public exportPostingsToCsv() {
+    // we need to grab all columns except the first one (trash icon)
+    let columnsKeys = this.postingsGrid.columnApi.getAllDisplayedColumns(); 
+    let columnIds: Array<any> = []; 
+    columnsKeys.forEach(keys => 
+      { 
+        let columnName: string = keys.getColId(); 
+        if (columnName != '0' && columnName) 
+        { 
+          columnIds.push(columnName); 
+        } 
+      });
+    this.utilityFunctionsService.exportGridToCsv(this.postingsGrid, 'postings.csv', columnIds);
   }
 }

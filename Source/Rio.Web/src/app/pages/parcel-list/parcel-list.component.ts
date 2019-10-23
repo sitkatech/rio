@@ -7,6 +7,7 @@ import { ColDef, GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -27,6 +28,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
+    private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private decimalPipe: DecimalPipe) { }
 
@@ -105,5 +107,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.parcelService.getParcelsWithWaterUsage(this.waterYearToDisplay).subscribe(result => {
         this.parcelsGrid.api.setRowData(result);
     });
+  }
+
+  public exportToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.parcelsGrid, 'parcels.csv', null);
   }
 }

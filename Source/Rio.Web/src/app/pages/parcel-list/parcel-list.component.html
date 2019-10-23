@@ -6,13 +6,17 @@
 <div class="container">
     <div class="float-right" style="margin: 1rem 0 1rem 0;">
         <div class="row">
-            <div class="col-sm-4 control-label">
+            <div class="col-sm-3 offset-sm-1 control-label text-right">
                 Year
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-6">
                 <select [(ngModel)]="waterYearToDisplay" (change)="updateGridData()" class="form-control">
                     <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
                 </select>
+            </div>
+            <div class="col-sm-2 text-right">
+                <a class="float-right btn btn-secondary btn-sm" (click)="exportToCsv()"><i
+                        class="fas fa-download"></i></a>
             </div>
         </div>
     </div>
