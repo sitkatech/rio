@@ -20,7 +20,7 @@
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
-    <form (ngSubmit)="onSubmit(editUserForm)" #editUserForm="ngForm">
+    <form (ngSubmit)="onSubmit(bulkSetAllocationForm)" #bulkSetAllocationForm="ngForm">
         <div class="form-group mt-4">
             <div class="row">
                 <div class="col-sm-4 control-label">
@@ -66,11 +66,11 @@
                 <i class="fas fa-bolt"></i> Required field
             </div>
             <div class="col-sm-3 text-right">
-                <button type="submit" class="btn btn-primary" [disabled]="!editUserForm.form.valid || isLoadingSubmit">
+                <button type="submit" class="btn btn-primary" [disabled]="!bulkSetAllocationForm.form.valid || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Submit
                 </button>
-                <a class="btn btn-secondary ml-1" routerLink="/users/{{user?.UserID}}">Cancel</a>
+                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
             </div>
         </div>
     </form>

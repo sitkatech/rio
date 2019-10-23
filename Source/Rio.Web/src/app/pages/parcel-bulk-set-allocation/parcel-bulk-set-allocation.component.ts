@@ -44,7 +44,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  onSubmit(inviteUserForm: HTMLFormElement): void {
+  onSubmit(bulkSetAllocationForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
 
     this.parcelService.bulkSetAnnualAllocations(this.model)
