@@ -21,15 +21,16 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public model: ParcelAllocationUpsertDto;
   public isLoadingSubmit: boolean = false;
   public waterYears: number[];
+  public parcelAllocationTypes = [{ParcelAllocationTypeID: 1, Name: "Project Water"}, {ParcelAllocationTypeID: 2, Name: "Reconciliation"}, {ParcelAllocationTypeID: 3, Name: "Native Yield"}];
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router, private parcelService: ParcelService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
 
   ngOnInit(): void {
+    this.model = new ParcelAllocationUpsertDto();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.model = new ParcelAllocationUpsertDto();
       forkJoin(
         this.parcelService.getWaterYears()
       ).subscribe(([waterYears]) => {
@@ -51,7 +52,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         this.isLoadingSubmit = false;
         this.router.navigateByUrl("/manager-dashboard").then(x => {
-          this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+          this.alertService.pushAlert(new Alert("Successfully set Allocations for " + response + " parcels.", AlertContext.Success));
         });
       }
         ,

@@ -43,9 +43,7 @@
                     <select name="ParcelAllocationTypeID" class="form-control"
                         [(ngModel)]="model.ParcelAllocationTypeID" required>
                         <option value=""></option>
-                        <option value="1">Project Water</option>
-                        <option value="2">Reconciliation</option>
-                        <option value="3">Native Yield</option>
+                        <option *ngFor="let parcelAllocationType of parcelAllocationTypes" value="{{parcelAllocationType.ParcelAllocationTypeID}}">{{parcelAllocationType.Name}}</option>
                     </select>
                 </div>
             </div>

@@ -108,8 +108,8 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
-            return Ok();
+            var numberOfParcels = ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
+            return Ok(numberOfParcels);
         }
 
 
