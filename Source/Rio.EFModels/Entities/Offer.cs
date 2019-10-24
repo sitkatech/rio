@@ -72,5 +72,24 @@ namespace Rio.EFModels.Entities
             var offer = GetOffersImpl(dbContext).SingleOrDefault(x => x.OfferID == offerID);
             return offer?.AsDto();
         }
+
+        public static OfferDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
+        {
+            var offer = dbContext.Offer
+                .Include(x => x.CreateUser)
+                .Include(x => x.OfferStatus)
+                .Include(x => x.WaterTransfer)
+                .Include(x => x.Trade)
+                .ThenInclude(x => x.CreateUser)
+                .Include(x => x.Trade)
+                .ThenInclude(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .AsNoTracking()
+                .Where(x => !x.WaterTransfer.Any() && x.OfferStatusID != (int) OfferStatusEnum.Rejected && x.OfferStatusID != (int) OfferStatusEnum.Rescinded &&
+                            (x.Trade.Posting.PostingStatusID == (int) postingTypeEnum &&
+                             x.Trade.Posting.CreateUserID == x.CreateUserID)
+                            || (x.Trade.Posting.PostingStatusID != (int) postingTypeEnum &&
+                                x.Trade.Posting.CreateUserID != x.CreateUserID)).OrderByDescending(x => x.OfferDate).FirstOrDefault();
+            return offer?.AsDto();
+        }
     }
 }

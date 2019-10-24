@@ -1,11 +1,100 @@
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Market Metrics</li>
-    </ol>
-  </nav>
-  <div class="container">
-      <h2 style="display: inline-block">Market Metrics</h2>
-      <p class="lead">
-        Coming Soon!
-      </p>
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Market Metrics</li>
+  </ol>
+</nav>
+<div class="container mt-sm-4">
+  <h2 style="display: inline-block">
+    Market Metrics
+  </h2>
+  <app-alert-display></app-alert-display>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-4" *ngIf="marketMetrics">
+      <div class="card">
+        <div class="card-header">
+          Current Trading Conditions
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-borderless">
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  Current Ask
+                </th>
+                <td class="text-sm-right pb-0 mb-0" style="white-space: nowrap;">
+                  {{getMostRecentOfferToSell()}}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Most recent Offer to Sell</small>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  Current Bid
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  {{getMostRecentOfferToBuy()}}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Most recent Offer to Buy</small>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  Total Ask Volume
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  {{marketMetrics.TotalSellVolume | number: "1.0" }} ac-ft
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Total volume of all Offers to Sell</small>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  Total Bid Volume
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  {{marketMetrics.TotalBuyVolume | number: "1.0" }} ac-ft
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Total volume of all Offers to Buy</small>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr />
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  Last Trade
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  {{getMostRecentRegisteredTrade()}}
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8">
+      <div class="card">
+        <div class="card-header">
+          Historic Trading Conditions
+        </div>
+        <div class="card-body">
+        </div>
+      </div>
+    </div>
   </div>
+</div>

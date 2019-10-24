@@ -133,5 +133,11 @@ namespace Rio.EFModels.Entities
 
             return result;
         }
+
+        public static WaterTransferDto GetMostRecentRegistered(RioDbContext dbContext)
+        {
+            var waterTransfer = GetWaterTransfersImpl(dbContext).Where(x => x.WaterTransferRegistration.All(y => y.WaterTransferRegistrationStatusID == (int) WaterTransferRegistrationStatusEnum.Registered)).OrderByDescending(x => x.WaterTransferRegistration.Max(y => y.StatusDate)).FirstOrDefault();
+            return waterTransfer?.AsDto();
+        }
     }
 }
