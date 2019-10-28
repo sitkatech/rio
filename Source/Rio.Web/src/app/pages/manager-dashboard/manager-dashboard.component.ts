@@ -5,7 +5,7 @@ import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { forkJoin } from 'rxjs';
-import { ColDef, CsvExportParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
@@ -83,7 +83,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
 
-  private initializePostingActivityGrid(postings: any, ): void {
+  private initializePostingActivityGrid(postings: any): void {
     let _currencyPipe = this.currencyPipe;
     let _datePipe = this.datePipe;
     let _decimalPipe = this.decimalPipe;
