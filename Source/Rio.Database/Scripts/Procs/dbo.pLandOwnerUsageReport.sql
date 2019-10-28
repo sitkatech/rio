@@ -11,13 +11,19 @@ as
 begin
 
 select a.UserID, a.FirstName, a.LastName, a.Email, a.Allocation, a.Purchased, a.Sold,
+a.ProjectWater, a.Reconciliation, a.NativeYield, a.StoredWater,
 a.Allocation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
 a.Allocation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
 a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
 (
-	select u.UserID, u.FirstName, u.LastName, u.Email, isnull(pa.Allocation, 0) as Allocation,
+	select u.UserID, u.FirstName, u.LastName, u.Email, 
+			isnull(pa.ProjectWater, 0) as ProjectWater,
+			isnull(pa.Reconciliation, 0) as Reconciliation,
+			isnull(pa.NativeYield, 0) as NativeYield,
+			isnull(pa.StoredWater, 0) as StoredWater,
+			isnull(pa.Allocation, 0) as Allocation,
 			isnull(wts.Purchased, 0) as Purchased,
 			isnull(wts.Sold, 0) as Sold,
 			isnull(pme.UsageToDate, 0) as UsageToDate,
@@ -26,7 +32,12 @@ from
 	from dbo.[User] u
 	left join
 	(
-		select u.UserID, sum(pa.AcreFeetAllocated) as Allocation
+		select u.UserID, 
+				sum(pa.AcreFeetAllocated) as Allocation, 
+				sum(case when pa.ParcelAllocationTypeID = 1 then pa.AcreFeetAllocated else 0 end) as ProjectWater,
+				sum(case when pa.ParcelAllocationTypeID = 2 then pa.AcreFeetAllocated else 0 end) as Reconciliation,
+				sum(case when pa.ParcelAllocationTypeID = 3 then pa.AcreFeetAllocated else 0 end) as NativeYield,
+				sum(case when pa.ParcelAllocationTypeID = 4 then pa.AcreFeetAllocated else 0 end) as StoredWater
 		from dbo.[User] u
 		join dbo.UserParcel up on u.UserID = up.UserID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID

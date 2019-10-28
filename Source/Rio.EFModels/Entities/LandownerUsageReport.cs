@@ -17,6 +17,10 @@ namespace Rio.EFModels.Entities
         public string LastName { get; set; }
         public string Email { get; set; }
 
+        public decimal? ProjectWater { get; set; }
+        public decimal? Reconciliation { get; set; }
+        public decimal? NativeYield { get; set; }
+        public decimal? StoredWater { get; set; }
         public decimal? Allocation { get; set; }
         public int? Purchased { get; set; }
         public int? Sold { get; set; }
@@ -38,6 +42,10 @@ namespace Rio.EFModels.Entities
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Email = x.Email,
+                ProjectWater = x.ProjectWater,
+                Reconciliation = x.Reconciliation,
+                NativeYield = x.NativeYield,
+                StoredWater = x.StoredWater,
                 Allocation = x.Allocation,
                 Purchased = x.Purchased,
                 Sold = x.Sold,

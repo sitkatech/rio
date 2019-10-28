@@ -92,7 +92,6 @@
     <Build Include="dbo\Tables\dbo.TradeStatus.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransfer.sql" />
     <None Include="Scripts\ReleaseScripts\0004 - Adding User Parcels part two.sql" />
-    <None Include="Scripts\Views\dbo.vAllParcelsWithAnnualWaterUsage.sql" />
     <None Include="Scripts\Views\dbo.vUserDetailed.sql" />
     <None Include="Scripts\Views\dbo.vPostingDetailed.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferType.sql" />
@@ -103,6 +102,9 @@
     <None Include="Scripts\Procs\Script.PostDeployment.Procs.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferRegistrationStatus.sql" />
     <None Include="Scripts\LookupTables\dbo.WaterTransferRegistrationStatus.sql" />
+    <Build Include="dbo\Tables\dbo.ParcelAllocationType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ParcelAllocationType.sql" />
+    <None Include="Scripts\Procs\dbo.pParcelAllocationAndUsage.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

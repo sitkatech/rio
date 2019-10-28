@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.Models.DataTransferObjects.Parcel
 {
@@ -7,9 +8,7 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public int ParcelID { get; set; }
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
-        public int WaterYear { get; set; }
-        public decimal? AcreFeetAllocated { get; set; }
-
+        public List<ParcelAllocationDto> Allocations { get; set; }
         public List<ParcelMonthlyEvapotranspirationDto> MonthlyEvapotranspiration { get; set; }
     }
 }

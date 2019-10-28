@@ -1,0 +1,75 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/manager-dashboard">Manager Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Set Allocation for All Parcels
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4">
+    <h2>
+        Set Allocation for All Parcels
+    </h2>
+    <p class="lead">
+        Use this page to assign a water allocation to all parcels in the platform. Enter the year, the allocation type,
+        and the unit quantity to allocate. Any existing allocations will be overwritten by the new data. You can also
+        manually allocate water one parcel at a time via the Parcel detail pages
+    </p>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <form (ngSubmit)="onSubmit(bulkSetAllocationForm)" #bulkSetAllocationForm="ngForm">
+        <div class="form-group mt-4">
+            <div class="row">
+                <div class="col-sm-4 control-label">
+                    <label class="required">Year</label>
+                </div>
+                <div class="col-sm-3">
+                    <select name="WaterYear" class="form-control" [(ngModel)]="model.WaterYear" required>
+                        <option value=""></option>
+                        <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-4 control-label">
+                    <label class="required">Allocation Type</label>
+                </div>
+                <div class="col-sm-3">
+                    <select name="ParcelAllocationTypeID" class="form-control"
+                        [(ngModel)]="model.ParcelAllocationTypeID" required>
+                        <option value=""></option>
+                        <option *ngFor="let parcelAllocationType of parcelAllocationTypes" value="{{parcelAllocationType.ParcelAllocationTypeID}}">{{parcelAllocationType.Name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-4 control-label">
+                    <label class="required">Allocation (acre-feet per parcel acre)</label>
+                </div>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" name="AcreFeetAllocated" step="1" required
+                        [(ngModel)]="model.AcreFeetAllocated" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-sm-3 text-right">
+                <button type="submit" class="btn btn-primary" [disabled]="!bulkSetAllocationForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -6,6 +6,8 @@ import { ColDef } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { DecimalPipe } from '@angular/common';
+import { AgGridAngular } from 'ag-grid-angular';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-user-list',
@@ -13,13 +15,15 @@ import { DecimalPipe } from '@angular/common';
   styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit, OnDestroy {
+  @ViewChild('usersGrid', {static: false}) usersGrid: AgGridAngular;
+
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
   public rowData = [];
   columnDefs: ColDef[];
 
-  constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private userService: UserService, private decimalPipe: DecimalPipe) { }
+  constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private utilityFunctionsService: UtilityFunctionsService, private userService: UserService, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -70,4 +74,17 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.authenticationService.dispose();
     this.cdr.detach();
   }
+
+  public exportToCsv() {
+    // we need to grab all columns except the first one (trash icon)
+    let columnsKeys = this.usersGrid.columnApi.getAllDisplayedColumns(); 
+    let columnIds: Array<any> = []; 
+    columnsKeys.forEach(keys => 
+      { 
+        let columnName: string = keys.getColId(); 
+        columnIds.push(columnName); 
+      });
+    columnIds.splice(0, 1);
+    this.utilityFunctionsService.exportGridToCsv(this.usersGrid, 'users.csv', columnIds);
+  }  
 }

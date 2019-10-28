@@ -3,9 +3,11 @@ import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
-import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
 import { ParcelWithWaterUsageDto } from 'src/app/shared/models/parcel/parcel-with-water-usage-dto';
+import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
+import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +25,11 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getWaterYears(): Observable<Array<number>> {
+    let route = `/getWaterYears`;
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };
@@ -33,13 +40,19 @@ export class ParcelService {
     let route = `/parcels/${parcelID}/updateAnnualAllocations`;
     return this.apiService.postToApi(route, model);
   }
-  getParcelAllocationAndConsumption(parcelID: number): Observable<Array<ParcelAllocationAndConsumptionDto>> {
-    let route = `/parcels/${parcelID}/getAllocationAndConsumption`;
+  
+  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto): Observable<any[]>  {
+    let route = `/parcels/bulkSetAnnualParcelAllocation`;
+    return this.apiService.postToApi(route, model);
+  }
+  
+  getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {
+    let route = `/parcels/${parcelID}/getAllocations`;
     return this.apiService.getFromApi(route);
   }
-
-  getParcelAllocationAndConsumptionByUserID(userID: number): Observable<any[]> {
-    let route = `/users/${userID}/getParcelsAllocationAndConsumption`;
+  
+  getWaterUsage(parcelID: number): Observable<Array<ParcelMonthlyEvapotranspirationDto>> {
+    let route = `/parcels/${parcelID}/getWaterUsage`;
     return this.apiService.getFromApi(route);
   }
 
@@ -48,8 +61,8 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsWithWaterUsage(): Observable<Array<ParcelWithWaterUsageDto>> {
-    let route = `/parcels/getParcelsWithWaterUsage`;
+  getParcelsWithWaterUsage(year: number): Observable<Array<ParcelWithWaterUsageDto>> {
+    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
 }

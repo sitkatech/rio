@@ -4,27 +4,28 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { ParcelAllocationAndConsumptionDto } from 'src/app/shared/models/parcel/parcel-allocation-and-consumption-dto';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
 import { UserDto } from 'src/app/shared/models';
+import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
   templateUrl: './parcel-edit-allocation.component.html',
-  styleUrls: ['./parcel-edit-allocation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./parcel-edit-allocation.component.scss']
 })
 export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
+  public waterYears: Array<number>;
   public parcel: ParcelDto;
-  public parcelAllocationAndConsumptions: Array<ParcelAllocationAndConsumptionDto>;
-  public model: ParcelAllocationUpsertWrapperDto;
+  public parcelAllocations: Array<ParcelAllocationDto>;
+  public model: any;
   public isLoadingSubmit: boolean = false;
 
   constructor(
@@ -44,26 +45,34 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
       if (id) {
         forkJoin(
           this.parcelService.getParcelByParcelID(id),
-          this.parcelService.getParcelAllocationAndConsumption(id)
-        ).subscribe(([parcel, parcelAllocationAndConsumptions]) => {
-          this.parcel = parcel instanceof Array
-            ? null
-            : parcel as ParcelDto;
-          this.parcel = parcel;
-          this.parcelAllocationAndConsumptions = parcelAllocationAndConsumptions;
-          this.model = new ParcelAllocationUpsertWrapperDto();
-          this.model.ParcelAllocations =
-            this.parcelAllocationAndConsumptions.map(x => {
-              let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
-              parcelAllocationUpsertDto.WaterYear = x.WaterYear;
-              parcelAllocationUpsertDto.AcreFeetAllocated = x.AcreFeetAllocated;
-              return parcelAllocationUpsertDto;
-            }
-            );
-          this.cdr.detectChanges();
-        });
+          this.parcelService.getParcelAllocations(id),
+          this.parcelService.getWaterYears()
+        ).subscribe(
+          ([parcel, parcelAllocations, waterYears]) => {
+            this.parcel = parcel instanceof Array
+              ? null
+              : parcel as ParcelDto;
+            this.parcel = parcel;
+            this.parcelAllocations = parcelAllocations;
+            this.waterYears = waterYears;
+            this.model = waterYears.map(year => {
+              return {
+                WaterYear: year,
+                ProjectWater: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.ProjectWater),
+                Reconciliation: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.Reconciliation),
+                NativeYield: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.NativeYield),
+                StoredWater: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.StoredWater)
+              };
+            });
+          }
+        );
       }
     });
+  }
+
+  private getAnnualAllocationForType(year: number, parcelAllocationTypeEnum: ParcelAllocationTypeEnum) {
+    const parcelAllocation = this.parcelAllocations.find(pa => pa.WaterYear === year && pa.ParcelAllocationTypeID === parcelAllocationTypeEnum);
+    return parcelAllocation ? parcelAllocation.AcreFeetAllocated : null;
   }
 
   ngOnDestroy() {
@@ -74,7 +83,38 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
 
   public onSubmit(editAllocationForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.parcelService.updateAnnualAllocations(this.parcel.ParcelID, this.model)
+    let parcelAllocationUpsertWrapperDto = new ParcelAllocationUpsertWrapperDto();
+    parcelAllocationUpsertWrapperDto.ParcelAllocations = [];
+    this.model.filter(pa => pa.ProjectWater > 0).forEach(pa => {
+      let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
+      parcelAllocationUpsertDto.WaterYear = pa.WaterYear;
+      parcelAllocationUpsertDto.ParcelAllocationTypeID = ParcelAllocationTypeEnum.ProjectWater;
+      parcelAllocationUpsertDto.AcreFeetAllocated = pa.ProjectWater;
+      parcelAllocationUpsertWrapperDto.ParcelAllocations.push(parcelAllocationUpsertDto);
+    });
+    this.model.filter(pa => pa.Reconciliation > 0).forEach(pa => {
+      let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
+      parcelAllocationUpsertDto.WaterYear = pa.WaterYear;
+      parcelAllocationUpsertDto.ParcelAllocationTypeID = ParcelAllocationTypeEnum.Reconciliation;
+      parcelAllocationUpsertDto.AcreFeetAllocated = pa.Reconciliation;
+      parcelAllocationUpsertWrapperDto.ParcelAllocations.push(parcelAllocationUpsertDto);
+    });
+    this.model.filter(pa => pa.NativeYield > 0).forEach(pa => {
+      let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
+      parcelAllocationUpsertDto.WaterYear = pa.WaterYear;
+      parcelAllocationUpsertDto.ParcelAllocationTypeID = ParcelAllocationTypeEnum.NativeYield;
+      parcelAllocationUpsertDto.AcreFeetAllocated = pa.NativeYield;
+      parcelAllocationUpsertWrapperDto.ParcelAllocations.push(parcelAllocationUpsertDto);
+    });
+    this.model.filter(pa => pa.StoredWater > 0).forEach(pa => {
+      let parcelAllocationUpsertDto = new ParcelAllocationUpsertDto();
+      parcelAllocationUpsertDto.WaterYear = pa.WaterYear;
+      parcelAllocationUpsertDto.ParcelAllocationTypeID = ParcelAllocationTypeEnum.StoredWater;
+      parcelAllocationUpsertDto.AcreFeetAllocated = pa.StoredWater;
+      parcelAllocationUpsertWrapperDto.ParcelAllocations.push(parcelAllocationUpsertDto);
+    });
+      
+    this.parcelService.updateAnnualAllocations(this.parcel.ParcelID, parcelAllocationUpsertWrapperDto)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         editAllocationForm.reset();

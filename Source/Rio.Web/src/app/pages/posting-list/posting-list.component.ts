@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { UserDto } from 'src/app/shared/models';
@@ -7,6 +7,7 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { ColDef } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { DatePipe, CurrencyPipe } from '@angular/common';
+import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
   selector: 'rio-posting-list',
@@ -14,6 +15,8 @@ import { DatePipe, CurrencyPipe } from '@angular/common';
   styleUrls: ['./posting-list.component.scss']
 })
 export class PostingListComponent implements OnInit, OnDestroy {
+  @ViewChild('postingsGrid', {static: false}) postingsGrid: AgGridAngular;
+
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
@@ -21,11 +24,13 @@ export class PostingListComponent implements OnInit, OnDestroy {
   postings: PostingDto[];
   postingToEdit = {};
   columnDefs: ColDef[];
+  postingTypeFilter: number;
 
   constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private postingService: PostingService, private datePipe: DatePipe, private currencyPipe: CurrencyPipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.postingTypeFilter = 0;
       this.currentUser = currentUser;
       this.postingService.getPostings().subscribe(result => {
         let _datePipe = this.datePipe;
@@ -110,4 +115,17 @@ export class PostingListComponent implements OnInit, OnDestroy {
       return (a + b.AvailableQuantity);
     }, 0);
   }
+
+  public updateGridData(){
+    if(this.postingTypeFilter === 0)
+    {
+      this.postingsGrid.api.setRowData(this.postings);
+    }
+    else
+    {
+      let result = this.postings.filter(x => x.PostingType.PostingTypeID === this.postingTypeFilter);
+      this.postingsGrid.api.setRowData(result);
+    }
+  }
+
 }

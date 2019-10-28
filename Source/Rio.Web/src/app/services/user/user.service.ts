@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
+import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -56,4 +57,11 @@ export class UserService {
         let route = `/landowner-usage-report/${year}`;
         return this.apiService.getFromApi(route);
     }
+
+    getParcelsAllocationsByUserID(userID: number): Observable<Array<ParcelAllocationDto>> {
+        let route = `/users/${userID}/getParcelsAllocations`;
+        return this.apiService.getFromApi(route);
+      }
+    
+    
 }

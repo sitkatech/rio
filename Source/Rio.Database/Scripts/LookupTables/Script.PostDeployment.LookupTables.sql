@@ -16,6 +16,9 @@ GO
 :r .\dbo.Role.sql 
 GO
 
+:r .\dbo.ParcelAllocationType.sql 
+GO
+
 :r .\dbo.PostingType.sql 
 GO
 

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Role;
 
 namespace Rio.API.Controllers
-{
-    public class RoleController : Controller
+{ 
+    [ApiController]
+    public class RoleController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<RoleController> _logger;
@@ -21,7 +21,8 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("roles")]
-        public ActionResult<IEnumerable<RoleDto>> Get()
+        [UserManageFeature]
+        public IActionResult Get()
         {
             var roleDtos = Role.List(_dbContext);
             return Ok(roleDtos);

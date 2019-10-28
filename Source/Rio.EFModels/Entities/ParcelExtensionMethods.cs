@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.EFModels.Entities
 {
@@ -17,37 +14,6 @@ namespace Rio.EFModels.Entities
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                 LandOwner = parcel.UserParcel.OrderBy(x => x.UserID).FirstOrDefault()?.User.AsSimpleDto()
             };
-        }
-
-        public static List<ParcelAllocationAndConsumptionDto> CreateParcelAllocationAndConsumptionDtos(List<int> waterYears, IEnumerable<ParcelDto> parcelDtos,
-            List<ParcelAllocationDto> parcelAllocationDtos, List<ParcelMonthlyEvapotranspirationDto> parcelMonthlyEvapotranspirationDtos)
-        {
-            var parcelAllocationAndConsumptionDtos = new List<ParcelAllocationAndConsumptionDto>();
-            foreach (var parcelDto in parcelDtos)
-            {
-                foreach (var waterYear in waterYears)
-                {
-                    var parcelAllocationAndConsumptionDto = new ParcelAllocationAndConsumptionDto()
-                    {
-                        ParcelID = parcelDto.ParcelID,
-                        ParcelNumber = parcelDto.ParcelNumber,
-                        ParcelAreaInAcres = parcelDto.ParcelAreaInAcres,
-                        WaterYear = waterYear
-                    };
-                    var parcelAllocationDtoForThisYear =
-                        parcelAllocationDtos.SingleOrDefault(x => x.ParcelID == parcelDto.ParcelID && x.WaterYear == waterYear);
-                    if (parcelAllocationDtoForThisYear != null)
-                    {
-                        parcelAllocationAndConsumptionDto.AcreFeetAllocated = parcelAllocationDtoForThisYear.AcreFeetAllocated.HasValue ?
-                            Math.Round(parcelAllocationDtoForThisYear.AcreFeetAllocated.Value, 1) : (decimal?) null;
-                    }
-
-                    parcelAllocationAndConsumptionDto.MonthlyEvapotranspiration = parcelMonthlyEvapotranspirationDtos
-                        .Where(x => x.ParcelID == parcelDto.ParcelID && x.WaterYear == waterYear).ToList();
-                    parcelAllocationAndConsumptionDtos.Add(parcelAllocationAndConsumptionDto);
-                }
-            }
-            return parcelAllocationAndConsumptionDtos;
         }
     }
 }

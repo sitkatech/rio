@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { forkJoin } from 'rxjs';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, CsvExportParams } from 'ag-grid-community';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
@@ -13,6 +13,8 @@ import { PostingService } from 'src/app/services/posting.service';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { UserService } from 'src/app/services/user/user.service';
+import { AgGridAngular } from 'ag-grid-angular';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -20,6 +22,10 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./manager-dashboard.component.scss']
 })
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('landOwnerUsageReportGrid', { static: false }) landOwnerUsageReportGrid: AgGridAngular;
+  @ViewChild('tradeActivityGrid', { static: false }) tradeActivityGrid: AgGridAngular;
+  @ViewChild('postingsGrid', { static: false }) postingsGrid: AgGridAngular;
+
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
 
@@ -37,6 +43,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
+    private utilityFunctionsService: UtilityFunctionsService,
     private tradeService: TradeService,
     private parcelService: ParcelService,
     private postingService: PostingService,
@@ -48,15 +55,17 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.waterYearToDisplay = 2019;
+      this.waterYearToDisplay = (new Date()).getFullYear();
 
       forkJoin(
         this.parcelService.getParcelsWithLandOwners(),
         this.tradeService.getAllTradeActivity(),
         this.postingService.getPostingsDetailed(),
         this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay),
-      ).subscribe(([parcels, trades, postings, landownerUsageReport]) => {
+        this.parcelService.getWaterYears()
+      ).subscribe(([parcels, trades, postings, landownerUsageReport, waterYears]) => {
         this.parcels = parcels;
+        this.waterYears = waterYears;
         this.initializeTradeActivityGrid(trades);
         this.initializePostingActivityGrid(postings);
         this.initializeLandownerUsageReportGrid(landownerUsageReport);
@@ -223,23 +232,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Status',
-        valueGetter: function (params) { 
-          if(params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted)
-          {
-            if(params.data.BuyerRegistration.IsCanceled || params.data.SellerRegistration.IsCanceled)
-            {
+        valueGetter: function (params) {
+          if (params.data.TradeStatus.TradeStatusID === TradeStatusEnum.Accepted) {
+            if (params.data.BuyerRegistration.IsCanceled || params.data.SellerRegistration.IsCanceled) {
               return "Transaction Canceled";
             }
-            else if(!params.data.BuyerRegistration.IsRegistered || !params.data.SellerRegistration.IsRegistered)
-            {
+            else if (!params.data.BuyerRegistration.IsRegistered || !params.data.SellerRegistration.IsRegistered) {
               return "Awaiting Registration";
             }
-            else
-            {
+            else {
               return params.data.TradeStatus.TradeStatusDisplayName;
             }
           }
-          return params.data.TradeStatus.TradeStatusDisplayName; },
+          return params.data.TradeStatus.TradeStatusDisplayName;
+        },
         sortable: true, filter: true, width: 200
       },
       {
@@ -312,7 +318,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.trades = trades;
   }
 
-  private initializeLandownerUsageReportGrid(landownerUsageReport: any, ): void {
+  private initializeLandownerUsageReportGrid(landownerUsageReport: any): void {
     let _decimalPipe = this.decimalPipe;
 
     this.landownerUsageReportGridColumnDefs = [
@@ -337,14 +343,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 155
       },
-      { headerName: 'Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
+      { headerName: 'Project Water', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Reconciliation', field: 'Reconciliation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Native Yield', field: 'NativeYield', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Stored Water', field: 'StoredWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Purchased', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
       { headerName: 'Sold', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Supply', field: 'TotalSupply', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Current Available', field: 'CurrentAvailable', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       {
         headerName: 'Most Recent Trade', valueGetter: function (params: any) {
-          return { LinkValue: params.data.TradeNumber, LinkDisplay: params.data.TradeNumber };
+          return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/trades/" },
         filterValueGetter: function (params: any) {
@@ -367,5 +377,34 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: '# of Postings', field: 'NumberOfPostings', sortable: true, filter: true, width: 120 },
     ];
     this.landownerUsageReports = landownerUsageReport;
+  }
+
+  public updateLandownerUsageReportData() {
+    this.userService.getLandowneUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
+      this.landOwnerUsageReportGrid.api.setRowData(result);
+    });
+  }
+
+  public exportLandOwnerUsageReportToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv', null);
+  }
+
+  public exportTradeActivityToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.tradeActivityGrid, 'tradeActivity.csv', null);
+  }
+
+  public exportPostingsToCsv() {
+    // we need to grab all columns except the first one (trash icon)
+    let columnsKeys = this.postingsGrid.columnApi.getAllDisplayedColumns(); 
+    let columnIds: Array<any> = []; 
+    columnsKeys.forEach(keys => 
+      { 
+        let columnName: string = keys.getColId(); 
+        if (columnName != '0' && columnName) 
+        { 
+          columnIds.push(columnName); 
+        } 
+      });
+    this.utilityFunctionsService.exportGridToCsv(this.postingsGrid, 'postings.csv', columnIds);
   }
 }

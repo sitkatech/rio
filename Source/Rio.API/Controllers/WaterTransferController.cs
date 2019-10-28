@@ -12,7 +12,8 @@ using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
-    public class WaterTransferController : Controller
+    [ApiController]
+    public class WaterTransferController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<OfferController> _logger;

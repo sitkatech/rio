@@ -10,7 +10,8 @@ using System.Collections.Generic;
 
 namespace Rio.API.Controllers
 {
-    public class ParcelController : Controller
+    [ApiController]
+    public class ParcelController : ControllerBase
     {
         private readonly RioDbContext _dbContext;
         private readonly ILogger<ParcelController> _logger;
@@ -23,11 +24,11 @@ namespace Rio.API.Controllers
             _keystoneService = keystoneService;
         }
 
-        [HttpGet("parcels/getParcelsWithWaterUsage")]
+        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
         [ParcelManageFeature]
-        public ActionResult<IEnumerable<ParcelDto>> List()
+        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListWithWaterUsage(_dbContext);
+            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
             return Ok(parcelDtos);
         }
 
@@ -44,9 +45,9 @@ namespace Rio.API.Controllers
             return Ok(parcelDto);
         }
 
-        [HttpGet("parcels/{parcelID}/getAllocationAndConsumption")]
+        [HttpGet("parcels/{parcelID}/getAllocations")]
         [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationAndConsumptionDto>> GetAllocationAndConsumption([FromRoute] int parcelID)
+        public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
@@ -55,15 +56,33 @@ namespace Rio.API.Controllers
             }
 
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
+            return Ok(parcelAllocationDtos);
+        }
+
+        [HttpGet("getWaterYears")]
+        [ParcelManageFeature]
+        public ActionResult<List<int>> GetWaterYears()
+        {
+            return Ok(DateUtilities.GetWaterYears());
+        }
+
+        [HttpGet("parcels/{parcelID}/getWaterUsage")]
+        [ParcelManageFeature]
+        public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
+        {
+            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            if (parcelDto == null)
+            {
+                return NotFound();
+            }
+
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
-            var waterYears = DateUtilities.GetWaterYears();
-            var parcelAllocationAndConsumptionDtos = ParcelExtensionMethods.CreateParcelAllocationAndConsumptionDtos(waterYears, new List<ParcelDto>{parcelDto}, parcelAllocationDtos, parcelMonthlyEvapotranspirationDtos);
-            return Ok(parcelAllocationAndConsumptionDtos);
+            return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
         [HttpPost("parcels/{parcelID}/updateAnnualAllocations")]
         [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationAndConsumptionDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
+        public ActionResult<List<ParcelAllocationDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
@@ -78,6 +97,19 @@ namespace Rio.API.Controllers
 
             var updatedParcelAllocationDtos = ParcelAllocation.Upsert(_dbContext, parcelID, parcelAllocationUpsertWrapperDto.ParcelAllocations);
             return Ok(updatedParcelAllocationDtos);
+        }
+
+        [HttpPost("parcels/bulkSetAnnualParcelAllocation")]
+        [ParcelManageFeature]
+        public ActionResult BulkSetAnnualParcelAllocation([FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var numberOfParcels = ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
+            return Ok(numberOfParcels);
         }
 
 

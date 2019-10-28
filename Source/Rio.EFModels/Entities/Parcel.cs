@@ -3,44 +3,11 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {
     public partial class Parcel
     {
-        public static IEnumerable<ParcelWithWaterUsageDto> ListWithWaterUsage(RioDbContext dbContext)
-        {
-            // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.vAllParcelsWithAnnualWaterUsage.OrderBy(x => x.ParcelNumber).ToList()
-                .Select(parcel =>
-                {
-                    var parcelWithWaterUsageDto = new ParcelWithWaterUsageDto()
-                    {
-                        ParcelID = parcel.ParcelID,
-                        ParcelNumber = parcel.ParcelNumber,
-                        ParcelAreaInAcres = parcel.ParcelAreaInAcres,
-                        WaterUsageFor2016 = parcel.WaterUsageFor2016,
-                        WaterUsageFor2017 = parcel.WaterUsageFor2017,
-                        WaterUsageFor2018 = parcel.WaterUsageFor2018,
-                        AllocationFor2016 = parcel.AllocationFor2016,
-                        AllocationFor2017 = parcel.AllocationFor2017,
-                        AllocationFor2018 = parcel.AllocationFor2018
-                    };
-                    if (parcel.UserID.HasValue)
-                    {
-                        parcelWithWaterUsageDto.LandOwner = new UserSimpleDto()
-                        {
-                            FirstName = parcel.FirstName, LastName = parcel.LastName, Email = parcel.Email,
-                            UserID = parcel.UserID.Value
-                        };
-                    }
-
-                    return parcelWithWaterUsageDto;
-                }).ToList();
-            return parcels;
-        }
-
         public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext)
         {
             var parcels = dbContext.UserParcel.Include(x => x.Parcel)
