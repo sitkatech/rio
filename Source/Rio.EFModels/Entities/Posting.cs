@@ -140,7 +140,7 @@ namespace Rio.EFModels.Entities
 
         public static PostingDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
         {
-            var offer = GetPostingImpl(dbContext).Where(x => x.PostingStatusID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
+            var offer = GetPostingImpl(dbContext).Where(x => x.PostingTypeID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
             return offer?.AsDto();
         }
     }
