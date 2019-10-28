@@ -49,22 +49,6 @@
                 </tr>
                 <tr>
                   <th>
-                    <div class="ml-3">Project Water</div>
-                  </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualProjectWater() | number: '1.1-1'}} ac-ft
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <div class="ml-3">Reconciliation</div>
-                  </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualReconciliation() | number: '1.1-1'}} ac-ft
-                  </td>
-                </tr>
-                <tr>
-                  <th>
                     <div class="ml-3">Native Yield</div>
                   </th>
                   <td colspan="2" class="text-sm-right">
@@ -73,10 +57,26 @@
                 </tr>
                 <tr>
                   <th>
+                    <div class="ml-3">Project Water</div>
+                  </th>
+                  <td colspan="2" class="text-sm-right">
+                    {{getAnnualProjectWater() | number: '1.1-1'}} ac-ft
+                  </td>
+                </tr>
+                <tr>
+                  <th>
                     <div class="ml-3">Stored Water</div>
                   </th>
                   <td colspan="2" class="text-sm-right">
                     {{getAnnualStoredWater() | number: '1.1-1'}} ac-ft
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    <div class="ml-3">Reconciliation</div>
+                  </th>
+                  <td colspan="2" class="text-sm-right">
+                    {{getAnnualReconciliation() | number: '1.1-1'}} ac-ft
                   </td>
                 </tr>
               </ng-container>

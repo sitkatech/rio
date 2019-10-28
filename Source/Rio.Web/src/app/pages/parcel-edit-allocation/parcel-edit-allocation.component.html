@@ -26,30 +26,30 @@
                 <thead>
                   <tr>
                     <th>Year</th>
-                    <th>Project Water (Acre Feet)</th>
-                    <th>Reconciliation (Acre Feet)</th>
                     <th>Native Yield (Acre Feet)</th>
+                    <th>Project Water (Acre Feet)</th>
                     <th>Stored Water (Acre Feet)</th>
+                    <th>Reconciliation (Acre Feet)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let parcelAllocation of model; let i = index">
                     <td>{{parcelAllocation.WaterYear}}</td>
                     <td>
-                      <input type="number" class="form-control" name="ProjectWater{{i}}"
-                        [(ngModel)]="parcelAllocation.ProjectWater" step=".1" />
-                    </td>
-                    <td>
-                      <input type="number" class="form-control" name="Reconciliation{{i}}"
-                        [(ngModel)]="parcelAllocation.Reconciliation" step=".1" />
-                    </td>
-                    <td>
                       <input type="number" class="form-control" name="NativeYield{{i}}"
                         [(ngModel)]="parcelAllocation.NativeYield" step=".1" />
                     </td>
                     <td>
+                      <input type="number" class="form-control" name="ProjectWater{{i}}"
+                        [(ngModel)]="parcelAllocation.ProjectWater" step=".1" />
+                    </td>
+                    <td>
                       <input type="number" class="form-control" name="StoredWater{{i}}"
                         [(ngModel)]="parcelAllocation.StoredWater" step=".1" />
+                    </td>
+                    <td>
+                      <input type="number" class="form-control" name="Reconciliation{{i}}"
+                        [(ngModel)]="parcelAllocation.Reconciliation" step=".1" />
                     </td>
                   </tr>
                 </tbody>

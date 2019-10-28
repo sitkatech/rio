@@ -86,6 +86,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private initializePostingActivityGrid(postings: any, ): void {
     let _currencyPipe = this.currencyPipe;
     let _datePipe = this.datePipe;
+    let _decimalPipe = this.decimalPipe;
 
     this.postingsGridColumnDefs = [
       {
@@ -160,10 +161,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Status', field: 'PostingStatusDisplayName', sortable: true, filter: true, width: 100 },
       { headerName: 'Type', field: 'PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
-      { headerName: '# of Offers', field: 'NumberOfOffers', sortable: true, filter: true, width: 120 },
+      { headerName: '# of Offers', field: 'NumberOfOffers', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
       { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
-      { headerName: 'Initial Quantity', field: 'Quantity', sortable: true, filter: true, width: 140 },
-      { headerName: 'Available Quantity', field: 'AvailableQuantity', sortable: true, filter: true, width: 160 },
+      { headerName: 'Initial Quantity', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },
+      { headerName: 'Available Quantity', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
     ];
     this.postings = postings;
   }
@@ -171,6 +172,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private initializeTradeActivityGrid(trades: any, ): void {
     let _currencyPipe = this.currencyPipe;
     let _datePipe = this.datePipe;
+    let _decimalPipe = this.decimalPipe;
 
     this.tradesGridColumnDefs = [
       {
@@ -290,7 +292,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 155
       },
-      { headerName: 'Quantity (acre-feet)', field: 'Quantity', sortable: true, filter: true, width: 160 },
+      { headerName: 'Quantity (acre-feet)', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
       { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {
@@ -344,10 +346,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-      { headerName: 'Project Water', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-      { headerName: 'Reconciliation', field: 'Reconciliation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Native Yield', field: 'NativeYield', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Project Water', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Stored Water', field: 'StoredWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+      { headerName: 'Reconciliation', field: 'Reconciliation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Purchased', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
       { headerName: 'Sold', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Supply', field: 'TotalSupply', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
@@ -373,8 +375,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 160
       },
-      { headerName: '# of Trades', field: 'NumberOfTrades', sortable: true, filter: true, width: 120 },
-      { headerName: '# of Postings', field: 'NumberOfPostings', sortable: true, filter: true, width: 120 },
+      { headerName: '# of Trades', field: 'NumberOfTrades', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+      { headerName: '# of Postings', field: 'NumberOfPostings', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
     ];
     this.landownerUsageReports = landownerUsageReport;
   }
