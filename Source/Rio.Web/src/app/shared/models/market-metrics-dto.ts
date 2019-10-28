@@ -2,8 +2,10 @@ import { OfferDto } from './offer/offer-dto';
 import { WaterTransferDto } from './water-transfer-dto';
 
 export class MarketMetricsDto {
-    MostRecentOfferToBuy: OfferDto;
-    MostRecentOfferToSell: OfferDto;
+    MostRecentOfferToBuyPrice: number;
+    MostRecentOfferToBuyQuantity: number;
+    MostRecentOfferToSellPrice: number;
+    MostRecentOfferToSellQuantity: number;
     MostRecentWaterTransfer: WaterTransferDto;
     TotalBuyVolume: number;
     TotalSellVolume: number;

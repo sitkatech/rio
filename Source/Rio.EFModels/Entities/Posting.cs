@@ -76,21 +76,6 @@ namespace Rio.EFModels.Entities
             return posting?.AsDto();
         }
 
-        public static PostingDto Update(RioDbContext dbContext, int postingID, PostingUpsertDto postingUpsertDto)
-        {
-            var posting = dbContext.Posting
-                .Single(x => x.PostingID == postingID);
-
-            posting.PostingTypeID = postingUpsertDto.PostingTypeID;
-            posting.Quantity = postingUpsertDto.Quantity;
-            posting.Price = postingUpsertDto.Price;
-            posting.PostingDescription = postingUpsertDto.PostingDescription;
-
-            dbContext.SaveChanges();
-            dbContext.Entry(posting).Reload();
-            return GetByPostingID(dbContext, postingID);
-        }
-
         public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID,
             PostingUpdateStatusDto postingUpdateStatusDto, int? availableQuantity)
         {
@@ -153,5 +138,10 @@ namespace Rio.EFModels.Entities
             return parcels;
         }
 
+        public static PostingDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
+        {
+            var offer = GetPostingImpl(dbContext).Where(x => x.PostingStatusID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
+            return offer?.AsDto();
+        }
     }
 }

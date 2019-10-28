@@ -4,6 +4,7 @@ import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { MarketMetricsService } from 'src/app/services/market-metrics.service';
 import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -16,7 +17,11 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   marketMetrics: MarketMetricsDto;
 
   constructor(private cdr: ChangeDetectorRef,
-    private authenticationService: AuthenticationService, private marketMetricsService: MarketMetricsService) { }
+    private authenticationService: AuthenticationService, 
+    private marketMetricsService: MarketMetricsService,
+    private currencyPipe: CurrencyPipe,
+    private decimalPipe: DecimalPipe,
+) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -33,22 +38,23 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public getMostRecentOfferToSell() : string
+  private getMostRecentOfferImpl(quantity: number, price: number) : string
   {
-    if(this.marketMetrics.MostRecentOfferToSell)
+    if(quantity)
     {
-      return this.marketMetrics.MostRecentOfferToSell.Quantity + " ac-ft at $" + this.marketMetrics.MostRecentOfferToSell.Price + " per ac-ft";
+      return this.decimalPipe.transform(quantity, "1.0-0") + " ac-ft at " + this.currencyPipe.transform(price, "USD") + " per ac-ft";
     }
     return "-";
   }
 
+  public getMostRecentOfferToSell() : string
+  {
+    return this.getMostRecentOfferImpl(this.marketMetrics.MostRecentOfferToSellQuantity, this.marketMetrics.MostRecentOfferToSellPrice);
+  }
+
   public getMostRecentOfferToBuy() : string
   {
-    if(this.marketMetrics.MostRecentOfferToBuy)
-    {
-      return this.marketMetrics.MostRecentOfferToBuy.Quantity + " ac-ft at $" + this.marketMetrics.MostRecentOfferToSell.Price + " per ac-ft";
-    }
-    return "-";
+    return this.getMostRecentOfferImpl(this.marketMetrics.MostRecentOfferToBuyQuantity, this.marketMetrics.MostRecentOfferToBuyPrice);
   }
 
   public getMostRecentRegisteredTrade() : string
