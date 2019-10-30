@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -73,6 +74,35 @@ namespace Rio.API.Controllers
                     priceProperty.SetValue(marketMetricsDto, mostRecentOffer?.Price);
                 }
             }
+        }
+
+        [HttpGet("market-metrics/monthly-trade-activity")]
+        [UserManageFeature]
+        public ActionResult<List<TradeActivityByMonthDto>> GetLast12MonthsTradeActivity()
+        {
+            var now = DateTime.Now;
+            var date12MonthsBefore = now.AddMonths(-11);
+            var beginDate = new DateTime(date12MonthsBefore.Year, date12MonthsBefore.Month, 1);
+            var endDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
+
+            var tradeActivityByMonthDtos = Enumerable.Range(0, 12).Select(a => beginDate.AddMonths(a).AddDays(1))
+                .TakeWhile(a => a <= endDate)
+                .Select(a => new TradeActivityByMonthDto() { GroupingDate = a, NumberOfTrades = 0, TradeVolume = 0}).ToList();
+
+            var acceptedAndNotCanceledTrades = Trade.GetAllTrades(_dbContext).Where(x =>
+                x.TradeStatus.TradeStatusID == (int) TradeStatusEnum.Accepted && !x.BuyerRegistration.IsCanceled &&
+                !x.SellerRegistration.IsCanceled && x.OfferDate >= beginDate && x.OfferDate <= now).ToList();
+            var tradesGroupedByMonth = acceptedAndNotCanceledTrades.GroupBy(x => new DateTime(x.OfferDate.Year, x.OfferDate.Month, 2)).ToList();
+            foreach (var tradeActivityByMonthDto in tradeActivityByMonthDtos)
+            {
+                var currentTradeActivityByMonthDto = tradesGroupedByMonth.SingleOrDefault(x => x.Key == tradeActivityByMonthDto.GroupingDate);
+                if (currentTradeActivityByMonthDto != null)
+                {
+                    tradeActivityByMonthDto.TradeVolume = currentTradeActivityByMonthDto.Sum(x => x.Quantity);
+                    tradeActivityByMonthDto.NumberOfTrades = currentTradeActivityByMonthDto.Count();
+                }
+            }
+            return Ok(tradeActivityByMonthDtos);
         }
     }
 }

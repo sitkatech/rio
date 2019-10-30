@@ -4,7 +4,8 @@ import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { MarketMetricsService } from 'src/app/services/market-metrics.service';
 import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -15,19 +16,32 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
   marketMetrics: MarketMetricsDto;
+  tradeActivityByMonth: TradeActivityByMonthDto[];
+  tradeActivityByMonthSeries: { name: string; value: number; }[];
+  colorScheme: { domain: string[]; };
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService, 
     private marketMetricsService: MarketMetricsService,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
+    private datePipe: DatePipe
 ) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      forkJoin(this.marketMetricsService.getMarketMetrics()).subscribe(([marketMetrics]) => {
+      forkJoin(this.marketMetricsService.getMarketMetrics(), this.marketMetricsService.getMonthlyTradeActivity()).subscribe(([marketMetrics, tradeActivityByMonth]) => {
         this.marketMetrics = marketMetrics;
+        this.tradeActivityByMonth = tradeActivityByMonth;
+        console.log(tradeActivityByMonth);
+        this.tradeActivityByMonthSeries = tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.TradeVolume }
+        });
+
+        this.colorScheme = {
+          domain: ['#636363', '#ff1100', '#0400d6'] 
+        };
       });
     });
   }
