@@ -1,5 +1,5 @@
 export class TradeActivityByMonthDto {
-    MonthYear: string;
+    GroupingDate: string;
     TradeVolume: number;
     NumberOfTrades: number;
 
