@@ -76,10 +76,10 @@
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th style="text-align: right">Project Water</th>
-                  <th style="text-align: right">Reconciliation</th>
                   <th style="text-align: right">Native Yield</th>
+                  <th style="text-align: right">Project Water</th>
                   <th style="text-align: right">Stored Water</th>
+                  <th style="text-align: right">Reconciliation</th>
                   <th style="text-align: right">Total Allocation</th>
                   <th style="text-align: right">Total Usage</th>
                   <th style="text-align: right">Jan</th>
@@ -100,13 +100,13 @@
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear}}</td>
                   <td style="text-align: right">
-                    {{getProjectWaterForYear(waterYear)}}</td>
-                  <td style="text-align: right">
-                    {{getReconciliationForYear(waterYear)}}</td>
-                  <td style="text-align: right">
                     {{getNativeYieldForYear(waterYear)}}</td>
                   <td style="text-align: right">
+                    {{getProjectWaterForYear(waterYear)}}</td>
+                  <td style="text-align: right">
                     {{getStoredWaterForYear(waterYear)}}</td>
+                  <td style="text-align: right">
+                    {{getReconciliationForYear(waterYear)}}</td>
                   <td style="text-align: right">
                     {{getTotalAllocationForYear(waterYear)}}</td>
                   <td style="text-align: right">{{getConsumptionForYear(waterYear)}}</td>

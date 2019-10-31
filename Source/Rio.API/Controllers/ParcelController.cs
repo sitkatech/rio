@@ -60,7 +60,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("getWaterYears")]
-        [ParcelManageFeature]
+        [ParcelViewFeature]
         public ActionResult<List<int>> GetWaterYears()
         {
             return Ok(DateUtilities.GetWaterYears());

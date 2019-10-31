@@ -68,6 +68,7 @@ from
 		select u.UserID, count(post.PostingID) as NumberOfPostings
 		from dbo.[User] u
 		join dbo.Posting post on u.UserID = post.CreateUserID
+		where year(post.PostingDate) = @year
 		group by u.UserID
 	) post on u.UserID = post.UserID
 	left join
@@ -75,6 +76,7 @@ from
 		select u.UserID, count(post.TradeID) as NumberOfTrades
 		from dbo.[User] u
 		join dbo.Trade post on u.UserID = post.CreateUserID
+		where year(post.TradeDate) = @year
 		group by u.UserID
 	) tr on u.UserID = tr.UserID
 ) a

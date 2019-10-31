@@ -6,7 +6,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { ColDef } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { DatePipe, CurrencyPipe } from '@angular/common';
+import { DatePipe, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 
 @Component({
@@ -26,7 +26,7 @@ export class PostingListComponent implements OnInit, OnDestroy {
   columnDefs: ColDef[];
   postingTypeFilter: number;
 
-  constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private postingService: PostingService, private datePipe: DatePipe, private currencyPipe: CurrencyPipe) { }
+  constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private postingService: PostingService, private datePipe: DatePipe, private currencyPipe: CurrencyPipe, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -35,6 +35,7 @@ export class PostingListComponent implements OnInit, OnDestroy {
       this.postingService.getPostings().subscribe(result => {
         let _datePipe = this.datePipe;
         let _currencyPipe = this.currencyPipe;
+        let _decimalPipe = this.decimalPipe;
         this.postings = result;
         this.columnDefs = [
           {
@@ -81,7 +82,7 @@ export class PostingListComponent implements OnInit, OnDestroy {
             sortable: true, filter: 'agDateColumnFilter', width: 140
           },
           { headerName: 'Type', field: 'PostingType.PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
-          { headerName: 'Available Quantity', field: 'AvailableQuantity', sortable: true, filter: true, width: 160 },
+          { headerName: 'Available Quantity', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
           { headerName: 'Unit Price (ac-ft)', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 140 },
           { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
           { headerName: 'Description', field: 'PostingDescription', sortable: true, filter: true },

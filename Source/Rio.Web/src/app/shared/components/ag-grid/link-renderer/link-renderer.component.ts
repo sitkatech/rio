@@ -13,7 +13,7 @@ export class LinkRendererComponent implements AgRendererComponent {
   agInit(params: any): void {
     if(params.value === null)
     {
-      params = { value: "", inRouterLink: ""}
+      params = { value: { LinkDisplay: "", LinkValue: ""}, inRouterLink: ""}
     }
     else
     {

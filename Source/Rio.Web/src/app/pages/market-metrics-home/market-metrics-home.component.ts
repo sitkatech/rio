@@ -4,6 +4,9 @@ import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { MarketMetricsService } from 'src/app/services/market-metrics.service';
 import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
+import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
+import { ColorHelper } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -14,15 +17,46 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
   marketMetrics: MarketMetricsDto;
+  tradeActivityByMonth: TradeActivityByMonthDto[];
+  tradeVolumeByMonthSeries: { name: string; value: number; }[];
+  colorScheme: { domain: string[]; };
+  offerHistorySeries: { name: string; series: { name: string; value: number; }[] }[];
+  public lineSeriesColors: ColorHelper;
+  
+  public readonly priceLineSeries = ["Avg Price", "Min Price", "Max Price"];
 
   constructor(private cdr: ChangeDetectorRef,
-    private authenticationService: AuthenticationService, private marketMetricsService: MarketMetricsService) { }
+    private authenticationService: AuthenticationService, 
+    private marketMetricsService: MarketMetricsService,
+    private currencyPipe: CurrencyPipe,
+    private decimalPipe: DecimalPipe,
+    private datePipe: DatePipe
+) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      forkJoin(this.marketMetricsService.getMarketMetrics()).subscribe(([marketMetrics]) => {
+      forkJoin(this.marketMetricsService.getMarketMetrics(), this.marketMetricsService.getMonthlyTradeActivity()).subscribe(([marketMetrics, tradeActivityByMonth]) => {
         this.marketMetrics = marketMetrics;
+        this.tradeActivityByMonth = tradeActivityByMonth;
+        this.tradeVolumeByMonthSeries = tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.TradeVolume }
+        });
+        this.offerHistorySeries = [];
+        this.offerHistorySeries.push({name: "Avg Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.AveragePrice }
+        })});
+        this.offerHistorySeries.push({name: "Min Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MinimumPrice }
+        })});
+        this.offerHistorySeries.push({name: "Max Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MaximumPrice }
+        })});
+
+        this.colorScheme = {
+          domain: ['#636363', '#ff1100', '#0400d6'] 
+        };
+        this.lineSeriesColors = new ColorHelper(this.colorScheme, 'ordinal', this.priceLineSeries);
       });
     });
   }
@@ -33,22 +67,23 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public getMostRecentOfferToSell() : string
+  private getMostRecentOfferImpl(quantity: number, price: number) : string
   {
-    if(this.marketMetrics.MostRecentOfferToSell)
+    if(quantity)
     {
-      return this.marketMetrics.MostRecentOfferToSell.Quantity + " ac-ft at $" + this.marketMetrics.MostRecentOfferToSell.Price + " per ac-ft";
+      return this.decimalPipe.transform(quantity, "1.0-0") + " ac-ft at " + this.currencyPipe.transform(price, "USD") + " per ac-ft";
     }
     return "-";
   }
 
+  public getMostRecentOfferToSell() : string
+  {
+    return this.getMostRecentOfferImpl(this.marketMetrics.MostRecentOfferToSellQuantity, this.marketMetrics.MostRecentOfferToSellPrice);
+  }
+
   public getMostRecentOfferToBuy() : string
   {
-    if(this.marketMetrics.MostRecentOfferToBuy)
-    {
-      return this.marketMetrics.MostRecentOfferToBuy.Quantity + " ac-ft at $" + this.marketMetrics.MostRecentOfferToSell.Price + " per ac-ft";
-    }
-    return "-";
+    return this.getMostRecentOfferImpl(this.marketMetrics.MostRecentOfferToBuyQuantity, this.marketMetrics.MostRecentOfferToBuyPrice);
   }
 
   public getMostRecentRegisteredTrade() : string
