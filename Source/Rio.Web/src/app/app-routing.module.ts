@@ -22,6 +22,7 @@ import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.co
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
 import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-allocation/parcel-bulk-set-allocation.component';
+import { GlossaryComponent } from './pages/glossary/glossary.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -46,6 +47,7 @@ const routes: Routes = [
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
   { path: "help", component: HelpComponent },
+  { path: "glossary", component: GlossaryComponent },
   { path: "login-callback", component: LoginCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },

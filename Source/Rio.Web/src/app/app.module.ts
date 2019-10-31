@@ -43,6 +43,7 @@ import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.co
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
 import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-allocation/parcel-bulk-set-allocation.component';
+import { GlossaryComponent } from './pages/glossary/glossary.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-alloca
     PostingDeleteComponent,
     LoginCallbackComponent,
     HelpComponent,
-    ParcelBulkSetAllocationComponent
+    ParcelBulkSetAllocationComponent,
+    GlossaryComponent
   ],
   imports: [
     AppRoutingModule,
