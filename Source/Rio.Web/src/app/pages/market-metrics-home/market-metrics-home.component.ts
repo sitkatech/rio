@@ -6,6 +6,7 @@ import { MarketMetricsService } from 'src/app/services/market-metrics.service';
 import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
 import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
+import { ColorHelper } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -17,8 +18,12 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   private currentUser: UserDto;
   marketMetrics: MarketMetricsDto;
   tradeActivityByMonth: TradeActivityByMonthDto[];
-  tradeActivityByMonthSeries: { name: string; value: number; }[];
+  tradeVolumeByMonthSeries: { name: string; value: number; }[];
   colorScheme: { domain: string[]; };
+  offerHistorySeries: { name: string; series: { name: string; value: number; }[] }[];
+  public lineSeriesColors: ColorHelper;
+  
+  public readonly priceLineSeries = ["Avg Price", "Min Price", "Max Price"];
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService, 
@@ -34,14 +39,24 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
       forkJoin(this.marketMetricsService.getMarketMetrics(), this.marketMetricsService.getMonthlyTradeActivity()).subscribe(([marketMetrics, tradeActivityByMonth]) => {
         this.marketMetrics = marketMetrics;
         this.tradeActivityByMonth = tradeActivityByMonth;
-        console.log(tradeActivityByMonth);
-        this.tradeActivityByMonthSeries = tradeActivityByMonth.map(x => {
+        this.tradeVolumeByMonthSeries = tradeActivityByMonth.map(x => {
           return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.TradeVolume }
         });
+        this.offerHistorySeries = [];
+        this.offerHistorySeries.push({name: "Avg Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.AveragePrice }
+        })});
+        this.offerHistorySeries.push({name: "Min Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MinimumPrice }
+        })});
+        this.offerHistorySeries.push({name: "Max Price" , series: tradeActivityByMonth.map(x => {
+          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MaximumPrice }
+        })});
 
         this.colorScheme = {
           domain: ['#636363', '#ff1100', '#0400d6'] 
         };
+        this.lineSeriesColors = new ColorHelper(this.colorScheme, 'ordinal', this.priceLineSeries);
       });
     });
   }

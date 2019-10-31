@@ -98,6 +98,10 @@ namespace Rio.API.Controllers
                 var currentTradeActivityByMonthDto = tradesGroupedByMonth.SingleOrDefault(x => x.Key == tradeActivityByMonthDto.GroupingDate);
                 if (currentTradeActivityByMonthDto != null)
                 {
+                    tradeActivityByMonthDto.MaximumPrice = Math.Round(currentTradeActivityByMonthDto.Max(x => x.Price), 2);
+                    tradeActivityByMonthDto.MinimumPrice = Math.Round(currentTradeActivityByMonthDto.Min(x => x.Price), 2);
+                    tradeActivityByMonthDto.AveragePrice = Math.Round(currentTradeActivityByMonthDto.Average(x => x.Price), 2);
+                    tradeActivityByMonthDto.TradeVolume = currentTradeActivityByMonthDto.Sum(x => x.Quantity);
                     tradeActivityByMonthDto.TradeVolume = currentTradeActivityByMonthDto.Sum(x => x.Quantity);
                     tradeActivityByMonthDto.NumberOfTrades = currentTradeActivityByMonthDto.Count();
                 }

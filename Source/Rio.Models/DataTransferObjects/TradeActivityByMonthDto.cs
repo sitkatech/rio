@@ -7,6 +7,9 @@ namespace Rio.Models.DataTransferObjects
     {
         public DateTime GroupingDate { get; set; }
         public decimal TradeVolume{ get; set; }
+        public decimal MinimumPrice{ get; set; }
+        public decimal MaximumPrice{ get; set; }
+        public decimal AveragePrice{ get; set; }
         public int NumberOfTrades{ get; set; }
     }
 }
