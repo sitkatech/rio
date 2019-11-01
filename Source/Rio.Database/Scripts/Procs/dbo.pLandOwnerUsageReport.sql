@@ -10,7 +10,7 @@ as
 
 begin
 
-select a.UserID, a.FirstName, a.LastName, a.Email, a.Allocation, a.Purchased, a.Sold,
+select a.UserID, a.FirstName, a.LastName, a.Email, a.AcresManaged, a.Allocation, a.Purchased, a.Sold,
 a.ProjectWater, a.Reconciliation, a.NativeYield, a.StoredWater,
 a.Allocation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
 a.Allocation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
@@ -23,6 +23,7 @@ from
 			isnull(pa.Reconciliation, 0) as Reconciliation,
 			isnull(pa.NativeYield, 0) as NativeYield,
 			isnull(pa.StoredWater, 0) as StoredWater,
+			isnull(pa.AcresManaged, 0) as AcresManaged,
 			isnull(pa.Allocation, 0) as Allocation,
 			isnull(wts.Purchased, 0) as Purchased,
 			isnull(wts.Sold, 0) as Sold,
@@ -33,6 +34,7 @@ from
 	left join
 	(
 		select u.UserID, 
+				sum(p.ParcelAreaInAcres) as AcresManaged, 
 				sum(pa.AcreFeetAllocated) as Allocation, 
 				sum(case when pa.ParcelAllocationTypeID = 1 then pa.AcreFeetAllocated else 0 end) as ProjectWater,
 				sum(case when pa.ParcelAllocationTypeID = 2 then pa.AcreFeetAllocated else 0 end) as Reconciliation,

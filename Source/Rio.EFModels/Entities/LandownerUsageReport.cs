@@ -21,6 +21,7 @@ namespace Rio.EFModels.Entities
         public decimal? Reconciliation { get; set; }
         public decimal? NativeYield { get; set; }
         public decimal? StoredWater { get; set; }
+        public double? AcresManaged { get; set; }
         public decimal? Allocation { get; set; }
         public int? Purchased { get; set; }
         public int? Sold { get; set; }
@@ -46,6 +47,7 @@ namespace Rio.EFModels.Entities
                 Reconciliation = x.Reconciliation,
                 NativeYield = x.NativeYield,
                 StoredWater = x.StoredWater,
+                AcresManaged = x.AcresManaged,
                 Allocation = x.Allocation,
                 Purchased = x.Purchased,
                 Sold = x.Sold,

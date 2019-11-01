@@ -10,6 +10,7 @@
         public decimal? Reconciliation { get; set; }
         public decimal? NativeYield { get; set; }
         public decimal? StoredWater { get; set; }
+        public double? AcresManaged { get; set; }
         public decimal? Allocation { get; set; }
         public int? Purchased { get; set; }
         public int? Sold { get; set; }
