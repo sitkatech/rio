@@ -86,12 +86,12 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-12 col-md-9" *ngIf="parcels">
+                        <div class="col-sm-12 col-md-10" *ngIf="parcels">
                             <parcel-map mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()"
                                 mapHeight="500px">
                             </parcel-map>
                         </div>
-                        <div class="col-sm-12 col-md-3">
+                        <div class="col-sm-12 col-md-2">
                             <ul>
                                 <li *ngFor="let parcel of parcels"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></li>
                             </ul>

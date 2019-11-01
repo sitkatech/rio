@@ -16,91 +16,142 @@
   </h2>
   <app-alert-display></app-alert-display>
 
-  <div class="row mt-4">
-    <div class="col-sm-12 col-md-4" *ngIf="parcels && parcels.length > 0">
+  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">
+          <div class="float-right">
+            <label class="switch">
+              <input type="checkbox" (change)="toggleUnitsShown()" />
+              <div class="slider round">
+                <span class="off">ac-ft</span>
+                <span class="on">ac-ft/ac</span>
+              </div>
+            </label>
+          </div>
           Annual Water Budget Overview
         </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-borderless">
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">
-                  <a style="cursor: pointer" class="collapsed small"
-                    (click)="showAllocationDetails = !showAllocationDetails">
-                    <span *ngIf="showAllocationDetails else dontShowAllocationDetails"
-                      class="fas fa-minus text-muted"></span>
-                    <ng-template #dontShowAllocationDetails>
-                      <span class="fas fa-plus text-muted"></span>
+                <th class="text-sm-left pb-0 mb-0">
+                  <a style="cursor: pointer" class="collapsed"
+                    (click)="showAcresManagedDetails = !showAcresManagedDetails">
+                    <i *ngIf="showAcresManagedDetails else dontShowAcresManagedDetails"
+                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                    <ng-template #dontShowAcresManagedDetails>
+                      <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
+                    Acres Managed
                   </a>
-                  Allocation
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} ac-ft
+                  {{getTotalAPNAcreage() | number: '1.1-1'}} ac
+                </td>
+              </tr>
+              <ng-container *ngIf="showAcresManagedDetails">
+                <tr>
+                  <td colspan="2">
+                    <hr class="p-0 m-0" />
+                  </td>
+                </tr>
+                <tr *ngFor="let parcel of parcels">
+                  <th class="text-sm-right"><a
+                      routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></th>
+                  <td class="text-sm-right">{{parcel.ParcelAreaInAcres | number: '1.1-1'}} ac
+                  </td>
+                </tr>
+              </ng-container>
+              <tr>
+                <td colspan="2" class="text-left pt-0 mt-0">
+                  <small>Total acres of all your managed parcels</small>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr style="border: 1px solid #000;" />
+                </td>
+              </tr>
+              <tr>
+                <th class="text-sm-left pb-0 mb-0">
+                  <a style="cursor: pointer" class="collapsed"
+                    (click)="showAllocationDetails = !showAllocationDetails">
+                    <i *ngIf="showAllocationDetails else dontShowAllocationDetails"
+                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                    <ng-template #dontShowAllocationDetails>
+                      <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
+                    </ng-template>
+                    Allocation
+                  </a>
+                </th>
+                <td class="text-sm-right pb-0 mb-0">
+                  {{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <ng-container *ngIf="showAllocationDetails">
                 <tr>
-                  <td colspan="3">
+                  <td colspan="2">
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
                 <tr>
                   <th class="text-sm-right">
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i class="fas fa-question-circle small"></i></a> Native Yield
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                        class="fas fa-question-circle small"></i></a> Native Yield
                   </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualNativeYield() | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">
+                    {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
                 <tr>
                   <th class="text-right">
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i class="fas fa-question-circle small"></i></a>  Project Water
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                        class="fas fa-question-circle small"></i></a> Project Water
                   </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualProjectWater() | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">
+                    {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
                 <tr>
                   <th class="text-right">
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i class="fas fa-question-circle small"></i></a> Stored Water
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                        class="fas fa-question-circle small"></i></a> Stored Water
                   </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualStoredWater() | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">
+                    {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
                 <tr>
                   <th class="text-right">
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i class="fas fa-question-circle small"></i></a> Reconciliation
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                        class="fas fa-question-circle small"></i></a> Reconciliation
                   </th>
-                  <td colspan="2" class="text-sm-right">
-                    {{getAnnualReconciliation() | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">
+                    {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Your annual allocated water budget</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">
-                  <a style="cursor: pointer" class="collapsed small"
-                    (click)="showPurchasedDetails = !showPurchasedDetails"
-                    *ngIf="getPurchasedWaterTransfersForWaterYear().length > 0">
-                    <span *ngIf="showPurchasedDetails else dontShowPurchasedDetails"
-                      class="fas fa-minus text-muted"></span>
+                <th class="text-sm-left pb-0 mb-0">
+                  <a style="cursor: pointer" class="collapsed"
+                    (click)="showPurchasedDetails = !showPurchasedDetails">
+                    <i *ngIf="showPurchasedDetails else dontShowPurchasedDetails"
+                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
                     <ng-template #dontShowPurchasedDetails>
-                      <span class="fas fa-plus text-muted"></span>
+                      <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
+                    Purchased
                   </a>
-                  Purchased
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getPurchasedAcreFeet() as purchasedAcreFeet else noPurchasedAcreFeet">
-                    {{purchasedAcreFeet | number: '1.1-1'}} ac-ft
+                    {{purchasedAcreFeet | number: '1.1-1'}} {{unitsShown}}
                   </span>
                   <ng-template #noPurchasedAcreFeet>
                     <span class="systemText">-</span>
@@ -109,38 +160,36 @@
               </tr>
               <ng-container *ngIf="showPurchasedDetails">
                 <tr>
-                  <td colspan="3">
+                  <td colspan="2">
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
                 <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}} ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                   </th>
-                  <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">{{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Water supply you have purchased this year</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">
-                  <a style="cursor: pointer" class="collapsed small" (click)="showSoldDetails = !showSoldDetails"
-                    *ngIf="getSoldWaterTransfersForWaterYear().length > 0">
-                    <span *ngIf="showSoldDetails else dontShowSoldDetails" class="fas fa-minus text-muted"></span>
+                <th class="text-sm-left pb-0 mb-0">
+                  <a style="cursor: pointer" class="collapsed" (click)="showSoldDetails = !showSoldDetails">
+                    <i *ngIf="showSoldDetails else dontShowSoldDetails" class="fas fa-minus text-muted" style="font-size: smaller"></i>
                     <ng-template #dontShowSoldDetails>
-                      <span class="fas fa-plus text-muted"></span>
+                      <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
                   </a>
                   Sold
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getSoldAcreFeet() as soldAcreFeet else noSoldAcreFeet">
-                    {{soldAcreFeet | number: '1.1-1'}} ac-ft
+                    {{soldAcreFeet | number: '1.1-1'}} {{unitsShown}}
                   </span>
                   <ng-template #noSoldAcreFeet>
                     <span class="systemText">-</span>
@@ -149,55 +198,54 @@
               </tr>
               <ng-container *ngIf="showSoldDetails">
                 <tr>
-                  <td colspan="3">
+                  <td colspan="2">
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
                 <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}} ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                   </th>
-                  <td class="text-sm-right">{{waterTransfer.TransferDate | date:"MM/dd"}}</td>
-                  <td class="text-sm-right">{{waterTransfer.AcreFeetTransferred | number: '1.1-1'}} ac-ft
+                  <td class="text-sm-right">{{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Water supply you have sold this year</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">
+                <th class="text-sm-left pb-0 mb-0">
                   Total Supply
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  <span>{{getTotalSupply() | number: '1.1-1'}} ac-ft</span>
+                  <span>{{getTotalSupply() | number: '1.1-1'}} {{unitsShown}}</span>
                 </td>
               </tr>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold</small>
                 </td>
               </tr>
               <tr>
-                <td colspan="3">
+                <td colspan="2">
                   <small class="systemText" *ngIf="showSoldDetails || showPurchasedDetails">* denotes a pending
                     transaction</small>
                 </td>
               </tr>
               <tr>
-                <td colspan="3">
-                  <hr />
+                <td colspan="2">
+                  <hr style="border: 1px solid #000;" />
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">
+                <th class="text-sm-left pb-0 mb-0">
                   Usage to Date
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getWaterUsageToDate() as waterUsageToDate else noWaterUsage">
-                    {{waterUsageToDate | number: '1.1-1'}} ac-ft
+                    {{waterUsageToDate | number: '1.1-1'}} {{unitsShown}}
                   </span>
                   <ng-template #noWaterUsage>
                     <span class="systemText">Not available</span>
@@ -205,29 +253,29 @@
                 </td>
               </tr>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Total usage this year as measured by OpenET</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">Current Available</th>
+                <th class="text-sm-left pb-0 mb-0">Current Available</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{getCurrentAvailableWater() | number: '1.1-1'}} ac-ft
+                  {{getCurrentAvailableWater() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Allocation + Purchased – Sold – Usage to Date</small>
                 </td>
               </tr>
               <tr>
-                <th class="text-sm-left pb-0 mb-0" colspan="2">Average Annual Usage</th>
+                <th class="text-sm-left pb-0 mb-0">Average Annual Usage</th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{historicAverageAnnualUsage}} ac-ft
+                  {{getResultInUnitsShown(historicAverageAnnualUsage) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <tr>
-                <td colspan="3" class="text-left pt-0 mt-0">
+                <td colspan="2" class="text-left pt-0 mt-0">
                   <small>Average annual usage from all years of OpenET data</small>
                 </td>
               </tr>
@@ -236,7 +284,43 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-8" *ngIf="trades">
+    <div class="col-sm-12 col-md-7">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              {{waterYearToDisplay}} Allocation and Usage
+            </div>
+            <div class="card-body">
+              <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
+                [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
+                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
+              </rio-landowner-water-allocation-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              {{waterYearToDisplay}} Water Usage by Parcel
+            </div>
+            <div class="card-body">
+              <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
+                [parcelNumbers]="parcelNumbers">
+              </rio-landowner-water-use-chart>
+              <p class="small">
+                *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="trades">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="float-right">
@@ -341,51 +425,27 @@
       </div>
     </div>
   </div>
-  <ng-template [ngIf]="parcels && parcels.length > 0">
-    <div class="row mt-4">
-      <div class="col-sm-12 col-md-12">
-        <div class="card">
-          <div class="card-header">
-            {{waterYearToDisplay}} Allocation and Usage
-          </div>
-          <div class="card-body">
-            <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
-              [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
-              [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
-            </rio-landowner-water-allocation-chart>
+  <div class="row mt-4 mb-4" *ngIf="parcels && parcels.length > 0">
+    <div class="col-sm-12 col-md-12">
+      <div class="card mt-4">
+        <div class="card-header">
+          Parcel Map
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-12 col-md-10" *ngIf="parcels">
+              <parcel-map mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="500px">
+              </parcel-map>
+            </div>
+            <div class="col-sm-12 col-md-2">
+              <ul>
+                <li *ngFor="let parcel of parcels"><a
+                    routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="row mt-4">
-      <div class="col-sm-12 col-md-12">
-        <div class="card">
-          <div class="card-header">
-            {{waterYearToDisplay}} Monthly Water Usage
-          </div>
-          <div class="card-body">
-            <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
-              [parcelNumbers]="parcelNumbers">
-            </rio-landowner-water-use-chart>
-            <p class="small">
-              *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-4 mb-4">
-      <div class="col-sm-12 col-md-12">
-        <div class="card mt-4">
-          <div class="card-header">
-            Parcel Map
-          </div>
-          <div class="card-body">
-            <parcel-map mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="500px">
-            </parcel-map>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
+  </div>
 </div>
