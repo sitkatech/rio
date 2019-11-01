@@ -20,6 +20,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   tradeActivityByMonth: TradeActivityByMonthDto[];
   tradeVolumeByMonthSeries: { name: string; value: number; }[];
   colorScheme: { domain: string[]; };
+  volumeTradedColorScheme: { domain: string[]; };
   offerHistorySeries: { name: string; series: { name: string; value: number; }[] }[];
   public lineSeriesColors: ColorHelper;
   
@@ -54,7 +55,10 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
         })});
 
         this.colorScheme = {
-          domain: ['#636363', '#ff1100', '#0400d6'] 
+          domain: ['#636363', '#ff1100', '#37be23'] 
+        };
+        this.volumeTradedColorScheme = {
+          domain: ['#0f77d2'] 
         };
         this.lineSeriesColors = new ColorHelper(this.colorScheme, 'ordinal', this.priceLineSeries);
       });
@@ -71,7 +75,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   {
     if(quantity)
     {
-      return this.decimalPipe.transform(quantity, "1.0-0") + " ac-ft at " + this.currencyPipe.transform(price, "USD") + " per ac-ft";
+      return this.decimalPipe.transform(quantity, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(price, "USD") + " per ac-ft";
     }
     return "-";
   }
@@ -90,7 +94,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   {
     if(this.marketMetrics.MostRecentWaterTransfer)
     {
-      return this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred + " ac-ft at $" + this.marketMetrics.MostRecentWaterTransfer.UnitPrice + " per ac-ft";
+      return this.decimalPipe.transform(this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(this.marketMetrics.MostRecentWaterTransfer.UnitPrice, "USD") + " per ac-ft";
     }
     return "-";
   }

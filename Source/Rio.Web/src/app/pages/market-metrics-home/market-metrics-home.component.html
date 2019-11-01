@@ -9,86 +9,70 @@
   </h2>
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
-    <div class="col-sm-12 col-md-7" *ngIf="marketMetrics">
+    <div class="col-sm-12" *ngIf="marketMetrics">
       <div class="card">
         <div class="card-header">
           Current Trading Conditions
         </div>
         <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-sm table-borderless">
-              <tr>
-                <th class="text-sm-left pb-0 mb-0">
-                  Current Ask
-                </th>
-                <td class="text-sm-right pb-0 mb-0" style="white-space: nowrap;">
-                  {{getMostRecentOfferToSell()}}
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
-                  <small>Most recent Offer to Sell</small>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-sm-left pb-0 mb-0">
-                  Current Bid
-                </th>
-                <td class="text-sm-right pb-0 mb-0">
-                  {{getMostRecentOfferToBuy()}}
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
-                  <small>Most recent Offer to Buy</small>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-sm-left pb-0 mb-0">
-                  Total Ask Volume
-                </th>
-                <td class="text-sm-right pb-0 mb-0">
-                  {{marketMetrics.TotalSellVolume | number: "1.0" }} ac-ft
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
-                  <small>Total volume of all Offers to Sell</small>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-sm-left pb-0 mb-0">
-                  Total Bid Volume
-                </th>
-                <td class="text-sm-right pb-0 mb-0">
-                  {{marketMetrics.TotalBuyVolume | number: "1.0" }} ac-ft
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2" class="text-left pt-0 mt-0">
-                  <small>Total volume of all Offers to Buy</small>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <hr />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-sm-left pb-0 mb-0">
-                  Last Trade
-                </th>
-                <td class="text-sm-right pb-0 mb-0">
-                  {{getMostRecentRegisteredTrade()}}
-                </td>
-              </tr>
-            </table>
+          <div class="row">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Current Ask</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getMostRecentOfferToSell()}}
+            </div>
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Ask Volume</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{marketMetrics.TotalSellVolume | number: "1.1-1" }} ac-ft
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <small>Most recent Offer to Sell</small>
+            </div>
+            <div class="col-sm-6 text-left">
+              <small>Total volume of all Offers to Sell</small>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Current Bid</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getMostRecentOfferToBuy()}}
+            </div>
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Bid Volume</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{marketMetrics.TotalBuyVolume | number: "1.1-1" }} ac-ft
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 text-left">
+              <small>Most recent Offer to Buy</small>
+            </div>
+            <div class="col-sm-6 text-left">
+              <small>Total volume of all Offers to Buy</small>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Last Trade</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getMostRecentRegisteredTrade()}}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <h3 class="mt-4">Historic Trading Conditions</h3>
+  <h4 class="mt-4">Historic Trading Conditions</h4>
   <div class="row mt-4">
     <div class="col-sm-12">
       <div class="card" *ngIf="offerHistorySeries">
@@ -108,8 +92,9 @@
               </ngx-charts-line-chart>
             </div>
             <div class="col-sm-1 px-1 mb-3" style="height: 400px">
-              <ngx-charts-legend class="chart-legend" [data]="priceLineSeries" [title]="false" [colors]="lineSeriesColors" [width]="100"
-                  (labelActivate)="legendLabelActivate($event)" (labelDeactivate)="legendLabelDeactivate($event)">
+              <ngx-charts-legend class="chart-legend" [data]="priceLineSeries" [title]="false"
+                [colors]="lineSeriesColors" [width]="100" (labelActivate)="legendLabelActivate($event)"
+                (labelDeactivate)="legendLabelDeactivate($event)">
               </ngx-charts-legend>
             </div>
           </div>
@@ -126,7 +111,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-sm-11 px-2 mb-3" style="height: 400px">
-              <ngx-charts-bar-vertical [scheme]="colorScheme" [results]="tradeVolumeByMonthSeries" [gradient]="true"
+              <ngx-charts-bar-vertical [scheme]="volumeTradedColorScheme" [results]="tradeVolumeByMonthSeries" [gradient]="true"
                 [xAxis]="true" [yAxis]="true" [legend]="false" [showXAxisLabel]="true" [showYAxisLabel]="true"
                 [xAxisLabel]="" [yAxisLabel]="'Acre Feet'" (select)="onSelect($event)">
               </ngx-charts-bar-vertical>
@@ -160,7 +145,7 @@
                       {{monthlyTradeActivity.NumberOfTrades | number:"1.0-0" }}</td>
                   </tr>
                   <tr>
-                    <td>Volume</td>
+                    <td>Volume (ac-ft)</td>
                     <td *ngFor="let monthlyTradeActivity of tradeActivityByMonth" class="text-right">
                       {{monthlyTradeActivity.TradeVolume| number:"1.1-1" }}</td>
                   </tr>
