@@ -26,7 +26,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
         [ParcelManageFeature]
-        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
+        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
             return Ok(parcelDtos);

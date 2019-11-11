@@ -6,7 +6,7 @@
           Parcels</a>
         Showing data for year </div>
       <div class="col-md-3">
-        <select [(ngModel)]="waterYearToDisplay" (change)="updateLandownerUsageReportData()" class="form-control">
+        <select [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()" class="form-control">
           <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
         </select>
       </div>
@@ -19,7 +19,69 @@
   <app-alert-display></app-alert-display>
 
   <div class="row mt-4">
-    <div class="col-sm-12" *ngIf="trades">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="float-right">
+            <label class="switch">
+              <input type="checkbox" (change)="toggleUnitsShown()" />
+              <div class="slider round">
+                <span class="off">ac-ft</span>
+                <span class="on">ac-ft/ac</span>
+              </div>
+            </label>
+          </div>
+          District-Wide Statistics
+        </div>
+        <div class="card-body" *ngIf="parcelAllocationAndUsages">
+          <div class="row">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Allocation</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualAllocation() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Usage</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Native Yield</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Project Water</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Reconciliation Water</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+            <div class="col-sm-3 text-sm-left">
+              <strong>Total Stored Water</strong>
+            </div>
+            <div class="col-sm-3 text-sm-right">
+              {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12" *ngIf="parcels">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -42,7 +104,7 @@
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-sm-12" *ngIf="trades">
+    <div class="col-sm-12" *ngIf="parcels">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -64,7 +126,7 @@
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-sm-12" *ngIf="postings">
+    <div class="col-sm-12" *ngIf="parcels">
       <div class="card">
         <div class="card-header">
           <div class="row">

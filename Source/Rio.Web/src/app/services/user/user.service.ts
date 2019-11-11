@@ -53,7 +53,7 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
-    getLandowneUsageReportByYear(year: number): Observable<UserDto[]> {
+    getLandownerUsageReportByYear(year: number): Observable<UserDto[]> {
         let route = `/landowner-usage-report/${year}`;
         return this.apiService.getFromApi(route);
     }

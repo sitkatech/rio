@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
 import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
-import { ParcelWithWaterUsageDto } from 'src/app/shared/models/parcel/parcel-with-water-usage-dto';
+import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
@@ -61,7 +61,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsWithWaterUsage(year: number): Observable<Array<ParcelWithWaterUsageDto>> {
+  getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
     let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
