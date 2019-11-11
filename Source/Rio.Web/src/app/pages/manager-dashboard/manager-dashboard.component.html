@@ -1,10 +1,20 @@
 <div class="container mt-sm-4" *ngIf="currentUser">
-  <div style="margin: 1rem 0 1rem 0;">
-    <a class="float-right btn btn-primary btn-sm mr-3" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
-      Parcels</a>
+  <div class="float-right">
+    <div class="row">
+      <div class="col-md-9" style="white-space: nowrap;">
+        <a class="btn btn-primary btn-sm mr-3" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
+          Parcels</a>
+        Showing data for year </div>
+      <div class="col-md-3">
+        <select [(ngModel)]="waterYearToDisplay" (change)="updateLandownerUsageReportData()" class="form-control">
+          <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
+        </select>
+      </div>
+    </div>
   </div>
+
   <h2 style="display: inline-block;">
-    Manager Dashboard - {{currentUser.FullName}}
+    Manager Dashboard
   </h2>
   <app-alert-display></app-alert-display>
 
@@ -17,21 +27,8 @@
               Landowner Usage Report
             </div>
             <div class="col-sm-5">
-              <div class="row">
-                <div class="col-sm-3 offset-sm-4 text-right">
-                  Year
-                </div>
-                <div class="col-sm-3">
-                  <select [(ngModel)]="waterYearToDisplay" (change)="updateLandownerUsageReportData()"
-                    class="form-control">
-                    <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
-                  </select>
-                </div>
-                <div class="col-sm-2 text-right">
-                  <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportLandOwnerUsageReportToCsv()"><i
-                      class="fas fa-download"></i></a>
-                </div>
-              </div>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportLandOwnerUsageReportToCsv()"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>
@@ -53,8 +50,8 @@
               Trade Activity
             </div>
             <div class="col-sm-5">
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportTradeActivityToCsv()"><i
-                  class="fas fa-download"></i></a>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportTradeActivityToCsv()"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>
@@ -75,8 +72,8 @@
               Postings
             </div>
             <div class="col-sm-5">
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportPostingsToCsv()"><i
-                  class="fas fa-download"></i></a>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportPostingsToCsv()"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>

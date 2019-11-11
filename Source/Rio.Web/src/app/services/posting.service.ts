@@ -41,8 +41,8 @@ export class PostingService {
         return this.apiService.deleteToApi(route);
     }
 
-    getPostingsDetailed(): Observable<PostingDto[]> {
-        let route = `/postings-activity`;
+    getPostingsDetailedByYear(year: number): Observable<PostingDto[]> {
+        let route = `/postings-activity/${year}`;
         return this.apiService.getFromApi(route);
     }
 

@@ -110,10 +110,10 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
         }
 
-        public static IEnumerable<PostingDetailedDto> ListDetailed(RioDbContext dbContext)
+        public static IEnumerable<PostingDetailedDto> ListDetailedByYear(RioDbContext dbContext, int year)
         {
             // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.vPostingDetailed.OrderByDescending(x => x.PostingDate).ToList()
+            var parcels = dbContext.vPostingDetailed.Where(x => x.PostingDate.Year == year).OrderByDescending(x => x.PostingDate).ToList()
                 .Select(posting =>
                 {
                     var userDetailedDto = new PostingDetailedDto()

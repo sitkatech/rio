@@ -264,11 +264,11 @@ An offer to {offerAction} water has been presented for your review.
             return Ok(offerDtos);
         }
 
-        [HttpGet("all-trade-activity")]
+        [HttpGet("all-trade-activity/{year}")]
         [UserViewFeature]
-        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivity()
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivity([FromRoute] int year)
         {
-            var tradeWithMostRecentOfferDtos = Trade.GetAllTrades(_dbContext);
+            var tradeWithMostRecentOfferDtos = Trade.GetTradesForYear(_dbContext, year);
             return Ok(tradeWithMostRecentOfferDtos);
         }
 

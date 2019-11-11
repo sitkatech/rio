@@ -103,11 +103,11 @@ namespace Rio.API.Controllers
             return Ok(tradeDto);
         }
 
-        [HttpGet("postings-activity")]
+        [HttpGet("postings-activity/{year}")]
         [PostingManageFeature]
-        public ActionResult<IEnumerable<PostingDetailedDto>> ListDetailed()
+        public ActionResult<IEnumerable<PostingDetailedDto>> ListDetailedByYear([FromRoute] int year)
         {
-            var postingDetailedDtos = Posting.ListDetailed(_dbContext);
+            var postingDetailedDtos = Posting.ListDetailedByYear(_dbContext, year);
             return Ok(postingDetailedDtos);
         }
     }

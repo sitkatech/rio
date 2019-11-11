@@ -39,6 +39,16 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForYear(RioDbContext dbContext, int year)
+        {
+            var offers = GetTradeWithOfferDetailsImpl(dbContext).Where(x => x.TradeDate.Year == year)
+                .OrderByDescending(x => x.TradeDate)
+                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .AsEnumerable();
+
+            return offers;
+        }
+
         public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForUserID(RioDbContext dbContext, int userID)
         {
             var offers = GetTradeWithOfferDetailsImpl(dbContext)
