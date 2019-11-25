@@ -5,7 +5,7 @@
     ParcelID int not null constraint FK_UserParcel_Parcel_ParcelID foreign key references dbo.Parcel(ParcelID),
     OwnerName varchar(214) NULL,
 	EffectiveYear int NULL,
-    SaleDate datetime NOT NULL,
+    SaleDate datetime NULL,
 	Note varchar(500) NULL,
     constraint CK_ParcelOwner_OwnerNameXorOwnerID check (
         (UserID IS NULL AND OwnerName IS NOT NULL) OR
