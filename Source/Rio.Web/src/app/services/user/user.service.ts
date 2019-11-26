@@ -43,8 +43,8 @@ export class UserService {
         return this.apiService.putToApi(route, userUpdateDto);
     }
 
-    getWaterUsageByUserID(userID: number): Observable<WaterUsageDto[]> {
-        let route = `/users/${userID}/water-usage`;
+    getWaterUsageByUserID(userID: number, year: number): Observable<WaterUsageDto[]> {
+        let route = `/users/${userID}/water-usage/${year}`;
         return this.apiService.getFromApi(route);
     }
     

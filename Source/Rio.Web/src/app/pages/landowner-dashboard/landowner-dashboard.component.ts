@@ -94,35 +94,16 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
         this.userService.getWaterTransfersByUserID(userID),
-        this.userService.getWaterUsageByUserID(userID),
-        this.userService.getWaterUsageOverviewByUserID(userID),
         this.parcelService.getWaterYears()
-      ).subscribe(([postings, trades, waterTransfers, waterUsagesInChartForm, waterUsageOverview, waterYears]) => {
+      ).subscribe(([ postings, trades, waterTransfers, waterYears ]) => {
 
         this.waterYears = waterYears;
         this.waterYearToDisplay = (new Date()).getFullYear();
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
-        
-        this.waterUsages = waterUsagesInChartForm.map(x => 
-          {
-            return { 
-              Year: x.Year, 
-              AnnualUsage: 
-                x.WaterUsage.map(wu => {
-                  return {
-                    monthlyValue: wu.series.reduce((a, b) => {
-                      return (a + b.value);
-                    }, 0)
-                  };
-                }).reduce((a, b) => {
-                  return (a + b.monthlyValue);
-                }, 0)
-            };
-        });
-        this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
       });
+
       this.cdr.detectChanges();
     });
   }
@@ -135,6 +116,29 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     
     this.userService.getParcelsAllocationsByUserID(this.user.UserID, this.waterYearToDisplay).subscribe(parcelAllocations => {
       this.parcelAllocations = parcelAllocations;
+    });
+
+    forkJoin(
+      this.userService.getWaterUsageByUserID(this.user.UserID, this.waterYearToDisplay),
+      this.userService.getWaterUsageOverviewByUserID(this.user.UserID)
+    ).subscribe(([ waterUsagesInChartForm, waterUsageOverview ]) =>{
+      this.waterUsages = waterUsagesInChartForm.map(x => 
+        {
+          return { 
+            Year: x.Year, 
+            AnnualUsage: 
+              x.WaterUsage.map(wu => {
+                return {
+                  monthlyValue: wu.series.reduce((a, b) => {
+                    return (a + b.value);
+                  }, 0)
+                };
+              }).reduce((a, b) => {
+                return (a + b.monthlyValue);
+              }, 0)
+          };
+      });
+      this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
     })
   }
   ngOnDestroy() {
