@@ -32,10 +32,23 @@ namespace Rio.EFModels.Entities
                          x.EffectiveYear <=
                          year) &&
                         (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
-                .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(x => x.RowNumber).First())
-                .Select(x => x.AsParcelDto()).AsEnumerable();
+                .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First()).ToList();
 
-            return parcels;
+            
+            var parcelIDsToCheck = parcels.Select(x=>x.ParcelID).ToList();
+
+            // if the same list of parcels from earlier have entries matching the same date criteria with a lower row number when userid is excluded from the where, those entries are parcels where this user is not the owner as of year
+            var parcelRowNumbersToCheck = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.User).AsNoTracking()
+                .Where(x => parcelIDsToCheck.Contains(x.ParcelID) &&
+                            (x.EffectiveYear == null ||
+                             x.EffectiveYear <=
+                             year) &&
+                            (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
+                .GroupBy(x=>x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
+                .Select(x=> new {x.ParcelID, x.RowNumber}).ToList();
+
+
+            return parcels.Where(x => parcelRowNumbersToCheck.Contains(new { x.ParcelID, x.RowNumber })).Select(x => x.AsParcelDto()).AsEnumerable();
         }
 
         public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)

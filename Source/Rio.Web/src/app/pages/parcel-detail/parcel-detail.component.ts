@@ -58,7 +58,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.waterUsage = waterUsage;
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
-          console.log(this.parcelOwnershipHistory);
         });
       }
       this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
