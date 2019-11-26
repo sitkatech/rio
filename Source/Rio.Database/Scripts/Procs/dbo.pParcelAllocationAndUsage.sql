@@ -12,7 +12,7 @@ begin
 
 	select p.ParcelID, p.ParcelNumber, p.ParcelAreaInAcres, u.UserID, u.FirstName, u.LastName, u.Email,
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
-			pmev.UsageToDate
+			pmev.UsageToDate, up.OwnerName
 	from dbo.Parcel p
 	left join (
         select

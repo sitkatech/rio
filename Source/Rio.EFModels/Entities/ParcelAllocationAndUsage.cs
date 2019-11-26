@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.Parcel;
@@ -26,6 +28,7 @@ namespace Rio.EFModels.Entities
         public decimal? StoredWater { get; set; }
         public decimal? Allocation { get; set; }
         public decimal? UsageToDate { get; set; }
+        public string OwnerName { get; set; }
 
         public static IEnumerable<ParcelAllocationAndUsageDto> GetByYear(RioDbContext dbContext, int year)
         {
@@ -54,6 +57,13 @@ namespace Rio.EFModels.Entities
                         LastName = parcel.LastName,
                         Email = parcel.Email,
                         UserID = parcel.UserID.Value
+                    };
+                }
+                else
+                {
+                    parcelAllocationAndUsageDto.LandOwner = new UserSimpleDto()
+                    {
+                        FirstName = parcel.OwnerName
                     };
                 }
 
