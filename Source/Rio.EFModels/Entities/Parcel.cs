@@ -57,5 +57,10 @@ namespace Rio.EFModels.Entities
             var geometries = parcels.Select(x => x.ParcelGeometry).ToList();
             return new BoundingBoxDto(geometries);
         }
+
+        public static IQueryable<ParcelOwnershipDto> GetOwnershipHistory(RioDbContext dbContext, int parcelID)
+        {
+            return dbContext.vParcelOwnership.AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
+        }
     }
 }

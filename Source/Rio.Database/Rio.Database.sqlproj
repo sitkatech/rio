@@ -105,6 +105,7 @@
     <Build Include="dbo\Tables\dbo.ParcelAllocationType.sql" />
     <None Include="Scripts\LookupTables\dbo.ParcelAllocationType.sql" />
     <None Include="Scripts\Procs\dbo.pParcelAllocationAndUsage.sql" />
+    <None Include="Scripts\Views\dbo.vParcelOwnership.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

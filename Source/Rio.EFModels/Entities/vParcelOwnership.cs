@@ -45,5 +45,20 @@ namespace Rio.EFModels.Entities
 
             return parcelDto;
         }
+        public static ParcelOwnershipDto AsParcelOwnershipDto(this vParcelOwnership vParcelOwnership)
+        {
+            var user = vParcelOwnership.User;
+            var parcelOwnershipDto = new ParcelOwnershipDto
+            {
+                OwnerName = user != null ? $"{user.FirstName} {user.LastName}" : vParcelOwnership.OwnerName,
+                OwnerUserId = user?.UserID,
+                EffectiveYear = vParcelOwnership.EffectiveYear ?? vParcelOwnership.SaleDate?.Year,
+                Note = vParcelOwnership.Note,
+                SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? ""
+
+            };
+
+            return parcelOwnershipDto;
+        }
     }
 }

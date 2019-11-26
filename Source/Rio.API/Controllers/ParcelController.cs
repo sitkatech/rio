@@ -134,5 +134,15 @@ namespace Rio.API.Controllers
             var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext, year);
             return Ok(parcelDtos);
         }
+
+
+        [HttpGet("parcels/{parcelID}/getOwnershipHistory")]
+        [ParcelManageFeature]
+        public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
+        {
+            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID);
+            
+            return Ok(parcelOwnershipDtos);
+        }
     }
 }
