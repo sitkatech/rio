@@ -9,25 +9,30 @@ namespace Rio.EFModels.Entities
 {
     public partial class Parcel
     {
-        public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext)
+        public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext, int year)
         {
-            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x=>x.User).AsNoTracking().Where(x =>
-                x.RowNumber == 1 &&
-                (x.EffectiveYear == null ||
-                 x.EffectiveYear <=
-                 DateTime.Now.Year)).Select(x=>x.AsParcelDto()).AsEnumerable();
+            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.User).AsNoTracking().Where(
+                    x =>
+                        x.RowNumber == 1 &&
+                        (x.EffectiveYear == null ||
+                         x.EffectiveYear <=
+                         year) &&
+                        (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).Select(x => x.AsParcelDto())
+                .AsEnumerable();
 
             return parcels;
         }
 
-        public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID)
+        public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
         {
-            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x=>x.User).AsNoTracking().Where(x =>
-                x.UserID == userID &&
-                (x.EffectiveYear == null ||
-                 x.EffectiveYear <=
-                 DateTime.Now.Year)).ToList()
-                .GroupBy(x=>x.ParcelID).Select(x=>x.OrderBy(x=>x.RowNumber).First())
+            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.User).AsNoTracking().Where(
+                    x =>
+                        x.UserID == userID &&
+                        (x.EffectiveYear == null ||
+                         x.EffectiveYear <=
+                         year) &&
+                        (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
+                .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(x => x.RowNumber).First())
                 .Select(x => x.AsParcelDto()).AsEnumerable();
 
             return parcels;

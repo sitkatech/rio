@@ -175,11 +175,11 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("users/{userID}/parcels")]
+        [HttpGet("users/{userID}/parcels/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelDto>> ListParcelsByUserID([FromRoute] int userID)
+        public ActionResult<List<ParcelDto>> ListParcelsByUserID([FromRoute] int userID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year);
             if (parcelDtos == null)
             {
                 return NotFound();
@@ -188,11 +188,11 @@ namespace Rio.API.Controllers
             return Ok(parcelDtos);
         }
 
-        [HttpGet("users/{userID}/getParcelsAllocations")]
+        [HttpGet("users/{userID}/getParcelsAllocations/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByUserID([FromRoute] int userID)
+        public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByUserID([FromRoute] int userID, [FromRoute] int year)
         {
-            var parcelDtosEnumerable = Parcel.ListByUserID(_dbContext, userID);
+            var parcelDtosEnumerable = Parcel.ListByUserID(_dbContext, userID, year);
             if (parcelDtosEnumerable == null)
             {
                 return NotFound();
@@ -230,11 +230,11 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDtos);
         }
 
-        [HttpGet("users/{userID}/water-usage")]
+        [HttpGet("users/{userID}/water-usage/{year}")]
         [UserViewFeature]
-        public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByUserID([FromRoute] int userID)
+        public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByUserID([FromRoute] int userID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByUserID(_dbContext, userID).ToList();
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs);
@@ -273,11 +273,11 @@ namespace Rio.API.Controllers
             return parcelWaterUsageDtos;
         }
 
-        [HttpGet("users/{userID}/water-usage-overview")]
+        [HttpGet("users/{userID}/water-usage-overview/{year}")]
         [UserViewFeature]
-        public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverviewByUserID([FromRoute] int userID)
+        public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverviewByUserID([FromRoute] int userID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByUserID(_dbContext, userID);
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year);
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs).ToList();

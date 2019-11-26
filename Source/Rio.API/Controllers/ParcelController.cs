@@ -127,11 +127,11 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("parcels/getParcelsWithLandOwners")]
+        [HttpGet("parcels/getParcelsWithLandOwners/{year}")]
         [ParcelManageFeature]
-        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners()
+        public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext);
+            var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext, year);
             return Ok(parcelDtos);
         }
     }
