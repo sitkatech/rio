@@ -42,6 +42,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbSet<vAllParcelsWithAnnualWaterUsage> vAllParcelsWithAnnualWaterUsage { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
+        public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
         public virtual DbSet<LandownerUsageReport> LandownerUsageReports { get; set; }
@@ -524,6 +525,19 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vParcelOwnership>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vParcelOwnership");
+
+                entity.Property(e => e.Note).IsUnicode(false);
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.UserParcelID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<vPostingDetailed>(entity =>
