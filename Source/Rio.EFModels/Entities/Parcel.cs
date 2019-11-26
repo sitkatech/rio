@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
@@ -10,22 +11,24 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext)
         {
-            var parcels = dbContext.UserParcel.Include(x => x.Parcel)
-                .AsNoTracking()
-                .OrderBy(x => x.Parcel.ParcelNumber)
-                .Select(x => x.Parcel.AsDto())
-                .AsEnumerable();
+            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x=>x.User).AsNoTracking().Where(x =>
+                x.RowNumber == 1 &&
+                (x.EffectiveYear == null ||
+                 x.EffectiveYear <=
+                 DateTime.Now.Year)).Select(x=>x.AsParcelDto()).AsEnumerable();
 
             return parcels;
         }
 
         public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID)
         {
-            var parcels = dbContext.UserParcel.Include(x => x.Parcel).Where(x => x.UserID == userID)
-                .AsNoTracking()
-                .OrderBy(x => x.Parcel.ParcelNumber)
-                .Select(x => x.Parcel.AsDto())
-                .AsEnumerable();
+            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x=>x.User).AsNoTracking().Where(x =>
+                x.UserID == userID &&
+                (x.EffectiveYear == null ||
+                 x.EffectiveYear <=
+                 DateTime.Now.Year)).ToList()
+                .GroupBy(x=>x.ParcelID).Select(x=>x.OrderBy(x=>x.RowNumber).First())
+                .Select(x => x.AsParcelDto()).AsEnumerable();
 
             return parcels;
         }
