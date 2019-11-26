@@ -9,6 +9,7 @@ import { UserDto } from 'src/app/shared/models';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
+import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -24,6 +25,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsage: Array<ParcelMonthlyEvapotranspirationDto>;
   public months: number[];
+  public parcelOwnershipHistory: ParcelOwnershipDto[];
 
   constructor(
     private route: ActivatedRoute,
@@ -46,14 +48,17 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelAllocations(id),
           this.parcelService.getWaterUsage(id),
+          this.parcelService.getParcelOwnershipHistory(id),
           this.parcelService.getWaterYears()
-        ).subscribe(([parcel, parcelAllocations, waterUsage, waterYears]) => {
+        ).subscribe(([parcel, parcelAllocations, waterUsage, parcelOwnershipHistory, waterYears]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
           this.parcelAllocations = parcelAllocations;
           this.waterUsage = waterUsage;
           this.waterYears = waterYears;
+          this.parcelOwnershipHistory = parcelOwnershipHistory;
+          console.log(this.parcelOwnershipHistory);
         });
       }
       this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]

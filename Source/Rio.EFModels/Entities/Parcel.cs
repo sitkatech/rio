@@ -60,7 +60,7 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<ParcelOwnershipDto> GetOwnershipHistory(RioDbContext dbContext, int parcelID)
         {
-            return dbContext.vParcelOwnership.AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
+            return dbContext.vParcelOwnership.Include(x=>x.User).AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
         }
     }
 }

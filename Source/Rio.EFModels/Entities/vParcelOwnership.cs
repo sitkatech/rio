@@ -51,7 +51,7 @@ namespace Rio.EFModels.Entities
             var parcelOwnershipDto = new ParcelOwnershipDto
             {
                 OwnerName = user != null ? $"{user.FirstName} {user.LastName}" : vParcelOwnership.OwnerName,
-                OwnerUserId = user?.UserID,
+                OwnerUserID = user?.UserID,
                 EffectiveYear = vParcelOwnership.EffectiveYear ?? vParcelOwnership.SaleDate?.Year,
                 Note = vParcelOwnership.Note,
                 SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? ""

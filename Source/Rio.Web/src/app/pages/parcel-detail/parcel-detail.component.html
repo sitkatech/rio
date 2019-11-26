@@ -144,15 +144,15 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- <tr *ngFor="let waterYear of waterYears"> -->
-                <tr>
-                  <td>Name McAppellation</td>
+                <tr *ngFor="let parcelOwnershipRecord of parcelOwnershipHistory">
+                
+                  <td>{{parcelOwnershipRecord.OwnerName}}</td>
                   <td style="text-align: right">
-                   -2</td>
+                   {{parcelOwnershipRecord.EffectiveYear}}</td>
                   <td style="text-align: right">
-                   4/20/69</td>
+                   {{parcelOwnershipRecord.SaleDate}}</td>
                   <td style="text-align: right">
-                    Blaze it duderz</td>
+                    {{parcelOwnershipRecord.Note}}</td>
                 </tr>
               </tbody>
             </table>
