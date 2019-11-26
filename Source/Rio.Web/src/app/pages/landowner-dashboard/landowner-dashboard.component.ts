@@ -102,6 +102,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.postings = postings;
         this.trades = trades;
         this.waterTransfers = waterTransfers;
+
+        this.updateAnnualData();
       });
 
       this.cdr.detectChanges();
@@ -120,7 +122,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
     forkJoin(
       this.userService.getWaterUsageByUserID(this.user.UserID, this.waterYearToDisplay),
-      this.userService.getWaterUsageOverviewByUserID(this.user.UserID)
+      this.userService.getWaterUsageOverviewByUserID(this.user.UserID, this.waterYearToDisplay)
     ).subscribe(([ waterUsagesInChartForm, waterUsageOverview ]) =>{
       this.waterUsages = waterUsagesInChartForm.map(x => 
         {
