@@ -56,8 +56,8 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsWithLandOwners(): Observable<Array<ParcelDto>> {
-    let route = `/parcels/getParcelsWithLandOwners`;
+  getParcelsWithLandOwners(year: number): Observable<Array<ParcelDto>> {
+    let route = `/parcels/getParcelsWithLandOwners/${year}`;
     return this.apiService.getFromApi(route);
   }
 

@@ -60,14 +60,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
 
-      forkJoin(
-        this.parcelService.getParcelsWithLandOwners(),
-        this.parcelService.getWaterYears()
-      ).subscribe(([parcels, waterYears]) => {
-        this.parcels = parcels;
+      this.parcelService.getWaterYears().subscribe(waterYears =>{
         this.waterYears = waterYears;
-        this.updateAnnualData();
-      });
+        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
+          this.parcels = parcels;
+          this.updateAnnualData();
+        })
+      })
     });
   }
 
@@ -379,6 +378,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
+    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
+      this.parcels = parcels;
+    })
     this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
       this.landOwnerUsageReportGrid.api.setRowData(result);
     });
