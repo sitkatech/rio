@@ -93,15 +93,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
-        this.userService.getParcelsAllocationsByUserID(userID),
         this.userService.getWaterTransfersByUserID(userID),
         this.userService.getWaterUsageByUserID(userID),
         this.userService.getWaterUsageOverviewByUserID(userID),
         this.parcelService.getWaterYears()
-      ).subscribe(([postings, trades, parcelAllocations, waterTransfers, waterUsagesInChartForm, waterUsageOverview, waterYears]) => {
-        
-        this.parcelAllocations = parcelAllocations;
-        
+      ).subscribe(([postings, trades, waterTransfers, waterUsagesInChartForm, waterUsageOverview, waterYears]) => {
+
         this.waterYears = waterYears;
         this.waterYearToDisplay = (new Date()).getFullYear();
         this.postings = postings;
@@ -134,6 +131,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.parcelService.getParcelsByUserID(this.user.UserID, this.waterYearToDisplay).subscribe(parcels=>{
       this.parcels = parcels;
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
+    });
+    
+    this.userService.getParcelsAllocationsByUserID(this.user.UserID, this.waterYearToDisplay).subscribe(parcelAllocations => {
+      this.parcelAllocations = parcelAllocations;
     })
   }
   ngOnDestroy() {

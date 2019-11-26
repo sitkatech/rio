@@ -58,8 +58,8 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
-    getParcelsAllocationsByUserID(userID: number): Observable<Array<ParcelAllocationDto>> {
-        let route = `/users/${userID}/getParcelsAllocations`;
+    getParcelsAllocationsByUserID(userID: number, year: number): Observable<Array<ParcelAllocationDto>> {
+        let route = `/users/${userID}/getParcelsAllocations/${year}`;
         return this.apiService.getFromApi(route);
       }
     
