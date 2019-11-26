@@ -15,8 +15,8 @@ import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-a
 export class ParcelService {
   constructor(private apiService: ApiService) { }
 
-  getParcelsByUserID(userID: number): Observable<any[]> {
-    let route = `/users/${userID}/parcels`;
+  getParcelsByUserID(userID: number, year:number): Observable<any[]> {
+    let route = `/users/${userID}/parcels/${year}`;
     return this.apiService.getFromApi(route);
   }
 

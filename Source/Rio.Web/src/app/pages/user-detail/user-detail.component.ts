@@ -39,7 +39,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
             if (id) {
                 forkJoin(
                     this.userService.getUserFromUserID(id),
-                    this.parcelService.getParcelsByUserID(id)
+                    this.parcelService.getParcelsByUserID(id, new Date().getFullYear())
                 ).subscribe(([user, parcels]) => {
                     this.user = user instanceof Array
                         ? null

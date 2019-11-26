@@ -58,7 +58,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
       if (waterTransferID) {
-        this.getData(waterTransferID);
+        this.getData(waterTransferID);``
       }
     });
   }
@@ -72,7 +72,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   private getData(waterTransferID: number): void {
     forkJoin(
       this.waterTransferService.getWaterTransferFromWaterTransferID(waterTransferID),
-      this.parcelService.getParcelsByUserID(this.currentUser.UserID),
+      this.parcelService.getParcelsByUserID(this.currentUser.UserID, new Date().getFullYear() ),
       this.waterTransferService.getParcelsForWaterTransferIDAndUserID(waterTransferID, this.currentUser.UserID),
     )
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {

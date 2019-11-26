@@ -90,7 +90,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.user = this.currentUser;
       }
       forkJoin(
-        this.parcelService.getParcelsByUserID(userID),
+        
         this.postingService.getPostingsByUserID(userID),
         this.tradeService.getTradeActivityForUser(userID),
         this.userService.getParcelsAllocationsByUserID(userID),
@@ -98,10 +98,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.userService.getWaterUsageByUserID(userID),
         this.userService.getWaterUsageOverviewByUserID(userID),
         this.parcelService.getWaterYears()
-      ).subscribe(([parcels, postings, trades, parcelAllocations, waterTransfers, waterUsagesInChartForm, waterUsageOverview, waterYears]) => {
-        this.parcels = parcels;
+      ).subscribe(([postings, trades, parcelAllocations, waterTransfers, waterUsagesInChartForm, waterUsageOverview, waterYears]) => {
+        
         this.parcelAllocations = parcelAllocations;
-        this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
+        
         this.waterYears = waterYears;
         this.waterYearToDisplay = (new Date()).getFullYear();
         this.postings = postings;
@@ -130,6 +130,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  public updateAnnualData() {
+    this.parcelService.getParcelsByUserID(this.user.UserID, this.waterYearToDisplay).subscribe(parcels=>{
+      this.parcels = parcels;
+      this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
+    })
+  }
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
