@@ -146,7 +146,13 @@
               <tbody>
                 <tr *ngFor="let parcelOwnershipRecord of parcelOwnershipHistory">
                 
-                  <td>{{parcelOwnershipRecord.OwnerName}}</td>
+                  <td *ngIf="parcelOwnershipRecord.OwnerUserID">
+                    <a routerLink="/users/{{parcelOwnershipRecord.OwnerUserID}}">{{parcelOwnershipRecord.OwnerName}}</a>
+                  </td>
+                
+                  <td *ngIf="!parcelOwnershipRecord.OwnerUserID">
+                    {{parcelOwnershipRecord.OwnerName}}
+                  </td>
                   <td style="text-align: right">
                    {{parcelOwnershipRecord.EffectiveYear}}</td>
                   <td style="text-align: right">

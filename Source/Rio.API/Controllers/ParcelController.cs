@@ -7,6 +7,7 @@ using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.API.Controllers
 {
@@ -140,7 +141,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
-            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID);
+            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x=>x.SaleDate);
             
             return Ok(parcelOwnershipDtos);
         }

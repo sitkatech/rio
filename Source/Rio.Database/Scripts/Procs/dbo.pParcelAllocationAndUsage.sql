@@ -19,8 +19,12 @@ begin
             *, 
             Row_Number() OVER (
 		        Partition by ParcelID Order by isnull(SaleDate,0) desc
-	        ) as RowNumber from
-        dbo.UserParcel
+	        ) as RowNumber
+        from
+            dbo.UserParcel
+        where
+            (SaleDate is null or Year(SaleDate) <= @year) and
+            (EffectiveYear is null or EffectiveYear <= @year)
     ) up on p.ParcelID = up.ParcelID
 	left join dbo.[User] u on up.UserID = u.UserID
 	left join 
