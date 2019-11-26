@@ -14,7 +14,14 @@ begin
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
 			pmev.UsageToDate
 	from dbo.Parcel p
-	left join dbo.UserParcel up on p.ParcelID = up.ParcelID
+	left join (
+        select
+            *, 
+            Row_Number() OVER (
+		        Partition by ParcelID Order by isnull(SaleDate,0) desc
+	        ) as RowNumber from
+        dbo.UserParcel
+    ) up on p.ParcelID = up.ParcelID
 	left join dbo.[User] u on up.UserID = u.UserID
 	left join 
 	(
@@ -33,5 +40,7 @@ begin
 		from dbo.ParcelMonthlyEvapotranspiration pme where pme.WaterYear = @year
 		group by pme.ParcelID
 	) pmev on p.ParcelID = pmev.ParcelID
+
+    where RowNumber = 1
 
 end
