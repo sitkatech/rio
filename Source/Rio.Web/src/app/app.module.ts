@@ -44,6 +44,7 @@ import { LoginCallbackComponent } from './pages/login-callback/login-callback.co
 import { HelpComponent } from './pages/help/help.component';
 import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-allocation/parcel-bulk-set-allocation.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
+import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +74,8 @@ import { GlossaryComponent } from './pages/glossary/glossary.component';
     LoginCallbackComponent,
     HelpComponent,
     ParcelBulkSetAllocationComponent,
-    GlossaryComponent
+    GlossaryComponent,
+    ParcelChangeOwnerComponent
   ],
   imports: [
     AppRoutingModule,

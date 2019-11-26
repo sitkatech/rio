@@ -37,7 +37,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
       this.waterYearToDisplay = (new Date()).getFullYear();
-      forkJoin(this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay), this.parcelService.getWaterYears()).subscribe(([parcelsWithWaterUsage, waterYears]) => {
+      forkJoin(
+        this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay), 
+        this.parcelService.getWaterYears()
+      ).subscribe(([parcelsWithWaterUsage, waterYears]) => {
         this.rowData = parcelsWithWaterUsage;
         this.waterYears = waterYears;
         this.cdr.detectChanges();
