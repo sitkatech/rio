@@ -43,8 +43,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
-        public virtual DbSet<LandownerUsageReport> LandownerUsageReports { get; set; }
-        public virtual DbSet<ParcelAllocationAndUsage> ParcelAllocationAndUsages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
