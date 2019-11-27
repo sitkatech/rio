@@ -67,18 +67,17 @@ export class ParcelChangeOwnerComponent implements OnInit {
   }
 
   public onSubmit(form: HTMLFormElement){
-    debugger;
-    
     var associativeArray = {
       ParcelID: this.parcelID,
       UserID: this.selectedUser ? this.selectedUser.UserID : undefined,
       OwnerName: this.ownerNameUntracked,
-      SaleDate: this.saleDate,
+      SaleDate: this.saleDate.jsdate,
       EffectiveYear: this.effectiveYear,
 
     }
     var parcelChangeOwnerDto = new ParcelChangeOwnerDto(associativeArray);
-    console.log(parcelChangeOwnerDto);
+    this.parcelService.changeParcelOwner(this.parcelID, parcelChangeOwnerDto).subscribe(anything=>{
+    });
   }
 
 }

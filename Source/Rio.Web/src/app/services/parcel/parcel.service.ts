@@ -9,6 +9,7 @@ import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocat
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
+import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -70,5 +71,10 @@ export class ParcelService {
   getParcelOwnershipHistory(parcelID:number): Observable<Array<ParcelOwnershipDto>> {
     let route = `/parcels/${parcelID}/getOwnershipHistory`
     return this.apiService.getFromApi(route);
+  }
+
+  changeParcelOwner(parcelID:number, model: ParcelChangeOwnerDto): Observable<any[]> {
+    let route = `/parcels/${parcelID}/changeOwner`
+    return this.apiService.postToApi(route, model);
   }
 }

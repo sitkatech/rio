@@ -136,7 +136,6 @@ namespace Rio.API.Controllers
             return Ok(parcelDtos);
         }
 
-
         [HttpGet("parcels/{parcelID}/getOwnershipHistory")]
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
@@ -145,5 +144,14 @@ namespace Rio.API.Controllers
             
             return Ok(parcelOwnershipDtos);
         }
+
+        [HttpPost("parcels/{parcelID}/changeOwner")]
+        [ParcelManageFeature]
+        public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
+        {
+
+            return Ok();
+        }
+
     }
 }
