@@ -1,17 +1,81 @@
-<p>parcel-change-owner works!</p>
+<nav aria-label="breadcrumb" *ngIf="parcel">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/parcels/{{parcelID}}">{{parcel.ParcelNumber}}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Change Parcel Owner
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4">
+    <h2>
+        Change Parcel Owner
+    </h2>
+    <p class="lead">
+        Use this page to change the owner of a parcel.
+    </p>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <form (ngSubmit)="onSubmit(changeOwnerForm)" #changeOwnerForm="ngForm">
 
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Does the Owner have an account in the platform?</p>
+                <label class="ml-2"><input type="radio" name="ownerHasAccount" [(ngModel)]="ownerHasAccount"
+                        [value]="true" /> Yes</label>
+                <label class="ml-2"><input type="radio" name="ownerHasAccount" [(ngModel)]="ownerHasAccount"
+                        [value]="false" /> No</label>
+            </div>
+        </div>
 
+        <div class="row" *ngIf="ownerHasAccount">
+            <div class="col-sm-6">
+                <ngx-select-dropdown [multiple]="false" [config]="userDropdownConfig" name="selectedUser" [(ngModel)]="selectedUser" (change)="selected()"
+                    [options]="users"></ngx-select-dropdown>
+            </div>
+        </div>
 
+        <div class="row" *ngIf="!ownerHasAccount">
+            <div class="col-sm-6">
+                <input type="text" name="ownerNameUntracked" [(ngModel)]="ownerNameUntracked"
+                    placeholder="Enter the name of the new owner" class="form-control">
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>Enter the date of the sale and the year that the change in ownership should be effective, if
+                    different
+                    from the sale year</p>
+            </div>
+        </div>
 
-<ngx-select-dropdown  [multiple]="false" [config]="config" (change)="selected()" [(ngModel)]="selectedUser" [options]="users"></ngx-select-dropdown>
+        <div class="row">
+            <div class="col-sm-3">
+                <my-date-picker name="saleDate" [options]="dateOptions" [(ngModel)]="saleDate" required>
+                </my-date-picker>
+            </div>
+            <div class="col-sm-3">
+                <input type="number" step="1" name="effectiveYear" [(ngModel)]="effectiveYear" class="form-control"
+                    placeholder="Effective Year">
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-sm-4">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-sm-3 text-right">
+                <button type="submit" class="btn btn-primary"
+                    [disabled]="!changeOwnerForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcelID}}">Cancel</a>
+            </div>
+        </div>
 
-here's the other one by the dub
-
-
-
-<!-- <select name="UserID" class="form-control"
-[(ngModel)]="model.UserID" required>
-<option value=""></option>
-<option *ngFor="let user of users" value="{{user.UserID}}">{{getDisplayName(user)}}</option>
-</select> -->
+    </form>
+</div>

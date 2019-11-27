@@ -46,6 +46,7 @@ import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-alloca
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
+import { MyDatePickerModule } from 'mydatepicker';
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
     NgxChartsModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
-    SelectDropDownModule
+    SelectDropDownModule,
+    MyDatePickerModule
   ],  
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
