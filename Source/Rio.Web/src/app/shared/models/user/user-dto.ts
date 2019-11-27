@@ -19,3 +19,12 @@ export class UserDto {
     }
 }
 
+export class ParcelChangeOwnerDto {
+    ParcelID: number;
+    UserID: number;
+    OwnerName: number;
+
+    constructor(obj?:any){
+        Object.assign(this,obj)
+    }
+}

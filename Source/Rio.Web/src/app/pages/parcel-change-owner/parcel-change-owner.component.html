@@ -1,1 +1,17 @@
 <p>parcel-change-owner works!</p>
+
+
+
+
+<ngx-select-dropdown  [multiple]="false" [config]="config" (change)="selected()" [(ngModel)]="selectedUser" [options]="users"></ngx-select-dropdown>
+
+
+here's the other one by the dub
+
+
+
+<!-- <select name="UserID" class="form-control"
+[(ngModel)]="model.UserID" required>
+<option value=""></option>
+<option *ngFor="let user of users" value="{{user.UserID}}">{{getDisplayName(user)}}</option>
+</select> -->
