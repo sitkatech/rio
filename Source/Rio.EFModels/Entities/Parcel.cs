@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {

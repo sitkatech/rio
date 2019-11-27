@@ -7,6 +7,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class vParcelOwnership
     {
+        public int ID { get; set; }
         public int UserParcelID { get; set; }
         public int? UserID { get; set; }
         public int ParcelID { get; set; }

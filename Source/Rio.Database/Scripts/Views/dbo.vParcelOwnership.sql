@@ -5,7 +5,9 @@ go
 Create View dbo.vParcelOwnership
 as
 
-SELECT [UserParcelID],
+SELECT 
+IsNull([UserParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views so they can be involved in navigational properties.
+    [UserParcelID],
 	[UserID],
 	[ParcelID],
 	[OwnerName],
