@@ -119,7 +119,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
         this.isLoadingSubmit = false;
         editAllocationForm.reset();
         this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
-          this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+          this.alertService.pushAlert(new Alert(`The allocations for ${this.parcel.ParcelNumber} were successfully updated.`, AlertContext.Success));
         });
       }
         ,
