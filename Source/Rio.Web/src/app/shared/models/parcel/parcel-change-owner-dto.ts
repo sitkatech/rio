@@ -4,6 +4,7 @@ export class ParcelChangeOwnerDto {
     OwnerName: number;
     SaleDate: Date;
     EffectiveYear: number;
+    Note: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

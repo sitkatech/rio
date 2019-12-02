@@ -59,11 +59,12 @@
         </div>
       </div>
     </div>
+
     <div class="row mt-4">
       <div class="col-sm-2">
         <i class="fas fa-bolt"></i> Required field
       </div>
-      <div class="col-sm-4 text-right">
+      <div class="col-sm-6 text-right">
         <button type="submit" class="btn btn-primary" [disabled]="!editAllocationForm.form.valid || isLoadingSubmit">
           <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
           Save
