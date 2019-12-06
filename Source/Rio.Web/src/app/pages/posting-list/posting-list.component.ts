@@ -40,7 +40,7 @@ export class PostingListComponent implements OnInit, OnDestroy {
         this.columnDefs = [
           {
             headerName: '', valueGetter: function (params: any) {
-              return { LinkValue: params.data.PostingID, LinkDisplay: "View Posting", CssClasses: "btn btn-sm btn-primary" };
+              return { LinkValue: params.data.PostingID, LinkDisplay: "View Posting", CssClasses: "btn btn-sm btn-rio" };
             }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/postings/" },
             sortable: false, filter: false, width: 130

@@ -74,8 +74,8 @@
         <div class="card-body" *ngIf="isPostingOpen()">
           <p>This is your posting.  View any offers on your dashboard.</p>
           <div class="text-center">
-            <a class="btn btn-primary btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
-            <button class="btn btn-primary btn-sm" (click)="closePosting()">Close Posting</button>
+            <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
+            <button class="btn btn-rio btn-sm" (click)="closePosting()">Close Posting</button>
           </div>
         </div>
         <div class="card-body" *ngIf="!isPostingOpen()">
@@ -105,12 +105,12 @@
             </dd>
           </dl>
           <div class="text-center">
-            <button class="btn btn-primary btn-sm mr-1" *ngIf="offers.length == 0"
+            <button class="btn btn-rio btn-sm mr-1" *ngIf="offers.length == 0"
               (click)="acceptCurrentOffer()">Accept Offer</button>
-            <button class="btn btn-primary btn-sm mr-1" (click)="isCounterOffering = true"
+            <button class="btn btn-rio btn-sm mr-1" (click)="isCounterOffering = true"
               *ngIf="!isPendingOffer()">Make Counter
               Offer</button>
-            <button class="btn btn-primary btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Rescind Offer</button>
+            <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Rescind Offer</button>
           </div>
         </div>
       </div>
@@ -156,9 +156,9 @@
             </dd>
           </dl>
           <div class="text-center">
-            <button class="btn btn-primary btn-sm mr-1" (click)="isConfirmingTrade = true" [disabled]="!isOfferFormValid()">Present Counter
+            <button class="btn btn-rio btn-sm mr-1" (click)="isConfirmingTrade = true" [disabled]="!isOfferFormValid()">Present Counter
               Offer</button>
-            <button class="btn btn-primary btn-sm" (click)="cancelCounterOffer()">Cancel</button>
+            <button class="btn btn-rio btn-sm" (click)="cancelCounterOffer()">Cancel</button>
           </div>
         </div>
       </div>
@@ -195,11 +195,11 @@
             </dd>
           </dl>
           <div class="text-center">
-            <button class="btn btn-primary btn-sm mr-1" (click)="confirmTrade()" [disabled]="isLoadingSubmit">
+            <button class="btn btn-rio btn-sm mr-1" (click)="confirmTrade()" [disabled]="isLoadingSubmit">
               <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
               Confirm
             </button>
-            <button class="btn btn-primary btn-sm" (click)="cancelConfirmation()">Cancel</button>
+            <button class="btn btn-rio btn-sm" (click)="cancelConfirmation()">Cancel</button>
           </div>
         </div>
       </div>

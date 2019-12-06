@@ -76,7 +76,7 @@
                                 <dd><input type="text" [(ngModel)]="confirmedFullNameForCancelation" /></dd>
                             </dl>            
                             <div class="text-center">
-                                <button [disabled]="!isFullNameConfirmedForCancelation() || isLoadingSubmit" type="submit" class="btn btn-sm btn-primary"
+                                <button [disabled]="!isFullNameConfirmedForCancelation() || isLoadingSubmit" type="submit" class="btn btn-sm btn-rio"
                                     (click)="cancelTrade()">
                                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                                     Cancel Trade
@@ -144,12 +144,12 @@
                         <dd class="col-md-5"><input type="text" [(ngModel)]="confirmedFullNameForRegistration" /></dd>
                     </dl>
                     <div class="text-center">
-                        <button class="btn btn-primary btn-sm mr-1" (click)="submitRegistration()"
+                        <button class="btn btn-rio btn-sm mr-1" (click)="submitRegistration()"
                             [disabled]="!isFullNameConfirmedForRegistration() || isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Confirm and Register Transfer
                         </button>
-                        <button class="btn btn-primary btn-sm" (click)="cancelRegistration()">Cancel</button>
+                        <button class="btn btn-rio btn-sm" (click)="cancelRegistration()">Cancel</button>
                     </div>
                 </div>
             </div>

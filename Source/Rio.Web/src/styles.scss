@@ -37,8 +37,101 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 
+.ag-theme-balham
+{
+    font-family: 'Tahoma';
+}
+
+
 .ag-paging-panel .ag-icon
 {
     color: rgba(0, 0, 0, 0.54);
 }
+
+.ag-theme-balham .ag-header
+{
+    background-color: #2f5b4c;
+}
 // end ag-grid settings
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 98px;
+    height: 21px;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .switch input {display:none;}
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #6b6b6b;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #196004;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #196004;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(77px);
+    -ms-transform: translateX(7px);
+    transform: translateX(77px);
+  }
+  
+  /*------ ADDED CSS ---------*/
+  .on
+  {
+    display: none;
+  }
+  
+  .on, .off
+  {
+    color: white;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    font-size: 10px;
+  }
+  
+  input:checked+ .slider .on
+  {display: block;}
+  
+  input:checked + .slider .off
+  {display: none;}
+  
+  /*--------- END --------*/
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;}
