@@ -12,7 +12,7 @@
     <entry key="Use native geometry serialization">false</entry>
     <entry key="Batch insert size">1</entry>
     <entry key="database">RioDB</entry>
-    <entry key="host">@database_server_name@</entry>
+    <entry key="host">192.168.10.218</entry>
     <entry key="Use Native Paging">true</entry>
     <entry key="Force spatial index usage via hints">false</entry>
     <entry key="fetch size">1000</entry>
@@ -21,14 +21,14 @@
     <entry key="Connection timeout">20</entry>
     <entry key="Integrated Security">false</entry>
     <entry key="port">1433</entry>
-    <entry key="passwd">@database_user_password@</entry>
+    <entry key="passwd">password#1</entry>
     <entry key="min connections">1</entry>
     <entry key="dbtype">sqlserver</entry>
     <entry key="namespace">Rio</entry>
     <entry key="max connections">10</entry>
     <entry key="Evictor tests per run">3</entry>
     <entry key="Test while idle">true</entry>
-    <entry key="user">@database_user_name@</entry>
+    <entry key="user">RioDBWebUser</entry>
     <entry key="Max connection idle time">300</entry>
   </connectionParameters>
   <__default>false</__default>

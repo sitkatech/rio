@@ -12,6 +12,8 @@ Post-Deployment Script Template
 
 :r .\dbo.vGeoServerAllParcels.sql
 
+:r .\dbo.vGeoServerWells.sql
+
 :r .\dbo.vUserDetailed.sql
 
 :r .\dbo.vPostingDetailed.sql

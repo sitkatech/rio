@@ -1,0 +1,15 @@
+<layer>
+  <name>Wells</name>
+  <id>LayerInfoImpl--18630a05:16eebb97b3c:-64ce</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--18630a05:16eebb97b3c:-2645</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl--18630a05:16eebb97b3c:-64cf</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>

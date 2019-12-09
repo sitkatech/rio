@@ -14,5 +14,5 @@ export const environment = {
     postLogoutRedirectUri: window.location.origin + '/',
     waitForTokenInMsec: 500
   },
-  geoserverMapServiceUrl: 'http://localhost:8777/geoserver/Rio'
+  geoserverMapServiceUrl: 'http://localhost:8780/geoserver/Rio'
 };

@@ -106,6 +106,7 @@
     <None Include="Scripts\LookupTables\dbo.ParcelAllocationType.sql" />
     <None Include="Scripts\Procs\dbo.pParcelAllocationAndUsage.sql" />
     <None Include="Scripts\Views\dbo.vParcelOwnership.sql" />
+    <None Include="Scripts\Views\dbo.vGeoServerWells.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

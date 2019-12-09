@@ -124,8 +124,17 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             parcelsWMSOptions.cql_filter = this.createParcelMapFilter(this.visibleParcelIDs);
             this.fitBoundsToSelectedParcels(this.visibleParcelIDs);
         }
+
+        let wellsWMSOptions = ({
+            layers: "Rio:Wells",
+            transparent: true,
+            format: "image/png",
+            tiled: true
+        } as WMSOptions);
+
         this.overlayLayers = Object.assign({
-            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", parcelsWMSOptions)
+            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", parcelsWMSOptions),
+            "Wells": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wellsWMSOptions)
         }, this.overlayLayers);
 
         this.compileService.configure(this.appRef);
