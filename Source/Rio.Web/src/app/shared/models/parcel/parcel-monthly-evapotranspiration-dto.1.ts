@@ -1,4 +1,6 @@
 export class ParcelMonthlyEvapotranspirationDto {
+    ParcelID: number;
+    ParcelNumber: string;
     WaterYear: number;
     WaterMonth: number;
     EvapotranspirationRate: number;

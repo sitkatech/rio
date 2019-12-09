@@ -230,6 +230,16 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDtos);
         }
 
+        [HttpGet("users/{userID}/parcel-water-usage/{year}")]
+        [UserViewFeature]
+        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> ListWaterUsagesByParcelAndUserID([FromRoute] int userID, [FromRoute] int year)
+        {
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year).ToList();
+            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
+            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs).Where(x => x.WaterYear == year);
+            return Ok(parcelMonthlyEvapotranspirationDtos);
+        }
+
         [HttpGet("users/{userID}/water-usage/{year}")]
         [UserViewFeature]
         public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByUserID([FromRoute] int userID, [FromRoute] int year)

@@ -9,6 +9,7 @@ namespace Rio.EFModels.Entities
             return new ParcelMonthlyEvapotranspirationDto()
             {
                 ParcelID = parcelMonthlyEvapotranspiration.ParcelID,
+                ParcelNumber = parcelMonthlyEvapotranspiration.Parcel.ParcelNumber,
                 WaterYear = parcelMonthlyEvapotranspiration.WaterYear,
                 WaterMonth = parcelMonthlyEvapotranspiration.WaterMonth,
                 EvapotranspirationRate = parcelMonthlyEvapotranspiration.EvapotranspirationRate

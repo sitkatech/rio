@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration
+            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration.Include(x => x.Parcel)
                 .AsNoTracking()
                 .Where(x => x.ParcelID == parcelID);
 
@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration
+            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration.Include(x => x.Parcel)
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
