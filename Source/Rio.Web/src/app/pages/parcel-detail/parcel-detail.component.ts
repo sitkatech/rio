@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
+import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 
 @Component({
