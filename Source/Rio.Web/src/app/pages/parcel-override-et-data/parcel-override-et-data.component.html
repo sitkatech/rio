@@ -12,7 +12,7 @@
         </div>
     </div>
     <h2>
-        Override ET Data for - {{user.FullName}} - {{waterYear}}
+        Override ET Data for - {{user.FullName}} - {{waterYearToDisplay}}
     </h2>
     <app-alert-display></app-alert-display>
 
@@ -31,7 +31,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let parcel of parcels; let i = index">
+                                <tr *ngFor="let parcel of parcels">
                                     <td>{{parcel.ParcelNumber}}</td>
                                 </tr>
                             </tbody>

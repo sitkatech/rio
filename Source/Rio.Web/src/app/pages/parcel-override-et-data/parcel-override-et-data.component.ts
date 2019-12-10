@@ -1,11 +1,24 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { TradeService } from 'src/app/services/trade.service';
+import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
+import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
+import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
+import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
+import { PostingService } from 'src/app/services/posting.service';
+import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
+import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
+import { WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
+import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
+import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto.1';
 
 
