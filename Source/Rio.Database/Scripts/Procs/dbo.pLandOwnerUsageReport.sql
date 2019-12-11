@@ -61,7 +61,7 @@ from
 				sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as Purchased,
 				sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as Sold
 		from dbo.[User] u
-		join dbo.WaterTransferRegistration wtr on u.UserID = wtr.UserID
+		join dbo.WaterTransferRegistration wtr on u.UserID = wtr.UserID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
 		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID and year(wt.TransferDate) = @year
 		group by u.UserID
 	) wts on u.UserID = wts.UserID
