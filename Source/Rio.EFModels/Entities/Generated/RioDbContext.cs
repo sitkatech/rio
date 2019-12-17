@@ -15,6 +15,9 @@ namespace Rio.EFModels.Entities
         {
         }
 
+        public virtual DbSet<Account> Account { get; set; }
+        public virtual DbSet<AccountStatus> AccountStatus { get; set; }
+        public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
         public virtual DbSet<FileResource> FileResource { get; set; }
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
@@ -40,18 +43,69 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
+        public virtual DbSet<Well> Well { get; set; }
         public virtual DbSet<vAllParcelsWithAnnualWaterUsage> vAllParcelsWithAnnualWaterUsage { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
+        public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
         public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasIndex(e => e.AccountNumber)
+                    .HasName("AK_Account_AccountNumber")
+                    .IsUnique();
+
+                entity.Property(e => e.AccountName).IsUnicode(false);
+
+                entity.Property(e => e.AccountNumber).HasComputedColumnSql("([AccountId]+(10000))");
+
+                entity.Property(e => e.Notes).IsUnicode(false);
+
+                entity.HasOne(d => d.AccountStatus)
+                    .WithMany(p => p.Account)
+                    .HasForeignKey(d => d.AccountStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<AccountStatus>(entity =>
+            {
+                entity.HasIndex(e => e.AccountStatusDisplayName)
+                    .HasName("AK_AccountStatus_AccountStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.AccountStatusName)
+                    .HasName("AK_AccountStatus_AccountStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.AccountStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.AccountStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.AccountStatusName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AccountUser>(entity =>
+            {
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.AccountUser)
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AccountUser)
+                    .HasForeignKey(d => d.UserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<DatabaseMigration>(entity =>
             {
                 entity.HasKey(e => e.DatabaseMigrationNumber)
@@ -492,6 +546,17 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<Well>(entity =>
+            {
+                entity.Property(e => e.WellID).ValueGeneratedNever();
+
+                entity.Property(e => e.WellName).IsUnicode(false);
+
+                entity.Property(e => e.WellType).IsUnicode(false);
+
+                entity.Property(e => e.WellTypeCodeName).IsUnicode(false);
+            });
+
             modelBuilder.Entity<vAllParcelsWithAnnualWaterUsage>(entity =>
             {
                 entity.HasNoKey();
@@ -522,6 +587,15 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerWells>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerWells");
+
+                entity.Property(e => e.WellName).IsUnicode(false);
             });
 
             modelBuilder.Entity<vParcelOwnership>(entity =>
