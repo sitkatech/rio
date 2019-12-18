@@ -10,5 +10,6 @@ namespace Rio.Models.DataTransferObjects.Account
         public string AccountName { get; set; }
         public string Notes { get; set; }
         public List<UserSimpleDto> Users { get; set; }
+        public string Status { get; set; }
     }
 }

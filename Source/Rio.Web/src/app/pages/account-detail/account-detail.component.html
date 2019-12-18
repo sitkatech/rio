@@ -18,10 +18,10 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
-                    <!-- <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
-                        routerLink="/users/{{user?.UserID}}/edit">
+                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                        routerLink="/accounts/{{account.AccountID}}/edit">
                         <span class="fas fa-edit"></span> Edit
-                    </a> -->
+                    </a>
                     Basics
                 </div>
                 <div class="card-body">
@@ -35,6 +35,12 @@
                         <dt class="text-sm-right col-sm-5 col-xs-12">Account Number</dt>
                         <dd class="col-sm-7 col-xs-12">
                             {{account.AccountNumber}}
+                            <em *ngIf="!account.AccountNumber" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Account Status</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{account.Status}}
                             <em *ngIf="!account.AccountNumber" class="text-muted">Not Available</em>
                         </dd>
 

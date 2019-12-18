@@ -23,7 +23,8 @@ namespace Rio.EFModels.Entities
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
-                Users = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList()
+                Users = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList(),
+                Status = account.AccountStatus.AccountStatusDisplayName
             };
         }
     }
