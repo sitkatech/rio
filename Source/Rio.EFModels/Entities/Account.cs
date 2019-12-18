@@ -9,10 +9,16 @@ namespace Rio.EFModels.Entities
 {
     public partial class Account
     {
-        public static List<AccountDto> ListByUserID(RioDbContext dbContext, int userID)
+        public static List<AccountSimpleDto> ListByUserID(RioDbContext dbContext, int userID)
         {
             return dbContext.User.Include(x => x.AccountUser).ThenInclude(x => x.Account)
-                .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsDto()).ToList();
+                .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsSimpleDto()).ToList();
+        }
+
+        public static List<AccountDto> List(RioDbContext dbContext)
+        {
+            return dbContext.Account.Include(x => x.AccountUser).ThenInclude(x => x.User).Select(x => x.AsDto())
+                .ToList();
         }
     }
 }

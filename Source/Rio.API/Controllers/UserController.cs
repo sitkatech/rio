@@ -147,7 +147,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("user/{userID}/accounts")]
         [UserManageFeature]
-        public ActionResult<List<AccountDto>> ListAccountsByUserID([FromRoute] int userID)
+        public ActionResult<List<AccountSimpleDto>> ListAccountsByUserID([FromRoute] int userID)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
             if (userDto == null)

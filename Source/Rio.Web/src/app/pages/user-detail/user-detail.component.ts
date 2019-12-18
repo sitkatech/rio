@@ -6,7 +6,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 @Component({
     selector: 'template-user-detail',
@@ -20,7 +20,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
     public user: UserDto;
     public parcels: Array<ParcelDto>;
-    public accounts: Array<AccountDto>
+    public accounts: Array<AccountSimpleDto>
 
     constructor(
         private route: ActivatedRoute,
