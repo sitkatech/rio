@@ -65,7 +65,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
             sortable: true, filter: true, width: 170
           },
           { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
-          { headerName: 'Status', field: 'Status', sortable: true, filter: true, width: 100 },
+          { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
           {
             headerName: 'Users',
             valueGetter: function (params) {

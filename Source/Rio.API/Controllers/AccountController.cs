@@ -25,6 +25,14 @@ namespace Rio.API.Controllers
             _keystoneService = keystoneService;
         }
 
+        [HttpGet("accountStatus")]
+        [UserManageFeature]
+        public IActionResult Get()
+        {
+            var accountStatusDtos = AccountStatus.List(_dbContext);
+            return Ok(accountStatusDtos);
+        }
+
         [HttpGet("/accounts")]
         [UserManageFeature]
         public ActionResult<List<AccountDto>> ListAllAccounts()

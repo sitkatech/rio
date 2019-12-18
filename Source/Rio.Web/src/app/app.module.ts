@@ -50,6 +50,7 @@ import { MyDatePickerModule } from 'mydatepicker';
 import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
 import { AccountListComponent } from './pages/account-list/account-list.component';
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
+import { AccountEditComponent } from './pages/account-edit/account-edit.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { AccountDetailComponent } from './pages/account-detail/account-detail.co
     ParcelChangeOwnerComponent,
     ParcelOverrideEtDataComponent,
     AccountListComponent,
-    AccountDetailComponent
+    AccountDetailComponent,
+    AccountEditComponent
   ],
   imports: [
     AppRoutingModule,
