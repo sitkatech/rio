@@ -24,7 +24,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
   public accounts: Array<AccountDto>
 
   public rowData = [];
-  columnDefs: ColDef[];
+  public columnDefs: ColDef[];
+  public showOnlyActiveAccounts: boolean = true;
 
   constructor(
     private accountService: AccountService,
@@ -75,7 +76,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
         ];
-        this.rowData = accounts;
+        this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
         this.cdr.detectChanges();
       });
     });
@@ -85,5 +86,15 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
+  }
+
+  public toggleAccountStatusShown(): void {
+    this.showOnlyActiveAccounts = !this.showOnlyActiveAccounts;
+
+    if (this.showOnlyActiveAccounts) {
+      this.rowData = this.accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
+    } else {
+      this.rowData = this.accounts;
+    }
   }
 }
