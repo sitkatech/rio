@@ -106,4 +106,20 @@
             </div>
         </div>
     </div>
+    <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Accounts
+                </div>
+                <div class="card-body">
+                    <div class="row" *ngFor="let account of accounts">
+                        <div class="col-sm-12">
+                            {{account.AccountNumber}} - {{account.AccountName}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
