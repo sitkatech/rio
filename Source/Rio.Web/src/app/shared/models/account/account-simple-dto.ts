@@ -1,5 +1,6 @@
 
 export class AccountSimpleDto{
+    AccountID: number;
     AccountName: string;
     AccountNumber: number;
     Notes: string;

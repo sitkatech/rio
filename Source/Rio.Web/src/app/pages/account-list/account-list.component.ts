@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
@@ -17,8 +17,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
   templateUrl: './account-list.component.html',
   styleUrls: ['./account-list.component.scss']
 })
-export class AccountListComponent implements OnInit {
-
+export class AccountListComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
@@ -30,7 +29,7 @@ export class AccountListComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef,) { }
+    private cdr: ChangeDetectorRef, ) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -41,14 +40,14 @@ export class AccountListComponent implements OnInit {
         this.columnDefs = [
           {
             headerName: '', field: 'AccountID', cellRendererFramework: FontAwesomeIconLinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/account/", fontawesomeIconName: 'tasks' },
+            cellRendererParams: { inRouterLink: "/accounts/", fontawesomeIconName: 'tasks' },
             sortable: false, filter: false, width: 40
           },
           {
             headerName: 'Account Name', valueGetter: function (params: any) {
               return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
             }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/account/" },
+            cellRendererParams: { inRouterLink: "/accounts/" },
             filterValueGetter: function (params: any) {
               return params.data.AccountName;
             },
@@ -81,4 +80,9 @@ export class AccountListComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
+  }
 }

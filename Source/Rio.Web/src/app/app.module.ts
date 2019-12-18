@@ -49,6 +49,7 @@ import { SelectDropDownModule } from 'ngx-select-dropdown'
 import { MyDatePickerModule } from 'mydatepicker';
 import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
 import { AccountListComponent } from './pages/account-list/account-list.component';
+import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import { AccountListComponent } from './pages/account-list/account-list.componen
     GlossaryComponent,
     ParcelChangeOwnerComponent,
     ParcelOverrideEtDataComponent,
-    AccountListComponent
+    AccountListComponent,
+    AccountDetailComponent
   ],
   imports: [
     AppRoutingModule,

@@ -13,4 +13,9 @@ export class AccountService {
     const route = "/accounts"
     return this.apiService.getFromApi(route);
   }
+
+  public getAccountByID(accountID): Observable<AccountDto>{
+    const route = `/account/${accountID}`
+    return this.apiService.getFromApi(route);
+  }
 }

@@ -32,5 +32,18 @@ namespace Rio.API.Controllers
             var accountDtos = Account.List(_dbContext);
             return accountDtos;
         }
+
+        [HttpGet("/account/{accountID}")]
+        [UserManageFeature]
+        public ActionResult<AccountDto> ListAllAccounts([FromRoute] int accountID)
+        {
+            var accountDto = EFModels.Entities.Account.GetByUserID(_dbContext, accountID);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(accountDto);
+        }
     }
 }

@@ -20,5 +20,11 @@ namespace Rio.EFModels.Entities
             return dbContext.Account.Include(x => x.AccountUser).ThenInclude(x => x.User).Select(x => x.AsDto())
                 .ToList();
         }
+
+        public static AccountDto GetByUserID(RioDbContext dbContext,  int accountID)
+        {
+            return dbContext.Account.Include(x => x.AccountUser).ThenInclude(x => x.User)
+                .Single(x => x.AccountID == accountID).AsDto();
+        }
     }
 }
