@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Account;
+using System.Collections.Generic;
 
 namespace Rio.API.Controllers
 {
@@ -43,15 +40,35 @@ namespace Rio.API.Controllers
 
         [HttpGet("/account/{accountID}")]
         [UserManageFeature]
-        public ActionResult<AccountDto> ListAllAccounts([FromRoute] int accountID)
+        public ActionResult<AccountDto> GetAccountByID([FromRoute] int accountID)
         {
-            var accountDto = EFModels.Entities.Account.GetByUserID(_dbContext, accountID);
+            var accountDto = Account.GetByAccountID(_dbContext, accountID);
             if (accountDto == null)
             {
                 return NotFound();
             }
 
             return Ok(accountDto);
+        }
+
+        [HttpPut("/account/{accountID}")]
+        [UserManageFeature]
+        public ActionResult<AccountDto> UpdateAccount([FromRoute] int accountID, [FromBody] AccountUpdateDto accountUpdateDto)
+        {
+            var accountDto = Account.GetByAccountID(_dbContext, accountID);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
+
+            var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
+            if (accountStatus == null)
+            {
+                return NotFound($"Could not find a System AccountStatus with the ID {accountUpdateDto.AccountStatusID}");
+            }
+
+            var updatedUserDto = Account.UpdateAccountEntity(_dbContext, accountID, accountUpdateDto);
+            return Ok(updatedUserDto);
         }
     }
 }

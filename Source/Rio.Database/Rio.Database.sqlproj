@@ -109,7 +109,7 @@
     <None Include="Scripts\Views\dbo.vGeoServerWells.sql" />
     <Build Include="dbo\Tables\dbo.Account.sql" />
     <Build Include="dbo\Tables\dbo.AccountStatus.sql" />
-    <Build Include="dbo\Tables\AccountUser.sql" />
+    <Build Include="dbo\Tables\dbo.AccountUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

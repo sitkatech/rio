@@ -46,7 +46,7 @@ namespace Rio.API.Controllers
             }
             else
             {
-                return BadRequest($"Role ID is required.");
+                return BadRequest("Role ID is required.");
             }
 
             const string applicationName = "Rosedale-Rio Bravo Water Trading Platform";
@@ -178,7 +178,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.Value);
+            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.GetValueOrDefault());
             if (role == null)
             {
                 return NotFound($"Could not find a System Role with the ID {userUpsertDto.RoleID}");

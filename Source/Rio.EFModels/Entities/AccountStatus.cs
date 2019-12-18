@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities
 {
@@ -16,6 +13,15 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.AsDto());
 
             return roles;
+        }
+
+        public static object GetByAccountStatusID(RioDbContext dbContext, int accountStatusID)
+        {
+            var accountStatus = dbContext.AccountStatus
+                .AsNoTracking()
+                .FirstOrDefault(x => x.AccountStatusID == accountStatusID);
+
+            return accountStatus?.AsDto();
         }
     }
 }

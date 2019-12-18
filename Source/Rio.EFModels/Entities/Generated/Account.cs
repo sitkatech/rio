@@ -14,11 +14,13 @@ namespace Rio.EFModels.Entities
 
         [Key]
         public int AccountID { get; set; }
-        public int? AccountNumber { get; set; }
+        public int AccountNumber { get; set; }
         [StringLength(255)]
         public string AccountName { get; set; }
         public int AccountStatusID { get; set; }
         public string Notes { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? UpdateDate { get; set; }
 
         [ForeignKey(nameof(AccountStatusID))]
         [InverseProperty("Account")]

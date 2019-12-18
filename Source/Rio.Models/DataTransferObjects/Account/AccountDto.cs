@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects.User;
+using System.Collections.Generic;
 
 namespace Rio.Models.DataTransferObjects.Account
 {

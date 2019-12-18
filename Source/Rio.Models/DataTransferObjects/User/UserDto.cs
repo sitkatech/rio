@@ -1,5 +1,5 @@
-﻿using System;
-using Rio.Models.DataTransferObjects.Role;
+﻿using Rio.Models.DataTransferObjects.Role;
+using System;
 
 namespace Rio.Models.DataTransferObjects.User
 {

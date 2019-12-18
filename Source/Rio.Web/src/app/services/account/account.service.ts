@@ -19,8 +19,8 @@ export class AccountService {
     return this.apiService.getFromApi(route);
   }
 
-  public updateAccount(userID: number, accountUpdateDto: any): Observable<AccountDto> {
-      let route = `/users/${userID}`;
+  public updateAccount(accountID: number, accountUpdateDto: any): Observable<AccountDto> {
+      let route = `/account/${accountID}`;
       return this.apiService.putToApi(route, accountUpdateDto);
   }
 }

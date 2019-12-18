@@ -53,7 +53,6 @@ namespace Rio.EFModels.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -66,7 +65,7 @@ namespace Rio.EFModels.Entities
 
                 entity.Property(e => e.AccountName).IsUnicode(false);
 
-                entity.Property(e => e.AccountNumber).HasComputedColumnSql("([AccountId]+(10000))");
+                entity.Property(e => e.AccountNumber).HasComputedColumnSql("(isnull([AccountID]+(10000),(0)))");
 
                 entity.Property(e => e.Notes).IsUnicode(false);
 

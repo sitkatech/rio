@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Rio.Models.DataTransferObjects.Account;
+﻿using Rio.Models.DataTransferObjects.Account;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
