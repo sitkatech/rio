@@ -18,6 +18,7 @@ namespace Rio.EFModels.Entities
         {
             return new AccountDto()
             {
+                AccountID = account.AccountID,
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
