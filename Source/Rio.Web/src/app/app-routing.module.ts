@@ -29,6 +29,7 @@ import { AccountListComponent } from './pages/account-list/account-list.componen
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
 import { AccountNewComponent } from './pages/account-new/account-new.component';
+import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -49,6 +50,7 @@ const routes: Routes = [
   { path: "accounts", component: AccountListComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id", component: AccountDetailComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id/edit", component: AccountEditComponent, canActivate: [UnauthenticatedAccessGuard]},
+  { path: "accounts/:id/edit-users", component: AccountEditUsersComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "new-account", component: AccountNewComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "landowner-dashboard/:id", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "landowner-dashboard", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },

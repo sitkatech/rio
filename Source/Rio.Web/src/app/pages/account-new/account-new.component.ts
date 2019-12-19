@@ -7,6 +7,8 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AccountStatusService } from 'src/app/services/accountStatus/account-status.service';
 import { AccountStatusDto } from 'src/app/shared/models/account/account-status-dto';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDto } from 'src/app/shared/models';
 
 @Component({
   selector: 'rio-account-new',
@@ -18,12 +20,16 @@ export class AccountNewComponent implements OnInit {
   public isLoadingSubmit: boolean;
   public accountID: number;
   accountStatuses: Array<AccountStatusDto>;
+  watchUserChangeSubscription: any;
+  currentUser: UserDto;
 
-  constructor(private accountService: AccountService, private router: Router, private alertService: AlertService, private cdr: ChangeDetectorRef, private accountStatusService: AccountStatusService) { }
+  constructor(private accountService: AccountService, private router: Router, private alertService: AlertService, private cdr: ChangeDetectorRef, private accountStatusService: AccountStatusService, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
-    this.model = new AccountUpsertDto();
-    this.accountStatusService.getAccountStatuses().subscribe(accountStatuses => {
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.model = new AccountUpsertDto();
+      this.accountStatusService.getAccountStatuses().subscribe(accountStatuses => {
 
         this.accountStatuses = accountStatuses.sort((a: AccountStatusDto, b: AccountStatusDto) => {
           if (a.AccountStatusDisplayName > b.AccountStatusDisplayName)
@@ -32,7 +38,8 @@ export class AccountNewComponent implements OnInit {
             return -1;
           return 0;
         });
-      })
+      });
+    });
   }
 
   onSubmit(editAccountForm: HTMLFormElement): void {

@@ -56,6 +56,10 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
+                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                    routerLink="/accounts/{{account.AccountID}}/edit-users">
+                    <span class="fas fa-edit"></span> Add or Remove Users
+                </a>
                     Users
                 </div>
                 <div class="card-body">

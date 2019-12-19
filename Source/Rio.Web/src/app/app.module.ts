@@ -52,6 +52,7 @@ import { AccountListComponent } from './pages/account-list/account-list.componen
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
 import { AccountNewComponent } from './pages/account-new/account-new.component';
+import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { AccountNewComponent } from './pages/account-new/account-new.component';
     AccountListComponent,
     AccountDetailComponent,
     AccountEditComponent,
-    AccountNewComponent
+    AccountNewComponent,
+    AccountEditUsersComponent
   ],
   imports: [
     AppRoutingModule,
