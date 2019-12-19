@@ -51,6 +51,7 @@ import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/p
 import { AccountListComponent } from './pages/account-list/account-list.component';
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
+import { AccountNewComponent } from './pages/account-new/account-new.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,8 @@ import { AccountEditComponent } from './pages/account-edit/account-edit.componen
     ParcelOverrideEtDataComponent,
     AccountListComponent,
     AccountDetailComponent,
-    AccountEditComponent
+    AccountEditComponent,
+    AccountNewComponent
   ],
   imports: [
     AppRoutingModule,

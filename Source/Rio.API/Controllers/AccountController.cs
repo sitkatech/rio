@@ -70,5 +70,20 @@ namespace Rio.API.Controllers
             var updatedUserDto = Account.UpdateAccountEntity(_dbContext, accountID, accountUpdateDto);
             return Ok(updatedUserDto);
         }
+
+        [HttpPost("/account/new")]
+        [UserManageFeature]
+        public ActionResult<AccountDto> CreateAccount([FromBody] AccountUpdateDto accountUpdateDto)
+        {
+
+            var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
+            if (accountStatus == null)
+            {
+                return NotFound($"Could not find a System AccountStatus with the ID {accountUpdateDto.AccountStatusID}");
+            }
+
+            var updatedUserDto = Account.CreateAccountEntity(_dbContext, accountUpdateDto);
+            return Ok(updatedUserDto);
+        }
     }
 }
