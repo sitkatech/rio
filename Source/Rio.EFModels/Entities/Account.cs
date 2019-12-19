@@ -3,6 +3,7 @@ using Rio.Models.DataTransferObjects.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.API.Util;
 
 namespace Rio.EFModels.Entities
 {
@@ -57,6 +58,22 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(account).Reload();
 
             return GetByAccountID(dbContext, account.AccountID);
+        }
+
+        public static AccountDto SetAssociatedUsers(RioDbContext dbContext, AccountDto accountDto, List<int> userIDs)
+        {
+            var newAccountUsers = userIDs.Select(userID => new AccountUser(){AccountID = accountDto.AccountID, UserID = userID}).ToList();
+
+            var existingAccountUsers = dbContext.Account.Include(x => x.AccountUser)
+                .Single(x => x.AccountID == accountDto.AccountID).AccountUser;
+
+            var allInDatabase = dbContext.AccountUser;
+
+            existingAccountUsers.Merge(newAccountUsers, allInDatabase, (x,y)=>x.AccountID == y.AccountID && x.UserID == y.UserID);
+
+            dbContext.SaveChanges();
+
+            return GetByAccountID(dbContext, accountDto.AccountID);
         }
     }
 }

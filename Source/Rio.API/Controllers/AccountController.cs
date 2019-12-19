@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Account;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.API.Controllers
 {
@@ -79,11 +81,30 @@ namespace Rio.API.Controllers
             var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
             if (accountStatus == null)
             {
-                return NotFound($"Could not find a System AccountStatus with the ID {accountUpdateDto.AccountStatusID}");
+                return NotFound($"Could not find an Account Status with the ID {accountUpdateDto.AccountStatusID}");
             }
 
             var updatedUserDto = Account.CreateAccountEntity(_dbContext, accountUpdateDto);
             return Ok(updatedUserDto);
+        }
+
+        [HttpPut("/account/{accountID}/edit-users")]
+        [UserManageFeature]
+        public ActionResult<AccountDto> EditUsers([FromRoute] int accountID, [FromBody] AccountEditUsersDto accountEditUsersDto)
+        {
+            var accountDto = Account.GetByAccountID(_dbContext, accountID);
+
+            if (accountDto == null)
+            {
+                return NotFound($"Could not find an Account with the ID {accountID}.");
+            }
+
+            if (!EFModels.Entities.User.ValidateAllExist(_dbContext, accountEditUsersDto.UserIDs))
+            {
+                return NotFound("One or more of the User IDs was invalid.");
+            }
+
+            return Ok(Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs));
         }
     }
 }

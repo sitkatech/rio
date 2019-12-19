@@ -141,5 +141,10 @@ namespace Rio.EFModels.Entities
 
             return result;
         }
+
+        public static bool ValidateAllExist(RioDbContext dbContext, List<int> userIDs)
+        {
+            return dbContext.User.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
+        }
     }
 }
