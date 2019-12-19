@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AccountDto, AccountEditUsersDto } from 'src/app/shared/models/account/account-dto';
 import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-dto';
 import { AccountEditUsersComponent } from 'src/app/pages/account-edit-users/account-edit-users.component';
 
