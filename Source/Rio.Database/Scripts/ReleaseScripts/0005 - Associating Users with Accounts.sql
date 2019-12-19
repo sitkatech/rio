@@ -14,6 +14,9 @@ GO
 DECLARE @MigrationName VARCHAR(200);
 SET @MigrationName = '0005 - Associating Users with Accounts'
 
+Declare @LandownerRoleID int;
+set @LandownerRoleID = 2
+
 IF NOT EXISTS(SELECT * FROM dbo.DatabaseMigration DM WHERE DM.ReleaseScriptFileName = @MigrationName)
 BEGIN
     Insert into dbo.Account (AccountName, AccountStatusID, UserID)
@@ -22,6 +25,7 @@ BEGIN
 	    Case when IsActive = 1 then 1 else 2 end as AccountStatusID,
 	    UserID
     from dbo.[User]
+    Where RoleID = @LandownerRoleID
 
     Insert into dbo.AccountUser (AccountID, UserID)
     Select
