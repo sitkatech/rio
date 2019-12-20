@@ -18,7 +18,7 @@ import { Alert } from 'src/app/shared/models/alert';
 })
 export class AccountEditUsersComponent implements OnInit, OnDestroy {
   public watchUserChangeSubscription: any;
-  public currentUser: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/index").UserDto;
+  public currentUser: UserDto;
   public accountID: number;
   public account: AccountDto;
   public allUsers: UserDto[];
