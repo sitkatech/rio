@@ -13,7 +13,7 @@
     <h2 style="display: inline-block">New Account</h2>
     <p>Use this form to create a new account. An account number will be assigned automatically.</p>
 
-    <form (ngSubmit)="onSubmit(newAccountForm)" #editAccountForm="ngForm">
+    <form (ngSubmit)="onSubmit(newAccountForm)" #newAccountForm="ngForm">
         <div class="row mt-4">
             <div class="col-sm-8">
                 <div class="card">
@@ -52,11 +52,11 @@
                 <i class="fas fa-bolt"></i> Required field
             </div>
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-rio" [disabled]="!editAccountForm.form.valid || isLoadingSubmit">
+                <button type="submit" class="btn btn-rio" [disabled]="!newAccountForm.form.valid || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Submit
                 </button>
-                <a class="btn btn-secondary ml-1" routerLink="/accounts/{{account?.AccountID}}">Cancel</a>
+                <a class="btn btn-secondary ml-1" routerLink="/accounts">Cancel</a>
             </div>
         </div>
     </form>
