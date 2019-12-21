@@ -17,7 +17,6 @@ namespace Rio.EFModels.Entities
         public int PostingTypeID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime PostingDate { get; set; }
-        public int CreateUserID { get; set; }
         public int Quantity { get; set; }
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
@@ -25,10 +24,11 @@ namespace Rio.EFModels.Entities
         public string PostingDescription { get; set; }
         public int PostingStatusID { get; set; }
         public int AvailableQuantity { get; set; }
+        public int CreateAccountID { get; set; }
 
-        [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.Posting))]
-        public virtual User CreateUser { get; set; }
+        [ForeignKey(nameof(CreateAccountID))]
+        [InverseProperty(nameof(Account.Posting))]
+        public virtual Account CreateAccount { get; set; }
         [ForeignKey(nameof(PostingStatusID))]
         [InverseProperty("Posting")]
         public virtual PostingStatus PostingStatus { get; set; }

@@ -16,6 +16,7 @@ namespace Rio.EFModels.Entities
         }
 
         public virtual DbSet<Account> Account { get; set; }
+        public virtual DbSet<AccountParcel> AccountParcel { get; set; }
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
@@ -37,7 +38,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
         public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<UserParcel> UserParcel { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
         public virtual DbSet<WaterTransferRegistration> WaterTransferRegistration { get; set; }
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
@@ -72,6 +72,18 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.AccountStatus)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.AccountStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<AccountParcel>(entity =>
+            {
+                entity.Property(e => e.Note).IsUnicode(false);
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.AccountParcel)
+                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
@@ -172,11 +184,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.OfferNotes).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Offer)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Offer_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Offer_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.OfferStatus)
                     .WithMany(p => p.Offer)
@@ -273,11 +285,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.PostingDescription).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Posting)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Posting_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Posting_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.PostingStatus)
                     .WithMany(p => p.Posting)
@@ -390,11 +402,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.TradeNumber).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Trade)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Trade_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Trade_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.Posting)
                     .WithMany(p => p.Trade)
@@ -453,18 +465,6 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<UserParcel>(entity =>
-            {
-                entity.Property(e => e.Note).IsUnicode(false);
-
-                entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.UserParcel)
-                    .HasForeignKey(d => d.ParcelID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
             modelBuilder.Entity<WaterTransfer>(entity =>
             {
                 entity.Property(e => e.Notes).IsUnicode(false);
@@ -477,10 +477,11 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<WaterTransferRegistration>(entity =>
             {
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.Account)
                     .WithMany(p => p.WaterTransferRegistration)
-                    .HasForeignKey(d => d.UserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WaterTransferRegistration_Account_AccountID_AccountID");
 
                 entity.HasOne(d => d.WaterTransfer)
                     .WithMany(p => p.WaterTransferRegistration)
