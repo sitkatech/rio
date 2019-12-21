@@ -26,7 +26,8 @@ namespace Rio.EFModels.Entities
                 ParcelID = vParcelOwnership.ParcelID,
                 ParcelNumber = vParcelOwnership.Parcel.ParcelNumber,
                 ParcelAreaInAcres = vParcelOwnership.Parcel.ParcelAreaInAcres,
-                LandOwner = landOwner
+                //TODO
+                //LandOwner = landOwner
 
             };
 

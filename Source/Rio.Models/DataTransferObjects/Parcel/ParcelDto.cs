@@ -1,4 +1,4 @@
-﻿using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects.Account;
 
 namespace Rio.Models.DataTransferObjects.Parcel
 {
@@ -8,6 +8,6 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
 
-        public UserSimpleDto LandOwner { get; set; }
+        public AccountSimpleDto LandOwner { get; set; }
     }
 }

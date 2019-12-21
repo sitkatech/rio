@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Rio.Models.DataTransferObjects.Parcel;
+using System;
 using System.Linq;
-using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
 {
@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
                 ParcelID = parcel.ParcelID,
                 ParcelNumber = parcel.ParcelNumber,
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
-                LandOwner = parcel.UserParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.User.AsSimpleDto()
+                LandOwner = parcel.AccountParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.Account.AsSimpleDto()
             };
         }
     }

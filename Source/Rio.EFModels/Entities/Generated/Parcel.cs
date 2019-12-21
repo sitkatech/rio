@@ -10,9 +10,9 @@ namespace Rio.EFModels.Entities
     {
         public Parcel()
         {
+            AccountParcel = new HashSet<AccountParcel>();
             ParcelAllocation = new HashSet<ParcelAllocation>();
             ParcelMonthlyEvapotranspiration = new HashSet<ParcelMonthlyEvapotranspiration>();
-            UserParcel = new HashSet<UserParcel>();
             WaterTransferRegistrationParcel = new HashSet<WaterTransferRegistrationParcel>();
         }
 
@@ -40,11 +40,11 @@ namespace Rio.EFModels.Entities
         public double ParcelAreaInAcres { get; set; }
 
         [InverseProperty("Parcel")]
+        public virtual ICollection<AccountParcel> AccountParcel { get; set; }
+        [InverseProperty("Parcel")]
         public virtual ICollection<ParcelAllocation> ParcelAllocation { get; set; }
         [InverseProperty("Parcel")]
         public virtual ICollection<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
-        [InverseProperty("Parcel")]
-        public virtual ICollection<UserParcel> UserParcel { get; set; }
         [InverseProperty("Parcel")]
         public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
     }

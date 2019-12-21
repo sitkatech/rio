@@ -9,6 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public Account()
         {
+            AccountParcel = new HashSet<AccountParcel>();
             AccountUser = new HashSet<AccountUser>();
         }
 
@@ -25,6 +26,8 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(AccountStatusID))]
         [InverseProperty("Account")]
         public virtual AccountStatus AccountStatus { get; set; }
+        [InverseProperty("Account")]
+        public virtual ICollection<AccountParcel> AccountParcel { get; set; }
         [InverseProperty("Account")]
         public virtual ICollection<AccountUser> AccountUser { get; set; }
     }

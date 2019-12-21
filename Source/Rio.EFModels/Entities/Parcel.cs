@@ -49,7 +49,7 @@ namespace Rio.EFModels.Entities
         public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)
         {
             var parcel = dbContext.Parcel
-                .Include(x => x.UserParcel).ThenInclude(x => x.User)
+                .Include(x => x.AccountParcel).ThenInclude(x => x.Account)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 

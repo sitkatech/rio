@@ -16,6 +16,7 @@ namespace Rio.EFModels.Entities
         }
 
         public virtual DbSet<Account> Account { get; set; }
+        public virtual DbSet<AccountParcel> AccountParcel { get; set; }
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
@@ -37,7 +38,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
         public virtual DbSet<User> User { get; set; }
-        public virtual DbSet<UserParcel> UserParcel { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
         public virtual DbSet<WaterTransferRegistration> WaterTransferRegistration { get; set; }
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
@@ -72,6 +72,18 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.AccountStatus)
                     .WithMany(p => p.Account)
                     .HasForeignKey(d => d.AccountStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<AccountParcel>(entity =>
+            {
+                entity.Property(e => e.Note).IsUnicode(false);
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.AccountParcel)
+                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
@@ -450,18 +462,6 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.RoleID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<UserParcel>(entity =>
-            {
-                entity.Property(e => e.Note).IsUnicode(false);
-
-                entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.UserParcel)
-                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 

@@ -49,23 +49,24 @@ namespace Rio.EFModels.Entities
                     Allocation = parcel.Allocation,
                     UsageToDate = parcel.UsageToDate,
                 };
-                if (parcel.UserID.HasValue)
-                {
-                    parcelAllocationAndUsageDto.LandOwner = new UserSimpleDto()
-                    {
-                        FirstName = parcel.FirstName,
-                        LastName = parcel.LastName,
-                        Email = parcel.Email,
-                        UserID = parcel.UserID.Value
-                    };
-                }
-                else
-                {
-                    parcelAllocationAndUsageDto.LandOwner = new UserSimpleDto()
-                    {
-                        FirstName = parcel.OwnerName
-                    };
-                }
+                // TODO
+                //if (parcel.UserID.HasValue)
+                //{
+                //    parcelAllocationAndUsageDto.LandOwner = new UserSimpleDto()
+                //    {
+                //        FirstName = parcel.FirstName,
+                //        LastName = parcel.LastName,
+                //        Email = parcel.Email,
+                //        UserID = parcel.UserID.Value
+                //    };
+                //}
+                //else
+                //{
+                //    parcelAllocationAndUsageDto.LandOwner = new UserSimpleDto()
+                //    {
+                //        FirstName = parcel.OwnerName
+                //    };
+                //}
 
                 return parcelAllocationAndUsageDto;
             });
