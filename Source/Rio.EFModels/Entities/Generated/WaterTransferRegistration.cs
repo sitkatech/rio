@@ -16,14 +16,14 @@ namespace Rio.EFModels.Entities
         public int WaterTransferRegistrationID { get; set; }
         public int WaterTransferID { get; set; }
         public int WaterTransferTypeID { get; set; }
+        public int UserID { get; set; }
         public int WaterTransferRegistrationStatusID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime StatusDate { get; set; }
-        public int AccountID { get; set; }
 
-        [ForeignKey(nameof(AccountID))]
+        [ForeignKey(nameof(UserID))]
         [InverseProperty("WaterTransferRegistration")]
-        public virtual Account Account { get; set; }
+        public virtual User User { get; set; }
         [ForeignKey(nameof(WaterTransferID))]
         [InverseProperty("WaterTransferRegistration")]
         public virtual WaterTransfer WaterTransfer { get; set; }
