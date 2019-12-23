@@ -18,7 +18,7 @@ export class ParcelService {
   constructor(private apiService: ApiService) { }
 
   getParcelsByAccountID(accountID: number, year:number): Observable<any[]> {
-    let route = `/users/${accountID}/parcels/${year}`;
+    let route = `/accounts/${accountID}/parcels/${year}`;
     return this.apiService.getFromApi(route);
   }
 

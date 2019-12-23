@@ -5,15 +5,11 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
-using Rio.Models.DataTransferObjects.WaterUsage;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 
 namespace Rio.API.Controllers
@@ -186,38 +182,6 @@ namespace Rio.API.Controllers
 
             var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userUpsertDto);
             return Ok(updatedUserDto);
-        }
-
-
-        // todo: goes to account controller and gets a new route
-        [HttpGet("users/{accountID}/parcels/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year);
-            if (parcelDtos == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(parcelDtos);
-        }
-
-        // todo: goes to account controller and gets a new route
-        [HttpGet("users/{accountID}/getParcelsAllocations/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtosEnumerable = Parcel.ListByAccountID(_dbContext, accountID, year);
-            if (parcelDtosEnumerable == null)
-            {
-                return NotFound();
-            }
-
-            var parcelDtos = parcelDtosEnumerable.ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelIDs);
-            return Ok(parcelAllocationDtos);
         }
 
         [HttpGet("users/{userID}/postings")]

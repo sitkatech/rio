@@ -56,7 +56,7 @@ export class AccountService {
   }
 
   getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
-      let route = `/users/${accountID}/getParcelsAllocations/${year}`;
+      let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
       return this.apiService.getFromApi(route);
   }
 }
