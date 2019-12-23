@@ -23,11 +23,11 @@ namespace Rio.EFModels.Entities
         public int OfferStatusID { get; set; }
         [StringLength(2000)]
         public string OfferNotes { get; set; }
-        public int CreateUserID { get; set; }
+        public int CreateAccountID { get; set; }
 
-        [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.Offer))]
-        public virtual User CreateUser { get; set; }
+        [ForeignKey(nameof(CreateAccountID))]
+        [InverseProperty(nameof(Account.Offer))]
+        public virtual Account CreateAccount { get; set; }
         [ForeignKey(nameof(OfferStatusID))]
         [InverseProperty("Offer")]
         public virtual OfferStatus OfferStatus { get; set; }

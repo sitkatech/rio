@@ -1,5 +1,5 @@
-﻿using System;
-using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects.Account;
+using System;
 
 namespace Rio.Models.DataTransferObjects.Posting
 {
@@ -13,7 +13,7 @@ namespace Rio.Models.DataTransferObjects.Posting
         public decimal Price { get; set; }
         public string PostingDescription { get; set; }
 
-        public UserSimpleDto CreateUser { get; set; }
+        public AccountDto CreateAccount { get; set; }
         public PostingStatusDto PostingStatus { get; set; }
     }
 }

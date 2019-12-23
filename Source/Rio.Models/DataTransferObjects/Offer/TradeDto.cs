@@ -1,5 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.Posting;
-using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects.Account;
+using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.Models.DataTransferObjects.Offer
 {
@@ -7,7 +7,7 @@ namespace Rio.Models.DataTransferObjects.Offer
     {
         public int TradeID { get; set; }
         public string TradeNumber { get; set; }
-        public UserSimpleDto CreateUser { get; set; }
+        public AccountDto CreateAccount { get; set; }
         public TradeStatusDto TradeStatus { get; set; }
         public PostingDto Posting { get; set; }
     }

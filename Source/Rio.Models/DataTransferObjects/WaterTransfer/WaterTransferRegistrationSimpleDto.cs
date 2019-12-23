@@ -1,12 +1,12 @@
-﻿using System;
-using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects.Account;
+using System;
 
 namespace Rio.Models.DataTransferObjects.WaterTransfer
 {
     public class WaterTransferRegistrationSimpleDto
     {
         public int WaterTransferTypeID { get; set; }
-        public UserSimpleDto User { get; set; }
+        public AccountDto Account { get; set; }
         public int WaterTransferRegistrationStatusID { get; set; }
         public DateTime StatusDate { get; set; }
         public bool IsRegistered { get; set; }

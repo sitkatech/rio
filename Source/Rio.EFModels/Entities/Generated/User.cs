@@ -11,10 +11,6 @@ namespace Rio.EFModels.Entities
         {
             AccountUser = new HashSet<AccountUser>();
             FileResource = new HashSet<FileResource>();
-            Offer = new HashSet<Offer>();
-            Posting = new HashSet<Posting>();
-            Trade = new HashSet<Trade>();
-            WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
         }
 
         [Key]
@@ -52,13 +48,5 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<AccountUser> AccountUser { get; set; }
         [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResource { get; set; }
-        [InverseProperty("CreateUser")]
-        public virtual ICollection<Offer> Offer { get; set; }
-        [InverseProperty("CreateUser")]
-        public virtual ICollection<Posting> Posting { get; set; }
-        [InverseProperty("CreateUser")]
-        public virtual ICollection<Trade> Trade { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistration { get; set; }
     }
 }

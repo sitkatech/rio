@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Rio.Models.DataTransferObjects.Offer;
+﻿using Rio.Models.DataTransferObjects.Offer;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
@@ -11,7 +11,7 @@ namespace Rio.EFModels.Entities
             {
                 TradeID = trade.TradeID,
                 TradeNumber = trade.TradeNumber,
-                CreateUser = trade.CreateUser.AsSimpleDto(),
+                CreateAccount = trade.CreateAccount.AsDto(),
                 TradeStatus = trade.TradeStatus.AsDto(),
                 Posting = trade.Posting.AsDto()
             };
@@ -25,12 +25,12 @@ namespace Rio.EFModels.Entities
                 TradeID = trade.TradeID,
                 TradeNumber = trade.TradeNumber,
                 TradeStatus = trade.TradeStatus.AsDto(),
-                CreateUser = trade.CreateUser.AsSimpleDto(),
+                CreateUser = trade.CreateAccount.AsSimpleDto(),
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,
                 OfferDate = mostRecentOffer.OfferDate,
-                OfferCreateUser = mostRecentOffer.CreateUser.AsSimpleDto(),
+                OfferCreateAccount = mostRecentOffer.CreateAccount.AsSimpleDto(),
                 WaterTransferID = null
             };
 
@@ -47,24 +47,24 @@ namespace Rio.EFModels.Entities
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
             {
-                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateUserID == mostRecentOffer.CreateUserID ? (int) PostingTypeEnum.OfferToSell : (int)PostingTypeEnum.OfferToBuy;
+                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateAccountID == mostRecentOffer.CreateAccountID ? (int) PostingTypeEnum.OfferToSell : (int)PostingTypeEnum.OfferToBuy;
             }
             else
             {
-                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateUserID == mostRecentOffer.CreateUserID ? (int)PostingTypeEnum.OfferToBuy : (int)PostingTypeEnum.OfferToSell;
+                tradeWithMostRecentOfferDto.OfferPostingTypeID = trade.Posting.CreateAccountID == mostRecentOffer.CreateAccountID ? (int)PostingTypeEnum.OfferToBuy : (int)PostingTypeEnum.OfferToSell;
             }
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
             {
                 tradeWithMostRecentOfferDto.TradePostingTypeID = (int) PostingTypeEnum.OfferToBuy;
-                tradeWithMostRecentOfferDto.Buyer = trade.CreateUser.AsSimpleDto();
-                tradeWithMostRecentOfferDto.Seller = trade.Posting.CreateUser.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Buyer = trade.CreateAccount.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Seller = trade.Posting.CreateAccount.AsSimpleDto();
             }
             else
             {
                 tradeWithMostRecentOfferDto.TradePostingTypeID = (int) PostingTypeEnum.OfferToSell;
-                tradeWithMostRecentOfferDto.Buyer = trade.Posting.CreateUser.AsSimpleDto();
-                tradeWithMostRecentOfferDto.Seller = trade.CreateUser.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Buyer = trade.Posting.CreateAccount.AsSimpleDto();
+                tradeWithMostRecentOfferDto.Seller = trade.CreateAccount.AsSimpleDto();
             }
 
             return tradeWithMostRecentOfferDto;

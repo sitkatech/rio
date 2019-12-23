@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Rio.Models.DataTransferObjects.Offer;
+﻿using Rio.Models.DataTransferObjects.Offer;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
                 OfferNotes = offer.OfferNotes,
                 Quantity = offer.Quantity,
                 Price = offer.Price,
-                CreateUser = offer.CreateUser.AsSimpleDto(),
+                CreateAccount = offer.CreateAccount.AsDto(),
                 OfferStatus = offer.OfferStatus.AsDto(),
                 TradeID = offer.TradeID,
             };

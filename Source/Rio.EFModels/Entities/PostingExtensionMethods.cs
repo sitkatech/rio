@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
                 Quantity = posting.Quantity,
                 AvailableQuantity = posting.AvailableQuantity,
                 Price = posting.Price,
-                CreateUser = posting.CreateUser.AsSimpleDto(),
+                CreateAccount = posting.CreateAccount.AsDto(),
                 PostingType = posting.PostingType.AsDto(),
                 PostingStatus = posting.PostingStatus.AsDto()
             };

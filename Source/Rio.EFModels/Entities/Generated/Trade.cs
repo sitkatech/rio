@@ -18,13 +18,13 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime TradeDate { get; set; }
         public int TradeStatusID { get; set; }
-        public int CreateUserID { get; set; }
         [StringLength(50)]
         public string TradeNumber { get; set; }
+        public int CreateAccountID { get; set; }
 
-        [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.Trade))]
-        public virtual User CreateUser { get; set; }
+        [ForeignKey(nameof(CreateAccountID))]
+        [InverseProperty(nameof(Account.Trade))]
+        public virtual Account CreateAccount { get; set; }
         [ForeignKey(nameof(PostingID))]
         [InverseProperty("Trade")]
         public virtual Posting Posting { get; set; }

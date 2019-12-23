@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rio.Models.DataTransferObjects.Posting
 {
@@ -16,6 +15,6 @@ namespace Rio.Models.DataTransferObjects.Posting
 
         public string PostingDescription { get; set; }
         [Required]
-        public int CreateUserID { get; set; }
+        public int CreateAccountID { get; set; }
     }
 }

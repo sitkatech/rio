@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Net.Mail;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
 
 namespace Rio.API.Controllers
 {
@@ -89,20 +91,22 @@ namespace Rio.API.Controllers
             {
                 postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
-                var postingCreateUserID = posting.CreateUser.UserID;
+                var postingCreateAccountID = posting.CreateAccount.AccountID;
                 var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
                 foreach (var activeTrade in activeTradesForPosting)
                 {
-                    var offerStatus = activeTrade.OfferCreateUser.UserID == postingCreateUserID
+                    var offerStatus = activeTrade.OfferCreateAccount.AccountID == postingCreateAccountID
                         ? OfferStatusEnum.Rescinded
                         : OfferStatusEnum.Rejected;
-                    var offerUpsertDtoForRescindReject = new OfferUpsertDto();
-                    offerUpsertDtoForRescindReject.TradeID = activeTrade.TradeID;
-                    offerUpsertDtoForRescindReject.Price = activeTrade.Price;
-                    offerUpsertDtoForRescindReject.Quantity = activeTrade.Quantity;
-                    offerUpsertDtoForRescindReject.OfferStatusID = (int)offerStatus;
-                    offerUpsertDtoForRescindReject.OfferNotes = $"Offer {offerStatus} because original posting is now closed";
-                    Offer.CreateNew(_dbContext, postingID, postingCreateUserID, offerUpsertDtoForRescindReject);
+                    var offerUpsertDtoForRescindReject = new OfferUpsertDto
+                    {
+                        TradeID = activeTrade.TradeID,
+                        Price = activeTrade.Price,
+                        Quantity = activeTrade.Quantity,
+                        OfferStatusID = (int) offerStatus,
+                        OfferNotes = $"Offer {offerStatus} because original posting is now closed"
+                    };
+                    Offer.CreateNew(_dbContext, postingID, postingCreateAccountID, offerUpsertDtoForRescindReject);
                 }
             }
             Posting.UpdateStatus(_dbContext, postingID,
@@ -123,40 +127,40 @@ namespace Rio.API.Controllers
         private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer,
             TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
         {
-            UserSimpleDto buyer;
-            UserSimpleDto seller;
-            if (currentTrade.CreateUser.UserID == posting.CreateUser.UserID)
+            AccountDto buyer;
+            AccountDto seller;
+            if (currentTrade.CreateAccount.AccountID == posting.CreateAccount.AccountID)
             {
                 if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
                 {
-                    buyer = posting.CreateUser;
-                    seller = currentTrade.CreateUser;
+                    buyer = posting.CreateAccount;
+                    seller = currentTrade.CreateAccount;
                 }
                 else
                 {
-                    buyer = currentTrade.CreateUser;
-                    seller = posting.CreateUser;
+                    buyer = currentTrade.CreateAccount;
+                    seller = posting.CreateAccount;
                 }
             }
             else
             {
                 if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
                 {
-                    buyer = posting.CreateUser;
-                    seller = currentTrade.CreateUser;
+                    buyer = posting.CreateAccount;
+                    seller = currentTrade.CreateAccount;
                 }
                 else
                 {
-                    buyer = currentTrade.CreateUser;
-                    seller = posting.CreateUser;
+                    buyer = currentTrade.CreateAccount;
+                    seller = posting.CreateAccount;
                 }
             }
 
             var mailMessages = new List<MailMessage>();
             var messageBody = $@"Your offer to trade water has been accepted.
 <ul>
-    <li><strong>Buyer:</strong> {buyer.FullName} ({buyer.Email})</li>
-    <li><strong>Seller:</strong> {seller.FullName} ({seller.Email})</li>
+    <li><strong>Buyer:</strong> {buyer.AccountName} ({string.Join(", ",  buyer.Users.Select(x=>x.Email))})</li>
+    <li><strong>Seller:</strong> {seller.AccountName} ({string.Join(", ", seller.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
     <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
     <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
@@ -165,7 +169,7 @@ To finalize this transaction, the buyer and seller must complete payment and any
 <br /><br />
 <a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
-            var mailTos = new List<UserSimpleDto> {buyer, seller};
+            var mailTos = (new List<AccountDto> {buyer, seller}).SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
                 var mailMessage = new MailMessage
@@ -183,14 +187,14 @@ To finalize this transaction, the buyer and seller must complete payment and any
             TradeDto currentTrade,
             PostingDto posting)
         {
-            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+            var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy";
 
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
+            var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
             var messageBody =
                 $@"
-Hello {toUser.FullName},
+Hello {toAccount.AccountName},
 <br /><br />
 Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
@@ -201,7 +205,10 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
                 Subject = $"Trade {currentTrade.TradeNumber} Rejected",
                 Body = messageBody
             };
-            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            foreach (var user in toAccount.Users)
+            {
+                mailMessage.To.Add(new MailAddress(user.Email, user.FullName));
+            }
             return mailMessage;
         }
 
@@ -209,14 +216,14 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
             TradeDto currentTrade,
             PostingDto posting)
         {
-            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+            var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
 
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
+            var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
             var messageBody =
                 $@"
-Hello {toUser.FullName},
+Hello {toAccount.AccountName},
 <br /><br />
 An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
 <br /><br />
@@ -227,20 +234,23 @@ An offer to {offerAction} water was rescinded by the other party. You can see de
                 Subject = $"Trade {currentTrade.TradeNumber} Rescinded",
                 Body = messageBody
             };
-            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            foreach (var user in toAccount.Users)
+            {
+                mailMessage.To.Add(new MailAddress(user.Email, user.FullName));
+            }
             return mailMessage;
         }
 
         private static MailMessage GeneratePendingOfferEmail(string rioUrl, TradeDto currentTrade,
             OfferDto offer, PostingDto posting)
         {
-            var offerAction = currentTrade.CreateUser.UserID == offer.CreateUser.UserID
+            var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
-            var toUser = offer.CreateUser.UserID == posting.CreateUser.UserID ? currentTrade.CreateUser : posting.CreateUser;
+            var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
             var messageBody =
                 $@"
-Hello {toUser.FullName},
+Hello {toAccount.AccountName},
 <br /><br />
 An offer to {offerAction} water has been presented for your review. 
 <br /><br />
@@ -251,7 +261,10 @@ An offer to {offerAction} water has been presented for your review.
                 Subject = "New offer to review",
                 Body = messageBody
             };
-            mailMessage.To.Add(new MailAddress(toUser.Email, toUser.FullName));
+            foreach (var user in toAccount.Users)
+            {
+                mailMessage.To.Add(new MailAddress(user.Email, user.FullName));
+            }
             return mailMessage;
         }
 
@@ -276,7 +289,7 @@ An offer to {offerAction} water has been presented for your review.
         [UserViewFeature]
         public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForUser([FromRoute] int userID)
         {
-            var tradeWithMostRecentOfferDtos = Trade.GetTradesForUserID(_dbContext, userID);
+            var tradeWithMostRecentOfferDtos = Trade.GetTradesForAccountID(_dbContext, userID);
             return Ok(tradeWithMostRecentOfferDtos);
         }
 

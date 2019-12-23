@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Offer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Offer;
 
 namespace Rio.EFModels.Entities
 {
@@ -13,7 +13,7 @@ namespace Rio.EFModels.Entities
             var trade = new Trade
             {
                 PostingID = postingID,
-                CreateUserID = userID,
+                CreateAccountID = userID,
                 TradeDate = DateTime.UtcNow,
                 TradeStatusID = (int) TradeStatusEnum.Countered
             };
@@ -49,10 +49,10 @@ namespace Rio.EFModels.Entities
             return offers;
         }
 
-        public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForUserID(RioDbContext dbContext, int userID)
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForAccountID(RioDbContext dbContext, int accountID)
         {
             var offers = GetTradeWithOfferDetailsImpl(dbContext)
-                .Where(x => x.CreateUserID == userID || x.Posting.CreateUserID == userID)
+                .Where(x => x.CreateAccountID == accountID || x.Posting.CreateAccountID == accountID)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())
                 .AsEnumerable();
@@ -64,11 +64,11 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.User)
-                .Include(x => x.Offer).ThenInclude(x => x.CreateUser)
+                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
+                .Include(x => x.Offer).ThenInclude(x => x.CreateAccount)
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .Include(x => x.CreateAccount)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
                 .AsNoTracking();
         }
 
@@ -93,8 +93,8 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Trade
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateUser)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateUser)
+                .Include(x => x.CreateAccount)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .AsNoTracking();

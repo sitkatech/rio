@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Rio.Models.DataTransferObjects.WaterTransfer;
+﻿using Rio.Models.DataTransferObjects.WaterTransfer;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
         {
             return new WaterTransferRegistrationDto
             {
-                UserID = waterTransferRegistration.UserID,
+                AccountID = waterTransferRegistration.AccountID,
                 WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
                 StatusDate = waterTransferRegistration.StatusDate
             };
@@ -19,7 +19,7 @@ namespace Rio.EFModels.Entities
         {
             return new WaterTransferRegistrationSimpleDto
             {
-                User = waterTransferRegistration.User.AsSimpleDto(),
+                Account = waterTransferRegistration.Account.AsDto(),
                 WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
                 WaterTransferRegistrationStatusID = waterTransferRegistration.WaterTransferRegistrationStatusID,
                 StatusDate = waterTransferRegistration.StatusDate,

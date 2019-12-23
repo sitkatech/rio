@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.WaterTransfer;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
@@ -49,11 +49,11 @@ namespace Rio.EFModels.Entities
             return waterTransferParcelDtos;
         }
 
-        public static IEnumerable<WaterTransferRegistrationParcelDto> ListByWaterTransferIDAndUserID(
-            RioDbContext dbContext, int waterTransferID, int userID)
+        public static IEnumerable<WaterTransferRegistrationParcelDto> ListByWaterTransferIDAndAccountID(
+            RioDbContext dbContext, int waterTransferID, int accountID)
         {
             var waterTransferParcelDtos = GetWaterTransferRegistrationParcelsImpl(dbContext)
-                .Where(x => x.WaterTransferRegistration.WaterTransferID == waterTransferID && x.WaterTransferRegistration.UserID == userID)
+                .Where(x => x.WaterTransferRegistration.WaterTransferID == waterTransferID && x.WaterTransferRegistration.AccountID == accountID)
                 .OrderBy(x => x.Parcel.ParcelNumber)
                 .Select(x => x.AsDto())
                 .AsEnumerable();

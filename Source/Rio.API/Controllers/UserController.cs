@@ -201,7 +201,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int userID)
         {
-            var waterTransferDtos = WaterTransfer.ListByUserID(_dbContext, userID);
+            var waterTransferDtos = WaterTransfer.ListByAccountID(_dbContext, userID);
             if (waterTransferDtos == null)
             {
                 return NotFound();

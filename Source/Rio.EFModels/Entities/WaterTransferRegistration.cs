@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.WaterTransfer;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
         private static IQueryable<WaterTransferRegistration> GetWaterTransferRegistrationsImpl(RioDbContext dbContext)
         {
             return dbContext.WaterTransferRegistration
-                .Include(x => x.User)
+                .Include(x => x.Account)
                 .AsNoTracking();
         }
 

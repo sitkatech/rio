@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
             {
                 PostingTypeID = postingUpsertDto.PostingTypeID, 
                 PostingDescription = postingUpsertDto.PostingDescription,
-                CreateUserID = postingUpsertDto.CreateUserID,
+                CreateAccountID = postingUpsertDto.CreateAccountID,
                 PostingDate = DateTime.UtcNow,
                 Price = postingUpsertDto.Price,
                 Quantity = postingUpsertDto.Quantity,
@@ -55,14 +55,14 @@ namespace Rio.EFModels.Entities
             return dbContext.Posting
                 .Include(x => x.PostingType)
                 .Include(x => x.PostingStatus)
-                .Include(x => x.CreateUser)
+                .Include(x => x.CreateAccount)
                 .AsNoTracking();
         }
 
         public static IEnumerable<PostingDto> ListByUserID(RioDbContext dbContext, int userID)
         {
             var postings = GetPostingImpl(dbContext)
-                .Where(x => x.CreateUserID == userID)
+                .Where(x => x.CreateAccountID == userID)
                 .OrderByDescending(x => x.PostingDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();

@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities
 {
@@ -184,11 +182,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.OfferNotes).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Offer)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Offer_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Offer_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.OfferStatus)
                     .WithMany(p => p.Offer)
@@ -285,11 +283,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.PostingDescription).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Posting)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Posting_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Posting_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.PostingStatus)
                     .WithMany(p => p.Posting)
@@ -402,11 +400,11 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.TradeNumber).IsUnicode(false);
 
-                entity.HasOne(d => d.CreateUser)
+                entity.HasOne(d => d.CreateAccount)
                     .WithMany(p => p.Trade)
-                    .HasForeignKey(d => d.CreateUserID)
+                    .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Trade_User_CreateUserID_UserID");
+                    .HasConstraintName("FK_Trade_Account_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.Posting)
                     .WithMany(p => p.Trade)
@@ -477,10 +475,11 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<WaterTransferRegistration>(entity =>
             {
-                entity.HasOne(d => d.User)
+                entity.HasOne(d => d.Account)
                     .WithMany(p => p.WaterTransferRegistration)
-                    .HasForeignKey(d => d.UserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WaterTransferRegistration_Account_AccountID_AccountID");
 
                 entity.HasOne(d => d.WaterTransfer)
                     .WithMany(p => p.WaterTransferRegistration)
