@@ -18,6 +18,4 @@ Post-Deployment Script Template
 
 :r .\dbo.vPostingDetailed.sql
 
-:r .\dbo.vParcelOwnership.sql
-
 GO

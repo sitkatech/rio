@@ -1,4 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.Parcel;
+﻿using Rio.Models.DataTransferObjects.Account;
+using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
@@ -7,17 +8,17 @@ namespace Rio.EFModels.Entities
     {
         public static ParcelDto AsParcelDto(this vParcelOwnership vParcelOwnership)
         {
-            UserSimpleDto landOwner;
+            AccountSimpleDto landOwner;
 
-            if (vParcelOwnership.User != null)
+            if (vParcelOwnership.Account != null)
             {
-                landOwner = vParcelOwnership.User.AsSimpleDto();
+                landOwner = vParcelOwnership.Account.AsSimpleDto();
             }
             else
             {
-                landOwner = new UserSimpleDto()
+                landOwner = new AccountSimpleDto()
                 {
-                    FirstName = vParcelOwnership.OwnerName
+                    AccountName = vParcelOwnership.OwnerName
                 };
             }
 
@@ -26,8 +27,8 @@ namespace Rio.EFModels.Entities
                 ParcelID = vParcelOwnership.ParcelID,
                 ParcelNumber = vParcelOwnership.Parcel.ParcelNumber,
                 ParcelAreaInAcres = vParcelOwnership.Parcel.ParcelAreaInAcres,
-                //TODO
-                //LandOwner = landOwner
+                
+                LandOwner = landOwner
 
             };
 
@@ -35,11 +36,11 @@ namespace Rio.EFModels.Entities
         }
         public static ParcelOwnershipDto AsParcelOwnershipDto(this vParcelOwnership vParcelOwnership)
         {
-            var user = vParcelOwnership.User;
+            var account = vParcelOwnership.Account;
             var parcelOwnershipDto = new ParcelOwnershipDto
             {
-                OwnerName = user != null ? $"{user.FirstName} {user.LastName}" : vParcelOwnership.OwnerName,
-                OwnerUserID = user?.UserID,
+                OwnerName = account != null ? $"{account.AccountName}" : vParcelOwnership.OwnerName,
+                OwnerAccountID = account?.AccountID,
                 EffectiveYear = vParcelOwnership.EffectiveYear ?? vParcelOwnership.SaleDate?.Year,
                 Note = vParcelOwnership.Note,
                 SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? ""

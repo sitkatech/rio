@@ -72,7 +72,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   private getData(waterTransferID: number): void {
     forkJoin(
       this.waterTransferService.getWaterTransferFromWaterTransferID(waterTransferID),
-      this.parcelService.getParcelsByUserID(this.currentUser.UserID, new Date().getFullYear() ),
+      this.parcelService.getParcelsByAccountID(this.currentUser.UserID, new Date().getFullYear() ),
       this.waterTransferService.getParcelsForWaterTransferIDAndUserID(waterTransferID, this.currentUser.UserID),
     )
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {

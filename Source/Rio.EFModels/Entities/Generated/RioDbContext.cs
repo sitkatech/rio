@@ -603,11 +603,11 @@ namespace Rio.EFModels.Entities
 
                 entity.ToView("vParcelOwnership");
 
+                entity.Property(e => e.AccountParcelID).ValueGeneratedOnAdd();
+
                 entity.Property(e => e.Note).IsUnicode(false);
 
                 entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.Property(e => e.UserParcelID).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<vPostingDetailed>(entity =>

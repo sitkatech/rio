@@ -6,9 +6,9 @@ Create View dbo.vParcelOwnership
 as
 
 SELECT 
-IsNull([UserParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views so they can be involved in navigational properties.
-    [UserParcelID],
-	[UserID],
+IsNull([AccountParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views so they can be involved in navigational properties.
+    [AccountParcelID],
+	[AccountID],
 	[ParcelID],
 	[OwnerName],
 	[EffectiveYear],
@@ -17,7 +17,7 @@ IsNull([UserParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views so
 	Row_Number() OVER (
 		Partition by ParcelID Order by isnull(SaleDate,0) desc
 	) as RowNumber
-  FROM [dbo].[UserParcel]
+  FROM [dbo].[AccountParcel]
 GO
 /*
 select *

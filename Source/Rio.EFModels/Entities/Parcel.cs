@@ -11,7 +11,7 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext, int year)
         {
-            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.User).AsNoTracking().Where(
+            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account).AsNoTracking().Where(
                     x =>
                         x.RowNumber == 1 &&
                         (x.EffectiveYear == null ||
@@ -23,13 +23,13 @@ namespace Rio.EFModels.Entities
             return parcels;
         }
 
-        public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
+        public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID, int year)
         {
             // get all the parcelIDs User(userID) has ever owned
-            var parcelIDsEverOwned = dbContext.vParcelOwnership.AsNoTracking().Where(x => x.UserID == userID).Select(x => x.ParcelID).Distinct().ToList();
+            var parcelIDsEverOwned = dbContext.vParcelOwnership.AsNoTracking().Where(x => x.AccountID == accountID).Select(x => x.ParcelID).Distinct().ToList();
 
             // get all of their parcel ownership records as of (year)
-            var parcelDtos = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.User)
+            var parcelDtos = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account)
                 .AsNoTracking()
                 .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
                             (x.EffectiveYear == null ||
@@ -39,7 +39,7 @@ namespace Rio.EFModels.Entities
                 // get the lowest row numbered of those
                 .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
                 // throw out anything where Record.UserID != userID
-                .Where(x => x.UserID == userID)
+                .Where(x => x.AccountID == accountID)
                 .Select(x => x.AsParcelDto()).AsEnumerable();
 
             return parcelDtos;
@@ -68,7 +68,7 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<ParcelOwnershipDto> GetOwnershipHistory(RioDbContext dbContext, int parcelID)
         {
-            return dbContext.vParcelOwnership.Include(x=>x.User).AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
+            return dbContext.vParcelOwnership.Include(x=>x.Account).AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
         }
     }
 }

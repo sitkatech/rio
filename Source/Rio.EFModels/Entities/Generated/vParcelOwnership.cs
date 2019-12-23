@@ -8,8 +8,8 @@ namespace Rio.EFModels.Entities
     public partial class vParcelOwnership
     {
         public int ID { get; set; }
-        public int UserParcelID { get; set; }
-        public int? UserID { get; set; }
+        public int AccountParcelID { get; set; }
+        public int? AccountID { get; set; }
         public int ParcelID { get; set; }
         [StringLength(214)]
         public string OwnerName { get; set; }

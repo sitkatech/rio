@@ -3,7 +3,7 @@
     public class ParcelOwnershipDto
     {
         public string OwnerName { get; set; }
-        public int? OwnerUserID { get; set; }
+        public int? OwnerAccountID { get; set; }
         public int? EffectiveYear { get; set; }
         public string SaleDate { get; set; }
 

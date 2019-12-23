@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(ParcelID))]
         public virtual Parcel Parcel { get; set; }
 
-        [ForeignKey(nameof(UserID))]
-        public virtual User User { get; set; }
+        [ForeignKey(nameof(AccountID))]
+        public virtual Account Account { get; set; }
     }
 }

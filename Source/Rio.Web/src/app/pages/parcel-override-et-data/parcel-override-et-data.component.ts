@@ -20,6 +20,7 @@ import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocat
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
+import { AccountService } from 'src/app/services/account/account.service';
 
 
 @Component({
@@ -43,7 +44,8 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private accountService: AccountService
   ) {
   }
 
@@ -65,13 +67,13 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
-    this.parcelService.getParcelsByUserID(this.user.UserID, this.waterYearToDisplay).subscribe(parcels=>{
+    this.parcelService.getParcelsByAccountID(this.user.UserID, this.waterYearToDisplay).subscribe(parcels=>{
       this.parcels = parcels;
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
     });
     
     forkJoin(
-      this.userService.getParcelWaterUsageByUserID(this.user.UserID, this.waterYearToDisplay)
+      this.accountService.getParcelWaterUsageByAccountID(this.user.UserID, this.waterYearToDisplay)
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })

@@ -51,28 +51,8 @@ export class UserService {
         return this.apiService.putToApi(route, userUpdateDto);
     }
 
-    getWaterUsageByUserID(userID: number, year: number): Observable<WaterUsageDto[]> {
-        let route = `/users/${userID}/water-usage/${year}`;
-        return this.apiService.getFromApi(route);
-    }
-    
-    getParcelWaterUsageByUserID(userID: number, year: number): Observable<ParcelMonthlyEvapotranspirationDto[]> {
-        let route = `/users/${userID}/parcel-water-usage/${year}`;
-        return this.apiService.getFromApi(route);
-    }
-    
-    getWaterUsageOverviewByUserID(userID: number, year: number): Observable<WaterAllocationOverviewDto> {
-        let route = `/users/${userID}/water-usage-overview/${year}`;
-        return this.apiService.getFromApi(route);
-    }
-
     getLandownerUsageReportByYear(year: number): Observable<UserDto[]> {
         let route = `/landowner-usage-report/${year}`;
-        return this.apiService.getFromApi(route);
-    }
-
-    getParcelsAllocationsByUserID(userID: number, year: number): Observable<Array<ParcelAllocationDto>> {
-        let route = `/users/${userID}/getParcelsAllocations/${year}`;
         return this.apiService.getFromApi(route);
     }
 }
