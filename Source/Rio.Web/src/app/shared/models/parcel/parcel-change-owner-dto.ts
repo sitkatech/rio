@@ -1,6 +1,6 @@
 export class ParcelChangeOwnerDto {
     ParcelID: number;
-    UserID: number;
+    AccountID: number;
     OwnerName: number;
     SaleDate: Date;
     EffectiveYear: number;

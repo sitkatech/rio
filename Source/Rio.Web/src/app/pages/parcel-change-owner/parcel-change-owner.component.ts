@@ -2,8 +2,8 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
+import { AccountService } from 'src/app/services/account/account.service';
+
 import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { IMyDpOptions } from 'mydatepicker';
@@ -11,6 +11,7 @@ import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { AccountDto } from 'src/app/shared/models/account/account-dto';
 
 @Component({
   selector: 'rio-parcel-change-owner',
@@ -18,8 +19,8 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
   styleUrls: ['./parcel-change-owner.component.scss']
 })
 export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
-  public users: UserDto[];
-  public selectedUser: UserDto;
+  public accounts: AccountDto[];
+  public selectedAccount: AccountDto;
   public parcelID: number;
   public ownerHasAccount: boolean;
   public effectiveYear: number;
@@ -29,59 +30,59 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   public note: string;
 
   public isLoadingSubmit: boolean = false;
-  public watchUserChangeSubscription: any;
+  public watchAccountChangeSubscription: any;
 
   public myDatePickerOptions: IMyDpOptions = {
     // other options...
     dateFormat: 'dd.mm.yyyy',
   };
 
-  public userDropdownConfig = {
+  public accountDropdownConfig = {
     search: true,
     height: '320px',
-    placeholder: "Select an owner from the list of users",
-    displayKey: "FullName",
-    searchOnKey: "FullName",
+    placeholder: "Select an owner from the list of accounts",
+    displayKey: "AccountName",
+    searchOnKey: "AccountName",
   }
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private alertService: AlertService,
-    private userService: UserService,
+    private accountService: AccountService,
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
       this.ownerHasAccount = true;
       forkJoin(
-        this.userService.getUsers(),
+        this.accountService.listAllAccounts(),
         this.parcelService.getParcelByParcelID(this.parcelID)
-      ).subscribe(([users, parcel]) => {
-        this.users = users;
+      ).subscribe(([accounts, parcel]) => {
+        this.accounts = accounts;
         this.parcel = parcel;
       });
     });
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
+    this.watchAccountChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
   }
 
-  public getDisplayName(user: UserDto): string {
-    return `${user.FirstName} ${user.LastName}`;
+  public getDisplayName(account: AccountDto): string {
+    return `${account.AccountNumber} - ${account.AccountName}`;
   }
 
   public onSubmit(form: HTMLFormElement) {
     var associativeArray = {
       ParcelID: this.parcelID,
-      UserID: this.selectedUser ? this.selectedUser.UserID : undefined,
+      AccountID: this.selectedAccount ? this.selectedAccount.AccountID : undefined,
       OwnerName: this.ownerNameUntracked,
       SaleDate: this.saleDate.jsdate,
       EffectiveYear: this.effectiveYear,
