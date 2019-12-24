@@ -21,12 +21,14 @@ begin
 		        Partition by ParcelID Order by isnull(SaleDate,0) desc
 	        ) as RowNumber
         from
-            dbo.UserParcel
+            dbo.AccountParcel
         where
             (SaleDate is null or Year(SaleDate) <= @year) and
             (EffectiveYear is null or EffectiveYear <= @year)
     ) up on p.ParcelID = up.ParcelID
-	left join dbo.[User] u on up.UserID = u.UserID
+
+	left join dbo.[AccountUser] au on up.AccountID = au.AccountID
+	left join dbo.[User] u on au.UserID = u.UserID
 	left join 
 	(
 		select pa.ParcelID, 
