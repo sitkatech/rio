@@ -14,11 +14,11 @@
     </div>
   </div>
   <h2>
-    Landowner Dashboard - {{user.FullName}}
+    Landowner Dashboard - {{user.FullName}} - {{getAccount()}}
   </h2>
   <app-alert-display></app-alert-display>
 
-  <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+  <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
     <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">

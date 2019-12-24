@@ -7,6 +7,7 @@ import { TradeService } from 'src/app/services/trade.service';
 import { forkJoin } from 'rxjs';
 import { OfferStatusEnum } from '../../models/enums/offer-status-enum';
 import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
+import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 
 @Component({
     selector: 'header-nav',
@@ -17,6 +18,7 @@ import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
 export class HeaderNavComponent implements OnInit, OnDestroy {
     private watchUserChangeSubscription: any;
     private currentUser: UserDto;
+    public activeAccount: AccountSimpleDto;
     public trades: Array<TradeWithMostRecentOfferDto>;
 
     windowWidth: number;
@@ -122,5 +124,17 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
         //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
         return 5;
+    }
+
+    public getAvailableAccounts(): Array<AccountSimpleDto>{
+        return this.authenticationService.getAvailableAccounts();
+    }
+
+    public setCurrentAccount(): void{
+        this.authenticationService.setActiveAccount(this.activeAccount);
+    }
+
+    public compareAccountsFn(c1: AccountSimpleDto, c2: AccountSimpleDto): boolean {
+        return c1 && c2 ? c1.AccountID === c2.AccountID : c1 === c2;
     }
 }

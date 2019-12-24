@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from './user/user.service';
 import { UserDto } from '../shared/models';
-import { Subject, throwError } from 'rxjs';
+import { Subject, throwError, BehaviorSubject, Observable } from 'rxjs';
 import { catchError, map, filter } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { isNullOrUndefined } from 'util';
 import { Router, NavigationEnd } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
+import { AccountSimpleDto } from '../shared/models/account/account-simple-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,9 @@ export class AuthenticationService {
 
   private _currentUserSetSubject = new Subject<UserDto>();
   public currentUserSetObservable = this._currentUserSetSubject.asObservable();
+
+  private _currentAccountSubject: Subject<AccountSimpleDto>;
+
 
   constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private userService: UserService) {
     this.router.events
@@ -39,6 +43,49 @@ export class AuthenticationService {
           this._currentUserSetSubject.next(null);
         }
       });
+
+    const activeAccountAsJson = window.localStorage.getItem('activeAccount');
+    if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
+      console.log(activeAccountAsJson);
+      let initialActiveAccount = JSON.parse(activeAccountAsJson);
+      if (initialActiveAccount) {
+        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(initialActiveAccount);
+      }
+    }
+    else {
+      this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(this.getAvailableAccounts()[0]);
+    }
+  }
+
+  public getAvailableAccounts(): Array<AccountSimpleDto> {
+    return [{
+      AccountID: 1,
+      AccountName: "First",
+      AccountNumber: 1234
+    },
+    {
+      AccountID: 2,
+      AccountName: "Second",
+      AccountNumber: 2345
+    },
+    {
+      AccountID: 3,
+      AccountName: "Third",
+      AccountNumber: 3456
+    }
+    ];
+  }
+
+  // Returns the observable (read-only) part of this subject
+  public getActiveAccount(): Observable<AccountSimpleDto> {
+    return this._currentAccountSubject.asObservable();
+  }
+
+  // Stores the new company value in local storage and pushes it to the subject
+  public setActiveAccount(account: AccountSimpleDto) {
+    console.log(account);
+    window.localStorage.setItem('activeAccount', JSON.stringify(account));
+    this._currentAccountSubject.next(account);
   }
 
   dispose() {

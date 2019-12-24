@@ -19,6 +19,7 @@ import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entr
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 
 @Component({
@@ -55,6 +56,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   historicAverageAnnualUsage: string | number;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsages: any;
+  public activeAccount : AccountSimpleDto;
 
   constructor(
     private route: ActivatedRoute,
@@ -108,6 +110,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.cdr.detectChanges();
     });
+    this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+  }
+
+  public getAccount() : string
+  {
+    return this.activeAccount.AccountName;
   }
 
   public updateAnnualData() {
