@@ -36,6 +36,10 @@ export class AuthenticationService {
           this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
             this.currentUser = result;
             this._currentUserSetSubject.next(this.currentUser);
+
+            this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result=>{
+              this._availableAccounts = result;
+            })
           });
 
         } else {
@@ -45,8 +49,10 @@ export class AuthenticationService {
       });
 
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
+
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
       console.log(activeAccountAsJson);
+
       let initialActiveAccount = JSON.parse(activeAccountAsJson);
       if (initialActiveAccount) {
         this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(initialActiveAccount);
@@ -57,23 +63,10 @@ export class AuthenticationService {
     }
   }
 
+  private _availableAccounts: Array<AccountSimpleDto>;
+
   public getAvailableAccounts(): Array<AccountSimpleDto> {
-    return [{
-      AccountID: 1,
-      AccountName: "First",
-      AccountNumber: 1234
-    },
-    {
-      AccountID: 2,
-      AccountName: "Second",
-      AccountNumber: 2345
-    },
-    {
-      AccountID: 3,
-      AccountName: "Third",
-      AccountNumber: 3456
-    }
-    ];
+    return this._availableAccounts;
   }
 
   // Returns the observable (read-only) part of this subject
