@@ -77,9 +77,6 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   public getDisplayName(user: UserDto): string {
     return `${user.FirstName} ${user.LastName}`;
   }
-  public selected() {
-    console.log(this.selectedUser);
-  }
 
   public onSubmit(form: HTMLFormElement) {
     var associativeArray = {

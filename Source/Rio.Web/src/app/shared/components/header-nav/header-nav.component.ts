@@ -38,9 +38,13 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
+            // display the correct active account in the dropdown below the username.
+            // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
+            this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+
             if (currentUser) {
                 forkJoin(
-                    this.tradeService.getTradeActivityForUser(currentUser.UserID),
+                    this.tradeService.getTradeActivityByAccountID(currentUser.UserID),
                 ).subscribe(([trades]) => {
                     this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                 });

@@ -184,33 +184,6 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
-        [HttpGet("users/{userID}/postings")]
-        [UserViewFeature]
-        public ActionResult<List<PostingDto>> ListPostingsByUserID([FromRoute] int userID)
-        {
-            var postingDtos = Posting.ListByUserID(_dbContext, userID);
-            if (postingDtos == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(postingDtos);
-        }
-
-        [HttpGet("users/{userID}/water-transfers")]
-        [UserViewFeature]
-        public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int userID)
-        {
-            var waterTransferDtos = WaterTransfer.ListByAccountID(_dbContext, userID);
-            if (waterTransferDtos == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(waterTransferDtos);
-        }
-
-
         [HttpGet("landowner-usage-report/{year}")]
         [UserManageFeature]
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)

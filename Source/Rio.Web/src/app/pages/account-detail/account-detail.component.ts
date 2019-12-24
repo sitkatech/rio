@@ -40,7 +40,6 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
           if (id) {
               this.accountService.getAccountByID(id).subscribe(account =>{
                 this.account = account;
-                console.log(this.account);
               });
           }
       });

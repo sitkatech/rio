@@ -35,14 +35,8 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
-    
     listAccountsByUserID(userID: number): Observable<Array<AccountSimpleDto>> {
         let route = `/user/${userID}/accounts`
-        return this.apiService.getFromApi(route);
-    }
-
-    getWaterTransfersByUserID(userID: number): Observable<Array<WaterTransferDto>> {
-        let route = `/users/${userID}/water-transfers`;
         return this.apiService.getFromApi(route);
     }
 

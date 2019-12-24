@@ -31,7 +31,7 @@
                         <div class="row" *ngIf="ownerHasAccount">
                             <div class="col-sm-12">
                                 <ngx-select-dropdown [multiple]="false" [config]="userDropdownConfig"
-                                    name="selectedUser" [(ngModel)]="selectedUser" (change)="selected()"
+                                    name="selectedUser" [(ngModel)]="selectedUser" 
                                     [options]="users"></ngx-select-dropdown>
                             </div>
                         </div>

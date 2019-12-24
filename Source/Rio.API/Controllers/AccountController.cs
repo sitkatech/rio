@@ -10,6 +10,8 @@ using Rio.Models.DataTransferObjects.WaterUsage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.Models.DataTransferObjects.Posting;
+using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
@@ -139,6 +141,32 @@ namespace Rio.API.Controllers
             }
 
             return Ok(parcelDtos);
+        }
+
+        [HttpGet("accounts/{accountID}/postings")]
+        [UserViewFeature]
+        public ActionResult<List<PostingDto>> ListPostingsByAccountID([FromRoute] int accountID)
+        {
+            var postingDtos = Posting.ListByAccountID(_dbContext, accountID);
+            if (postingDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(postingDtos);
+        }
+
+        [HttpGet("accounts/{accountID}/water-transfers")]
+        [UserViewFeature]
+        public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int accountID)
+        {
+            var waterTransferDtos = WaterTransfer.ListByAccountID(_dbContext, accountID);
+            if (waterTransferDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(waterTransferDtos);
         }
 
         [HttpGet("accounts/{accountID}/parcel-water-usage/{year}")]

@@ -16,8 +16,8 @@ export class PostingService {
         return this.apiService.getFromApi(route);
     }
 
-    getPostingsByUserID(userID: number): Observable<PostingDto[]> {
-        let route = `/users/${userID}/postings`;
+    getPostingsByAccountID(accountID: number): Observable<PostingDto[]> {
+        let route = `/accounts/${accountID}/postings`;
         return this.apiService.getFromApi(route);
     }
 

@@ -16,8 +16,8 @@ export class TradeService {
         return this.apiService.getFromApi(route);
     }
 
-    getTradeActivityForUser(userID: number): Observable<TradeWithMostRecentOfferDto[]> {
-        let route = `/trade-activity/${userID}`;
+    getTradeActivityByAccountID(accountID: number): Observable<TradeWithMostRecentOfferDto[]> {
+        let route = `/trade-activity/${accountID}`;
         return this.apiService.getFromApi(route);
     }
 

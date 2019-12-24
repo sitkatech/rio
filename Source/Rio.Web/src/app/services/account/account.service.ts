@@ -7,6 +7,7 @@ import { AccountEditUsersComponent } from 'src/app/pages/account-edit-users/acco
 import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,11 @@ export class AccountService {
   editUsers(accountID: number, model: AccountEditUsersDto): Observable<AccountDto> {
     let route = `/account/${accountID}/edit-users`;
     return this.apiService.putToApi(route, model);
+  }
+
+  getWaterTransfersByAccountID(accountID: number): Observable<Array<WaterTransferDto>> {
+      let route = `/accounts/${accountID}/water-transfers`;
+      return this.apiService.getFromApi(route);
   }
 
   getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto[]> {

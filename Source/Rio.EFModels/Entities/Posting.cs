@@ -59,10 +59,10 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        public static IEnumerable<PostingDto> ListByUserID(RioDbContext dbContext, int userID)
+        public static IEnumerable<PostingDto> ListByAccountID(RioDbContext dbContext, int accountID)
         {
             var postings = GetPostingImpl(dbContext)
-                .Where(x => x.CreateAccountID == userID)
+                .Where(x => x.CreateAccountID == accountID)
                 .OrderByDescending(x => x.PostingDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();

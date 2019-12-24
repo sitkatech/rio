@@ -49,7 +49,6 @@ export class UserDetailComponent implements OnInit, OnDestroy {
                         : user as UserDto;
                     this.parcels = parcels;
                     this.accounts = accounts;
-                    console.log(accounts);
                     this.cdr.detectChanges();
                 });
             }

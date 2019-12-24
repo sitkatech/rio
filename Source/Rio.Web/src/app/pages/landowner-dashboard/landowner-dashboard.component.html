@@ -16,16 +16,6 @@
   <h2>
     Landowner Dashboard - {{user.FullName}} - {{getAccount()}}
   </h2>
-  <div class="row">
-    <div class="col-sm">
-      Account: 
-      <select class="form-control" [(ngModel)]="account" (change)="updateAnnualData()">
-        <ng-template ngFor let-account [ngForOf]="accounts">
-          <option [ngValue]="account">{{account.AccountNumber}} - {{account.AccountName}}</option>
-        </ng-template>
-      </select>
-    </div>
-  </div>
   <app-alert-display></app-alert-display>
 
   <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">

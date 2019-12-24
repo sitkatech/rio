@@ -51,8 +51,6 @@ export class AuthenticationService {
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
 
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
-      console.log(activeAccountAsJson);
-
       let initialActiveAccount = JSON.parse(activeAccountAsJson);
       if (initialActiveAccount) {
         this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(initialActiveAccount);
@@ -76,7 +74,6 @@ export class AuthenticationService {
 
   // Stores the new company value in local storage and pushes it to the subject
   public setActiveAccount(account: AccountSimpleDto) {
-    console.log(account);
     window.localStorage.setItem('activeAccount', JSON.stringify(account));
     this._currentAccountSubject.next(account);
   }
