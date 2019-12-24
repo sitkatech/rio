@@ -7,6 +7,7 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'rio-account-detail',
@@ -38,9 +39,10 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
           this.currentUser = currentUser;
           const id = parseInt(this.route.snapshot.paramMap.get("id"));
           if (id) {
-              this.accountService.getAccountByID(id).subscribe(account =>{
-                this.account = account;
-              });
+              forkJoin(this.accountService.getAccountByID(id), this.parcelService.getParcelsByAccountID(id, new Date().getFullYear())).subscribe(([account, parcels]) =>{
+                  this.account = account;
+                  this.parcels = parcels;
+              })
           }
       });
   }
@@ -53,5 +55,9 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   
   public currentUserIsAdmin(): boolean {
       return this.authenticationService.isUserAnAdministrator(this.currentUser);
+  }
+
+  public getSelectedParcelIDs(): Array<number> {
+      return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
 }
