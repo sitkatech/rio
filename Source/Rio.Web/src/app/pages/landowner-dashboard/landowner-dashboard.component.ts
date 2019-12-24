@@ -120,13 +120,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
       this.parcelService.getWaterYears()
     ).subscribe(([postings, trades, waterTransfers, waterYears]) => {
-
-      console.log({
-        postings: postings,
-        trades: trades,
-        waterTransfers: waterTransfers
-      })
-
       this.waterYears = waterYears;
       this.waterYearToDisplay = (new Date()).getFullYear();
       this.postings = postings;
@@ -241,7 +234,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
-    return trade.OfferCreateUser.UserID === this.user.UserID;
+    return trade.OfferCreateAccount.AccountID === this.activeAccount.AccountID;
   }
 
   public getTradeStatus(trade: TradeWithMostRecentOfferDto): string {
@@ -257,7 +250,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public isTradeRegisteredByUser(trade: TradeWithMostRecentOfferDto) {
-    return (trade.BuyerRegistration.IsRegistered && trade.Buyer.UserID === this.user.UserID) || (trade.SellerRegistration.IsRegistered && trade.Seller.UserID === this.user.UserID);
+    return (trade.BuyerRegistration.IsRegistered && trade.Buyer.AccountID === this.activeAccount.AccountID) || (trade.SellerRegistration.IsRegistered && trade.Seller.AccountID === this.activeAccount.AccountID);
   }
 
   public isTradeRegisteredByBothParties(trade: TradeWithMostRecentOfferDto) {

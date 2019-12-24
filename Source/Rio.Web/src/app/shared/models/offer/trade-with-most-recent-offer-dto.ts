@@ -2,6 +2,7 @@ import { UserSimpleDto } from '../user/user-simple-dto';
 import { TradeStatusDto } from './trade-status-dto';
 import { OfferStatusDto } from './offer-status-dto';
 import { WaterTransferRegistrationSimpleDto } from '../water-transfer-registration-simple-dto';
+import { AccountSimpleDto } from '../account/account-simple-dto';
 
 export class TradeWithMostRecentOfferDto {
     TradeID: number;
@@ -12,10 +13,10 @@ export class TradeWithMostRecentOfferDto {
     Quantity: number;
     Price: number;
     OfferDate: Date;
-    OfferCreateUser: UserSimpleDto;
+    OfferCreateAccount: AccountSimpleDto;
     OfferStatus: OfferStatusDto;
-    Buyer: UserSimpleDto;
-    Seller: UserSimpleDto;
+    Buyer: AccountSimpleDto;
+    Seller: AccountSimpleDto;
     BuyerRegistration: WaterTransferRegistrationSimpleDto;
     SellerRegistration: WaterTransferRegistrationSimpleDto;
     WaterTransferID: number;

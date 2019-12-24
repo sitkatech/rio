@@ -90,12 +90,12 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
         const pendingTrades = this.trades !== undefined ? this.trades.filter(tr => this.isTradePending(tr)
-            || (tr.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && this.isTradePendingRegistrationForUser(tr))) : [];
+            || (tr.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted && this.isTradePendingRegistrationForAccount(tr))) : [];
         return pendingTrades;
     }
 
-    public doesMostRecentOfferBelongToCurrentUser(trade: TradeWithMostRecentOfferDto): boolean {
-        return trade.OfferCreateUser.UserID === this.currentUser.UserID;
+    public doesMostRecentOfferBelongToCurrentAccount(trade: TradeWithMostRecentOfferDto): boolean {
+        return trade.OfferCreateAccount.AccountID === this.activeAccount.AccountID;
     }
 
     public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
@@ -111,14 +111,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return "Trade " + trade.TradeNumber + " - A buyer is awaiting your response to their offer to purchase water. This offer expires in " + this.getDaysLeftToRespond(trade) + " days.";
     }
 
-    public isTradePendingRegistrationForUser(trade: TradeWithMostRecentOfferDto) {
+    public isTradePendingRegistrationForAccount(trade: TradeWithMostRecentOfferDto) {
         if(!trade.BuyerRegistration && !trade.SellerRegistration)
         {
             return false;
         }
         let isCanceled =  trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
-        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.UserID === this.currentUser.UserID) 
-        || (trade.SellerRegistration.IsPending && trade.Seller.UserID === this.currentUser.UserID));
+        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.AccountID === this.activeAccount.AccountID) 
+        || (trade.SellerRegistration.IsPending && trade.Seller.AccountID === this.activeAccount.AccountID));
     }
 
     public isTradePending(trade: TradeWithMostRecentOfferDto) {
