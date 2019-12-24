@@ -25,7 +25,7 @@ namespace Rio.EFModels.Entities
                 TradeID = trade.TradeID,
                 TradeNumber = trade.TradeNumber,
                 TradeStatus = trade.TradeStatus.AsDto(),
-                CreateUser = trade.CreateAccount.AsSimpleDto(),
+                CreateAccount = trade.CreateAccount.AsSimpleDto(),
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,

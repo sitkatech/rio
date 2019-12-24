@@ -8,7 +8,7 @@ namespace Rio.Models.DataTransferObjects.Offer
     {
         public int TradeID { get; set; }
         public string TradeNumber { get; set; }
-        public AccountSimpleDto CreateUser { get; set; }
+        public AccountSimpleDto CreateAccount { get; set; }
         public int OfferPostingTypeID { get; set; }
         public TradeStatusDto TradeStatus { get; set; }
         public int Quantity { get; set; }

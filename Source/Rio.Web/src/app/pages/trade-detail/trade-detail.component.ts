@@ -16,7 +16,6 @@ import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { UserDto } from 'src/app/shared/models';
 import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/models/water-transfer-registration-simple-dto';
-import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
@@ -107,7 +106,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.mostRecentOffer = this.offers[0];
       this.resetModelToMostRecentOffer();
       let currentUserID = this.currentUser.UserID;
-      this.isCurrentOfferCreator = this.mostRecentOffer.CreateUser.UserID === currentUserID;
+      this.isCurrentOfferCreator = this.mostRecentOffer.CreateAccount.AccountID === this.activeAccount.AccountID;
       this.originalPostingType = this.trade.Posting.PostingType;
       this.offerType = this.isPostingOwner ?
         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
@@ -203,11 +202,10 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public getOfferType(offer: OfferDto): string {
     if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) {
       if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell) {
-        // todo offer.CreateUser -> CreateAccount
-        return offer.CreateUser.UserID === this.trade.CreateAccount.AccountID ? "Buyer Counter Offer" : "Seller Counter Offer";
+        return offer.CreateAccount.AccountID === this.trade.CreateAccount.AccountID ? "Buyer Counter Offer" : "Seller Counter Offer";
       }
       else {
-        return offer.CreateUser.UserID === this.trade.CreateAccount.AccountID ? "Seller Counter Offer" : "Buyer Counter Offer";
+        return offer.CreateAccount.AccountID === this.trade.CreateAccount.AccountID ? "Seller Counter Offer" : "Buyer Counter Offer";
       }
     }
     else {
@@ -246,11 +244,13 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   public confirmTrade(): void {
     this.isLoadingSubmit = true;
+    this.model.CreateAccountID = this.activeAccount.AccountID;
     this.offerService.newOffer(this.trade.Posting.PostingID, this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         this.router.navigateByUrl("/landowner-dashboard")
           .then(() => {
+            // TODO: better success message depending on what kind of action we posted
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });
       },

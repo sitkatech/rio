@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-6" *ngIf="isPostingOwner || isTradeOwner">
+    <div class="col-sm-12 col-md-6" *ngIf="isPostingOwner() || isTradeOwner()">
       <div class="card" *ngIf="!isRejectingTrade && !isConfirmingTrade && !isCounterOffering">
         <div class="card-header">
           Your Actions
@@ -230,12 +230,12 @@
                 <dl class="row" *ngIf="isOfferAccepted(offer)">
                   <dt class="text-sm-right col-sm-5 col-xs-12">Buyer</dt>
                   <dd class="col-sm-7 col-xs-12">
-                    {{buyer.FullName}} ({{buyer.Email}})
+                    {{buyer.AccountNumber}} - {{buyer.AccountName}} 
                   </dd>
 
                   <dt class="text-sm-right col-sm-5 col-xs-12">Seller</dt>
                   <dd class="col-sm-7 col-xs-12">
-                    {{seller.FullName}} ({{seller.Email}})
+                    {{seller.AccountNumber}} - {{seller.AccountName}} 
                   </dd>
                 </dl>
               </div>

@@ -1,5 +1,5 @@
 import { OfferStatusDto } from './offer-status-dto';
-import { UserSimpleDto } from '../user/user-simple-dto';
+import { AccountSimpleDto } from '../account/account-simple-dto';
 
 export class OfferDto {
     OfferID: number;
@@ -7,7 +7,7 @@ export class OfferDto {
     Quantity: number;
     Price: number;
     OfferNotes: string;
-    CreateUser: UserSimpleDto;
+    CreateAccount: AccountSimpleDto;
     OfferStatus: OfferStatusDto;
     TradeID: number;
     WaterTransferID: number;
