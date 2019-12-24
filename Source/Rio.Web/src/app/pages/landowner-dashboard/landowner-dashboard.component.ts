@@ -59,6 +59,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   historicAverageAnnualUsage: string | number;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsages: any;
+  public activeAccount : AccountSimpleDto;
 
   constructor(
     private route: ActivatedRoute,
@@ -122,6 +123,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.cdr.detectChanges();
     });
+    this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+  }
+
+  public getAccount() : string
+  {
+    return this.activeAccount.AccountName;
   }
 
   public updateAnnualData() {

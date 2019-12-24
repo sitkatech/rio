@@ -61,6 +61,9 @@
                     </a>
                     <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
                 </div>
+                <select class="form-control" [compareWith]="compareAccountsFn"  (change)="setCurrentAccount()" [(ngModel)]="activeAccount">
+                    <option *ngFor="let account of getAvailableAccounts()" [ngValue]="account">{{account.AccountNumber}} - {{account.AccountName}}</option>
+                </select>
             </li>
         </ul>
     </div>
