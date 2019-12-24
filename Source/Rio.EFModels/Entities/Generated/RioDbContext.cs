@@ -53,7 +53,7 @@ namespace Rio.EFModels.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-         
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -81,11 +81,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.Note).IsUnicode(false);
 
                 entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.AccountParcel)
-                    .HasForeignKey(d => d.AccountID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Parcel)
                     .WithMany(p => p.AccountParcel)

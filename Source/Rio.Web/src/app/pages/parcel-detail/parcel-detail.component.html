@@ -35,9 +35,10 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12">Landowner</dt>
             <dd class="col-sm-7 col-xs-12">
-              <a *ngIf="parcel.LandOwner?.FullName"
-                routerLink="/users/{{parcel.LandOwner?.UserID}}">{{parcel.LandOwner?.FullName}}</a>
-              <em *ngIf="!parcel.LandOwner?.FullName" class="text-muted">Not Set</em>
+              <a *ngIf="getCurrentOwner() && getCurrentOwner().OwnerAccountID"
+                routerLink="/accounts/{{getCurrentOwner().OwnerAccountID}}">{{getCurrentOwner().OwnerName}}</a>
+              <span *ngIf="getCurrentOwner() && !getCurrentOwner().OwnerAccountID">{{getCurrentOwner().OwnerName}}</span>
+              <em *ngIf="!getCurrentOwner()" class="text-muted">Not Set</em>
             </dd>
           </dl>
         </div>
@@ -145,11 +146,11 @@
               <tbody>
                 <tr *ngFor="let parcelOwnershipRecord of parcelOwnershipHistory">
                 
-                  <td *ngIf="parcelOwnershipRecord.OwnerUserID">
-                    <a routerLink="/users/{{parcelOwnershipRecord.OwnerUserID}}">{{parcelOwnershipRecord.OwnerName}}</a>
+                  <td *ngIf="parcelOwnershipRecord.OwnerAccountID">
+                    <a routerLink="/accounts/{{parcelOwnershipRecord.OwnerAccountID}}">{{parcelOwnershipRecord.OwnerName}}</a>
                   </td>
                 
-                  <td *ngIf="!parcelOwnershipRecord.OwnerUserID">
+                  <td *ngIf="!parcelOwnershipRecord.OwnerAccountID">
                     {{parcelOwnershipRecord.OwnerName}}
                   </td>
                   <td style="text-align: right">

@@ -46,7 +46,7 @@ namespace Rio.EFModels.Entities
 
         }
 
-        private static IEnumerable<ParcelDto> ListByAccountIDs(RioDbContext dbContext, List<int> accountIDs, int year)
+        private static IEnumerable<ParcelDto> ListByAccountIDs(RioDbContext dbContext, List<int?> accountIDs, int year)
         {
             // get all the parcelIDs Account(accountID) has ever owned
             var parcelIDsEverOwned = dbContext.vParcelOwnership.AsNoTracking().Where(x => accountIDs.Contains(x.AccountID)).Select(x => x.ParcelID).Distinct().ToList();
@@ -72,8 +72,8 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
         {
             var user = dbContext.User.Include(x => x.AccountUser).Single(x => x.UserID == userID);
-            var accountIDs = user.AccountUser.Select(x => x.AccountID).ToList();
-
+            var accountIDs = user.AccountUser.Select(x => (int?) x.AccountID).ToList();
+            
             return ListByAccountIDs(dbContext, accountIDs, year);
         }
 

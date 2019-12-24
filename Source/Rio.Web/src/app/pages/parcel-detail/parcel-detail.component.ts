@@ -125,4 +125,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       return "-";
     }
   }
+
+  public getCurrentOwner(): ParcelOwnershipDto{
+    return this.parcelOwnershipHistory[0];
+  }
+  
 }

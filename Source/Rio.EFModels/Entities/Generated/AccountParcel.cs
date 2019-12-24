@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         [Key]
         public int AccountParcelID { get; set; }
-        public int AccountID { get; set; }
+        public int? AccountID { get; set; }
         public int ParcelID { get; set; }
         [StringLength(214)]
         public string OwnerName { get; set; }
