@@ -181,6 +181,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
 
     public confirmTrade(): void {
         this.isLoadingSubmit = true;
+        this.model.CreateAccountID = this.currentAccount.AccountID;
         this.offerService.newOffer(this.posting.PostingID, this.model)
             .subscribe(response => {
                 this.isLoadingSubmit = false;

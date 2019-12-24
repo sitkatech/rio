@@ -38,6 +38,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   @ViewChild("parcelPicker", { static: false })
   public parcelPicker: ParcelPickerComponent;
+  activeAccount: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/account/account-simple-dto").AccountSimpleDto;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -57,9 +58,12 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
-      if (waterTransferID) {
-        this.getData(waterTransferID);``
-      }
+      this.authenticationService.getActiveAccount().subscribe(account =>{
+        this.activeAccount = account;
+        if (waterTransferID) {
+          this.getData(waterTransferID);``
+        }
+      })
     });
   }
 
@@ -79,9 +83,9 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
           : waterTransfer as WaterTransferDto;
-        this.waterTransferType = this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
+        this.waterTransferType = this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
         this.isRegisteringTransfer = false;
-        this.registerAction = this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID ? "to" : "from";
+        this.registerAction = this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID ? "to" : "from";
         if (!this.canRegister()) {
           this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
         }
@@ -97,8 +101,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public canRegister(): boolean {
     return !this.isCanceled() &&    
-    (this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID && !this.waterTransfer.BuyerRegistration.IsRegistered) ||
-      (this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID && !this.waterTransfer.SellerRegistration.IsRegistered);
+    (this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID && !this.waterTransfer.BuyerRegistration.IsRegistered) ||
+      (this.waterTransfer.SellerRegistration.Account.AccountID === this.activeAccount.AccountID && !this.waterTransfer.SellerRegistration.IsRegistered);
   }
 
   private isCanceled() {
@@ -106,7 +110,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public isBuyerOrSeller(): boolean {
-    return this.waterTransfer.BuyerRegistration.User.UserID === this.currentUser.UserID || this.waterTransfer.SellerRegistration.User.UserID === this.currentUser.UserID;
+    return this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID || this.waterTransfer.SellerRegistration.Account.AccountID === this.activeAccount.AccountID;
   }
 
   public isFullNameConfirmedForCancelation(): boolean {

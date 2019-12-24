@@ -1,8 +1,8 @@
-import { UserSimpleDto } from './user/user-simple-dto';
+import { AccountDto } from './account/account-dto';
 
 export class WaterTransferRegistrationSimpleDto {
     WaterTransferTypeID: number;
-    User: UserSimpleDto;
+    Account: AccountDto;
     WaterTransferRegistrationStatusID: number;
     StatusDate: Date;
     IsRegistered: boolean;

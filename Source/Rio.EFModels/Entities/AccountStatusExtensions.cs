@@ -8,8 +8,8 @@ namespace Rio.EFModels.Entities
         {
             return new AccountStatusDto()
             {
-                AccountStatusID = accountStatus.AccountStatusID,
-                AccountStatusDisplayName =  accountStatus.AccountStatusDisplayName
+                AccountStatusID = accountStatus?.AccountStatusID,
+                AccountStatusDisplayName =  accountStatus?.AccountStatusDisplayName
             };
         }
     }

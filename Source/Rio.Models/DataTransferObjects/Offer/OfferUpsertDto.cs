@@ -13,5 +13,6 @@ namespace Rio.Models.DataTransferObjects.Offer
         public decimal Price { get; set; }
         public string OfferNotes { get; set; }
         public int OfferStatusID { get; set; }
+        public int CreateAccountID { get; set; }
     }
 }

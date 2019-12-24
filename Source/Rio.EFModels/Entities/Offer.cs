@@ -8,11 +8,11 @@ namespace Rio.EFModels.Entities
 {
     public partial class Offer
     {
-        public static OfferDto CreateNew(RioDbContext dbContext, int postingID, int userID, OfferUpsertDto offerUpsertDto)
+        public static OfferDto CreateNew(RioDbContext dbContext, int postingID, OfferUpsertDto offerUpsertDto)
         {
             if (!offerUpsertDto.TradeID.HasValue)
             {
-                var trade = Trade.CreateNew(dbContext, postingID, userID);
+                var trade = Trade.CreateNew(dbContext, postingID, offerUpsertDto.CreateAccountID);
                 offerUpsertDto.TradeID = trade.TradeID;
             }
 
@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
             {
                 TradeID = offerUpsertDto.TradeID.Value,
                 OfferNotes = offerUpsertDto.OfferNotes,
-                CreateAccountID = userID,
+                CreateAccountID = offerUpsertDto.CreateAccountID,
                 OfferDate = DateTime.UtcNow,
                 Price = offerUpsertDto.Price,
                 Quantity = offerUpsertDto.Quantity,

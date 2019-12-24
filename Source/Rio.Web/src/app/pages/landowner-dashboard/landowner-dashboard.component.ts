@@ -342,11 +342,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getSoldWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.SellerRegistration.User.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.SellerRegistration.Account.AccountID === this.activeAccount.AccountID);
   }
 
   public getPurchasedWaterTransfersForWaterYear(year?: number) {
-    return this.getWaterTransfersForWaterYear(year).filter(x => x.BuyerRegistration.User.UserID === this.user.UserID);
+    return this.getWaterTransfersForWaterYear(year).filter(x => x.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDto) {

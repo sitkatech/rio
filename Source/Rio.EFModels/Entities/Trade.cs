@@ -8,12 +8,12 @@ namespace Rio.EFModels.Entities
 {
     public partial class Trade
     {
-        public static TradeDto CreateNew(RioDbContext dbContext, int postingID, int userID)
+        public static TradeDto CreateNew(RioDbContext dbContext, int postingID, int accountID)
         {
             var trade = new Trade
             {
                 PostingID = postingID,
-                CreateAccountID = userID,
+                CreateAccountID = accountID,
                 TradeDate = DateTime.UtcNow,
                 TradeStatusID = (int) TradeStatusEnum.Countered
             };
@@ -93,8 +93,8 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Trade
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountStatus)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x=>x.AccountStatus)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .AsNoTracking();

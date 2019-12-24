@@ -49,7 +49,7 @@ namespace Rio.API.Controllers
             }
 
             var userDto = GetCurrentUser();
-            var offer = Offer.CreateNew(_dbContext, postingID, userDto.UserID, offerUpsertDto);
+            var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var currentTrade = Trade.GetByTradeID(_dbContext, offer.TradeID);
             var rioUrl = _rioWebUrl;
@@ -106,7 +106,7 @@ namespace Rio.API.Controllers
                         OfferStatusID = (int) offerStatus,
                         OfferNotes = $"Offer {offerStatus} because original posting is now closed"
                     };
-                    Offer.CreateNew(_dbContext, postingID, postingCreateAccountID, offerUpsertDtoForRescindReject);
+                    Offer.CreateNew(_dbContext, postingID, offerUpsertDtoForRescindReject);
                 }
             }
             Posting.UpdateStatus(_dbContext, postingID,
