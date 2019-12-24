@@ -9,6 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public User()
         {
+            AccountUser = new HashSet<AccountUser>();
             FileResource = new HashSet<FileResource>();
             Offer = new HashSet<Offer>();
             Posting = new HashSet<Posting>();
@@ -48,6 +49,8 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(RoleID))]
         [InverseProperty("User")]
         public virtual Role Role { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<AccountUser> AccountUser { get; set; }
         [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResource { get; set; }
         [InverseProperty("CreateUser")]

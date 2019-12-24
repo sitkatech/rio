@@ -7,6 +7,7 @@ import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -31,6 +32,12 @@ export class UserService {
 
     getUserFromGlobalID(globalID: string): Observable<UserDto> {
         let route = `/user-claims/${globalID}`;
+        return this.apiService.getFromApi(route);
+    }
+
+    
+    listAccountsByUserID(userID: number): Observable<Array<AccountSimpleDto>> {
+        let route = `/user/${userID}/accounts`
         return this.apiService.getFromApi(route);
     }
 

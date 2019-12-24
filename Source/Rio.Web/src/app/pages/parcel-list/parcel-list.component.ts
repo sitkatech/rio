@@ -70,7 +70,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
           { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 100 },
           {
-            headerName: 'Land Owner', valueGetter: function (params: any) {
+            headerName: 'Landowner', valueGetter: function (params: any) {
               return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.UserID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.FullName };
             }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/users/" },

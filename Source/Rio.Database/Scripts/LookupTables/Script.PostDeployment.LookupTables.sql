@@ -36,3 +36,6 @@ GO
 
 :r .\dbo.WaterTransferType.sql 
 GO
+
+:r .\dbo.AccountStatus.sql
+GO

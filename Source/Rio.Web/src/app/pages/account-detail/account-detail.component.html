@@ -1,0 +1,76 @@
+<nav aria-label="breadcrumb" *ngIf="account">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/accounts" *ngIf="currentUserIsAdmin()">Accounts</a>
+            <span *ngIf="!currentUserIsAdmin()">Accounts</span>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {{account.AccountNumber}} - {{account.AccountName}}
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4" *ngIf="account">
+    <h2 style="display: inline-block">
+        {{account.AccountNumber}} - {{account.AccountName}}
+    </h2>
+    <app-alert-display></app-alert-display>
+    <div class="row mt-4">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                        routerLink="/accounts/{{account.AccountID}}/edit">
+                        <span class="fas fa-edit"></span> Edit
+                    </a>
+                    Basics
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Account Name</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{account.AccountName}}
+                            <em *ngIf="!account.AccountName" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Account Number</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{account.AccountNumber}}
+                            <em *ngIf="!account.AccountNumber" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Account Status</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{account.AccountStatus.AccountStatusDisplayName}}
+                            <em *ngIf="!account.AccountNumber" class="text-muted">Not Available</em>
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-5 col-xs-12">Notes</dt>
+                        <dd class="col-sm-7 col-xs-12">
+                            {{account.Notes}}
+                            <em *ngIf="!account.Notes" class="text-muted">Not Available</em>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                    routerLink="/accounts/{{account.AccountID}}/edit-users">
+                    <span class="fas fa-edit"></span> Add or Remove Users
+                </a>
+                    Users
+                </div>
+                <div class="card-body">
+                    <div class="row" *ngFor="let user of account.Users">
+                        <div class="col-sm-12">
+                            <a routerLink="/users/{{user.UserID}}">
+                                {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

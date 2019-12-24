@@ -107,6 +107,9 @@
     <None Include="Scripts\Procs\dbo.pParcelAllocationAndUsage.sql" />
     <None Include="Scripts\Views\dbo.vParcelOwnership.sql" />
     <None Include="Scripts\Views\dbo.vGeoServerWells.sql" />
+    <Build Include="dbo\Tables\dbo.Account.sql" />
+    <Build Include="dbo\Tables\dbo.AccountStatus.sql" />
+    <Build Include="dbo\Tables\dbo.AccountUser.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />
@@ -115,6 +118,8 @@
     <None Include="Scripts\LookupTables\Script.PostDeployment.LookupTables.sql" />
     <None Include="Scripts\ReleaseScripts\0001 - Initial Data Population.sql" />
     <None Include="Scripts\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql" />
+    <None Include="Scripts\LookupTables\dbo.AccountStatus.sql" />
+    <None Include="Scripts\ReleaseScripts\0005 - Associating Users with Accounts.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

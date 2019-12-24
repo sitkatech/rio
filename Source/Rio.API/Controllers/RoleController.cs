@@ -5,7 +5,7 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 
 namespace Rio.API.Controllers
-{ 
+{
     [ApiController]
     public class RoleController : ControllerBase
     {

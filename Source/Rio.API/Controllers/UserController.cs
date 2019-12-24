@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.Parcel;
+using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
-using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.WaterUsage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace Rio.API.Controllers
 {
@@ -45,7 +46,7 @@ namespace Rio.API.Controllers
             }
             else
             {
-                return BadRequest($"Role ID is required.");
+                return BadRequest("Role ID is required.");
             }
 
             const string applicationName = "Rosedale-Rio Bravo Water Trading Platform";
@@ -144,6 +145,19 @@ namespace Rio.API.Controllers
             return Ok(userDto);
         }
 
+        [HttpGet("user/{userID}/accounts")]
+        [UserManageFeature]
+        public ActionResult<List<AccountSimpleDto>> ListAccountsByUserID([FromRoute] int userID)
+        {
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            if (userDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(Account.ListByUserID(_dbContext, userID));
+        }
+
         [HttpPut("users/{userID}")]
         [UserManageFeature]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
@@ -164,7 +178,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.Value);
+            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.GetValueOrDefault());
             if (role == null)
             {
                 return NotFound($"Could not find a System Role with the ID {userUpsertDto.RoleID}");

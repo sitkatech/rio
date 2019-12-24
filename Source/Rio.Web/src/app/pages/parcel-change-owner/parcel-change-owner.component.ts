@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
@@ -17,7 +17,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
   templateUrl: './parcel-change-owner.component.html',
   styleUrls: ['./parcel-change-owner.component.scss']
 })
-export class ParcelChangeOwnerComponent implements OnInit {
+export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   public users: UserDto[];
   public selectedUser: UserDto;
   public parcelID: number;
@@ -29,7 +29,7 @@ export class ParcelChangeOwnerComponent implements OnInit {
   public note: string;
 
   public isLoadingSubmit: boolean = false;
-
+  public watchUserChangeSubscription: any;
 
   public myDatePickerOptions: IMyDpOptions = {
     // other options...
@@ -47,24 +47,31 @@ export class ParcelChangeOwnerComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private alertService: AlertService,
     private userService: UserService,
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
-    this.ownerHasAccount = true;
-    forkJoin(
-      this.userService.getUsers(),
-      this.parcelService.getParcelByParcelID(this.parcelID)
-    ).subscribe(([users, parcel]) => {
-      this.users = users;
-      this.parcel = parcel;
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
+      this.ownerHasAccount = true;
+      forkJoin(
+        this.userService.getUsers(),
+        this.parcelService.getParcelByParcelID(this.parcelID)
+      ).subscribe(([users, parcel]) => {
+        this.users = users;
+        this.parcel = parcel;
+      });
     });
+  }
 
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
   }
 
   public getDisplayName(user: UserDto): string {
@@ -74,7 +81,7 @@ export class ParcelChangeOwnerComponent implements OnInit {
     console.log(this.selectedUser);
   }
 
-  public onSubmit(form: HTMLFormElement){
+  public onSubmit(form: HTMLFormElement) {
     var associativeArray = {
       ParcelID: this.parcelID,
       UserID: this.selectedUser ? this.selectedUser.UserID : undefined,
@@ -84,14 +91,15 @@ export class ParcelChangeOwnerComponent implements OnInit {
       Note: this.note
 
     }
+    this.isLoadingSubmit = true;
     var parcelChangeOwnerDto = new ParcelChangeOwnerDto(associativeArray);
-    this.parcelService.changeParcelOwner(this.parcelID, parcelChangeOwnerDto).subscribe(anything=>{
+    this.parcelService.changeParcelOwner(this.parcelID, parcelChangeOwnerDto).subscribe(anything => {
       this.isLoadingSubmit = false;
       form.reset();
-      this.router.navigateByUrl(`/parcels/${this.parcelID}`).then(x=> {
-        this.alertService.pushAlert(new Alert(`The ownership record for ${this.parcel.ParcelNumber} was successfully updated.`, AlertContext.Success ));
+      this.router.navigateByUrl(`/parcels/${this.parcelID}`).then(x => {
+        this.alertService.pushAlert(new Alert(`The ownership record for ${this.parcel.ParcelNumber} was successfully updated.`, AlertContext.Success));
       })
-    }, error=>{
+    }, error => {
       this.isLoadingSubmit = false;
       this.cdr.detectChanges();
     });

@@ -79,8 +79,8 @@ export class UserInviteComponent implements OnInit, OnDestroy {
             .subscribe(response => {
                 this.isLoadingSubmit = false;
                 inviteUserForm.reset();
-                this.router.navigateByUrl("/users").then(x => {
-                    this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
+                this.router.navigateByUrl(`/users/${response.UserID}`).then(x => {
+                    this.alertService.pushAlert(new Alert("The user invite was successful.", AlertContext.Success));
                 });
             }
                 ,

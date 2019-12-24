@@ -6,6 +6,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 @Component({
     selector: 'template-user-detail',
@@ -19,6 +20,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
 
     public user: UserDto;
     public parcels: Array<ParcelDto>;
+    public accounts: Array<AccountSimpleDto>
 
     constructor(
         private route: ActivatedRoute,
@@ -39,12 +41,15 @@ export class UserDetailComponent implements OnInit, OnDestroy {
             if (id) {
                 forkJoin(
                     this.userService.getUserFromUserID(id),
-                    this.parcelService.getParcelsByUserID(id, new Date().getFullYear())
-                ).subscribe(([user, parcels]) => {
+                    this.parcelService.getParcelsByUserID(id, new Date().getFullYear()),
+                    this.userService.listAccountsByUserID(id)
+                ).subscribe(([user, parcels, accounts]) => {
                     this.user = user instanceof Array
                         ? null
                         : user as UserDto;
                     this.parcels = parcels;
+                    this.accounts = accounts;
+                    console.log(accounts);
                     this.cdr.detectChanges();
                 });
             }

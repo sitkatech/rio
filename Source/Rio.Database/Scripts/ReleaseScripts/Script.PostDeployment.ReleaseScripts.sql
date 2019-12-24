@@ -22,3 +22,6 @@ GO
 
 :r ".\0004 - Adding User Parcels part two.sql"
 GO
+
+:r ".\0005 - Associating Users with Accounts.sql"
+GO

@@ -48,6 +48,11 @@ import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-c
 import { SelectDropDownModule } from 'ngx-select-dropdown'
 import { MyDatePickerModule } from 'mydatepicker';
 import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
+import { AccountListComponent } from './pages/account-list/account-list.component';
+import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
+import { AccountEditComponent } from './pages/account-edit/account-edit.component';
+import { AccountNewComponent } from './pages/account-new/account-new.component';
+import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 
 @NgModule({
   declarations: [
@@ -79,7 +84,12 @@ import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/p
     ParcelBulkSetAllocationComponent,
     GlossaryComponent,
     ParcelChangeOwnerComponent,
-    ParcelOverrideEtDataComponent
+    ParcelOverrideEtDataComponent,
+    AccountListComponent,
+    AccountDetailComponent,
+    AccountEditComponent,
+    AccountNewComponent,
+    AccountEditUsersComponent
   ],
   imports: [
     AppRoutingModule,

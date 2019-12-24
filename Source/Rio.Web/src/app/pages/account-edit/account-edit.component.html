@@ -1,0 +1,67 @@
+<nav aria-label="breadcrumb" *ngIf="account">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a routerLink="/accounts">Accounts</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a routerLink="/accounts/{{account?.AccountID}}">
+                {{account.AccountName}}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Edit Basics
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4" *ngIf="account">
+    <h2 style="display: inline-block">{{account.AccountNumber}} - {{account.AccountName}}</h2>
+    <app-alert-display></app-alert-display>
+
+    <form (ngSubmit)="onSubmit(editAccountForm)" #editAccountForm="ngForm">
+        <div class="row mt-4">
+            <div class="col-sm-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group mt-4">
+                            <p class="mb-0"><label><strong>Account Name</strong></label></p>
+                            <input type="text" name="Name" [(ngModel)]="model.AccountName" class="form-control" />
+                        </div>
+
+                        <div class="form-group mt-4">
+
+                            <p class="mb-0"> <label class="required"><strong>Status</strong></label></p>
+                            <select name="AccountStatusID" class="form-control" [(ngModel)]="model.AccountStatusID"
+                                required>
+                                <option value=""></option>
+                                <option *ngFor="let accountStatus of accountStatuses"
+                                    [value]="accountStatus.AccountStatusID">
+                                    {{accountStatus.AccountStatusDisplayName}}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <p class="mb-0"> <label><strong>Notes</strong></label></p>
+                            <textarea name="Notes" [(ngModel)]="model.Notes" placeholder="(Optional)"
+                                class="form-control" rows=4></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-4">
+            <div class="col-sm-2">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-sm-6 text-right">
+                <button type="submit" class="btn btn-rio" [disabled]="!editAccountForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/accounts/{{account?.AccountID}}">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

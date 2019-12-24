@@ -2,7 +2,8 @@
 export class AccountSimpleDto{
     AccountID: number;
     AccountName: string;
-    AccountNumber: number
+    AccountNumber: number;
+    Notes: string;
     
     constructor(obj?: any) {
         Object.assign(this, obj);
