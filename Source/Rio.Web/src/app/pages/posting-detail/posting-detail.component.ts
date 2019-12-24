@@ -16,6 +16,7 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { PostingUpdateStatusDto } from 'src/app/shared/models/posting/posting-update-status-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { UserDto } from 'src/app/shared/models';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 @Component({
     selector: 'template-posting-detail',
@@ -36,11 +37,10 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     public isRejectingTrade: boolean = false;
     public isRescindingTrade: boolean = false;
 
-    public isPostingOwner: boolean = false;
-
     public originalPostingType: PostingTypeDto;
     public offerType: string;
     public counterOfferRecipientType: string;
+    currentAccount: AccountSimpleDto;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -56,6 +56,9 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
+            this.authenticationService.getActiveAccount().subscribe(account=>{
+                this.currentAccount = account;
+            })
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             if (postingID) {
                 forkJoin(
@@ -68,8 +71,6 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
 
                     this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
                     this.resetModelToPosting();
-                    let currentUserID = this.currentUser.UserID;
-                    this.isPostingOwner = this.posting.CreateUser.UserID === currentUserID;
                     this.originalPostingType = this.posting.PostingType;
                     this.offerType = this.isPostingOwner ?
                         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
@@ -84,6 +85,10 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription.unsubscribe();
         this.authenticationService.dispose();
         this.cdr.detach();
+    }
+
+    public isPostingOwner(): boolean{
+        return this.posting.CreateAccount.AccountID === this.currentAccount.AccountID;
     }
 
     private resetModelToPosting() {
@@ -107,7 +112,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     public canEditCurrentPosting(): boolean {
-        return this.isPostingOpen() && (this.authenticationService.isUserAnAdministrator(this.currentUser) || this.isPostingOwner);
+        return this.isPostingOpen() && (this.authenticationService.isUserAnAdministrator(this.currentUser) || this.isPostingOwner());
     }
 
     private isPostingOpen() {

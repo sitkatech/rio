@@ -56,6 +56,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.PostingType)
                 .Include(x => x.PostingStatus)
                 .Include(x => x.CreateAccount)
+                .ThenInclude(x=>x.AccountStatus)
                 .AsNoTracking();
         }
 

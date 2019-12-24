@@ -1,11 +1,11 @@
-import { UserSimpleDto } from '../user/user-simple-dto';
 import { TradeStatusDto } from './trade-status-dto';
 import { PostingDto } from '../posting/posting-dto';
+import { AccountDto } from '../account/account-dto';
 
 export class TradeDto {
     TradeID: number;
     TradeNumber: string;
-    CreateUser: UserSimpleDto;
+    CreateAccount: AccountDto;
     TradeStatus: TradeStatusDto;
     Posting: PostingDto;
 

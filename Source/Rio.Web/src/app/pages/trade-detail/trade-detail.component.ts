@@ -20,6 +20,8 @@ import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountDto } from 'src/app/shared/models/account/account-dto';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -41,16 +43,15 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public isRejectingTrade: boolean = false;
   public isRescindingTrade: boolean = false;
 
-  public isPostingOwner: boolean = false;
-  public isTradeOwner: boolean = false;
   public isCurrentOfferCreator: boolean = false;
 
   public originalPostingType: PostingTypeDto;
   public offerType: string;
   public counterOfferRecipientType: string;
   public waterTransferRegistrations: Array<WaterTransferRegistrationSimpleDto>;
-  public buyer: UserSimpleDto;
-  public seller: UserSimpleDto;
+  public buyer: AccountDto;
+  public seller: AccountDto;
+  activeAccount: AccountSimpleDto;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -69,11 +70,23 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+      this.authenticationService.getActiveAccount().subscribe(account =>{
+        this.activeAccount = account;
+      })
+      
       const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
+
       if (tradeNumber) {
         this.getData(tradeNumber);
       }
     });
+  }
+
+  isPostingOwner(): boolean {
+    return this.trade.Posting.CreateAccount.AccountID === this.activeAccount.AccountID;
+  }
+  isTradeOwner(): boolean{
+    return this.trade.CreateAccount.AccountID === this.activeAccount.AccountID;
   }
 
   ngOnDestroy() {
@@ -94,16 +107,15 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.mostRecentOffer = this.offers[0];
       this.resetModelToMostRecentOffer();
       let currentUserID = this.currentUser.UserID;
-      this.isTradeOwner = this.trade.CreateUser.UserID === currentUserID;
-      this.isPostingOwner = this.trade.Posting.CreateUser.UserID === currentUserID;
       this.isCurrentOfferCreator = this.mostRecentOffer.CreateUser.UserID === currentUserID;
       this.originalPostingType = this.trade.Posting.PostingType;
       this.offerType = this.isPostingOwner ?
         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
         : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
       this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-      this.buyer = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? this.trade.Posting.CreateUser : this.trade.CreateUser;
-      this.seller = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell ? this.trade.Posting.CreateUser : this.trade.CreateUser;
+      
+      this.buyer = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? this.trade.Posting.CreateAccount : this.trade.CreateAccount;
+      this.seller = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell ? this.trade.Posting.CreateAccount : this.trade.CreateAccount;
 
       // reset the action states to initial (false) state
       this.isCounterOffering = false;
@@ -156,8 +168,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
 
   public canConfirmTransfer(): boolean {
     return !this.isCanceled() && this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted 
-    && ((this.currentUser.UserID === this.buyer.UserID && !this.isRegistered(WaterTransferTypeEnum.Buying)) ||
-      (this.currentUser.UserID === this.seller.UserID && !this.isRegistered(WaterTransferTypeEnum.Selling)));
+    && ((this.activeAccount.AccountID === this.buyer.AccountID && !this.isRegistered(WaterTransferTypeEnum.Buying)) ||
+      (this.activeAccount.AccountID === this.seller.AccountID && !this.isRegistered(WaterTransferTypeEnum.Selling)));
   }
 
   private isCanceled() {
@@ -191,10 +203,11 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public getOfferType(offer: OfferDto): string {
     if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) {
       if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell) {
-        return offer.CreateUser.UserID === this.trade.CreateUser.UserID ? "Buyer Counter Offer" : "Seller Counter Offer";
+        // todo offer.CreateUser -> CreateAccount
+        return offer.CreateUser.UserID === this.trade.CreateAccount.AccountID ? "Buyer Counter Offer" : "Seller Counter Offer";
       }
       else {
-        return offer.CreateUser.UserID === this.trade.CreateUser.UserID ? "Seller Counter Offer" : "Buyer Counter Offer";
+        return offer.CreateUser.UserID === this.trade.CreateAccount.AccountID ? "Seller Counter Offer" : "Buyer Counter Offer";
       }
     }
     else {

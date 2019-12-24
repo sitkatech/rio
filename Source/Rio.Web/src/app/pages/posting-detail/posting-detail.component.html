@@ -67,7 +67,7 @@
       </div>
     </div>
     <div class="col-sm-12 col-md-6">
-      <div class="card" *ngIf="isPostingOwner">
+      <div class="card" *ngIf="isPostingOwner()">
         <div class="card-header">
           Your Actions
         </div>
@@ -83,7 +83,7 @@
         </div>
       </div>
 
-      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner && !isConfirmingTrade && !isCounterOffering">
+      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering">
         <div class="card-header">
           Your Offer
         </div>
