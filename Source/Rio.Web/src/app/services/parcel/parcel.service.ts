@@ -17,8 +17,13 @@ import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change
 export class ParcelService {
   constructor(private apiService: ApiService) { }
 
-  getParcelsByAccountID(accountID: number, year:number): Observable<any[]> {
+  getParcelsByAccountID(accountID: number, year: number): Observable<any[]> {
     let route = `/accounts/${accountID}/parcels/${year}`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getParcelsByUserID(userID: number, year: number): Observable<ParcelDto[]> {
+    let route = `/users/${userID}/parcels/${year}`;
     return this.apiService.getFromApi(route);
   }
 
@@ -38,21 +43,21 @@ export class ParcelService {
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  updateAnnualAllocations(parcelID: number, model: ParcelAllocationUpsertWrapperDto): Observable<any[]>  {
+  updateAnnualAllocations(parcelID: number, model: ParcelAllocationUpsertWrapperDto): Observable<any[]> {
     let route = `/parcels/${parcelID}/updateAnnualAllocations`;
     return this.apiService.postToApi(route, model);
   }
-  
-  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto): Observable<any[]>  {
+
+  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto): Observable<any[]> {
     let route = `/parcels/bulkSetAnnualParcelAllocation`;
     return this.apiService.postToApi(route, model);
   }
-  
+
   getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {
     let route = `/parcels/${parcelID}/getAllocations`;
     return this.apiService.getFromApi(route);
   }
-  
+
   getWaterUsage(parcelID: number): Observable<Array<ParcelMonthlyEvapotranspirationDto>> {
     let route = `/parcels/${parcelID}/getWaterUsage`;
     return this.apiService.getFromApi(route);
@@ -68,12 +73,12 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelOwnershipHistory(parcelID:number): Observable<Array<ParcelOwnershipDto>> {
+  getParcelOwnershipHistory(parcelID: number): Observable<Array<ParcelOwnershipDto>> {
     let route = `/parcels/${parcelID}/getOwnershipHistory`
     return this.apiService.getFromApi(route);
   }
 
-  changeParcelOwner(parcelID:number, model: ParcelChangeOwnerDto): Observable<any[]> {
+  changeParcelOwner(parcelID: number, model: ParcelChangeOwnerDto): Observable<any[]> {
     let route = `/parcels/${parcelID}/changeOwner`
     return this.apiService.postToApi(route, model);
   }

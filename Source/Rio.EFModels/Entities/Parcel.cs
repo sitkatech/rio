@@ -25,7 +25,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID, int year)
         {
-            // get all the parcelIDs User(userID) has ever owned
+            // get all the parcelIDs Account(accountID) has ever owned
             var parcelIDsEverOwned = dbContext.vParcelOwnership.AsNoTracking().Where(x => x.AccountID == accountID).Select(x => x.ParcelID).Distinct().ToList();
 
             // get all of their parcel ownership records as of (year)
@@ -44,6 +44,37 @@ namespace Rio.EFModels.Entities
 
             return parcelDtos;
 
+        }
+
+        private static IEnumerable<ParcelDto> ListByAccountIDs(RioDbContext dbContext, List<int> accountIDs, int year)
+        {
+            // get all the parcelIDs Account(accountID) has ever owned
+            var parcelIDsEverOwned = dbContext.vParcelOwnership.AsNoTracking().Where(x => accountIDs.Contains(x.AccountID)).Select(x => x.ParcelID).Distinct().ToList();
+
+            // get all of their parcel ownership records as of (year)
+            var parcelDtos = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account)
+                .AsNoTracking()
+                .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
+                            (x.EffectiveYear == null ||
+                             x.EffectiveYear <=
+                             year) &&
+                            (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
+                // get the lowest row numbered of those
+                .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
+                // throw out anything where Record.UserID != userID
+                .Where(x => accountIDs.Contains(x.AccountID))
+                .Select(x => x.AsParcelDto()).AsEnumerable();
+
+            return parcelDtos;
+
+        }
+
+        public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
+        {
+            var user = dbContext.User.Include(x => x.AccountUser).Single(x => x.UserID == userID);
+            var accountIDs = user.AccountUser.Select(x => x.AccountID).ToList();
+
+            return ListByAccountIDs(dbContext, accountIDs, year);
         }
 
         public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)

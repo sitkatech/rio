@@ -11,6 +11,7 @@ using Rio.Models.DataTransferObjects.WaterTransfer;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.API.Controllers
 {
@@ -182,6 +183,19 @@ namespace Rio.API.Controllers
 
             var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userUpsertDto);
             return Ok(updatedUserDto);
+        }
+
+        [HttpGet("users/{userID}/parcels/{year}")]
+        [UserViewFeature]
+        public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int userID, [FromRoute] int year)
+        {
+            var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year);
+            if (parcelDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parcelDtos);
         }
 
         [HttpGet("landowner-usage-report/{year}")]
