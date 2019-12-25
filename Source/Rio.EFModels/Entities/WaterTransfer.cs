@@ -84,12 +84,12 @@ namespace Rio.EFModels.Entities
         {
             var result = new List<ErrorMessage>();
 
-            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && waterTransferRegistrationDto.AccountID != waterTransferDto.SellerRegistration.Account.AccountID)
+            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && !waterTransferDto.SellerRegistration.Account.Users.Select(x => (int?)x.UserID).Contains(waterTransferRegistrationDto.UserID))
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match seller." });
             }
 
-            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && waterTransferRegistrationDto.AccountID != waterTransferDto.BuyerRegistration.Account.AccountID)
+            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && !waterTransferDto.BuyerRegistration.Account.Users.Select(x => (int?)x.UserID).Contains(waterTransferRegistrationDto.UserID))
             {
                 result.Add(new ErrorMessage() { Message = "Confirming user does not match buyer." });
             }
