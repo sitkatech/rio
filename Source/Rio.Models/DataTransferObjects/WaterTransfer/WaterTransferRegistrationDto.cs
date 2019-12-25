@@ -13,5 +13,8 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
         public int? WaterTransferRegistrationStatusID { get; set; }
         public DateTime? StatusDate { get; set; }
         public List<WaterTransferRegistrationParcelDto> WaterTransferRegistrationParcels { get; set; }
+
+        // Used for cancellations only
+        public int? UserID { get; set; }
     }
 }

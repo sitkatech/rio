@@ -69,7 +69,7 @@ namespace Rio.EFModels.Entities
         private static IQueryable<WaterTransfer> GetWaterTransfersImpl(RioDbContext dbContext)
         {
             return dbContext.WaterTransfer
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account).ThenInclude(x=>x.AccountUser).ThenInclude(x=>x.User)
                 .Include(x => x.Offer).ThenInclude(x => x.Trade)
                 .AsNoTracking();
         }
@@ -121,12 +121,15 @@ namespace Rio.EFModels.Entities
                 result.Add(new ErrorMessage() { Message = "Cannot cancel transfer because one of the parties has already registered this transfer." });
             }
 
-            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && waterTransferRegistrationDto.AccountID != waterTransferDto.SellerRegistration.Account.AccountID)
+
+            if(waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Selling && !
+                   waterTransferDto.SellerRegistration.Account.Users.Select(x => (int?)x.UserID).Contains(waterTransferRegistrationDto.UserID))
             {
                 result.Add(new ErrorMessage() { Message = "Canceling user does not match seller." });
             }
 
-            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && waterTransferRegistrationDto.AccountID != waterTransferDto.BuyerRegistration.Account.AccountID)
+            if (waterTransferRegistrationDto.WaterTransferTypeID == (int) WaterTransferTypeEnum.Buying && !
+                    waterTransferDto.BuyerRegistration.Account.Users.Select(x => (int?)x.UserID).Contains(waterTransferRegistrationDto.UserID))
             {
                 result.Add(new ErrorMessage() { Message = "Canceling user does not match buyer." });
             }

@@ -15,6 +15,7 @@ import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/p
 import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { TradeService } from 'src/app/services/trade.service';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   @ViewChild("parcelPicker", { static: false })
   public parcelPicker: ParcelPickerComponent;
-  activeAccount: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/account/account-simple-dto").AccountSimpleDto;
+  activeAccount: AccountSimpleDto;
 
   constructor(
     private cdr: ChangeDetectorRef,
