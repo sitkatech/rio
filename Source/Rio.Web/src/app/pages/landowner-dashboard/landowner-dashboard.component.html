@@ -1,8 +1,7 @@
-<div class="container mt-sm-4" *ngIf="user">
+<div class="container mt-sm-4" *ngIf="activeAccount">
   <div class="float-right">
     <div class="row">
       <div class="col-md-7" style="white-space: nowrap">
-        <!-- <a class="btn btn-sm btn-rio" routerLink="/parcel-override-et-data/{{this.user.UserID}}/{{waterYearToDisplay}}">Override ET Data</a> -->
         Showing data for year </div>
       <div class="col-md-5">
         <select class="form-control" [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()">
@@ -14,7 +13,7 @@
     </div>
   </div>
   <h2>
-    Landowner Dashboard - {{user.FullName}} - {{getAccount()}}
+    Landowner Dashboard - {{getAccount()}}
   </h2>
   <app-alert-display></app-alert-display>
 

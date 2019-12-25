@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit,  ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -85,25 +85,23 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.currentDate = (new Date());
 
       // todo: this can probably go away when all is said and done
-      let userID = parseInt(this.route.snapshot.paramMap.get("id"));
-      if (userID) {
-        this.userService.getUserFromUserID(userID).subscribe(user => {
-          this.user = user instanceof Array
+      let accountID = parseInt(this.route.snapshot.paramMap.get("id"));
+      if (accountID) {
+        this.accountService.getAccountByID(accountID).subscribe(account => {
+          this.activeAccount = account instanceof Array
             ? null
-            : user as UserDto;
+            : account as AccountSimpleDto;
+          this.updateAccountData(account)
+        });
+      } else {
+        console.log("No account ID")
+        // Only subscribe to the account dropdown if an accountID was not passed in the route
+        this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
+          console.log("Found an account");
+          this.activeAccount = account;
+          this.updateAccountData(account);
         });
       }
-      else {
-        userID = this.currentUser.UserID;
-        this.user = this.currentUser;
-      }
-
-      // TODO: if account is supplied in route, behave differently
-
-      this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-        this.activeAccount = account;
-        this.updateAccountData(this.activeAccount);
-      });
 
       this.cdr.detectChanges();
     });
@@ -113,7 +111,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.activeAccount.AccountName;
   }
 
-  public updateAccountData(account: AccountSimpleDto): void{
+  public updateAccountData(account: AccountSimpleDto): void {
     forkJoin(
       this.postingService.getPostingsByAccountID(account.AccountID),
       this.tradeService.getTradeActivityByAccountID(account.AccountID),

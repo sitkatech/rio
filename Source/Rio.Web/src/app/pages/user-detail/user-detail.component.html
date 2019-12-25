@@ -10,9 +10,6 @@
     </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="user">
-    <div style="margin: 1rem 0 1rem 0;" *ngIf="canViewLandOwnerDashboard()">
-        <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{user.UserID}}">View Landowner Dashboard</a>
-    </div>  
     <div style="margin: 1rem 0 1rem 0;" *ngIf="user.UserGuid === null">
         <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/invite-user/{{user.UserID}}">Invite User</a>
     </div>  

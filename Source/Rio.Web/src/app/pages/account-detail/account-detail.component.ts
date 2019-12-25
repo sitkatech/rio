@@ -60,4 +60,8 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   public getSelectedParcelIDs(): Array<number> {
       return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
+
+  public canViewLandOwnerDashboard(): boolean {
+      return this.currentUserIsAdmin();
+  }
 }
