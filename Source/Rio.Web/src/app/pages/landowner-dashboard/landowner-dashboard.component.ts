@@ -61,6 +61,20 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
 
+  public emptyCumulativeWaterUsage: SeriesEntry[] = [
+    { name: "January", value: 0 },
+    { name: "February", value: 0 }, 
+    { name: "March", value: 0 }, 
+    { name: "April", value: 0 }, 
+    { name: "May", value: 0 }, 
+    { name: "June", value: 0 }, 
+    { name: "July", value: 0 }, 
+    { name: "August", value: 0 },
+    { name: "September", value: 0 }, 
+    { name: "October", value: 0 }, 
+    { name: "November", value: 0 }, 
+    { name: "December", value: 0 }];
+
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -116,6 +130,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.postingService.getPostingsByAccountID(account.AccountID),
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
+      // todo: pull out of forgjoid
       this.parcelService.getWaterYears()
     ).subscribe(([postings, trades, waterTransfers, waterYears]) => {
       this.waterYears = waterYears;
@@ -161,13 +176,26 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             }, 0)
         };
       });
+
       this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
+
+      console.log({
+        annualAllocationSeries: this.getAnnualAllocationSeries(),
+        historicCumulativeWaterUsage: this.historicCumulativeWaterUsage,
+        allocationChartRange: this.allocationChartRange,
+        cumulativeWaterUsageForWaterYear: this.getCumulativeWaterUsageForWaterYear()
+      })
     })
   }
+
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
+  }
+
+  public dataAvailableForYear(waterYear: number):boolean {
+    return false
   }
 
   public toggleUnitsShown(): void {
@@ -449,11 +477,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
     if (!this.waterUsageOverview) {
-      return null;
+      return this.emptyCumulativeWaterUsage
     }
 
     let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay);
-    return currentYearData ? currentYearData.CumulativeWaterUsage : null;
+    return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
   public getAnnualAllocationSeries(): MultiSeriesEntry {

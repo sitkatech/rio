@@ -295,9 +295,10 @@
             <div class="card-body" *ngIf="annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
                 [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
-                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
+                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()" >
               </rio-landowner-water-allocation-chart>
             </div>
+            
           </div>
         </div>
       </div>
