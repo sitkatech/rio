@@ -226,6 +226,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             .addTo(this.map);
         if (this.displayparcelsLayerOnLoad) {
             this.overlayLayers["Parcels"].addTo(this.map);
+            this.overlayLayers["Wells"].addTo(this.map);
         }
         this.afterSetControl.emit(this.layerControl);
     }
