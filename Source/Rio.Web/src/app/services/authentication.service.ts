@@ -22,7 +22,7 @@ export class AuthenticationService {
   private _currentUserSetSubject = new Subject<UserDto>();
   public currentUserSetObservable = this._currentUserSetSubject.asObservable();
 
-  private _currentAccountSubject: Subject<AccountSimpleDto>;
+  private _currentAccountSubject: BehaviorSubject<AccountSimpleDto>;
 
 
   constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private userService: UserService) {
@@ -37,8 +37,11 @@ export class AuthenticationService {
             this.currentUser = result;
             this._currentUserSetSubject.next(this.currentUser);
 
-            this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result=>{
+            this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
               this._availableAccounts = result;
+              if (!this._currentAccountSubject.value ){
+                this.setActiveAccount(this._availableAccounts[0])
+              }
             })
           });
 
@@ -57,7 +60,11 @@ export class AuthenticationService {
       }
     }
     else {
-      this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(this.getAvailableAccounts()[0]);
+      if (this.getAvailableAccounts()) {
+        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(this.getAvailableAccounts()[0]);
+      } else {
+        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
+      }
     }
   }
 
