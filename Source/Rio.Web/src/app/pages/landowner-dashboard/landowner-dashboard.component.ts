@@ -112,8 +112,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         // Only subscribe to the account dropdown if an accountID was not passed in the route
         this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
           console.log("Found an account");
-          this.activeAccount = account;
-          this.updateAccountData(account);
+          if (account) {
+            this.activeAccount = account;
+            this.updateAccountData(account);
+          }
         });
       }
 

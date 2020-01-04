@@ -152,7 +152,14 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            return Ok(Account.ListByUserID(_dbContext, userID));
+            if (userDto.Role.RoleID == (int) RoleEnum.Admin)
+            {
+                return Ok(Account.List(_dbContext));
+            }
+            else
+            {
+                return Ok(Account.ListByUserID(_dbContext, userID));
+            }
         }
 
         [HttpPut("users/{userID}")]
