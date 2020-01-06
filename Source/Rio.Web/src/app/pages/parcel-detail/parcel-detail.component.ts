@@ -27,6 +27,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public months: number[];
   public parcelOwnershipHistory: ParcelOwnershipDto[];
 
+  public today: Date = new Date();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -127,7 +129,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getCurrentOwner(): ParcelOwnershipDto{
-    return this.parcelOwnershipHistory[0];
+    
+    return this.parcelOwnershipHistory.filter(x=>{
+      return x.EffectiveYear <= this.today.getFullYear();      
+    })[0]
   }
   
 }

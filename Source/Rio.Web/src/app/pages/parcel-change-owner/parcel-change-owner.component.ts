@@ -12,6 +12,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { MdpDate } from '../../shared/models/mdp-date';
 
 @Component({
   selector: 'rio-parcel-change-owner',
@@ -24,17 +25,17 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   public parcelID: number;
   public ownerHasAccount: boolean;
   public effectiveYear: number;
-  public saleDate: any;
+  public saleDate: MdpDate;
   public parcel: ParcelDto;
   public ownerNameUntracked: string;
-  public note: string;
+  public note: string = "";
 
   public isLoadingSubmit: boolean = false;
   public watchAccountChangeSubscription: any;
 
   public myDatePickerOptions: IMyDpOptions = {
     // other options...
-    dateFormat: 'dd.mm.yyyy',
+    dateFormat: 'mm-dd-yyyy',
   };
 
   public accountDropdownConfig = {
@@ -56,6 +57,9 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    const today = new Date();
+    this.saleDate = {date: {year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate()}, jsdate: today};
+    console.log(this.saleDate)
     this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
       this.ownerHasAccount = true;
@@ -79,7 +83,22 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
     return `${account.AccountNumber} - ${account.AccountName}`;
   }
 
+  public formValid(): boolean {
+    const lengthValid  = this.note.length <= 500 ;
+    let accountValid;
+    if (this.ownerHasAccount){
+      accountValid = (Boolean) ((this.selectedAccount && this.selectedAccount.AccountID));
+    }
+    else{
+      accountValid = this.ownerNameUntracked;
+    }
+     
+    const valid = lengthValid && accountValid;
+    return valid;
+  }
+
   public onSubmit(form: HTMLFormElement) {
+    debugger;
     var associativeArray = {
       ParcelID: this.parcelID,
       AccountID: this.selectedAccount ? this.selectedAccount.AccountID : undefined,

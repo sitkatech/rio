@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
                 ParcelID = parcel.ParcelID,
                 ParcelNumber = parcel.ParcelNumber,
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
-                LandOwner = parcel.AccountParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.Account.AsSimpleDto()
+                LandOwner = parcel.AccountParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.Account?.AsSimpleDto()
             };
         }
     }

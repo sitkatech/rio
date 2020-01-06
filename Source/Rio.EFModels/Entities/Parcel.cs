@@ -101,5 +101,21 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.vParcelOwnership.Include(x=>x.Account).AsNoTracking().Where(x=>x.ParcelID == parcelID).Select( x=>x.AsParcelOwnershipDto());
         }
+
+        public static IEnumerable<ErrorMessage> ValidateChangeOwner(RioDbContext dbContext,
+            ParcelChangeOwnerDto parcelChangeOwnerDto, ParcelDto parcelDto)
+        {
+            var mostRecentSaleDate = dbContext.vParcelOwnership.AsNoTracking().Where(x=>x.ParcelID == parcelDto.ParcelID).Max(x=>x.SaleDate);
+
+            if (mostRecentSaleDate.HasValue && parcelChangeOwnerDto.SaleDate < mostRecentSaleDate.Value)
+            {
+                yield return new ErrorMessage
+                {
+                    Message =
+                        $"Please enter a sale date after the previous sale date for this parcel ({mostRecentSaleDate.Value.ToShortDateString()})",
+                    Type = "Error"
+                };
+            }
+        }
     }
 }

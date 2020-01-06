@@ -149,11 +149,22 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
         {
+            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            if (parcelDto == null)
+            {
+                return NotFound();
+            }
+
+            var errorMessages = Parcel.ValidateChangeOwner(_dbContext, parcelChangeOwnerDto, parcelDto).ToList();
+            errorMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
             UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
+            
             return Ok();
         }
 

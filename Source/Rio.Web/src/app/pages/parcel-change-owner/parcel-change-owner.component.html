@@ -31,8 +31,8 @@
                         <div class="row" *ngIf="ownerHasAccount">
                             <div class="col-sm-12">
                                 <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
-                                    name="selectedAccount" [(ngModel)]="selectedAccount" 
-                                    [options]="accounts"></ngx-select-dropdown>
+                                    name="selectedAccount" [(ngModel)]="selectedAccount" [options]="accounts">
+                                </ngx-select-dropdown>
                             </div>
                         </div>
 
@@ -43,37 +43,55 @@
                             </div>
                         </div>
 
-                        <hr>
+                        <hr/>
 
                         <div class="row">
                             <div class="col-sm-12">
                                 <p>
                                     <strong class="required">
-                                        Enter the date of the sale and the year that the change in ownership should
-                                        be effective, if different from the sale year.
+                                        Enter the date of the sale.
                                     </strong>
                                 </p>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-sm-6">
-                                <my-date-picker name="saleDate" [options]="myDatePickerOptions" [(ngModel)]="saleDate" required>
+                            <div class="col-sm-12">
+                                <my-date-picker name="saleDate" [options]="myDatePickerOptions" [(ngModel)]="saleDate"
+                                    required>
                                 </my-date-picker>
                             </div>
-                            <div class="col-sm-6">
+                        </div>
+
+                        <hr />
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p>
+                                    <strong>
+                                        Enter the year that the change in ownership should take effect, if different
+                                        from the sale year.
+                                    </strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="col-sm-12 px-0">
                                 <input type="number" step="1" name="effectiveYear" [(ngModel)]="effectiveYear"
                                     class="form-control" placeholder="Effective Year">
                             </div>
                         </div>
 
-                        <hr/>
+                        <hr />
 
                         <div class="row">
                             <div class="col-sm-12">
-                               <textarea type="textarea" name="note" [(ngModel)]="note" class="form-control" placeholder="Notes (Optional)">
-                                   
+                                <textarea type="textarea" name="note" [(ngModel)]="note" class="form-control"
+                                    placeholder="Notes (Optional)" maxlength="500">
+
                                </textarea>
+                                <em>{{500 - note.length}} characters remaining</em>
                             </div>
                         </div>
 
@@ -88,7 +106,7 @@
             </div>
             <div class="col-sm-6 text-right">
                 <button type="submit" class="btn btn-rio"
-                    [disabled]="!changeOwnerForm.form.valid || isLoadingSubmit">
+                    [disabled]="!(changeOwnerForm.form.valid && formValid()) || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Submit
                 </button>

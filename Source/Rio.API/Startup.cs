@@ -1,5 +1,4 @@
-﻿using Rio.EFModels.Entities;
-using IdentityServer4.AccessTokenValidation;
+﻿using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
+using Rio.EFModels.Entities;
 
 namespace Rio.API
 {

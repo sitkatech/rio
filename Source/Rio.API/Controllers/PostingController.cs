@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
+using System.Collections.Generic;
 
 namespace Rio.API.Controllers
 {

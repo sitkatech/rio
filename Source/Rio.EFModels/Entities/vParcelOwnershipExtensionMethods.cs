@@ -41,7 +41,7 @@ namespace Rio.EFModels.Entities
             {
                 OwnerName = account != null ? $"{account.AccountName}" : vParcelOwnership.OwnerName,
                 OwnerAccountID = account?.AccountID,
-                EffectiveYear = vParcelOwnership.EffectiveYear ?? vParcelOwnership.SaleDate?.Year,
+                EffectiveYear = vParcelOwnership.EffectiveYear,
                 Note = vParcelOwnership.Note,
                 SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? ""
 

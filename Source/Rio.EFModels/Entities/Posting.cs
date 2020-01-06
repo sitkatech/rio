@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Posting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Posting;
 
 namespace Rio.EFModels.Entities
 {

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Rio.Models.DataTransferObjects.WaterTransfer;
+﻿using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.EFModels.Entities
 {
