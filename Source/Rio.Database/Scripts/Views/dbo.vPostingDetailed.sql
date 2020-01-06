@@ -14,7 +14,8 @@ as
 	join dbo.PostingType pt on p.PostingTypeID = pt.PostingTypeID
 	join dbo.PostingStatus ps on p.PostingStatusID = ps.PostingStatusID
 	left join dbo.Trade t on p.PostingID = t.PostingID
-	left join dbo.[User] u on p.CreateUserID = u.UserID
+	left join dbo.[AccountUser] au on p.CreateAccountID = au.AccountID
+	left join dbo.[User] u on au.UserID = u.UserID
 	group by p.PostingID, p.PostingDate, pt.PostingTypeID, pt.PostingTypeDisplayName
 	, ps.PostingStatusID, ps.PostingStatusDisplayName
 	, u.UserID, u.FirstName, u.LastName, u.Email

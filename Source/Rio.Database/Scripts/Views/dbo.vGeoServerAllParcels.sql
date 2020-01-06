@@ -18,8 +18,9 @@ select          p.ParcelID as PrimaryKey,
                 u.FirstName + ' ' + u.LastName as LandOwnerFullName
                 
 FROM        dbo.Parcel p
-left join   dbo.UserParcel up on p.ParcelID = up.ParcelID
-left join   dbo.[User] u on up.UserID = u.UserID
+left join   dbo.AccountParcel up on p.ParcelID = up.ParcelID
+left join   dbo.AccountUser au on up.AccountID = au.AccountID
+left join dbo.[User] u on u.UserID = au.UserID
 
 GO
 /*
