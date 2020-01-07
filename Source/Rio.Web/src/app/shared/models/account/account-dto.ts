@@ -7,6 +7,7 @@ export class AccountDto {
     Notes: string;
     AccountStatus: AccountStatusDto;
     Users: Array<UserSimpleDto>;
+    AccountDisplayName: string;
     
     constructor(obj?: any) {
         Object.assign(this, obj);

@@ -13,6 +13,7 @@ namespace Rio.EFModels.Entities
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
+                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})"
             };
         }
         public static AccountDto AsDto(this Account account)
@@ -24,7 +25,8 @@ namespace Rio.EFModels.Entities
                 AccountName = account.AccountName,
                 Notes = account.Notes,
                 Users = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList(),
-                AccountStatus = account.AccountStatus.AsDto()
+                AccountStatus = account.AccountStatus.AsDto(),
+                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})"
             };
         }
     }
