@@ -4,4 +4,5 @@ Restore RioDB from backup
 Comment out the line for Views in Script.PostDeployment.Sql
 Run the Publish script
 Run the manual script "Migrate User To Account.sql"
-Run the views manually
+Run the views scripts manually
+Run the proc scripts manually
