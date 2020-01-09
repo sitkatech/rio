@@ -396,10 +396,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getWaterUsageToDate(): number {
+    debugger;
     if (!this.waterUsages) {
       return null;
     }
-    const waterUsageForYear = this.waterUsages.find(x => x.Year === this.waterYearToDisplay);
+    // do NOT use triple equals here. waterYearToDisplay is a STRING but x.Year is a NUMBER
+    const waterUsageForYear = this.waterUsages.find(x => x.Year == this.waterYearToDisplay);
     if (waterUsageForYear) {
       return this.getResultInUnitsShown(waterUsageForYear.AnnualUsage);
     }
