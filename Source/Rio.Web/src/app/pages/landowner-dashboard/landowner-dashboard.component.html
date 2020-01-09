@@ -17,6 +17,8 @@
   </h2>
   <app-alert-display></app-alert-display>
 
+
+
   <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
     <div class="col-sm-12 col-md-5">
       <div class="card">
@@ -39,8 +41,8 @@
                 <th class="text-sm-left pb-0 mb-0">
                   <a style="cursor: pointer" class="collapsed"
                     (click)="showAcresManagedDetails = !showAcresManagedDetails">
-                    <i *ngIf="showAcresManagedDetails else dontShowAcresManagedDetails"
-                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                    <i *ngIf="showAcresManagedDetails else dontShowAcresManagedDetails" class="fas fa-minus text-muted"
+                      style="font-size: smaller"></i>
                     <ng-template #dontShowAcresManagedDetails>
                       <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
@@ -58,8 +60,8 @@
                   </td>
                 </tr>
                 <tr *ngFor="let parcel of parcels">
-                  <th class="text-sm-right"><a
-                      routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></th>
+                  <th class="text-sm-right"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+                  </th>
                   <td class="text-sm-right">{{parcel.ParcelAreaInAcres | number: '1.1-1'}} ac
                   </td>
                 </tr>
@@ -76,10 +78,9 @@
               </tr>
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
-                  <a style="cursor: pointer" class="collapsed"
-                    (click)="showAllocationDetails = !showAllocationDetails">
-                    <i *ngIf="showAllocationDetails else dontShowAllocationDetails"
-                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                  <a style="cursor: pointer" class="collapsed" (click)="showAllocationDetails = !showAllocationDetails">
+                    <i *ngIf="showAllocationDetails else dontShowAllocationDetails" class="fas fa-minus text-muted"
+                      style="font-size: smaller"></i>
                     <ng-template #dontShowAllocationDetails>
                       <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
@@ -140,10 +141,9 @@
               </tr>
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
-                  <a style="cursor: pointer" class="collapsed"
-                    (click)="showPurchasedDetails = !showPurchasedDetails">
-                    <i *ngIf="showPurchasedDetails else dontShowPurchasedDetails"
-                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                  <a style="cursor: pointer" class="collapsed" (click)="showPurchasedDetails = !showPurchasedDetails">
+                    <i *ngIf="showPurchasedDetails else dontShowPurchasedDetails" class="fas fa-minus text-muted"
+                      style="font-size: smaller"></i>
                     <ng-template #dontShowPurchasedDetails>
                       <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
@@ -167,9 +167,11 @@
                 </tr>
                 <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}} ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}
+                      ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                   </th>
-                  <td class="text-sm-right">{{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                  <td class="text-sm-right">
+                    {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>
@@ -181,7 +183,8 @@
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
                   <a style="cursor: pointer" class="collapsed" (click)="showSoldDetails = !showSoldDetails">
-                    <i *ngIf="showSoldDetails else dontShowSoldDetails" class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                    <i *ngIf="showSoldDetails else dontShowSoldDetails" class="fas fa-minus text-muted"
+                      style="font-size: smaller"></i>
                     <ng-template #dontShowSoldDetails>
                       <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
                     </ng-template>
@@ -205,9 +208,11 @@
                 </tr>
                 <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
                   <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}} ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                      routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}
+                      ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                   </th>
-                  <td class="text-sm-right">{{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                  <td class="text-sm-right">
+                    {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>
@@ -292,13 +297,13 @@
             <div class="card-header">
               {{waterYearToDisplay}} Allocation and Usage
             </div>
-            <div class="card-body" *ngIf="annualAllocationChartData && waterUsageOverview">
+            <div class="card-body" *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
                 [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
-                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()" >
+                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-allocation-chart>
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -308,7 +313,7 @@
             <div class="card-header">
               {{waterYearToDisplay}} Water Usage by Parcel
             </div>
-            <div class="card-body" *ngIf="waterUsageChartData">
+            <div class="card-body" *ngIf="userHasParcels() && waterUsageChartData">
               <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
                 [parcelNumbers]="parcelNumbers">
               </rio-landowner-water-use-chart>
@@ -319,6 +324,11 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="!userHasParcels() || !waterUsages">
+    <div class="col-12">
+      <em>No data availabe: this user is not associated with any parcels in {{waterYearToDisplay}}</em>
     </div>
   </div>
   <div class="row mt-4" *ngIf="trades">

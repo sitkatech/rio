@@ -1,4 +1,4 @@
-import { Component, OnInit,  ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -63,16 +63,16 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = [
     { name: "January", value: 0 },
-    { name: "February", value: 0 }, 
-    { name: "March", value: 0 }, 
-    { name: "April", value: 0 }, 
-    { name: "May", value: 0 }, 
-    { name: "June", value: 0 }, 
-    { name: "July", value: 0 }, 
+    { name: "February", value: 0 },
+    { name: "March", value: 0 },
+    { name: "April", value: 0 },
+    { name: "May", value: 0 },
+    { name: "June", value: 0 },
+    { name: "July", value: 0 },
     { name: "August", value: 0 },
-    { name: "September", value: 0 }, 
-    { name: "October", value: 0 }, 
-    { name: "November", value: 0 }, 
+    { name: "September", value: 0 },
+    { name: "October", value: 0 },
+    { name: "November", value: 0 },
     { name: "December", value: 0 }];
 
   constructor(
@@ -108,10 +108,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           this.updateAccountData(account)
         });
       } else {
-        console.log("No account ID")
         // Only subscribe to the account dropdown if an accountID was not passed in the route
         this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-          console.log("Found an account");
           if (account) {
             this.activeAccount = account;
             this.updateAccountData(account);
@@ -179,14 +177,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         };
       });
 
-      this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
 
-      console.log({
-        annualAllocationSeries: this.getAnnualAllocationSeries(),
-        historicCumulativeWaterUsage: this.historicCumulativeWaterUsage,
-        allocationChartRange: this.allocationChartRange,
-        cumulativeWaterUsageForWaterYear: this.getCumulativeWaterUsageForWaterYear()
-      })
+      // user will have neither allocation nor usage to chart if they have no parcels in this year.
+      if (this.parcels && this.parcels.length > 0) {
+        this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
+      }
     })
   }
 
@@ -196,8 +191,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public dataAvailableForYear(waterYear: number):boolean {
-    return false
+  public userHasParcels(): boolean {
+    return this.parcels && this.parcels.length > 0
   }
 
   public toggleUnitsShown(): void {
