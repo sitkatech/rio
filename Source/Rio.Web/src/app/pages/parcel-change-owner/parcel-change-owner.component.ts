@@ -80,7 +80,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   }
 
   public getDisplayName(account: AccountDto): string {
-    return `${account.AccountNumber} - ${account.AccountName}`;
+    return account.AccountDisplayName;
   }
 
   public formValid(): boolean {

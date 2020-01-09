@@ -5,17 +5,17 @@
             <span *ngIf="!currentUserIsAdmin()">Accounts</span>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            {{account.AccountNumber}} - {{account.AccountName}}
+            {{account.AccountDisplayName}}
         </li>
     </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="account">
     <div style="margin: 1rem 0 1rem 0;" *ngIf="canViewLandOwnerDashboard()">
-        <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{account.AccountID}}">View Landowner Dashboard</a>
-    </div>  
+        <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{account.AccountID}}">View
+            Landowner Dashboard</a>
+    </div>
     <h2 style="display: inline-block">
-        {{account.AccountNumber}} - {{account.AccountName}}
-    </h2>
+        {{account.AccountDisplayName}} </h2>
     <app-alert-display></app-alert-display>
     <div class="row mt-4">
         <div class="col-sm-6">
@@ -60,9 +60,9 @@
             <div class="card">
                 <div class="card-header">
                     <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
-                    routerLink="/accounts/{{account.AccountID}}/edit-users">
-                    <span class="fas fa-edit"></span> Add or Remove Users
-                </a>
+                        routerLink="/accounts/{{account.AccountID}}/edit-users">
+                        <span class="fas fa-edit"></span> Add or Remove Users
+                    </a>
                     Users
                 </div>
                 <div class="card-body">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
         <div class="col-sm-12">
             <div class="card">
@@ -92,7 +92,8 @@
                         </div>
                         <div class="col-sm-12 col-md-2">
                             <ul>
-                                <li *ngFor="let parcel of parcels"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></li>
+                                <li *ngFor="let parcel of parcels"><a
+                                        routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></li>
                             </ul>
                         </div>
                     </div>
