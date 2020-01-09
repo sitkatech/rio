@@ -293,11 +293,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {
         headerName: 'Posted By', valueGetter: function (params: any) {
-          return { LinkValue: params.data.OfferCreateUser.UserID, LinkDisplay: params.data.OfferCreateUser.FullName };
+          return { LinkValue: params.data.OfferCreateAccount.UserID, LinkDisplay: params.data.OfferCreateAccount.FullName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
-          return params.data.OfferCreateUser.FullName;
+          return params.data.OfferCreateAccount.FullName;
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;

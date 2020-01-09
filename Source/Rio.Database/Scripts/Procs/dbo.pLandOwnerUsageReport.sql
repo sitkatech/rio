@@ -41,7 +41,8 @@ from
 				sum(case when pa.ParcelAllocationTypeID = 3 then pa.AcreFeetAllocated else 0 end) as NativeYield,
 				sum(case when pa.ParcelAllocationTypeID = 4 then pa.AcreFeetAllocated else 0 end) as StoredWater
 		from dbo.[User] u
-		join dbo.UserParcel up on u.UserID = up.UserID
+		join dbo.AccountUser au on au.UserID = u.UserID
+		join dbo.AccountParcel up on au.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelAllocation pa on p.ParcelID = pa.ParcelID and pa.WaterYear = @year
 		group by u.UserID
@@ -50,7 +51,8 @@ from
 	(
 		select u.UserID, sum(pme.EvapotranspirationRate) as UsageToDate
 		from dbo.[User] u
-		join dbo.UserParcel up on u.UserID = up.UserID
+		join dbo.AccountUser au on au.UserID = u.UserID
+		join dbo.AccountParcel up on au.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelMonthlyEvapotranspiration pme on p.ParcelID = pme.ParcelID and pme.WaterYear = @year
 		group by u.UserID
@@ -61,7 +63,8 @@ from
 				sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as Purchased,
 				sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as Sold
 		from dbo.[User] u
-		join dbo.WaterTransferRegistration wtr on u.UserID = wtr.UserID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
+		join dbo.AccountUser au on u.UserID = au.AccountID
+		join dbo.WaterTransferRegistration wtr on au.AccountID = wtr.AccountID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
 		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID and year(wt.TransferDate) = @year
 		group by u.UserID
 	) wts on u.UserID = wts.UserID
@@ -69,7 +72,8 @@ from
 	(
 		select u.UserID, count(post.PostingID) as NumberOfPostings
 		from dbo.[User] u
-		join dbo.Posting post on u.UserID = post.CreateUserID
+		join dbo.AccountUser au on u.UserID = au.AccountID
+		join dbo.Posting post on au.AccountID = post.CreateAccountID
 		where year(post.PostingDate) = @year
 		group by u.UserID
 	) post on u.UserID = post.UserID
@@ -77,34 +81,36 @@ from
 	(
 		select u.UserID, count(post.TradeID) as NumberOfTrades
 		from dbo.[User] u
-		join dbo.Trade post on u.UserID = post.CreateUserID
+		join dbo.AccountUser au on u.UserID = au.AccountID
+		join dbo.Trade post on au.AccountID = post.CreateAccountID
 		where year(post.TradeDate) = @year
 		group by u.UserID
 	) tr on u.UserID = tr.UserID
 ) a
+left join dbo.AccountUser au on au.UserID = a.UserID
 left join
 (
-	select th.TradeID, th.TradeNumber, th.UserID, th.TransactionDate, rank() over(partition by th.UserID order by th.TransactionDate desc, th.TradeNumber desc) as Ranking
+	select th.TradeID, th.TradeNumber, th.AccountID, th.TransactionDate, rank() over(partition by th.AccountID order by th.TransactionDate desc, th.TradeNumber desc) as Ranking
 	from
 	(
-		select t.TradeID, t.TradeNumber, t.CreateUserID as UserID, coalesce(p.PostingDate, t.TradeDate, o.OfferDate) as TransactionDate
+		select t.TradeID, t.TradeNumber, t.CreateAccountID as AccountID, coalesce(p.PostingDate, t.TradeDate, o.OfferDate) as TransactionDate
 		from dbo.Offer o
 		join dbo.Trade t on o.TradeID = t.TradeID
 		join dbo.Posting p on t.PostingID = p.PostingID
 		union
-		select t.TradeID, t.TradeNumber, p.CreateUserID as UserID, coalesce(p.PostingDate, t.TradeDate, o.OfferDate) as TransactionDate
+		select t.TradeID, t.TradeNumber, p.CreateAccountID as AccountID, coalesce(p.PostingDate, t.TradeDate, o.OfferDate) as TransactionDate
 		from dbo.Offer o
 		join dbo.Trade t on o.TradeID = t.TradeID
 		join dbo.Posting p on t.PostingID = p.PostingID
 		union
-		select t.TradeID, t.TradeNumber, wtr.UserID, wtr.StatusDate as TransactionDate
+		select t.TradeID, t.TradeNumber, wtr.AccountID, wtr.StatusDate as TransactionDate
 		from dbo.WaterTransferRegistration wtr
 		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID
 		join dbo.Offer o on wt.OfferID = o.OfferID
 		join dbo.Trade t on o.TradeID = t.TradeID
 		where wtr.StatusDate is not null
 	) th
-) mrtr on a.UserID = mrtr.UserID and mrtr.Ranking = 1
+) mrtr on au.AccountID = mrtr.AccountID and mrtr.Ranking = 1
 
 
 end
