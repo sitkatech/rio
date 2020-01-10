@@ -1,16 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from 'src/app/services/user/user.service';
-import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
 import { AccountService } from 'src/app/services/account/account.service';
 import { ColDef } from 'ag-grid-community';
-import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { DecimalPipe } from '@angular/common';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { MultiLinkRendererComponent} from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 
 @Component({
   selector: 'rio-account-list',
@@ -70,9 +66,11 @@ export class AccountListComponent implements OnInit, OnDestroy {
           {
             headerName: 'Users',
             valueGetter: function (params) {
-              let names = params.data.Users.map(x => `${x.FirstName} ${x.LastName}`);
-              return names.join(", ");
-            }, sortable: true, filter: true, width: 315
+              let names = params.data.Users.map(x => {
+                return {LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}`}
+              });
+              return {links: names};
+            }, sortable: true, filter: true, width: 315, cellRendererParams: {inRouterLink: "/users/"},cellRendererFramework: MultiLinkRendererComponent
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
         ];

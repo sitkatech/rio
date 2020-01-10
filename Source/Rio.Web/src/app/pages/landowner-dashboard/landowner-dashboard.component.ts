@@ -396,7 +396,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getWaterUsageToDate(): number {
-    debugger;
     if (!this.waterUsages) {
       return null;
     }

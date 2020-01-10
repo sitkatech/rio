@@ -13,6 +13,7 @@ import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-r
 import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { ParcelPickerComponent } from './components/parcel-picker/parcel-picker.component';
 import { ParcelMapComponent } from './components/parcel-map/parcel-map.component';
+import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { ParcelMapComponent } from './components/parcel-map/parcel-map.component
         ParcelDetailPopupComponent,
         LinkRendererComponent,
         FontAwesomeIconLinkRendererComponent,
-        ParcelPickerComponent
+        ParcelPickerComponent,
+        MultiLinkRendererComponent
     ],
     imports: [
         CommonModule,

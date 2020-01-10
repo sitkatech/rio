@@ -53,6 +53,7 @@ import { AccountDetailComponent } from './pages/account-detail/account-detail.co
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
 import { AccountNewComponent } from './pages/account-new/account-new.component';
 import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
+import { MultiLinkRendererComponent } from './shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +112,7 @@ import { AccountEditUsersComponent } from './pages/account-edit-users/account-ed
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe
   ],
-  entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent],
+  entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent, MultiLinkRendererComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
