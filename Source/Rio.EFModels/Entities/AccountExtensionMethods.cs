@@ -1,5 +1,7 @@
-﻿using Rio.Models.DataTransferObjects.Account;
+﻿using System.Collections.Generic;
+using Rio.Models.DataTransferObjects.Account;
 using System.Linq;
+using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {
@@ -18,15 +20,18 @@ namespace Rio.EFModels.Entities
         }
         public static AccountDto AsDto(this Account account)
         {
+            var userSimpleDtos = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList();
             return new AccountDto()
             {
                 AccountID = account.AccountID,
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
-                Users = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList(),
+                Users = userSimpleDtos,
+                NumberOfUsers = userSimpleDtos.Count,
                 AccountStatus = account.AccountStatus.AsDto(),
-                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})"
+                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
+                NumberOfParcels = account.AccountParcel.Count
             };
         }
     }

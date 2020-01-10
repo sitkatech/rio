@@ -8,6 +8,8 @@ export class AccountDto {
     AccountStatus: AccountStatusDto;
     Users: Array<UserSimpleDto>;
     AccountDisplayName: string;
+    NumberOfParcels: number;
+    NumberOfUsers: number;
     
     constructor(obj?: any) {
         Object.assign(this, obj);

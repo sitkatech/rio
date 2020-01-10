@@ -1,7 +1,7 @@
 <div class="container mt-sm-4" *ngIf="user">
     <div class="float-right">
         <div class="row">
-            <div class="col-md-7" style="white-space: nowrap">Showing data for year </div>
+            <div class="col-md-7" style="white-space: nowrap">Viewing year: </div>
             <div class="col-md-5">
                 <select class="form-control" [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()">
                     <ng-template ngFor let-waterYear [ngForOf]="waterYears">

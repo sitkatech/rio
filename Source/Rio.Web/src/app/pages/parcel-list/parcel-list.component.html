@@ -4,18 +4,18 @@
     </ol>
 </nav>
 <div class="container">
-    <div class="float-right" style="margin: 1rem 0 1rem 0;">
+    <div class="float-right" >
         <div class="row">
-            <div class="col-sm-3 offset-sm-1 control-label text-right">
-                Year
+            <div class="col-sm-5 control-label text-right mt-1" style="padding: 0;">
+                Viewing year:
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-5">
                 <select [(ngModel)]="waterYearToDisplay" (change)="updateGridData()" class="form-control">
                     <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
                 </select>
             </div>
             <div class="col-sm-2 text-right">
-                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()"><i
+                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer; margin-top:3px;" (click)="exportToCsv()"><i
                         class="fas fa-download"></i></a>
             </div>
         </div>

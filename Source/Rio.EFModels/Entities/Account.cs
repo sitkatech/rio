@@ -17,7 +17,7 @@ namespace Rio.EFModels.Entities
 
         public static List<AccountDto> List(RioDbContext dbContext)
         {
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User).Select(x => x.AsDto())
+            return dbContext.Account.Include(x => x.AccountStatus).Include(x=>x.AccountParcel).Include(x => x.AccountUser).ThenInclude(x => x.User).Select(x => x.AsDto())
                 .ToList();
         }
 
