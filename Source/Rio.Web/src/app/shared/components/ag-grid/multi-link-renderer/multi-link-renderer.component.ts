@@ -18,6 +18,8 @@ export class MultiLinkRendererComponent implements AgRendererComponent {
       }
     }
     else {
+      console.log(params);
+      debugger;
       this.params = params;
     }
   }

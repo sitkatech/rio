@@ -1,4 +1,6 @@
-<ng-container *ngFor="let link of params.links">
-    <a [routerLink]="[params.inRouterLink, link.value.LinkValue]" *ngIf="link.value.LinkDisplay"
-        [className]="link.value.CssClasses">{{param.value.LinkDisplay}};</a>
+<ng-container *ngFor="let link of params.value.links; last as isLast">
+    <a [routerLink]="[params.inRouterLink, link.LinkValue]" *ngIf="link.LinkDisplay && !isLast"
+        [className]="link.CssClasses">{{link.LinkDisplay}}, </a>
+        <a [routerLink]="[params.inRouterLink, link.LinkValue]" *ngIf="link.LinkDisplay && isLast "
+            [className]="link.CssClasses">{{link.LinkDisplay}}</a>
     </ng-container>

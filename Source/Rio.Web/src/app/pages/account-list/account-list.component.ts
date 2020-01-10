@@ -70,7 +70,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
                 return {LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}`}
               });
               return {links: names};
-            }, sortable: true, filter: true, width: 315, cellRendererParams: {inRouterLink: "/users/"},cellRendererFramework: MultiLinkRendererComponent
+            }, sortable: true, filter: true, width: 315, cellRendererParams: {inRouterLink: "/users/"}, cellRendererFramework: MultiLinkRendererComponent
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
         ];
