@@ -39,17 +39,17 @@
                     </a>
                     <a routerLink="/parcels" class="dropdown-item">
                         View all Parcels
-                    </a>                    
+                    </a>
                 </div>
             </li>
         </ul>
-        <ul class="navbar-nav mt-2 mt-lg-0 mr-sm-2">
+        <ul class="navbar-nav flex-column mt-2 mt-lg-0 mr-sm-2">
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                 <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
             </li>
             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated()">
-                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
+                <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
                     Welcome {{getUserName()}}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -61,9 +61,11 @@
                     </a>
                     <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
                 </div>
-                <select class="form-control" [compareWith]="compareAccountsFn"  (change)="setCurrentAccount()" [(ngModel)]="activeAccount">
-                    <option *ngFor="let account of getAvailableAccounts()" [ngValue]="account">{{account.AccountDisplayName}}</option>
-                </select>
+            </li>
+            <li>
+                <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
+                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="width:300px">
+                </ngx-select-dropdown>
             </li>
         </ul>
     </div>
@@ -77,9 +79,9 @@
                 <ng-container *ngIf="isTradePendingRegistrationForAccount(trade) && !isTradePending(trade)">
                     Trade {{trade.TradeNumber}} needs to be registered
                     <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
-                    *ngIf="trade.WaterTransferID && isTradePendingRegistrationForAccount(trade)">
-                    [Register transfer]
-                </a>
+                        *ngIf="trade.WaterTransferID && isTradePendingRegistrationForAccount(trade)">
+                        [Register transfer]
+                    </a>
                 </ng-container>
                 <ng-container *ngIf="isTradePending(trade)">
                     <span *ngIf="doesMostRecentOfferBelongToCurrentAccount(trade)">

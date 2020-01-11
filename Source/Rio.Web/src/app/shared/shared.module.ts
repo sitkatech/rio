@@ -14,6 +14,7 @@ import { FontAwesomeIconLinkRendererComponent } from './components/ag-grid/fonta
 import { ParcelPickerComponent } from './components/parcel-picker/parcel-picker.component';
 import { ParcelMapComponent } from './components/parcel-map/parcel-map.component';
 import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-renderer/multi-link-renderer.component';
+import { SelectDropDownModule } from 'ngx-select-dropdown';
 
 @NgModule({
     declarations: [
@@ -33,7 +34,8 @@ import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-rend
         FormsModule,
         HttpClientModule,
         NgProgressModule,
-        RouterModule
+        RouterModule,
+        SelectDropDownModule,
     ],
     exports: [
         CommonModule,

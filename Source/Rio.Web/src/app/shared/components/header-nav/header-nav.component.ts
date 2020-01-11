@@ -23,6 +23,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     windowWidth: number;
 
+    public accountDropdownConfig = {
+      search: true,
+      height: '320px',
+      placeholder: "",
+      displayKey: "AccountDisplayName",
+      searchOnKey: "AccountDisplayName",
+    }
+
     @HostListener('window:resize', ['$event'])
     resize(ev?: Event) {
         this.windowWidth = window.innerWidth;
@@ -135,6 +143,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public setCurrentAccount(): void{
+        console.log("Hotdamn!")
         this.authenticationService.setActiveAccount(this.activeAccount);
     }
 

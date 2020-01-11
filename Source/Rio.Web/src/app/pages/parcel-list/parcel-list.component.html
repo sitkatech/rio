@@ -10,7 +10,7 @@
                 Viewing year:
             </div>
             <div class="col-sm-5">
-                <select [(ngModel)]="waterYearToDisplay" (change)="updateGridData()" class="form-control">
+                <select [(ngModel)]="waterYearToDisplay" (change)="updateGridData()" class="form-control" style="width: 85%; padding:3px" >
                     <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
                 </select>
             </div>
