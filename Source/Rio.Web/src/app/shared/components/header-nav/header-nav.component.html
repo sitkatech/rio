@@ -62,7 +62,7 @@
                     <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
                 </div>
             </li>
-            <li>
+            <li *ngIf="isAuthenticated()">
                 <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
                     name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="width:300px">
                 </ngx-select-dropdown>
