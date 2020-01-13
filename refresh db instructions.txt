@@ -5,5 +5,6 @@ Comment out the line for Views and Procs in Script.PostDeployment.Sql
 Run the Publish script
 Run the manual script "Migrate User To Account.sql"
 Run the account import script
+Run the account clean-up script
 Run the views scripts manually
 Run the proc scripts manually
