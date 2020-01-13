@@ -121,8 +121,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  public getAccount(): string {
-    return this.activeAccount.AccountName;
+  public getAccountDisplayName(): string {
+    return this.activeAccount.AccountDisplayName;
   }
 
   public updateAccountData(account: AccountSimpleDto): void {
@@ -144,6 +144,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
+    console.log(`Parent: ${this.waterYearToDisplay}`);
+
     if (!this.activeAccount || !this.waterYearToDisplay) {
       return;
     }

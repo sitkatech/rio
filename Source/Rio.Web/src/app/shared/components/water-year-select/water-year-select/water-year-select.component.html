@@ -1,0 +1,8 @@
+<div class="form-group form-inline">
+Viewing year: 
+<select class="form-control" [(ngModel)]="selectedYear">
+    <ng-template ngFor let-year [ngForOf]="years">
+      <option value="{{year}}">{{year}}</option>
+    </ng-template>
+  </select>
+</div>

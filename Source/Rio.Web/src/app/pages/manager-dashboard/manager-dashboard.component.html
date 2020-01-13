@@ -1,21 +1,22 @@
 <div class="container mt-sm-4" *ngIf="currentUser">
-  <div class="float-right">
-    <div class="row">
-      <div class="col-md-9 pl-0 pr-4" style="white-space: nowrap;">
-        <a class="btn btn-rio btn-sm mr-3 mt-1" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
-          Parcels</a>
-        Viewing year: </div>
-      <div class="col-md-3 px-2">
-        <select [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()" class="form-control" style="width: 80%; padding:3px" >
-          <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
-        </select>
-      </div>
+
+
+  <div class="row">
+    <div class="col-sm-6">
+      <h2 style="display: inline-block;">
+        Manager Dashboard
+      </h2>
+    </div>
+    <div class="col-sm-6 text-right">
+      <a class="btn btn-rio btn-sm" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
+        Parcels</a>
+        <div class="float-right pl-2">
+      <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+        (selectedYearChange)="updateAnnualData()"></rio-water-year-select></div>
     </div>
   </div>
 
-  <h2 style="display: inline-block;">
-    Manager Dashboard
-  </h2>
+
   <app-alert-display></app-alert-display>
 
   <div class="row mt-4">

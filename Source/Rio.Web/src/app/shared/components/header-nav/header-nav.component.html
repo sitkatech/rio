@@ -64,7 +64,7 @@
             </li>
             <li *ngIf="isAuthenticated()">
                 <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
-                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="width:300px">
+                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="width:300px; font-size:12px;">
                 </ngx-select-dropdown>
             </li>
         </ul>

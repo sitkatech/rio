@@ -143,7 +143,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public setCurrentAccount(): void{
-        console.log("Hotdamn!")
         this.authenticationService.setActiveAccount(this.activeAccount);
     }
 

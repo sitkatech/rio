@@ -15,6 +15,7 @@ import { ParcelPickerComponent } from './components/parcel-picker/parcel-picker.
 import { ParcelMapComponent } from './components/parcel-map/parcel-map.component';
 import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
+import { WaterYearSelectComponent } from './components/water-year-select/water-year-select/water-year-select.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
         LinkRendererComponent,
         FontAwesomeIconLinkRendererComponent,
         ParcelPickerComponent,
-        MultiLinkRendererComponent
+        MultiLinkRendererComponent,
+        WaterYearSelectComponent
     ],
     imports: [
         CommonModule,
@@ -43,7 +45,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
         NotFoundComponent,
         ParcelMapComponent,
         ParcelPickerComponent,
-        HeaderNavComponent
+        HeaderNavComponent,
+        WaterYearSelectComponent
     ],
     entryComponents:[
         ParcelDetailPopupComponent

@@ -5,17 +5,12 @@
 </nav>
 <div class="container">
     <div class="float-right" >
-        <div class="row">
-            <div class="col-sm-5 control-label text-right mt-1" style="padding: 0;">
-                Viewing year:
+        <div class="row mr-1">
+            <div class="col-sm-10 pr-0">
+                <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" (selectedYearChange)="updateGridData()"></rio-water-year-select>
             </div>
-            <div class="col-sm-5">
-                <select [(ngModel)]="waterYearToDisplay" (change)="updateGridData()" class="form-control" style="width: 85%; padding:3px" >
-                    <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
-                </select>
-            </div>
-            <div class="col-sm-2 text-right">
-                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer; margin-top:3px;" (click)="exportToCsv()"><i
+            <div class="col-sm-2 pl-0">
+                <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()"><i
                         class="fas fa-download"></i></a>
             </div>
         </div>

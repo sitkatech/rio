@@ -1,19 +1,13 @@
 <div class="container mt-sm-4" *ngIf="activeAccount">
   <div class="float-right pr-0">
     <div class="row">
-      <div class="col-md-6 mt-1 pr-3" style="white-space: nowrap">
-        Viewing year: </div>
-      <div class="col-md-6">
-        <select class="form-control" [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()" style="width: 80%; padding:3px" >
-          <ng-template ngFor let-waterYear [ngForOf]="waterYears">
-            <option value="{{waterYear}}">{{waterYear}}</option>
-          </ng-template>
-        </select>
+      <div class="col-md-12">
+        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
     </div>
   </div>
   <h2>
-    Landowner Dashboard - {{getAccount()}}
+    Landowner Dashboard - {{getAccountDisplayName()}}
   </h2>
   <app-alert-display></app-alert-display>
 
