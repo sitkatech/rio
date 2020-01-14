@@ -60,7 +60,12 @@ export class AuthenticationService {
             } else{
               this.alertService.pushAlert(new Alert("Gotta make yr acct.", AlertContext.Info));
               new UserCreateDto({
-                
+                FirstName:claims["given_name"],
+LastName: claims["family_name"],
+Email:claims["email"],
+//RoleID:,
+LoginName:claims["login_name"],
+UserGuid: claims["sub"],
               })
             }
           });

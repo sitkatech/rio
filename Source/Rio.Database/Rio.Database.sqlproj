@@ -81,7 +81,6 @@
     <None Include="Scripts\LookupTables\dbo.PostingType.sql" />
     <Build Include="dbo\Tables\dbo.ParcelAllocation.sql" />
     <Build Include="dbo\Tables\dbo.ParcelMonthlyEvapotranspiration.sql" />
-    <None Include="Scripts\ReleaseScripts\0003 - PMET_Import.sql" />
     <Build Include="dbo\Tables\dbo.Trade.sql" />
     <Build Include="dbo\Tables\dbo.Offer.sql" />
     <Build Include="dbo\Tables\dbo.OfferStatus.sql" />
@@ -91,7 +90,6 @@
     <None Include="Scripts\LookupTables\dbo.TradeStatus.sql" />
     <Build Include="dbo\Tables\dbo.TradeStatus.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransfer.sql" />
-    <None Include="Scripts\ReleaseScripts\0004 - Adding User Parcels part two.sql" />
     <None Include="Scripts\Views\dbo.vUserDetailed.sql" />
     <None Include="Scripts\Views\dbo.vPostingDetailed.sql" />
     <Build Include="dbo\Tables\dbo.WaterTransferType.sql" />
@@ -116,10 +114,8 @@
     <None Include="Scripts\LookupTables\dbo.RioPageType.sql" />
     <None Include="Scripts\LookupTables\dbo.Role.sql" />
     <None Include="Scripts\LookupTables\Script.PostDeployment.LookupTables.sql" />
-    <None Include="Scripts\ReleaseScripts\0001 - Initial Data Population.sql" />
     <None Include="Scripts\ReleaseScripts\Script.PostDeployment.ReleaseScripts.sql" />
     <None Include="Scripts\LookupTables\dbo.AccountStatus.sql" />
-    <None Include="Scripts\ReleaseScripts\0005 - Associating Users with Accounts.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
@@ -129,6 +125,5 @@
     <None Include="Scripts\Views\dbo.vGeoServerAllParcels.sql" />
     <None Include="Scripts\Views\Script.PostDeployment.Views.sql" />
     <Build Include="dbo\Tables\dbo.AccountParcel.sql" />
-    <None Include="Scripts\ReleaseScripts\0002 - Associating Users to Parcels.sql" />
   </ItemGroup>
 </Project>

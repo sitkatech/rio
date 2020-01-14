@@ -18,9 +18,9 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime TradeDate { get; set; }
         public int TradeStatusID { get; set; }
+        public int CreateAccountID { get; set; }
         [StringLength(50)]
         public string TradeNumber { get; set; }
-        public int CreateAccountID { get; set; }
 
         [ForeignKey(nameof(CreateAccountID))]
         [InverseProperty(nameof(Account.Trade))]

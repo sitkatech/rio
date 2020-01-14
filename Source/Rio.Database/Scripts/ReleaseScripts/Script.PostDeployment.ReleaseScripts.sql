@@ -10,18 +10,4 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-/*
-:r ".\0001 - Initial Data Population.sql"
-GO
-
-:r ".\0002 - Associating Users to Parcels.sql"
-GO
-
-:r ".\0003 - PMET_Import.sql"
-GO
-
-:r ".\0004 - Adding User Parcels part two.sql"
-GO
-
-:r ".\0005 - Associating Users with Accounts.sql"
-GO */
+/* Start with 0006 */

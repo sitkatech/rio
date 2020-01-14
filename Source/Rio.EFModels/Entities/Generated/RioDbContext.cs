@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Rio.EFModels.Entities
 {
@@ -51,7 +53,8 @@ namespace Rio.EFModels.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            if (!optionsBuilder.IsConfigured)
+            {}
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -187,7 +190,7 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.Offer)
                     .HasForeignKey(d => d.CreateAccountID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Offer_Account_CreateAccountID_AccountID");
+                    .HasConstraintName("FK_Offer_User_CreateAccountID_AccountID");
 
                 entity.HasOne(d => d.OfferStatus)
                     .WithMany(p => p.Offer)
@@ -479,8 +482,7 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.WaterTransferRegistration)
                     .HasForeignKey(d => d.AccountID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_WaterTransferRegistration_Account_AccountID_AccountID");
+                    .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.WaterTransfer)
                     .WithMany(p => p.WaterTransferRegistration)
