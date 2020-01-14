@@ -14,10 +14,13 @@ export class LoginCallbackComponent implements OnInit {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      var redirectUrl = sessionStorage.getItem("authRedirectUrl");
-      console.log(redirectUrl);
-      sessionStorage.removeItem("authRedirectUrl");
-      this.router.navigate([redirectUrl]);
+      if (this.authenticationService.isUserAnAdministrator(currentUser)){
+        this.router.navigate(['/manager-dashboard']);
+      } else if (this.authenticationService.isUserALandOwner(currentUser)){
+        this.router.navigate(['/landowner-dashboard']);
+      } else{
+        this.router.navigate(['/']);
+      }
     });
   }
 }

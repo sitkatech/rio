@@ -7,5 +7,5 @@
     Price money not null,
     OfferStatusID int not null constraint FK_Offer_OfferStatus_OfferStatusID foreign key references dbo.OfferStatus(OfferStatusID),
     OfferNotes varchar(2000) null,
-    CreateUserID int not null constraint FK_Offer_User_CreateUserID_UserID foreign key references dbo.[User](UserID)
+    CreateAccountID int not null constraint FK_Offer_User_CreateAccountID_AccountID foreign key references dbo.[Account](AccountID)
 )

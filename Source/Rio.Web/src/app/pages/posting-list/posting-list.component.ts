@@ -87,6 +87,11 @@ export class PostingListComponent implements OnInit, OnDestroy {
           { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
           { headerName: 'Description', field: 'PostingDescription', sortable: true, filter: true },
         ];
+        
+        this.columnDefs.forEach(x => {
+          x.resizable = true;
+        });
+        
       });
     });
   }

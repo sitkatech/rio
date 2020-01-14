@@ -128,7 +128,7 @@
     <Build Include="dbo\Tables\dbo.Parcel.sql" />
     <None Include="Scripts\Views\dbo.vGeoServerAllParcels.sql" />
     <None Include="Scripts\Views\Script.PostDeployment.Views.sql" />
-    <Build Include="dbo\Tables\dbo.UserParcel.sql" />
+    <Build Include="dbo\Tables\dbo.AccountParcel.sql" />
     <None Include="Scripts\ReleaseScripts\0002 - Associating Users to Parcels.sql" />
   </ItemGroup>
 </Project>

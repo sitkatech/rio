@@ -15,8 +15,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 })
 export class ApiService {
 
-    constructor(private busyService: BusyService, private apiRoute: ApiRouteService, private http: HttpClient, private alertService: AlertService, private oauthService: OAuthService, private router: Router,) 
-    {
+    constructor(private busyService: BusyService, private apiRoute: ApiRouteService, private http: HttpClient, private alertService: AlertService, private oauthService: OAuthService, private router: Router, ) {
     }
 
     postToApi(relativeRoute: string, data: any): Observable<any> {
@@ -125,12 +124,15 @@ export class ApiService {
             if (error && (error.status === 401)) {
                 this.alertService.pushAlert(new Alert("Access token expired..."));
                 this.oauthService.initImplicitFlow();
-            } else if (error && (error.status === 403/* || error.status === 404*/)) {
+            } else if (error && (error.status === 403)) {
                 this.router.navigate(["/"]);
             } else if (error.error && typeof error.error === 'string') {
                 this.alertService.pushAlert(new Alert(error.error));
+            } else if (error.error && error.status === 404) {
+                // let the caller handle not found appropriate to whatever it was doing
             } else if (error.error && !(error.error instanceof ProgressEvent)) {
                 for (const key of Object.keys(error.error)) {
+                    // FIXME: will break if errror.error[key] is not a string[]
                     const newLocal = new Alert((error.error[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","));
                     this.alertService.pushAlert(newLocal);
                 }

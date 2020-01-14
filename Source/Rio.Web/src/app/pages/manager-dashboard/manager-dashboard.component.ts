@@ -313,6 +313,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
     ];
+        
+    this.tradesGridColumnDefs.forEach(x => {
+      x.resizable = true;
+    });
   }
 
   private initializeLandownerUsageReportGrid(): void {

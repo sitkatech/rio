@@ -76,6 +76,11 @@ export class AccountListComponent implements OnInit, OnDestroy {
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
         ];
+        
+        this.columnDefs.forEach(x => {
+          x.resizable = true;
+        });
+        
         this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
         this.cdr.detectChanges();
       });

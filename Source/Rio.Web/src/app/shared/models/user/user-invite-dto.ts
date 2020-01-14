@@ -4,3 +4,4 @@ export class UserInviteDto {
     LastName: string;
     Email: string;
 }
+

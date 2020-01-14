@@ -5,13 +5,11 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Posting;
+using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
-using Rio.Models.DataTransferObjects.WaterTransfer;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.API.Controllers
 {
@@ -99,7 +97,18 @@ namespace Rio.API.Controllers
                 RoleID = inviteDto.RoleID.Value
             };
 
-            var user = Rio.EFModels.Entities.User.CreateNewUser(_dbContext, newUser, keystoneUser.LoginName, keystoneUser.UserGuid);
+            var user = EFModels.Entities.User.CreateNewUser(_dbContext, newUser, keystoneUser.LoginName,
+                keystoneUser.UserGuid);
+            return Ok(user);
+        }
+
+        [HttpPost("users")]
+        [UserManageFeature]
+        public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userUpsertDto)
+        {
+            // todo: validation of any kind, do we need to ask Keystone if this GUID is valid before we create the record?
+            var user = EFModels.Entities.User.CreateNewUser(_dbContext, userUpsertDto, userUpsertDto.LoginName,
+                userUpsertDto.UserGuid);
             return Ok(user);
         }
 

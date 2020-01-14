@@ -64,6 +64,11 @@ export class UserListComponent implements OnInit, OnDestroy {
           { headerName: 'Water Purchased (ac-ft)', field: 'AcreFeetOfWaterPurchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 200 },
           { headerName: 'Water Sold (ac-ft)', field: 'AcreFeetOfWaterSold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 160 },
         ];
+        
+        this.columnDefs.forEach(x => {
+          x.resizable = true;
+        });
+
         this.rowData = users;
       });
     });

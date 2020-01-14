@@ -10,7 +10,7 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-
+/*
 :r ".\0001 - Initial Data Population.sql"
 GO
 
@@ -24,4 +24,4 @@ GO
 GO
 
 :r ".\0005 - Associating Users with Accounts.sql"
-GO
+GO */

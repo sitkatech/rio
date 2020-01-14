@@ -97,6 +97,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         { headerName: 'Stored Water', field: 'StoredWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
         { headerName: 'Reconciliation', field: 'Reconciliation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       ];
+      
+      this.columnDefs.forEach(x => {
+        x.resizable = true;
+      });
     });
   }
 

@@ -9,6 +9,10 @@ import { isNullOrUndefined } from 'util';
 import { Router, NavigationEnd } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
 import { AccountSimpleDto } from '../shared/models/account/account-simple-dto';
+import { AlertService } from '../shared/services/alert.service';
+import { Alert } from '../shared/models/alert';
+import { AlertContext } from '../shared/models/enums/alert-context.enum';
+import { UserCreateDto } from '../shared/models/user/user-create-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,13 +29,19 @@ export class AuthenticationService {
   private _currentAccountSubject: BehaviorSubject<AccountSimpleDto>;
 
 
-  constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private userService: UserService) {
+  constructor(private router: Router,
+    private oauthService: OAuthService,
+    private cookieStorageService: CookieStorageService,
+    private userService: UserService,
+    private alertService: AlertService) {
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         if (this.isAuthenticated()) {
           var claims = this.oauthService.getIdentityClaims();
           var globalID = claims["sub"];
+
+          console.log(claims);
 
           this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
             this.currentUser = result;
@@ -43,6 +53,16 @@ export class AuthenticationService {
                 this.setActiveAccount(this._availableAccounts[0])
               }
             })
+          }, error => {
+            if (error.status !== 404){
+              this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
+              this.router.navigate(['/']);
+            } else{
+              this.alertService.pushAlert(new Alert("Gotta make yr acct.", AlertContext.Info));
+              new UserCreateDto({
+                
+              })
+            }
           });
 
         } else {
@@ -54,6 +74,7 @@ export class AuthenticationService {
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
 
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
+      // todo: check that activeAccountAsJson is in the list of available accounts. 
       let initialActiveAccount = JSON.parse(activeAccountAsJson);
       if (initialActiveAccount) {
         this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(initialActiveAccount);
@@ -101,7 +122,7 @@ export class AuthenticationService {
     // add in our default redirect url if none is set
     var redirectUrl = sessionStorage.getItem("authRedirectUrl");
     if (!redirectUrl) {
-      sessionStorage["authRedirectUrl"] = "/landowner-dashboard";
+      sessionStorage["authRedirectUrl"] = "/landing-page";
     }
     this.oauthService.initImplicitFlow();
   }
