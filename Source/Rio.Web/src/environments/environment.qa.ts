@@ -3,6 +3,8 @@ export const environment = {
   staging: true,
   dev: false,
   apiHostName: 'rio-api.qa.sycan.sitkatech.com',
+  createAccountUrl: "https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=",
+  createAccountRedirectUrl: "https://rio.qa.sycan.sitkatech.com/",
 
   keystoneAuthConfiguration: {
     clientId: 'Rio',

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
@@ -7,7 +7,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   templateUrl: './login-callback.component.html',
   styleUrls: ['./login-callback.component.scss']
 })
-export class LoginCallbackComponent implements OnInit {
+export class LoginCallbackComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
 
   constructor(private router: Router, private authenticationService: AuthenticationService) { }
@@ -22,5 +22,9 @@ export class LoginCallbackComponent implements OnInit {
         this.router.navigate(['/']);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.watchUserChangeSubscription.unsubscribe();
   }
 }

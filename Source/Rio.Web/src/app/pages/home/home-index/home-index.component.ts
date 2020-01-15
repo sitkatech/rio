@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
 import { error } from 'protractor';
@@ -9,7 +9,7 @@ import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
     templateUrl: './home-index.component.html',
     styleUrls: ['./home-index.component.scss']
 })
-export class HomeIndexComponent implements OnInit {
+export class HomeIndexComponent implements OnInit, OnDestroy {
     public watchUserChangeSubscription: any;
     public currentUser: UserDto;
 
@@ -20,6 +20,10 @@ export class HomeIndexComponent implements OnInit {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
             this.currentUser = currentUser;
         });
+    }
+
+    ngOnDestroy(): void {
+      this.watchUserChangeSubscription.unsubscribe();
     }
 
     public userIsUnassigned(){

@@ -103,7 +103,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("users")]
-        //[UserManageFeature] todo: what feature should this be?
+        [LoggedInUnclassifiedFeature]
         public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userUpsertDto)
         {
             // todo: validation of any kind, do we need to ask Keystone if this GUID is valid before we create the record?
@@ -152,7 +152,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("user/{userID}/accounts")]
-        [UserManageFeature]
+        [UserViewFeature]
         public ActionResult<List<AccountSimpleDto>> ListAccountsByUserID([FromRoute] int userID)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);

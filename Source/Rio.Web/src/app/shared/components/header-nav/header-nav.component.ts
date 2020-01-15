@@ -46,11 +46,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
-            // display the correct active account in the dropdown below the username.
-            // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-            this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
 
-            if (currentUser) {
+            // do not attempt any API hits if the user is known to be unassigned.
+            if (currentUser && !this.isUnassigned()) {
+
+                // display the correct active account in the dropdown below the username.
+                // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
+                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+
                 forkJoin(
                     this.tradeService.getTradeActivityByAccountID(currentUser.UserID),
                 ).subscribe(([trades]) => {
@@ -76,6 +79,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public isAdministrator(): boolean {
         return this.authenticationService.isUserAnAdministrator(this.currentUser);
+    }
+
+    public isUnassigned(): boolean{
+        return this.authenticationService.isUserUnassigned(this.currentUser);
     }
 
     public getUserName() {

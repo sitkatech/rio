@@ -38,7 +38,9 @@ namespace Rio.API.Services.Authorization
             }
 
             var userDto = UserContext.GetUserFromHttpContext(dbContext, context.HttpContext);
-            var isAuthorized = userDto != null && _grantedRoles.Any(x => (int) x == userDto.Role.RoleID);
+
+            var isAuthorized = userDto != null && (_grantedRoles.Any(x => (int) x == userDto.Role.RoleID) || !_grantedRoles.Any()); // allowing an empty list lets us implement LoggedInUnclassifiedFeature easily
+            
             if (!isAuthorized)
             {
                 context.Result = new StatusCodeResult((int)System.Net.HttpStatusCode.Forbidden);

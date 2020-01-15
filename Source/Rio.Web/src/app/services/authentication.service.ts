@@ -13,6 +13,7 @@ import { AlertService } from '../shared/services/alert.service';
 import { Alert } from '../shared/models/alert';
 import { AlertContext } from '../shared/models/enums/alert-context.enum';
 import { UserCreateDto } from '../shared/models/user/user-create-dto';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,6 @@ export class AuthenticationService {
           }, error => {
             if (error.status !== 404) {
               this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
-              debugger;
               this.router.navigate(['/']);
             } else {
               const newUser = new UserCreateDto({
@@ -133,19 +133,13 @@ export class AuthenticationService {
   }
 
   public login() {
-    // add in our default redirect url if none is set
-    var redirectUrl = sessionStorage.getItem("authRedirectUrl");
-    if (!redirectUrl) {
-      sessionStorage["authRedirectUrl"] = "/landing-page";
-    }
     this.oauthService.initImplicitFlow();
   }
 
 
   public createAccount() {
-    const redirectUrl = encodeURIComponent("http://dev.rio.org:8887/login-callback");
-
-    window.location.href = `https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=${redirectUrl}`;
+    const redirectUrl = encodeURIComponent(environment.createAccountRedirectUrl);
+    window.location.href = `${environment.createAccountUrl}${redirectUrl}`;
   }
 
 
@@ -169,5 +163,12 @@ export class AuthenticationService {
       ? user.Role.RoleID
       : null;
     return role === RoleEnum.Admin;
+  }
+
+  public isUserUnassigned(user: UserDto): boolean {
+    const role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.Unassigned;
   }
 }
