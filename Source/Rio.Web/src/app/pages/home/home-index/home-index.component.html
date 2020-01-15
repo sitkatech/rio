@@ -21,7 +21,8 @@
             <div class="card">
                 <div class="card-header">
                     <!--todo: style is kinda-->
-                    Access your water account
+                    <ng-container *ngIf="!currentUser">Access your water account</ng-container>
+                    <ng-container *ngIf="currentUser">View your dashboard</ng-container>
                 </div>
                 <div class="card-body" *ngIf="!currentUser">
                     <div class="row">
@@ -32,7 +33,8 @@
                     <div class="row mt-2">
                         <div class="col mx-1">
                             <a href="javascript:void(0);" (click)="login()" class="btn btn-rio mr-1">Login</a>
-                            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio ml-1">Create Account</a>
+                            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio ml-1">Create
+                                Account</a>
                         </div>
                     </div>
                     <hr />
@@ -40,12 +42,19 @@
                         <div class="col">
                             <small style="font-size:11px;">
                                 Need help logging in? <br />
-                                <a href="routerLinkPlz">Forgot Password</a> | <a href="routerLinkPlz">Forgot Username</a> | <a href="routerLinkPlz">Request Support</a>
+                                <a href="routerLinkPlz">Forgot Password</a> | <a href="routerLinkPlz">Forgot
+                                    Username</a> | <a href="routerLinkPlz">Request Support</a>
                             </small>
                         </div>
                     </div>
                 </div>
-                <!-- write cases for: unassigned, manager, landowner-->
+                <div class="card-body" *ngIf="currentUser">
+                    <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1" routerLink="/manager-dashboard">Manager
+                        Dashboard</a>
+                    <a *ngIf="isUserALandowner()" class="btn btn-rio" routerLink="/landowner-dashboard">Manager
+                        Dashboard</a>
+                    <a class="btn btn-rio" routerLink="/help">Request Support</a>
+                </div>
             </div>
         </div>
         <div class="col-md-8 order-md-1 order-12 col-sm-12">
