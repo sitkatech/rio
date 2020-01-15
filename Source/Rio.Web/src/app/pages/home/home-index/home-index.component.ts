@@ -29,4 +29,12 @@ export class HomeIndexComponent implements OnInit {
         
         return this.currentUser.Role.RoleID === RoleEnum.Unassigned;
     }
+
+    public login(): void {
+        this.authenticationService.login();
+    }
+
+    public createAccount(): void{
+        this.authenticationService.createAccount();
+    }
 }

@@ -23,7 +23,7 @@
                     <!--todo: style is kinda-->
                     Access your water account
                 </div>
-                <div class="card-body">
+                <div class="card-body" *ngIf="!currentUser">
                     <div class="row">
                         <div class="col">
                             Log in to view your Water Account. Create an Account if you don't have one yet.
@@ -31,8 +31,8 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col mx-1">
-                            <a href="routerLinkPlz" class="btn btn-rio mr-1">Login</a>
-                            <a href="routerLinkPlz" class="btn btn-rio ml-1">Create Account</a>
+                            <a href="javascript:void(0);" (click)="login()" class="btn btn-rio mr-1">Login</a>
+                            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio ml-1">Create Account</a>
                         </div>
                     </div>
                     <hr />
@@ -45,6 +45,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- write cases for: unassigned, manager, landowner-->
             </div>
         </div>
         <div class="col-md-8 order-md-1 order-12 col-sm-12">

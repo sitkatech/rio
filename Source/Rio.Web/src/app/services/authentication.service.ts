@@ -18,7 +18,6 @@ import { UserCreateDto } from '../shared/models/user/user-create-dto';
   providedIn: 'root'
 })
 export class AuthenticationService {
-
   private currentUser: UserDto;
 
   private getUserObservable: any;
@@ -72,7 +71,7 @@ export class AuthenticationService {
       });
 
     // todo: I think this should just be new up the behavior subject as undefined and then do the localStorage stuff after the account list comes back.
-    
+
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
 
 
@@ -141,6 +140,14 @@ export class AuthenticationService {
     }
     this.oauthService.initImplicitFlow();
   }
+
+
+  public createAccount() {
+    const redirectUrl = encodeURIComponent("http://dev.rio.org:8887/login-callback");
+
+    window.location.href = `https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=${redirectUrl}`;
+  }
+
 
   public logout() {
     this.oauthService.logOut();
