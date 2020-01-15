@@ -5,7 +5,15 @@
 </div>
 
 <div class="container mt-4">
-        <app-alert-display></app-alert-display>
+    
+    <ngb-alert *ngIf="userIsUnassigned()" [type]="'info'" [dismissible]="false"
+               >
+    <span>Welcome {{currentUser.FullName}}. You have successfully logged in to the RRB Water Accounting Platform, but your
+        account is not yet configured. You will receive an email from the RRB Administrators when your account is ready to
+        use. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or comments.</span>
+    </ngb-alert>    
+    
+    <app-alert-display></app-alert-display>
         <div class="row mt-sm-4">
             <div class="col-md">
                 <h1 class="text-primary">Rosedale-Rio Bravo Water Trading Platform</h1>

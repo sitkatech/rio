@@ -50,7 +50,6 @@ export class AuthenticationService {
               this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
               this.router.navigate(['/']);
             } else {
-              this.alertService.pushAlert(new Alert("Gotta make yr acct.", AlertContext.Info));
               const newUser = new UserCreateDto({
                 FirstName: claims["given_name"],
                 LastName: claims["family_name"],
@@ -73,7 +72,10 @@ export class AuthenticationService {
         }
       });
 
+    // todo: I think this should just be new up the behavior subject as undefined and then do the localStorage stuff after the account list comes back.
+    
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
+
 
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
       // todo: check that activeAccountAsJson is in the list of available accounts. 
