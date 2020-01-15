@@ -103,7 +103,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("users")]
-        [UserManageFeature]
+        //[UserManageFeature] todo: what feature should this be?
         public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userUpsertDto)
         {
             // todo: validation of any kind, do we need to ask Keystone if this GUID is valid before we create the record?

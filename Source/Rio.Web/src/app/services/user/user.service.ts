@@ -8,6 +8,7 @@ import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entr
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +19,11 @@ export class UserService {
     inviteUser(userInviteDto: any): Observable<UserDto> {
         let route = `/users/invite`;
         return this.apiService.postToApi(route, userInviteDto);
+    }
+
+    createNewUser(userCreateDto: UserCreateDto): Observable<UserDto> {
+        let route = `/users/`;
+        return this.apiService.postToApi(route, userCreateDto);
     }
 
     getUsers(): Observable<UserDto[]> {

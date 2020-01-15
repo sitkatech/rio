@@ -44,29 +44,26 @@ export class AuthenticationService {
           console.log(claims);
 
           this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
-            this.currentUser = result;
-            this._currentUserSetSubject.next(this.currentUser);
-
-            this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
-              this._availableAccounts = result;
-              if (!this._currentAccountSubject.value ){
-                this.setActiveAccount(this._availableAccounts[0])
-              }
-            })
+            this.getUserCallback(result);
           }, error => {
-            if (error.status !== 404){
+            if (error.status !== 404) {
               this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
               this.router.navigate(['/']);
-            } else{
+            } else {
               this.alertService.pushAlert(new Alert("Gotta make yr acct.", AlertContext.Info));
-              new UserCreateDto({
-                FirstName:claims["given_name"],
-LastName: claims["family_name"],
-Email:claims["email"],
-//RoleID:,
-LoginName:claims["login_name"],
-UserGuid: claims["sub"],
+              const newUser = new UserCreateDto({
+                FirstName: claims["given_name"],
+                LastName: claims["family_name"],
+                Email: claims["email"],
+                RoleID: RoleEnum.Unassigned,
+                LoginName: claims["login_name"],
+                UserGuid: claims["sub"],
+              });
+
+              this.userService.createNewUser(newUser).subscribe(user => {
+                this.getUserCallback(user);
               })
+
             }
           });
 
@@ -92,6 +89,18 @@ UserGuid: claims["sub"],
         this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
       }
     }
+  }
+
+  private getUserCallback(user: UserDto) {
+    this.currentUser = user;
+    this._currentUserSetSubject.next(this.currentUser);
+
+    this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
+      this._availableAccounts = result;
+      if (!this._currentAccountSubject.value) {
+        this.setActiveAccount(this._availableAccounts[0])
+      }
+    })
   }
 
   private _availableAccounts: Array<AccountSimpleDto>;
