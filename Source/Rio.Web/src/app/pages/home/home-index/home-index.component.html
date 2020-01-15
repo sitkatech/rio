@@ -5,36 +5,66 @@
 </div>
 
 <div class="container mt-4">
-    
-    <ngb-alert *ngIf="userIsUnassigned()" [type]="'info'" [dismissible]="false"
-               >
-    <span>Welcome {{currentUser.FullName}}. You have successfully logged in to the RRB Water Accounting Platform, but your
-        account is not yet configured. You will receive an email from the RRB Administrators when your account is ready to
-        use. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or comments.</span>
-    </ngb-alert>    
-    
+
+    <ngb-alert *ngIf="userIsUnassigned()" [type]="'info'" [dismissible]="false">
+        <span>Welcome {{currentUser.FullName}}. You have successfully logged in to the RRB Water Accounting Platform,
+            but your
+            account is not yet configured. You will receive an email from the RRB Administrators when your account is
+            ready to
+            use. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or
+            comments.</span>
+    </ngb-alert>
+
     <app-alert-display></app-alert-display>
-        <div class="row mt-sm-4">
-            <div class="col-md">
-                <h1 class="text-primary">Rosedale-Rio Bravo Water Trading Platform</h1>
-                <div class="mt-4">
-                    <p class="lead">
-                        Welcome to the <a href="https://www.rrbwsd.com/">Rosedale-Rio Bravo Water Storage District</a> Water
-                        Trading Platform. The trading program is designed to meet these objectives:
-                    </p>
-                    <ul>
-                        <li>Reduce water trading transaction costs and facilitate effective accounting and management of
-                            available water resources.</li>
-                        <li>Enable the movement of water to the highest valued and best uses.</li>
-                        <li>Help RRB (and other Kern County districts) achieve groundwater sustainability goals and minimize
-                            economic costs to the community.</li>
-                        <li>Over the longer term, consider opportunities to generate additional benefits from fallowed land
-                            such
-                            as groundwater recharge basins and wildlife habitat.</li>
-                    </ul>
+    <div class="row mt-sm-4">
+        <div class="col-md-4 order-md-12 order-1 col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <!--todo: style is kinda-->
+                    Access your water account
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            Log in to view your Water Account. Create an Account if you don't have one yet.
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col mx-1">
+                            <a href="routerLinkPlz" class="btn btn-rio mr-1">Login</a>
+                            <a href="routerLinkPlz" class="btn btn-rio ml-1">Create Account</a>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col">
+                            <small style="font-size:11px;">
+                                Need help logging in? <br />
+                                <a href="routerLinkPlz">Forgot Password</a> | <a href="routerLinkPlz">Forgot Username</a> | <a href="routerLinkPlz">Request Support</a>
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-8 order-md-1 order-12 col-sm-12">
+            <h1 class="text-primary">Rosedale-Rio Bravo Water Trading Platform</h1>
+            <div class="mt-4">
+                <p class="lead">
+                    Welcome to the <a href="https://www.rrbwsd.com/">Rosedale-Rio Bravo Water Storage District</a> Water
+                    Trading Platform. The trading program is designed to meet these objectives:
+                </p>
+                <ul>
+                    <li>Reduce water trading transaction costs and facilitate effective accounting and management of
+                        available water resources.</li>
+                    <li>Enable the movement of water to the highest valued and best uses.</li>
+                    <li>Help RRB (and other Kern County districts) achieve groundwater sustainability goals and minimize
+                        economic costs to the community.</li>
+                    <li>Over the longer term, consider opportunities to generate additional benefits from fallowed land
+                        such
+                        as groundwater recharge basins and wildlife habitat.</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    
-    
+</div>

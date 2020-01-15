@@ -144,8 +144,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
-    console.log(`Parent: ${this.waterYearToDisplay}`);
-
     if (!this.activeAccount || !this.waterYearToDisplay) {
       return;
     }

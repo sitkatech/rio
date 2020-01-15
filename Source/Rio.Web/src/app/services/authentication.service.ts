@@ -41,13 +41,12 @@ export class AuthenticationService {
           var claims = this.oauthService.getIdentityClaims();
           var globalID = claims["sub"];
 
-          console.log(claims);
-
           this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
             this.getUserCallback(result);
           }, error => {
             if (error.status !== 404) {
               this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
+              debugger;
               this.router.navigate(['/']);
             } else {
               const newUser = new UserCreateDto({
