@@ -17,7 +17,6 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        debugger;
         if (localStorage.getItem("loginOnReturn")){
             localStorage.removeItem("loginOnReturn");
             this.authenticationService.login();

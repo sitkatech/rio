@@ -98,7 +98,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.currentDate = (new Date());
 
-      // todo: this can probably go away when all is said and done
       let accountID = parseInt(this.route.snapshot.paramMap.get("id"));
       if (accountID) {
         this.accountService.getAccountByID(accountID).subscribe(account => {
@@ -130,7 +129,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.postingService.getPostingsByAccountID(account.AccountID),
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
-      // todo: pull out of forgjoid
       this.parcelService.getWaterYears()
     ).subscribe(([postings, trades, waterTransfers, waterYears]) => {
       this.waterYears = waterYears;

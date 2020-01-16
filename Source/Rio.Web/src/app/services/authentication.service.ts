@@ -70,23 +70,30 @@ export class AuthenticationService {
         }
       });
 
-    // todo: I think this should just be new up the behavior subject as undefined and then do the localStorage stuff after the account list comes back.
+    
+    this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
+    
+  }
 
+  private updateCurrentAccountSubject(){
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
 
-
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
-      // todo: check that activeAccountAsJson is in the list of available accounts. 
+      // if the saved account is valid for this user, make it the current active account. Otherwise clear it from local storage.
       let initialActiveAccount = JSON.parse(activeAccountAsJson);
-      if (initialActiveAccount) {
-        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(initialActiveAccount);
+      if (initialActiveAccount && this.getAvailableAccounts().map(x=>x.AccountID).includes(initialActiveAccount.AccountID)) {
+        this._currentAccountSubject.next(initialActiveAccount);
+      } else{
+        window.localStorage.removeItem("activeAccount");
       }
     }
-    else {
-      if (this.getAvailableAccounts()) {
-        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(this.getAvailableAccounts()[0]);
+
+    if (!this._currentAccountSubject.value) {
+      // no current account: leave active account undefined if manager, default to first on list otherwise.
+      if (this.getAvailableAccounts() && this.currentUser.Role.RoleID != RoleEnum.Admin) {
+        this._currentAccountSubject.next(this.getAvailableAccounts()[0]);
       } else {
-        this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
+        this._currentAccountSubject.next(undefined);
       }
     }
   }
@@ -96,10 +103,9 @@ export class AuthenticationService {
     this._currentUserSetSubject.next(this.currentUser);
 
     this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
+      
       this._availableAccounts = result;
-      if (!this._currentAccountSubject.value) {
-        this.setActiveAccount(this._availableAccounts[0])
-      }
+      this.updateCurrentAccountSubject();
     })
   }
 
