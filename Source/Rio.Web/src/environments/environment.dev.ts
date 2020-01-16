@@ -4,7 +4,7 @@ export const environment = {
   dev: true,
   apiHostName: 'api-dev.rio.org:8889',
   createAccountUrl: "https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=",
-  createAccountRedirectUrl: "http://dev.rio.org:8887",
+  createAccountRedirectUrl: "http://dev.rio.org:8887/create-user-callback",
 
   keystoneAuthConfiguration: {
     clientId: 'Rio',

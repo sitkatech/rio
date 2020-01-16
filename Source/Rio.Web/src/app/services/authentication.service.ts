@@ -135,8 +135,7 @@ export class AuthenticationService {
   public login() {
     this.oauthService.initImplicitFlow();
   }
-
-
+  
   public createAccount() {
     const redirectUrl = encodeURIComponent(environment.createAccountRedirectUrl);
     window.location.href = `${environment.createAccountUrl}${redirectUrl}`;

@@ -54,6 +54,7 @@ import { AccountEditComponent } from './pages/account-edit/account-edit.componen
 import { AccountNewComponent } from './pages/account-new/account-new.component';
 import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 import { MultiLinkRendererComponent } from './shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
+import { CreateUserCallbackComponent } from './pages/create-user-callback/create-user-callback.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +91,8 @@ import { MultiLinkRendererComponent } from './shared/components/ag-grid/multi-li
     AccountDetailComponent,
     AccountEditComponent,
     AccountNewComponent,
-    AccountEditUsersComponent
+    AccountEditUsersComponent,
+    CreateUserCallbackComponent
   ],
   imports: [
     AppRoutingModule,

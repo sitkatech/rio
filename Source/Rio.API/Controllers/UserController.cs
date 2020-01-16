@@ -10,6 +10,7 @@ using Rio.Models.DataTransferObjects.User;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace Rio.API.Controllers
 {
@@ -19,12 +20,14 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<UserController> _logger;
         private readonly KeystoneService _keystoneService;
+        private readonly RioConfiguration _rioConfiguration;
 
-        public UserController(RioDbContext dbContext, ILogger<UserController> logger, KeystoneService keystoneService)
+        public UserController(RioDbContext dbContext, ILogger<UserController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
+            _rioConfiguration = rioConfigurationOptions.Value;
         }
 
         [HttpPost("/users/invite")]
@@ -55,7 +58,7 @@ namespace Rio.API.Controllers
                 WelcomeText = $"You are receiving this notification because you are identified as a participant in the pilot phase of the {applicationName}, an online platform provided by the {rioBravoWaterStorageDistrict}.",
                 SiteName = applicationName,
                 SignatureBlock = $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:admin@rrbwsd.com'>admin@rrbwsd.com</a><br />(661) 589-6045<br /><a href='https://www.rrbwsd.com'>https://www.rrbwsd.com</a>",
-                RedirectURL = "https://rrbwatertrading.sitkatech.com"
+                RedirectURL = _rioConfiguration.KEYSTONE_REDIRECT_URL
             };
 
             var response = _keystoneService.Invite(inviteModel);

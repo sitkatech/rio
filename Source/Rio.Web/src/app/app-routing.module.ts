@@ -30,6 +30,7 @@ import { AccountDetailComponent } from './pages/account-detail/account-detail.co
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
 import { AccountNewComponent } from './pages/account-new/account-new.component';
 import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
+import { CreateUserCallbackComponent } from './pages/create-user-callback/create-user-callback.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -63,6 +64,7 @@ const routes: Routes = [
   { path: "help", component: HelpComponent },
   { path: "glossary", component: GlossaryComponent },
   { path: "login-callback", component: LoginCallbackComponent },
+  { path: "create-user-callback", component: CreateUserCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },
   { path: 'unauthenticated', component: UnauthenticatedComponent },
