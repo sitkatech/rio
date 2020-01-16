@@ -8,7 +8,7 @@
         </li>
     </ol>
 </nav>
-<div class="container" *ngIf="postingTypes">
+<div class="container" *ngIf="postingTypes && currentAccount">
     <h2>New Posting</h2>
     <p class="lead">
         Create a new offer to either buy or sell an allocation.
@@ -22,7 +22,7 @@
                         <label>Account</label>
                     </div>
                     <div class="col-sm-8">
-                        {{account.AccountDisplayName}}
+                        {{currentAccount.AccountDisplayName}}
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -108,4 +108,9 @@
             </div>
         </div>
     </form>
+</div>
+<div class="container" *ngIf="!currentAccount">
+  <ngb-alert [type]="'info'" [dismissible]="false">
+    No account is selected. Use the dropdown in the top right to select an account to view the Landowner Dashboard.
+</ngb-alert>
 </div>

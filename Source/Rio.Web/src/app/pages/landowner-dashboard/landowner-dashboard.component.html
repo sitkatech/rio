@@ -455,3 +455,8 @@
     </div>
   </div>
 </div>
+<div class="container mt-sm-4" *ngIf="!activeAccount">
+  <ngb-alert [type]="'info'" [dismissible]="false">
+    No account is selected. Use the dropdown in the top right to select an account to view the Landowner Dashboard.
+</ngb-alert>
+</div>
