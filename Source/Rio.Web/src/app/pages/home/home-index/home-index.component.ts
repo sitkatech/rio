@@ -38,6 +38,14 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
         return this.currentUser.Role.RoleID === RoleEnum.Unassigned;
     }
 
+    public userRoleIsDisabled(){
+        if (!this.currentUser){
+            return false; // doesn't exist != unassigned
+        }
+        
+        return this.currentUser.Role.RoleID === RoleEnum.Disabled;
+    }
+
     public isUserAnAdministrator(){
         return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }

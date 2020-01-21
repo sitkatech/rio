@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -8,6 +8,9 @@ import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/
 import { DecimalPipe } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
+import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 
 @Component({
   selector: 'rio-user-list',
@@ -16,12 +19,16 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 })
 export class UserListComponent implements OnInit, OnDestroy {
   @ViewChild('usersGrid', {static: false}) usersGrid: AgGridAngular;
+  @ViewChild('unassignedUsersGrid', {static: false}) unassignedUsersGrid: AgGridAngular;
 
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
   public rowData = [];
   columnDefs: ColDef[];
+  columnDefsUnassigned: ColDef[];
+  users: UserDetailedDto[];
+  unassignedUsers: UserDetailedDto[];
 
   constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private utilityFunctionsService: UtilityFunctionsService, private userService: UserService, private decimalPipe: DecimalPipe) { }
 
@@ -70,8 +77,18 @@ export class UserListComponent implements OnInit, OnDestroy {
         });
 
         this.rowData = users;
+        this.users = users;
+        
+        this.unassignedUsers = users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
+
+        this.cdr.detectChanges();
       });
     });
+  }
+
+  private refreshView(){
+    debugger;
+    this.unassignedUsersGrid.api.refreshView();
   }
 
   ngOnDestroy() {
@@ -79,6 +96,11 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.authenticationService.dispose();
     this.cdr.detach();
   }
+
+  // public unassignedUsers(): Array<UserDetailedDto> {
+  //   const unassignedUsers =  this.users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
+  //   return unassignedUsers;
+  // }
 
   public exportToCsv() {
     // we need to grab all columns except the first one (trash icon)

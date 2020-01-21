@@ -9,6 +9,7 @@ using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Microsoft.Extensions.Options;
 
@@ -117,10 +118,19 @@ namespace Rio.API.Controllers
 
         [HttpGet("users")]
         [UserManageFeature]
-        public ActionResult<IEnumerable<UserDto>> List()
+        public ActionResult<IEnumerable<UserDetailedDto>> List()
         {
             var userDtos = EFModels.Entities.User.List(_dbContext);
             return Ok(userDtos);
+        }
+
+        [HttpGet("users/unassigned-report")]
+        [UserManageFeature]
+        public ActionResult<UnassignedUserReportDto> GetUnassignedUserReport()
+        {
+            var report = new UnassignedUserReportDto
+                {Count = _dbContext.User.Count(x => x.RoleID == (int) RoleEnum.Unassigned)};
+            return Ok(report);
         }
 
         [HttpGet("users/{userID}")]

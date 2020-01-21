@@ -10,6 +10,7 @@ import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
+import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 
 @Component({
   selector: 'rio-account-edit-users',
@@ -21,7 +22,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   public currentUser: UserDto;
   public accountID: number;
   public account: AccountDto;
-  public allUsers: UserDto[];
+  public allUsers: UserDetailedDto[];
   public usersToSave: UserSimpleDto[];
 
   public userDropdownConfig = {
@@ -33,7 +34,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   };
 
   public selectedUser: UserDto[];
-  public filteredUsers: UserDto[];
+  public filteredUsers: UserDetailedDto[];
 
   public isLoadingSubmit: boolean = false;
 
@@ -48,7 +49,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.allUsers = new Array<UserDto>();
+    this.allUsers = new Array<UserDetailedDto>();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.accountID = parseInt(this.route.snapshot.paramMap.get("id"));

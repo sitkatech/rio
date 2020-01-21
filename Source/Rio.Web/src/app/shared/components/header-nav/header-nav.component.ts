@@ -8,6 +8,9 @@ import { forkJoin } from 'rxjs';
 import { OfferStatusEnum } from '../../models/enums/offer-status-enum';
 import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
+import { UserService } from 'src/app/services/user/user.service';
+import { AlertService } from '../../services/alert.service';
+import { Alert } from '../../models/alert';
 
 @Component({
     selector: 'header-nav',
@@ -40,6 +43,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         private authenticationService: AuthenticationService,
         private cookieStorageService: CookieStorageService,
         private tradeService: TradeService,
+        private userService: UserService,
+        private alertService: AlertService,
         private cdr: ChangeDetectorRef) {
     }
 
@@ -48,7 +53,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             this.currentUser = currentUser;
 
             // do not attempt any API hits if the user is known to be unassigned.
-            if (currentUser && !this.isUnassigned()) {
+            if (currentUser && !this.isUnassignedOrDisabled()) {
 
                 // display the correct active account in the dropdown below the username.
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
@@ -59,6 +64,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                 ).subscribe(([trades]) => {
                     this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                 });
+            }
+
+            if (currentUser && this.isAdministrator()){
+                this.userService.getUnassignedUserReport().subscribe(report =>{
+                    if (report.Count > 0){
+                        this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`));
+                    }
+                })
             }
         });
     }
@@ -83,6 +96,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public isUnassigned(): boolean{
         return this.authenticationService.isUserUnassigned(this.currentUser);
+    }
+
+    public isUnassignedOrDisabled(): boolean{
+        return this.authenticationService.isUserUnassigned(this.currentUser) || this.authenticationService.isUserRoleDisabled(this.currentUser);
     }
 
     public getUserName() {

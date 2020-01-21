@@ -70,20 +70,20 @@ export class AuthenticationService {
         }
       });
 
-    
+
     this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
-    
+
   }
 
-  private updateCurrentAccountSubject(){
+  private updateCurrentAccountSubject() {
     const activeAccountAsJson = window.localStorage.getItem('activeAccount');
 
     if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
       // if the saved account is valid for this user, make it the current active account. Otherwise clear it from local storage.
       let initialActiveAccount = JSON.parse(activeAccountAsJson);
-      if (initialActiveAccount && this.getAvailableAccounts().map(x=>x.AccountID).includes(initialActiveAccount.AccountID)) {
+      if (initialActiveAccount && this.getAvailableAccounts().map(x => x.AccountID).includes(initialActiveAccount.AccountID)) {
         this._currentAccountSubject.next(initialActiveAccount);
-      } else{
+      } else {
         window.localStorage.removeItem("activeAccount");
       }
     }
@@ -102,11 +102,17 @@ export class AuthenticationService {
     this.currentUser = user;
     this._currentUserSetSubject.next(this.currentUser);
 
-    this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
-      
-      this._availableAccounts = result;
-      this.updateCurrentAccountSubject();
-    })
+    if (!this.isUserRoleDisabled(this.currentUser)) {
+      this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
+
+        this._availableAccounts = result;
+        this.updateCurrentAccountSubject();
+      })
+    }
+
+    // if (this.currentUser.Role.RoleID == RoleEnum.Disabled){
+    //   this.router.navigate(["/"]);
+    // }
   }
 
   private _availableAccounts: Array<AccountSimpleDto>;
@@ -177,5 +183,12 @@ export class AuthenticationService {
       ? user.Role.RoleID
       : null;
     return role === RoleEnum.Unassigned;
+  }
+
+  public isUserRoleDisabled(user: UserDto): boolean {
+    const role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.Disabled;
   }
 }

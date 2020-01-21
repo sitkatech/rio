@@ -30,6 +30,7 @@ namespace Rio.EFModels.Entities
     {
         Admin = 1,
         LandOwner = 2,
-        Unassigned = 3
+        Unassigned = 3,
+        Disabled = 4
     }
 }

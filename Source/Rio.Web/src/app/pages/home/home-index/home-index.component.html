@@ -7,12 +7,20 @@
 <div class="container mt-4">
 
     <ngb-alert *ngIf="userIsUnassigned()" [type]="'info'" [dismissible]="false">
-        <span>Welcome {{currentUser.FullName}}. You have successfully logged in to the RRB Water Accounting Platform,
+        <span>
+            Welcome {{currentUser.FullName}}. You have successfully logged in to the RRB Water Accounting Platform,
             but your
             account is not yet configured. You will receive an email from the RRB Administrators when your account is
             ready to
             use. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or
-            comments.</span>
+            comments.
+        </span>
+    </ngb-alert>
+
+    <ngb-alert *ngIf="userRoleIsDisabled()" [type]="'info'" [dismissible]="false">
+        <span>
+            Your account is currently disabled. Please <a routerLink="/help">Request Support</a> if you would like to activate your account.
+        </span>
     </ngb-alert>
 
     <app-alert-display></app-alert-display>
