@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
@@ -7,6 +7,8 @@ import { ColDef } from 'ag-grid-community';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { MultiLinkRendererComponent} from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
+import { AgGridAngular } from 'ag-grid-angular';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-account-list',
@@ -14,6 +16,7 @@ import { MultiLinkRendererComponent} from 'src/app/shared/components/ag-grid/mul
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent implements OnInit, OnDestroy {
+  @ViewChild("accountsGrid", {static: false}) accountsGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
@@ -26,7 +29,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
   constructor(
     private accountService: AccountService,
     private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef, ) { }
+    private cdr: ChangeDetectorRef, private utilityFunctionsService: UtilityFunctionsService ) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -102,4 +105,17 @@ export class AccountListComponent implements OnInit, OnDestroy {
       this.rowData = this.accounts;
     }
   }
+
+  public exportToCsv() {
+    // we need to grab all columns except the first one (trash icon)
+    let columnsKeys = this.accountsGrid.columnApi.getAllDisplayedColumns(); 
+    let columnIds: Array<any> = []; 
+    columnsKeys.forEach(keys => 
+      { 
+        let columnName: string = keys.getColId(); 
+        columnIds.push(columnName); 
+      });
+    columnIds.splice(0, 1);
+    this.utilityFunctionsService.exportGridToCsv(this.accountsGrid, 'accounts.csv', columnIds);
+  }  
 }

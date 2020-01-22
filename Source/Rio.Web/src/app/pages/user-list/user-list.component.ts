@@ -97,11 +97,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  // public unassignedUsers(): Array<UserDetailedDto> {
-  //   const unassignedUsers =  this.users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
-  //   return unassignedUsers;
-  // }
-
   public exportToCsv() {
     // we need to grab all columns except the first one (trash icon)
     let columnsKeys = this.usersGrid.columnApi.getAllDisplayedColumns(); 
