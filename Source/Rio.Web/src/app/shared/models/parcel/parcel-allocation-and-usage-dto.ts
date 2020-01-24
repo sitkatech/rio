@@ -1,10 +1,10 @@
-import { UserSimpleDto } from '../user/user-simple-dto';
+import { AccountSimpleDto } from '../account/account-simple-dto';
 
 export class ParcelAllocationAndUsageDto {
     ParcelID: number;
     ParcelNumber: string;
     ParcelAreaInAcres: number;
-    LandOwner: UserSimpleDto;
+    LandOwner: AccountSimpleDto;
     Allocation: number;
     ProjectWater: number;
     Reconciliation: number;

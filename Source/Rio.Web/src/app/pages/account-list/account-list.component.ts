@@ -6,7 +6,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { ColDef } from 'ag-grid-community';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { MultiLinkRendererComponent} from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
+import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
@@ -16,7 +16,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-  @ViewChild("accountsGrid", {static: false}) accountsGrid: AgGridAngular;
+  @ViewChild("accountsGrid", { static: false }) accountsGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
@@ -29,7 +29,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
   constructor(
     private accountService: AccountService,
     private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef, private utilityFunctionsService: UtilityFunctionsService ) { }
+    private cdr: ChangeDetectorRef, private utilityFunctionsService: UtilityFunctionsService) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -66,24 +66,29 @@ export class AccountListComponent implements OnInit, OnDestroy {
           },
           { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
           { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
-          {headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
-          {headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
+          { headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
+          { headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
           {
             headerName: 'Users',
             valueGetter: function (params) {
               let names = params.data.Users.map(x => {
-                return {LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}`}
+                return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
               });
-              return {links: names};
-            }, sortable: true, filter: true, width: 315, cellRendererParams: {inRouterLink: "/users/"}, cellRendererFramework: MultiLinkRendererComponent
+              if (names.length) {
+                debugger;
+              }
+              const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
+
+              return { links: names, DownloadDisplay: downloadDisplay };
+            }, sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/users/" }, cellRendererFramework: MultiLinkRendererComponent
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
         ];
-        
+
         this.columnDefs.forEach(x => {
           x.resizable = true;
         });
-        
+
         this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
         this.cdr.detectChanges();
       });
@@ -108,14 +113,13 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
   public exportToCsv() {
     // we need to grab all columns except the first one (trash icon)
-    let columnsKeys = this.accountsGrid.columnApi.getAllDisplayedColumns(); 
-    let columnIds: Array<any> = []; 
-    columnsKeys.forEach(keys => 
-      { 
-        let columnName: string = keys.getColId(); 
-        columnIds.push(columnName); 
-      });
+    let columnsKeys = this.accountsGrid.columnApi.getAllDisplayedColumns();
+    let columnIds: Array<any> = [];
+    columnsKeys.forEach(keys => {
+      let columnName: string = keys.getColId();
+      columnIds.push(columnName);
+    });
     columnIds.splice(0, 1);
     this.utilityFunctionsService.exportGridToCsv(this.accountsGrid, 'accounts.csv', columnIds);
-  }  
+  }
 }

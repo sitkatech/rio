@@ -10,9 +10,9 @@ as
 
 begin
 
-	select p.ParcelID, p.ParcelNumber, p.ParcelAreaInAcres, u.UserID, u.FirstName, u.LastName, u.Email,
+	select p.ParcelID, p.ParcelNumber, p.ParcelAreaInAcres,
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
-			pmev.UsageToDate, up.OwnerName
+			pmev.UsageToDate, up.OwnerName, a.AccountID, a.AccountName, a.AccountNumber
 	from dbo.Parcel p
 	left join (
         select
@@ -27,8 +27,7 @@ begin
             (EffectiveYear is null or EffectiveYear <= @year)
     ) up on p.ParcelID = up.ParcelID
 
-	left join dbo.[AccountUser] au on up.AccountID = au.AccountID
-	left join dbo.[User] u on au.UserID = u.UserID
+	left join dbo.[Account] a on up.AccountID = a.AccountID
 	left join 
 	(
 		select pa.ParcelID, 
@@ -50,3 +49,5 @@ begin
     where RowNumber = 1
 
 end
+
+select * from AccountParcel

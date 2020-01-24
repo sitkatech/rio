@@ -10,27 +10,31 @@ export class UtilityFunctionsService {
   constructor() { }
 
   public exportGridToCsv(grid: AgGridAngular, fileName: string, columnKeys: Array<string>) {
-    var params = 
-     {
-      skipHeader: false,
-      columnGroups: false,
-      skipFooters: true,
-      skipGroups: true,
-      skipPinnedTop: true,
-      skipPinnedBottom: true,
-      allColumns: true,
-      onlySelected: false,
-      suppressQuotes: false,
-      fileName: fileName,
-      processCellCallback: function (p) {
-        if (p.column.getColDef().cellRendererFramework) {
-          return p.value.LinkDisplay;
+    var params =
+      {
+        skipHeader: false,
+        columnGroups: false,
+        skipFooters: true,
+        skipGroups: true,
+        skipPinnedTop: true,
+        skipPinnedBottom: true,
+        allColumns: true,
+        onlySelected: false,
+        suppressQuotes: false,
+        fileName: fileName,
+        processCellCallback: function (p) {
+          if (p.column.getColDef().cellRendererFramework) {
+            if (p.value.DownloadDisplay) {
+              return p.value.DownloadDisplay;
+            } else {
+              return p.value.LinkDisplay;
+            }
+          }
+          else {
+            return p.value;
+          }
         }
-        else {
-          return p.value;
-        }
-      }
-    } as CsvExportParams
+      } as CsvExportParams
     if (columnKeys) {
       params.columnKeys = columnKeys;
     }

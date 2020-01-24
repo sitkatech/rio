@@ -15,7 +15,7 @@
 </div>
 <div class="container mt-sm-4" *ngIf="users && unassignedUsers.length">
   <div class="table-responsive">
-    <ag-grid-angular #unassignedUsersGrid style="width: 100%; height: 800px;" class="ag-theme-balham" [rowData]="unassignedUsers"
+    <ag-grid-angular #unassignedUsersGrid style="width: 100%; height: 300px;" class="ag-theme-balham" [rowData]="unassignedUsers"
       [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100">
     </ag-grid-angular>
   </div>

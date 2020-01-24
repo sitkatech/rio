@@ -71,9 +71,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           { headerName: 'In Pilot?', valueGetter: function (params) { return params.data.LandOwner !== null ? "Yes" : "No"; }, sortable: true, filter: true, width: 100 },
           {
             headerName: 'Landowner', valueGetter: function (params: any) {
-              return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.UserID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.FullName };
+              return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
             }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/users/" },
+            cellRendererParams: { inRouterLink: "/accounts/" },
             filterValueGetter: function (params: any) {
               return (params.data.LandOwner) ? params.data.LandOwner.FullName : null;
             },
