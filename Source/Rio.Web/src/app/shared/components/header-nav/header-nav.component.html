@@ -12,9 +12,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" routerLink="/" routerLinkActive="active" *ngIf="!isAuthenticated()">Home</a>
+                <a class="nav-link" routerLink="/" routerLinkActive="active" *ngIf="!isAuthenticated() || isUnassignedOrDisabled()">Home</a>
                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
-                    *ngIf="isAuthenticated()">Home</a>
+                    *ngIf="isAuthenticated() && !isUnassignedOrDisabled()">Home</a>
             </li>
             <li class="nav-item" *ngIf="isAuthenticated()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Buy and Sell Water</a>
@@ -53,7 +53,7 @@
                     Welcome {{getUserName()}}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/landowner-dashboard" class="dropdown-item">
+                    <a *ngIf="!isUnassignedOrDisabled()" routerLink="/landowner-dashboard" class="dropdown-item">
                         My Dashboard
                     </a>
                     <a routerLink="/help" class="dropdown-item">
