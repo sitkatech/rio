@@ -165,11 +165,11 @@ Subject: {mm.Subject}
         public static string GetDefaultEmailSignature()
         {
             const string defaultEmailSignature = @"<br /><br />
-Respectfully, the RRB WSD Water Trading Platform team
+Respectfully, the RRB WSD Water Accounting Platform team
 <br /><br />
 ***
 <br /><br />
-You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Trading Platform. 
+You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Accounting Platform. 
 <br /><br />
 P.O. Box 20820<br />
 Bakersfield, CA 93390-0820<br />
@@ -180,7 +180,7 @@ Phone: (661) 589-6045<br />
 
         public static MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress("donotreply@sitkatech.com", "RRB Water Trading Platform");
+            return new MailAddress("donotreply@sitkatech.com", "RRB Water Accounting Platform");
         }
 
         public static void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)

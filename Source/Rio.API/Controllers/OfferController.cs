@@ -23,6 +23,7 @@ namespace Rio.API.Controllers
         private readonly ILogger<OfferController> _logger;
         private readonly KeystoneService _keystoneService;
         private readonly string _rioWebUrl;
+        private readonly bool _allowTrading;
 
         public OfferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
         {
@@ -30,12 +31,18 @@ namespace Rio.API.Controllers
             _logger = logger;
             _keystoneService = keystoneService;
             _rioWebUrl = rioConfigurationOptions.Value.RIO_WEB_URL;
+            _allowTrading = rioConfigurationOptions.Value.ALLOW_TRADING;
         }
 
         [HttpPost("/offers/new/{postingID}")]
         [OfferManageFeature]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
+            if (!_allowTrading)
+            {
+                return BadRequest();
+            }
+
             var posting = Posting.GetByPostingID(_dbContext, postingID);
             if (!ModelState.IsValid)
             {
@@ -165,7 +172,7 @@ namespace Rio.API.Controllers
     <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
     <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
 </ul>
-To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Trading Platform before the district will recognize the transfer.
+To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
 <br /><br />
 <a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
@@ -196,7 +203,7 @@ To finalize this transaction, the buyer and seller must complete payment and any
                 $@"
 Hello {toAccount.AccountName},
 <br /><br />
-Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
@@ -225,7 +232,7 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
                 $@"
 Hello {toAccount.AccountName},
 <br /><br />
-An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Trading Platform Landowner Dashboard. 
+An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";

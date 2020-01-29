@@ -20,6 +20,7 @@ namespace Rio.API.Controllers
         private readonly ILogger<OfferController> _logger;
         private readonly KeystoneService _keystoneService;
         private readonly string _rioWebUrl;
+        private readonly bool _allowTrading;
 
         public WaterTransferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
         {
@@ -27,6 +28,7 @@ namespace Rio.API.Controllers
             _logger = logger;
             _keystoneService = keystoneService;
             _rioWebUrl = rioConfigurationOptions.Value.RIO_WEB_URL;
+            _allowTrading = rioConfigurationOptions.Value.ALLOW_TRADING;
         }
 
         [HttpGet("water-transfers/{waterTransferID}")]
@@ -59,6 +61,11 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
+            if (!_allowTrading)
+            {
+                return BadRequest();
+            }
+
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
             if (waterTransferDto == null)
             {
@@ -91,6 +98,11 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
+            if (!_allowTrading)
+            {
+                return BadRequest();
+            }
+
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
             if (waterTransferDto == null)
             {
@@ -136,6 +148,11 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<List<WaterTransferDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
+            if (!_allowTrading)
+            {
+                return BadRequest();
+            }
+
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
             if (waterTransferDto == null)
             {

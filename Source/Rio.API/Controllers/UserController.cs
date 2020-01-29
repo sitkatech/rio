@@ -48,7 +48,7 @@ namespace Rio.API.Controllers
                 return BadRequest("Role ID is required.");
             }
 
-            const string applicationName = "Rosedale-Rio Bravo Water Trading Platform";
+            const string applicationName = "Rosedale-Rio Bravo Water Accounting Platform";
             const string rioBravoWaterStorageDistrict = "Rosedale-Rio Bravo Water Storage District";
             var inviteModel = new KeystoneService.KeystoneInviteModel
             {
