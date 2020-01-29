@@ -31,6 +31,7 @@ namespace Rio.EFModels.Entities
                 NumberOfUsers = userSimpleDtos.Count,
                 AccountStatus = account.AccountStatus.AsDto(),
                 AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
+                ShortAccountDisplayName = $"#{account.AccountNumber} ({account.AccountName})",
                 NumberOfParcels = account.AccountParcel.Count
             };
         }

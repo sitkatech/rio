@@ -47,12 +47,12 @@
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                 <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
             </li>
-            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated()">
+            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()">
                 <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Welcome {{getUserName()}}
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                     <a *ngIf="!isUnassignedOrDisabled()" routerLink="/landowner-dashboard" class="dropdown-item">
                         My Dashboard
                     </a>
@@ -63,8 +63,9 @@
                 </div>
             </li>
             <li *ngIf="isAuthenticated()">
-                <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
-                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="width:300px; font-size:12px;">
+                <span class="accountDropdownLabel">Account:</span>
+                <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
+                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="display:inline-block; width:240px; font-size:12px;">
                 </ngx-select-dropdown>
             </li>
         </ul>

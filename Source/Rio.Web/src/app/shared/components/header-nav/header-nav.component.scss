@@ -25,3 +25,19 @@
   {
     color: #fff;
   }
+
+  .welcomeUser{
+    @media screen and (min-width: 991px){
+      text-align:right;
+    }
+    @media screen and (max-width: 990px){
+      text-align:left;
+    }
+  }
+
+  .accountDropdownLabel {
+    color:white; display:inline-block; padding-right:5px; 
+    @media screen and (max-width: 1272px){
+      display:none;
+    }
+  }

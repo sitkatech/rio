@@ -11,6 +11,7 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
 import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
 import { UnassignedUserReportDto } from 'src/app/shared/models/user/unassigned-user-report-dto';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
+import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -51,6 +52,11 @@ export class UserService {
     updateUser(userID: number, userUpdateDto: any): Observable<UserDto> {
         let route = `/users/${userID}`;
         return this.apiService.putToApi(route, userUpdateDto);
+    }
+    
+    editAccounts(userID: number, userEditAccountsDto: UserEditAccountsDto): Observable<UserDto> {
+        let route = `/users/${userID}/edit-accounts`;
+        return this.apiService.putToApi(route, userEditAccountsDto);
     }
 
     getLandownerUsageReportByYear(year: number): Observable<UserDto[]> {

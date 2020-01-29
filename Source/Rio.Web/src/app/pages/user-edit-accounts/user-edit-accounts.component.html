@@ -1,0 +1,71 @@
+<nav aria-label="breadcrumb" *ngIf="user">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a routerLink="/users">Users</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a routerLink="/users/{{user?.UserID}}">
+                {{user.FullName}}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Add or Remove Accounts
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4" *ngIf="user && allAccounts">
+    <h2 style="display: inline-block">Add or Remove Accounts</h2>
+    <app-alert-display></app-alert-display>
+
+    <form (ngSubmit)="onSubmit(editUserAccountsForm)" #editUserAccountsForm="ngForm">
+        <div class="row mt-4">
+            <div class="col-sm-8">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="row form-group mt-4">
+                            <div class="col-sm-12">
+                                <p>Select account(s) to associate with this user:</p>
+                                <div class="input-group">
+                                    <ngx-select-dropdown class="selectAccount" [multiple]="false" [config]="accountDropdownConfig" name="selectedAccount" [(ngModel)]="selectedAccount"
+                                        [options]="filteredAccounts"></ngx-select-dropdown>
+                                        <div class="input-group-append">
+                                            <a class="btn btn-rio btn-sm addAccount" (click)="addAccount(selectedAccount)">Add</a>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <p>These accounts will be associated with the user. Click the <span class="fas fa-trash"></span> icon next to a account to remove it:</p>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngFor="let account of accountsToSave">
+                            <div class="col-sm-12">
+                                <span class="fas fa-trash removeAccount" (click)="removeAccount(account)"></span>
+                                {{account.AccountDisplayName}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-4">
+            <div class="col-sm-2">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-sm-6 text-right">
+                <button type="submit" class="btn btn-rio"
+                    [disabled]="!editUserAccountsForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/users/{{user?.UserID}}">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -65,6 +65,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
         return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 
+    public userIsAdministrator(): boolean{
+        return this.authenticationService.isUserAnAdministrator(this.user);
+    }
+
     public getSelectedParcelIDs(): Array<number> {
         return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
     }

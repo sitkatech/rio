@@ -29,8 +29,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public accountDropdownConfig = {
       search: true,
       height: '320px',
-      placeholder: "",
-      displayKey: "AccountDisplayName",
+      placeholder: "Select an account",
+      displayKey: "ShortAccountDisplayName",
       searchOnKey: "AccountDisplayName",
     }
 
@@ -57,7 +57,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
                 // display the correct active account in the dropdown below the username.
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account;
+                    console.log(this.authenticationService.getAvailableAccounts()) });
 
                 forkJoin(
                     this.tradeService.getTradeActivityByAccountID(currentUser.UserID),
@@ -65,6 +66,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                     this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                 });
             }
+
 
             if (currentUser && this.isAdministrator()){
                 this.userService.getUnassignedUserReport().subscribe(report =>{

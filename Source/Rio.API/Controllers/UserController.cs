@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -11,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Microsoft.Extensions.Options;
 
 namespace Rio.API.Controllers
 {
@@ -212,6 +212,25 @@ namespace Rio.API.Controllers
 
             var updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, userID, userUpsertDto);
             return Ok(updatedUserDto);
+        }
+
+        [HttpPut("/users/{userID}/edit-accounts")]
+        [UserManageFeature]
+        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)
+        {
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+
+            if (userDto == null)
+            {
+                return NotFound($"Could not find an User with the ID {userID}.");
+            }
+
+            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
+            {
+                return NotFound("One or more of the Account IDs was invalid.");
+            }
+
+            return Ok(EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs));
         }
 
         [HttpGet("users/{userID}/parcels/{year}")]

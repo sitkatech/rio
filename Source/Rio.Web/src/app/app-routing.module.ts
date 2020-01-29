@@ -31,6 +31,7 @@ import { AccountEditComponent } from './pages/account-edit/account-edit.componen
 import { AccountNewComponent } from './pages/account-new/account-new.component';
 import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 import { CreateUserCallbackComponent } from './pages/create-user-callback/create-user-callback.component';
+import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
@@ -48,6 +49,7 @@ const routes: Routes = [
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "users/:id/edit-accounts", component: UserEditAccountsComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts", component: AccountListComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id", component: AccountDetailComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id/edit", component: AccountEditComponent, canActivate: [UnauthenticatedAccessGuard]},

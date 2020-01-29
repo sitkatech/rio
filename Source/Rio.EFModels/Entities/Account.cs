@@ -75,5 +75,10 @@ namespace Rio.EFModels.Entities
 
             return GetByAccountID(dbContext, accountDto.AccountID);
         }
+
+        public static bool ValidateAllExist(RioDbContext dbContext, List<int> accountIDs)
+        {
+            return dbContext.Account.Count(x => accountIDs.Contains(x.AccountID)) == accountIDs.Distinct().Count();
+        }
     }
 }

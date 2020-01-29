@@ -77,12 +77,28 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
+                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                        routerLink="/users/{{user?.UserID}}/edit-accounts">
+                        <span class="fas fa-edit"></span> Edit Accounts
+                    </a>
                     Accounts
                 </div>
-                <div class="card-body">
+                <div class="card-body" *ngIf="!userIsAdministrator()">
                     <div class="row" *ngFor="let account of accounts">
                         <div class="col-sm-12">
                             <a routerLink="/accounts/{{account.AccountID}}">{{account.AccountDisplayName}}</a>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="!accounts.length">
+                        <div class="col-sm-12">
+                            <em>This user is not assigned to manage any Accounts.</em>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" *ngIf="userIsAdministrator()">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <em>Administrators are able to view and manage all Accounts. The full list can be found on the <a routerLink="/accounts">Account index page</a></em>
                         </div>
                     </div>
                 </div>

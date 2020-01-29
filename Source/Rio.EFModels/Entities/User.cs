@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Rio.API.Util;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.User;
 
@@ -145,6 +146,22 @@ namespace Rio.EFModels.Entities
         public static bool ValidateAllExist(RioDbContext dbContext, List<int> userIDs)
         {
             return dbContext.User.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
+        }
+
+        public static UserDto SetAssociatedAccounts(RioDbContext dbContext, UserDto userDto, List<int> accountIDs)
+        {
+            var newAccountUsers = accountIDs.Select(accountID => new AccountUser() { UserID = userDto.UserID, AccountID = accountID }).ToList();
+
+            var existingAccountUsers = dbContext.User.Include(x => x.AccountUser)
+                .Single(x => x.UserID == userDto.UserID).AccountUser;
+
+            var allInDatabase = dbContext.AccountUser;
+
+            existingAccountUsers.Merge(newAccountUsers, allInDatabase, (x, y) => x.UserID == y.UserID && x.AccountID == y.AccountID);
+
+            dbContext.SaveChanges();
+
+            return GetByUserID(dbContext, userDto.UserID);
         }
     }
 }
