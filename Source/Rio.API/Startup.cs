@@ -47,6 +47,8 @@ namespace Rio.API
 
             services.Configure<RioConfiguration>(Configuration);
 
+            // todo: Calling 'BuildServiceProvider' from application code results in an additional copy of singleton services being created.
+            // Consider alternatives such as dependency injecting services as parameters to 'Configure'.
             var rioConfiguration = services.BuildServiceProvider().GetService<IOptions<RioConfiguration>>().Value;
 
             var keystoneHost = rioConfiguration.KEYSTONE_HOST;
