@@ -21,6 +21,7 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -495,5 +496,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
     const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
     return annualAllocation ? annualAllocation.ChartData : null;
+  }
+
+  public allowTrading(): boolean {
+    return environment.allowTrading;
   }
 }

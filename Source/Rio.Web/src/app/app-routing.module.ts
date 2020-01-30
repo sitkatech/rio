@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NotFoundComponent, UnauthenticatedComponent, SubscriptionInsufficientComponent } from './shared/pages';
-import { UnauthenticatedAccessGuard } from './shared/guards/unauthenticated-access/unauthenticated-access.guard';
+import { UnauthenticatedAccessGuard, AllowTradeGuard } from './shared/guards/unauthenticated-access/unauthenticated-access.guard';
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { HomeIndexComponent } from './pages/home/home-index/home-index.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
@@ -34,13 +34,15 @@ import { CreateUserCallbackComponent } from './pages/create-user-callback/create
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
 
 const routes: Routes = [
-  { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "trades/:tradeNumber", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "register-transfer/:waterTransferID", component: RegisterTransferComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "delete-posting/:postingID", component: PostingDeleteComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard] },
+  { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "trades/:tradeNumber", component: TradeDetailComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "register-transfer/:waterTransferID", component: RegisterTransferComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "delete-posting/:postingID", component: PostingDeleteComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
+  
+  
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/bulk-set-allocation", component: ParcelBulkSetAllocationComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard] },

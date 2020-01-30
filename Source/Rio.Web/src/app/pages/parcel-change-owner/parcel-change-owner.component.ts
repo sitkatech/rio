@@ -59,7 +59,6 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const today = new Date();
     this.saleDate = {date: {year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate()}, jsdate: today};
-    console.log(this.saleDate)
     this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
       this.ownerHasAccount = true;

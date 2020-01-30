@@ -11,6 +11,7 @@ import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserService } from 'src/app/services/user/user.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'header-nav',
@@ -57,8 +58,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
                 // display the correct active account in the dropdown below the username.
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account;
-                    console.log(this.authenticationService.getAvailableAccounts()) });
+                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account;});
 
                 forkJoin(
                     this.tradeService.getTradeActivityByAccountID(currentUser.UserID),
@@ -174,5 +174,9 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public compareAccountsFn(c1: AccountSimpleDto, c2: AccountSimpleDto): boolean {
         return c1 && c2 ? c1.AccountID === c2.AccountID : c1 === c2;
+    }
+
+    public allowTrading(): boolean {
+        return environment.allowTrading;
     }
 }
