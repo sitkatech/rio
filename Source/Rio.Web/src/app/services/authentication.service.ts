@@ -48,6 +48,7 @@ export class AuthenticationService {
               this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
               this.router.navigate(['/']);
             } else {
+              this.alertService.clearAlerts();
               const newUser = new UserCreateDto({
                 FirstName: claims["given_name"],
                 LastName: claims["family_name"],
@@ -176,6 +177,10 @@ export class AuthenticationService {
       ? user.Role.RoleID
       : null;
     return role === RoleEnum.Admin;
+  }
+
+  public isCurrentUserAnAdministrator(): boolean{
+    return this.isUserAnAdministrator(this.currentUser);
   }
 
   public isUserUnassigned(user: UserDto): boolean {

@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NotFoundComponent, UnauthenticatedComponent, SubscriptionInsufficientComponent } from './shared/pages';
-import { UnauthenticatedAccessGuard, AllowTradeGuard } from './shared/guards/unauthenticated-access/unauthenticated-access.guard';
+import { UnauthenticatedAccessGuard } from './shared/guards/unauthenticated-access/unauthenticated-access.guard';
+import { AllowTradeGuard } from "./shared/guards/unauthenticated-access/allow-trade-guard";
+import { ManagerOnlyGuard } from "./shared/guards/unauthenticated-access/manager-only-guard";
 import { UserListComponent } from './pages/user-list/user-list.component';
 import { HomeIndexComponent } from './pages/home/home-index/home-index.component';
 import { UserDetailComponent } from './pages/user-detail/user-detail.component';
@@ -42,16 +44,15 @@ const routes: Routes = [
   { path: "delete-posting/:postingID", component: PostingDeleteComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
   
-  
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/bulk-set-allocation", component: ParcelBulkSetAllocationComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id/edit-annual-allocation", component: ParcelEditAllocationComponent, canActivate: [UnauthenticatedAccessGuard] },
   { path: "parcels/:id/change-owner", component: ParcelChangeOwnerComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "users/:id/edit-accounts", component: UserEditAccountsComponent, canActivate: [UnauthenticatedAccessGuard]},
+  { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard]},
+  { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
+  { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
+  { path: "users/:id/edit-accounts", component: UserEditAccountsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard]},
   { path: "accounts", component: AccountListComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id", component: AccountDetailComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "accounts/:id/edit", component: AccountEditComponent, canActivate: [UnauthenticatedAccessGuard]},

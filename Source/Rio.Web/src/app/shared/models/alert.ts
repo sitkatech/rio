@@ -4,7 +4,8 @@ export class Alert {
     constructor(
         public message: string,
         public context: AlertContext = AlertContext.Primary,
-        public dismissable: boolean = true
+        public dismissable: boolean = true,
+        public uniqueCode: string = ""
     ) {
     }
 }

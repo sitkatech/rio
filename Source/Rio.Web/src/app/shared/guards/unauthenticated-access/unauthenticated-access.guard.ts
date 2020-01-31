@@ -3,7 +3,6 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Rout
 import { Observable } from 'rxjs';
 import { CookieStorageService } from '../../services/cookies/cookie-storage.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -25,12 +24,3 @@ export class UnauthenticatedAccessGuard implements CanActivate {
   }
 }
 
-export class AllowTradeGuard implements CanActivate {
-
-  constructor() {
-  }
-
-  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    return environment.allowTrading
-  }
-}
