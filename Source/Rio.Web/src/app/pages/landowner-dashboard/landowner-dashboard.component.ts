@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { ActivatedRoute } from '@angular/router';
@@ -22,6 +22,8 @@ import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-all
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
+import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
+import { AccountDto } from 'src/app/shared/models/account/account-dto';
 
 
 @Component({
@@ -30,6 +32,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./landowner-dashboard.component.scss']
 })
 export class LandownerDashboardComponent implements OnInit, OnDestroy {
+  @ViewChild('landownerWaterUseChart', {static: false}) landownerWaterUseChart: LandownerWaterUseChartComponent;
+  
   public waterYearToDisplay: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
@@ -189,6 +193,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       if (this.parcels && this.parcels.length > 0) {
         this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
       }
+
+      this.landownerWaterUseChart.buildColorScheme();
     })
   }
 
@@ -438,6 +444,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     }
 
+    const allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+    
     this.annualAllocationChartData = this.waterYears.map(x => {
       const allocation = this.getAnnualAllocation(x);
       const sold = this.getSoldAcreFeet(x);
@@ -456,10 +464,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "October",
         "November",
         "December"];
+
       return {
         Year: x,
         ChartData: {
-          name: "Annual Supply (Allocation +/- Trades)",
+          name: allocationLabel,
           series: months.map(y => { return { name: y, value: allocation + purchased - sold } })
         }
       }

@@ -15,7 +15,8 @@ namespace Rio.EFModels.Entities
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
-                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})"
+                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
+                ShortAccountDisplayName = $"#{account.AccountNumber} ({account.AccountName})"
             };
         }
         public static AccountDto AsDto(this Account account)

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { SeriesEntry, MultiSeriesEntry } from "src/app/shared/models/series-entry";
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'rio-landowner-water-allocation-chart',
   templateUrl: './landowner-water-allocation-chart.component.html',
@@ -14,7 +15,9 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
 
   view: any[] = [755, 400];
   
-  seriesDomain = ["Monthly Usage", "Average Usage (All Years)", "Annual Supply (Allocation +/- Trades)"];
+  allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+
+  seriesDomain = ["Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
 
   @Input() yDomain;
 

@@ -12,6 +12,8 @@ import { UserService } from 'src/app/services/user/user.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { environment } from 'src/environments/environment';
+import { AlertContext } from '../../models/enums/alert-context.enum';
+import { AccountDto } from '../../models/account/account-dto';
 
 @Component({
     selector: 'header-nav',
@@ -71,7 +73,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             if (currentUser && this.isAdministrator()){
                 this.userService.getUnassignedUserReport().subscribe(report =>{
                     if (report.Count > 0){
-                        this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`));
+                        this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`, AlertContext.Info, true, AlertService.USERS_AWAITING_CONFIGURATION));
                     }
                 })
             }

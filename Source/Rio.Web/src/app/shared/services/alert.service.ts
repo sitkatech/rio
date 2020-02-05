@@ -44,4 +44,5 @@ export class AlertService {
 
 
     public static NOT_FOUND_UNAUTHORIZED = "NotFoundUnauthorized";
+    public static USERS_AWAITING_CONFIGURATION = "UsersAwaitingConfiguration";
 }

@@ -109,6 +109,7 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the User IDs was invalid.");
             }
 
+            // todo: get added users, send them each an email that they were added to this account
             return Ok(Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs));
         }
 

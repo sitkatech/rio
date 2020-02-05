@@ -7,5 +7,6 @@
         public string AccountName { get; set; }
         public string Notes { get; set; }
         public string AccountDisplayName { get; set; }
+        public string ShortAccountDisplayName { get; set; }
     }
 }

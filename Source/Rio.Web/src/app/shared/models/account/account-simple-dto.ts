@@ -4,6 +4,7 @@ export class AccountSimpleDto{
     AccountNumber: number;
     Notes: string;
     AccountDisplayName: string;
+    ShortAccountDisplayName: string;
     
     constructor(obj?: any) {
         Object.assign(this, obj);

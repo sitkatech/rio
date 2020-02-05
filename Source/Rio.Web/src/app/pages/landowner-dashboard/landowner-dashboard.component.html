@@ -312,7 +312,7 @@
             </div>
             <div class="card-body" *ngIf="userHasParcels() && waterUsageChartData">
               <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
-                [parcelNumbers]="parcelNumbers">
+                [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
               </rio-landowner-water-use-chart>
               <p class="small">
                 *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.

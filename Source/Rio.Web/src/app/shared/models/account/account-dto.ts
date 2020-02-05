@@ -10,6 +10,7 @@ export class AccountDto {
     AccountDisplayName: string;
     NumberOfParcels: number;
     NumberOfUsers: number;
+    ShortAccountDisplayName;
     
     constructor(obj?: any) {
         Object.assign(this, obj);

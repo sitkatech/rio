@@ -113,6 +113,9 @@ namespace Rio.API.Controllers
             // todo: validation of any kind, do we need to ask Keystone if this GUID is valid before we create the record?
             var user = EFModels.Entities.User.CreateNewUser(_dbContext, userUpsertDto, userUpsertDto.LoginName,
                 userUpsertDto.UserGuid);
+
+            // todo: email admin that this user was created.
+
             return Ok(user);
         }
 
@@ -230,6 +233,7 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the Account IDs was invalid.");
             }
 
+            // todo: get added accounts; send email to user that these accounts have been added
             return Ok(EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs));
         }
 

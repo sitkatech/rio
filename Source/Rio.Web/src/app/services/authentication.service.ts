@@ -6,7 +6,7 @@ import { Subject, throwError, BehaviorSubject, Observable } from 'rxjs';
 import { catchError, map, filter } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { isNullOrUndefined } from 'util';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
 import { AccountSimpleDto } from '../shared/models/account/account-simple-dto';
 import { AlertService } from '../shared/services/alert.service';
@@ -70,6 +70,21 @@ export class AuthenticationService {
           this._currentUserSetSubject.next(null);
         }
       });
+
+    // check for a currentUser at NavigationStart so that authorization-based guards can work with promises.
+    this.router.events
+      .pipe(filter(e=>e instanceof NavigationStart))
+      .subscribe((e: NavigationStart)=>{
+        if (this.isAuthenticated() && !this.currentUser){
+          var claims = this.oauthService.getIdentityClaims();
+          var globalID = claims["sub"];
+          console.log("Authenticated but no user found...")
+          this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(user => {
+            this.currentUser = user;
+            this._currentUserSetSubject.next(this.currentUser);
+          });
+        }
+      })
 
 
     this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
@@ -150,7 +165,6 @@ export class AuthenticationService {
   }
 
   public createAccount() {
-    debugger;
     localStorage.setItem("loginOnReturn", "true");
     const redirectUrl = encodeURIComponent(environment.createAccountRedirectUrl);
     window.location.href = `${environment.createAccountUrl}${redirectUrl}`;

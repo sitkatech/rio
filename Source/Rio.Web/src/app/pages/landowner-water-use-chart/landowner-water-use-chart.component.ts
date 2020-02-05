@@ -31,14 +31,7 @@ export class LandownerWaterUseChartComponent implements OnInit {
   }
 
   ngOnInit() {
-    let colorList: string[];
-
-    const numOfParcels = this.parcelNumbers.length;
-
-    colorList = palette('mpn65', numOfParcels).map(x=>`#${x}`);
-    
-    this.colorScheme = {domain: colorList};
-    this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.parcelNumbers, this.colorScheme);
+    this.buildColorScheme();
   }
 
   public legendLabelActivate(item: any): void {
@@ -47,6 +40,17 @@ export class LandownerWaterUseChartComponent implements OnInit {
 
   public legendLabelDeactivate(item: any): void {
     this.activeEntries = [];
+  }
+
+  public buildColorScheme(){
+    let colorList: string[];
+
+    const numOfParcels = this.parcelNumbers.length;
+
+    colorList = palette('mpn65', numOfParcels).map(x=>`#${x}`);
+    
+    this.colorScheme = {domain: colorList};
+    this.colors = new ColorHelper(this.colorScheme, 'ordinal', this.parcelNumbers, this.colorScheme);
   }
 
 }
