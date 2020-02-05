@@ -16,6 +16,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -491,5 +492,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return result;
     }
     return 0;
+  }
+
+  public allowTrading():boolean{
+    return environment.allowTrading;
   }
 }

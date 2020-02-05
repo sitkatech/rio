@@ -125,10 +125,6 @@ export class AuthenticationService {
         this.updateCurrentAccountSubject();
       })
     }
-
-    // if (this.currentUser.Role.RoleID == RoleEnum.Disabled){
-    //   this.router.navigate(["/"]);
-    // }
   }
 
   private _availableAccounts: Array<AccountSimpleDto>;
@@ -209,5 +205,10 @@ export class AuthenticationService {
       ? user.Role.RoleID
       : null;
     return role === RoleEnum.Disabled;
+  }
+
+
+  public isCurrentUserNullOrUndefined(): boolean {
+    return !this.currentUser;
   }
 }

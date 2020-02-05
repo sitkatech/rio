@@ -10,6 +10,8 @@ using Rio.Models.DataTransferObjects.WaterUsage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 
@@ -278,5 +280,66 @@ namespace Rio.API.Controllers
 
             return parcelWaterUsageDtos;
         }
+
+        private static List<MailMessage> GenerateAddedUserEmails(string rioUrl, OfferDto offer,
+    TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
+        {
+            // TODO: Make this be what it's supposed to be instead of what it is
+            AccountDto buyer;
+            AccountDto seller;
+            if (currentTrade.CreateAccount.AccountID == posting.CreateAccount.AccountID)
+            {
+                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
+                {
+                    buyer = posting.CreateAccount;
+                    seller = currentTrade.CreateAccount;
+                }
+                else
+                {
+                    buyer = currentTrade.CreateAccount;
+                    seller = posting.CreateAccount;
+                }
+            }
+            else
+            {
+                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
+                {
+                    buyer = posting.CreateAccount;
+                    seller = currentTrade.CreateAccount;
+                }
+                else
+                {
+                    buyer = currentTrade.CreateAccount;
+                    seller = posting.CreateAccount;
+                }
+            }
+
+            var mailMessages = new List<MailMessage>();
+            var messageBody = $@"Your offer to trade water has been accepted.
+<ul>
+    <li><strong>Buyer:</strong> {buyer.AccountName} ({string.Join(", ", buyer.Users.Select(x => x.Email))})</li>
+    <li><strong>Seller:</strong> {seller.AccountName} ({string.Join(", ", seller.Users.Select(x => x.Email))})</li>
+    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
+    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
+    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
+</ul>
+To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
+<br /><br />
+<a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
+{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+            var mailTos = (new List<AccountDto> { buyer, seller }).SelectMany(x => x.Users);
+            foreach (var mailTo in mailTos)
+            {
+                var mailMessage = new MailMessage
+                {
+                    Subject = $"Trade {currentTrade.TradeNumber} Accepted",
+                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                };
+                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+                mailMessages.Add(mailMessage);
+            }
+            return mailMessages;
+        }
+
     }
 }
