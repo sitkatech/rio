@@ -10,7 +10,6 @@ import { Alert } from '../../models/alert';
   providedIn: 'root'
 })
 export class ManagerOnlyGuard implements CanActivate {
-  // for locking down routes that don't make an unauthorized API calls but still aren't an intended part of the UX
   constructor(private router: Router, private alertService: AlertService, private authenticationService: AuthenticationService) {
   }
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {

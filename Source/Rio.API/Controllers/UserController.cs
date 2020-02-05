@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.Extensions.DependencyInjection;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -114,11 +115,15 @@ namespace Rio.API.Controllers
         [LoggedInUnclassifiedFeature]
         public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userUpsertDto)
         {
-            // todo: validation of any kind, do we need to ask Keystone if this GUID is valid before we create the record?
             var user = EFModels.Entities.User.CreateNewUser(_dbContext, userUpsertDto, userUpsertDto.LoginName,
                 userUpsertDto.UserGuid);
 
-            // todo: email admin that this user was created.
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
+            foreach (var mailMessage in mailMessages)
+            {
+                SendEmailMessage(smtpClient, mailMessage);
+            }
 
             return Ok(user);
         }
@@ -322,58 +327,23 @@ To finalize this transaction, the buyer and seller must complete payment and any
             return mailMessages;
         }
 
-        private static List<MailMessage> GenerateUserCreatedEmail(string rioUrl, OfferDto offer,
-    TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
+        private static List<MailMessage> GenerateUserCreatedEmail(string rioUrl, UserDto user, RioDbContext dbContext)
         {
-            // TODO: Make this be what it's supposed to be instead of what it is
-            AccountDto buyer;
-            AccountDto seller;
-            if (currentTrade.CreateAccount.AccountID == posting.CreateAccount.AccountID)
-            {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
-            }
-            else
-            {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
-            }
-
             var mailMessages = new List<MailMessage>();
-            var messageBody = $@"Your offer to trade water has been accepted.
-<ul>
-    <li><strong>Buyer:</strong> {buyer.AccountName} ({string.Join(", ", buyer.Users.Select(x => x.Email))})</li>
-    <li><strong>Seller:</strong> {seller.AccountName} ({string.Join(", ", seller.Users.Select(x => x.Email))})</li>
-    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
-    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
-    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
-</ul>
-To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
-<br /><br />
-<a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
+            var messageBody = $@"A new user has signed up to the Rosedale-Rio Bravo Water Accounting Platform: <br/><br/>
+ {user.FullName} ({user.Email}) <br/><br/>
+As an administrator of the Water Accounting Platform, you can assign them a role and associate them with a Billing Account by following <a href='{rioUrl}/users/{user.UserID}'>this link</a>. <br/><br/>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
-            var mailTos = (new List<AccountDto> { buyer, seller }).SelectMany(x => x.Users);
+
+            // todo!
+             var administrators = EFModels.Entities.User.ListByRole(dbContext, RoleEnum.Admin);
+
+             var mailTos = administrators;
             foreach (var mailTo in mailTos)
             {
                 var mailMessage = new MailMessage
                 {
-                    Subject = $"Trade {currentTrade.TradeNumber} Accepted",
+                    Subject = $"New User in Rosedale-Rio Bravo Water Accounting Platform",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
@@ -382,5 +352,13 @@ To finalize this transaction, the buyer and seller must complete payment and any
             return mailMessages;
         }
 
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        {
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            smtpClient.Send(mailMessage);
+        }
     }
 }
