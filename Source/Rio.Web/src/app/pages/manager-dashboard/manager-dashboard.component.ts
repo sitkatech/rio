@@ -326,11 +326,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.landownerUsageReportGridColumnDefs = [
       {
         headerName: 'Landowner', valueGetter: function (params: any) {
-          return { LinkValue: params.data.UserID, LinkDisplay: params.data.FullName };
+          return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/users/" },
+        cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: function (params: any) {
-          return params.data.FullName;
+          return params.data.AccountName;
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;

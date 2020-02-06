@@ -12,10 +12,9 @@ namespace Rio.EFModels.Entities
         {
         }
 
-        public int UserID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
+        public int AccountID { get; set; }
+        public string AccountName { get; set; }
+        public int AccountNumber { get; set; }
 
         public decimal? ProjectWater { get; set; }
         public decimal? Reconciliation { get; set; }
@@ -37,12 +36,11 @@ namespace Rio.EFModels.Entities
             var sqlParameter = new SqlParameter("year", year);
             var landownerUsageReports = dbContext.LandownerUsageReports.FromSqlRaw($"EXECUTE dbo.pLandownerUsageReport @year", sqlParameter).ToList();
 
-            var landownerUsageReportDtos = landownerUsageReports.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).Select(x => new LandownerUsageReportDto()
+            var landownerUsageReportDtos = landownerUsageReports.OrderBy(x => x.AccountNumber).Select(x => new LandownerUsageReportDto()
             {
-                UserID = x.UserID,
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
+                AccountID = x.AccountID,
+                AccountName = x.AccountName,
+                AccountNumber = x.AccountNumber,
                 ProjectWater = x.ProjectWater,
                 Reconciliation = x.Reconciliation,
                 NativeYield = x.NativeYield,

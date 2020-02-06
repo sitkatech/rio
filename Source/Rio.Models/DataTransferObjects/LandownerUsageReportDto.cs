@@ -2,9 +2,9 @@
 {
     public class LandownerUsageReportDto
     {
-        public int UserID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public int AccountID { get; set; }
+        public string AccountName { get; set; }
+        public int AccountNumber { get; set; }
         public string Email { get; set; }
         public decimal? ProjectWater { get; set; }
         public decimal? Reconciliation { get; set; }
@@ -20,6 +20,6 @@
         public int NumberOfPostings { get; set; }
         public int NumberOfTrades { get; set; }
         public string MostRecentTradeNumber { get; set; }
-        public string FullName => $"{FirstName} {LastName}";
+        public string FullName => $"{AccountName} {AccountNumber}";
     }
 }
