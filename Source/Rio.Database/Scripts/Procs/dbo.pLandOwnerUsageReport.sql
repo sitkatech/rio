@@ -9,8 +9,7 @@ create procedure dbo.pLandOwnerUsageReport
 as
 
 begin
-
-select a.UserID, a.FirstName, a.LastName, a.Email, a.AcresManaged, a.Allocation, a.Purchased, a.Sold,
+select a.AccountID, a.AccountName, a.AccountNumber, a.AcresManaged, a.Allocation, a.Purchased, a.Sold,
 a.ProjectWater, a.Reconciliation, a.NativeYield, a.StoredWater,
 a.Allocation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
 a.Allocation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
@@ -18,7 +17,7 @@ a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
 (
-	select u.UserID, u.FirstName, u.LastName, u.Email, 
+	select acc.AccountID, acc.AccountName, acc.AccountNumber, 
 			isnull(pa.ProjectWater, 0) as ProjectWater,
 			isnull(pa.Reconciliation, 0) as Reconciliation,
 			isnull(pa.NativeYield, 0) as NativeYield,
@@ -30,64 +29,58 @@ from
 			isnull(pme.UsageToDate, 0) as UsageToDate,
 			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
-	from dbo.[User] u
+	from dbo.Account acc
 	left join
 	(
-		select u.UserID, 
+		select acc.AccountID, 
 				sum(p.ParcelAreaInAcres) as AcresManaged, 
 				sum(pa.AcreFeetAllocated) as Allocation, 
 				sum(case when pa.ParcelAllocationTypeID = 1 then pa.AcreFeetAllocated else 0 end) as ProjectWater,
 				sum(case when pa.ParcelAllocationTypeID = 2 then pa.AcreFeetAllocated else 0 end) as Reconciliation,
 				sum(case when pa.ParcelAllocationTypeID = 3 then pa.AcreFeetAllocated else 0 end) as NativeYield,
 				sum(case when pa.ParcelAllocationTypeID = 4 then pa.AcreFeetAllocated else 0 end) as StoredWater
-		from dbo.[User] u
-		join dbo.AccountUser au on au.UserID = u.UserID
-		join dbo.AccountParcel up on au.AccountID = up.AccountID
+		from dbo.Account acc
+		join dbo.AccountParcel up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelAllocation pa on p.ParcelID = pa.ParcelID and pa.WaterYear = @year
-		group by u.UserID
-	) pa on u.UserID = pa.UserID
+		group by acc.AccountID
+	) pa on acc.AccountID = pa.AccountID
 	left join
 	(
-		select u.UserID, sum(pme.EvapotranspirationRate) as UsageToDate
-		from dbo.[User] u
-		join dbo.AccountUser au on au.UserID = u.UserID
-		join dbo.AccountParcel up on au.AccountID = up.AccountID
+		select acc.AccountID , sum(pme.EvapotranspirationRate) as UsageToDate
+		from dbo.Account acc
+		join dbo.AccountParcel up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelMonthlyEvapotranspiration pme on p.ParcelID = pme.ParcelID and pme.WaterYear = @year
-		group by u.UserID
-	) pme on u.UserID = pme.UserID
+		group by acc.AccountID
+	) pme on acc.AccountID = pme.AccountID
 	left join 
 	(
-		select u.UserID, 
+		select acc.AccountID, 
 				sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as Purchased,
 				sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as Sold
-		from dbo.[User] u
-		join dbo.AccountUser au on u.UserID = au.AccountID
-		join dbo.WaterTransferRegistration wtr on au.AccountID = wtr.AccountID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
+		from dbo.Account acc
+		join dbo.WaterTransferRegistration wtr on acc.AccountID = wtr.AccountID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
 		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID and year(wt.TransferDate) = @year
-		group by u.UserID
-	) wts on u.UserID = wts.UserID
+		group by acc.AccountID
+	) wts on acc.AccountID = wts.AccountID
 	left join 
 	(
-		select u.UserID, count(post.PostingID) as NumberOfPostings
-		from dbo.[User] u
-		join dbo.AccountUser au on u.UserID = au.AccountID
-		join dbo.Posting post on au.AccountID = post.CreateAccountID
+		select acc.AccountID, count(post.PostingID) as NumberOfPostings
+		from dbo.Account acc
+		join dbo.Posting post on acc.AccountID = post.CreateAccountID
 		where year(post.PostingDate) = @year
-		group by u.UserID
-	) post on u.UserID = post.UserID
+		group by acc.AccountID
+	) post on acc.AccountID = post.AccountID
 	left join
 	(
-		select u.UserID, count(post.TradeID) as NumberOfTrades
-		from dbo.[User] u
-		join dbo.AccountUser au on u.UserID = au.AccountID
-		join dbo.Trade post on au.AccountID = post.CreateAccountID
+		select acc.AccountID, count(post.TradeID) as NumberOfTrades
+		from dbo.Account acc
+		join dbo.Trade post on acc.AccountID = post.CreateAccountID
 		where year(post.TradeDate) = @year
-		group by u.UserID
-	) tr on u.UserID = tr.UserID
+		group by acc.AccountID
+	) tr on acc.AccountID = tr.AccountID
 ) a
-left join dbo.AccountUser au on au.UserID = a.UserID
 left join
 (
 	select th.TradeID, th.TradeNumber, th.AccountID, th.TransactionDate, rank() over(partition by th.AccountID order by th.TransactionDate desc, th.TradeNumber desc) as Ranking
@@ -110,7 +103,7 @@ left join
 		join dbo.Trade t on o.TradeID = t.TradeID
 		where wtr.StatusDate is not null
 	) th
-) mrtr on au.AccountID = mrtr.AccountID and mrtr.Ranking = 1
+) mrtr on a.AccountID = mrtr.AccountID and mrtr.Ranking = 1
 
 
 end
