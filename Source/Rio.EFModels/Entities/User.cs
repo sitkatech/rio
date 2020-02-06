@@ -79,6 +79,12 @@ namespace Rio.EFModels.Entities
             return user?.AsDto();
         }
 
+        public static List<UserDto> GetByUserID(RioDbContext dbContext, List<int> userIDs)
+        {
+            return GetUserImpl(dbContext).Where(x => userIDs.Contains(x.UserID)).Select(x=>x.AsDto()).ToList();
+            
+        }
+
         public static UserDto GetByUserGuid(RioDbContext dbContext, Guid userGuid)
         {
             var user = GetUserImpl(dbContext)
@@ -148,12 +154,14 @@ namespace Rio.EFModels.Entities
             return dbContext.User.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
         }
 
-        public static UserDto SetAssociatedAccounts(RioDbContext dbContext, UserDto userDto, List<int> accountIDs)
+        public static UserDto SetAssociatedAccounts(RioDbContext dbContext, UserDto userDto, List<int> accountIDs, out List<int> addedAccountIDs)
         {
             var newAccountUsers = accountIDs.Select(accountID => new AccountUser() { UserID = userDto.UserID, AccountID = accountID }).ToList();
 
             var existingAccountUsers = dbContext.User.Include(x => x.AccountUser)
                 .Single(x => x.UserID == userDto.UserID).AccountUser;
+
+            addedAccountIDs = accountIDs.Where(x => !existingAccountUsers.Select(y => y.AccountID).Contains(x)).ToList();
 
             var allInDatabase = dbContext.AccountUser;
 

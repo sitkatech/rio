@@ -27,6 +27,12 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.AccountID == accountID).AsDto();
         }
 
+        public static List<AccountDto> GetByAccountID(RioDbContext dbContext, List<int> accountIDs)
+        {
+            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+                .Where(x => accountIDs.Contains(x.AccountID)).Select(x=>x.AsDto()).ToList();
+        }
+
         public static AccountDto UpdateAccountEntity(RioDbContext dbContext, int accountID, AccountUpdateDto accountUpdateDto)
         {
             var account = dbContext.Account
@@ -60,12 +66,14 @@ namespace Rio.EFModels.Entities
             return GetByAccountID(dbContext, account.AccountID);
         }
 
-        public static AccountDto SetAssociatedUsers(RioDbContext dbContext, AccountDto accountDto, List<int> userIDs)
+        public static AccountDto SetAssociatedUsers(RioDbContext dbContext, AccountDto accountDto, List<int> userIDs, out List<int> addedUserIDs)
         {
             var newAccountUsers = userIDs.Select(userID => new AccountUser(){AccountID = accountDto.AccountID, UserID = userID}).ToList();
 
             var existingAccountUsers = dbContext.Account.Include(x => x.AccountUser)
                 .Single(x => x.AccountID == accountDto.AccountID).AccountUser;
+
+            addedUserIDs = userIDs.Where(x => !existingAccountUsers.Select(y => y.UserID).Contains(x)).ToList();
 
             var allInDatabase = dbContext.AccountUser;
 

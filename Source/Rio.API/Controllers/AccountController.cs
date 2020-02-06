@@ -11,8 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
+using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
@@ -23,12 +26,14 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<AccountController> _logger;
         private readonly KeystoneService _keystoneService;
+        private readonly RioConfiguration _rioConfiguration;
 
-        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService)
+        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         [HttpGet("accountStatus")]
@@ -67,7 +72,7 @@ namespace Rio.API.Controllers
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
             if (accountDto == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
 
             var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
@@ -112,7 +117,18 @@ namespace Rio.API.Controllers
             }
 
             // todo: get added users, send them each an email that they were added to this account
-            return Ok(Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs));
+            var updatedAccount = Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs, out var addedUserIDs);
+
+            var addedUsers = EFModels.Entities.User.GetByUserID(_dbContext, addedUserIDs);
+
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateAddedUserEmails(_rioConfiguration.RIO_WEB_URL, updatedAccount, addedUsers);
+            foreach (var mailMessage in mailMessages)
+            {
+                SendEmailMessage(smtpClient, mailMessage);
+            }
+
+            return Ok(updatedAccount);
         }
 
 
@@ -281,64 +297,35 @@ namespace Rio.API.Controllers
             return parcelWaterUsageDtos;
         }
 
-        private static List<MailMessage> GenerateAddedUserEmails(string rioUrl, OfferDto offer,
-    TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
+        private static List<MailMessage> GenerateAddedUserEmails(string rioUrl, AccountDto addedAccount, IEnumerable<UserDto> addedUsers)
         {
-            // TODO: Make this be what it's supposed to be instead of what it is
-            AccountDto buyer;
-            AccountDto seller;
-            if (currentTrade.CreateAccount.AccountID == posting.CreateAccount.AccountID)
-            {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
-            }
-            else
-            {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
-            }
 
             var mailMessages = new List<MailMessage>();
-            var messageBody = $@"Your offer to trade water has been accepted.
-<ul>
-    <li><strong>Buyer:</strong> {buyer.AccountName} ({string.Join(", ", buyer.Users.Select(x => x.Email))})</li>
-    <li><strong>Seller:</strong> {seller.AccountName} ({string.Join(", ", seller.Users.Select(x => x.Email))})</li>
-    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
-    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
-    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
-</ul>
-To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
-<br /><br />
-<a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
-            var mailTos = (new List<AccountDto> { buyer, seller }).SelectMany(x => x.Users);
-            foreach (var mailTo in mailTos)
+            var messageBody = $@"The following account has been added to your profile in the Rosedale-Rio Bravo Water Accounting Platform. You can now manage this accounts in the Water Accounting Platform:<br/><br/>
+{addedAccount.AccountDisplayName}<br/><br/>
+You can view parcels associated with this account and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
+
+            var mailTos = addedUsers;
+            foreach(var mailTo in mailTos)
             {
                 var mailMessage = new MailMessage
                 {
-                    Subject = $"Trade {currentTrade.TradeNumber} Accepted",
+                    Subject = $"Rosedale-Rio Bravo Water Accounting Platform: Water Accounts Added",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
                 mailMessages.Add(mailMessage);
             }
             return mailMessages;
+        }
+
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        {
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            smtpClient.Send(mailMessage);
         }
 
     }

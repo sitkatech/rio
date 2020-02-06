@@ -122,7 +122,7 @@ namespace Rio.API.Controllers
             var mailMessages = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
             foreach (var mailMessage in mailMessages)
             {
-                SendEmailMessage(smtpClient, mailMessage);
+                SendEmailMessage(smtpClient, mailMessage, false);
             }
 
             return Ok(user);
@@ -242,8 +242,17 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the Account IDs was invalid.");
             }
 
-            // todo: get added accounts; send email to user that these accounts have been added
-            return Ok(EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs));
+            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
+
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.RIO_WEB_URL, updatedUserDto, addedAccounts);
+            foreach (var mailMessage in mailMessages)
+            {
+                SendEmailMessage(smtpClient, mailMessage, true);
+            }
+
+            return Ok(updatedUserDto);
         }
 
         [HttpGet("users/{userID}/parcels/{year}")]
@@ -267,63 +276,25 @@ namespace Rio.API.Controllers
             return Ok(landownerUsageReportDtos);
         }
 
-        private static List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, OfferDto offer,
-            TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
+        private static List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)
         {
-            // TODO: Make this be what it's supposed to be instead of what it is
-            AccountDto buyer;
-            AccountDto seller;
-            if (currentTrade.CreateAccount.AccountID == posting.CreateAccount.AccountID)
+            var mailMessages = new List<MailMessage>();
+            var messageBody = $@"The following accounts have been added to your profile in the Rosedale-Rio Bravo Water Accounting Platform. You can now manage these accounts in the Water Accounting Platform:<br/><br/>";
+            foreach (var account in addedAccounts)
             {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
-            }
-            else
-            {
-                if (posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy)
-                {
-                    buyer = posting.CreateAccount;
-                    seller = currentTrade.CreateAccount;
-                }
-                else
-                {
-                    buyer = currentTrade.CreateAccount;
-                    seller = posting.CreateAccount;
-                }
+                messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            var mailMessages = new List<MailMessage>();
-            var messageBody = $@"Your offer to trade water has been accepted.
-<ul>
-    <li><strong>Buyer:</strong> {buyer.AccountName} ({string.Join(", ", buyer.Users.Select(x => x.Email))})</li>
-    <li><strong>Seller:</strong> {seller.AccountName} ({string.Join(", ", seller.Users.Select(x => x.Email))})</li>
-    <li><strong>Quantity:</strong> {offer.Quantity} acre-feet</li>
-    <li><strong>Unit Price:</strong> {offer.Price:$#,##0.00} per acre-foot</li>
-    <li><strong>Total Price:</strong> {(offer.Price * offer.Quantity):$#,##0.00}</li>
-</ul>
-To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
-<br /><br />
-<a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
-            var mailTos = (new List<AccountDto> { buyer, seller }).SelectMany(x => x.Users);
-            foreach (var mailTo in mailTos)
+            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
+
+            var mailTo = updatedUser;
+            var mailMessage = new MailMessage
             {
-                var mailMessage = new MailMessage
-                {
-                    Subject = $"Trade {currentTrade.TradeNumber} Accepted",
-                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
-                };
-                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
-                mailMessages.Add(mailMessage);
-            }
+                Subject = $"Rosedale-Rio Bravo Water Accounting Platform: Water Accounts Added",
+                Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+            };
+            mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
+            mailMessages.Add(mailMessage);
             return mailMessages;
         }
 
@@ -335,7 +306,6 @@ To finalize this transaction, the buyer and seller must complete payment and any
 As an administrator of the Water Accounting Platform, you can assign them a role and associate them with a Billing Account by following <a href='{rioUrl}/users/{user.UserID}'>this link</a>. <br/><br/>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
 
-            // todo!
              var administrators = EFModels.Entities.User.ListByRole(dbContext, RoleEnum.Admin);
 
              var mailTos = administrators;
@@ -352,12 +322,16 @@ As an administrator of the Water Accounting Platform, you can assign them a role
             return mailMessages;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage, bool addAdminsAsBccRecipients)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            if (addAdminsAsBccRecipients)
+            {
+                SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
+                    EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            }
             smtpClient.Send(mailMessage);
         }
     }
