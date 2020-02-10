@@ -5,7 +5,7 @@ export const environment = {
   apiHostName: 'api-rrbwatertrading.sitkatech.com',
   createAccountUrl: "https://keystone.sitkatech.com/Authentication/Register?RedirectUrl=",
   createAccountRedirectUrl: "https://waterbudget.rrbwsd.com/",
-  allowTrading: false,
+  allowTrading: true,
 
   keystoneAuthConfiguration: {
     clientId: 'Rio',
