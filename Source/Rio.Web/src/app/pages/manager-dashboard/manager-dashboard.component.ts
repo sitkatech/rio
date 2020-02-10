@@ -56,7 +56,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.waterYearToDisplay = (new Date()).getFullYear();
+      // todo: fix this after default display year is built
+      // this.waterYearToDisplay = (new Date()).getFullYear();
+      this.waterYearToDisplay = 2019;
       this.initializeTradeActivityGrid();
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();

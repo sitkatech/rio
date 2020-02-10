@@ -145,7 +145,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.parcelService.getWaterYears()
     ).subscribe(([postings, trades, waterTransfers, waterYears]) => {
       this.waterYears = waterYears;
-      this.waterYearToDisplay = (new Date()).getFullYear();
+      // todo: after default display year is built, fix this 
+      this.waterYearToDisplay = 2019;
+      //this.waterYearToDisplay = (new Date()).getFullYear();
       this.postings = postings;
       this.trades = trades;
       this.waterTransfers = waterTransfers;
