@@ -6,7 +6,7 @@ namespace Rio.API.Services
 {
     public static class DateUtilities
     {
-        public const int MinimumYear = 2016;
+        public const int MinimumYear = 2017;
 
         public enum Month
         {
@@ -242,7 +242,9 @@ namespace Rio.API.Services
 
         public static List<int> GetWaterYears()
         {
-            return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
+            //return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
+            //TODO uncomment the above and get rid of the below
+            return new List<int> {2017, 2018, 2019};
         }
     }
 }
