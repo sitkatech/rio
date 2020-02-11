@@ -39,6 +39,19 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public waterYears: Array<number>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;
 
+  public months = ["January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"];
+
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -75,6 +88,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     forkJoin(
       this.accountService.getParcelWaterUsageByAccountID(this.user.UserID, this.waterYearToDisplay)
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
+      console.log(parcelMonthlyEvaporations)
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })
   }

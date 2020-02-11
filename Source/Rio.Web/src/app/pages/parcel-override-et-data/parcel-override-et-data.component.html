@@ -1,16 +1,12 @@
 <div class="container mt-sm-4" *ngIf="user">
-    <div class="float-right">
+    <div class="float-right pr-0">
         <div class="row">
-            <div class="col-md-7" style="white-space: nowrap">Viewing year: </div>
-            <div class="col-md-5">
-                <select class="form-control" [(ngModel)]="waterYearToDisplay" (change)="updateAnnualData()">
-                    <ng-template ngFor let-waterYear [ngForOf]="waterYears">
-                        <option value="{{waterYear}}">{{waterYear}}</option>
-                    </ng-template>
-                </select>
-            </div>
+          <div class="col-md-12">
+            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+              (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+          </div>
         </div>
-    </div>
+      </div>
     <h2>
         Override ET Data for - {{user.FullName}} - {{waterYearToDisplay}}
     </h2>
@@ -28,11 +24,17 @@
                             <thead>
                                 <tr>
                                     <th>Parcel Number</th>
+                                    <th *ngFor="let month of months">{{month}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let parcel of parcels">
-                                    <td>{{parcel.ParcelNumber}}</td>
+                                    <td class="text-nowrap">{{parcel.ParcelNumber}}</td>
+                                    <td *ngFor="let monthlyEvap of parcelMonthlyEvaporations">{{monthlyEvap.EvapotranspirationRate}} <input type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    
                                 </tr>
                             </tbody>
                         </table>
