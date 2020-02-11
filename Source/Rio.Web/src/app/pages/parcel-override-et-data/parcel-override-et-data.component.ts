@@ -39,18 +39,20 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public waterYears: Array<number>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;
 
-  public months = ["January",
-        "February",
-        "March",
-        "April",
+  public isEditing: boolean = false;
+
+  public months = ["Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"];
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"];
 
   constructor(
     private route: ActivatedRoute,
@@ -88,7 +90,6 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     forkJoin(
       this.accountService.getParcelWaterUsageByAccountID(this.user.UserID, this.waterYearToDisplay)
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
-      console.log(parcelMonthlyEvaporations)
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })
   }
@@ -101,5 +102,27 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return Array.from(new Set(this.parcels.map((item: any) => item.ParcelID)));
+  }
+
+  public getTotalWaterUsageForMonth(monthNum : number) : number {
+    let sum = 0;
+    if (this.parcelMonthlyEvaporations !== null && this.parcelMonthlyEvaporations !== undefined)
+    {
+      sum = this.parcelMonthlyEvaporations.filter(evapData => evapData.WaterMonth == monthNum)
+                                          .reduce((sum, current) => sum + current.EvapotranspirationRate, 0);
+    }
+    return sum
+  }
+
+  public toggleEditMode() : void {
+    this.isEditing = this.isEditing === true ? false : true;
+  }
+
+  public confirmSaveOverrideEtChanges() : void {
+    this.isEditing = false;
+  }
+
+  public cancelOverrideEtChanges() : void {
+    this.isEditing = false;
   }
 }

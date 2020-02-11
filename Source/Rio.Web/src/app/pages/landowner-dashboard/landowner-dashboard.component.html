@@ -319,7 +319,7 @@
               </div>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel <!-- <a routerLink="/parcel-override-et-data/{{currentUser.UserID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a> -->
+          {{waterYearToDisplay}} Water Usage by Parcel <a routerLink="/parcel-override-et-data/{{currentUser.UserID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
         </div>
         <div *ngIf="userHasParcels() && waterUsageChartData && waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock">          
         </div>
