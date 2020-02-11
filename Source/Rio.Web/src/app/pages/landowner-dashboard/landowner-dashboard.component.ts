@@ -67,18 +67,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
 
-  public months = ["January",
-        "February",
-        "March",
-        "April",
+  public months = ["Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"];
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"];
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = [
     { name: "January", value: 0 },
@@ -522,5 +522,31 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     else {
       this.waterUsageByParcelViewType = "chart";
     }
+  }
+
+  public getTotalWaterUsageForMonth(monthNum : number) : number {
+    let currentWaterUsage = this.getWaterUsageForWaterYear();
+    let sum = 0;
+    if (currentWaterUsage != null && currentWaterUsage != undefined) {
+      currentWaterUsage[monthNum].series.forEach(element => {
+        sum += element.value;
+      });
+    }
+    return sum;
+  }
+
+  public getTotalWaterUsageForParcel(parcelNum : string) : number {
+    let currentWaterUsage = this.getWaterUsageForWaterYear();
+    let sum = 0;
+    if (currentWaterUsage != null && currentWaterUsage != undefined) {
+      currentWaterUsage.forEach(month => {
+        month.series.forEach(parcelUsage => {
+          if (parcelUsage.name === parcelNum) {
+            sum += parcelUsage.value;
+          }
+        })
+      })
+    }
+    return sum;
   }
 }

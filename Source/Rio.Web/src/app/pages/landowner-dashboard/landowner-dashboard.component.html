@@ -335,21 +335,31 @@
         </ng-template>
         <ng-template #tableBlock>
           <div class="card-body">
+            <p>*Measurements in acre-feet</p>
             <table class="table table-responsive">
               <thead>
                 <th></th>
                 <th *ngFor="let month of months">{{month}}</th>
+                <th>Total</th>
               </thead>
               <tbody>
-                <tr *ngFor="let parcel of parcelNumbers">
-                  <td class="text-nowrap"><strong>{{parcel}}</strong></td>
+                <tr *ngFor="let parcel of parcels">
+                  <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
                   <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                     <ng-container *ngFor="let seriesData of monthData.series">
-                      <td *ngIf="seriesData.name === parcel">{{seriesData.value}}</td>
+                      <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">{{seriesData.value | number:"1.1"}}</td>
                     </ng-container>
                   </ng-container>
+                  <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1"}}</strong></td>
                 </tr>
               </tbody>
+              <tfoot>
+                <th><strong>Total</strong></th>
+                <th class="text-right" *ngFor="let month of months; let i = index">
+                  {{getTotalWaterUsageForMonth(i) | number:"1.1"}}
+                </th>
+                <th class="text-right">{{getWaterUsageToDate() | number: "1.1"}}</th>
+              </tfoot>
             </table>
             <p class="small">
               *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
