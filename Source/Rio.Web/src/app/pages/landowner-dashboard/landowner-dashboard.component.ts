@@ -42,6 +42,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public showPurchasedDetails: boolean;
   public showSoldDetails: boolean;
   public unitsShown: string = "ac-ft";
+  public waterUsageByParcelViewType: string = "chart";
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -65,6 +66,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
+
+  public months = ["January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"];
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = [
     { name: "January", value: 0 },
@@ -453,25 +467,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       const sold = this.getSoldAcreFeet(x);
       const purchased = this.getPurchasedAcreFeet(x);
 
-      values.push(allocation + purchased - sold);
-      const months = ["January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"];
+      values.push(allocation + purchased - sold);      
 
       return {
         Year: x,
         ChartData: {
           name: allocationLabel,
-          series: months.map(y => { return { name: y, value: allocation + purchased - sold } })
+          series: this.months.map(y => { return { name: y, value: allocation + purchased - sold } })
         }
       }
     });
@@ -511,5 +513,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public allowTrading(): boolean {
     return environment.allowTrading;
+  }
+
+  public toggleWaterUsageByParcelView(): void {
+    if (this.waterUsageByParcelViewType === "chart"){
+      this.waterUsageByParcelViewType = "table";
+    }
+    else {
+      this.waterUsageByParcelViewType = "chart";
+    }
   }
 }
