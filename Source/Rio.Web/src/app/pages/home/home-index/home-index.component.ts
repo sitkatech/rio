@@ -3,6 +3,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
 import { error } from 'protractor';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-home-index',
@@ -60,5 +61,17 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
 
     public createAccount(): void{
         this.authenticationService.createAccount();
+    }
+
+    public forgotPasswordUrl() :string{
+        return `${environment.keystoneSupportBaseUrl}/ForgotPassword`;
+    }
+
+    public forgotUsernameUrl() :string{
+        return `${environment.keystoneSupportBaseUrl}/ForgotUsername`;
+    }
+
+    public keystoneSupportUrl():string{
+        return `${environment.keystoneSupportBaseUrl}/Support/20`;
     }
 }

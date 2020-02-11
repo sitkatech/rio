@@ -7,6 +7,8 @@ export const environment = {
   createAccountRedirectUrl: "https://rio.qa.sycan.sitkatech.com/",
   allowTrading: false,
 
+  keystoneSupportBaseUrl: "https://qa.keystone.sitkatech.com/Authentication",
+
   keystoneAuthConfiguration: {
     clientId: 'Rio',
     issuer: 'https://qa.keystone.sitkatech.com/core',

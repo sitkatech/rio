@@ -7,6 +7,8 @@ export const environment = {
   createAccountRedirectUrl: "https://waterbudget.rrbwsd.com/",
   allowTrading: true,
 
+  keystoneSupportBaseUrl: "https://keystone.sitkatech.com/Authentication",
+
   keystoneAuthConfiguration: {
     clientId: 'Rio',
     issuer: 'https://keystone.sitkatech.com/core',

@@ -11,6 +11,8 @@ export const environment = {
   createAccountRedirectUrl: "http://dev.rio.org:8887/create-user-callback",
   allowTrading: false,
 
+  keystoneSupportBaseUrl: "https://qa.keystone.sitkatech.com/Authentication",
+
   keystoneAuthConfiguration: {
     clientId: 'Rio',
     issuer: 'https://qa.keystone.sitkatech.com/core',
