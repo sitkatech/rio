@@ -1,9 +1,9 @@
 <div class="container mt-sm-4" *ngIf="user">
     <div class="float-right pr-0">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-12" >
             <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-              (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+              (selectedYearChange)="updateAnnualData()" [(disabled)]="isEditing"></rio-water-year-select>
           </div>
         </div>
       </div>
@@ -18,7 +18,7 @@
                 <div class="card-header">
                     <div class="float-right">
                         <label class="switch">
-                            <input type="checkbox" (click)="toggleEditMode()" />
+                            <input type="checkbox" [(ngModel)]="isEditing" (click)="toggleEditMode()" />
                             <div class="slider round">
                             <span class="off">View</span>
                             <span class="on">Edit</span>
@@ -39,17 +39,19 @@
                             <tbody>
                                 <tr *ngFor="let parcel of parcels">
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
-                                    <td class="text-right" *ngFor="let monthlyEvap of parcelMonthlyEvaporations">{{monthlyEvap.EvapotranspirationRate}} <input style="width:50px" *ngIf="isEditing"></td>
+                                    <td class="text-right" [ngStyle]="{'color':getParcelEvapForMonth(i+1, parcel.ParcelNumber)[0] === 'overridden' ? 'red' : 'black'}" *ngFor="let month of months; let i = index">{{getParcelEvapForMonth(i+1, parcel.ParcelNumber)[1]}} <input style="width:50px" *ngIf="isEditing"></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total</strong></td>
-                                    <td class="text-right" *ngFor="let month of months; let i = index">{{getTotalWaterUsageForMonth(i+1)}}</td>
+                                    <td class="text-right" *ngFor="let month of months; let i = index">{{getTotalWaterUsageForMonth(i+1) | number : '1.4'}}</td>
                                 </tr>
                             </tbody>                            
-                        </table>
-                        <a class="btn btn-secondary btn-sm" style="float:right" (click)="cancelOverrideEtChanges()">Cancel</a>
-                        <a class="btn btn-rio btn-sm mr-3" style="float:right" (click)="confirmSaveOverrideEtChanges()">Save</a>
+                        </table>                        
                     </div>
+                    <ng-container *ngIf="isEditing">
+                        <button class="btn btn-secondary btn-sm" style="float:right" (click)="cancelOverrideEtChanges()">Cancel</button>
+                        <button class="btn btn-rio btn-sm mr-3" style="float:right" (click)="confirmSaveOverrideEtChanges()">Save</button>
+                    </ng-container>
                 </div>
             </div>
         </div>

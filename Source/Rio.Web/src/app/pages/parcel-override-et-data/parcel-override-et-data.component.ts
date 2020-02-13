@@ -20,6 +20,7 @@ import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocat
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
+import { ParcelMonthlyEvapotranspirationOverrideDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-override-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 
 
@@ -38,6 +39,8 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public parcelNumbers: string[];
   public waterYears: Array<number>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;
+  public parcelMonthlyEvaporationOverrides: Array<ParcelMonthlyEvapotranspirationOverrideDto>;
+  
 
   public isEditing: boolean = false;
 
@@ -92,6 +95,12 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })
+
+    forkJoin(
+      this.accountService.getParcelWaterOverridesByAccountID(this.user.UserID, this.waterYearToDisplay)
+    ).subscribe(([ parcelMonthlyEvaporationOverrides]) =>{
+      this.parcelMonthlyEvaporationOverrides = parcelMonthlyEvaporationOverrides;
+    })
   }
 
   ngOnDestroy() {
@@ -112,6 +121,31 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
                                           .reduce((sum, current) => sum + current.EvapotranspirationRate, 0);
     }
     return sum
+  }
+
+  public getParcelEvapForMonth(monthNum : number, parcelNum : string) : Array<string> {
+    let value = new Array<string>();
+    value[0] = "original";
+    value[1] = "0";
+    if (this.parcelMonthlyEvaporations !== null && this.parcelMonthlyEvaporations !== undefined)
+    {
+      let overrideVal, newVal
+      if (this.parcelMonthlyEvaporationOverrides !== null && this.parcelMonthlyEvaporationOverrides !== undefined)
+      {
+        overrideVal = this.parcelMonthlyEvaporationOverrides.find(evapData => evapData.WaterMonth === monthNum && evapData.ParcelNumber === parcelNum);
+      }
+      newVal = this.parcelMonthlyEvaporations.find(evapData => evapData.WaterMonth === monthNum && evapData.ParcelNumber === parcelNum);
+      if (overrideVal != undefined)
+      {
+        value[0] = "overridden";
+        value[1] = overrideVal.OverriddenEvapotranspirationRate;
+      }
+      else
+      {
+        value[1] = newVal != undefined ? newVal.EvapotranspirationRate : value;  
+      }      
+    }
+    return value;
   }
 
   public toggleEditMode() : void {

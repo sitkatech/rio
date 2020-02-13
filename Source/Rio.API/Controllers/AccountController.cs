@@ -198,6 +198,16 @@ namespace Rio.API.Controllers
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
+        [HttpGet("accounts/{accountID}/parcel-water-overrides/{year}")]
+        [UserViewFeature]
+        public ActionResult<List<ParcelMonthlyEvapotranspirationOverrideDto>> ListWaterOverridesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)
+        {
+            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year).ToList();
+            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
+            var parcelMonthlyEvapotranspirationOverrideDtos = ParcelMonthlyEvapotranspirationOverride.ListByParcelID(_dbContext, parcelIDs).Where(x => x.WaterYear == year);
+            return Ok(parcelMonthlyEvapotranspirationOverrideDtos);
+        }
+
         [HttpGet("accounts/{accountID}/water-usage/{year}")]
         [UserViewFeature]
         public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByAccountID([FromRoute] int accountID, [FromRoute] int year)
