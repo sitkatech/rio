@@ -39,7 +39,6 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public parcelNumbers: string[];
   public waterYears: Array<number>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;
-  public parcelMonthlyEvaporationOverrides: Array<ParcelMonthlyEvapotranspirationOverrideDto>;
   
 
   public isEditing: boolean = false;
@@ -95,12 +94,6 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })
-
-    forkJoin(
-      this.accountService.getParcelWaterOverridesByAccountID(this.user.UserID, this.waterYearToDisplay)
-    ).subscribe(([ parcelMonthlyEvaporationOverrides]) =>{
-      this.parcelMonthlyEvaporationOverrides = parcelMonthlyEvaporationOverrides;
-    })
   }
 
   ngOnDestroy() {
@@ -118,34 +111,14 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     if (this.parcelMonthlyEvaporations !== null && this.parcelMonthlyEvaporations !== undefined)
     {
       sum = this.parcelMonthlyEvaporations.filter(evapData => evapData.WaterMonth == monthNum)
-                                          .reduce((sum, current) => sum + current.EvapotranspirationRate, 0);
+                                          .reduce((sum, current) => sum + (current.OverriddenEvapotranspirationRate || current.EvapotranspirationRate), 0);
     }
     return sum
   }
 
-  public getParcelEvapForMonth(monthNum : number, parcelNum : string) : Array<string> {
-    let value = new Array<string>();
-    value[0] = "original";
-    value[1] = "0";
-    if (this.parcelMonthlyEvaporations !== null && this.parcelMonthlyEvaporations !== undefined)
-    {
-      let overrideVal, newVal
-      if (this.parcelMonthlyEvaporationOverrides !== null && this.parcelMonthlyEvaporationOverrides !== undefined)
-      {
-        overrideVal = this.parcelMonthlyEvaporationOverrides.find(evapData => evapData.WaterMonth === monthNum && evapData.ParcelNumber === parcelNum);
-      }
-      newVal = this.parcelMonthlyEvaporations.find(evapData => evapData.WaterMonth === monthNum && evapData.ParcelNumber === parcelNum);
-      if (overrideVal != undefined)
-      {
-        value[0] = "overridden";
-        value[1] = overrideVal.OverriddenEvapotranspirationRate;
-      }
-      else
-      {
-        value[1] = newVal != undefined ? newVal.EvapotranspirationRate : value;  
-      }      
-    }
-    return value;
+  public getParcelEvaporationMonthlyData(parcel : ParcelDto) : Array<ParcelMonthlyEvapotranspirationDto> {
+    const parcelMonthlyEvapotranspirations = this.parcelMonthlyEvaporations.filter(x => x.ParcelID === parcel.ParcelID);
+    return parcelMonthlyEvapotranspirations;
   }
 
   public toggleEditMode() : void {
@@ -153,10 +126,15 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   public confirmSaveOverrideEtChanges() : void {
+    console.log(this.user.UserID, this.waterYearToDisplay);
+    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.user.UserID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(x=>{
+      //
+    });
     this.isEditing = false;
   }
 
   public cancelOverrideEtChanges() : void {
+    this.parcelMonthlyEvaporations.forEach(x => x.OverriddenEvapotranspirationRate = null);
     this.isEditing = false;
   }
 }

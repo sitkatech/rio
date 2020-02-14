@@ -13,7 +13,6 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -198,14 +197,13 @@ namespace Rio.API.Controllers
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
-        [HttpGet("accounts/{accountID}/parcel-water-overrides/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelMonthlyEvapotranspirationOverrideDto>> ListWaterOverridesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)
+        [HttpPut("accounts/{accountID}/{year}/saveParcelMonthlyEvapotranspirationOverrideValues")]
+        [UserManageFeature]
+        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
+            [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
         {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelMonthlyEvapotranspirationOverrideDtos = ParcelMonthlyEvapotranspirationOverride.ListByParcelID(_dbContext, parcelIDs).Where(x => x.WaterYear == year);
-            return Ok(parcelMonthlyEvapotranspirationOverrideDtos);
+            ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
+            return Ok();
         }
 
         [HttpGet("accounts/{accountID}/water-usage/{year}")]

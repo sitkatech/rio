@@ -12,7 +12,8 @@ namespace Rio.EFModels.Entities
                 ParcelNumber = parcelMonthlyEvapotranspiration.Parcel.ParcelNumber,
                 WaterYear = parcelMonthlyEvapotranspiration.WaterYear,
                 WaterMonth = parcelMonthlyEvapotranspiration.WaterMonth,
-                EvapotranspirationRate = parcelMonthlyEvapotranspiration.EvapotranspirationRate
+                EvapotranspirationRate = parcelMonthlyEvapotranspiration.EvapotranspirationRate,
+                OverriddenEvapotranspirationRate = parcelMonthlyEvapotranspiration.OverriddenEvapotranspirationRate
             };
         }
     }

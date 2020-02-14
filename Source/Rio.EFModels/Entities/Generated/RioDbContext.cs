@@ -28,7 +28,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
-        public virtual DbSet<ParcelMonthlyEvapotranspirationOverride> ParcelMonthlyEvapotranspirationOverride { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
@@ -54,6 +53,7 @@ namespace Rio.EFModels.Entities
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -278,18 +278,6 @@ namespace Rio.EFModels.Entities
 
                 entity.HasOne(d => d.Parcel)
                     .WithMany(p => p.ParcelMonthlyEvapotranspiration)
-                    .HasForeignKey(d => d.ParcelID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelMonthlyEvapotranspirationOverride>(entity =>
-            {
-                entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.WaterMonth })
-                    .HasName("AK_ParcelMonthlyEvapotranspirationOverride_ParcelID_WaterYear_WaterMonth")
-                    .IsUnique();
-
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelMonthlyEvapotranspirationOverride)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });

@@ -5,6 +5,7 @@
     WaterYear int not null,
     WaterMonth int not null,
     EvapotranspirationRate decimal(10, 4) not null,
+    OverriddenEvapotranspirationRate decimal(10, 4) null,
     constraint AK_ParcelMonthlyEvapotranspiration_ParcelID_WaterYear_WaterMonth unique(ParcelID, WaterYear, WaterMonth)
 )
 GO

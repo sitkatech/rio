@@ -39,7 +39,9 @@
                             <tbody>
                                 <tr *ngFor="let parcel of parcels">
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
-                                    <td class="text-right" [ngStyle]="{'color':getParcelEvapForMonth(i+1, parcel.ParcelNumber)[0] === 'overridden' ? 'red' : 'black'}" *ngFor="let month of months; let i = index">{{getParcelEvapForMonth(i+1, parcel.ParcelNumber)[1]}} <input style="width:50px" *ngIf="isEditing"></td>
+                                    <td class="text-right" [ngStyle]="{'color': parcelMonthlyEvaporation.OverriddenEvapotranspirationRate && !isEditing ? 'red' : 'black'}" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
+                                        {{ !isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate}} 
+                                        <input [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px" *ngIf="isEditing"></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total</strong></td>

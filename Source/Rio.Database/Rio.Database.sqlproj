@@ -108,7 +108,6 @@
     <Build Include="dbo\Tables\dbo.Account.sql" />
     <Build Include="dbo\Tables\dbo.AccountStatus.sql" />
     <Build Include="dbo\Tables\dbo.AccountUser.sql" />
-    <Build Include="dbo\Tables\dbo.ParcelMonthlyEvapotranspirationOverride.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\ReleaseScripts\README.md" />

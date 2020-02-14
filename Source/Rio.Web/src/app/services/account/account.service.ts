@@ -57,11 +57,6 @@ export class AccountService {
       let route = `/accounts/${accountID}/parcel-water-usage/${year}`;
       return this.apiService.getFromApi(route);
   }
-
-  getParcelWaterOverridesByAccountID(accountID: number, year: number): Observable<ParcelMonthlyEvapotranspirationOverrideDto[]> {
-    let route = `/accounts/${accountID}/parcel-water-overrides/${year}`;
-    return this.apiService.getFromApi(route);
-  }
   
   getWaterUsageOverviewByAccountID(accountID: number, year: number): Observable<WaterAllocationOverviewDto> {
       let route = `/accounts/${accountID}/water-usage-overview/${year}`;
@@ -71,5 +66,10 @@ export class AccountService {
   getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
       let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
       return this.apiService.getFromApi(route);
+  }
+
+  saveParcelMonthlyEvapotranspirationOverrideValues(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
+      let route = `/accounts/${accountID}/${year}/saveParcelMonthlyEvapotranspirationOverrideValues`;
+      return this.apiService.putToApi(route, model);
   }
 }

@@ -14,6 +14,8 @@ namespace Rio.EFModels.Entities
         public int WaterMonth { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal EvapotranspirationRate { get; set; }
+        [Column(TypeName = "decimal(10, 4)")]
+        public decimal? OverriddenEvapotranspirationRate { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
         [InverseProperty("ParcelMonthlyEvapotranspiration")]
