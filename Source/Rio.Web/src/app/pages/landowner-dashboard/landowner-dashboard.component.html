@@ -304,22 +304,68 @@
           </div>
         </div>
       </div>
-      <div class="row mt-4">
-        <div class="col-sm-12">
-          <div class="card">
-            <div class="card-header">
-              {{waterYearToDisplay}} Water Usage by Parcel
-            </div>
-            <div class="card-body" *ngIf="userHasParcels() && waterUsageChartData">
-              <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
-                [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
-              </rio-landowner-water-use-chart>
-              <p class="small">
-                *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
-              </p>
-            </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="float-right">
+            <label class="switch">
+              <input type="checkbox" (change)="toggleWaterUsageByParcelView()" />
+              <div class="slider round">
+                <span class="off">Chart</span>
+                <span class="on">Table</span>
+              </div>
+            </label>
           </div>
+          {{waterYearToDisplay}} Water Usage by Parcel <!-- <a routerLink="/parcel-override-et-data/{{currentUser.UserID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a> -->
         </div>
+        <div *ngIf="userHasParcels() && waterUsageChartData && waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock">          
+        </div>
+        <ng-template #chartBlock>
+          <div class="card-body">
+            <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
+            [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
+            </rio-landowner-water-use-chart> 
+            <p class="small">
+              *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+            </p>
+          </div>          
+        </ng-template>
+        <ng-template #tableBlock>
+          <div class="card-body">
+            <p>*Measurements in acre-feet</p>
+            <table class="table table-responsive">
+              <thead>
+                <th></th>
+                <th *ngFor="let month of months">{{month}}</th>
+                <th>Total</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let parcel of parcels">
+                  <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
+                  <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
+                    <ng-container *ngFor="let seriesData of monthData.series">
+                      <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">{{seriesData.value | number:"1.1"}}</td>
+                    </ng-container>
+                  </ng-container>
+                  <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1"}}</strong></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <th><strong>Total</strong></th>
+                <th class="text-right" *ngFor="let month of months; let i = index">
+                  {{getTotalWaterUsageForMonth(i) | number:"1.1"}}
+                </th>
+                <th class="text-right">{{getWaterUsageToDate() | number: "1.1"}}</th>
+              </tfoot>
+            </table>
+            <p class="small">
+              *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+            </p>
+          </div>
+        </ng-template>         
       </div>
     </div>
   </div>
