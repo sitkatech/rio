@@ -41,7 +41,7 @@
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
                                     <td class="text-right" [ngStyle]="{'color': parcelMonthlyEvaporation.OverriddenEvapotranspirationRate && !isEditing ? 'red' : 'black'}" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
                                         {{ !isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate}} 
-                                        <input [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px" *ngIf="isEditing"></td>
+                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px" *ngIf="isEditing"></td>
                                 </tr>
                                 <tr>
                                     <td><strong>Total</strong></td>
