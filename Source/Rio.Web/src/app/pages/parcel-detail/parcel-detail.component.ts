@@ -78,7 +78,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public getConsumptionForYearAndMonth(year: number, month: number): string {
     var monthlyEvapotranspiration = this.waterUsage.find(x => x.WaterYear === year && x.WaterMonth === month);
-    return isNullOrUndefined(monthlyEvapotranspiration) ? "-" : monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1);
+    return isNullOrUndefined(monthlyEvapotranspiration) ? "-" : isNullOrUndefined(monthlyEvapotranspiration.OverriddenEvapotranspirationRate) ? monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1) : monthlyEvapotranspiration.OverriddenEvapotranspirationRate.toFixed(1);
   }
 
   public getProjectWaterForYear(year: number): string {
@@ -119,7 +119,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     var monthlyEvapotranspiration = this.waterUsage.filter(x => x.WaterYear === year);
     if (monthlyEvapotranspiration.length > 0) {
       let result = monthlyEvapotranspiration.reduce(function (a, b) {
-        return (a + b.EvapotranspirationRate);
+        return (a + (b.OverriddenEvapotranspirationRate || b.EvapotranspirationRate));
       }, 0);
       return result.toFixed(1);
     }

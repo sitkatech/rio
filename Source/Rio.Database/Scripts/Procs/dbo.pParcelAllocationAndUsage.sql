@@ -41,7 +41,7 @@ begin
 	) pal on p.ParcelID = pal.ParcelID
 	left join 
 	(
-		select pme.ParcelID, isnull(sum(pme.EvapotranspirationRate), 0) as UsageToDate
+		select pme.ParcelID, isnull(sum(coalesce(pme.OverriddenEvapotranspirationRate, pme.EvapotranspirationRate)), 0) as UsageToDate
 		from dbo.ParcelMonthlyEvapotranspiration pme where pme.WaterYear = @year
 		group by pme.ParcelID
 	) pmev on p.ParcelID = pmev.ParcelID
