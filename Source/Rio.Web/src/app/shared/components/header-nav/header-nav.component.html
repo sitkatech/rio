@@ -42,6 +42,25 @@
                     </a>
                 </div>
             </li>
+            <li class="nav-item dropdown" routerLinkActive="active">
+                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Learn More
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a routerLink="/about" class="dropdown-item">
+                        About
+                    </a>
+                    <a routerLink="/general-faq" class="dropdown-item">
+                        General FAQ
+                    </a>
+                    <a routerLink="/water-use-measurement" class="dropdown-item">
+                        Water Use Measurement
+                    </a>
+                    <a routerLink="/openet-faq" class="dropdown-item">
+                        OpenEt FAQ
+                    </a>
+                </div>
+            </li>
         </ul>
         <ul class="navbar-nav flex-column mt-2 mt-lg-0 mr-sm-2">
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">

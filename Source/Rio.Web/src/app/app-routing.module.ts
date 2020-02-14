@@ -34,6 +34,10 @@ import { AccountNewComponent } from './pages/account-new/account-new.component';
 import { AccountEditUsersComponent } from './pages/account-edit-users/account-edit-users.component';
 import { CreateUserCallbackComponent } from './pages/create-user-callback/create-user-callback.component';
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
+import { AboutComponent } from './pages/about/about.component';
+import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
+import { WaterUseMeasurementComponent } from './pages/water-use-measurement/water-use-measurement.component';
+import { OpenetFaqComponent } from './pages/openet-faq/openet-faq.component'
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard] },
@@ -67,6 +71,10 @@ const routes: Routes = [
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent },
   { path: "help", component: HelpComponent },
+  { path: "about", component: AboutComponent},
+  { path: "general-faq", component: GeneralFaqComponent},
+  { path: "water-use-measurement", component: WaterUseMeasurementComponent},
+  { path: "openet-faq", component: OpenetFaqComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "login-callback", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },
