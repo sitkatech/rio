@@ -7,6 +7,7 @@ import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-d
 import { AccountEditUsersComponent } from 'src/app/pages/account-edit-users/account-edit-users.component';
 import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
+import { ParcelMonthlyEvapotranspirationOverrideDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-override-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 
@@ -65,5 +66,10 @@ export class AccountService {
   getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
       let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
       return this.apiService.getFromApi(route);
+  }
+
+  saveParcelMonthlyEvapotranspirationOverrideValues(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
+      let route = `/accounts/${accountID}/${year}/saveParcelMonthlyEvapotranspirationOverrideValues`;
+      return this.apiService.putToApi(route, model);
   }
 }

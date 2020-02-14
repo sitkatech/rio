@@ -20,6 +20,7 @@ import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocat
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
+import { ParcelMonthlyEvapotranspirationOverrideDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-override-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 
 
@@ -37,7 +38,22 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public parcels: Array<ParcelDto>;
   public parcelNumbers: string[];
   public waterYears: Array<number>;
-  public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;
+  public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;  
+
+  public isEditing: boolean = false;
+
+  public months = ["Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"];
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +66,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.parcelMonthlyEvaporations = new Array<ParcelMonthlyEvapotranspirationDto>();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       const waterYear = parseInt(this.route.snapshot.paramMap.get("waterYear"));
@@ -87,5 +104,49 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return Array.from(new Set(this.parcels.map((item: any) => item.ParcelID)));
+  }
+
+  public getTotalWaterUsageForMonth(monthNum : number) : number {
+    let sum = this.parcelMonthlyEvaporations.filter(evapData => evapData.WaterMonth == monthNum)
+                                            .reduce((sum, current) => sum + (current.OverriddenEvapotranspirationRate || current.EvapotranspirationRate), 0);
+    return sum;
+  }
+
+  public getParcelEvaporationMonthlyData(parcel : ParcelDto) : Array<ParcelMonthlyEvapotranspirationDto> {
+    const parcelMonthlyEvapotranspirations = this.parcelMonthlyEvaporations.filter(x => x.ParcelID === parcel.ParcelID);
+    return parcelMonthlyEvapotranspirations;
+  }
+
+  public getTotalWaterUsageForParcel(parcel: ParcelDto) : number {
+    let parcelEvapotranspirationsDtos = this.getParcelEvaporationMonthlyData(parcel);
+    let sum = parcelEvapotranspirationsDtos.reduce((sum, current) => sum + (current.OverriddenEvapotranspirationRate || current.EvapotranspirationRate), 0);
+    return sum;
+  }
+
+  public getTotalWaterUsageForAccount() : number {
+    let sum = this.parcelMonthlyEvaporations.reduce((sum, current) => sum + (current.OverriddenEvapotranspirationRate || current.EvapotranspirationRate), 0);
+    return sum;
+  }
+
+  public toggleEditMode() : void {
+    if (this.isEditing === true) {
+      this.cancelOverrideEtChanges();
+    }
+    else {
+      this.isEditing = true;
+    }
+  }
+
+  public confirmSaveOverrideEtChanges() : void {
+    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.user.UserID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(x=>{
+      //
+    });
+    this.isEditing = false;
+  }
+
+  public cancelOverrideEtChanges() : void {
+    //Need to bring originals back
+    this.updateAnnualData();
+    this.isEditing = false;
   }
 }

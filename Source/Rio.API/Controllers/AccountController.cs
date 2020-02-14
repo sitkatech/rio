@@ -13,7 +13,6 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -198,6 +197,15 @@ namespace Rio.API.Controllers
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
+        [HttpPut("accounts/{accountID}/{year}/saveParcelMonthlyEvapotranspirationOverrideValues")]
+        [UserManageFeature]
+        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
+            [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
+        {
+            ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
+            return Ok();
+        }
+
         [HttpGet("accounts/{accountID}/water-usage/{year}")]
         [UserViewFeature]
         public ActionResult<List<WaterUsageByParcelDto>> ListWaterUsagesByAccountID([FromRoute] int accountID, [FromRoute] int year)
@@ -255,7 +263,7 @@ namespace Rio.API.Controllers
             for (var i = 1; i < 13; i++)
             {
                 var grouping = parcelMonthlyEvapotranspirationGroupedByMonth.SingleOrDefault(x => x.Key == i);
-                cumulativeTotal += grouping?.Sum(x => x.EvapotranspirationRate) ?? 0;
+                cumulativeTotal += grouping?.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate) ?? 0;
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
                     Month = ((DateUtilities.Month)i).ToString(),
@@ -291,7 +299,7 @@ namespace Rio.API.Controllers
                 new ParcelWaterUsageDto
                 {
                     ParcelNumber = parcelDtos.Single(parcel => parcel.ParcelID == groupedByParcel.Key).ParcelNumber,
-                    WaterUsageInAcreFeet = Math.Round(groupedByParcel.Sum(x => x.EvapotranspirationRate), 1)
+                    WaterUsageInAcreFeet = Math.Round(groupedByParcel.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate), 1)
                 }).ToList();
 
             return parcelWaterUsageDtos;
