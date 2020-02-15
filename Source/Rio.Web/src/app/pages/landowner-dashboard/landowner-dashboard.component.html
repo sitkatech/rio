@@ -319,7 +319,7 @@
               </div>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3 float-right" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
+          {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
         </div>               
         <div class="card-body">
           <div *ngIf="waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock"></div>

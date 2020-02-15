@@ -1,4 +1,4 @@
-<div class="container mt-sm-4" *ngIf="account">
+<div class="container mt-sm-4" *ngIf="user">
     <div class="float-right pr-0">
         <div class="row">
           <div class="col-md-12" >
@@ -8,7 +8,7 @@
         </div>
       </div>
     <h2>
-        Override ET Data for - {{account.AccountDisplayName}} - {{waterYearToDisplay}}
+        Override ET Data for - {{user.FullName}} - {{waterYearToDisplay}}
     </h2>
     <app-alert-display></app-alert-display>
 
@@ -28,6 +28,7 @@
                     {{waterYearToDisplay}} Water Usage by Parcel
                 </div>
                 <div class="card-body">
+                    *Red font indicates overridden value
                     <div class="table-responsive">
                         <table class="table table-striped table-condensed">
                             <thead>
@@ -40,8 +41,7 @@
                             <tbody>
                                 <tr *ngFor="let parcel of parcels">
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
-                                    <td class="text-right" [ngClass]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing ? 'font-italic' : ''" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
-                                        <span *ngIf="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing">*</span>
+                                    <td class="text-right" [ngStyle]="{'color': parcelMonthlyEvaporation.OverriddenEvapotranspirationRate && !isEditing ? 'red' : 'black'}" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
                                         {{ (!isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate) | number:"1.1-1"}} 
                                         <br>
                                         <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px" *ngIf="isEditing"></td>
@@ -53,10 +53,7 @@
                                     <td class="text-right"><strong>{{getTotalWaterUsageForAccount() | number:"1.1-1"}}</strong></td>
                                 </tr>
                             </tbody>                            
-                        </table>   
-                        <p class="small">
-                            <em>* Indicates OpenET usage data has been overridden</em>    
-                        </p>                 
+                        </table>                        
                     </div>
                     <ng-container *ngIf="isEditing">
                         <button class="btn btn-secondary btn-sm" style="float:right" (click)="cancelOverrideEtChanges()">Cancel</button>
