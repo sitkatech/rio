@@ -60,7 +60,7 @@ const routes: Routes = [
   { path: "new-account", component: AccountNewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard]},
   { path: "landowner-dashboard/:id", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
   { path: "landowner-dashboard", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard] },
-  { path: "parcel-override-et-data/:userID/:waterYear", component: ParcelOverrideEtDataComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
+  { path: "parcel-override-et-data/:accountID/:waterYear", component: ParcelOverrideEtDataComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard] },
