@@ -7,6 +7,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 })
 export class WaterYearSelectComponent implements OnInit {
   @Input() years: Array<number> = new Array<number>();
+  @Input() disabled: Boolean;
 
   @Input()
   get selectedYear(): number {

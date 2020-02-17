@@ -47,7 +47,7 @@ from
 	) pa on acc.AccountID = pa.AccountID
 	left join
 	(
-		select acc.AccountID , sum(pme.EvapotranspirationRate) as UsageToDate
+		select acc.AccountID , sum(coalesce(pme.OverriddenEvapotranspirationRate, pme.EvapotranspirationRate)) as UsageToDate
 		from dbo.Account acc
 		join dbo.AccountParcel up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID

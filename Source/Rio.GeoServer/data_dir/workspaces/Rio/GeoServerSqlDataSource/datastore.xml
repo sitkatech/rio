@@ -12,7 +12,7 @@
     <entry key="Use native geometry serialization">false</entry>
     <entry key="Batch insert size">1</entry>
     <entry key="database">RioDB</entry>
-    <entry key="host">192.168.10.218</entry>
+    <entry key="host">host.docker.internal</entry>
     <entry key="Use Native Paging">true</entry>
     <entry key="Force spatial index usage via hints">false</entry>
     <entry key="fetch size">1000</entry>
