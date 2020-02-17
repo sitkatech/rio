@@ -202,8 +202,8 @@ namespace Rio.API.Controllers
         public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
             [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
         {
-            ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
-            return Ok();
+            var numChanging = ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
+            return Ok(numChanging);
         }
 
         [HttpGet("accounts/{accountID}/water-usage/{year}")]

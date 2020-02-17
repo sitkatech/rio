@@ -142,8 +142,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   public confirmSaveOverrideEtChanges() : void {
-    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.account.AccountID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(x=>{
-      let countSaved = this.parcelMonthlyEvaporations.filter(x => x.OverriddenEvapotranspirationRate !== null).length;
+    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.account.AccountID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(countSaved=>{
       let saveMessage = `Successfully saved ${countSaved} OpenET usage record${countSaved != 1 ? 's' : ''}`;
       this.alertService.pushAlert(new Alert(saveMessage, AlertContext.Success));
     });
