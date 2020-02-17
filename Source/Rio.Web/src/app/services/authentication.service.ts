@@ -144,6 +144,10 @@ export class AuthenticationService {
     this._currentAccountSubject.next(account);
   }
 
+  public refreshUserInfo(user: UserDto) {
+    this.getUserCallback(user);
+  }
+
   dispose() {
     this.getUserObservable.unsubscribe();
   }
@@ -207,8 +211,12 @@ export class AuthenticationService {
     return role === RoleEnum.Disabled;
   }
 
-
   public isCurrentUserNullOrUndefined(): boolean {
     return !this.currentUser;
+  }
+
+  public hasCurrentUserAcknowledgedDisclaimer(): boolean {
+    console.log(this.currentUser);
+    return this.currentUser.DisclaimerAcknowledgedDate != null;
   }
 }

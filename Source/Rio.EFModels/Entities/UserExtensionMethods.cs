@@ -15,7 +15,8 @@ namespace Rio.EFModels.Entities
                 Email = user.Email,
                 Phone = user.Phone,
                 Role = user.Role?.AsDto(),
-                LoginName = user.LoginName
+                LoginName = user.LoginName,
+                DisclaimerAcknowledgedDate = user.DisclaimerAcknowledgedDate
             };
         }
 

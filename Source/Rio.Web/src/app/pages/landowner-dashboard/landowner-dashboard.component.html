@@ -293,6 +293,9 @@
           <div class="card">
             <div class="card-header">
               {{waterYearToDisplay}} Allocation and Usage
+              <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+                class="fas fa-question-circle small"></i>
+              </a>
             </div>
             <div class="card-body" *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
@@ -308,7 +311,6 @@
   </div>
   <div class="row mt-4">
     <div class="col-sm-12">
-      <a routerLink="/water-use-measurement">How is my water use measured / calculated?</a>
       <div class="card">
         <div class="card-header">
           <div class="float-right">
@@ -320,7 +322,11 @@
               </div>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
+          {{waterYearToDisplay}} Water Usage by Parcel 
+          <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+            class="fas fa-question-circle small"></i>
+          </a>
+          <a class="btn btn-rio btn-sm mr-3" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
         </div>
         <div *ngIf="userHasParcels() && waterUsageChartData && waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock">          
         </div>

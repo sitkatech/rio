@@ -9,5 +9,6 @@ namespace Rio.Models.DataTransferObjects.User
         public string Phone { get; set; }
         public string LoginName { get; set; }
         public RoleDto Role { get; set; }
+        public DateTime? DisclaimerAcknowledgedDate { get; set; }
     }
 }
