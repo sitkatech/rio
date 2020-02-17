@@ -17,13 +17,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <label class="switch">
-                            <input type="checkbox" [(ngModel)]="isEditing" (click)="toggleEditMode()" />
-                            <div class="slider round">
-                            <span class="off">View</span>
-                            <span class="on">Edit</span>
-                            </div>
-                        </label>
+                        <button class="btn btn-rio" [(disabled)]="isEditing" (click)="toggleEditMode()">Edit</button>
                     </div>
                     {{waterYearToDisplay}} Water Usage by Parcel
                 </div>
