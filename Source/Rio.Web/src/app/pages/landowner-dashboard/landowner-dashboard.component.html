@@ -304,27 +304,11 @@
           </div>
         </div>
       </div>
-<<<<<<< HEAD
-      <div class="row mt-4">
-        <div class="col-sm-12">
-          <a routerLink="/water-use-measurement">How is my water use measured / calculated?</a>
-          <div class="card">
-            <div class="card-header">
-              {{waterYearToDisplay}} Water Usage by Parcel
-            </div>
-            <div class="card-body" *ngIf="userHasParcels() && waterUsageChartData">
-              <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
-                [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
-              </rio-landowner-water-use-chart>
-              <p class="small">
-                *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
-              </p>
-            </div>
-=======
     </div>
   </div>
   <div class="row mt-4">
     <div class="col-sm-12">
+      <a routerLink="/water-use-measurement">How is my water use measured / calculated?</a>
       <div class="card">
         <div class="card-header">
           <div class="float-right">
@@ -335,7 +319,6 @@
                 <span class="on">Table</span>
               </div>
             </label>
->>>>>>> develop
           </div>
           {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
         </div>
