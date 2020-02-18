@@ -199,7 +199,7 @@ namespace Rio.API.Controllers
 
         [HttpPut("accounts/{accountID}/{year}/saveParcelMonthlyEvapotranspirationOverrideValues")]
         [UserManageFeature]
-        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
+        public ActionResult<int> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
             [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
         {
             var numChanging = ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
