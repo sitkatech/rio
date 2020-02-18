@@ -125,6 +125,19 @@ namespace Rio.EFModels.Entities
             return GetByUserID(dbContext, userID);
         }
 
+        public static UserDto SetDisclaimerAcknowledgedDate(RioDbContext dbContext, int userID)
+        {
+            var user = dbContext.User.Single(x => x.UserID == userID);
+
+            user.UpdateDate = DateTime.UtcNow;
+            user.DisclaimerAcknowledgedDate = DateTime.UtcNow;
+
+            dbContext.SaveChanges();
+            dbContext.Entry(user).Reload();
+
+            return GetByUserID(dbContext, userID);
+        }
+
         public static UserDto UpdateUserGuid(RioDbContext dbContext, int userID, Guid userGuid)
         {
             var user = dbContext.User

@@ -31,7 +31,7 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelMonthlyEvapotranspirationDto>();
         }
 
-        public static void SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
+        public static int SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
             List<ParcelMonthlyEvapotranspirationDto> overriddenParcelMonthlyEvapotranspirationDtos)
         {
             var postedDtos = overriddenParcelMonthlyEvapotranspirationDtos.Select(x => new ParcelMonthlyEvapotranspiration()
@@ -52,10 +52,14 @@ namespace Rio.EFModels.Entities
 
             var allInDatabase = dbContext.ParcelMonthlyEvapotranspiration;
 
+            var countChanging = postedDtos.Count(x => existingParcelMonthlyEvapotranspirationDtos.Any(y =>
+                y.ParcelID == x.ParcelID && y.WaterYear == x.WaterYear && y.WaterMonth == x.WaterMonth && (y.OverriddenEvapotranspirationRate != x.OverriddenEvapotranspirationRate || x.OverriddenEvapotranspirationRate != null)));
+
             existingParcelMonthlyEvapotranspirationDtos.Merge(postedDtos, allInDatabase,
                 (x, y) => x.ParcelID == y.ParcelID && x.WaterMonth == y.WaterMonth && x.WaterYear == y.WaterYear,
                 (x, y) => x.OverriddenEvapotranspirationRate = y.OverriddenEvapotranspirationRate);
             dbContext.SaveChanges();
+            return countChanging;
         }
     }
 }

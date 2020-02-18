@@ -490,6 +490,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const annualWaterUsage = this.waterUsageChartData.find(x => x.Year == this.waterYearToDisplay);
+    console.log(annualWaterUsage.ChartData);
     return annualWaterUsage ? annualWaterUsage.ChartData : null;
   }
 

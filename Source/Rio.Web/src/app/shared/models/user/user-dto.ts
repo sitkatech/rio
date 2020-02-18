@@ -14,6 +14,8 @@ export class UserDto {
 
     Role: RoleDto;
 
+    DisclaimerAcknowledgedDate: Date;
+
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

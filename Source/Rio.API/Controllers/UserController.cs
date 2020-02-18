@@ -226,6 +226,19 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
+        [HttpPut("users/set-disclaimer-acknowledged-date")]
+        public ActionResult<UserDto> SetDisclaimerAcknowledgedDate([FromBody] int userID)
+        {
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            if (userDto == null)
+            {
+                return NotFound();
+            }
+
+            var updatedUserDto = Rio.EFModels.Entities.User.SetDisclaimerAcknowledgedDate(_dbContext, userID);
+            return Ok(updatedUserDto);
+        }
+
         [HttpPut("/users/{userID}/edit-accounts")]
         [UserManageFeature]
         public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)

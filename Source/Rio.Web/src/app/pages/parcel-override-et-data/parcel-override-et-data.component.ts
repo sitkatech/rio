@@ -22,6 +22,10 @@ import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-all
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelMonthlyEvapotranspirationOverrideDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-override-dto';
 import { AccountService } from 'src/app/services/account/account.service';
+import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { Alert } from 'src/app/shared/models/alert';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 
 
 @Component({
@@ -34,13 +38,13 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
 
-  public user: UserDto;
+  public account: AccountDto;
   public parcels: Array<ParcelDto>;
   public parcelNumbers: string[];
   public waterYears: Array<number>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;  
 
-  public isEditing: boolean = false;
+  public isEditing: boolean = true;
 
   public months = ["Jan",
         "Feb",
@@ -61,7 +65,8 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private alertService: AlertService
   ) {
   }
 
@@ -71,12 +76,11 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       const waterYear = parseInt(this.route.snapshot.paramMap.get("waterYear"));
       this.waterYearToDisplay = waterYear;
-      let userID = parseInt(this.route.snapshot.paramMap.get("userID"));
+      let accountID = parseInt(this.route.snapshot.paramMap.get("accountID"));
       forkJoin(
-        this.userService.getUserFromUserID(userID), this.parcelService.getWaterYears()
-      ).subscribe(([user, waterYears]) => {
-
-        this.user = user;
+        this.accountService.getAccountByID(accountID), this.parcelService.getWaterYears()
+      ).subscribe(([account, waterYears]) => {
+        this.account = account,
         this.waterYears = waterYears;
         this.updateAnnualData();
       });
@@ -84,13 +88,13 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
-    this.parcelService.getParcelsByAccountID(this.user.UserID, this.waterYearToDisplay).subscribe(parcels=>{
+    this.parcelService.getParcelsByAccountID(this.account.AccountID, this.waterYearToDisplay).subscribe(parcels=>{
       this.parcels = parcels;
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
     });
     
     forkJoin(
-      this.accountService.getParcelWaterUsageByAccountID(this.user.UserID, this.waterYearToDisplay)
+      this.accountService.getParcelWaterUsageByAccountID(this.account.AccountID, this.waterYearToDisplay)
     ).subscribe(([ parcelMonthlyEvaporations]) =>{
       this.parcelMonthlyEvaporations = parcelMonthlyEvaporations;
     })
@@ -138,8 +142,9 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   public confirmSaveOverrideEtChanges() : void {
-    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.user.UserID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(x=>{
-      //
+    this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.account.AccountID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(countSaved=>{
+      let saveMessage = `Successfully saved ${countSaved} OpenET usage record${countSaved != 1 ? 's' : ''}`;
+      this.alertService.pushAlert(new Alert(saveMessage, AlertContext.Success));
     });
     this.isEditing = false;
   }
