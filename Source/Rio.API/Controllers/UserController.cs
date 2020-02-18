@@ -227,7 +227,6 @@ namespace Rio.API.Controllers
         }
 
         [HttpPut("users/set-disclaimer-acknowledged-date")]
-        [UserManageFeature]
         public ActionResult<UserDto> SetDisclaimerAcknowledgedDate([FromBody] int userID)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);

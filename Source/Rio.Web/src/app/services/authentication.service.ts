@@ -216,7 +216,6 @@ export class AuthenticationService {
   }
 
   public hasCurrentUserAcknowledgedDisclaimer(): boolean {
-    console.log(this.currentUser);
-    return this.currentUser.DisclaimerAcknowledgedDate != null;
+    return this.currentUser != null && this.currentUser.DisclaimerAcknowledgedDate != null;
   }
 }
