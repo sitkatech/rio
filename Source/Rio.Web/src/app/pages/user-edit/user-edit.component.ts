@@ -70,6 +70,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
 
         this.model = new UserUpdateDto();
         this.model.RoleID = user.Role.RoleID;
+        this.model.ReceiveSupportEmails = user.ReceiveSupportEmails;
 
         this.cdr.detectChanges();
       });
@@ -98,5 +99,11 @@ export class UserEditComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         }
       );
+  }
+
+  checkReceiveSupportEmails(): void {
+    if (this.model.RoleID != 1){
+      this.model.ReceiveSupportEmails = false;
+    }
   }
 }

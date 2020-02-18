@@ -319,7 +319,7 @@ namespace Rio.API.Controllers
 As an administrator of the Water Accounting Platform, you can assign them a role and associate them with a Billing Account by following <a href='{rioUrl}/users/{user.UserID}'>this link</a>. <br/><br/>
 {SitkaSmtpClientService.GetDefaultEmailSignature()}";
 
-             var administrators = EFModels.Entities.User.ListByRole(dbContext, RoleEnum.Admin);
+            var administrators = EFModels.Entities.User.AdminsThatReceiveSupportEmails(dbContext);
 
              var mailTos = administrators;
             foreach (var mailTo in mailTos)
@@ -343,7 +343,7 @@ As an administrator of the Water Accounting Platform, you can assign them a role
             if (addAdminsAsBccRecipients)
             {
                 SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
-                    EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+                    EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
             }
             smtpClient.Send(mailMessage);
         }

@@ -11,6 +11,7 @@ export class UserDto {
     Email: string;
     Phone: string;
     LoginName: string;
+    ReceiveSupportEmails: boolean;
 
     Role: RoleDto;
 
