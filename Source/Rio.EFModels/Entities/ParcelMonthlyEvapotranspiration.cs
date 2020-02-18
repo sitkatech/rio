@@ -59,7 +59,6 @@ namespace Rio.EFModels.Entities
                 (x, y) => x.ParcelID == y.ParcelID && x.WaterMonth == y.WaterMonth && x.WaterYear == y.WaterYear,
                 (x, y) => x.OverriddenEvapotranspirationRate = y.OverriddenEvapotranspirationRate);
             dbContext.SaveChanges();
-
             return countChanging;
         }
     }
