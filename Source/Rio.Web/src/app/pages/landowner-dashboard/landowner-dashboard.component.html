@@ -311,7 +311,7 @@
   </div>
   <div class="row mt-4">
     <div class="col-sm-12">
-      <div class="card">
+      <div *ngIf="userHasParcels() && waterUsageChartData" class="card">
         <div class="card-header">
           <div class="float-right">
             <label class="switch">
@@ -322,27 +322,19 @@
               </div>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel 
-          <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
-            class="fas fa-question-circle small"></i>
-          </a>
-          <a class="btn btn-rio btn-sm mr-3" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID < 3">Override OpenET Data</a>
-        </div>
-        <div *ngIf="userHasParcels() && waterUsageChartData && waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock">          
-        </div>
-        <ng-template #chartBlock>
-          <div class="card-body">
+          {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3 float-right" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
+        </div>               
+        <div class="card-body">
+          <div *ngIf="waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock"></div>
+          <ng-template #chartBlock>
             <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
             [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
             </rio-landowner-water-use-chart> 
             <p class="small">
-              *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+              Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
             </p>
-          </div>          
-        </ng-template>
-        <ng-template #tableBlock>
-          <div class="card-body">
-            <p>*Measurements in acre-feet</p>
+          </ng-template>
+          <ng-template #tableBlock>
             <table class="table table-responsive">
               <thead>
                 <th></th>
@@ -354,7 +346,7 @@
                   <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
                   <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                     <ng-container *ngFor="let seriesData of monthData.series">
-                      <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">{{seriesData.value | number:"1.1"}}</td>
+                      <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''" *ngIf="seriesData.name === parcel.ParcelNumber"><span *ngIf="seriesData.IsOverridden === true">*</span>{{seriesData.value | number:"1.1"}}</td>
                     </ng-container>
                   </ng-container>
                   <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1"}}</strong></td>
@@ -369,16 +361,20 @@
               </tfoot>
             </table>
             <p class="small">
-              *Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+              <em>* Indicates OpenET usage data has been overridden</em>
+              <br>
+              Measurements are in acre-feet
+              <br>
+              Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
             </p>
-          </div>
-        </ng-template>         
+          </ng-template>         
+        </div>         
       </div>
     </div>
   </div>
   <div class="row mt-4" *ngIf="!userHasParcels() || !waterUsages">
     <div class="col-12">
-      <em>No data availabe: this user is not associated with any parcels in {{waterYearToDisplay}}</em>
+      <em>No data available: this Account is not associated with any parcels in {{waterYearToDisplay}}</em>
     </div>
   </div>
   <div class="row mt-4" *ngIf="trades && allowTrading()">
