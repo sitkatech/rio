@@ -93,8 +93,9 @@
                 </tr>
                 <tr>
                   <th class="text-sm-right">
+                    Native Yield
                     <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
-                        class="fas fa-question-circle small"></i></a> Native Yield
+                      class="fas fa-question-circle small"></i></a>
                   </th>
                   <td class="text-sm-right">
                     {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
@@ -102,8 +103,9 @@
                 </tr>
                 <tr>
                   <th class="text-right">
+                    Project Water
                     <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
-                        class="fas fa-question-circle small"></i></a> Project Water
+                      class="fas fa-question-circle small"></i></a>
                   </th>
                   <td class="text-sm-right">
                     {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
@@ -111,8 +113,9 @@
                 </tr>
                 <tr>
                   <th class="text-right">
+                    Stored Water
                     <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
-                        class="fas fa-question-circle small"></i></a> Stored Water
+                      class="fas fa-question-circle small"></i></a> 
                   </th>
                   <td class="text-sm-right">
                     {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
@@ -120,8 +123,9 @@
                 </tr>
                 <tr>
                   <th class="text-right">
+                    Reconciliation
                     <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
-                        class="fas fa-question-circle small"></i></a> Reconciliation
+                      class="fas fa-question-circle small"></i></a> 
                   </th>
                   <td class="text-sm-right">
                     {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
@@ -244,6 +248,8 @@
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
                   Usage to Date
+                  <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+                    class="fas fa-question-circle small"></i></a> 
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getWaterUsageToDate() as waterUsageToDate else noWaterUsage">
@@ -293,6 +299,9 @@
           <div class="card">
             <div class="card-header">
               {{waterYearToDisplay}} Allocation and Usage
+              <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+                class="fas fa-question-circle small"></i>
+              </a>
             </div>
             <div class="card-body" *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
@@ -319,7 +328,12 @@
               </div>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel <a class="btn btn-rio btn-sm mr-3 float-right" routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
+          {{waterYearToDisplay}} Water Usage by Parcel
+          <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+            class="fas fa-question-circle small"></i></a> 
+          <a class="btn btn-rio btn-sm mr-3 float-right" 
+             routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" 
+             *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
         </div>               
         <div class="card-body">
           <div *ngIf="waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock"></div>

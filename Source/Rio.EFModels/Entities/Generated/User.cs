@@ -34,6 +34,8 @@ namespace Rio.EFModels.Entities
         public DateTime? UpdateDate { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? LastActivityDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? DisclaimerAcknowledgedDate { get; set; }
         public bool IsActive { get; set; }
         public bool ReceiveSupportEmails { get; set; }
         [StringLength(128)]

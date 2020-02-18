@@ -9,6 +9,7 @@ CREATE TABLE dbo.[User](
     CreateDate datetime NOT NULL,
     UpdateDate datetime NULL,
     LastActivityDate datetime NULL,
+	DisclaimerAcknowledgedDate datetime NULL,
     IsActive bit NOT NULL,
     ReceiveSupportEmails bit NOT NULL,
     LoginName varchar(128) NULL,

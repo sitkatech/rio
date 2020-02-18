@@ -56,6 +56,11 @@ import { AccountEditUsersComponent } from './pages/account-edit-users/account-ed
 import { MultiLinkRendererComponent } from './shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { CreateUserCallbackComponent } from './pages/create-user-callback/create-user-callback.component';
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
+import { AboutComponent } from './pages/about/about.component';
+import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
+import { WaterUseMeasurementComponent } from './pages/water-use-measurement/water-use-measurement.component';
+import { OpenetFaqComponent } from './pages/openet-faq/openet-faq.component';
+import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +99,12 @@ import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-
     AccountNewComponent,
     AccountEditUsersComponent,
     CreateUserCallbackComponent,
-    UserEditAccountsComponent
+    UserEditAccountsComponent,
+    AboutComponent,
+    GeneralFaqComponent,
+    WaterUseMeasurementComponent,
+    OpenetFaqComponent,
+    DisclaimerComponent
   ],
   imports: [
     AppRoutingModule,

@@ -68,4 +68,9 @@ export class UserService {
         let route = `/users/unassigned-report`;
         return this.apiService.getFromApi(route);
     }
+
+    setDisclaimerAcknowledgedDate(userID: number): Observable<UserDto> {
+        let route = `/users/set-disclaimer-acknowledged-date`
+        return this.apiService.putToApi(route, userID);
+    }
 }
