@@ -10,5 +10,7 @@ namespace Rio.Models.DataTransferObjects.WaterUsage
 
         [JsonProperty("value")]
         public decimal WaterUsageInAcreFeet { get; set; }
+
+        public bool IsOverridden { get; set; }
     }
 }
