@@ -71,8 +71,8 @@
                             <em *ngIf="!user?.Role?.RoleDisplayName" class="text-muted">Not Available</em>
                         </dd>
 
-                        <dt class="text-sm-right col-sm-5 col-xs-12">Receives System Communications</dt>
-                        <dd class="col-sm-7 col-xs-12">
+                        <dt class="text-sm-right col-sm-5 col-xs-12" *ngIf="user.Role.RoleID === 1">Receives System Communications</dt>
+                        <dd class="col-sm-7 col-xs-12" *ngIf="user.Role.RoleID === 1">
                             {{user?.ReceiveSupportEmails == true ? "Yes" : "No"}}
                             <em *ngIf="!user" class="text-muted">Not Available</em>
                         </dd>
