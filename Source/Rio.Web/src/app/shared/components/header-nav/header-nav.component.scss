@@ -21,6 +21,10 @@
     background-color: #194939;
   }
 
+  .nav-item:hover {
+    box-shadow: inset 0 -5px 0 #196004;
+  }
+
   .navbar.navbar-rio a.nav-link
   {
     color: #fff;
