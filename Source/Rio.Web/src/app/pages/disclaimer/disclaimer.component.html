@@ -19,7 +19,7 @@
     Pellentesque aliquet vehicula tellus, vel tincidunt nisi sodales et. Sed tempus vitae magna aliquam pretium. Donec in molestie turpis. Cras vitae pharetra nunc, a vulputate elit. Aliquam erat volutpat. Nulla vitae finibus quam. Nullam quis magna et dolor dictum venenatis. Donec tempus et nisi eu sollicitudin. Mauris blandit eleifend neque, pretium dapibus odio accumsan id.
         </p>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="checkDisclaimerAcknowledged()">
         <div class="col">
             <button class="btn btn-rio btn-sm mr-3 float-right" (click)="setDisclaimerAcknowledged()">Acknowledge</button>
         </div>

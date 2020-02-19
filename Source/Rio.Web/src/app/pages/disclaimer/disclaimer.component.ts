@@ -13,17 +13,24 @@ export class DisclaimerComponent implements OnInit {
 
   private watchUserChangeSubscription : any;
   private currentUser : UserDto;
+  private forced : boolean = true;
 
   constructor(
     private userService: UserService,
     private authenticationService : AuthenticationService,
-    private router : Router
+    private router : Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
     });
+    this.forced = this.route.snapshot.paramMap.get("forced") === "true";
+  }
+
+  public checkDisclaimerAcknowledged(): boolean {
+      return !this.currentUser || (!this.forced && this.currentUser.DisclaimerAcknowledgedDate != null) ? false : true;
   }
 
   public setDisclaimerAcknowledged(): void {
