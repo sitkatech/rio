@@ -76,7 +76,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<UserDto> AdminsThatReceiveSupportEmails(RioDbContext dbContext)
         {
             var users = GetUserImpl(dbContext)
-                .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails == true)
+                .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
 
