@@ -128,7 +128,7 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID);
 
             user.RoleID = userEditDto.RoleID.Value;
-            user.ReceiveSupportEmails = userEditDto.ReceiveSupportEmails;
+            user.ReceiveSupportEmails = userEditDto.RoleID.Value == 1 && userEditDto.ReceiveSupportEmails;
             user.UpdateDate = DateTime.UtcNow;
 
             dbContext.SaveChanges();
