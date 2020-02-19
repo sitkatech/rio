@@ -154,4 +154,19 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     this.updateAnnualData();
     this.isEditing = false;
   }
+
+  public catchExtraSymbols(event : KeyboardEvent) : void {
+    if (event.code === "KeyE" || event.code === "Equal" || event.code === "Minus") {
+      event.preventDefault();
+    }
+  }
+
+  public catchPastedSymbols(event : any, parcel : ParcelMonthlyEvapotranspirationDto) : void {
+    let val = event.clipboardData.getData('text/plain');
+    if (val && (val.includes("+") || val.includes("-") || val.includes("e") || val.includes("E"))) {
+      val = val.replace(/\+|\-|e|E/g, '');
+      parcel.OverriddenEvapotranspirationRate = val;
+      event.preventDefault();
+    }
+  }
 }
