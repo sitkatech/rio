@@ -72,6 +72,7 @@ const routes: Routes = [
   // { path: "users/:id/edit-permissions", component: PersonEditPermissionsComponent, canActivate: [AuthGuard] },
   { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },
+  { path: "disclaimer/:forced", component: DisclaimerComponent },
   { path: "help", component: HelpComponent },
   { path: "about", component: AboutComponent},
   { path: "general-faq", component: GeneralFaqComponent},
