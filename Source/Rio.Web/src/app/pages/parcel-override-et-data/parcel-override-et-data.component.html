@@ -38,7 +38,7 @@
                                         <span *ngIf="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing">*</span>
                                         {{ (!isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate) | number:"1.1-1"}} 
                                         <br>
-                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px" *ngIf="isEditing"></td>
+                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px; text-align:right" *ngIf="isEditing" (keypress)="catchExtraSymbols($event)" (paste)="catchPastedSymbols($event, parcelMonthlyEvaporation)"></td>
                                     <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel) | number:"1.1-1"}}</strong></td>
                                 </tr>
                                 <tr>
