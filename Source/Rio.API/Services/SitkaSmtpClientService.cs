@@ -178,9 +178,25 @@ Phone: (661) 589-6045<br />
             return defaultEmailSignature;
         }
 
+        public static string GetSupportNotificationEmailSignature()
+        {
+            const string supportNotificationEmailSignature = @"<br /><br />
+Respectfully, the RRB WSD Water Accounting Platform team
+<br /><br />
+***
+<br /><br />
+You have received this email because you are assigned to receive support notifications within the Rosedale-Rio Bravo WSD Water Accounting Platform. 
+<br /><br />
+P.O. Box 20820<br />
+Bakersfield, CA 93390-0820<br />
+Phone: (661) 589-6045<br />
+<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
+            return supportNotificationEmailSignature;
+        }
+
         public static MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress("donotreply@sitkatech.com", "RRB Water Accounting Platform");
+            return new MailAddress("donotreply @sitkatech.com", "RRB Water Accounting Platform");
         }
 
         public static void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)
@@ -188,6 +204,14 @@ Phone: (661) 589-6045<br />
             foreach (var admin in admins)
             {
                 mailMessage.Bcc.Add(admin.Email);
+            }
+        }
+
+        public static void AddAdminsAsCCRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)
+        {
+            foreach (var admin in admins)
+            {
+                mailMessage.CC.Add(admin.Email);
             }
         }
     }

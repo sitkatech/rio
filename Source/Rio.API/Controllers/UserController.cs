@@ -119,11 +119,8 @@ namespace Rio.API.Controllers
                 userUpsertDto.UserGuid);
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
-            foreach (var mailMessage in mailMessages)
-            {
-                SendEmailMessage(smtpClient, mailMessage, false);
-            }
+            var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
+            SendEmailMessage(smtpClient, mailMessage, "cc");
 
             return Ok(user);
         }
@@ -262,7 +259,7 @@ namespace Rio.API.Controllers
             var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.RIO_WEB_URL, updatedUserDto, addedAccounts);
             foreach (var mailMessage in mailMessages)
             {
-                SendEmailMessage(smtpClient, mailMessage, true);
+                SendEmailMessage(smtpClient, mailMessage, "bcc");
             }
 
             return Ok(updatedUserDto);
@@ -311,40 +308,39 @@ namespace Rio.API.Controllers
             return mailMessages;
         }
 
-        private static List<MailMessage> GenerateUserCreatedEmail(string rioUrl, UserDto user, RioDbContext dbContext)
+        private static MailMessage GenerateUserCreatedEmail(string rioUrl, UserDto user, RioDbContext dbContext)
         {
-            var mailMessages = new List<MailMessage>();
             var messageBody = $@"A new user has signed up to the Rosedale-Rio Bravo Water Accounting Platform: <br/><br/>
  {user.FullName} ({user.Email}) <br/><br/>
 As an administrator of the Water Accounting Platform, you can assign them a role and associate them with a Billing Account by following <a href='{rioUrl}/users/{user.UserID}'>this link</a>. <br/><br/>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{SitkaSmtpClientService.GetSupportNotificationEmailSignature()}";
 
-            var administrators = EFModels.Entities.User.AdminsThatReceiveSupportEmails(dbContext);
-
-             var mailTos = administrators;
-            foreach (var mailTo in mailTos)
+            var mailMessage = new MailMessage
             {
-                var mailMessage = new MailMessage
-                {
-                    Subject = $"New User in Rosedale-Rio Bravo Water Accounting Platform",
-                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
-                };
-                mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
-                mailMessages.Add(mailMessage);
-            }
-            return mailMessages;
+                Subject = $"New User in Rosedale-Rio Bravo Water Accounting Platform",
+                Body = $"Hello,<br /><br />{messageBody}",
+            };
+
+            mailMessage.To.Add(SitkaSmtpClientService.GetDefaultEmailFrom());
+            return mailMessage;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage, bool addAdminsAsBccRecipients)
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage, string typeOfCCAdminsToReceive = "None")
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            if (addAdminsAsBccRecipients)
+            if (typeOfCCAdminsToReceive.ToLower() == "bcc")
             {
                 SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
                     EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
             }
+            else if (typeOfCCAdminsToReceive.ToLower() == "cc")
+            {
+                SitkaSmtpClientService.AddAdminsAsCCRecipientsToEmail(mailMessage,
+                    EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
+            }
+
             smtpClient.Send(mailMessage);
         }
     }

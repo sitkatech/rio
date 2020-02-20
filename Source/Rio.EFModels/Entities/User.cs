@@ -56,6 +56,7 @@ namespace Rio.EFModels.Entities
                         HasActiveTrades = user.HasActiveTrades,
                         AcreFeetOfWaterPurchased = user.AcreFeetOfWaterPurchased,
                         AcreFeetOfWaterSold = user.AcreFeetOfWaterSold,
+                        ReceiveSupportEmails = user.ReceiveSupportEmails
                     };
                     return userDetailedDto;
                 }).ToList();
