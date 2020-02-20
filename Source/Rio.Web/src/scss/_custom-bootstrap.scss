@@ -101,3 +101,24 @@ a:hover {
   border-color: #196004;
   color:#fff;
 }
+
+.btn-toggle {
+  color: #212529;
+  background-color: #ababab;
+  border-color: #a4a4a4;
+}
+
+.btn-toggle:not(:disabled):not(.disabled):active,
+.btn-toggle:not(:disabled):not(.disabled).active,
+.show > .btn-toggle.dropdown-toggle {
+  background-color: #196004;
+  border-color: #196004;
+  color: #fff;
+}
+
+.btn-toggle:hover {
+  cursor: pointer;
+  color: #fff;
+  background-color: #4f6349;
+  border-color: #4f6349;
+}

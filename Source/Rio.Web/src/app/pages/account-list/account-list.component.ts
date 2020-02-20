@@ -75,7 +75,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
                 return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
               });
               if (names.length) {
-                debugger;
+                //debugger;
               }
               const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
 

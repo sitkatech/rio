@@ -425,13 +425,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.utilityFunctionsService.exportGridToCsv(this.postingsGrid, 'postings.csv', columnIds);
   }
 
-  public toggleUnitsShown(): void {
-    if (this.unitsShown === "ac-ft") {
-      this.unitsShown = "ac-ft / ac";
-    }
-    else {
-      this.unitsShown = "ac-ft";
-    }
+  public toggleUnitsShown(units : string): void {
+    this.unitsShown = units;
   }
 
   public getAnnualAllocation(year: number): number {

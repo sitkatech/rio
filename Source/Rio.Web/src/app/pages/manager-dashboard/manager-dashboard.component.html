@@ -23,16 +23,15 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <div class="float-right">
-            <label class="switch">
-              <input type="checkbox" (change)="toggleUnitsShown()" />
-              <div class="slider round">
-                <span class="off">ac-ft</span>
-                <span class="on">ac-ft/ac</span>
-              </div>
+          <div class="btn-group btn-group-toggle float-right">
+            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''" style="width:65px;">
+              <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
+            </label>
+            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
+              <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
             </label>
           </div>
-          District-Wide Statistics
+          <span style="vertical-align: middle"> District-Wide Statistics </span>
         </div>
         <div class="card-body" *ngIf="parcelAllocationAndUsages">
           <div class="row">
@@ -91,7 +90,7 @@
             </div>
             <div class="col-sm-5">
               <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportLandOwnerUsageReportToCsv()"><i class="fas fa-download"></i></a>
+                (click)="exportLandOwnerUsageReportToCsv()" data-placement="top" title="Download Landowner Usage Report" onmouseenter="$(this).tooltip('show')"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>

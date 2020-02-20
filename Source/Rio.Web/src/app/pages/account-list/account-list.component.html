@@ -6,21 +6,25 @@
 <div class="container">
     <app-alert-display></app-alert-display>
     <div class="float-right">
-        <label class="switch mr-1" style="top: 5px;">
-            <input type="checkbox" (change)="toggleAccountStatusShown()" />
-            <div class="slider round">
-                <span class="off">Active</span>
-                <span class="on">All</span>
-            </div>
-        </label>
         <a routerLink="/new-account" class="btn btn-sm btn-rio mr-1">New Account</a>
-        <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()"><i
+        <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" data-placement="top" title="Download list of Accounts" onmouseenter="$(this).tooltip('show')"><i
           class="fas fa-download"></i></a>
-    </div>
+    </div>    
     <h2 style="display: inline-block">Accounts</h2>
     <p class="lead">
         A list of accounts is shown in the grid below.
     </p>
+    <div class="float-right">
+        <div class="btn-group btn-group-toggle">
+            <label class="btn btn-toggle btn-sm" [ngClass]="showOnlyActiveAccounts ? 'active' : ''">
+                <input type="radio" name="units" id="chart-icon" (click)="toggleAccountStatusShown()"> Active
+            </label>
+            <label class="btn btn-toggle btn-sm" [ngClass]="!showOnlyActiveAccounts ? 'active' : ''" style="width:55px">
+                <input type="radio" name="units" id="table-icon" (click)="toggleAccountStatusShown()"> All
+            </label>
+        </div>        
+    </div>
+    
 </div>
 <div class="container mt-sm-4">
 

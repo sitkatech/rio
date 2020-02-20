@@ -224,13 +224,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels && this.parcels.length > 0
   }
 
-  public toggleUnitsShown(): void {
-    if (this.unitsShown === "ac-ft") {
-      this.unitsShown = "ac-ft / ac";
-    }
-    else {
-      this.unitsShown = "ac-ft";
-    }
+  public toggleUnitsShown(units : string): void {
+    this.unitsShown = units;
   }
 
   public toggleTradeStatusShown(): void {
