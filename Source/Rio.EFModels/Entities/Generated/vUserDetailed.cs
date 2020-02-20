@@ -24,6 +24,7 @@ namespace Rio.EFModels.Entities
         public string Phone { get; set; }
         [StringLength(100)]
         public string Company { get; set; }
+        public bool ReceiveSupportEmails { get; set; }
         public int RoleID { get; set; }
         [Required]
         [StringLength(100)]

@@ -56,6 +56,7 @@ namespace Rio.EFModels.Entities
                         HasActiveTrades = user.HasActiveTrades,
                         AcreFeetOfWaterPurchased = user.AcreFeetOfWaterPurchased,
                         AcreFeetOfWaterSold = user.AcreFeetOfWaterSold,
+                        ReceiveSupportEmails = user.ReceiveSupportEmails
                     };
                     return userDetailedDto;
                 }).ToList();
@@ -68,6 +69,16 @@ namespace Rio.EFModels.Entities
                 .Where(x => x.IsActive && x.RoleID == (int) roleEnum)
                 .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return users;
+        }
+
+        public static IEnumerable<string> GetEmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
+        {
+            var users = GetUserImpl(dbContext)
+                .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
+                .Select(x => x.Email)
                 .AsEnumerable();
 
             return users;
@@ -118,6 +129,7 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID);
 
             user.RoleID = userEditDto.RoleID.Value;
+            user.ReceiveSupportEmails = userEditDto.RoleID.Value == 1 && userEditDto.ReceiveSupportEmails;
             user.UpdateDate = DateTime.UtcNow;
 
             dbContext.SaveChanges();

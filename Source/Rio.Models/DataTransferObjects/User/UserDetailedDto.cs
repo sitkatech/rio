@@ -14,6 +14,7 @@ namespace Rio.Models.DataTransferObjects.User
         public Guid? UserGuid { get; set; }
         public string Phone { get; set; }
         public string LoginName { get; set; }
+        public bool ReceiveSupportEmails { get; set; }
         public int RoleID { get; set; }
         public string RoleDisplayName { get; set; }
 
