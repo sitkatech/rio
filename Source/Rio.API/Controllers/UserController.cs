@@ -334,17 +334,6 @@ As an administrator of the Water Accounting Platform, you can assign them a role
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            //if (typeOfCCAdminsToReceive.ToLower() == "bcc")
-            //{
-            //    SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
-            //        EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
-            //}
-            //else if (typeOfCCAdminsToReceive.ToLower() == "cc")
-            //{
-            //    SitkaSmtpClientService.AddAdminsAsCCRecipientsToEmail(mailMessage,
-            //        EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
-            //}
-
             smtpClient.Send(mailMessage);
         }
     }
