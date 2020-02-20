@@ -56,6 +56,7 @@ namespace Rio.EFModels.Entities
                         HasActiveTrades = user.HasActiveTrades,
                         AcreFeetOfWaterPurchased = user.AcreFeetOfWaterPurchased,
                         AcreFeetOfWaterSold = user.AcreFeetOfWaterSold,
+                        ReceiveSupportEmails = user.ReceiveSupportEmails
                     };
                     return userDetailedDto;
                 }).ToList();
@@ -73,11 +74,11 @@ namespace Rio.EFModels.Entities
             return users;
         }
 
-        public static IEnumerable<UserDto> AdminsThatReceiveSupportEmails(RioDbContext dbContext)
+        public static IEnumerable<string> GetEmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
         {
             var users = GetUserImpl(dbContext)
                 .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
-                .Select(x => x.AsDto())
+                .Select(x => x.Email)
                 .AsEnumerable();
 
             return users;

@@ -5,7 +5,7 @@ go
 create view dbo.vUserDetailed
 as
 
-select u.UserID, u.UserGuid, u.FirstName, u.LastName, u.Email, u.LoginName, u.Phone, u.Company, r.RoleID, r.RoleDisplayName,
+select u.UserID, u.UserGuid, u.FirstName, u.LastName, u.Email, u.LoginName, u.Phone, u.Company, u.ReceiveSupportEmails, r.RoleID, r.RoleDisplayName,
 		cast(sign(isnull(zz.AccountID, 0)) as bit) as HasActiveTrades, 
 		sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as AcreFeetOfWaterPurchased,
 		sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as AcreFeetOfWaterSold
@@ -28,7 +28,7 @@ left join (
 ) zz on au.AccountID = zz.AccountID
 left join dbo.WaterTransferRegistration wtr on au.AccountID = wtr.AccountID
 left join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID
-group by u.UserID, u.UserGuid, u.FirstName, u.LastName, u.Email, u.LoginName, u.Phone, u.Company, r.RoleID, r.RoleDisplayName, zz.AccountID
+group by u.UserID, u.UserGuid, u.FirstName, u.LastName, u.Email, u.LoginName, u.Phone, u.Company, u.ReceiveSupportEmails, r.RoleID, r.RoleDisplayName, zz.AccountID
 
 GO
 /*
