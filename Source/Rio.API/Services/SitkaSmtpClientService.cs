@@ -199,19 +199,19 @@ Phone: (661) 589-6045<br />
             return new MailAddress("donotreply @sitkatech.com", "RRB Water Accounting Platform");
         }
 
-        public static void AddAdminsAsBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)
+        public static void AddBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<string> recipients)
         {
-            foreach (var admin in admins)
+            foreach (var recipient in recipients)
             {
-                mailMessage.Bcc.Add(admin.Email);
+                mailMessage.Bcc.Add(recipient);
             }
         }
 
-        public static void AddAdminsAsCCRecipientsToEmail(MailMessage mailMessage, IEnumerable<UserDto> admins)
+        public static void AddCcRecipientsToEmail(MailMessage mailMessage, IEnumerable<string> recipients)
         {
-            foreach (var admin in admins)
+            foreach (var recipient in recipients)
             {
-                mailMessage.CC.Add(admin.Email);
+                mailMessage.CC.Add(recipient);
             }
         }
     }

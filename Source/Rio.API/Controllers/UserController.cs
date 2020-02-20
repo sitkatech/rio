@@ -120,7 +120,9 @@ namespace Rio.API.Controllers
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
-            SendEmailMessage(smtpClient, mailMessage, "cc");
+            SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
+                        EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+            SendEmailMessage(smtpClient, mailMessage);
 
             return Ok(user);
         }
@@ -259,7 +261,9 @@ namespace Rio.API.Controllers
             var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.RIO_WEB_URL, updatedUserDto, addedAccounts);
             foreach (var mailMessage in mailMessages)
             {
-                SendEmailMessage(smtpClient, mailMessage, "bcc");
+                SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, 
+                    EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                SendEmailMessage(smtpClient, mailMessage);
             }
 
             return Ok(updatedUserDto);
@@ -325,21 +329,21 @@ As an administrator of the Water Accounting Platform, you can assign them a role
             return mailMessage;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage, string typeOfCCAdminsToReceive = "None")
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            if (typeOfCCAdminsToReceive.ToLower() == "bcc")
-            {
-                SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
-                    EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
-            }
-            else if (typeOfCCAdminsToReceive.ToLower() == "cc")
-            {
-                SitkaSmtpClientService.AddAdminsAsCCRecipientsToEmail(mailMessage,
-                    EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
-            }
+            //if (typeOfCCAdminsToReceive.ToLower() == "bcc")
+            //{
+            //    SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage,
+            //        EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
+            //}
+            //else if (typeOfCCAdminsToReceive.ToLower() == "cc")
+            //{
+            //    SitkaSmtpClientService.AddAdminsAsCCRecipientsToEmail(mailMessage,
+            //        EFModels.Entities.User.AdminsThatReceiveSupportEmails(_dbContext));
+            //}
 
             smtpClient.Send(mailMessage);
         }

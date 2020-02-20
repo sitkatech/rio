@@ -333,7 +333,7 @@ You can view parcels associated with this account and the water allocation and u
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
 

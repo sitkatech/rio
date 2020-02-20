@@ -175,7 +175,7 @@ namespace Rio.API.Controllers
             mailMessage.IsBodyHtml = true;
             mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
-            SitkaSmtpClientService.AddAdminsAsBccRecipientsToEmail(mailMessage, EFModels.Entities.User.ListByRole(_dbContext, RoleEnum.Admin));
+            SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
 
