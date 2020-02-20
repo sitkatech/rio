@@ -519,7 +519,10 @@
   </div>
 </div>
 <div class="container mt-sm-4" *ngIf="!activeAccount">
-  <ngb-alert [type]="'info'" [dismissible]="false">
+  <ngb-alert [type]="'info'" [dismissible]="false" *ngIf="landownerHasAnyAccounts()">
     No account is selected. Use the dropdown in the top right to select an account to view the Landowner Dashboard.
+  </ngb-alert>
+  <ngb-alert [type]="'info'" [dismissible]="false" *ngIf="!landownerHasAnyAccounts()">
+    You do not have any assigned accounts.
   </ngb-alert>
 </div>

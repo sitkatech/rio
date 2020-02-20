@@ -85,10 +85,7 @@
                 </div>
             </li>
             <li *ngIf="isAuthenticated()">
-                <span class="accountDropdownLabel">Account:</span>
-                <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
-                    name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()" (change)="setCurrentAccount()" style="display:inline-block; width:240px; font-size:12px;">
-                </ngx-select-dropdown>
+                <rio-account-select></rio-account-select>
             </li>
         </ul>
     </div>
