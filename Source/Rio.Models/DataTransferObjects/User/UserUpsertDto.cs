@@ -11,5 +11,7 @@ namespace Rio.Models.DataTransferObjects.User
         public string PhoneNumber { get; set; }
         [Required]
         public int? RoleID { get; set; }
+        [Required]
+        public bool ReceiveSupportEmails { get; set; }
     }
 }

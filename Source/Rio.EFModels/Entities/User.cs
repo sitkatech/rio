@@ -73,6 +73,16 @@ namespace Rio.EFModels.Entities
             return users;
         }
 
+        public static IEnumerable<UserDto> AdminsThatReceiveSupportEmails(RioDbContext dbContext)
+        {
+            var users = GetUserImpl(dbContext)
+                .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
+                .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return users;
+        }
+
         public static UserDto GetByUserID(RioDbContext dbContext, int userID)
         {
             var user = GetUserImpl(dbContext).SingleOrDefault(x => x.UserID == userID);
@@ -118,6 +128,7 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID);
 
             user.RoleID = userEditDto.RoleID.Value;
+            user.ReceiveSupportEmails = userEditDto.RoleID.Value == 1 && userEditDto.ReceiveSupportEmails;
             user.UpdateDate = DateTime.UtcNow;
 
             dbContext.SaveChanges();

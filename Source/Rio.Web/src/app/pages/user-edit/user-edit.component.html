@@ -13,7 +13,7 @@
     </li>
   </ol>
 </nav>
-<div class="container mt-sm-4">
+<div class="container mt-sm-4" *ngIf="model">
     <h2 style="display: inline-block">{{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}</h2>
     <app-alert-display></app-alert-display>
   <div class="col-sm-12">
@@ -23,12 +23,23 @@
           <label class="required">Role</label>
         </div>
         <div class="col-sm-10">
-          <select name="RoleID" class="form-control" [(ngModel)]="model.RoleID" required>
+          <select name="RoleID" class="form-control" [(ngModel)]="model.RoleID" (change)="checkReceiveSupportEmails()" required>
             <option value=""></option>
             <option *ngFor="let role of roles" [value]="role.RoleID">
               {{role.RoleDisplayName}}
             </option>
           </select>
+        </div>
+      </div>
+      <div class="form-group mt-4" *ngIf="model.RoleID.toString() === '1'">
+        <div class="col-sm-5 control-label">
+          <label class="required">Should Receive System Communications?</label>
+        </div>
+        <div class="col-sm-10">
+          <label class="ml-2"><input type="radio" name="ReceiveSupportEmails"
+            [(ngModel)]="model.ReceiveSupportEmails" [value]="true"> Yes</label>
+          <label class="ml-2"><input type="radio" name="ReceiveSupportEmails"
+            [(ngModel)]="model.ReceiveSupportEmails" [value]="false"> No</label>
         </div>
       </div>
       <div class="row">
