@@ -10,7 +10,7 @@
                 <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" (selectedYearChange)="updateGridData()"></rio-water-year-select>
             </div>
             <div class="col-sm-2 pl-0">
-                <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" data-placement="top" title="Download list of Parcels" onmouseenter="$(this).tooltip('show')"><i
+                <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" placement="top" ngbTooltip="Download list of Parcels"><i
                         class="fas fa-download"></i></a>
             </div>
         </div>

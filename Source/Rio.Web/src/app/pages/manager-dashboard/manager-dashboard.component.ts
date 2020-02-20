@@ -18,6 +18,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { environment } from 'src/environments/environment';
 
+declare var $:any;
 @Component({
   selector: 'rio-manager-dashboard',
   templateUrl: './manager-dashboard.component.html',
@@ -67,10 +68,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.waterYears = waterYears;
         this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
           this.parcels = parcels;
-          this.updateAnnualData();
+          this.updateAnnualData();        
         })
-      })
-    });
+      })      
+    });    
   }
 
   ngOnDestroy() {
@@ -389,13 +390,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.parcels = parcels;
     })
     this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
-      this.landOwnerUsageReportGrid.api.setRowData(result);
+      this.landOwnerUsageReportGrid ? this.landOwnerUsageReportGrid.api.setRowData(result) : null;
     });
     this.tradeService.getTradeActivityForYear(this.waterYearToDisplay).subscribe(result => {
-      this.tradeActivityGrid.api.setRowData(result);
+      this.tradeActivityGrid ? this.tradeActivityGrid.api.setRowData(result) : null;
     });
     this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay).subscribe(result => {
-      this.postingsGrid.api.setRowData(result);
+      this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
     });
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
       this.parcelAllocationAndUsages = result;

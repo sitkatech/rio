@@ -12,6 +12,8 @@ import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 
+declare var $:any;
+
 @Component({
   selector: 'rio-user-list',
   templateUrl: './user-list.component.html',
