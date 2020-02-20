@@ -121,7 +121,7 @@ namespace Rio.API.Controllers
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext);
             SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
-                        EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                        EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             SendEmailMessage(smtpClient, mailMessage);
 
             return Ok(user);
@@ -262,7 +262,7 @@ namespace Rio.API.Controllers
             foreach (var mailMessage in mailMessages)
             {
                 SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, 
-                    EFModels.Entities.User.EmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                    EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
                 SendEmailMessage(smtpClient, mailMessage);
             }
 

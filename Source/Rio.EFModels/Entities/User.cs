@@ -74,7 +74,7 @@ namespace Rio.EFModels.Entities
             return users;
         }
 
-        public static IEnumerable<string> EmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
+        public static IEnumerable<string> GetEmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
         {
             var users = GetUserImpl(dbContext)
                 .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
