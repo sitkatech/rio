@@ -3,21 +3,17 @@
   <p>
     Landowner Dashboard
   </p>
-  <div class="float-right pr-0">
-    <div class="row">
-      <div class="col-md-12">
-        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-          (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
-      </div>
+  <div class="row">
+    <div class="col col-auto mr-auto">
+      <h2>
+        {{getAccountDisplayName()}}
+      </h2>
     </div>
-  </div>  
-  <h2>
-    {{getAccountDisplayName()}}
-  </h2>
-  
-
-  
-
+    <div class="col ml-auto col-auto float-right">
+      <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+        (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+    </div>
+  </div>
   <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
     <div class="col-sm-12 col-md-5">
       <div class="card">

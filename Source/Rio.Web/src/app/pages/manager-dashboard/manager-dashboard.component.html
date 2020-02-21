@@ -29,7 +29,7 @@
               <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
             </label>
           </div>
-          <span style="vertical-align: middle"> District-Wide Statistics </span>
+          <span class="align-middle"> District-Wide Statistics </span>
         </div>
         <div class="card-body" *ngIf="parcelAllocationAndUsages">
           <div class="row">
@@ -83,12 +83,10 @@
       <div class="card">
         <div class="card-header">
           <div class="row">
-            <div class="col-sm-7">
-              Landowner Usage Report
-            </div>
-            <div class="col-sm-5">
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportLandOwnerUsageReportToCsv()" placement="top" ngbTooltip="Download Landowner Usage Report"><i class="fas fa-download"></i></a>
+            <div class="col">
+                <span class="align-middle">Landowner Usage Report</span>
+                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                  (click)="exportLandOwnerUsageReportToCsv()" placement="top" ngbTooltip="Download Landowner Usage Report"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>
