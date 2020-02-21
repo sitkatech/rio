@@ -1,7 +1,18 @@
 .water-year-dropdown {
-    color : #000
+    color : #1F4D3D
 }
 
+.water-year-dropdown,
+.water-year-dropdown:after,
+.water-year-dropdown:before {
+    transition: all .5s;
+  }
+
 .water-year-dropdown:hover {
-    box-shadow: 10px 0px 10px #4f6349;
+    background-color: #EEE;
+}
+
+.dropdown-item:hover {
+    background-color: #E5FAF1;
+    cursor: pointer;
 }

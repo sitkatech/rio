@@ -1,4 +1,8 @@
 <div class="container mt-sm-4" *ngIf="activeAccount">
+  <app-alert-display></app-alert-display>
+  <p>
+    Landowner Dashboard
+  </p>
   <div class="float-right pr-0">
     <div class="row">
       <div class="col-md-12">
@@ -6,15 +10,13 @@
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
     </div>
-  </div>
-  <p>
-    Landowner Dashboard
-  </p>
+  </div>  
   <h2>
     {{getAccountDisplayName()}}
   </h2>
+  
 
-  <app-alert-display></app-alert-display>
+  
 
   <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
     <div class="col-sm-12 col-md-5">
@@ -322,10 +324,10 @@
       <div *ngIf="userHasParcels() && waterUsageChartData" class="card">
         <div class="card-header">
           <div class="btn-group btn-group-toggle float-right">
-            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'chart' ? 'active' : ''">
+            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'chart' ? 'active' : ''" placement="top" ngbTooltip="Chart">
               <input type="radio" name="units" id="chart-icon" (click)="toggleWaterUsageByParcelView()"><i class="fas fa-bar-chart"></i>
             </label>
-            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'table' ? 'active' : ''">
+            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'table' ? 'active' : ''" placement="top" ngbTooltip="Table">
               <input type="radio" name="units" id="table-icon" (click)="toggleWaterUsageByParcelView()"><i class="fas fa-table"></i>
             </label>
           </div>

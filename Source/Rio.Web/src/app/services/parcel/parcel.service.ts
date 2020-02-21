@@ -69,6 +69,7 @@ export class ParcelService {
   }
 
   getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
+    console.log(year);
     let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }

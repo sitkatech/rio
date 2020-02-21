@@ -1,5 +1,6 @@
 <div class="container mt-sm-4" *ngIf="currentUser">
 
+  <app-alert-display></app-alert-display>
 
   <div class="row">
     <div class="col-sm-6">
@@ -8,16 +9,13 @@
       </h2>
     </div>
     <div class="col-sm-6 text-right">
-      <a class="btn btn-rio btn-sm" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
+      <a class="btn btn-rio btn-sm mt-1" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
         Parcels</a>
         <div class="float-right pl-2">
       <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
         (selectedYearChange)="updateAnnualData()"></rio-water-year-select></div>
     </div>
   </div>
-
-
-  <app-alert-display></app-alert-display>
 
   <div class="row mt-4">
     <div class="col-sm-12">
