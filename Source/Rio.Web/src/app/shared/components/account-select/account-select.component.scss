@@ -4,6 +4,16 @@
     padding-top:2px;
   }
 
+  ngx-select-dropdown > div > button *,
+  ngx-select-dropdown > div > button *::before,
+  ngx-select-dropdown > div > button *::after {
+    transition: all .5s;
+  }
+  ngx-select-dropdown > div > button:hover *
+   {
+    color:#0EC85C;
+  }
+
   ngx-select-dropdown > div > button{
     background-color:  #194939 !important;
     border:none !important;
@@ -22,6 +32,14 @@
 
       
     }
+  }
+
+  .ngx-dropdown-list-container ul li:hover {
+    background-color: #E5FAF1;
+  }
+
+  .ngx-dropdown-container .ngx-dropdown-list-container ul.selected-items li {
+    background-color: #1F4D3D !important;
   }
 
   
