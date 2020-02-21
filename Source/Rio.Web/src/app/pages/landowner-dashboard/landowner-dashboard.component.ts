@@ -25,7 +25,6 @@ import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 
-
 @Component({
   selector: 'rio-landowner-dashboard',
   templateUrl: './landowner-dashboard.component.html',
@@ -124,14 +123,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             ? null
             : account as AccountSimpleDto;
           this.setActiveAccount(this.activeAccount);
-          this.subscribeToActiveAccount();
+          this.subscribeToActiveAccount();          
         });
       } else {
         this.subscribeToActiveAccount();
       }
 
-      this.cdr.detectChanges();
-    });
+      this.cdr.detectChanges();      
+    });   
   }
 
   public setActiveAccount(account: AccountSimpleDto) {
@@ -210,7 +209,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
       }
 
-      this.landownerWaterUseChart.buildColorScheme();
+      this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
     })
   }
 
@@ -224,13 +223,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels && this.parcels.length > 0
   }
 
-  public toggleUnitsShown(): void {
-    if (this.unitsShown === "ac-ft") {
-      this.unitsShown = "ac-ft / ac";
-    }
-    else {
-      this.unitsShown = "ac-ft";
-    }
+  public toggleUnitsShown(units : string): void {
+    this.unitsShown = units;
   }
 
   public toggleTradeStatusShown(): void {

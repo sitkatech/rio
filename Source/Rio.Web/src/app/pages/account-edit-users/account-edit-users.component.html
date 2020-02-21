@@ -14,7 +14,7 @@
     </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="account && allUsers">
-    <h2 style="display: inline-block">Add or Remove Users</h2>
+    <h2 class="d-inline-block">Add or Remove Users</h2>
     <app-alert-display></app-alert-display>
 
     <form (ngSubmit)="onSubmit(editAccountUsersForm)" #editAccountUsersForm="ngForm">

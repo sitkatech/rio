@@ -1,32 +1,32 @@
 <div class="container mt-sm-4" *ngIf="activeAccount">
-  <div class="float-right pr-0">
-    <div class="row">
-      <div class="col-md-12">
-        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-          (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
-      </div>
+  <app-alert-display></app-alert-display>
+  <p>
+    Landowner Dashboard
+  </p>
+  <div class="row">
+    <div class="col col-auto mr-auto">
+      <h2>
+        {{getAccountDisplayName()}}
+      </h2>
+    </div>
+    <div class="col ml-auto col-auto float-right">
+      <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+        (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
     </div>
   </div>
-  <h2>
-    Landowner Dashboard - {{getAccountDisplayName()}}
-  </h2>
-
-  <app-alert-display></app-alert-display>
-
   <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
     <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">
-          <div class="float-right">
-            <label class="switch">
-              <input type="checkbox" (change)="toggleUnitsShown()" />
-              <div class="slider round">
-                <span class="off">ac-ft</span>
-                <span class="on">ac-ft/ac</span>
-              </div>
+          <div class="btn-group btn-group-toggle float-right">
+            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''" style="width:65px;">
+              <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
+            </label>
+            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
+              <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
             </label>
           </div>
-          Annual Water Budget Overview
+          <span class="align-middle"> Water Budget Overview </span>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -94,7 +94,7 @@
                 <tr>
                   <th class="text-sm-right">
                     Native Yield
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Native Yield"><i
                       class="fas fa-question-circle small"></i></a>
                   </th>
                   <td class="text-sm-right">
@@ -104,7 +104,7 @@
                 <tr>
                   <th class="text-right">
                     Project Water
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Project Water"><i
                       class="fas fa-question-circle small"></i></a>
                   </th>
                   <td class="text-sm-right">
@@ -114,7 +114,7 @@
                 <tr>
                   <th class="text-right">
                     Stored Water
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Stored Water"><i
                       class="fas fa-question-circle small"></i></a> 
                   </th>
                   <td class="text-sm-right">
@@ -124,7 +124,7 @@
                 <tr>
                   <th class="text-right">
                     Reconciliation
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer"><i
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Reconciliation"><i
                       class="fas fa-question-circle small"></i></a> 
                   </th>
                   <td class="text-sm-right">
@@ -248,7 +248,7 @@
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
                   Usage to Date
-                  <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+                  <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn how water usage is measured"><i
                     class="fas fa-question-circle small"></i></a> 
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
@@ -299,7 +299,7 @@
           <div class="card">
             <div class="card-header">
               {{waterYearToDisplay}} Allocation and Usage
-              <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+              <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                 class="fas fa-question-circle small"></i>
               </a>
             </div>
@@ -319,17 +319,16 @@
     <div class="col-sm-12">
       <div *ngIf="userHasParcels() && waterUsageChartData" class="card">
         <div class="card-header">
-          <div class="float-right">
-            <label class="switch">
-              <input type="checkbox" (change)="toggleWaterUsageByParcelView()" />
-              <div class="slider round">
-                <span class="off">Chart</span>
-                <span class="on">Table</span>
-              </div>
+          <div class="btn-group btn-group-toggle float-right">
+            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'chart' ? 'active' : ''" placement="top" ngbTooltip="Chart">
+              <input type="radio" name="units" id="chart-icon" (click)="toggleWaterUsageByParcelView()"><i class="fas fa-bar-chart"></i>
+            </label>
+            <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'table' ? 'active' : ''" placement="top" ngbTooltip="Table">
+              <input type="radio" name="units" id="table-icon" (click)="toggleWaterUsageByParcelView()"><i class="fas fa-table"></i>
             </label>
           </div>
-          {{waterYearToDisplay}} Water Usage by Parcel
-          <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer"><i
+          <span class="align-middle">{{waterYearToDisplay}} Water Usage by Parcel </span>
+          <a routerLink="/water-use-measurement" target="_blank" style="cursor:pointer; vertical-align: middle;" placement="top" ngbTooltip="Learn how water usage is measured"><i
             class="fas fa-question-circle small"></i></a> 
           <a class="btn btn-rio btn-sm mr-3 float-right" 
              routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay}}" 

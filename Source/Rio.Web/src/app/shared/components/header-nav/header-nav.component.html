@@ -1,5 +1,5 @@
-<nav class="navbar navbar-rio navbar-expand-lg navbar-dark">
-    <a href="https://www.rrbwsd.com/" class="navbar-brand">
+<nav class="navbar navbar-rio navbar-expand-lg navbar-dark stroke">
+    <a href="https://www.rrbwsd.com/" class="navbar-brand" target="_blank">
         <img src="assets/main/logos/rrbwsd_logo.png" class="navbarLogo">
     </a>
     <a routerLink="/" routerLinkActive="active" class="navbar-brand nav-link">
@@ -12,9 +12,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" routerLink="/" routerLinkActive="active" *ngIf="!isAuthenticated() || isUnassignedOrDisabled()">Home</a>
+                <a class="nav-link" routerLink="/manager-dashboard" routerLinkActive="active" 
+                *ngIf="isAuthenticated() && isAdministrator()">My Dashboard</a>
                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
-                    *ngIf="isAuthenticated() && !isUnassignedOrDisabled()">Home</a>
+                    *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
             </li>
             <li class="nav-item" *ngIf="isAuthenticated() && allowTrading()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Buy and Sell Water</a>
@@ -28,9 +29,6 @@
                     Manage
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/manager-dashboard" class="dropdown-item">
-                        Manager Dashboard
-                    </a>
                     <a routerLink="/users" class="dropdown-item">
                         View all Users
                     </a>
@@ -75,9 +73,6 @@
                     Welcome {{getUserName()}}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a *ngIf="!isUnassignedOrDisabled()" routerLink="/landowner-dashboard" class="dropdown-item">
-                        My Dashboard
-                    </a>
                     <a routerLink="/help" class="dropdown-item">
                         Get Help
                     </a>

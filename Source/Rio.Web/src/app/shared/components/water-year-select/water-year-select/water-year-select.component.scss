@@ -1,6 +1,18 @@
-select {
-    width: 80%;
-    padding:3px;
-    font-size: 12px;
-    margin-left: 5px;
+.water-year-dropdown {
+    color : #1F4D3D
+}
+
+.water-year-dropdown,
+.water-year-dropdown:after,
+.water-year-dropdown:before {
+    transition: all .5s;
+  }
+
+.water-year-dropdown:hover {
+    background-color: #EEE;
+}
+
+.dropdown-item:hover {
+    background-color: #E5FAF1;
+    cursor: pointer;
 }

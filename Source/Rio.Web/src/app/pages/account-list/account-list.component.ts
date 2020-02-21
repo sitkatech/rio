@@ -9,7 +9,6 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-
 @Component({
   selector: 'rio-account-list',
   templateUrl: './account-list.component.html',

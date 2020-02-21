@@ -14,7 +14,7 @@
     </ol>
 </nav>
 <div class="container mt-sm-4" *ngIf="account">
-    <h2 style="display: inline-block">{{account.AccountDisplayName}}</h2>
+    <h2 class="d-inline-block">{{account.AccountDisplayName}}</h2>
     <app-alert-display></app-alert-display>
 
     <form (ngSubmit)="onSubmit(editAccountForm)" #editAccountForm="ngForm">

@@ -36,7 +36,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.waterYearToDisplay = (new Date()).getFullYear();
+      // todo: after default display year is built, fix this 
+      this.waterYearToDisplay = 2019;
+      //this.waterYearToDisplay = (new Date()).getFullYear();
       forkJoin(
         this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay), 
         this.parcelService.getWaterYears()

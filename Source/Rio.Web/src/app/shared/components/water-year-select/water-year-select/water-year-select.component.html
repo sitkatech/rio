@@ -1,8 +1,13 @@
-<div class="form-group form-inline">
-Viewing year: 
-<select class="form-control" [(ngModel)]="selectedYear" [disabled]="disabled">
+<div class="form-group form-inline mb-0">
+  Viewing year 
+  <a href="#" class="nav-link water-year-dropdown dropdown-toggle font-weight-bold" role="button" data-toggle="dropdown">
+    {{selectedYear}}
+  </a>
+  <div class="dropdown-menu">
     <ng-template ngFor let-year [ngForOf]="years">
-      <option value="{{year}}">{{year}}</option>
+      <a class="dropdown-item" (click)="selectedYear = year" >
+        {{year}}
+      </a>
     </ng-template>
-  </select>
+  </div>
 </div>
