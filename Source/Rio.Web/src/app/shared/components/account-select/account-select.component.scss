@@ -52,3 +52,10 @@
       } ngx-select-dropdown > div > button{ text-align: left !important;}
 
     }
+
+    .ngx-dropdown-list-container ul li {
+      padding-left: 5px !important;
+      padding-right: 5px !important;
+      white-space: nowrap !important;
+      overflow-x: hidden !important;
+    }
