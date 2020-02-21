@@ -73,9 +73,9 @@ export class AuthenticationService {
 
     // check for a currentUser at NavigationStart so that authorization-based guards can work with promises.
     this.router.events
-      .pipe(filter(e=>e instanceof NavigationStart))
-      .subscribe((e: NavigationStart)=>{
-        if (this.isAuthenticated() && !this.currentUser){
+      .pipe(filter(e => e instanceof NavigationStart))
+      .subscribe((e: NavigationStart) => {
+        if (this.isAuthenticated() && !this.currentUser) {
           var claims = this.oauthService.getIdentityClaims();
           var globalID = claims["sub"];
           console.log("Authenticated but no user found...")
@@ -142,6 +142,9 @@ export class AuthenticationService {
   public setActiveAccount(account: AccountSimpleDto) {
     window.localStorage.setItem('activeAccount', JSON.stringify(account));
     this._currentAccountSubject.next(account);
+    if (this.router.url !== "/landowner-dashboard") {
+      this.router.navigateByUrl("/landowner-dashboard");
+    }
   }
 
   public refreshUserInfo(user: UserDto) {
@@ -193,7 +196,7 @@ export class AuthenticationService {
     return role === RoleEnum.Admin;
   }
 
-  public isCurrentUserAnAdministrator(): boolean{
+  public isCurrentUserAnAdministrator(): boolean {
     return this.isUserAnAdministrator(this.currentUser);
   }
 

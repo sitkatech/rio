@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
@@ -6,7 +6,8 @@ import { UserDto } from '../../models';
 @Component({
   selector: 'rio-account-select',
   templateUrl: './account-select.component.html',
-  styleUrls: ['./account-select.component.scss']
+  styleUrls: ['./account-select.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class AccountSelectComponent implements OnInit {
   private watchUserChangeSubscription: any;
@@ -17,7 +18,7 @@ export class AccountSelectComponent implements OnInit {
     search: true,
     height: '320px',
     placeholder: "Select an account",
-    displayKey: "ShortAccountDisplayName",
+    displayKey: "AccountDisplayName",
     searchOnKey: "AccountDisplayName",
   }
 
@@ -54,6 +55,7 @@ export class AccountSelectComponent implements OnInit {
   }
 
   public showDropdown(): boolean{
-    return this.getAvailableAccounts().length > 1;
+    const accountList = this.getAvailableAccounts();
+    return accountList && accountList.length > 1;
   }
 }

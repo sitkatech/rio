@@ -1,3 +1,54 @@
-  .accountDropdownLabel {
+.accountDropdownLabel {
     color:white; display:inline-block; padding-right:5px;
+    font-size: 12px;
+    padding-top:2px;
   }
+
+  ngx-select-dropdown > div > button{
+    background-color:  #194939 !important;
+    border:none !important;
+    color:white !important;
+    padding-top: 2px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: right !important;
+    
+
+    > span{
+      
+      text-align: right !important;
+      float: none !important;
+      padding-right:16px;
+
+      
+    }
+  }
+
+  
+
+  ngx-select-dropdown > div > button > span:nth-child(2):after {
+    display: inline-block;
+    margin-left: 0.255em;
+    vertical-align: 0.255em;
+    content: "";
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-bottom: 0;
+    border-left: 0.3em solid transparent;
+    font-size:16px;
+  }
+
+  ngx-select-dropdown > div > button > span:first-child{
+    padding-right:0;
+    overflow-x:hidden;
+    max-width:205px;
+    display:inline-block;
+  }
+
+
+  @media screen and (max-width: 990px){
+    ngx-select-dropdown > div > button > span {
+      text-align: left !important;
+      } ngx-select-dropdown > div > button{ text-align: left !important;}
+
+    }
