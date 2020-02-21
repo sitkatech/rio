@@ -1,0 +1,9 @@
+<ng-container *ngIf="showDropdown()">
+    <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
+        name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()"
+        (change)="setCurrentAccount()" style="display:inline-block; width:240px; font-size:12px;">
+    </ngx-select-dropdown>
+</ng-container>
+<ng-container *ngIf="!showDropdown() && activeAccount"> <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
+    <span class="accountDropdownLabel pr-3">{{activeAccount.AccountDisplayName}}</span>
+</ng-container>

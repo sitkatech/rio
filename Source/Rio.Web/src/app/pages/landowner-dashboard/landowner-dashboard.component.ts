@@ -543,4 +543,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
     return sum;
   }
+
+  public landownerHasAnyAccounts(){
+    return this.authenticationService.getAvailableAccounts().length > 0;
+  }
 }
