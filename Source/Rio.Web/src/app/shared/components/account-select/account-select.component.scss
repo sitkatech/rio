@@ -4,6 +4,10 @@
     padding-top:2px;
   }
 
+  ngx-select-dropdown > div > *:focus {
+    outline: none
+  }
+
   ngx-select-dropdown > div > button *,
   ngx-select-dropdown > div > button *::before,
   ngx-select-dropdown > div > button *::after {
