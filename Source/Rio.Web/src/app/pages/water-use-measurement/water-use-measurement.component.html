@@ -1,47 +1,94 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Water Use Measurement</li>
+        <li class="breadcrumb-item active" aria-current="page">Measuring Water Use</li>
     </ol>
 </nav>
 <div class="container">
-    <app-alert-display></app-alert-display>
-    <h2 class="d-inline-block">Water Use Measurement</h2>
+    <app-alert-display></app-alert-display>    
+    <div class="row mb-2">
+        <div class="col">
+            <h2 class="d-inline-block">Measuring Water Use</h2>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus non dictum elit, vitae molestie turpis.
-                Sed molestie, mi in fermentum tincidunt, eros eros dignissim libero, ac tincidunt ante est vitae nisl.
-                Donec pharetra elit a orci auctor, id vehicula erat ultrices. Praesent mollis sapien nec turpis gravida,
-                a lobortis diam laoreet. Duis faucibus erat non massa eleifend bibendum. Donec ipsum ex, tempus eget
-                placerat in, dignissim a ante. Etiam libero purus, elementum vel lacus sed, commodo luctus ligula. Sed
-                eu ipsum nec massa vehicula ornare vel vel arcu. Sed accumsan, lectus et bibendum auctor, erat risus
-                aliquam felis, fringilla euismod purus lacus in nulla. Pellentesque at erat ac tellus condimentum
-                pellentesque id eu ligula. Phasellus quis dapibus elit. Nulla ornare nunc ut hendrerit efficitur. Duis
-                sapien est, ultricies interdum rutrum non, consectetur nec risus. Pellentesque ornare et enim sed
-                auctor. Sed ipsum magna, elementum eu consequat sit amet, sodales quis velit.
-
-                Nulla facilisi. Praesent condimentum, ipsum sed venenatis scelerisque, nunc dui maximus massa, a lacinia
-                arcu quam vel nibh. Praesent tristique neque tincidunt consequat egestas. Nullam facilisis dignissim
-                consectetur. Fusce sit amet turpis at ante lobortis dignissim. Phasellus urna justo, euismod convallis
-                magna ultricies, lobortis bibendum magna. Ut congue felis ut pretium porta.
-
-                In in metus in ex egestas ornare nec gravida ligula. Sed ac magna ex. Ut non orci tincidunt,
-                sollicitudin nibh eget, accumsan augue. Integer ullamcorper magna sit amet venenatis porta. Quisque odio
-                velit, malesuada eget tortor a, lacinia ullamcorper dolor. Nunc iaculis laoreet est at blandit. Mauris
-                fringilla mauris id risus facilisis, at viverra dui scelerisque. Nulla malesuada pretium enim, nec
-                condimentum sapien fermentum in. Suspendisse potenti. In rutrum enim odio, nec tempor quam tristique eu.
-
-                Etiam viverra ipsum nec neque dignissim bibendum. Sed fringilla, neque varius finibus tristique, nulla
-                purus faucibus metus, ut pellentesque justo sapien eu urna. Mauris suscipit porta massa id pretium.
-                Donec metus ex, luctus fermentum laoreet ut, dapibus ut velit. Praesent vel viverra massa. Nunc a
-                porttitor turpis. In ligula augue, tempor vitae justo id, egestas fringilla dolor. Vestibulum faucibus
-                quis ante vel gravida.
-
-                Pellentesque aliquet vehicula tellus, vel tincidunt nisi sodales et. Sed tempus vitae magna aliquam
-                pretium. Donec in molestie turpis. Cras vitae pharetra nunc, a vulputate elit. Aliquam erat volutpat.
-                Nulla vitae finibus quam. Nullam quis magna et dolor dictum venenatis. Donec tempus et nisi eu
-                sollicitudin. Mauris blandit eleifend neque, pretium dapibus odio accumsan id.
+            <p><strong>Tracking water use and demand</strong></p>
+            <p>Water use calculations on this trading platform are provided by <a href="https://www.etdata.org/" target="_blank">OpenET</a>
+               - a transparent and easily-accessible web-based platform for credible estimates of consumptive water use at the
+               field scale. OpenET relies on publicly available satellite and weather station data to estimate evapotranspiration
+               (ET) - water that is transferred from the land to the atmosphere via evaporation from bare soil and transpiration
+               through plant leaves. For irrigated agricultural fields, ET is necessary for plant growth and food production.
+               <br>
+               <br>
+               While several methods already exist for measuring ET at the field scale, they’re expensive, and since they’re
+               calculated differently by every consulting group, there isn’t a lot of broad trust in the data.
+               <u>Rosedale-Rio Bravo chose to partner with OpenET because it is bringing some of the leading scientists and
+                  most commonly used approaches for estimating ET together in one place, helping to create a shared basis 
+                  for decision-making.
+               </u>  
+               <br>
+               <br>
+               OpenET also significantly increases access to ET data for individual farmers and landowners, giving them
+               the opportunity to see the same data that water managers and regulators are using by providing low-cost,
+               near real-time ET estimates through a widely accessible website. At this stage of development, the OpenET
+               platform remains in a beta version, and data are being provided here for user testing purposes only. 
+               However, with further work on model intercomparison and refinements, the objective of OpenET is to provide
+               data that can be both broadly accessed and broadly trusted, with ET estimates that are well-documented,
+               easily retrieved, and truly representative of the best available science.
+               <br>
+               Rosedale Rio Bravo utilizes data from OpenET within this trading platform to account for consumptive use 
+               on each assessor’s parcel. This information allows the district to accurately account for and report the
+               water consumptively used by each parcel, and gives landowners the ability to accurately track their water
+               budgets throughout the year.              
             </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p><strong>The OpenET Team</strong></p>
+            <p>The OpenET project is being led by NASA, Desert Research Institute (DRI) and Environmental Defense Fund (EDF)
+               with in-kind support from Google Earth Engine. The technical team includes approximately 30 researchers and 
+               practitioners from NASA, DRI, the U.S. Department of Agriculture (USDA), the U.S. Geological Survey (USGS),
+               University of Nebraska, University of Idaho, University of Wisconsin, University of Maryland, California State
+               University Monterey Bay, Google Earth Engine and the web development firm HabitatSeven, with expertise in
+               satellite-based estimation of evapotranspiration, cloud computing, and user-driven website design.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p><strong>Why will the data be revised?</strong></p>
+            <p>Evapotranspiration (ET) information generated by OpenET are derived from various models that integrate
+               satellite and meteorological data to generate estimates of ET at the field scale. Because they are 
+               estimates, and because the models utilize different methodologies to arrive at these estimates, the
+               underlying OpenET models can produce results that diverge from field measurement. However, recent 
+               advances in remote sensing of ET have led to significant improvements in our ability to automate 
+               these methodologies, and many of these methods are now advancing towards operational use by U.S. state
+               and federal agencies. The OpenET project is integrating many of these advances to support further 
+               improvements in water management by increasing access to remotely sensed ET data, and building 
+               confidence in the data by developing an ensemble value that is endorsed by a community of scientists.
+               The models selected for inclusion in the initial ensemble are already informing water use decisions 
+               across the West, but the OpenET project makes it much easier to compare the models at scale, allowing
+               identification of consistent differences between the various methods and approaches, and making it 
+               easier for the scientific community to further refine and improve the estimates. The OpenET team is
+               currently initiating one of the largest model inter-comparison and accuracy assessments conducted 
+               to date to increase understanding of the uncertainty associated with ET data from individual models
+               as well as to improve the ensemble-based estimates. The results from these intercomparison and 
+               accuracy assessment studies will inform selection of the final approach for calculation of a single
+               value from the full ensemble of ET models.
+               <br>
+               <br>
+               The currently available data therefore represents the team’s initial estimate of an ensemble value 
+               based on the best available science. However, the science will significantly advance over the coming
+               year as the inter-comparison effort progresses and additional lessons are learned. Additional information
+               concerning the accuracy and appropriate uses of this data can be provided by Robyn Grimm at
+               <a href="mailto:rgrimm@edf.org">rgrimm@edf.org</a>.                
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mb-2">
+            <strong>Learn more about OpenET at <a href="https://www.etdata.org/" target="_blank">etdata.org</a>, or <a href="https://www.etdata.org/faq.pdf" target="_blank">download the OpenET FAQ</a></strong>
         </div>
     </div>
 </div>

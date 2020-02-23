@@ -38,7 +38,6 @@ import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-
 import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
 import { WaterUseMeasurementComponent } from './pages/water-use-measurement/water-use-measurement.component';
-import { OpenetFaqComponent } from './pages/openet-faq/openet-faq.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 
 const routes: Routes = [
@@ -74,10 +73,9 @@ const routes: Routes = [
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
   { path: "help", component: HelpComponent },
-  { path: "about", component: AboutComponent},
-  { path: "general-faq", component: GeneralFaqComponent},
-  { path: "water-use-measurement", component: WaterUseMeasurementComponent},
-  { path: "openet-faq", component: OpenetFaqComponent},
+  { path: "about-the-platform", component: AboutComponent},
+  { path: "frequently-asked-questions", component: GeneralFaqComponent},
+  { path: "measuring-water-use", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "login-callback", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },

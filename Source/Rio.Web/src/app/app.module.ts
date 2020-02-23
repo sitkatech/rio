@@ -59,7 +59,6 @@ import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-
 import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
 import { WaterUseMeasurementComponent } from './pages/water-use-measurement/water-use-measurement.component';
-import { OpenetFaqComponent } from './pages/openet-faq/openet-faq.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 
 @NgModule({
@@ -103,7 +102,6 @@ import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
     AboutComponent,
     GeneralFaqComponent,
     WaterUseMeasurementComponent,
-    OpenetFaqComponent,
     DisclaimerComponent
   ],
   imports: [
