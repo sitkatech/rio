@@ -16,10 +16,11 @@ export class AccountSelectComponent implements OnInit {
 
   public accountDropdownConfig = {
     search: true,
+    searchPlaceholder: "Search Account...",
     height: '320px',
     placeholder: "Select an account",
-    displayKey: "AccountDisplayName",
-    searchOnKey: "AccountDisplayName",
+    displayKey: "ShortAccountDisplayName",
+    searchOnKey: "ShortAccountDisplayName",
   }
 
   constructor(private authenticationService: AuthenticationService) { }

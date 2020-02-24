@@ -62,10 +62,8 @@
   ngx-select-dropdown > div > button > span:first-child{
     padding-right:0;
     overflow-x:hidden;
-    max-width:205px;
     display:inline-block;
   }
-
 
   @media screen and (max-width: 990px){
     ngx-select-dropdown > div > button > span {

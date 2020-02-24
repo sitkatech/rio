@@ -14,9 +14,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
-using Rio.Models.DataTransferObjects.Offer;
-using Rio.Models.DataTransferObjects.Posting;
-using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
@@ -189,10 +186,8 @@ namespace Rio.API.Controllers
             {
                 return Ok(Account.List(_dbContext));
             }
-            else
-            {
-                return Ok(Account.ListByUserID(_dbContext, userID));
-            }
+
+            return Ok(Account.ListByUserID(_dbContext, userID));
         }
 
         [HttpPut("users/{userID}")]

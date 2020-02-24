@@ -29,14 +29,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     windowWidth: number;
 
-    public accountDropdownConfig = {
-      search: true,
-      height: '320px',
-      placeholder: "Select an account",
-      displayKey: "ShortAccountDisplayName",
-      searchOnKey: "AccountDisplayName",
-    }
-
     @HostListener('window:resize', ['$event'])
     resize(ev?: Event) {
         this.windowWidth = window.innerWidth;
