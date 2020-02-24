@@ -83,7 +83,7 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-header">
-                    <a *ngIf="currentUserIsAdmin()" class="btn btn-rio btn-sm float-right"
+                    <a *ngIf="doOfferEditAccounts()" class="btn btn-rio btn-sm float-right"
                         routerLink="/users/{{user?.UserID}}/edit-accounts">
                         <span class="fas fa-edit"></span> Edit Accounts
                     </a>

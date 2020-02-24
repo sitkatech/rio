@@ -11,6 +11,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
+import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 
 @Component({
   selector: 'rio-user-edit-accounts',
@@ -52,6 +53,7 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
     this.allAccounts = new Array<AccountDto>();
     this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+
       this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
 
       forkJoin(
@@ -59,7 +61,13 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
         this.accountService.listAllAccounts(),
         this.userService.listAccountsByUserID(this.userID)
       ).subscribe(([user, accounts, userAccounts]) => {
+
         this.user = user;
+        if (user.Role.RoleID == RoleEnum.Admin){
+          debugger;
+          this.alertService.pushAlert(new Alert("Oops! Looks like you typed or copied and pasted a URL that doesn't quite work. That feature may have been removed or disabled."));
+          this.router.navigate(["/"]);
+        }
         this.allAccounts = accounts;
         this.accountsToSave = userAccounts;
 

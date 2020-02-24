@@ -1,5 +1,5 @@
 <ng-container *ngIf="showDropdown()">
-    <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
+    <ngx-select-dropdown id="accountSelectDropdown" #accountsDropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
         name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()"
         (change)="setCurrentAccount()" style="display:inline-block; width:360px; font-size:12px;">
     </ngx-select-dropdown>

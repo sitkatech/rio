@@ -76,4 +76,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     public canViewLandOwnerDashboard(): boolean {
         return this.currentUserIsAdmin();
     }
+
+    public doOfferEditAccounts(): boolean{
+        return this.currentUserIsAdmin() && !this.userIsAdministrator();
+    }
 }

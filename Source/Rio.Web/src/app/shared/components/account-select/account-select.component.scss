@@ -1,24 +1,30 @@
+/*
+NP: Please do note that since we had to ViewEncapsulation.None on AccountSelectComponent in order to style that as requested,
+you have to ngx-select-dropdown#accountSelectDropdown instead of plain ngx-select-dropdown,
+or else you'll end up styling all the ngx-select-dropdowns in the site D=
+*/
+
 .accountDropdownLabel {
     color:white; display:inline-block; padding-right:5px;
     font-size: 12px;
     padding-top:2px;
   }
 
-  ngx-select-dropdown > div > *:focus {
+  ngx-select-dropdown#accountSelectDropdown > div > *:focus {
     outline: none
   }
 
-  ngx-select-dropdown > div > button *,
-  ngx-select-dropdown > div > button *::before,
-  ngx-select-dropdown > div > button *::after {
+  ngx-select-dropdown#accountSelectDropdown > div > button *,
+  ngx-select-dropdown#accountSelectDropdown > div > button *::before,
+  ngx-select-dropdown#accountSelectDropdown > div > button *::after {
     transition: all .5s;
   }
-  ngx-select-dropdown > div > button:hover *
+  ngx-select-dropdown#accountSelectDropdown > div > button:hover *
    {
     color:#0EF16D;
   }
 
-  ngx-select-dropdown > div > button{
+  ngx-select-dropdown#accountSelectDropdown > div > button{
     background-color:  #194939 !important;
     border:none !important;
     color:white !important;
@@ -47,7 +53,7 @@
   }
   
 
-  ngx-select-dropdown > div > button > span:nth-child(2):after {
+  ngx-select-dropdown#accountSelectDropdown > div > button > span:nth-child(2):after {
     display: inline-block;
     margin-left: 0.255em;
     vertical-align: 0.255em;
@@ -59,16 +65,16 @@
     font-size:16px;
   }
 
-  ngx-select-dropdown > div > button > span:first-child{
+  ngx-select-dropdown#accountSelectDropdown > div > button > span:first-child{
     padding-right:0;
     overflow-x:hidden;
     display:inline-block;
   }
 
   @media screen and (max-width: 990px){
-    ngx-select-dropdown > div > button > span {
+    ngx-select-dropdown#accountSelectDropdown > div > button > span {
       text-align: left !important;
-      } ngx-select-dropdown > div > button{ text-align: left !important;}
+      } ngx-select-dropdown#accountSelectDropdown > div > button{ text-align: left !important;}
 
     }
 

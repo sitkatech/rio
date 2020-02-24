@@ -1,18 +1,23 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
+import { SelectDropDownComponent } from 'ngx-select-dropdown';
 
 @Component({
   selector: 'rio-account-select',
   templateUrl: './account-select.component.html',
   styleUrls: ['./account-select.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  host: {
+    '(document:click)': 'onClick($event)',
+  }
 })
 export class AccountSelectComponent implements OnInit {
   private watchUserChangeSubscription: any;
   public activeAccount: AccountSimpleDto;
   public currentUser: UserDto;
+  @ViewChild("accountsDropdown", { static: false }) accountsDropdown: SelectDropDownComponent;
 
   public accountDropdownConfig = {
     search: true,
@@ -55,8 +60,18 @@ export class AccountSelectComponent implements OnInit {
     return c1 && c2 ? c1.AccountID === c2.AccountID : c1 === c2;
   }
 
-  public showDropdown(): boolean{
+  public showDropdown(): boolean {
     const accountList = this.getAvailableAccounts();
     return accountList && accountList.length > 1;
   }
+
+  // NP Poor man's hack to make sure the account dropdown closes when it loses focus, like a dropdown should. If I'd known that ngx-select-dropdown was missing this I would have picked a different component, but here we are.
+  public onClick(event) {
+    if (!(event.target.classList.contains("ngx-dropdown-button") || event.target.parentElement.classList.contains("ngx-dropdown-button"))) {
+      if (this.accountsDropdown.toggleDropdown) {
+        this.accountsDropdown.toggleSelectDropdown();
+      }
+    }
+  }
+
 }
