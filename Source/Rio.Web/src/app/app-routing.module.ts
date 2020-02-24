@@ -73,7 +73,7 @@ const routes: Routes = [
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
   { path: "help", component: HelpComponent },
-  { path: "about-the-platform", component: AboutComponent},
+  { path: "platform-overview", component: AboutComponent},
   { path: "frequently-asked-questions", component: GeneralFaqComponent},
   { path: "measuring-water-use", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
