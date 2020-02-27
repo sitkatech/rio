@@ -64,7 +64,7 @@
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                 <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
             </li>
-            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()">
+            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()"> 
                 <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Welcome {{getUserName()}}

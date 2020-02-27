@@ -1,11 +1,13 @@
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 namespace Rio.Web
 {
@@ -44,6 +46,14 @@ namespace Rio.Web
             
             app.Use(async (context, next) =>
             {
+                if (context.Request.Path.Value == "/assets/config.json")
+                {
+                    var result = new ConfigDto(Configuration);
+                    var json = JsonConvert.SerializeObject(result);
+                    await context.Response.WriteAsync(json);
+                    return;
+                }
+
                 await next();
 
                 if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
@@ -56,5 +66,74 @@ namespace Rio.Web
             app.UseDefaultFiles();
             app.UseStaticFiles();
         }
+    }
+
+    public class ConfigDto
+    {
+        public ConfigDto(IConfiguration configuration)
+        {
+            Production = bool.Parse(configuration["Production"]);
+            Staging = bool.Parse(configuration["Staging"]);
+            Dev = bool.Parse(configuration["Dev"]);
+            ApiHostName = configuration["ApiHostName"];
+            CreateAccountUrl = configuration["CreateAccountUrl"];
+            CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
+            AllowTrading = bool.Parse(configuration["AllowTrading"]);
+            KeystoneSupportBaseUrl = configuration["KeystoneSupportBaseUrl"];
+            GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
+            KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
+        }
+
+        [JsonProperty("production")]
+        public bool Production { get; set; }
+        [JsonProperty("staging")]
+        public bool Staging { get; set; }
+        [JsonProperty("dev")]
+        public bool Dev { get; set; }
+        [JsonProperty("apiHostName")]
+        public string ApiHostName { get; set; }
+        [JsonProperty("createAccountUrl")]
+        public string CreateAccountUrl { get; set; }
+        [JsonProperty("createAccountRedirectUrl")]
+        public string CreateAccountRedirectUrl { get; set; }
+        [JsonProperty("allowTrading")]
+        public bool AllowTrading { get; set; }
+        [JsonProperty("keystoneSupportBaseUrl")]
+        public string KeystoneSupportBaseUrl { get; set; }
+        [JsonProperty("geoserverMapServiceUrl")]
+        public string GeoserverMapServiceUrl { get; set; }
+        [JsonProperty("keystoneAuthConfiguration")]
+        public KeystoneAuthConfigurationDto KeystoneAuthConfiguration { get; set; }
+    }
+
+    public class KeystoneAuthConfigurationDto
+    {
+        public KeystoneAuthConfigurationDto(IConfiguration configuration)
+        {
+            ClientID = configuration["Keystone_ClientID"];
+            Issuer = configuration["Keystone_Issuer"];
+            RedirectUri = configuration["Keystone_RedirectUri"];
+            Scope = configuration["Keystone_Scope"];
+            SessionChecksEnabled = bool.Parse(configuration["Keystone_SessionCheckEnabled"]);
+            LogoutUrl = configuration["Keystone_LogoutUrl"];
+            PostLogoutRedirectUri = configuration["Keystone_PostLogoutRedirectUri"];
+        }
+
+        [JsonProperty("clientId")]
+        public string ClientID { get; set; }
+        [JsonProperty("issuer")]
+        public string Issuer { get; set; }
+        [JsonProperty("redirectUri")]
+        public string RedirectUri { get; set; }
+        [JsonProperty("scope")]
+        public string Scope { get; set; }
+        [JsonProperty("sessionChecksEnabled")]
+        public bool SessionChecksEnabled { get; set; }
+        [JsonProperty("logoutUrl")]
+        public string LogoutUrl { get; set; }
+        [JsonProperty("postLogoutRedirectUri")]
+        public string PostLogoutRedirectUri { get; set; }
+        [JsonProperty("waitForTokenInMsec")]
+        public int WaitForTokenInMsec { get; set; }
     }
 }

@@ -1,19 +1,18 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
 import { SelectDropDownComponent } from 'ngx-select-dropdown';
 
+declare var jQuery: any;
+
 @Component({
   selector: 'rio-account-select',
   templateUrl: './account-select.component.html',
   styleUrls: ['./account-select.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: {
-    '(document:click)': 'onClick($event)',
-  }
+  encapsulation: ViewEncapsulation.None
 })
-export class AccountSelectComponent implements OnInit {
+export class AccountSelectComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   public activeAccount: AccountSimpleDto;
   public currentUser: UserDto;
@@ -41,7 +40,18 @@ export class AccountSelectComponent implements OnInit {
         // on pages which need to react to the active account, include this call in ngInit and put reactive logic in the subscribe statement.
         this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
       }
-    });
+    })
+    
+    jQuery(document).on("show.bs.dropdown", function(event){
+      debugger;
+        if (this.accountsDropdown.toggleDropdown) {
+          this.accountsDropdown.toggleSelectDropdown();
+        }
+    }.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    jQuery(document).off("show.bs.dropdown")
   }
 
   public isUnassignedOrDisabled(): boolean {
@@ -64,14 +74,4 @@ export class AccountSelectComponent implements OnInit {
     const accountList = this.getAvailableAccounts();
     return accountList && accountList.length > 1;
   }
-
-  // NP Poor man's hack to make sure the account dropdown closes when it loses focus, like a dropdown should. If I'd known that ngx-select-dropdown was missing this I would have picked a different component, but here we are.
-  public onClick(event) {
-    if (!(event.target.classList.contains("ngx-dropdown-button") || event.target.parentElement.classList.contains("ngx-dropdown-button"))) {
-      if (this.accountsDropdown.toggleDropdown) {
-        this.accountsDropdown.toggleSelectDropdown();
-      }
-    }
-  }
-
 }

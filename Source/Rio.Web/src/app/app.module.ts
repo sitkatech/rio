@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -60,6 +60,11 @@ import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
 import { WaterUseMeasurementComponent } from './pages/water-use-measurement/water-use-measurement.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
+import { AppInitService } from './app.init';
+
+export function init_app(appLoadService: AppInitService) {
+  return () => appLoadService.init();
+}
 
 @NgModule({
   declarations: [
@@ -102,7 +107,7 @@ import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
     AboutComponent,
     GeneralFaqComponent,
     WaterUseMeasurementComponent,
-    DisclaimerComponent
+    DisclaimerComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -121,6 +126,9 @@ import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
     MyDatePickerModule
   ],  
   providers: [
+    
+    AppInitService,
+    { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe
   ],

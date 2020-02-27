@@ -44,3 +44,8 @@ Hotfixes
 /Source/Rio.GeoServer/data_dir/security/version.properties
 /Source/Rio.GeoServer/data_dir/wps.xml
 /Source/_ReSharper.Caches
+
+Source/Rio.Web/src/assets/config.json
+Source/Rio.GeoServer/localhost-rsa.jks
+Source/Rio.GeoServer/data_dir/gwc-layers/*
+Source/Rio.GeoServer/docker_compose.localhost.yml

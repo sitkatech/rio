@@ -1,0 +1,24 @@
+{
+    "production": [TODO],
+    "staging": [TODO],
+    "dev": [TODO],
+    "apiHostName": [TODO],
+    "createAccountUrl": [TODO],
+    "createAccountRedirectUrl": [TODO],
+    "allowTrading": [TODO],
+  
+    "keystoneSupportBaseUrl": [TODO],
+
+    "geoserverMapServiceUrl": [TODO],
+  
+    "keystoneAuthConfiguration": {
+      "clientId": [TODO],
+      "issuer": [TODO],
+      "redirectUriRelative": [TODO],
+      "scope": [TODO],
+      "sessionChecksEnabled": [TODO],
+      "logoutUrl": [TODO],
+      "postLogoutRedirectUri": [TODO],
+      "waitForTokenInMsec": [TODO]
+    }
+  }

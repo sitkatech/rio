@@ -9,7 +9,6 @@
         public string SITKA_EMAIL_REDIRECT { get; set; }
         public string RIO_WEB_URL { get; set; }
         public string KEYSTONE_REDIRECT_URL { get; set; }
-
         public bool ALLOW_TRADING { get; set; }
     }
 }
