@@ -43,7 +43,6 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
     })
     
     jQuery(document).on("show.bs.dropdown", function(event){
-      debugger;
         if (this.accountsDropdown.toggleDropdown) {
           this.accountsDropdown.toggleSelectDropdown();
         }

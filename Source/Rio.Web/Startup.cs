@@ -112,7 +112,7 @@ namespace Rio.Web
         {
             ClientID = configuration["Keystone_ClientID"];
             Issuer = configuration["Keystone_Issuer"];
-            RedirectUri = configuration["Keystone_RedirectUri"];
+            RedirectUriRelative = configuration["Keystone_RedirectUriRelative"];
             Scope = configuration["Keystone_Scope"];
             SessionChecksEnabled = bool.Parse(configuration["Keystone_SessionCheckEnabled"]);
             LogoutUrl = configuration["Keystone_LogoutUrl"];
@@ -124,8 +124,8 @@ namespace Rio.Web
         public string ClientID { get; set; }
         [JsonProperty("issuer")]
         public string Issuer { get; set; }
-        [JsonProperty("redirectUri")]
-        public string RedirectUri { get; set; }
+        [JsonProperty("redirectUriRelative")]
+        public string RedirectUriRelative { get; set; }
         [JsonProperty("scope")]
         public string Scope { get; set; }
         [JsonProperty("sessionChecksEnabled")]
