@@ -117,6 +117,7 @@ namespace Rio.Web
             SessionChecksEnabled = bool.Parse(configuration["Keystone_SessionCheckEnabled"]);
             LogoutUrl = configuration["Keystone_LogoutUrl"];
             PostLogoutRedirectUri = configuration["Keystone_PostLogoutRedirectUri"];
+            WaitForTokenInMsec = int.Parse(configuration["WaitForTokenInMsec"]);
         }
 
         [JsonProperty("clientId")]
