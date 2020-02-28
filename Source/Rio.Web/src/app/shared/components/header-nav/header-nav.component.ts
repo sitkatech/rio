@@ -173,4 +173,12 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public allowTrading(): boolean {
         return environment.allowTrading;
     }
+
+    public platformShortName(): string{
+        return environment.platformShortName;
+    }
+
+    public leadOrganizationHomeUrl(): string{
+        return environment.leadOrganizationHomeUrl;
+    }
 }

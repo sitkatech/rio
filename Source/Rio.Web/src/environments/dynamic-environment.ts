@@ -48,4 +48,24 @@ export class DynamicEnvironment {
     public get keystoneAuthConfiguration() {
         return window.config.keystoneAuthConfiguration;
     }
+
+    public get platformLongName(){
+        return window.config.platformLongName;
+    }
+
+    public get platformShortName(){
+        return window.config.platformShortName;
+    }
+
+    public get leadOrganizationLongName(){
+        return window.config.leadOrganizationLongName;
+    }
+
+    public get leadOrganizationShortName(){
+        return window.config.leadOrganizationShortName;
+    }
+
+    public get leadOrganizationHomeUrl(){
+        return window.config.leadOrganizationHomeUrl;
+    }
 }

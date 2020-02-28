@@ -6,6 +6,7 @@ import { CookieStorageService } from './shared/services/cookies/cookie-storage.s
 import { Router, RouteConfigLoadStart, RouteConfigLoadEnd, NavigationEnd } from '@angular/router';
 import { BusyService } from './shared/services';
 import { AuthenticationService } from './services/authentication.service';
+import { Title } from '@angular/platform-browser';
 
 declare var require: any
 
@@ -19,7 +20,7 @@ export class AppComponent {
     userClaimsUpsertStarted = false;
     ignoreSessionTerminated = false;
 
-    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService) {
+    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService, private titleService: Title) {
     }
 
     ngOnInit() {
@@ -36,6 +37,8 @@ export class AppComponent {
         this.configureAuthService().subscribe(() => {
             this.oauthService.tryLogin();
         });
+
+        this.titleService.setTitle(`${environment.leadOrganizationShortName} ${environment.platformShortName}`)
     }
 
     private configureAuthService(): Observable<void> {

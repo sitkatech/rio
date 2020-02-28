@@ -82,6 +82,11 @@ namespace Rio.Web
             KeystoneSupportBaseUrl = configuration["KeystoneSupportBaseUrl"];
             GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
             KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
+            PlatformLongName = configuration["PlatformLongName"];
+            PlatformShortName = configuration["PlatformShortName"];
+            LeadOrganizationShortName = configuration["LeadOrganizationShortName"];
+            LeadOrganizationLongName = configuration["LeadOrganizationLongName"];
+            LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
         }
 
         [JsonProperty("production")]
@@ -104,6 +109,16 @@ namespace Rio.Web
         public string GeoserverMapServiceUrl { get; set; }
         [JsonProperty("keystoneAuthConfiguration")]
         public KeystoneAuthConfigurationDto KeystoneAuthConfiguration { get; set; }
+        [JsonProperty("platformLongName")]
+        public string PlatformLongName { get; set; }
+        [JsonProperty("platformShortName")]
+        public string PlatformShortName { get; set; }
+        [JsonProperty("leadOrganizationShortName")]
+        public string LeadOrganizationShortName { get; set; }
+        [JsonProperty("leadOrganizationLongName")]
+        public string LeadOrganizationLongName { get; set; }
+        [JsonProperty("leadOrganizationHomeUrl")]
+        public string LeadOrganizationHomeUrl { get; set; }
     }
 
     public class KeystoneAuthConfigurationDto
