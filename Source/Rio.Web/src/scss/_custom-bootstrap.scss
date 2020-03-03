@@ -81,7 +81,7 @@ a:hover {
 }
 
 .footer {
-  background-color: #5e7f74;
+  background-color: $footer;
   font-size: 12px; 
   color: white;
 }
@@ -97,13 +97,13 @@ a:hover {
 
 .btn-rio
 {
-  background-color: #196004;
-  border-color: #196004;
+  background-color: $buttonBorderAndBackground;
+  border-color: $buttonBorderAndBackground;
   color:#fff;
 }
 
 .btn-rio:hover {
-  color:#0EF16D;
+  color:$buttonHover;
 }
 
 .btn-toggle {
@@ -115,14 +115,14 @@ a:hover {
 .btn-toggle:not(:disabled):not(.disabled):active,
 .btn-toggle:not(:disabled):not(.disabled).active,
 .show > .btn-toggle.dropdown-toggle {
-  background-color: #196004;
-  border-color: #196004;
+  background-color: $buttonBorderAndBackground;
+  border-color: $buttonBorderAndBackground;
   color: #fff;
 }
 
 .btn-toggle:hover {
   cursor: pointer;
   color: #fff;
-  background-color: #4f6349;
-  border-color: #4f6349;
+  background-color: $buttonToggleHover;
+  border-color: $buttonToggleHover;
 }

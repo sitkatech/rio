@@ -8,13 +8,7 @@ $theme-colors: (
         "muted": #dee2e6,       // footerGray
         "danger": #ff0000,
         "success": #00cc00,
-        "warning": #ffff9f,
-        "h4Styled": #194349,
-        "footer": #5e7f74,
-        "buttonBorderAndBackground": #196004,
-        "buttonHover": #0EF16D,
-        "buttonToggleHover": #4f6349,
-        "headerBackground": #194939
+        "warning": #ffff9f
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -26,12 +20,6 @@ $muted: #dee2e6;
 $danger: #ff0000;
 $success: #00cc00;
 $warning: #ffff9f;
-$h4Styled: #194349;
-$footer: #5e7f74;
-$buttonBorderAndBackground: #196004;
-$buttonHover: #0EF16D;
-$buttonToggleHover: #4f6349;
-$headerBackground: #194939;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
 

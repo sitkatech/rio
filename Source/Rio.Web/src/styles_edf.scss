@@ -1,4 +1,4 @@
-@import "scss/_variables.scss";
+@import "scss/_variables_edf.scss";
 
 // import Bootstrap AFTER variables
 @import "~bootstrap/scss/bootstrap";
@@ -91,11 +91,11 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
   }
   
   input:checked + .slider {
-    background-color: $buttonBorderAndBackground;
+    background-color: #196004;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px $buttonBorderAndBackground;
+    box-shadow: 0 0 1px #196004;
   }
   
   input:checked + .slider:before {

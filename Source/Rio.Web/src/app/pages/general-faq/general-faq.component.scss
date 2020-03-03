@@ -1,5 +1,7 @@
+@import "../../../scss/_variables.scss";
+
 h4 {
-    color:#194939;
+    color:$h4Styled;
 }
 
 .faq-content {
