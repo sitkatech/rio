@@ -1,9 +1,9 @@
 <nav class="navbar navbar-rio navbar-expand-lg navbar-dark stroke">
-    <a href="https://www.rrbwsd.com/" class="navbar-brand" target="_blank">
+    <a href="{{leadOrganizationHomeUrl()}}" class="navbar-brand" target="_blank">
         <img src="assets/main/logos/rrbwsd_logo.png" class="navbarLogo">
     </a>
     <a routerLink="/" routerLinkActive="active" class="navbar-brand nav-link">
-        Water Accounting Platform
+        {{platformShortName()}}
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                 <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
             </li>
-            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()">
+            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()"> 
                 <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Welcome {{getUserName()}}

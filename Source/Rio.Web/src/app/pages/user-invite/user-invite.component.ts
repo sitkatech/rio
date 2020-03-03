@@ -10,6 +10,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { UserInviteDto } from 'src/app/shared/models/user/user-invite-dto';
+import { environment } from 'src/environments/environment';
 
 
 
@@ -93,5 +94,9 @@ export class UserInviteComponent implements OnInit, OnDestroy {
 
     public currentUserIsAdmin(): boolean {
         return this.authenticationService.isUserAnAdministrator(this.currentUser);
+    }
+
+    public platformShortName():string{
+        return environment.platformShortName;
     }
 }
