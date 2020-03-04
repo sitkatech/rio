@@ -87,7 +87,7 @@ namespace Rio.Web
             LeadOrganizationShortName = configuration["LeadOrganizationShortName"];
             LeadOrganizationLongName = configuration["LeadOrganizationLongName"];
             LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
-            FaviconUrl = configuration["FaviconUrl"];
+            FaviconFilename = configuration["FaviconUrl"];
         }
 
         [JsonProperty("production")]
@@ -120,8 +120,8 @@ namespace Rio.Web
         public string LeadOrganizationLongName { get; set; }
         [JsonProperty("leadOrganizationHomeUrl")]
         public string LeadOrganizationHomeUrl { get; set; }
-        [JsonProperty("faviconUrl")]
-        public string FaviconUrl {get; set;}
+        [JsonProperty("faviconFilename")]
+        public string FaviconFilename {get; set;}
     }
 
     public class KeystoneAuthConfigurationDto

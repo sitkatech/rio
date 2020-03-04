@@ -69,7 +69,11 @@ export class DynamicEnvironment {
         return window.config.leadOrganizationHomeUrl;
     }
 
-    public get faviconUrl(){
-        return window.config.faviconUrl;
+    public get faviconFilename(){
+        return window.config.faviconFilename;
+    }
+
+    public get leadOrganizationLogoFilename(){
+        return window.config.leadOrganizationLogoFilename;
     }
 }

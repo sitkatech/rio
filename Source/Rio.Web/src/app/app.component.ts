@@ -87,6 +87,6 @@ export class AppComponent {
     }
 
     setAppFavicon(){
-        this._document.getElementById('appFavicon').setAttribute('href', "assets/main/favicons/" + environment.faviconUrl);
+        this._document.getElementById('appFavicon').setAttribute('href', "assets/main/favicons/" + environment.faviconFilename);
      }
 }
