@@ -87,7 +87,7 @@ namespace Rio.Web
             LeadOrganizationShortName = configuration["LeadOrganizationShortName"];
             LeadOrganizationLongName = configuration["LeadOrganizationLongName"];
             LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
-            FaviconFilename = configuration["FaviconName"];
+            FaviconFilename = configuration["FaviconFilename"];
             LeadOrganizationLogoFilename = configuration["LeadOrganizationLogoFilename"];
         }
 
