@@ -159,7 +159,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     ).subscribe(([postings, trades, waterTransfers, waterYears]) => {
       this.waterYears = waterYears;
       // todo: after default display year is built, fix this 
-      this.waterYearToDisplay = 2019;
+      this.waterYearToDisplay = 2020;
       //this.waterYearToDisplay = (new Date()).getFullYear();
       this.postings = postings;
       this.trades = trades;

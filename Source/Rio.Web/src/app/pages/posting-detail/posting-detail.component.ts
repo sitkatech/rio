@@ -88,7 +88,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     public isPostingOwner(): boolean{
-        return this.posting.CreateAccount.AccountID === this.currentAccount.AccountID;
+        return (this.currentAccount) && this.posting.CreateAccount.AccountID === this.currentAccount.AccountID;
     }
 
     private resetModelToPosting() {
