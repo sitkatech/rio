@@ -3,7 +3,7 @@ NP: Please do note that since we had to ViewEncapsulation.None on AccountSelectC
 you have to ngx-select-dropdown#accountSelectDropdown instead of plain ngx-select-dropdown,
 or else you'll end up styling all the ngx-select-dropdowns in the site D=
 */
-@import "~src/scss/_variables_edf.scss";
+@import "~src/scss/_variables.scss";
 
 .accountDropdownLabel {
     color:white; display:inline-block; padding-right:5px;
