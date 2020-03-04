@@ -1,7 +1,7 @@
-@import "../../../scss/_variables.scss";
+@import "~src/scss/_variables_edf.scss";
 
 h4 {
-    color:$h4Styled;
+    color:$h4-styled;
 }
 
 .faq-content {

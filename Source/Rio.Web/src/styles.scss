@@ -1,4 +1,4 @@
-@import "scss/_variables.scss";
+@import "scss/_variables_edf.scss";
 
 // import Bootstrap AFTER variables
 @import "~bootstrap/scss/bootstrap";
@@ -26,8 +26,8 @@ $header-foreground-color: #fff;
 $icon-color: #fff;
 
 // changes the selected checkbox check mark color
-$accent-color: #0077f9;
-$hover-color: cornsilk;
+$accent-color: $grid-accent-color;
+$hover-color: $grid-hover-color;
 
 $ag-range-selected-color-1: rgb(250, 235, 215);
 $ag-range-selected-color-2: darken($ag-range-selected-color-1, 10%);
@@ -39,7 +39,7 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 
 .ag-theme-balham
 {
-    font-family: 'Tahoma';
+    font-family: $grid-font-family;
 }
 
 
@@ -50,7 +50,8 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 
 .ag-theme-balham .ag-header
 {
-    background-color: #2f5b4c;
+    background-color: $grid-header-background;
+    font-family: $grid-font-header-family;
 }
 // end ag-grid settings
 
@@ -91,11 +92,11 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
   }
   
   input:checked + .slider {
-    background-color: $buttonBorderAndBackground;
+    background-color: $button-border-and-background;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px $buttonBorderAndBackground;
+    box-shadow: 0 0 1px $button-border-and-background;
   }
   
   input:checked + .slider:before {

@@ -1,3 +1,5 @@
+@import "~src/scss/_variables_edf.scss";
+
 .waterYearToDisplay{
     width: 80% !important; padding:3px !important;
 }
@@ -6,4 +8,18 @@
     display: inline-block;
     height: 100%;
     vertical-align: middle;
+}
+
+.page-content {
+    margin-top: $header-nav-after-height
+}
+
+header-nav::after{
+    content: '';
+    background-image: linear-gradient(to bottom, $header-gradient-start 0%, $header-gradient-end 100%);
+    padding: 10px;
+    width: 100%;
+    height:$header-nav-after-height;    
+    position:absolute;
+    z-index: -1;
 }

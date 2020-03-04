@@ -3,7 +3,7 @@ NP: Please do note that since we had to ViewEncapsulation.None on AccountSelectC
 you have to ngx-select-dropdown#accountSelectDropdown instead of plain ngx-select-dropdown,
 or else you'll end up styling all the ngx-select-dropdowns in the site D=
 */
-@import "../../../../scss/_variables.scss";
+@import "~src/scss/_variables_edf.scss";
 
 .accountDropdownLabel {
     color:white; display:inline-block; padding-right:5px;
@@ -22,13 +22,13 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
   }
   ngx-select-dropdown#accountSelectDropdown > div > button:hover *
    {
-    color:$buttonHover;
+    color:$select-and-nav-hover;
   }
 
   ngx-select-dropdown#accountSelectDropdown > div > button{
-    background-color:  $headerBackground !important;
+    background-color:  $header-background !important;
     border:none !important;
-    color:white !important;
+    color:$account-dropdown-text !important;
     padding-top: 2px !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -46,11 +46,11 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
   }
 
   .ngx-dropdown-list-container ul li:hover {
-    background-color: #E5FAF1;
+    background-color: $select-and-nav-dropdown-hover;
   }
 
   .ngx-dropdown-container .ngx-dropdown-list-container ul.selected-items li {
-    background-color: #1F4D3D !important;
+    background-color: $select !important;
   }
   
 

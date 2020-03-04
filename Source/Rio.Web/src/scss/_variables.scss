@@ -9,12 +9,22 @@ $theme-colors: (
         "danger": #ff0000,
         "success": #00cc00,
         "warning": #ffff9f,
-        "h4Styled": #194349,
+        "h4-styled": #194349,
         "footer": #5e7f74,
-        "buttonBorderAndBackground": #196004,
-        "buttonHover": #0EF16D,
-        "buttonToggleHover": #4f6349,
-        "headerBackground": #194939
+        "button-border-and-background": #196004,
+        "button-hover": #0EF16D,
+        "button-toggle-hover": #4f6349,
+        "header-background": #194939,
+        "select": #1F4D3D,
+        "select-and-nav-hover": #0EF16D,
+        "select-and-nav-dropdown-hover": #E5FAF1,
+        "header-nav-link" : #fff,
+        "grid-header-background": #194939,
+        "grid-accent-color": #0077f9,
+        "grid-hover-color": cornsilk,
+        "account-dropdown-text": #fff,
+        "header-gradient-start": transparent,
+        "header-gradient-end": transparent
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -26,12 +36,26 @@ $muted: #dee2e6;
 $danger: #ff0000;
 $success: #00cc00;
 $warning: #ffff9f;
-$h4Styled: #194349;
+$h4-styled: #194349;
 $footer: #5e7f74;
-$buttonBorderAndBackground: #196004;
-$buttonHover: #0EF16D;
-$buttonToggleHover: #4f6349;
-$headerBackground: #194939;
+$button-border-and-background: #196004;
+$button-hover: #0EF16D;
+$button-toggle-hover: #4f6349;
+$header-background: #194939;
+$select: #1F4D3D;
+$select-and-nav-hover:#0EF16D;
+$select-and-nav-dropdown-hover: #E5FAF1;
+$header-nav-link: #fff;
+$grid-header-background: #194939;
+$grid-accent-color: #0077f9;
+$grid-hover-color: cornsilk;           
+$account-dropdown-text: #fff;
+$header-nav-after-height: 0px;
+$header-gradient-start: transparent;
+$header-gradient-end: transparent;
+$grid-font-family: 'Tahoma';
+$grid-font-header-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+$header-nav-link-font-weight: inherit;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
 

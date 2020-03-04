@@ -1,30 +1,66 @@
 $footer-height: 60px;
 
 $theme-colors: (
-        "primary": #205c90,     // systemBlue
-        "secondary": #c4c4c4,   // lightGray
-        "info": #228be6,        // brightBlue
-        "light": #f5f5f5,       // offWhite
-        "muted": #dee2e6,       // footerGray
-        "danger": #ff0000,
-        "success": #00cc00,
-        "warning": #ffff9f
+        "primary": #253D86,     
+        "secondary": #c4c4c4,   
+        "info": #029EDA,        
+        "light": #f5f5f5,       
+        "muted": #dee2e6,       
+        "danger": #DF1D37,
+        "success": #00985F,
+        "warning": #EBB700,
+        "h4-styled": #194349,
+        "footer": #44697D,
+        "button-border-and-background": #1D5D43,
+        "button-hover": #C8DA2C ,
+        "button-toggle-hover": #44697D,
+        "header-background": #fff,
+        "select": #253D86,
+        "select-and-nav-hover": #1D5D43,
+        "select-and-nav-dropdown-hover": rgba(29,92,66,0.3),
+        "header-nav-link": #253D86,
+        "grid-header-background": #253D86,
+        "grid-accent-color": #44697D,
+        "grid-hover-color":  rgba(199, 153, 0, 0.3),
+        "account-dropdown-text": #253D86,
+        "header-gradient-start": #253D86,
+        "header-gradient-end": #fff
 );
 
 // this looks redundant, but we need to make the override in both ways
-$primary: #205c90;
+$primary: #253D86;
 $secondary: #c4c4c4;
-$info: #228be6;
+$info: #029EDA;
 $light: #f5f5f5;
 $muted: #dee2e6;
-$danger: #ff0000;
-$success: #00cc00;
-$warning: #ffff9f;
+$danger: #DF1D37;
+$success: #00985F;
+$warning: #EBB700;
+$h4-styled: #194349;
+$footer: #44697D;
+$button-border-and-background: #1D5D43;
+$button-hover: #C8DA2C ;
+$button-toggle-hover: #44697D;
+$header-background: #fff;
+$select: #253D86;
+$select-and-nav-hover: #1D5D43;
+$select-and-nav-dropdown-hover: rgba(29,92,66,0.3);
+$header-nav-link: #253D86;
+$grid-header-background: #253D86;
+$grid-accent-color: #44697D;
+$grid-hover-color:  rgba(199, 153, 0, 0.3);
+$account-dropdown-text: #253D86;
+$header-nav-after-height: 20px;
+$header-gradient-start: #253D86;
+$header-gradient-end:#fff;
+$grid-font-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$grid-font-header-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$header-nav-link-font-weight: bold;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
 
-$font-family-sans-serif: 'Tahoma', sans-serif, 'Helvetica Neue', sans-serif;
+$font-family-sans-serif: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
 $font-size: 16px;
-$base-text: #000000;
+$base-text: #4A3C31;
 
 $card-cap-bg: #dfdfdf;

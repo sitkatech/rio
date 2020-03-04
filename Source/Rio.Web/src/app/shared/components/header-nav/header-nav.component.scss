@@ -1,4 +1,4 @@
-@import "../../../../scss/variables";
+@import "~src/scss/_variables_edf.scss";
 
 .navbarLogo {
     height: 80px;
@@ -20,7 +20,7 @@
   
   .navbar.navbar-rio
   {
-    background-color: $headerBackground;
+    background-color: $header-background;
   }
 
   .navbar.navbar-rio a.nav-link,
@@ -28,17 +28,18 @@
   .navbar.navbar-rio a.nav-link::after {
     transition: all .5s;
   }
+  
   .navbar.navbar-rio a.nav-link:hover {
-    color:$buttonHover;
+    color:$select-and-nav-hover;
   }
 
   nav .dropdown-item:hover {
-    background-color: #E5FAF1;
+    background-color: $select-and-nav-dropdown-hover;
   }
 
   .navbar.navbar-rio a.nav-link
   {
-    color: #fff;
+    color: $header-nav-link;
   }
 
   .welcomeUser{
