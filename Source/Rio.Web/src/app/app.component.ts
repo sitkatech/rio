@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { OAuthService, JwksValidationHandler, OAuthSuccessEvent } from 'angular-oauth2-oidc';
 import { Subject, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -7,6 +7,7 @@ import { Router, RouteConfigLoadStart, RouteConfigLoadEnd, NavigationEnd } from 
 import { BusyService } from './shared/services';
 import { AuthenticationService } from './services/authentication.service';
 import { Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 declare var require: any
 
@@ -20,7 +21,7 @@ export class AppComponent {
     userClaimsUpsertStarted = false;
     ignoreSessionTerminated = false;
 
-    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService, private titleService: Title) {
+    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService, private titleService: Title, @Inject(DOCUMENT) private _document: HTMLDocument) {
     }
 
     ngOnInit() {
@@ -39,6 +40,7 @@ export class AppComponent {
         });
 
         this.titleService.setTitle(`${environment.leadOrganizationShortName} ${environment.platformShortName}`)
+        this.setAppFavicon();
     }
 
     private configureAuthService(): Observable<void> {
@@ -83,4 +85,8 @@ export class AppComponent {
 
         return subject.asObservable();
     }
+
+    setAppFavicon(){
+        this._document.getElementById('appFavicon').setAttribute('href', "assets/main/favicons/" + environment.faviconUrl);
+     }
 }
