@@ -1,0 +1,67 @@
+$footer-height: 60px;
+
+$theme-colors: (
+        "primary": #253D86,     
+        "secondary": #c4c4c4,   
+        "info": #029EDA,        
+        "light": #f5f5f5,       
+        "muted": #dee2e6,       
+        "danger": #DF1D37,
+        "success": #00985F,
+        "warning": #EBB700,
+        "h4-styled": #194349,
+        "footer": #44697D,
+        "button-border-and-background": #1D5D43,
+        "button-hover": #C8DA2C ,
+        "button-toggle-hover": #44697D,
+        "header-background": #fff,
+        "select": #253D86,
+        "select-and-nav-hover": #1D5D43,
+        "select-and-nav-dropdown-hover": rgba(29,92,66,0.3),
+        "header-nav-link": #253D86,
+        "grid-header-background": #253D86,
+        "grid-accent-color": #44697D,
+        "grid-hover-color":  rgba(199, 153, 0, 0.3),
+        "account-dropdown-text": #253D86,
+        "header-gradient-start": #253D86,
+        "header-gradient-end": #fff
+);
+
+// this looks redundant, but we need to make the override in both ways
+$primary: #253D86;
+$secondary: #c4c4c4;
+$info: #029EDA;
+$light: #f5f5f5;
+$muted: #dee2e6;
+$danger: #DF1D37;
+$success: #00985F;
+$warning: #EBB700;
+
+$account-dropdown-text: #253D86;
+$button-border-and-background: #1D5D43;
+$button-hover: #C8DA2C ;
+$button-toggle-hover: #44697D;
+$grid-accent-color: #44697D;
+$grid-font-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$grid-font-header-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$grid-header-background: #253D86;
+$grid-hover-color:  rgba(199, 153, 0, 0.3);
+$footer: #44697D;
+$header-background: #fff;
+$header-gradient-start: #253D86;
+$header-gradient-end:#fff;
+$header-nav-after-height: 20px;
+$header-nav-link: #253D86;
+$header-nav-link-font-weight: bold;
+$h4-styled: #194349;
+$select: #253D86;
+$select-and-nav-dropdown-hover: rgba(29,92,66,0.3);
+$select-and-nav-hover: #1D5D43;
+$text-muted: darken(#d3d3d3, 15%);
+$text-warning: darken($warning, 20%);
+
+$font-family-sans-serif: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$font-size: 16px;
+$base-text: #4A3C31;
+
+$card-cap-bg: #dfdfdf;
