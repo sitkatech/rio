@@ -8,7 +8,23 @@ $theme-colors: (
         "muted": #dee2e6,       // footerGray
         "danger": #ff0000,
         "success": #00cc00,
-        "warning": #ffff9f
+        "warning": #ffff9f,
+        "h4-styled": #194349,
+        "footer": #5e7f74,
+        "button-border-and-background": #196004,
+        "button-hover": #0EF16D,
+        "button-toggle-hover": #4f6349,
+        "header-background": #194939,
+        "select": #1F4D3D,
+        "select-and-nav-hover": #0EF16D,
+        "select-and-nav-dropdown-hover": #E5FAF1,
+        "header-nav-link" : #fff,
+        "grid-header-background": #194939,
+        "grid-accent-color": #0077f9,
+        "grid-hover-color": cornsilk,
+        "account-dropdown-text": #fff,
+        "header-gradient-start": transparent,
+        "header-gradient-end": transparent
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -20,6 +36,27 @@ $muted: #dee2e6;
 $danger: #ff0000;
 $success: #00cc00;
 $warning: #ffff9f;
+
+$account-dropdown-text: #fff;
+$button-border-and-background: #196004;
+$button-hover: #0EF16D;
+$button-toggle-hover: #4f6349;
+$grid-accent-color: #0077f9;
+$grid-font-family: 'Tahoma';
+$grid-font-header-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+$grid-header-background: #194939;
+$grid-hover-color: cornsilk;
+$footer: #5e7f74;  
+$header-background: #194939;
+$header-gradient-start: transparent;
+$header-gradient-end: transparent;
+$header-nav-after-height: 0px;
+$header-nav-link: #fff;         
+$header-nav-link-font-weight: inherit;
+$h4-styled: #194349;
+$select: #1F4D3D;
+$select-and-nav-dropdown-hover: #E5FAF1;
+$select-and-nav-hover:#0EF16D;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
 

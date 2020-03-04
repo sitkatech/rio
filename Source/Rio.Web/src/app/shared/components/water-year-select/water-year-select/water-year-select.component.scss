@@ -1,5 +1,7 @@
+@import "~src/scss/_variables.scss";
+
 .water-year-dropdown {
-    color : #1F4D3D
+    color : $select
 }
 
 .water-year-dropdown,
@@ -13,6 +15,6 @@
 }
 
 .dropdown-item:hover {
-    background-color: #E5FAF1;
+    background-color: $select-and-nav-dropdown-hover;
     cursor: pointer;
 }
