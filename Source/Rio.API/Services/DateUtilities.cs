@@ -244,7 +244,7 @@ namespace Rio.API.Services
         {
             //return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
             //TODO uncomment the above and get rid of the below
-            return new List<int> {2017, 2018, 2019};
+            return new List<int> {2017, 2018, 2019, 2020};
         }
     }
 }
