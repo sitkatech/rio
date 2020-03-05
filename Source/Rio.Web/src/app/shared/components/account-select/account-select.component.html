@@ -5,5 +5,5 @@
     </ngx-select-dropdown>
 </ng-container>
 <ng-container *ngIf="!showDropdown() && activeAccount"> <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
-    <span class="accountDropdownLabel pr-3">{{activeAccount.AccountDisplayName}}</span>
+    <span class="accountLabelNoDropdown pr-3">{{activeAccount.AccountDisplayName}}</span>
 </ng-container>

@@ -5,8 +5,11 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
 */
 @import "~src/scss/_variables.scss";
 
-.accountDropdownLabel {
-    color:white; display:inline-block; padding-right:5px;
+.accountLabelNoDropdown {
+    color:$account-dropdown-text;
+    display:inline-block;
+    padding-right:5px;
+    float:right;
     font-size: 12px;
     padding-top:2px;
   }
@@ -75,8 +78,13 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
   @media screen and (max-width: 990px){
     ngx-select-dropdown#accountSelectDropdown > div > button > span {
       text-align: left !important;
-      } ngx-select-dropdown#accountSelectDropdown > div > button{ text-align: left !important;}
-
+      }
+    ngx-select-dropdown#accountSelectDropdown > div > button {
+      text-align: left !important;
+    }
+    .accountLabelNoDropdown {
+     float: left; 
+    }
     }
 
     .ngx-dropdown-list-container ul li {
