@@ -123,7 +123,6 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public isFullNameConfirmedForRegistration(): boolean {
-    debugger;
     if(this.confirmedFullNameForRegistration)
     {
       return this.confirmedFullNameForRegistration.toLowerCase() === this.currentUser.FullName.toLowerCase();
