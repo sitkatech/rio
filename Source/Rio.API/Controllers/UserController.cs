@@ -58,9 +58,9 @@ namespace Rio.API.Controllers
                 LastName = inviteDto.LastName,
                 Email = inviteDto.Email,
                 Subject = $"Invitation to the {applicationName}",
-                WelcomeText = $"You are receiving this notification because an administrator of the {applicationName}, an online service of {rioBravoWaterStorageDistrict}, has invited you to create an account.",
+                WelcomeText = $"You are receiving this notification because an administrator of the {applicationName}, an online service of the {rioBravoWaterStorageDistrict}, has invited you to create an account.",
                 SiteName = applicationName,
-                SignatureBlock = $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><br />(661) 589-6045<br /><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
+                SignatureBlock = $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
                 RedirectURL = _rioConfiguration.KEYSTONE_REDIRECT_URL
             };
 
