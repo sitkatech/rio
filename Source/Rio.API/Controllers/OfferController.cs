@@ -316,13 +316,6 @@ An offer to {offerAction} water has been presented for your review.
             return Ok(offerDtos);
         }
 
-        private UserDto GetCurrentUser()
-        {
-            var userGuid = _keystoneService.GetProfile().Payload.UserGuid;
-            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, userGuid);
-            return userDto;
-        }
-
         [HttpGet("offers/{offerID}")]
         [OfferManageFeature]
         public ActionResult<OfferDto> GetByOfferID([FromRoute] int offerID)
@@ -334,6 +327,13 @@ An offer to {offerAction} water has been presented for your review.
             }
 
             return Ok(offerDto);
+        }
+
+        private UserDto GetCurrentUser()
+        {
+            var userGuid = _keystoneService.GetProfile().Payload.UserGuid;
+            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, userGuid);
+            return userDto;
         }
     }
 }

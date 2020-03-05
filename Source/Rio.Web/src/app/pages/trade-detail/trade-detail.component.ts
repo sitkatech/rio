@@ -71,21 +71,21 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.authenticationService.getActiveAccount().subscribe(account =>{
         this.activeAccount = account;
-      })
       
-      const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
+        const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
 
-      if (tradeNumber) {
-        this.getData(tradeNumber);
-      }
+        if (tradeNumber) {
+          this.getData(tradeNumber);
+        }
+      })
     });
   }
 
   isPostingOwner(): boolean {
-    return this.trade.Posting.CreateAccount.AccountID === this.activeAccount.AccountID;
+    return this.activeAccount && this.trade.Posting.CreateAccount.AccountID === this.activeAccount.AccountID;
   }
   isTradeOwner(): boolean{
-    return this.trade.CreateAccount.AccountID === this.activeAccount.AccountID;
+    return this.activeAccount && this.trade.CreateAccount.AccountID === this.activeAccount.AccountID;
   }
 
   ngOnDestroy() {
@@ -106,7 +106,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.mostRecentOffer = this.offers[0];
       this.resetModelToMostRecentOffer();
       let currentUserID = this.currentUser.UserID;
-      this.isCurrentOfferCreator = this.mostRecentOffer.CreateAccount.AccountID === this.activeAccount.AccountID;
+      this.isCurrentOfferCreator = this.activeAccount && this.mostRecentOffer.CreateAccount.AccountID === this.activeAccount.AccountID;
       this.originalPostingType = this.trade.Posting.PostingType;
       this.offerType = this.isPostingOwner ?
         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
@@ -172,7 +172,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   private isCanceled() {
-    if(this.waterTransferRegistrations.length > 0)
+    if(this.waterTransferRegistrations && this.waterTransferRegistrations.length > 0)
     {
       return this.waterTransferRegistrations.filter(x => x.IsCanceled).length > 0;
     }
@@ -200,7 +200,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   public getOfferType(offer: OfferDto): string {
-    if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending) {
+    if (offer.OfferStatus.OfferStatusID === OfferStatusEnum.Pending && this.originalPostingType) {
       if (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell) {
         return offer.CreateAccount.AccountID === this.trade.CreateAccount.AccountID ? "Buyer Counter Offer" : "Seller Counter Offer";
       }

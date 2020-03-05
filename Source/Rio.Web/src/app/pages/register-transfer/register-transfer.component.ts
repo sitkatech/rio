@@ -61,7 +61,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
       this.authenticationService.getActiveAccount().subscribe(account =>{
         this.activeAccount = account;
-        if (waterTransferID) {
+        if (waterTransferID && account) {
           this.getData(waterTransferID);``
         }
       })
@@ -123,6 +123,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public isFullNameConfirmedForRegistration(): boolean {
+    debugger;
     if(this.confirmedFullNameForRegistration)
     {
       return this.confirmedFullNameForRegistration.toLowerCase() === this.currentUser.FullName.toLowerCase();

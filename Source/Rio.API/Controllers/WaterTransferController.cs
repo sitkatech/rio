@@ -10,6 +10,7 @@ using Rio.Models.DataTransferObjects.WaterTransfer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Controllers
 {
@@ -72,9 +73,11 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationDto, waterTransferDto);
-            validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
+            var currentUser = GetCurrentUser();
 
+            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationDto, waterTransferDto, currentUser);
+            validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -109,7 +112,9 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            var validationMessages = WaterTransfer.ValidateCancelTransfer(waterTransferRegistrationDto, waterTransferDto);
+            var currentUser = GetCurrentUser();
+
+            var validationMessages = WaterTransfer.ValidateCancelTransfer(waterTransferRegistrationDto, waterTransferDto, currentUser);
             validationMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
 
             if (!ModelState.IsValid)
@@ -232,6 +237,13 @@ namespace Rio.API.Controllers
                 mailMessages.Add(mailMessage);
             }
             return mailMessages;
+        }
+
+        private UserDto GetCurrentUser()
+        {
+            var userGuid = _keystoneService.GetProfile().Payload.UserGuid;
+            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, userGuid);
+            return userDto;
         }
     }
 }
