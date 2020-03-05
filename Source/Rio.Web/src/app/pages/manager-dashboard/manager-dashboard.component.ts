@@ -59,7 +59,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       // todo: fix this after default display year is built
       // this.waterYearToDisplay = (new Date()).getFullYear();
-      this.waterYearToDisplay = 2019;
+      this.waterYearToDisplay = 2020;
       this.initializeTradeActivityGrid();
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
@@ -252,9 +252,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Buyer', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Buyer.UserID, LinkDisplay: params.data.Buyer.FullName };
+          return { LinkValue: params.data.Buyer.AccountID, LinkDisplay: params.data.Buyer.AccountName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/users/" },
+        cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: function (params: any) {
           return params.data.Buyer.FullName;
         },
@@ -273,9 +273,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Seller', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Seller.UserID, LinkDisplay: params.data.Seller.FullName };
+          return { LinkValue: params.data.Seller.AccountID, LinkDisplay: params.data.Seller.AccountName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/users/" },
+        cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: function (params: any) {
           return params.data.Seller.FullName;
         },
