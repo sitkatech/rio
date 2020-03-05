@@ -93,8 +93,9 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Trade
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x=>x.AccountStatus)
+                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUser).ThenInclude(x=>x.User)
+                .Include(x=>x.CreateAccount.AccountStatus)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount.AccountStatus)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .AsNoTracking();

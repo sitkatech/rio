@@ -55,9 +55,8 @@ namespace Rio.EFModels.Entities
             return dbContext.Posting
                 .Include(x => x.PostingType)
                 .Include(x => x.PostingStatus)
-                .Include(x => x.CreateAccount)
-                .ThenInclude(x=>x.AccountStatus)
-                .AsNoTracking();
+                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUser).ThenInclude(x=>x.User)
+                .Include(x=>x.CreateAccount.AccountStatus).AsNoTracking();
         }
 
         public static IEnumerable<PostingDto> ListByAccountID(RioDbContext dbContext, int accountID)
