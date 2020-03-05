@@ -47,7 +47,7 @@ const routes: Routes = [
   { path: "new-posting", component: PostingNewComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
   { path: "delete-posting/:postingID", component: PostingDeleteComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
-  { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
+  { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/bulk-set-allocation", component: ParcelBulkSetAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },

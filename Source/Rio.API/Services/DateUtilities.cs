@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.EFModels.Entities;
 
 namespace Rio.API.Services
 {
@@ -242,9 +243,12 @@ namespace Rio.API.Services
 
         public static List<int> GetWaterYears()
         {
-            //return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
-            //TODO uncomment the above and get rid of the below
-            return new List<int> {2017, 2018, 2019, 2020};
+            return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
+        }
+
+        public static int GetDefaultWaterYearToDisplay(RioDbContext dbContext)
+        {
+            return dbContext.ParcelMonthlyEvapotranspiration.Max(x => x.WaterYear);
         }
     }
 }

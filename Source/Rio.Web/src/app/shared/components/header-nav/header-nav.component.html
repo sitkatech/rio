@@ -20,7 +20,7 @@
             <li class="nav-item" *ngIf="isAuthenticated() && allowTrading()">
                 <a class="nav-link" routerLink="/trades" routerLinkActive="active">Buy and Sell Water</a>
             </li>
-            <li class="nav-item" *ngIf="isAuthenticated() && allowTrading()">
+            <li class="nav-item" *ngIf="isAuthenticated() && allowTrading() && isAdministrator()">
                 <a class="nav-link" routerLink="/market-metrics" routerLinkActive="active">Market Metrics</a>
             </li>
             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">

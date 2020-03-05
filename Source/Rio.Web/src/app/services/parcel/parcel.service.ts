@@ -37,6 +37,11 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getDefaultWaterYearToDisplay(): Observable<number> {
+    let route = `/getDefaultWaterYearToDisplay`;
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };

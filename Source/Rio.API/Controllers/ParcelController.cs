@@ -67,6 +67,13 @@ namespace Rio.API.Controllers
             return Ok(DateUtilities.GetWaterYears());
         }
 
+        [HttpGet("getDefaultWaterYearToDisplay")]
+        [ParcelViewFeature]
+        public ActionResult<int> GetDefaultWaterYearToDisplay()
+        {
+            return Ok(DateUtilities.GetDefaultWaterYearToDisplay(_dbContext));
+        }
+
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
         [ParcelManageFeature]
         public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
