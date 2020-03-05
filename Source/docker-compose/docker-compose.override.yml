@@ -13,3 +13,9 @@ services:
       - SECRET_PATH=${SECRET_PATH}
       - KEYSTONE_REDIRECT_URL=${KEYSTONE_REDIRECT_URL}
       - ALLOW_TRADING=${ALLOW_TRADING}
+      - PlatformLongName=${PlatformLongName}
+      - PlatformShortName=${PlatformShortName}
+      - LeadOrganizationLongName=${LeadOrganizationLongName}
+      - LeadOrganizationShortName=${LeadOrganizationShortName}
+      - LeadOrganizationHomeUrl=${LeadOrganizationHomeUrl}
+      - LeadOrganizationEmail=${LeadOrganizationEmail}

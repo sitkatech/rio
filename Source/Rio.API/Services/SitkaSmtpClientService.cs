@@ -11,6 +11,7 @@ namespace Rio.API.Services
     public class SitkaSmtpClientService
     {
         private readonly RioConfiguration _rioConfiguration;
+
         //private static readonly ILog _logger = LogManager.GetLogger(typeof(SitkaSmtpClient));
 
         public SitkaSmtpClientService(RioConfiguration rioConfiguration)
@@ -162,41 +163,35 @@ Subject: {mm.Subject}
             mailMessage.ReplyToList.Add("admin@rrbwsd.com");
         }
 
-        public static string GetDefaultEmailSignature()
+        public string GetDefaultEmailSignature()
         {
-            const string defaultEmailSignature = @"<br /><br />
-Respectfully, the RRB WSD Water Accounting Platform team
+            string defaultEmailSignature = $@"<br /><br />
+Respectfully, the {_rioConfiguration.PlatformLongName} team
 <br /><br />
 ***
 <br /><br />
-You have received this email because you are a registered user of the Rosedale-Rio Bravo WSD Water Accounting Platform. 
+You have received this email because you are a registered user of the {_rioConfiguration.PlatformLongName}. 
 <br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
+<a href=""mailto:{_rioConfiguration.LeadOrganizationEmail}"">{_rioConfiguration.LeadOrganizationEmail}</a>";
             return defaultEmailSignature;
         }
 
-        public static string GetSupportNotificationEmailSignature()
+        public string GetSupportNotificationEmailSignature()
         {
-            const string supportNotificationEmailSignature = @"<br /><br />
-Respectfully, the RRB WSD Water Accounting Platform team
+            string supportNotificationEmailSignature = $@"<br /><br />
+Respectfully, the {_rioConfiguration.PlatformLongName} team
 <br /><br />
 ***
 <br /><br />
-You have received this email because you are assigned to receive support notifications within the Rosedale-Rio Bravo WSD Water Accounting Platform. 
+You have received this email because you are assigned to receive support notifications within the {_rioConfiguration.PlatformLongName}. 
 <br /><br />
-P.O. Box 20820<br />
-Bakersfield, CA 93390-0820<br />
-Phone: (661) 589-6045<br />
-<a href=""mailto:admin@rrbwsd.com"">admin@rrbwsd.com</a>";
+<a href=""mailto:{_rioConfiguration.LeadOrganizationEmail}"">{_rioConfiguration.LeadOrganizationEmail}</a>";
             return supportNotificationEmailSignature;
         }
 
-        public static MailAddress GetDefaultEmailFrom()
+        public MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress("donotreply @sitkatech.com", "RRB Water Accounting Platform");
+            return new MailAddress("donotreply @sitkatech.com", $"{_rioConfiguration.PlatformLongName}");
         }
 
         public static void AddBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<string> recipients)

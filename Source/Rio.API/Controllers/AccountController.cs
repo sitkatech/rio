@@ -306,11 +306,11 @@ namespace Rio.API.Controllers
             return parcelWaterUsageDtos;
         }
 
-        private static List<MailMessage> GenerateAddedUserEmails(string rioUrl, AccountDto addedAccount, IEnumerable<UserDto> addedUsers)
+        private List<MailMessage> GenerateAddedUserEmails(string rioUrl, AccountDto addedAccount, IEnumerable<UserDto> addedUsers)
         {
 
             var mailMessages = new List<MailMessage>();
-            var messageBody = $@"The following account has been added to your profile in the Rosedale-Rio Bravo Water Accounting Platform. You can now manage this accounts in the Water Accounting Platform:<br/><br/>
+            var messageBody = $@"The following account has been added to your profile in the {_rioConfiguration.PlatformLongName}. You can now manage this accounts in the Water Accounting Platform:<br/><br/>
 {addedAccount.AccountDisplayName}<br/><br/>
 You can view parcels associated with this account and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
 
@@ -319,7 +319,7 @@ You can view parcels associated with this account and the water allocation and u
             {
                 var mailMessage = new MailMessage
                 {
-                    Subject = $"Rosedale-Rio Bravo Water Accounting Platform: Water Accounts Added",
+                    Subject = $"{_rioConfiguration.PlatformLongName}: Water Accounts Added",
                     Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
@@ -331,7 +331,7 @@ You can view parcels associated with this account and the water allocation and u
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            mailMessage.From = smtpClient.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);

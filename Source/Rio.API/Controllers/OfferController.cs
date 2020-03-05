@@ -67,7 +67,7 @@ namespace Rio.API.Controllers
                 var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
                 // write a water transfer record
                 var waterTransfer = WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
-                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer);
+                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer, smtpClient);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -76,18 +76,18 @@ namespace Rio.API.Controllers
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
-                var mailMessage = GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting);
+                var mailMessage = GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient);
                 SendEmailMessage(smtpClient, mailMessage);
             }
             else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
             {
                 Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
-                var mailMessage = GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting);
+                var mailMessage = GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient);
                 SendEmailMessage(smtpClient, mailMessage);
             }
             else
             {
-                var mailMessage = GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting);
+                var mailMessage = GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting, smtpClient);
                 SendEmailMessage(smtpClient, mailMessage);
             }
 
@@ -125,14 +125,14 @@ namespace Rio.API.Controllers
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            mailMessage.From = smtpClient.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
 
         private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer,
-            TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer)
+            TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer, SitkaSmtpClientService smtpClient)
         {
             AccountDto buyer;
             AccountDto seller;
@@ -163,6 +163,7 @@ namespace Rio.API.Controllers
                 }
             }
 
+
             var mailMessages = new List<MailMessage>();
             var messageBody = $@"Your offer to trade water has been accepted.
 <ul>
@@ -175,7 +176,7 @@ namespace Rio.API.Controllers
 To finalize this transaction, the buyer and seller must complete payment and any other terms of the transaction. Once payment is complete, the trade must be confirmed by both parties within the Water Accounting Platform before the district will recognize the transfer.
 <br /><br />
 <a href=""{rioUrl}/register-transfer/{waterTransfer.WaterTransferID}"">Confirm Transfer</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailTos = (new List<AccountDto> {buyer, seller}).SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
@@ -192,7 +193,7 @@ To finalize this transaction, the buyer and seller must complete payment and any
 
         private static MailMessage GenerateRejectedOfferEmail(string rioUrl, OfferDto offer,
             TradeDto currentTrade,
-            PostingDto posting)
+            PostingDto posting, SitkaSmtpClientService smtpClient)
         {
             var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell"
@@ -206,7 +207,7 @@ Hello {toAccount.AccountName},
 Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = $"Trade {currentTrade.TradeNumber} Rejected",
@@ -221,7 +222,7 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
 
         private static MailMessage GenerateRescindedOfferEmail(string rioUrl, OfferDto offer,
             TradeDto currentTrade,
-            PostingDto posting)
+            PostingDto posting, SitkaSmtpClientService smtpClient)
         {
             var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
@@ -235,7 +236,7 @@ Hello {toAccount.AccountName},
 An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = $"Trade {currentTrade.TradeNumber} Rescinded",
@@ -249,7 +250,7 @@ An offer to {offerAction} water was rescinded by the other party. You can see de
         }
 
         private static MailMessage GeneratePendingOfferEmail(string rioUrl, TradeDto currentTrade,
-            OfferDto offer, PostingDto posting)
+            OfferDto offer, PostingDto posting, SitkaSmtpClientService smtpClient)
         {
             var offerAction = currentTrade.CreateAccount.AccountID == offer.CreateAccount.AccountID
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
@@ -262,7 +263,7 @@ Hello {toAccount.AccountName},
 An offer to {offerAction} water has been presented for your review. 
 <br /><br />
 <a href=""{rioUrl}/trades/{currentTrade.TradeNumber}"">Respond to this offer</a>
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
                 Subject = "New offer to review",

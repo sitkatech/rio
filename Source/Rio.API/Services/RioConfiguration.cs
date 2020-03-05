@@ -10,5 +10,11 @@
         public string RIO_WEB_URL { get; set; }
         public string KEYSTONE_REDIRECT_URL { get; set; }
         public bool ALLOW_TRADING { get; set; }
+        public string PlatformLongName { get; set; }
+        public string PlatformShortName { get; set; }
+        public string LeadOrganizationLongName { get; set; }
+        public string LeadOrganizationShortName { get; set; }
+        public string LeadOrganizationHomeUrl { get; set; }
+        public string LeadOrganizationEmail { get; set; }
     }
 }

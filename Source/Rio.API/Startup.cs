@@ -69,7 +69,7 @@ namespace Rio.API
 
             services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost.Replace("core", "")));
 
-            services.AddTransient(x => new SitkaSmtpClientService(rioConfiguration));
+            services.AddSingleton(x => new SitkaSmtpClientService(rioConfiguration));
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));

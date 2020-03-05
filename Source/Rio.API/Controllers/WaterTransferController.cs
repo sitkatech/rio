@@ -87,7 +87,7 @@ namespace Rio.API.Controllers
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto);
+                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, smtpClient);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -125,7 +125,7 @@ namespace Rio.API.Controllers
             waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto,
                 WaterTransferRegistrationStatusEnum.Canceled);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateCancelTransferEmail(_rioWebUrl, waterTransferDto);
+            var mailMessages = GenerateCancelTransferEmail(_rioWebUrl, waterTransferDto, smtpClient);
             foreach (var mailMessage in mailMessages)
             {
                 SendEmailMessage(smtpClient, mailMessage);
@@ -178,13 +178,14 @@ namespace Rio.API.Controllers
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = SitkaSmtpClientService.GetDefaultEmailFrom();
+            mailMessage.From = smtpClient.GetDefaultEmailFrom();
             SitkaSmtpClientService.AddReplyToEmail(mailMessage);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
 
-        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer)
+        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer,
+            SitkaSmtpClientService smtpClient)
         {
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
@@ -197,7 +198,7 @@ namespace Rio.API.Controllers
 </ul>
 <a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
 <br /><br />
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
@@ -211,7 +212,8 @@ namespace Rio.API.Controllers
             }
             return mailMessages;
         }
-        private static List<MailMessage> GenerateCancelTransferEmail(string rioUrl, WaterTransferDto waterTransfer)
+        private static List<MailMessage> GenerateCancelTransferEmail(string rioUrl, WaterTransferDto waterTransfer,
+            SitkaSmtpClientService smtpClient)
         {
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
@@ -224,7 +226,7 @@ namespace Rio.API.Controllers
 </ul>
 <a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
 <br /><br />
-{SitkaSmtpClientService.GetDefaultEmailSignature()}";
+{smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
