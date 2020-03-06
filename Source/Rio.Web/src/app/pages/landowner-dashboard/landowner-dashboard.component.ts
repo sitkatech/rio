@@ -79,6 +79,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
+  public monthsLong = ["January",
+                       "February",
+                       "March",
+                       "April",
+                       "May",
+                       "June", 
+                       "July",
+                       "August",
+                       "September",
+                       "October",
+                       "November",
+                       "December"];
+
   public emptyCumulativeWaterUsage: SeriesEntry[] = [
     { name: "January", value: 0 },
     { name: "February", value: 0 },
@@ -483,7 +496,46 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const annualWaterUsage = this.waterUsageChartData.find(x => x.Year == this.waterYearToDisplay);
-    return annualWaterUsage ? annualWaterUsage.ChartData : null;
+    return this.generateEmptyUsageValues(annualWaterUsage.ChartData);
+  }
+
+  public generateEmptyUsageValues(waterUsage : MultiSeriesEntry[]): MultiSeriesEntry[] {
+    if (waterUsage === null) {
+      waterUsage = new Array;
+    }
+
+    this.monthsLong.forEach((value, index) => {
+      if (waterUsage.length < index + 1 || waterUsage[index].name !== value)
+      {
+        var seriesEntries = new Array;
+        for (var parcel of this.parcels) {
+          var entry = new SeriesEntry();
+          entry.name = parcel.ParcelNumber;
+          entry.value = null;
+          seriesEntries.push(entry);
+        }
+        waterUsage.splice(index, 0, new MultiSeriesEntry(value, seriesEntries));
+      }
+      else if (waterUsage[index].series.length < this.parcels.length)
+      {
+        for (var parcel of this.parcels) {
+          var contained = false;
+          for (var series of waterUsage[index].series) {
+            if (series.name === parcel.ParcelNumber)
+            {
+              contained = true;
+            }
+          }
+          if (!contained) {
+            var entry = new SeriesEntry();
+            entry.name = parcel.ParcelNumber;
+            entry.value = null;
+            waterUsage[index].series.push(entry);
+          }
+        }
+      }
+    });
+    return waterUsage;
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
@@ -544,6 +596,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public landownerHasAnyAccounts(){
-    return this.authenticationService.getAvailableAccounts().length > 0;
+    var result = this.authenticationService.getAvailableAccounts();
+    return result != null && result.length > 0;
   }
 }
