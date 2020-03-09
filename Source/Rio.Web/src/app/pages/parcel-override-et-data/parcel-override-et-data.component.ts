@@ -35,6 +35,8 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 })
 export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
+  public currentMonth: number;
+  public currentYear: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
 
@@ -59,6 +61,19 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
+  public monthsLong = ["January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June", 
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December"];
+
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
@@ -71,6 +86,8 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.currentMonth = new Date().getMonth() + 1 //Because we store values in the database not zero indexed;
+    this.currentYear = new Date().getFullYear();
     this.parcelMonthlyEvaporations = new Array<ParcelMonthlyEvapotranspirationDto>();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
@@ -118,6 +135,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
 
   public getParcelEvaporationMonthlyData(parcel : ParcelDto) : Array<ParcelMonthlyEvapotranspirationDto> {
     const parcelMonthlyEvapotranspirations = this.parcelMonthlyEvaporations.filter(x => x.ParcelID === parcel.ParcelID);
+
     return parcelMonthlyEvapotranspirations;
   }
 

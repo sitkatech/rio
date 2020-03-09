@@ -496,46 +496,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const annualWaterUsage = this.waterUsageChartData.find(x => x.Year == this.waterYearToDisplay);
-    return this.generateEmptyUsageValues(annualWaterUsage.ChartData);
-  }
-
-  public generateEmptyUsageValues(waterUsage : MultiSeriesEntry[]): MultiSeriesEntry[] {
-    if (waterUsage === null) {
-      waterUsage = new Array;
-    }
-
-    this.monthsLong.forEach((value, index) => {
-      if (waterUsage.length < index + 1 || waterUsage[index].name !== value)
-      {
-        var seriesEntries = new Array;
-        for (var parcel of this.parcels) {
-          var entry = new SeriesEntry();
-          entry.name = parcel.ParcelNumber;
-          entry.value = null;
-          seriesEntries.push(entry);
-        }
-        waterUsage.splice(index, 0, new MultiSeriesEntry(value, seriesEntries));
-      }
-      else if (waterUsage[index].series.length < this.parcels.length)
-      {
-        for (var parcel of this.parcels) {
-          var contained = false;
-          for (var series of waterUsage[index].series) {
-            if (series.name === parcel.ParcelNumber)
-            {
-              contained = true;
-            }
-          }
-          if (!contained) {
-            var entry = new SeriesEntry();
-            entry.name = parcel.ParcelNumber;
-            entry.value = null;
-            waterUsage[index].series.push(entry);
-          }
-        }
-      }
-    });
-    return waterUsage;
+    return annualWaterUsage.ChartData;
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {

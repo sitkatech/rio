@@ -356,7 +356,7 @@
                   <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
                   <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                     <ng-container *ngFor="let seriesData of monthData.series">
-                      <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''" *ngIf="seriesData.name === parcel.ParcelNumber"><span *ngIf="seriesData.IsOverridden === true">*</span>{{seriesData.value | number:"1.1"}}</td>
+                      <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''" *ngIf="seriesData.name === parcel.ParcelNumber"><span *ngIf="seriesData.IsOverridden === true">*</span>{{seriesData.IsEmpty === false ? (seriesData.value | number:"1.1") : "-"}}</td>
                     </ng-container>
                   </ng-container>
                   <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1"}}</strong></td>

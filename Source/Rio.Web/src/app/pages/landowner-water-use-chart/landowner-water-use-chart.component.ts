@@ -30,7 +30,7 @@ export class LandownerWaterUseChartComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.buildColorScheme();
   }
 
@@ -46,7 +46,6 @@ export class LandownerWaterUseChartComponent implements OnInit {
     let colorList: string[];
 
     const numOfParcels = this.parcelNumbers.length;
-
     colorList = palette('mpn65', numOfParcels).map(x=>`#${x}`);
     
     this.colorScheme = {domain: colorList};

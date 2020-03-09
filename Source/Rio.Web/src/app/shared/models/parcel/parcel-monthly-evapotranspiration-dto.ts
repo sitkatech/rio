@@ -5,6 +5,7 @@ export class ParcelMonthlyEvapotranspirationDto {
     WaterMonth: number;
     EvapotranspirationRate: number;
     OverriddenEvapotranspirationRate?: number;
+    IsEmpty: boolean;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

@@ -36,9 +36,9 @@
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
                                     <td class="text-right" [ngClass]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing ? 'font-italic' : ''" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
                                         <span *ngIf="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing">*</span>
-                                        {{ (!isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate) | number:"1.1-1"}} 
+                                        {{ parcelMonthlyEvaporation.IsEmpty ? "-" : (!isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate) | number:"1.1-1"}} 
                                         <br>
-                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px; text-align:right" *ngIf="isEditing" (keypress)="catchExtraSymbols($event)" (paste)="catchPastedSymbols($event, parcelMonthlyEvaporation)"></td>
+                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px; text-align:right" *ngIf="isEditing && (waterYearToDisplay < currentYear || (waterYearToDisplay == currentYear && parcelMonthlyEvaporation.WaterMonth <= currentMonth))" (keypress)="catchExtraSymbols($event)" (paste)="catchPastedSymbols($event, parcelMonthlyEvaporation)"></td>
                                     <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel) | number:"1.1-1"}}</strong></td>
                                 </tr>
                                 <tr>
