@@ -35,9 +35,10 @@ namespace Rio.EFModels.Entities
             List<ParcelDto> parcels, int year)
         {
             var parcelMonthlyEvapotranspirations = new List<ParcelMonthlyEvapotranspirationDto>();
+            // make the full matrix of months * parcels and populate with zero/empty
             foreach (var parcel in parcels)
             {
-                for (int i = 1; i < 13; i++)
+                for (var i = 1; i < 13; i++)
                 {
                     parcelMonthlyEvapotranspirations.Add(new ParcelMonthlyEvapotranspirationDto {ParcelID = parcel.ParcelID, ParcelNumber = parcel.ParcelNumber, EvapotranspirationRate = 0, WaterMonth = i, WaterYear = year, IsEmpty = true});
                 }
@@ -47,22 +48,23 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID) && x.WaterYear == year).Select(x => x.AsDto()).ToList();
 
-            var finalList = parcelMonthlyEvapotranspirations.GroupJoin(parcelMonthlyEvapotranspirationsFromDB,
-                x => new {ParcelID = x.ParcelID, Month = x.WaterMonth, Year = year},
-                y => new {ParcelID = y.ParcelID, Month = y.WaterMonth, Year = y.WaterYear},
-                (x, y) => new ParcelMonthlyEvapotranspirationDto
+            // fill in the real values into the full set
+            foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirations)
+            {
+                var existing = parcelMonthlyEvapotranspirationsFromDB.SingleOrDefault(x =>
+                    x.ParcelID == parcelMonthlyEvapotranspirationDto.ParcelID &&
+                    x.WaterYear == parcelMonthlyEvapotranspirationDto.WaterYear &&
+                    x.WaterMonth == parcelMonthlyEvapotranspirationDto.WaterMonth);
+                if (existing != null)
                 {
-                    ParcelID = x.ParcelID,
-                    ParcelNumber = x.ParcelNumber,
-                    WaterYear = year,
-                    WaterMonth = x.WaterMonth,
-                    IsEmpty = y.Any() ? false : true,
-                    EvapotranspirationRate = y.Select(y => y.EvapotranspirationRate).SingleOrDefault(),
-                    OverriddenEvapotranspirationRate = y.Select(y => y.OverriddenEvapotranspirationRate).SingleOrDefault()
-                }).ToList();
-                                                                                
+                    parcelMonthlyEvapotranspirationDto.IsEmpty = false;
+                    parcelMonthlyEvapotranspirationDto.EvapotranspirationRate = existing.EvapotranspirationRate;
+                    parcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate =
+                        existing.OverriddenEvapotranspirationRate;
 
-            return finalList;
+                }
+            }
+            return parcelMonthlyEvapotranspirations;
         }
 
         public static int SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
