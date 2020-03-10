@@ -89,14 +89,24 @@ namespace Rio.EFModels.Entities
 
             var allInDatabase = dbContext.ParcelMonthlyEvapotranspiration;
 
-            var countChanging = postedDtos.Count(x => existingParcelMonthlyEvapotranspirationDtos.Any(y =>
-                y.ParcelID == x.ParcelID && y.WaterYear == x.WaterYear && y.WaterMonth == x.WaterMonth && (y.OverriddenEvapotranspirationRate != x.OverriddenEvapotranspirationRate || x.OverriddenEvapotranspirationRate != null)));
+            var countChanging = postedDtos.Count(x =>
+                                    existingParcelMonthlyEvapotranspirationDtos.Any(y =>
+                                    y.ParcelID == x.ParcelID && y.WaterYear == x.WaterYear && y.WaterMonth == x.WaterMonth &&
+                                    y.OverriddenEvapotranspirationRate != x.OverriddenEvapotranspirationRate));
+
+            var countBeingIntroduced = postedDtos.Count(x => 
+                                            !existingParcelMonthlyEvapotranspirationDtos.Any(y =>
+                                            y.ParcelID == x.ParcelID && y.WaterYear == x.WaterYear && y.WaterMonth == x.WaterMonth));
+
+            var countBeingRemoved = existingParcelMonthlyEvapotranspirationDtos.Count(x =>
+                                        !postedDtos.Any(y =>
+                                        y.ParcelID == x.ParcelID && y.WaterYear == x.WaterYear && y.WaterMonth == x.WaterMonth));
 
             existingParcelMonthlyEvapotranspirationDtos.Merge(postedDtos, allInDatabase,
                 (x, y) => x.ParcelID == y.ParcelID && x.WaterMonth == y.WaterMonth && x.WaterYear == y.WaterYear,
                 (x, y) => x.OverriddenEvapotranspirationRate = y.OverriddenEvapotranspirationRate);
             dbContext.SaveChanges();
-            return countChanging;
+            return countChanging + countBeingIntroduced + countBeingRemoved;
         }
     }
 }

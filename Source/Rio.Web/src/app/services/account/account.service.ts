@@ -48,7 +48,7 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
-  getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto[]> {
+  getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto> {
       let route = `/accounts/${accountID}/water-usage/${year}`;
       return this.apiService.getFromApi(route);
   }
