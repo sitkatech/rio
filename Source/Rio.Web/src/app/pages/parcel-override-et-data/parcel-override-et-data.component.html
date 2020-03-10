@@ -1,18 +1,33 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/landowner-dashboard">Landowner Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Override OpenET Data
+        </li>
+    </ol>
+</nav>
 <div class="container mt-sm-4" *ngIf="account">
-    <div class="float-right pr-0">
-        <div class="row">
-          <div class="col-md-12" >
-            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-              (selectedYearChange)="updateAnnualData()" [(disabled)]="isEditing"></rio-water-year-select>
-          </div>
-        </div>
-      </div>
+    <app-alert-display></app-alert-display>
+    
     <h2>
         Override ET Data for - {{account.AccountDisplayName}} - {{waterYearToDisplay}}
     </h2>
-    <app-alert-display></app-alert-display>
+    <p class="lead">
+        This editor is used to override water usage as reported by OpenET. When in edit mode, the top row 
+        for each parcel shows the OpenET water usage and the bottom row allows entering an override value. 
+        When an override value is provided, all water accounting in the platform uses the override data instead 
+        of OpenET data.
+    </p>   
+    <div class="row">
+        <div class="col-md-12 offset-md-10" >
+            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                (selectedYearChange)="updateAnnualData()" [(disabled)]="isEditing"></rio-water-year-select>
+        </div>
+    </div>
 
-    <div class="row mt-4" *ngIf="parcels && parcels.length > 0">
+    <div class="row" *ngIf="parcels && parcels.length > 0">
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
@@ -27,18 +42,18 @@
                             <thead>
                                 <tr>
                                     <th>Parcel Number</th>
-                                    <th *ngFor="let month of months">{{month}}</th>
+                                    <th class="text-right" *ngFor="let month of months">{{month}}</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let parcel of parcels">
                                     <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a></td>
-                                    <td class="text-right" [ngClass]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing ? 'font-italic' : ''" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
-                                        <span *ngIf="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && !isEditing">*</span>
-                                        {{ parcelMonthlyEvaporation.IsEmpty ? "-" : (!isEditing && parcelMonthlyEvaporation.OverriddenEvapotranspirationRate ? parcelMonthlyEvaporation.OverriddenEvapotranspirationRate : parcelMonthlyEvaporation.EvapotranspirationRate) | number:"1.1-1"}} 
+                                    <td class="text-right" [ngClass]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && (!isEditing || checkIfDateColumnIsAFutureDate(parcelMonthlyEvaporation.WaterMonth)) ? 'font-italic' : ''" *ngFor="let parcelMonthlyEvaporation of getParcelEvaporationMonthlyData(parcel)">
+                                        <span *ngIf="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate != null && (!isEditing || checkIfDateColumnIsAFutureDate(parcelMonthlyEvaporation.WaterMonth))">*</span>
+                                        {{ determineContentsOfCell(parcelMonthlyEvaporation)}} 
                                         <br>
-                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px; text-align:right" *ngIf="isEditing && (waterYearToDisplay < currentYear || (waterYearToDisplay == currentYear && parcelMonthlyEvaporation.WaterMonth <= currentMonth))" (keypress)="catchExtraSymbols($event)" (paste)="catchPastedSymbols($event, parcelMonthlyEvaporation)"></td>
+                                        <input type="number" [(ngModel)]="parcelMonthlyEvaporation.OverriddenEvapotranspirationRate" style="width:50px; text-align:right" *ngIf="isEditing && !checkIfDateColumnIsAFutureDate(parcelMonthlyEvaporation.WaterMonth)" (keypress)="catchExtraSymbols($event)" (paste)="catchPastedSymbols($event, parcelMonthlyEvaporation)"></td>
                                     <td class="text-right"><strong>{{getTotalWaterUsageForParcel(parcel) | number:"1.1-1"}}</strong></td>
                                 </tr>
                                 <tr>
@@ -53,8 +68,11 @@
                         </p>                 
                     </div>
                     <ng-container *ngIf="isEditing">
-                        <button class="btn btn-secondary btn-sm" style="float:right" (click)="cancelOverrideEtChanges()">Cancel</button>
-                        <button class="btn btn-rio btn-sm mr-3" style="float:right" (click)="confirmSaveOverrideEtChanges()">Save</button>
+                        <button class="btn btn-secondary btn-sm float-right" (click)="cancelOverrideEtChanges()">Cancel</button>
+                        <button class="btn btn-rio btn-sm mr-3 float-right" (click)="confirmSaveOverrideEtChanges()">Save</button>
+                    </ng-container>
+                    <ng-container *ngIf="!isEditing">
+                        <a class="btn btn-rio btm-sm mr-3 float-right" href="/landowner-dashboard">Back to Landowner Dashboard</a> 
                     </ng-container>
                 </div>
             </div>

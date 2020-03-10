@@ -13,7 +13,7 @@ namespace Rio.EFModels.Entities
         public int WaterYear { get; set; }
         public int WaterMonth { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
-        public decimal EvapotranspirationRate { get; set; }
+        public decimal? EvapotranspirationRate { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal? OverriddenEvapotranspirationRate { get; set; }
 

@@ -302,8 +302,8 @@ namespace Rio.API.Controllers
                 new ParcelWaterUsageDto
                 {
                     ParcelNumber = parcelDtos.Single(parcel => parcel.ParcelID == groupedByParcel.Key).ParcelNumber,
-                    WaterUsageInAcreFeet = Math.Round(groupedByParcel.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate), 1),
-                    IsOverridden = groupedByParcel.Single(parcel => parcel.ParcelID == groupedByParcel.Key).OverriddenEvapotranspirationRate != null ? true : false,
+                    WaterUsageInAcreFeet = Math.Round(groupedByParcel.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate ?? 0), 1),
+                    IsOverridden = groupedByParcel.Single(parcel => parcel.ParcelID == groupedByParcel.Key).OverriddenEvapotranspirationRate != null,
                     IsEmpty = groupedByParcel.Single(parcel => parcel.ParcelID == groupedByParcel.Key).IsEmpty
                 }).ToList();
 

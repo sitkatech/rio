@@ -6,7 +6,7 @@
         public string ParcelNumber { get; set; }
         public int WaterYear { get; set; }
         public int WaterMonth { get; set; }
-        public decimal EvapotranspirationRate { get; set; }
+        public decimal? EvapotranspirationRate { get; set; }
         public decimal? OverriddenEvapotranspirationRate { get; set; }
         public bool IsEmpty { get; set; }
     }

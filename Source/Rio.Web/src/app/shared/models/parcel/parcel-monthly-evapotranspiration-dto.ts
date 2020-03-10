@@ -3,7 +3,7 @@ export class ParcelMonthlyEvapotranspirationDto {
     ParcelNumber: string;
     WaterYear: number;
     WaterMonth: number;
-    EvapotranspirationRate: number;
+    EvapotranspirationRate?: number;
     OverriddenEvapotranspirationRate?: number;
     IsEmpty: boolean;
 

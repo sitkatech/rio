@@ -86,8 +86,6 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentMonth = new Date().getMonth() + 1 //Because we store values in the database not zero indexed;
-    this.currentYear = new Date().getFullYear();
     this.parcelMonthlyEvaporations = new Array<ParcelMonthlyEvapotranspirationDto>();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
@@ -163,6 +161,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.account.AccountID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(countSaved=>{
       let saveMessage = `Successfully saved ${countSaved} OpenET usage record${countSaved != 1 ? 's' : ''}`;
       this.alertService.pushAlert(new Alert(saveMessage, AlertContext.Success));
+      this.updateAnnualData();
     });
     this.isEditing = false;
   }
@@ -186,5 +185,25 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
       parcel.OverriddenEvapotranspirationRate = val;
       event.preventDefault();
     }
+  }
+
+  public determineContentsOfCell(parcelEvapotranspirationData : ParcelMonthlyEvapotranspirationDto) : any {
+    if ((!this.isEditing || this.checkIfDateColumnIsAFutureDate(parcelEvapotranspirationData.WaterMonth)) && parcelEvapotranspirationData.OverriddenEvapotranspirationRate !== null)
+    {
+      return parcelEvapotranspirationData.OverriddenEvapotranspirationRate.toFixed(1);
+    }
+    else if (parcelEvapotranspirationData.IsEmpty)
+    {
+      return "-";
+    }
+    else 
+    {
+      return parcelEvapotranspirationData.EvapotranspirationRate.toFixed(1);
+    }
+  }
+
+  public checkIfDateColumnIsAFutureDate(month: number) : boolean {
+      var date = new Date();
+      return (this.waterYearToDisplay > date.getFullYear() || (this.waterYearToDisplay == date.getFullYear() && month > date.getMonth() + 1))
   }
 }

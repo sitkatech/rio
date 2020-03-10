@@ -40,7 +40,7 @@ namespace Rio.EFModels.Entities
             {
                 for (var i = 1; i < 13; i++)
                 {
-                    parcelMonthlyEvapotranspirations.Add(new ParcelMonthlyEvapotranspirationDto {ParcelID = parcel.ParcelID, ParcelNumber = parcel.ParcelNumber, EvapotranspirationRate = 0, WaterMonth = i, WaterYear = year, IsEmpty = true});
+                    parcelMonthlyEvapotranspirations.Add(new ParcelMonthlyEvapotranspirationDto {ParcelID = parcel.ParcelID, ParcelNumber = parcel.ParcelNumber, EvapotranspirationRate = null, WaterMonth = i, WaterYear = year, IsEmpty = true});
                 }
             }
 
@@ -57,7 +57,7 @@ namespace Rio.EFModels.Entities
                     x.WaterMonth == parcelMonthlyEvapotranspirationDto.WaterMonth);
                 if (existing != null)
                 {
-                    parcelMonthlyEvapotranspirationDto.IsEmpty = false;
+                    parcelMonthlyEvapotranspirationDto.IsEmpty = existing.EvapotranspirationRate == null;
                     parcelMonthlyEvapotranspirationDto.EvapotranspirationRate = existing.EvapotranspirationRate;
                     parcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate =
                         existing.OverriddenEvapotranspirationRate;
@@ -70,12 +70,13 @@ namespace Rio.EFModels.Entities
         public static int SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
             List<ParcelMonthlyEvapotranspirationDto> overriddenParcelMonthlyEvapotranspirationDtos)
         {
-            var postedDtos = overriddenParcelMonthlyEvapotranspirationDtos.Select(x => new ParcelMonthlyEvapotranspiration()
+            var postedDtos = overriddenParcelMonthlyEvapotranspirationDtos.Where(x => !x.IsEmpty || (x.IsEmpty && x.OverriddenEvapotranspirationRate != null)).Select(x => new ParcelMonthlyEvapotranspiration()
             {
                 ParcelID = x.ParcelID,
                 WaterYear = x.WaterYear,
                 WaterMonth = x.WaterMonth,
-                EvapotranspirationRate = x.EvapotranspirationRate,
+                //Don't write to EvapotranspirationRate. Only OpenET imports should adjust that data
+                //EvapotranspirationRate = x.EvapotranspirationRate,
                 OverriddenEvapotranspirationRate = x.OverriddenEvapotranspirationRate
             }).ToList();
 
