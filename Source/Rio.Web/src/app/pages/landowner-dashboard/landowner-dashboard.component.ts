@@ -79,19 +79,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
-  public monthsLong = ["January",
-                       "February",
-                       "March",
-                       "April",
-                       "May",
-                       "June", 
-                       "July",
-                       "August",
-                       "September",
-                       "October",
-                       "November",
-                       "December"];
-
   public emptyCumulativeWaterUsage: SeriesEntry[] = [
     { name: "January", value: 0 },
     { name: "February", value: 0 },

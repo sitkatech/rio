@@ -61,19 +61,6 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
-  public monthsLong = ["January",
-                        "February",
-                        "March",
-                        "April",
-                        "May",
-                        "June", 
-                        "July",
-                        "August",
-                        "September",
-                        "October",
-                        "November",
-                        "December"];
-
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,

@@ -27,8 +27,6 @@ namespace Rio.API.Controllers
         private readonly KeystoneService _keystoneService;
         private readonly RioConfiguration _rioConfiguration;
 
-        public string[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-
         public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
