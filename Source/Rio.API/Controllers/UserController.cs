@@ -288,7 +288,7 @@ namespace Rio.API.Controllers
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)
         {
             var mailMessages = new List<MailMessage>();
-            var messageBody = $@"The following accounts have been added to your profile in the {_rioConfiguration.PlatformLongName}. You can now manage these accounts in the ${_rioConfiguration.PlatformShortName}:<br/><br/>";
+            var messageBody = $@"The following accounts have been added to your profile in the {_rioConfiguration.PlatformLongName}. You can now manage these accounts in the {_rioConfiguration.PlatformShortName}:<br/><br/>";
             foreach (var account in addedAccounts)
             {
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
