@@ -56,7 +56,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private tradeStatusIDs: TradeStatusEnum[];
   private postingStatusIDs: PostingStatusEnum[];
 
-  private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] }[];
+  private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] };
   private waterUsageOverview: WaterAllocationOverviewDto;
   private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
@@ -186,11 +186,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.accountService.getWaterUsageByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay),
       this.accountService.getWaterUsageOverviewByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay)
     ).subscribe(([waterUsagesInChartForm, waterUsageOverview]) => {
-      this.waterUsages = waterUsagesInChartForm.map(x => {
-        return {
-          Year: x.Year,
+      this.waterUsages = {
+          Year: waterUsagesInChartForm.Year,
           AnnualUsage:
-            x.WaterUsage.map(wu => {
+          waterUsagesInChartForm.WaterUsage.map(wu => {
               return {
                 monthlyValue: wu.series.reduce((a, b) => {
                   return (a + b.value);
@@ -199,9 +198,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             }).reduce((a, b) => {
               return (a + b.monthlyValue);
             }, 0)
-        };
-      });
-
+          };
 
       // user will have neither allocation nor usage to chart if they have no parcels in this year.
       if (this.parcels && this.parcels.length > 0) {
@@ -421,12 +418,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     if (!this.waterUsages) {
       return null;
     }
-    // do NOT use triple equals here. waterYearToDisplay is a STRING but x.Year is a NUMBER
-    const waterUsageForYear = this.waterUsages.find(x => x.Year == this.waterYearToDisplay);
-    if (waterUsageForYear) {
-      return this.getResultInUnitsShown(waterUsageForYear.AnnualUsage);
-    }
-    return 0;
+    
+    return this.getResultInUnitsShown(this.waterUsages.AnnualUsage);
   }
 
   public getEstimatedAvailableSupply(): number {
@@ -438,13 +431,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  initializeCharts(waterUsage: WaterUsageDto[], waterUsageOverview: WaterAllocationOverviewDto) {
-    this.waterUsageChartData = waterUsage.map(x => {
-      return {
-        Year: x.Year,
-        ChartData: x.WaterUsage
-      }
-    });
+  initializeCharts(waterUsage: WaterUsageDto, waterUsageOverview: WaterAllocationOverviewDto) {
+    this.waterUsageChartData = {
+      Year: waterUsage.Year,
+      ChartData: waterUsage.WaterUsage      
+    };
 
     let values = [];
     for (const series of waterUsageOverview.Current) {
@@ -482,8 +473,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return null;
     }
 
-    const annualWaterUsage = this.waterUsageChartData.find(x => x.Year == this.waterYearToDisplay);
-    return annualWaterUsage ? annualWaterUsage.ChartData : null;
+    return this.waterUsageChartData.ChartData;
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
@@ -544,6 +534,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public landownerHasAnyAccounts(){
-    return this.authenticationService.getAvailableAccounts().length > 0;
+    var result = this.authenticationService.getAvailableAccounts();
+    return result != null && result.length > 0;
   }
 }

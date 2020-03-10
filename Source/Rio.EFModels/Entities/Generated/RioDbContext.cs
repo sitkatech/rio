@@ -126,17 +126,7 @@ namespace Rio.EFModels.Entities
                 entity.HasKey(e => e.DatabaseMigrationNumber)
                     .HasName("PK_DatabaseMigration_DatabaseMigrationNumber");
 
-                entity.HasIndex(e => e.ReleaseScriptFileName)
-                    .HasName("UC_DatabaseMigration_ReleaseScriptFileName")
-                    .IsUnique();
-
-                entity.Property(e => e.DateMigrated).HasDefaultValueSql("(getutcdate())");
-
-                entity.Property(e => e.MigrationAuthorName).IsUnicode(false);
-
-                entity.Property(e => e.MigrationReason).IsUnicode(false);
-
-                entity.Property(e => e.ReleaseScriptFileName).IsUnicode(false);
+                entity.Property(e => e.DatabaseMigrationNumber).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<FileResource>(entity =>

@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[ParcelMonthlyEvapotranspiration](
 	[ParcelID] [int] NOT NULL,
 	[WaterYear] [int] NOT NULL,
 	[WaterMonth] [int] NOT NULL,
-	[EvapotranspirationRate] [decimal](10, 4) NOT NULL,
+	[EvapotranspirationRate] [decimal](10, 4) NULL,
 	[OverriddenEvapotranspirationRate] [decimal](10, 4) NULL,
  CONSTRAINT [PK_ParcelMonthlyEvapotranspiration_ParcelMonthlyEvapotranspirationID] PRIMARY KEY CLUSTERED 
 (

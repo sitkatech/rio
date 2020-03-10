@@ -35,6 +35,8 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 })
 export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
+  public currentMonth: number;
+  public currentYear: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
 
@@ -118,6 +120,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
 
   public getParcelEvaporationMonthlyData(parcel : ParcelDto) : Array<ParcelMonthlyEvapotranspirationDto> {
     const parcelMonthlyEvapotranspirations = this.parcelMonthlyEvaporations.filter(x => x.ParcelID === parcel.ParcelID);
+
     return parcelMonthlyEvapotranspirations;
   }
 
@@ -145,6 +148,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
     this.accountService.saveParcelMonthlyEvapotranspirationOverrideValues(this.account.AccountID, this.waterYearToDisplay, this.parcelMonthlyEvaporations).subscribe(countSaved=>{
       let saveMessage = `Successfully saved ${countSaved} OpenET usage record${countSaved != 1 ? 's' : ''}`;
       this.alertService.pushAlert(new Alert(saveMessage, AlertContext.Success));
+      this.updateAnnualData();
     });
     this.isEditing = false;
   }
@@ -168,5 +172,25 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
       parcel.OverriddenEvapotranspirationRate = val;
       event.preventDefault();
     }
+  }
+
+  public determineContentsOfCell(parcelEvapotranspirationData : ParcelMonthlyEvapotranspirationDto) : any {
+    if ((!this.isEditing || this.checkIfDateColumnIsAFutureDate(parcelEvapotranspirationData.WaterMonth)) && parcelEvapotranspirationData.OverriddenEvapotranspirationRate !== null)
+    {
+      return parcelEvapotranspirationData.OverriddenEvapotranspirationRate.toFixed(1);
+    }
+    else if (parcelEvapotranspirationData.IsEmpty)
+    {
+      return "-";
+    }
+    else 
+    {
+      return parcelEvapotranspirationData.EvapotranspirationRate.toFixed(1);
+    }
+  }
+
+  public checkIfDateColumnIsAFutureDate(month: number) : boolean {
+      var date = new Date();
+      return (this.waterYearToDisplay > date.getFullYear() || (this.waterYearToDisplay == date.getFullYear() && month > date.getMonth() + 1))
   }
 }

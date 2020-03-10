@@ -12,5 +12,6 @@ namespace Rio.Models.DataTransferObjects.WaterUsage
         public decimal WaterUsageInAcreFeet { get; set; }
 
         public bool IsOverridden { get; set; }
+        public bool IsEmpty { get; set; }
     }
 }

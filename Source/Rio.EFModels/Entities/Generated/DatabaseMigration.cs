@@ -9,13 +9,5 @@ namespace Rio.EFModels.Entities
     {
         [Key]
         public int DatabaseMigrationNumber { get; set; }
-        [Required]
-        [StringLength(500)]
-        public string ReleaseScriptFileName { get; set; }
-        public DateTime DateMigrated { get; set; }
-        [Required]
-        [StringLength(200)]
-        public string MigrationAuthorName { get; set; }
-        public string MigrationReason { get; set; }
     }
 }
