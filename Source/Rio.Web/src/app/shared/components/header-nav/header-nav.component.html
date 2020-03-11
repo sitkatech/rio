@@ -59,6 +59,22 @@
                     </a>
                 </div>
             </li>
+            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && hasGroundwaterModelingMenu()">
+                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Groundwater Modeling
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a routerLink="/about-groundwater-evaluation" class="dropdown-item">
+                        About the Groundwater Evaluation Toolkit
+                    </a>
+                    <a routerLink="/water-trading-scenario" class="dropdown-item">
+                        Water Trading Scenario
+                    </a>
+                    <a routerLink="/managed-recharge-scenario" class="dropdown-item">
+                        Managed Recharge Scenario
+                    </a>
+                </div>
+            </li>
         </ul>
         <ul class="navbar-nav flex-column mt-2 mt-lg-0 mr-sm-2">
             <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">

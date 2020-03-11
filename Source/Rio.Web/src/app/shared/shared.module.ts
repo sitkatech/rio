@@ -17,6 +17,7 @@ import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-rend
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { WaterYearSelectComponent } from './components/water-year-select/water-year-select/water-year-select.component';
 import { AccountSelectComponent } from './components/account-select/account-select.component';
+import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { AccountSelectComponent } from './components/account-select/account-sele
         ParcelPickerComponent,
         MultiLinkRendererComponent,
         WaterYearSelectComponent,
-        AccountSelectComponent
+        AccountSelectComponent,
+        ScenarioMapComponent
     ],
     imports: [
         CommonModule,
@@ -49,7 +51,8 @@ import { AccountSelectComponent } from './components/account-select/account-sele
         ParcelPickerComponent,
         HeaderNavComponent,
         WaterYearSelectComponent,
-        AccountSelectComponent
+        AccountSelectComponent, 
+        ScenarioMapComponent
     ],
     entryComponents:[
         ParcelDetailPopupComponent

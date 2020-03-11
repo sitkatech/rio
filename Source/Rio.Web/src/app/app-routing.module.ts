@@ -39,6 +39,9 @@ import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
 import { WaterUseMeasurementComponent } from './pages/measuring-water-use-with-openet/measuring-water-use-with-openet.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
+import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
+import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
+import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -68,6 +71,9 @@ const routes: Routes = [
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent},
+  { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent},
+  { path: "water-trading-scenario", component: WaterTradingScenarioComponent},
   { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
