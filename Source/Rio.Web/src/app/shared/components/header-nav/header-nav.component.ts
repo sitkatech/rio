@@ -185,4 +185,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public leadOrganizationLogoSrc(): string{
         return `assets/main/logos/${environment.leadOrganizationLogoFilename}`;
     }
+
+    public hasGroundwaterModelingMenu(): boolean {
+        return environment.enabledGETIntegration == true;
+    }
 }

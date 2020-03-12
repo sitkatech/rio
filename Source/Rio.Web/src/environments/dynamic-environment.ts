@@ -76,4 +76,8 @@ export class DynamicEnvironment {
     public get leadOrganizationLogoFilename(){
         return window.config.leadOrganizationLogoFilename;
     }
+
+    public get enabledGETIntegration() {
+        return window.config.enabledGETIntegration;
+    }
 }

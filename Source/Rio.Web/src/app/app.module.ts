@@ -61,6 +61,9 @@ import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
 import { WaterUseMeasurementComponent } from './pages/measuring-water-use-with-openet/measuring-water-use-with-openet.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AppInitService } from './app.init';
+import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
+import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
+import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -108,6 +111,9 @@ export function init_app(appLoadService: AppInitService) {
     GeneralFaqComponent,
     WaterUseMeasurementComponent,
     DisclaimerComponent,
+    AboutGroundwaterEvaluationComponent,
+    WaterTradingScenarioComponent,
+    ManagedRechargeScenarioComponent
   ],
   imports: [
     AppRoutingModule,
