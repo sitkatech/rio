@@ -89,7 +89,7 @@ namespace Rio.Web
             LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
             FaviconFilename = configuration["FaviconFilename"];
             LeadOrganizationLogoFilename = configuration["LeadOrganizationLogoFilename"];
-            EnabledGETIntegration = configuration["EnabledGETIntegration"];
+            EnabledGETIntegration = bool.Parse(configuration["EnabledGETIntegration"]);
         }
 
         [JsonProperty("production")]
@@ -127,7 +127,7 @@ namespace Rio.Web
         [JsonProperty("leadOrganizationLogoFilename")]
         public string LeadOrganizationLogoFilename { get; set;}
         [JsonProperty("enabledGETIntegration")]
-        public string EnabledGETIntegration { get; set;}
+        public bool EnabledGETIntegration { get; set;}
     }
 
     public class KeystoneAuthConfigurationDto
