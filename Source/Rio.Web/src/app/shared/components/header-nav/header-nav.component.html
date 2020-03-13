@@ -17,11 +17,19 @@
                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
                     *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
             </li>
-            <li class="nav-item" *ngIf="isAuthenticated() && allowTrading()">
-                <a class="nav-link" routerLink="/trades" routerLinkActive="active">Buy and Sell Water</a>
-            </li>
-            <li class="nav-item" *ngIf="isAuthenticated() && allowTrading() && isAdministrator()">
-                <a class="nav-link" routerLink="/market-metrics" routerLinkActive="active">Market Metrics</a>
+            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
+                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    Trade
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a routerLink="/trades" class="dropdown-item">
+                        Buy and Sell Water
+                    </a>
+                    <a routerLink="/market-metrics" class="dropdown-item" *ngIf="isAdministrator()">
+                        Market Metrics
+                    </a>
+                </div>
             </li>
             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
