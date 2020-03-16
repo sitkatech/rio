@@ -1,5 +1,5 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer } from 'leaflet';
+import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer, geoJSON } from 'leaflet';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
 import { CustomCompileService } from '../../services/custom-compile.service';
 import { WfsService } from "../../services/wfs.service";
@@ -39,6 +39,7 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
     public layerControl: Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
+    public Sample = require("../../../../assets/WaterTradingScenarioJSON/1981-January2020.json");
     boundingBox: BoundingBoxDto;
 
     constructor(
@@ -92,7 +93,19 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
         });
         this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
+        debugger;
+        var fileOptions = JSON.parse(this.Sample.FileDetails);
+        var mapPoints = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
+        geoJSON(mapPoints, {style:this.setStyle}).addTo(this.map);
+
         this.setControl();
+    }
+
+    public setStyle(feature:any): any {
+        return {
+            color: feature.properties.color,
+            fillColor: feature.properties.color
+        }
     }
 
     public setControl(): void {
