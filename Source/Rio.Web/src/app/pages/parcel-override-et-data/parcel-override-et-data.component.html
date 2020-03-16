@@ -32,6 +32,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
+                        <a class="btn btn-rio btm-sm mr-3" href="/landowner-dashboard" *ngIf="!isEditing">Back to Landowner Dashboard</a> 
                         <button class="btn btn-rio" [(disabled)]="isEditing" (click)="toggleEditMode()">Edit</button>
                     </div>
                     {{waterYearToDisplay}} Water Usage by Parcel
@@ -70,10 +71,7 @@
                     <ng-container *ngIf="isEditing">
                         <button class="btn btn-secondary btn-sm float-right" (click)="cancelOverrideEtChanges()">Cancel</button>
                         <button class="btn btn-rio btn-sm mr-3 float-right" (click)="confirmSaveOverrideEtChanges()">Save</button>
-                    </ng-container>
-                    <ng-container *ngIf="!isEditing">
-                        <a class="btn btn-rio btm-sm mr-3 float-right" href="/landowner-dashboard">Back to Landowner Dashboard</a> 
-                    </ng-container>
+                    </ng-container>                    
                 </div>
             </div>
         </div>
