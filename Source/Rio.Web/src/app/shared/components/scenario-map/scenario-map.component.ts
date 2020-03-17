@@ -1,5 +1,5 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer, geoJSON } from 'leaflet';
+import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer, geoJSON, control, DomUtil } from 'leaflet';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
 import { CustomCompileService } from '../../services/custom-compile.service';
 import { WfsService } from "../../services/wfs.service";
@@ -93,18 +93,46 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
         });
         this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
-        debugger;
         var fileOptions = JSON.parse(this.Sample.FileDetails);
         var mapPoints = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
         geoJSON(mapPoints, {style:this.setStyle}).addTo(this.map);
 
+        var legend = control({position:'bottomright'});
+        legend.onAdd = function(map: any): any {
+            var div = DomUtil.create('div', 'legend');
+            div.innerHTML = `<div class='legend-title'>
+                                    <div class='legend-label'>
+                                        <i class='fas fa-arrow-up'></i>
+                                    </div>
+                                    <div class='legend-units'>
+                                        <span>Feet</span>
+                                    </div>
+                                    <div class='legend-label'>
+                                        <i class='fas fa-arrow-down'></i>
+                                    </div>
+                            </div>`
+            
+            for (var legendItem of fileOptions.ResultSets[0].MapData.Legend) {
+                div.innerHTML += `<div class='legend-item'>
+                                        <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
+                                        <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
+                                        <div class='legend-color' style='background-color:` + legendItem.DecreaseColor + `'></div>
+                                   </div>`
+            }
+            return div;
+        }
+
+        legend.addTo(this.map);
         this.setControl();
     }
 
     public setStyle(feature:any): any {
         return {
             color: feature.properties.color,
-            fillColor: feature.properties.color
+            weight: 0.5,
+            opacity: 0.75,
+            fillColor: feature.properties.color,
+            fillOpacity: 0.75
         }
     }
 
