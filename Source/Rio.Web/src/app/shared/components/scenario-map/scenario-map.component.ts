@@ -43,7 +43,29 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
     public January2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-January2020.json");
     public February2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-February2020.json");
     public March2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-March2020.json");
-    public AvailableMonths = [this.January2020, this.February2020, this.March2020];
+    public April2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-April2020.json");
+    public May2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-May2020.json");
+    public June2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-June2020.json");
+    public July2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-July2020.json");
+    public August2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-August2020.json");
+    public September2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-September2020.json");
+    public October2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-October2020.json");
+    public November2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-November2020.json");
+    public December2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-December2020.json");
+    public AvailableMonths = [
+        this.January2020,
+        this.February2020, 
+        this.March2020,
+        this.April2020,
+        this.May2020,
+        this.June2020,
+        this.July2020,
+        this.August2020,
+        this.September2020,
+        this.October2020,
+        this.November2020,
+        this.December2020
+    ];
     boundingBox: BoundingBoxDto;
 
     constructor(
@@ -84,14 +106,18 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
             minZoom: 6,
             maxZoom: 17,
             layers: [
-                this.tileLayers["Aerial"],
+                this.tileLayers["Terrain"],
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: "2020-01-01/2020-03-01",
-                period: "P1M"
+                timeInterval: "2020-01-01/2020-12-01",
+                period: "P1M",
+                currentTime: Date.parse("2020-01-01 UTC")
             },
-            timeDimensionControl: true
+            timeDimensionControl: true,
+            timeDimensionControlOptions: {
+                loopButton: true
+            }
         } as L.MapOptions;
         this.map = L.map(this.mapID, mapOptions);
 
@@ -121,8 +147,11 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
         }
         
         var geoJSONLayer = L.geoJSON(mapObj, {style:this.setStyle});
-        var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer);
-        //geoJSONLayer.addTo(this.map);
+        var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
+            updateTimeDimension: true,
+            duration: 'P1D',
+            updateTimeDimensionMode: 'replace'
+        });
         geoJSONTDLayer.addTo(this.map);
 
         var legend = L.control({position:'bottomright'});
@@ -158,10 +187,7 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
     public setStyle(feature:any): any {
         return {
             color: feature.properties.color,
-            weight: 0.5,
-            opacity: 0.75,
-            fillColor: feature.properties.color,
-            fillOpacity: 0.75
+            weight: 0
         }
     }
 
