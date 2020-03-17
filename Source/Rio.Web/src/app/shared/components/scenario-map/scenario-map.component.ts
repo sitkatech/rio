@@ -1,6 +1,5 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import * as L from 'leaflet';
-import '../../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
+import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer } from 'leaflet';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
 import { CustomCompileService } from '../../services/custom-compile.service';
 import { WfsService } from "../../services/wfs.service";
@@ -22,50 +21,24 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
     public mapHeight: string = '300px';
 
     @Input()
-    public defaultFitBoundsOptions?: L.FitBoundsOptions = null;
+    public defaultFitBoundsOptions?: FitBoundsOptions = null;
 
     @Output()
-    public afterSetControl: EventEmitter<L.Control.Layers> = new EventEmitter();
+    public afterSetControl: EventEmitter<Control.Layers> = new EventEmitter();
 
     @Output()
-    public afterLoadMap: EventEmitter<L.LeafletEvent> = new EventEmitter();
+    public afterLoadMap: EventEmitter<LeafletEvent> = new EventEmitter();
 
     @Output()
-    public onMapMoveEnd: EventEmitter<L.LeafletEvent> = new EventEmitter();
+    public onMapMoveEnd: EventEmitter<LeafletEvent> = new EventEmitter();
 
     public component: any;
 
-    public map: L.Map;
+    public map: Map;
     public featureLayer: any;
-    public layerControl: L.Control.Layers;
+    public layerControl: Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
-    public January2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-January2020.json");
-    public February2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-February2020.json");
-    public March2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-March2020.json");
-    public April2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-April2020.json");
-    public May2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-May2020.json");
-    public June2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-June2020.json");
-    public July2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-July2020.json");
-    public August2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-August2020.json");
-    public September2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-September2020.json");
-    public October2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-October2020.json");
-    public November2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-November2020.json");
-    public December2020 = require("../../../../assets/WaterTradingScenarioJSON/1981-December2020.json");
-    public AvailableMonths = [
-        this.January2020,
-        this.February2020, 
-        this.March2020,
-        this.April2020,
-        this.May2020,
-        this.June2020,
-        this.July2020,
-        this.August2020,
-        this.September2020,
-        this.October2020,
-        this.November2020,
-        this.December2020
-    ];
     boundingBox: BoundingBoxDto;
 
     constructor(
@@ -84,13 +57,13 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
         this.boundingBox.Top = 35.27608156273151;
 
         this.tileLayers = Object.assign({}, {
-            "Aerial": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            "Aerial": tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Aerial',
             }),
-            "Street": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            "Street": tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Aerial',
             }),
-            "Terrain": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            "Terrain": tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Terrain',
             }),
         }, this.tileLayers);
@@ -100,99 +73,30 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
 
     public ngAfterViewInit(): void {
 
-        const mapOptions: L.MapOptions = {
+        const mapOptions: MapOptions = {
             // center: [46.8797, -110],
             // zoom: 6,
             minZoom: 6,
             maxZoom: 17,
             layers: [
-                this.tileLayers["Terrain"],
+                this.tileLayers["Aerial"],
             ],
-            timeDimension: true,
-            timeDimensionOptions: {
-                timeInterval: "2020-01-01/2020-12-01",
-                period: "P1M",
-                currentTime: Date.parse("2020-01-01 UTC")
-            },
-            timeDimensionControl: true,
-            timeDimensionControlOptions: {
-                loopButton: true
-            }
-        } as L.MapOptions;
-        this.map = L.map(this.mapID, mapOptions);
+        } as MapOptions;
+        this.map = map(this.mapID, mapOptions);
 
-        this.map.on('load', (event: L.LeafletEvent) => {
+        this.map.on('load', (event: LeafletEvent) => {
             this.afterLoadMap.emit(event);
         });
-        this.map.on("moveend", (event: L.LeafletEvent) => {
+        this.map.on("moveend", (event: LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
         });
         this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
-        var mapObj = {
-            "type":"FeatureCollection",
-            "features": new Array
-        };
-
-        for (var file of this.AvailableMonths)
-        {
-            var fileOptions = JSON.parse(file.FileDetails);
-            var date = fileOptions.RunResultName;
-            var mapPoints = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
-            for (var mapPoint of mapPoints.features)
-            {
-                mapPoint.properties["time"] = new Date(date + " UTC").toISOString();
-                mapObj.features.push(mapPoint);
-            }
-        }
-        
-        var geoJSONLayer = L.geoJSON(mapObj, {style:this.setStyle});
-        var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-            updateTimeDimension: true,
-            duration: 'P1D',
-            updateTimeDimensionMode: 'replace'
-        });
-        geoJSONTDLayer.addTo(this.map);
-
-        var legend = L.control({position:'bottomright'});
-        legend.onAdd = function(map: any): any {
-            var div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = `<div class='legend-title'>
-                                    <div class='legend-label'>
-                                        <i class='fas fa-arrow-up'></i>
-                                    </div>
-                                    <div class='legend-units'>
-                                        <span>Feet</span>
-                                    </div>
-                                    <div class='legend-label'>
-                                        <i class='fas fa-arrow-down'></i>
-                                    </div>
-                            </div>`
-            
-            for (var legendItem of fileOptions.ResultSets[0].MapData.Legend) {
-                div.innerHTML += `<div class='legend-item'>
-                                        <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
-                                        <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
-                                        <div class='legend-color' style='background-color:` + legendItem.DecreaseColor + `'></div>
-                                   </div>`
-            }
-            return div;
-        }
-
-        legend.addTo(this.map);
         this.setControl();
-        
-    }
-
-    public setStyle(feature:any): any {
-        return {
-            color: feature.properties.color,
-            weight: 0
-        }
     }
 
     public setControl(): void {
-        this.layerControl = new L.Control.Layers(this.tileLayers, this.overlayLayers)
+        this.layerControl = new Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         this.afterSetControl.emit(this.layerControl);
     }
