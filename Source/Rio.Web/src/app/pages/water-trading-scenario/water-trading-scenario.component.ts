@@ -52,6 +52,21 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         this.November2020,
         this.December2020
     ];
+
+    public months = {
+        'January' : '01',
+        'February' : '02',
+        'March' : '03',
+        'April' : '04',
+        'May' : '05',
+        'June' : '06',
+        'July' : '07',
+        'August' : '08',
+        'September' : '09',
+        'October' : '10',
+        'November' : '11',
+        'December' : '12'
+    }
     boundingBox: BoundingBoxDto;
 
     constructor(
@@ -93,9 +108,9 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: "2020-01-01/2020-12-01",
+                timeInterval: this.getISOString("January 2020") + "/" + this.getISOString("December 2020"),
                 period: "P1M",
-                currentTime: Date.parse("2020-01-01 UTC")
+                currentTime: Date.parse(this.getISOString("January 2020"))
             },
             timeDimensionControl: true,
             timeDimensionControlOptions: {
@@ -120,23 +135,21 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         for (var file of this.AvailableMonths)
         {
             var fileOptions = JSON.parse(file.FileDetails);
-            var date = fileOptions.RunResultName;
             var mapPoints = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
             for (var mapPoint of mapPoints.features)
             {
-                mapPoint.properties["time"] = new Date(date + " UTC").toISOString();
+                mapPoint.properties["time"] = this.getISOString(fileOptions.RunResultName);
                 layer.features.push(mapPoint);
             }
         }
         
         var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
         var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-            updateTimeDimension: true,
-            duration: 'P1D',
-            updateTimeDimensionMode: 'replace'
+            duration: 'P1D'
         });
         geoJSONTDLayer.addTo(this.map);
 
+        var legendItems = JSON.parse(this.AvailableMonths[0].FileDetails);  
         var legend = L.control({position:'bottomright'});
         legend.onAdd = function(map: any): any {
             var div = L.DomUtil.create('div', 'legend');
@@ -151,8 +164,9 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
                                         <i class='fas fa-arrow-down'></i>
                                     </div>
                             </div>`;
-            
-            for (var legendItem of fileOptions.ResultSets[0].MapData.Legend) {
+                            
+                      
+            for (var legendItem of legendItems.ResultSets[0].MapData.Legend) {
                 div.innerHTML += `<div class='legend-item'>
                                         <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
                                         <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
@@ -178,6 +192,11 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         this.layerControl = new L.Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         this.afterSetControl.emit(this.layerControl);
+    }
+
+    public getISOString(fileDate: string): string {
+        var contents = fileDate.split(" ");
+        return contents[1] + "-" + this.months[contents[0]] + "-01T00:00:00Z";
     }
 }
 
