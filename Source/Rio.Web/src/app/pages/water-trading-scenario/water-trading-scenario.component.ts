@@ -150,14 +150,14 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
                                     <div class='legend-label'>
                                         <i class='fas fa-arrow-down'></i>
                                     </div>
-                            </div>`
+                            </div>`;
             
             for (var legendItem of fileOptions.ResultSets[0].MapData.Legend) {
                 div.innerHTML += `<div class='legend-item'>
                                         <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
                                         <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
                                         <div class='legend-color' style='background-color:` + legendItem.DecreaseColor + `'></div>
-                                   </div>`
+                                   </div>`;
             }
             return div;
         }
