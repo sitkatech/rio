@@ -42,6 +42,7 @@ import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
+import { GETIntegrationEnabledGuard } from './shared/guards/unauthenticated-access/GET-integration-enabled-guard';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -71,9 +72,9 @@ const routes: Routes = [
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent},
-  { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent},
-  { path: "water-trading-scenario", component: WaterTradingScenarioComponent},
+  { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [UnauthenticatedAccessGuard, GETIntegrationEnabledGuard]},
+  { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [UnauthenticatedAccessGuard, GETIntegrationEnabledGuard]},
+  { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [UnauthenticatedAccessGuard, GETIntegrationEnabledGuard]},
   { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
