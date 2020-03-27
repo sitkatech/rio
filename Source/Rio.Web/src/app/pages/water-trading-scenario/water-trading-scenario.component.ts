@@ -30,8 +30,6 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public overlayLayers: { [key: string]: any } = {};
     //public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
     public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo2.json');
-    public december2037 = require('../../../assets/WaterTradingScenarioJSON/december2037.json');
-    public november2037 = require('../../../assets/WaterTradingScenarioJSON/november2037.json');
 
     public months = {
         'January' : '01',
@@ -101,7 +99,8 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
                 autoPlay: true,
                 playerOptions: {
                     loop: true
-                }
+                },
+                timeZones: ["Local"]
             }
             
         } as L.MapOptions;
@@ -149,15 +148,10 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         }
         
         var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
-        //geoJSONLayer.addTo(this.map);
         var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
             duration:"P1D"
         });
         geoJSONTDLayer.addTo(this.map);
-
-        // this.map.timeDimension.on("timeload", (data: any) => {
-        //     this.updateTimeDisplay();
-        // });
 
         var legendItems = this.availableScenarioInfo[0].Legend;  //JSON.parse(this.availableScenarioInfo[0].FileDetails);  
         var legend = L.control({position:'bottomright'});
@@ -188,26 +182,12 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
 
         legend.addTo(this.map);
         this.setControl();
-
-        // var target = document.querySelector('.timecontrol-date');
-        // console.log(target);
-        // var observer = new MutationObserver(function(mutations) {
-        //     for (var mutation of mutations)
-        //     {
-        //         console.log(mutation.target["innerHTML"]);
-        //     }
-        // })
-
-        // var config = { childList:true};
-
-        // observer.observe(target, config);
     }
 
     public setStyle(feature:any): any {
         return {
             color: feature.properties.color,
-            stroke: false,
-            fillOpacity: 0.9
+            stroke: false
         }
     }
 
@@ -215,19 +195,11 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         this.layerControl = new L.Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         this.afterSetControl.emit(this.layerControl);
-        this.updateTimeDisplay();
     }
 
     public getISOString(fileDate: string): string {
         var contents = fileDate.split(" ");
         return new Date(contents[1] + "-" + this.months[contents[0]] + "-01").toISOString();
-    }
-
-    public updateTimeDisplay():void {
-        let date = new Date(this.map.timeDimension.getCurrentTime());
-        let month = Object.keys(this.months).find(key => this.months[key] === (date.getUTCMonth() + 1).toString().padStart(2, '0'));
-        let year = date.getUTCFullYear();
-        document.getElementsByClassName("timecontrol-date")[0].innerHTML = month + " " + year;
     }
 }
 
