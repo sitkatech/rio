@@ -189,4 +189,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public hasGroundwaterModelingMenu(): boolean {
         return environment.enabledGETIntegration == true;
     }
+
+    public getNavThemeColor(): string {
+        return environment.navThemeColor;
+    }
 }

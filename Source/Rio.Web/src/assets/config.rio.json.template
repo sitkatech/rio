@@ -1,0 +1,40 @@
+{
+    "production": false,
+    "staging": false,
+    "dev": true,
+    "apiHostName": "api-dev.rio.org:8889",
+    "createAccountUrl": "https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=",
+    "createAccountRedirectUrl": "http://dev.rio.org:8887/create-user-callback",
+    "allowTrading": false,
+  
+    "keystoneSupportBaseUrl": "https://qa.keystone.sitkatech.com/Authentication",
+
+    "geoserverMapServiceUrl": "http://localhost:8780/geoserver/Rio",
+
+    "platformLongName": "Rosedale-Rio Bravo Water Accounting Platform",
+    "platformShortName": "Water Accounting Platform",
+    "leadOrganizationShortName": "RRB", 
+    "leadOrganizationLongName": "Rosedale-Rio Bravo Water Storage District", 
+    "leadOrganizationHomeUrl": "https://rrbwsd.com",
+    "leadOrganizationLogoFilename": "rrbwsd_logo.png",
+
+    "contactInfoPhone":"661.589.6045",
+    "contactInfoEmail":"admin@rrbwsd.com",
+    "contactInfoMailingAddress": "P.O. Box 20820, Bakersfield, CA 93390-0820",
+    "contactInfoPhysicalAddress": "849 Allen Road, Bakersfield, CA 93314",
+
+    "faviconFilename": "favicon.ico",
+    "enabledGETIntegration": false,
+    "navThemeColor": "dark",
+  
+    "keystoneAuthConfiguration": {
+      "clientId": "Rio",
+      "issuer": "https://qa.keystone.sitkatech.com/core",
+      "redirectUriRelative": "/login-callback",
+      "scope": "openid all_claims keystone",
+      "sessionChecksEnabled": true,
+      "logoutUrl": "https://qa.keystone.sitkatech.com/core/connect/endsession",
+      "postLogoutRedirectUri": "/",
+      "waitForTokenInMsec": 500
+    }
+  }

@@ -75,7 +75,7 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
     display:inline-block;
   }
 
-  @media screen and (max-width: 990px){
+  @media screen and (max-width: 1199px){
     ngx-select-dropdown#accountSelectDropdown > div > button > span {
       text-align: left !important;
       }

@@ -10,6 +10,22 @@
     "keystoneSupportBaseUrl": [TODO],
 
     "geoserverMapServiceUrl": [TODO],
+
+    "platformLongName": [TODO],
+    "platformShortName": [TODO],
+    "leadOrganizationShortName": [TODO], 
+    "leadOrganizationLongName": [TODO], 
+    "leadOrganizationHomeUrl": [TODO],
+    "leadOrganizationLogoFilename": [TODO],
+
+    "contactInfoPhone":[TODO],
+    "contactInfoEmail":[TODO],
+    "contactInfoMailingAddress": [TODO],
+    "contactInfoPhysicalAddress": [TODO],
+
+    "faviconFilename": [TODO],
+    "enabledGETIntegration": [TODO],
+    "navThemeColor" [TODO] (light or dark),
   
     "keystoneAuthConfiguration": {
       "clientId": [TODO],

@@ -23,8 +23,8 @@ $theme-colors: (
         "grid-accent-color": #44697D,
         "grid-hover-color":  rgba(199, 153, 0, 0.3),
         "account-dropdown-text": #253D86,
-        "header-gradient-start": #253D86,
-        "header-gradient-end": #fff
+        "header-gradient-start": transparent,
+        "header-gradient-end": transparent
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -48,8 +48,8 @@ $grid-header-background: #253D86;
 $grid-hover-color:  rgba(199, 153, 0, 0.3);
 $footer: #44697D;
 $header-background: #fff;
-$header-gradient-start: #253D86;
-$header-gradient-end:#fff;
+$header-gradient-start: transparent;
+$header-gradient-end:transparent;
 $header-nav-after-height: 20px;
 $header-nav-link: #253D86;
 $header-nav-link-font-weight: bold;

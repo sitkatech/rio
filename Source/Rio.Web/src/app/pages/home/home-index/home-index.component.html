@@ -57,11 +57,20 @@
                     </div>
                 </div>
                 <div class="card-body" *ngIf="currentUser">
-                    <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1" routerLink="/manager-dashboard">Manager
-                        Dashboard</a>
-                    <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1" routerLink="/landowner-dashboard">Landowner
-                        Dashboard</a>
-                    <a class="btn btn-rio" routerLink="/help">Request Support</a>
+                    <div class="row">
+                        <div class="col">
+                            <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1" routerLink="/manager-dashboard">Manager
+                                Dashboard</a>
+                            <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1" routerLink="/landowner-dashboard">Landowner
+                                Dashboard</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <a class="btn btn-rio mb-1 ml-sm-auto ml-lg-0" routerLink="/help">Request Support</a>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

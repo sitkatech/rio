@@ -42,11 +42,19 @@
     color: $header-nav-link;
   }
 
+  .navbar-brand 
+  {
+    @media only screen and (max-width:576px)
+    {
+      white-space:pre-line;
+    }
+  }
+
   .welcomeUser{
-    @media screen and (min-width: 991px){
+    @media screen and (min-width: 1200px){
       text-align:right;
     }
-    @media screen and (max-width: 990px){
+    @media screen and (max-width: 1199px){
       text-align:left;
     }
   }
