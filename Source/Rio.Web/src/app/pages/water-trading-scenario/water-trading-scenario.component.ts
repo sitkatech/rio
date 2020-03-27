@@ -4,6 +4,8 @@ import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimensio
 import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
 
+declare var $:any
+
 @Component({
     templateUrl: './water-trading-scenario.component.html',
     styleUrls: ['./water-trading-scenario.component.scss'],
@@ -26,32 +28,10 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public layerControl: L.Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
-    public January2020 = require("../../../assets/WaterTradingScenarioJSON/1981-January2020.json");
-    public February2020 = require("../../../assets/WaterTradingScenarioJSON/1981-February2020.json");
-    public March2020 = require("../../../assets/WaterTradingScenarioJSON/1981-March2020.json");
-    public April2020 = require("../../../assets/WaterTradingScenarioJSON/1981-April2020.json");
-    public May2020 = require("../../../assets/WaterTradingScenarioJSON/1981-May2020.json");
-    public June2020 = require("../../../assets/WaterTradingScenarioJSON/1981-June2020.json");
-    public July2020 = require("../../../assets/WaterTradingScenarioJSON/1981-July2020.json");
-    public August2020 = require("../../../assets/WaterTradingScenarioJSON/1981-August2020.json");
-    public September2020 = require("../../../assets/WaterTradingScenarioJSON/1981-September2020.json");
-    public October2020 = require("../../../assets/WaterTradingScenarioJSON/1981-October2020.json");
-    public November2020 = require("../../../assets/WaterTradingScenarioJSON/1981-November2020.json");
-    public December2020 = require("../../../assets/WaterTradingScenarioJSON/1981-December2020.json");
-    public AvailableMonths = [
-        this.January2020,
-        this.February2020, 
-        this.March2020,
-        this.April2020,
-        this.May2020,
-        this.June2020,
-        this.July2020,
-        this.August2020,
-        this.September2020,
-        this.October2020,
-        this.November2020,
-        this.December2020
-    ];
+    //public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
+    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo2.json');
+    public december2037 = require('../../../assets/WaterTradingScenarioJSON/december2037.json');
+    public november2037 = require('../../../assets/WaterTradingScenarioJSON/november2037.json');
 
     public months = {
         'January' : '01',
@@ -67,6 +47,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         'November' : '11',
         'December' : '12'
     }
+
     boundingBox: BoundingBoxDto;
 
     constructor(
@@ -95,6 +76,8 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             }),
         }, this.tileLayers);
 
+        
+
         this.compileService.configure(this.appRef);
     }
 
@@ -108,14 +91,19 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: this.getISOString("January 2020") + "/" + this.getISOString("December 2020"),
+                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/" + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
                 period: "P1M",
-                currentTime: Date.parse(this.getISOString("January 2020"))
+                currentTime: Date.parse(this.getISOString(this.availableScenarioInfo[0].RunDate)) //Date.parse(this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName))
             },
             timeDimensionControl: true,
             timeDimensionControlOptions: {
-                loopButton: true
+                loopButton: true,
+                autoPlay: true,
+                playerOptions: {
+                    loop: true
+                }
             }
+            
         } as L.MapOptions;
         this.map = L.map(this.mapID, mapOptions);
 
@@ -125,6 +113,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         this.map.on("moveend", (event: L.LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
         });
+
         this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
         var layer = {
@@ -132,24 +121,45 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             "features": new Array
         };
 
-        for (var file of this.AvailableMonths)
+        for (var file of this.availableScenarioInfo)
         {
-            var fileOptions = JSON.parse(file.FileDetails);
-            var mapPoints = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
+            //var fileOptions = JSON.parse(file.FileDetails);
+            var mapPoints = JSON.parse(file.RunFeatures); //JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
+            var time = this.getISOString(file.RunDate); //this.getISOString(fileOptions.RunResultName);
             for (var mapPoint of mapPoints.features)
             {
-                mapPoint.properties["time"] = this.getISOString(fileOptions.RunResultName);
-                layer.features.push(mapPoint);
+                mapPoint.properties["time"] = time;
+                if (mapPoint.geometry.type == "MultiPolygon")
+                {
+                    for (var coords of mapPoint.geometry.coordinates)
+                    {
+                        var newGeometry = {...mapPoint.geometry};
+                        var splitMultiPolygon = {...mapPoint};
+                        newGeometry.type = "Polygon";
+                        newGeometry.coordinates = coords;
+                        splitMultiPolygon.geometry = newGeometry;
+                        layer.features.push(splitMultiPolygon);
+                    }
+                }
+                else
+                {
+                    layer.features.push(mapPoint);
+                }
             }
         }
         
         var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
+        //geoJSONLayer.addTo(this.map);
         var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-            duration: 'P1D'
+            duration:"P1D"
         });
         geoJSONTDLayer.addTo(this.map);
 
-        var legendItems = JSON.parse(this.AvailableMonths[0].FileDetails);  
+        // this.map.timeDimension.on("timeload", (data: any) => {
+        //     this.updateTimeDisplay();
+        // });
+
+        var legendItems = this.availableScenarioInfo[0].Legend;  //JSON.parse(this.availableScenarioInfo[0].FileDetails);  
         var legend = L.control({position:'bottomright'});
         legend.onAdd = function(map: any): any {
             var div = L.DomUtil.create('div', 'legend');
@@ -166,7 +176,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
                             </div>`;
                             
                       
-            for (var legendItem of legendItems.ResultSets[0].MapData.Legend) {
+            for (var legendItem of legendItems /*legendItems.ResultSets[0].MapData.Legend*/) {
                 div.innerHTML += `<div class='legend-item'>
                                         <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
                                         <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
@@ -178,13 +188,26 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
 
         legend.addTo(this.map);
         this.setControl();
-        
+
+        // var target = document.querySelector('.timecontrol-date');
+        // console.log(target);
+        // var observer = new MutationObserver(function(mutations) {
+        //     for (var mutation of mutations)
+        //     {
+        //         console.log(mutation.target["innerHTML"]);
+        //     }
+        // })
+
+        // var config = { childList:true};
+
+        // observer.observe(target, config);
     }
 
     public setStyle(feature:any): any {
         return {
             color: feature.properties.color,
-            weight: 0
+            stroke: false,
+            fillOpacity: 0.9
         }
     }
 
@@ -192,11 +215,19 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         this.layerControl = new L.Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         this.afterSetControl.emit(this.layerControl);
+        this.updateTimeDisplay();
     }
 
     public getISOString(fileDate: string): string {
         var contents = fileDate.split(" ");
-        return contents[1] + "-" + this.months[contents[0]] + "-01T00:00:00Z";
+        return new Date(contents[1] + "-" + this.months[contents[0]] + "-01").toISOString();
+    }
+
+    public updateTimeDisplay():void {
+        let date = new Date(this.map.timeDimension.getCurrentTime());
+        let month = Object.keys(this.months).find(key => this.months[key] === (date.getUTCMonth() + 1).toString().padStart(2, '0'));
+        let year = date.getUTCFullYear();
+        document.getElementsByClassName("timecontrol-date")[0].innerHTML = month + " " + year;
     }
 }
 

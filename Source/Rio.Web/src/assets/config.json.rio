@@ -1,0 +1,33 @@
+{
+    "production": false,
+    "staging": false,
+    "dev": true,
+    "apiHostName": "api-dev.rio.org:8889",
+    "createAccountUrl": "https://qa.keystone.sitkatech.com/Authentication/Register?RedirectUrl=",
+    "createAccountRedirectUrl": "http://dev.rio.org:8887/create-user-callback",
+    "allowTrading": true,
+  
+    "keystoneSupportBaseUrl": "https://qa.keystone.sitkatech.com/Authentication",
+
+    "geoserverMapServiceUrl": "http://localhost:8780/geoserver/Rio",
+
+    "platformLongName": "Environmental Defense Fund Water Trading Platform",
+    "platformShortName": "Water Trading Platform",
+    "leadOrganizationShortName": "EDF", 
+    "leadOrganizationLongName": "Environmental Defense Fund", 
+    "leadOrganizationHomeUrl": "https://edf.org",
+
+    "faviconFilename": "edf_favicon.ico",
+    "enabledGETIntegration": true,
+  
+    "keystoneAuthConfiguration": {
+      "clientId": "Rio",
+      "issuer": "https://qa.keystone.sitkatech.com/core",
+      "redirectUriRelative": "/login-callback",
+      "scope": "openid all_claims keystone",
+      "sessionChecksEnabled": true,
+      "logoutUrl": "https://qa.keystone.sitkatech.com/core/connect/endsession",
+      "postLogoutRedirectUri": "/",
+      "waitForTokenInMsec": 500
+    }
+  }
