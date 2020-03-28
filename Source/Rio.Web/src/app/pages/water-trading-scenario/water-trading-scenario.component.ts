@@ -29,8 +29,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public layerControl: L.Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
-    //public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
-    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo2.json');
+    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
 
     public months = {
         'January' : '01',
@@ -90,7 +89,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/2036-12-01T00:00:00.000Z",// + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
+                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/" + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
                 period: "P1M",
                 currentTime: Date.parse(this.getISOString(this.availableScenarioInfo[0].RunDate)) //Date.parse(this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName))
             },
@@ -126,27 +125,24 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             //var fileOptions = JSON.parse(file.FileDetails);
             var mapPoints = JSON.parse(file.RunFeatures); //JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
             var time = this.getISOString(file.RunDate); //this.getISOString(fileOptions.RunResultName);
-            var year = file.RunDate.split(" ")[1];
-            if (parseInt(year) < 2037) {
-                for (var mapPoint of mapPoints.features)
+            for (var mapPoint of mapPoints.features)
+            {
+                mapPoint.properties["time"] = time;
+                if (mapPoint.geometry.type == "MultiPolygon")
                 {
-                    mapPoint.properties["time"] = time;
-                    if (mapPoint.geometry.type == "MultiPolygon")
+                    for (var coords of mapPoint.geometry.coordinates)
                     {
-                        for (var coords of mapPoint.geometry.coordinates)
-                        {
-                            var newGeometry = {...mapPoint.geometry};
-                            var splitMultiPolygon = {...mapPoint};
-                            newGeometry.type = "Polygon";
-                            newGeometry.coordinates = coords;
-                            splitMultiPolygon.geometry = newGeometry;
-                            layer.features.push(splitMultiPolygon);
-                        }
+                        var newGeometry = {...mapPoint.geometry};
+                        var splitMultiPolygon = {...mapPoint};
+                        newGeometry.type = "Polygon";
+                        newGeometry.coordinates = coords;
+                        splitMultiPolygon.geometry = newGeometry;
+                        layer.features.push(splitMultiPolygon);
                     }
-                    else
-                    {
-                        layer.features.push(mapPoint);
-                    }
+                }
+                else
+                {
+                    layer.features.push(mapPoint);
                 }
             }
         }
