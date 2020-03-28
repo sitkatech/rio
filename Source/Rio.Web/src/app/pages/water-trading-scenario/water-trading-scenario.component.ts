@@ -13,6 +13,7 @@ declare var $:any
 })
 export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     
+    public interval = 0;
     public zoomMapToDefaultExtent = true;
     public defaultFitBoundsOptions?: L.FitBoundsOptions = null;
     public afterSetControl = new EventEmitter();
@@ -89,7 +90,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/" + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
+                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/2036-12-01T00:00:00.000Z",// + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
                 period: "P1M",
                 currentTime: Date.parse(this.getISOString(this.availableScenarioInfo[0].RunDate)) //Date.parse(this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName))
             },
@@ -125,31 +126,37 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             //var fileOptions = JSON.parse(file.FileDetails);
             var mapPoints = JSON.parse(file.RunFeatures); //JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
             var time = this.getISOString(file.RunDate); //this.getISOString(fileOptions.RunResultName);
-            for (var mapPoint of mapPoints.features)
-            {
-                mapPoint.properties["time"] = time;
-                if (mapPoint.geometry.type == "MultiPolygon")
+            var year = file.RunDate.split(" ")[1];
+            if (parseInt(year) < 2037) {
+                for (var mapPoint of mapPoints.features)
                 {
-                    for (var coords of mapPoint.geometry.coordinates)
+                    mapPoint.properties["time"] = time;
+                    if (mapPoint.geometry.type == "MultiPolygon")
                     {
-                        var newGeometry = {...mapPoint.geometry};
-                        var splitMultiPolygon = {...mapPoint};
-                        newGeometry.type = "Polygon";
-                        newGeometry.coordinates = coords;
-                        splitMultiPolygon.geometry = newGeometry;
-                        layer.features.push(splitMultiPolygon);
+                        for (var coords of mapPoint.geometry.coordinates)
+                        {
+                            var newGeometry = {...mapPoint.geometry};
+                            var splitMultiPolygon = {...mapPoint};
+                            newGeometry.type = "Polygon";
+                            newGeometry.coordinates = coords;
+                            splitMultiPolygon.geometry = newGeometry;
+                            layer.features.push(splitMultiPolygon);
+                        }
                     }
-                }
-                else
-                {
-                    layer.features.push(mapPoint);
+                    else
+                    {
+                        layer.features.push(mapPoint);
+                    }
                 }
             }
         }
         
         var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
+        //geoJSONLayer.addTo(this.map);
         var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-            duration:"P1D"
+            duration:"PT1M",
+            updateTimeDimension: true,
+            updateTimeDimensionMode: 'replace'
         });
         geoJSONTDLayer.addTo(this.map);
 
