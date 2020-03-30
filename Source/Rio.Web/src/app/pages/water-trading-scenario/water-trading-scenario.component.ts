@@ -4,6 +4,8 @@ import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimensio
 import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
 
+declare var $ : any;
+
 @Component({
     templateUrl: './water-trading-scenario.component.html',
     styleUrls: ['./water-trading-scenario.component.scss'],
@@ -27,7 +29,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public layerControl: L.Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
-    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
+    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo2.json');
 
     public months = {
         'January' : '01',
@@ -79,6 +81,11 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
 
     public ngAfterViewInit(): void {
 
+        var firstRunObject = this.availableScenarioInfo[0];
+        var firstRunDate = this.getISOString(firstRunObject.RunDate);
+        var lastRunObject = this.availableScenarioInfo[this.availableScenarioInfo.length - 1];
+        var lastRunDate = this.getISOString(lastRunObject.RunDate);
+
         const mapOptions: L.MapOptions = {
             minZoom: 6,
             maxZoom: 17,
@@ -87,9 +94,9 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             ],
             timeDimension: true,
             timeDimensionOptions: {
-                timeInterval: this.getISOString(this.availableScenarioInfo[0].RunDate) + "/" + this.getISOString(this.availableScenarioInfo[this.availableScenarioInfo.length-1].RunDate), //this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(this.availableScenarioInfo[this.availableScenarioInfo.length-1].FileDetails).RunResultName),
+                timeInterval: firstRunDate + "/" + lastRunDate, //this.getISOString(JSON.parse(firstRunObject.FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(lastRunObject.FileDetails).RunResultName),
                 period: "P1M",
-                currentTime: Date.parse(this.getISOString(this.availableScenarioInfo[0].RunDate)) //Date.parse(this.getISOString(JSON.parse(this.availableScenarioInfo[0].FileDetails).RunResultName))
+                currentTime: Date.parse(firstRunDate) //Date.parse(this.getISOString(JSON.parse(firstRunObject.FileDetails).RunResultName))
             },
             timeDimensionControl: true,
             timeDimensionControlOptions: {
@@ -152,7 +159,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         });
         geoJSONTDLayer.addTo(this.map);
 
-        var legendItems = this.availableScenarioInfo[0].Legend;  //JSON.parse(this.availableScenarioInfo[0].FileDetails);  
+        var legendItems = firstRunObject.Legend;  //JSON.parse(firstRunObject.FileDetails);  
         var legend = L.control({position:'bottomright'});
         legend.onAdd = function(map: any): any {
             var div = L.DomUtil.create('div', 'legend');
@@ -181,12 +188,19 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
 
         legend.addTo(this.map);
         this.setControl();
+
+        //Because of the polygons not necessarily overlapping, make each polygon 
+        //opaque and then make the generated layer less opaque.
+        //Since currently this is the only piece being drawn, we can just select on g. 
+        //This will likely need to change as the map becomes more complex.
+        $("g").css("opacity", 0.4);
     }
 
     public setStyle(feature:any): any {
         return {
             color: feature.properties.color,
-            stroke: false
+            stroke: false,
+            fillOpacity: 1
         }
     }
 
