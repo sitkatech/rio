@@ -4,8 +4,6 @@ import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimensio
 import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
 
-declare var $:any
-
 @Component({
     templateUrl: './water-trading-scenario.component.html',
     styleUrls: ['./water-trading-scenario.component.scss'],
@@ -150,9 +148,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
         var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
         //geoJSONLayer.addTo(this.map);
         var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
-            duration:"PT1M",
-            updateTimeDimension: true,
-            updateTimeDimensionMode: 'replace'
+            duration:"PT1M"
         });
         geoJSONTDLayer.addTo(this.map);
 
