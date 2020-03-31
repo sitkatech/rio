@@ -1,0 +1,15 @@
+<layer>
+  <name>DisadvantagedCommunity</name>
+  <id>LayerInfoImpl-24e7449d:17131471fd3:61db</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7f3cf5fe:16ba026981c:-7ffc</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-24e7449d:17131471fd3:61da</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>
