@@ -29,7 +29,7 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public layerControl: L.Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
-    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo2.json');
+    public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
 
     public months = {
         'January' : '01',
