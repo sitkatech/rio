@@ -7,8 +7,6 @@ import { environment } from "src/environments/environment";
 
 declare var $ : any;
 
-declare var $ : any;
-
 @Component({
     templateUrl: './water-trading-scenario.component.html',
     styleUrls: ['./water-trading-scenario.component.scss'],
