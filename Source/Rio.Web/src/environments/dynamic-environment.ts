@@ -100,4 +100,8 @@ export class DynamicEnvironment {
     public get navThemeColor() {
         return window.config.navThemeColor;
     }
+
+    public get applicationType() {
+        return window.config.applicationType;
+    }
 }

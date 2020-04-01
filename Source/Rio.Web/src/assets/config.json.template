@@ -17,6 +17,7 @@
     "leadOrganizationLongName": [TODO], 
     "leadOrganizationHomeUrl": [TODO],
     "leadOrganizationLogoFilename": [TODO],
+    "applicationType" : [TODO],
 
     "contactInfoPhone":[TODO],
     "contactInfoEmail":[TODO],

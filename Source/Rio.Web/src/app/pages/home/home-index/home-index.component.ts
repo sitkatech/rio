@@ -94,4 +94,8 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
     public leadOrganizationHomeUrl(): string{
         return environment.leadOrganizationHomeUrl;
     }
+
+    public applicationType(): string {
+        return environment.applicationType;
+    }
 }

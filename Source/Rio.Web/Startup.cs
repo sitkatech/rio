@@ -95,6 +95,7 @@ namespace Rio.Web
             ContactInfoMailingAddress = configuration["ContactInfoMailingAddress"];
             ContactInfoPhysicalAddress = configuration["ContactInfoPhysicalAddress"];
             NavThemeColor = configuration["NavThemeColor"];
+            ApplicationType = configuration["ApplicationType"];
         }
 
         [JsonProperty("production")]
@@ -143,6 +144,8 @@ namespace Rio.Web
         public string ContactInfoPhysicalAddress { get; set;}
         [JsonProperty("navThemeColor")]
         public string NavThemeColor { get; set;}
+        [JsonProperty("applicationType")]
+        public string ApplicationType { get; set;}
     }
 
     public class KeystoneAuthConfigurationDto
