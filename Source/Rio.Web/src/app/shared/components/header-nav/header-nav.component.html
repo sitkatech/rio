@@ -1,135 +1,194 @@
-<nav class="navbar navbar-rio navbar-expand-lg navbar-dark stroke">
-    <a href="{{leadOrganizationHomeUrl()}}" class="navbar-brand" target="_blank">
-        <img src="{{leadOrganizationLogoSrc()}}" class="navbarLogo">
-    </a>
-    <a routerLink="/" routerLinkActive="active" class="navbar-brand nav-link">
-        {{platformShortName()}}
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" routerLink="/manager-dashboard" routerLinkActive="active" 
-                *ngIf="isAuthenticated() && isAdministrator()">My Dashboard</a>
-                <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
-                    *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
-            </li>
-            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
-                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    Trade
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/trades" class="dropdown-item">
-                        Buy and Sell Water
+<div class="header-outer">
+    <div class="container pr-0 pl-0">
+        <div class="row d-none d-lg-flex" style="margin-bottom:-4px">
+            <div class="col-12">
+                <ul class="mb-0 list-inline text-right top-bar">
+                    <li class="list-inline-item nav-item top-bar-item mr-0">
+                        <a class="nav-link top-bar-nav-link pb-lg-0" routerLink="/manager-dashboard" routerLinkActive="active" 
+                        *ngIf="isAuthenticated() && isAdministrator()">My Dashboard</a>
+                        <a class="nav-link top-bar-nav-link pb-lg-0" routerLink="/landowner-dashboard" routerLinkActive="active"
+                            *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown list-inline-item top-bar-item mr-0" routerLinkActive="active">
+                        <a href="#" class="nav-link top-bar-nav-link dropdown-toggle pb-lg-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Learn More
+                        </a>
+                        <div class="dropdown-menu top-bar-item" aria-labelledby="navbarDropdown">
+                            <a routerLink="/platform-overview" class="dropdown-item">
+                                Platform Overview
+                            </a>
+                            <a routerLink="/frequently-asked-questions" class="dropdown-item">
+                                Frequently Asked Questions
+                            </a>
+                            <a routerLink="/measuring-water-use-with-openet" class="dropdown-item">
+                                Measuring Water Use with OpenET
+                            </a>
+                            <a routerLink="/disclaimer/false" class="dropdown-item">
+                                Disclaimer
+                            </a>
+                        </div>
+                    </li>
+                    <li class="nav-item list-inline-item top-bar-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
+                        <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link pb-lg-0">Sign In</a>
+                    </li>
+                    <li class="list-inline-item nav-item dropdown welcomeUser top-bar-item" routerLinkActive="active" *ngIf="isAuthenticated()"> 
+                        <a href="#" class="nav-link top-bar-nav-link dropdown-toggle pb-lg-0" role="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            Welcome {{getUserName()}}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right top-bar-item" aria-labelledby="navbarDropdown">
+                            <a routerLink="/help" class="dropdown-item">
+                                Contact Us
+                            </a>
+                            <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <nav class="navbar navbar-rio navbar-expand-lg navbar-{{getNavThemeColor()}} stroke pl-lg-0 pr-lg-0 pt-lg-0">
+                    <a href="{{leadOrganizationHomeUrl()}}" class="navbar-brand pt-lg-0" target="_blank">
+                        <img src="{{leadOrganizationLogoSrc()}}" class="navbarLogo">
                     </a>
-                    <a routerLink="/market-metrics" class="dropdown-item" *ngIf="isAdministrator()">
-                        Market Metrics
+                    <a routerLink="/" routerLinkActive="active" class="nav-link platform-title-outer">
+                        {{platformShortName()}}
                     </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mt-2 mt-lg-0">
+                            <li class="platform-title-inner nav-item">
+                                <a routerLink="/" routerLinkActive="active" class="nav-link">
+                                    {{platformShortName()}}
+                                </a>
+                            </li>
+                            <li class="nav-item d-lg-none">
+                                <a class="nav-link" routerLink="/manager-dashboard" routerLinkActive="active" 
+                                *ngIf="isAuthenticated() && isAdministrator()">My Dashboard</a>
+                                <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
+                                    *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
+                            </li>
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Trade
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/trades" class="dropdown-item">
+                                        Buy and Sell Water
+                                    </a>
+                                    <a routerLink="/market-metrics" class="dropdown-item" *ngIf="isAdministrator()">
+                                        Market Metrics
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Manage
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/users" class="dropdown-item">
+                                        View all Users
+                                    </a>
+                                    <a routerLink="/accounts" class="dropdown-item">
+                                        View all Accounts
+                                    </a>
+                                    <a routerLink="/parcels" class="dropdown-item">
+                                        View all Parcels
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown d-lg-none" routerLinkActive="active">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Learn More
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/platform-overview" class="dropdown-item">
+                                        Platform Overview
+                                    </a>
+                                    <a routerLink="/frequently-asked-questions" class="dropdown-item">
+                                        Frequently Asked Questions
+                                    </a>
+                                    <a routerLink="/measuring-water-use-with-openet" class="dropdown-item">
+                                        Measuring Water Use with OpenET
+                                    </a>
+                                    <a routerLink="/disclaimer/false" class="dropdown-item">
+                                        Disclaimer
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && hasGroundwaterModelingMenu()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Groundwater Modeling
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/about-groundwater-evaluation" class="dropdown-item">
+                                        About the Groundwater Evaluation Toolkit
+                                    </a>
+                                    <a routerLink="/water-trading-scenario" class="dropdown-item">
+                                        Water Trading Scenario
+                                    </a>
+                                    <a routerLink="/managed-recharge-scenario" class="dropdown-item">
+                                        Managed Recharge Scenario
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav flex-column ml-lg-auto mt-2 mt-xl-0 w-100" style="max-width:430px;">
+                            <li class="nav-item d-lg-none" routerLinkActive="active" *ngIf="!isAuthenticated()">
+                                <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
+                            </li>
+                            <li class="nav-item dropdown welcomeUser d-lg-none" routerLinkActive="active" *ngIf="isAuthenticated()"> 
+                                <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Welcome {{getUserName()}}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/help" class="dropdown-item">
+                                        Contact Us
+                                    </a>
+                                    <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
+                                </div>
+                            </li>
+                            <li class="nav-item" *ngIf="isAuthenticated()" style="padding-right:0.5rem">
+                                <rio-account-select></rio-account-select>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                
+                <div *ngIf="getPendingTrades().length > 0">
+                    <div class="alert alert-secondary mb-0" style="max-height: 160px; overflow: auto;">
+                        <ul class="m-0 p-0">
+                            <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
+                                <span class="fas fa-exclamation-circle" style="color: orangered"></span>
+                                <ng-container *ngIf="isTradePendingRegistrationForAccount(trade) && !isTradePending(trade)">
+                                    Trade {{trade.TradeNumber}} needs to be registered
+                                    <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
+                                        *ngIf="trade.WaterTransferID && isTradePendingRegistrationForAccount(trade)">
+                                        [Register transfer]
+                                    </a>
+                                </ng-container>
+                                <ng-container *ngIf="isTradePending(trade)">
+                                    <span *ngIf="doesMostRecentOfferBelongToCurrentAccount(trade)">
+                                        {{getOfferThatBelongsToYouNotificationText(trade)}}
+                                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[View offer details]</a>
+                                    </span>
+                                    <span *ngIf="!doesMostRecentOfferBelongToCurrentAccount(trade)">
+                                        {{getOfferThatDoesNotBelongToYouNotificationText(trade)}}
+                                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[Respond to this offer]</a>
+                                    </span>
+                                </ng-container>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </li>
-            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
-                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                    Manage
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/users" class="dropdown-item">
-                        View all Users
-                    </a>
-                    <a routerLink="/accounts" class="dropdown-item">
-                        View all Accounts
-                    </a>
-                    <a routerLink="/parcels" class="dropdown-item">
-                        View all Parcels
-                    </a>
-                </div>
-            </li>
-            <li class="nav-item dropdown" routerLinkActive="active">
-                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Learn More
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/platform-overview" class="dropdown-item">
-                        Platform Overview
-                    </a>
-                    <a routerLink="/frequently-asked-questions" class="dropdown-item">
-                        Frequently Asked Questions
-                    </a>
-                    <a routerLink="/measuring-water-use-with-openet" class="dropdown-item">
-                        Measuring Water Use with OpenET
-                    </a>
-                    <a routerLink="/disclaimer/false" class="dropdown-item">
-                        Disclaimer
-                    </a>
-                </div>
-            </li>
-            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="(isLandOwner() || isAdministrator()) && hasGroundwaterModelingMenu()">
-                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Groundwater Modeling
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a routerLink="/about-groundwater-evaluation" class="dropdown-item">
-                        About the Groundwater Evaluation Toolkit
-                    </a>
-                    <a routerLink="/water-trading-scenario" class="dropdown-item">
-                        Water Trading Scenario
-                    </a>
-                    <a routerLink="/managed-recharge-scenario" class="dropdown-item">
-                        Managed Recharge Scenario
-                    </a>
-                </div>
-            </li>
-        </ul>
-        <ul class="navbar-nav flex-column mt-2 mt-lg-0 mr-sm-2">
-            <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
-                <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
-            </li>
-            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()"> 
-                <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Welcome {{getUserName()}}
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a routerLink="/help" class="dropdown-item">
-                        Get Help
-                    </a>
-                    <a href="javascript:void(0);" (click)="logout()" class="dropdown-item">Sign Out</a>
-                </div>
-            </li>
-            <li *ngIf="isAuthenticated()">
-                <rio-account-select></rio-account-select>
-            </li>
-        </ul>
-    </div>
-</nav>
-
-<div *ngIf="getPendingTrades().length > 0">
-    <div class="alert alert-secondary mb-0" style="max-height: 160px; overflow: auto;">
-        <ul class="m-0 p-0">
-            <li *ngFor="let trade of getPendingTrades()" style="list-style: none">
-                <span class="fas fa-exclamation-circle" style="color: orangered"></span>
-                <ng-container *ngIf="isTradePendingRegistrationForAccount(trade) && !isTradePending(trade)">
-                    Trade {{trade.TradeNumber}} needs to be registered
-                    <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
-                        *ngIf="trade.WaterTransferID && isTradePendingRegistrationForAccount(trade)">
-                        [Register transfer]
-                    </a>
-                </ng-container>
-                <ng-container *ngIf="isTradePending(trade)">
-                    <span *ngIf="doesMostRecentOfferBelongToCurrentAccount(trade)">
-                        {{getOfferThatBelongsToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[View offer details]</a>
-                    </span>
-                    <span *ngIf="!doesMostRecentOfferBelongToCurrentAccount(trade)">
-                        {{getOfferThatDoesNotBelongToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[Respond to this offer]</a>
-                    </span>
-                </ng-container>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </div>
