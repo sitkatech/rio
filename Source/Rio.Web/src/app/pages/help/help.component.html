@@ -15,9 +15,9 @@
         <dd>{{getContactInfoPhone()}}</dd>
         <dt>Email:</dt>
         <dd><a href="mailto:{{getContactInfoEmail()}}">{{getContactInfoEmail()}}</a></dd>
-        <dt>Physical Address:</dt>
-        <dd>{{getContactInfoPhysicalAddress()}}</dd>
-        <dt>Mailing Address:</dt>
-        <dd>{{getContactInfoMailingAddress()}}</dd>
+        <dt *ngIf='getContactInfoPhysicalAddress() != ""'>Physical Address:</dt>
+        <dd *ngIf='getContactInfoPhysicalAddress() != ""'>{{getContactInfoPhysicalAddress()}}</dd>
+        <dt *ngIf='getContactInfoMailingAddress() != ""'>Mailing Address:</dt>
+        <dd *ngIf='getContactInfoMailingAddress() != ""'>{{getContactInfoMailingAddress()}}</dd>
     </dl>
 </div>

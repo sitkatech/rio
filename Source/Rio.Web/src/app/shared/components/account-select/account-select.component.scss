@@ -42,7 +42,7 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
       
       text-align: right !important;
       float: none !important;
-      padding-right:16px;
+      margin-left: 0.255em;
 
       
     }
@@ -66,7 +66,7 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
     border-right: 0.3em solid transparent;
     border-bottom: 0;
     border-left: 0.3em solid transparent;
-    font-size:16px;
+    font-size:13px;
   }
 
   ngx-select-dropdown#accountSelectDropdown > div > button > span:first-child{
@@ -75,7 +75,15 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
     display:inline-block;
   }
 
-  @media screen and (max-width: 1199px){
+  @media screen and (min-width:992px) and (max-width:1199px)
+  {
+    .ngx-dropdown-list-container {
+      width:330px !important;
+      right:0;
+    }
+  }
+
+  @media screen and (max-width: 991px){
     ngx-select-dropdown#accountSelectDropdown > div > button > span {
       text-align: left !important;
       }
