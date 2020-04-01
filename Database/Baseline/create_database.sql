@@ -6,7 +6,7 @@ IF EXISTS( SELECT * FROM [master].[dbo].[sysdatabases] sdt WHERE sdt.[name] = '$
 BEGIN
 	IF ( ${db-overwrite} = 1 )
 	BEGIN
-		alter database ${db-name} set single_user with rollback immediate
+		alter database [${db-name}] set single_user with rollback immediate
 		DROP DATABASE [${db-name}]
 	END
 	ELSE
