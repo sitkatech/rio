@@ -3,6 +3,9 @@ import * as L from 'leaflet';
 import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
 import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
+import { environment } from "src/environments/environment";
+
+declare var $ : any;
 
 declare var $ : any;
 
@@ -29,7 +32,33 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public layerControl: L.Control.Layers;
     public tileLayers: { [key: string]: any } = {};
     public overlayLayers: { [key: string]: any } = {};
+    private defaultParcelsWMSOptions: L.WMSOptions;
+    private defaultDisadvantagedCommunitiesOptions: L.WMSOptions;
+    private defaultWaterTradingScenarioWellOptions: L.WMSOptions;
     public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
+    
+    public sellerParcels = [
+        29,
+        30,
+        36,
+        37,
+        59,
+        61,
+        74,
+        75
+    ];
+
+    public buyerParcels = [
+        494
+    ];
+
+    public buyerStyle = 'parcel_red';
+    public sellerStyle = 'parcel_blue';
+    public disadvantagedCommunityStyle = 'scenario_disadvantagedcommunity';
+    public waterTradingScenarioWellStyle = 'scenario_watertradingscenariowells';
+    public pertinentDACs = [
+        208
+    ]
 
     public months = {
         'January' : '01',
@@ -57,9 +86,9 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -119.075;
+        this.boundingBox.Left = -119.17;
         this.boundingBox.Bottom = 35.442022035628575;
-        this.boundingBox.Right = -119.425;
+        this.boundingBox.Right = -119.51;
         this.boundingBox.Top = 35.27608156273151;
 
         this.tileLayers = Object.assign({}, {
@@ -74,6 +103,38 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             }),
         }, this.tileLayers);
 
+        this.defaultParcelsWMSOptions = ({
+            layers: "Rio:AllParcels",
+            transparent: true,
+            format: "image/png",
+            tiled: true
+        } as L.WMSOptions);
+
+        this.defaultDisadvantagedCommunitiesOptions = ({
+            layers: "Rio:DisadvantagedCommunity",
+            transparent: true,
+            format: "image/png",
+            tiled: true
+        } as L.WMSOptions);
+
+        this.defaultWaterTradingScenarioWellOptions = ({
+            layers: "Rio:WaterTradingScenarioWell",
+            transparent: true,
+            format: "image/png",
+            tiled: true
+        } as L.WMSOptions);
+
+        let sellerParcelOptions = Object.assign({styles:this.sellerStyle, cql_filter:this.createParcelMapFilter(this.sellerParcels)}, this.defaultParcelsWMSOptions);
+        let buyerParcelOptions = Object.assign({styles:this.buyerStyle, cql_filter:this.createParcelMapFilter(this.buyerParcels)}, this.defaultParcelsWMSOptions);
+        let disadvantagedCommunityOptions = Object.assign({styles:this.disadvantagedCommunityStyle}, this.defaultDisadvantagedCommunitiesOptions);
+        let waterTradingScenarioWellOptions = Object.assign({styles:this.waterTradingScenarioWellStyle}, this.defaultWaterTradingScenarioWellOptions);
+        
+        this.overlayLayers = Object.assign({
+            "<img src='../../../assets/main/images/parcel_blue.png' style='height:16px'> Seller Parcels" : L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", sellerParcelOptions),
+            "<img src='../../../assets/main/images/parcel_red.png' style='height:16px'> Buyer Parcels": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", buyerParcelOptions),
+            "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
+            "<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", waterTradingScenarioWellOptions)
+        }, this.overlayLayers);
         
 
         this.compileService.configure(this.appRef);
@@ -91,6 +152,10 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
             maxZoom: 17,
             layers: [
                 this.tileLayers["Terrain"],
+                this.overlayLayers["<img src='../../../assets/main/images/parcel_blue.png' style='height:16px'> Seller Parcels"],
+                this.overlayLayers["<img src='../../../assets/main/images/parcel_red.png' style='height:16px'> Buyer Parcels"],
+                this.overlayLayers["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities"],
+                this.overlayLayers["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"]
             ],
             timeDimension: true,
             timeDimensionOptions: {
@@ -213,6 +278,10 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public getISOString(fileDate: string): string {
         var contents = fileDate.split(" ");
         return new Date(contents[1] + "-" + this.months[contents[0]] + "-01").toISOString();
+    }
+
+    private createParcelMapFilter(parcelIDs: Array<number>): any {
+        return "ParcelID in (" + parcelIDs.join(',') + ")";
     }
 }
 

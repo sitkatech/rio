@@ -5,8 +5,8 @@ use master
 if (@@error != 0) goto failed
 
 -- 2. restore the database from the backup file
-alter database ${db-name} set single_user with rollback immediate
-restore database ${db-name}
+alter database [${db-name}] set single_user with rollback immediate
+restore database [${db-name}]
     from disk = '@DUMPFILE@'
     with
 		move '${db-name}' to '@DATADEVICE@'
@@ -15,14 +15,14 @@ restore database ${db-name}
 if (@@error != 0) goto failed
 
 -- 3. Correct account issues
-use ${db-name}
+use [${db-name}]
 if (@@error != 0) goto failed
 
 exec sp_changedbowner 'sa'
 if (@@error != 0) goto failed
 
 -- 4. put the ${db-name} database back into multi user mode
-alter database ${db-name} set multi_user
+alter database [${db-name}] set multi_user
 if (@@error != 0) goto failed
 
 goto goodbye
