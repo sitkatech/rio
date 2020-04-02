@@ -1,4 +1,4 @@
-create table WaterTradingScenarioWell (
+create table dbo.WaterTradingScenarioWell (
 	WaterTradingScenarioWellID int not null constraint PK_WaterTradingScenarioWell_WaterTradingScenarioWellID primary key,
 	WaterTradingScenarioWellCountyName varchar(100) not null,
 	WaterTradingScenarioWellGeometry geometry not null
