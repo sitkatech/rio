@@ -24,7 +24,10 @@ $theme-colors: (
         "grid-hover-color":  rgba(199, 153, 0, 0.3),
         "account-dropdown-text": #253D86,
         "header-gradient-start": transparent,
-        "header-gradient-end": transparent
+        "header-gradient-end": transparent,
+        "breadcrumb-background-color": #018797,
+        "breadcrumb-border-color": transparent,
+        "breadcrumb-item-active-color": #fff
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -38,6 +41,10 @@ $success: #00985F;
 $warning: #EBB700;
 
 $account-dropdown-text: #253D86;
+$breadcrumb-background-color: #018797;
+$breadcrumb-border-color: transparent;
+$breadcrumb-border-style: none;
+$breadcrumb-item-active-color: #fff;
 $button-border-and-background: #253D86;
 $button-hover: #C8DA2C ;
 $button-toggle-hover: #44697D;
@@ -48,9 +55,6 @@ $grid-header-background: #253D86;
 $grid-hover-color:  rgba(199, 153, 0, 0.3);
 $footer: #44697D;
 $header-background: #fff;
-$header-gradient-start: transparent;
-$header-gradient-end:transparent;
-$header-nav-after-height: 20px;
 $header-nav-link: #253D86;
 $header-nav-link-font-weight: bold;
 $h4-styled: #194349;

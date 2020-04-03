@@ -1,18 +1,22 @@
-<nav aria-label="breadcrumb" *ngIf="account">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a routerLink="/accounts">Accounts</a>
-        </li>
-        <li class="breadcrumb-item">
-            <a routerLink="/accounts/{{account?.AccountID}}">
-                {{account.AccountDisplayName}}
-            </a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            Edit Basics
-        </li>
-    </ol>
-</nav>
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb" *ngIf="account">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a routerLink="/accounts">Accounts</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a routerLink="/accounts/{{account?.AccountID}}">
+                        {{account.AccountDisplayName}}
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Edit Basics
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
 <div class="container mt-sm-4" *ngIf="account">
     <h2 class="d-inline-block">{{account.AccountDisplayName}}</h2>
     <app-alert-display></app-alert-display>

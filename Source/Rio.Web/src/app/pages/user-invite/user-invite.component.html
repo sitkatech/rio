@@ -1,14 +1,18 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
-            <span *ngIf="!currentUserIsAdmin()">Users</span>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            Invite User
-        </li>
-    </ol>
-</nav>
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
+                    <span *ngIf="!currentUserIsAdmin()">Users</span>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Invite User
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
 <div class="container">
     <h2>Invite User</h2>
     <p class="lead">

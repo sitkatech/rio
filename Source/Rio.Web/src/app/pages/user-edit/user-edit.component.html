@@ -1,18 +1,22 @@
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      <a routerLink="/users">Users</a>
-    </li>
-    <li class="breadcrumb-item">
-      <a routerLink="/users/{{user?.UserID}}">
-        {{user?.FullName || (user?.FirstName + ' ' + user?.LastName)}}
-      </a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">
-      Edit Basics
-    </li>
-  </ol>
-</nav>
+<div class="breadcrumb-container">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a routerLink="/users">Users</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a routerLink="/users/{{user?.UserID}}">
+            {{user?.FullName || (user?.FirstName + ' ' + user?.LastName)}}
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Edit Basics
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
 <div class="container mt-sm-4" *ngIf="model">
     <h2 class="d-inline-block">{{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}</h2>
     <app-alert-display></app-alert-display>

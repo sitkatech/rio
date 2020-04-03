@@ -1,13 +1,17 @@
-<nav aria-label="breadcrumb" *ngIf="parcel">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item" aria-current="page">
-      <a routerLink="/parcels">Parcels</a>
-    </li>
-    <li class="breadcrumb-item active" aria-current="page">
-      {{parcel.ParcelNumber}}
-    </li>
-  </ol>
-</nav>
+<div class="breadcrumb-container">
+  <div class="container">
+    <nav aria-label="breadcrumb" *ngIf="parcel">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+          <a routerLink="/parcels">Parcels</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{parcel.ParcelNumber}}
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
 <div class="container mt-sm-4" *ngIf="parcel">
   <h2 class="d-inline-block">
     {{parcel.ParcelNumber}}

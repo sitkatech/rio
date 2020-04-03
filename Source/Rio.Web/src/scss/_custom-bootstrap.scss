@@ -19,14 +19,25 @@ abbr[data-original-title] {
 
 .breadcrumb
 {
-  border-width: 1px 0px 1px 0px;
-  border-style: solid;
-  border-color: #e9eeef;
-  background-color: #fff;
+  border-style: none;
+  background-color: transparent;
+  margin-bottom:0;
+  padding-left:0;
+  padding-right:0;
 }
+
+.breadcrumb-container {
+  background-color: $breadcrumb-background-color;
+  border-width: 1px 0px 1px 0px;
+  border-style: $breadcrumb-border-style;
+  border-color: #e9eeef;
+  min-height: 48px;
+  margin-bottom:0.5rem;
+}
+
 // Breadcrumb active text contrast increase
 .breadcrumb-item.active {
-  color: #474D52;
+  color: $breadcrumb-item-active-color;
 }
 
 // Maintain link color on hover

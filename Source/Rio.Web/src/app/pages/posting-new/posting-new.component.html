@@ -1,13 +1,17 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/trades">Buy and Sell Water</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            New Posting
-        </li>
-    </ol>
-</nav>
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/trades">Buy and Sell Water</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    New Posting
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
 <div class="container" *ngIf="postingTypes && currentAccount">
     <h2>New Posting</h2>
     <p class="lead">

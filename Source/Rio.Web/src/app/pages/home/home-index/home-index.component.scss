@@ -1,7 +1,14 @@
+@import "~src/scss/_variables.scss";
+
 .homepageJumbotronImage {
     background-size: cover;
     background-position: center center;
     height: 300px;
+}
+
+.home-breadcrumb {
+    display: none;
+    margin-bottom: 0;
 }
 
 #homepageJumbotronImage1 {
