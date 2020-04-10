@@ -243,19 +243,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getNoTradesMessage(): string {
     if (this.tradeStatusIDs.length === 1) {
-      return "You have no open trades.";
+      return "You have no open trades for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
     }
     else {
-      return "You have no trade activity.";
+      return "You have no trade activity for " + this.waterYearToDisplay +". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
     }
   }
 
   public getNoPostingsMessage(): string {
     if (this.postingStatusIDs.length === 1) {
-      return "You have no open postings.";
+      return "You have no open postings for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view open postings for other years.";
     }
     else {
-      return "You have no posting activity.";
+      return "You have no posting activity for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view posting activity for other years.";
     }
   }
 

@@ -42,6 +42,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
   public waterYears: Array<number>;
   public unitsShown: string = "ac-ft";
+  public displayTradeGrid: boolean = false;
+  public displayPostingsGrid: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -395,9 +397,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
     this.tradeService.getTradeActivityForYear(this.waterYearToDisplay).subscribe(result => {
       this.tradeActivityGrid ? this.tradeActivityGrid.api.setRowData(result) : null;
+      this.displayTradeGrid = result.length > 0 ? true : false;
     });
     this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay).subscribe(result => {
       this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
+      this.displayPostingsGrid = result.length > 0 ? true : false;
     });
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
       this.parcelAllocationAndUsages = result;
