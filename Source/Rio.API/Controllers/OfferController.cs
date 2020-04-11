@@ -125,8 +125,8 @@ namespace Rio.API.Controllers
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            mailMessage.From = smtpClient.GetDomainSpecificEmailFrom();
+            smtpClient.AddReplyToEmail(ref mailMessage);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
@@ -200,11 +200,16 @@ To finalize this transaction, the buyer and seller must complete payment and any
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy";
 
             var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
+            var fromAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID
+                ? posting.CreateAccount
+                : currentTrade.CreateAccount;
+
+            var properPreposition = offerAction == "sell" ? "to" : "from";
             var messageBody =
                 $@"
-Hello {toAccount.AccountName},
+Hello,
 <br /><br />
-Your offer to {offerAction} water was rejected by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
+Your offer to {offerAction} water {properPreposition} Account #{fromAccount.AccountNumber} ({fromAccount.AccountName}) was rejected by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {smtpClient.GetDefaultEmailSignature()}";
@@ -229,11 +234,16 @@ Your offer to {offerAction} water was rejected by the other party. You can see d
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
 
             var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
+            var fromAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID
+                ? posting.CreateAccount
+                : currentTrade.CreateAccount;
+
+            var properPreposition = offerAction == "sell" ? "to" : "from";
             var messageBody =
                 $@"
-Hello {toAccount.AccountName},
+Hello,
 <br /><br />
-An offer to {offerAction} water was rescinded by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
+An offer to {offerAction} water {properPreposition} Account #{fromAccount.AccountNumber} ({fromAccount.AccountName}) was rescinded by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
 <a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
 {smtpClient.GetDefaultEmailSignature()}";
@@ -256,11 +266,16 @@ An offer to {offerAction} water was rescinded by the other party. You can see de
                 ? posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "sell" : "buy"
                 : posting.PostingType.PostingTypeID == (int)PostingTypeEnum.OfferToBuy ? "buy" : "sell";
             var toAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID ? currentTrade.CreateAccount : posting.CreateAccount;
+            var fromAccount = offer.CreateAccount.AccountID == posting.CreateAccount.AccountID
+                ? posting.CreateAccount
+                : currentTrade.CreateAccount;
+
+            var properPreposition = offerAction == "sell" ? "to" : "from";
             var messageBody =
                 $@"
-Hello {toAccount.AccountName},
+Hello,
 <br /><br />
-An offer to {offerAction} water has been presented for your review. 
+An offer to {offerAction} water {properPreposition} Account #{fromAccount.AccountNumber} ({fromAccount.AccountName}) has been presented for your review. 
 <br /><br />
 <a href=""{rioUrl}/trades/{currentTrade.TradeNumber}"">Respond to this offer</a>
 {smtpClient.GetDefaultEmailSignature()}";

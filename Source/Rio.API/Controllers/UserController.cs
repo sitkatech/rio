@@ -329,7 +329,7 @@ As an administrator of the {_rioConfiguration.PlatformShortName}, you can assign
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            smtpClient.AddReplyToEmail(ref mailMessage);
             smtpClient.Send(mailMessage);
         }
     }
