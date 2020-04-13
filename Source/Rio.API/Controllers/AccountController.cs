@@ -319,7 +319,7 @@ You can view parcels associated with this account and the water allocation and u
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            SitkaSmtpClientService.AddReplyToEmail(mailMessage);
+            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
