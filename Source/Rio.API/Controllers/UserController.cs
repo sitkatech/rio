@@ -329,7 +329,7 @@ As an administrator of the {_rioConfiguration.PlatformShortName}, you can assign
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            smtpClient.AddReplyToEmail(ref mailMessage);
+            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             smtpClient.Send(mailMessage);
         }
     }

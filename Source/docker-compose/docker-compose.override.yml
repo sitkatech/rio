@@ -19,4 +19,3 @@ services:
       - LeadOrganizationShortName=${LeadOrganizationShortName}
       - LeadOrganizationHomeUrl=${LeadOrganizationHomeUrl}
       - LeadOrganizationEmail=${LeadOrganizationEmail}
-      - LeadOrganizationDomain=${LeadOrganizationDomain}

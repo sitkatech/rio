@@ -20,16 +20,14 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<OfferController> _logger;
         private readonly KeystoneService _keystoneService;
-        private readonly string _rioWebUrl;
-        private readonly bool _allowTrading;
+        private readonly RioConfiguration _rioConfiguration;
 
-        public WaterTransferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
+        public WaterTransferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
-            _rioWebUrl = rioConfigurationOptions.Value.RIO_WEB_URL;
-            _allowTrading = rioConfigurationOptions.Value.ALLOW_TRADING;
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         [HttpGet("water-transfers/{waterTransferID}")]
@@ -62,7 +60,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
-            if (!_allowTrading)
+            if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
@@ -87,7 +85,7 @@ namespace Rio.API.Controllers
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateConfirmTransferEmail(_rioWebUrl, waterTransferDto, smtpClient);
+                var mailMessages = GenerateConfirmTransferEmail(_rioConfiguration.RIO_WEB_URL, waterTransferDto, smtpClient);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -101,7 +99,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
-            if (!_allowTrading)
+            if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
@@ -125,7 +123,7 @@ namespace Rio.API.Controllers
             waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto,
                 WaterTransferRegistrationStatusEnum.Canceled);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateCancelTransferEmail(_rioWebUrl, waterTransferDto, smtpClient);
+            var mailMessages = GenerateCancelTransferEmail(_rioConfiguration.RIO_WEB_URL, waterTransferDto, smtpClient);
             foreach (var mailMessage in mailMessages)
             {
                 SendEmailMessage(smtpClient, mailMessage);
@@ -153,7 +151,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<List<WaterTransferDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
-            if (!_allowTrading)
+            if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
@@ -179,7 +177,7 @@ namespace Rio.API.Controllers
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            smtpClient.AddReplyToEmail(ref mailMessage);
+            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }

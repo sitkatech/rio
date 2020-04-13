@@ -158,11 +158,6 @@ Subject: {mm.Subject}
             return String.Join("; ", addresses.Select(x => x.ToString()));
         }
 
-        public void AddReplyToEmail(ref MailMessage mailMessage)
-        {
-            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
-        }
-
         public string GetDefaultEmailSignature()
         {
             string defaultEmailSignature = $@"<br /><br />
@@ -191,12 +186,7 @@ You have received this email because you are assigned to receive support notific
 
         public MailAddress GetDefaultEmailFrom()
         {
-            return new MailAddress($"donotreply @sitkatech.com", $"{_rioConfiguration.PlatformLongName}");
-        }
-
-        public MailAddress GetDomainSpecificEmailFrom()
-        {
-            return new MailAddress($"donotreply @{_rioConfiguration.LeadOrganizationDomain}", $"{_rioConfiguration.PlatformLongName}");
+            return new MailAddress($"donotreply@sitkatech.net", $"{_rioConfiguration.PlatformLongName}");
         }
 
         public static void AddBccRecipientsToEmail(MailMessage mailMessage, IEnumerable<string> recipients)

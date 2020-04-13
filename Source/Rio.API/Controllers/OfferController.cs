@@ -22,23 +22,21 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<OfferController> _logger;
         private readonly KeystoneService _keystoneService;
-        private readonly string _rioWebUrl;
-        private readonly bool _allowTrading;
+        private readonly RioConfiguration _rioConfiguration;    
 
-        public OfferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
+        public OfferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
-            _rioWebUrl = rioConfigurationOptions.Value.RIO_WEB_URL;
-            _allowTrading = rioConfigurationOptions.Value.ALLOW_TRADING;
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         [HttpPost("/offers/new/{postingID}")]
         [OfferManageFeature]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
-            if (!_allowTrading)
+            if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
@@ -59,7 +57,7 @@ namespace Rio.API.Controllers
             var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var currentTrade = Trade.GetByTradeID(_dbContext, offer.TradeID);
-            var rioUrl = _rioWebUrl;
+            var rioUrl = _rioConfiguration.RIO_WEB_URL;
 
             // update trades status if needed
             if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Accepted)
@@ -125,8 +123,8 @@ namespace Rio.API.Controllers
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
-            mailMessage.From = smtpClient.GetDomainSpecificEmailFrom();
-            smtpClient.AddReplyToEmail(ref mailMessage);
+            mailMessage.From = smtpClient.GetDefaultEmailFrom();
+            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }
