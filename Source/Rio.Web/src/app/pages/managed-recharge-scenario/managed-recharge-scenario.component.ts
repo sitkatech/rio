@@ -1,5 +1,6 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, OnInit} from '@angular/core';
 import * as L from 'leaflet';
+import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
 import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
 import { environment } from "src/environments/environment";
@@ -33,11 +34,29 @@ export class ManagedRechargeScenarioComponent implements OnInit {
   private defaultParcelsWMSOptions: L.WMSOptions;
   private defaultDisadvantagedCommunitiesOptions: L.WMSOptions;
   private defaultWaterTradingScenarioWellOptions: L.WMSOptions;
-
+  private defaultScenarioArsenicContaminationLocationOptions: L.WMSOptions;
+  private defaultScenarioRechargeBasinOptions: L.WMSOptions;
+  public availableScenarioInfo = require('../../../assets/ManagedRechargeScenarioJSON/availableRunInfo_2073.json');
 
   public disadvantagedCommunityStyle = 'scenario_disadvantagedcommunity';
   public waterTradingScenarioWellStyle = 'scenario_watertradingscenariowells';
-  public allParcelsStyle = 'parcel_pink';
+  public arsenicContaminationLocationStyle = 'point_circle_red';
+  public rechargeBasinStyle = 'scenario_rechargebasin';
+
+  public months = {
+    'January' : '01',
+    'February' : '02',
+    'March' : '03',
+    'April' : '04',
+    'May' : '05',
+    'June' : '06',
+    'July' : '07',
+    'August' : '08',
+    'September' : '09',
+    'October' : '10',
+    'November' : '11',
+    'December' : '12'
+  }
 
   boundingBox: BoundingBoxDto;
 
@@ -50,10 +69,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
   public ngOnInit(): void {
       // Default bounding box
       this.boundingBox = new BoundingBoxDto();
-      this.boundingBox.Left = -119.17;
-      this.boundingBox.Bottom = 35.442022035628575;
-      this.boundingBox.Right = -119.51;
-      this.boundingBox.Top = 35.27608156273151;
+      this.boundingBox.Left = -118.88031005859376;
+      this.boundingBox.Bottom = 35.17324704631253;
+      this.boundingBox.Right = -119.61502075195314;
+      this.boundingBox.Top = 35.50931279638352;
 
       this.tileLayers = Object.assign({}, {
           "Aerial": L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -66,13 +85,6 @@ export class ManagedRechargeScenarioComponent implements OnInit {
               attribution: 'Terrain',
           }),
       }, this.tileLayers);
-
-      this.defaultParcelsWMSOptions = ({
-          layers: "Rio:AllParcels",
-          transparent: true,
-          format: "image/png",
-          tiled: true
-      } as L.WMSOptions);
 
       this.defaultDisadvantagedCommunitiesOptions = ({
           layers: "Rio:DisadvantagedCommunity",
@@ -88,14 +100,30 @@ export class ManagedRechargeScenarioComponent implements OnInit {
           tiled: true
       } as L.WMSOptions);
 
-      let allParcelsOptions = Object.assign({styles:this.allParcelsStyle}, this.defaultParcelsWMSOptions);
+      this.defaultScenarioArsenicContaminationLocationOptions = ({
+          layers: "Rio:ScenarioArsenicContaminationLocation",
+          transparent: true,
+          format: "image/png",
+          tiled: true
+      } as L.WMSOptions);
+
+      this.defaultScenarioRechargeBasinOptions = ({
+          layers: "Rio:ScenarioRechargeBasin",
+          transparent: true,
+          format: "image/png",
+          tiled: true
+      } as L.WMSOptions);
+
       let disadvantagedCommunityOptions = Object.assign({styles:this.disadvantagedCommunityStyle}, this.defaultDisadvantagedCommunitiesOptions);
       let waterTradingScenarioWellOptions = Object.assign({styles:this.waterTradingScenarioWellStyle}, this.defaultWaterTradingScenarioWellOptions);
+      let scenarioArsenicContaminationLocationOptions = Object.assign({styles:this.arsenicContaminationLocationStyle}, this.defaultScenarioArsenicContaminationLocationOptions);
+      let scenarioRechargeBasin = Object.assign({styles:this.rechargeBasinStyle}, this.defaultScenarioRechargeBasinOptions);
       
       this.overlayLayers = Object.assign({
-          "All Parcels": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", allParcelsOptions),
-          "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
-          "<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", waterTradingScenarioWellOptions)
+        "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
+        "<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioRechargeBasin),
+        "<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", waterTradingScenarioWellOptions),
+        "<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioArsenicContaminationLocationOptions)
       }, this.overlayLayers);
       
 
@@ -104,28 +132,119 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
   public ngAfterViewInit(): void {
 
-      const mapOptions: L.MapOptions = {
-          minZoom: 6,
-          maxZoom: 17,
-          layers: [
-              this.tileLayers["Terrain"],
-              this.overlayLayers["All Parcels"],
-              this.overlayLayers["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities"],
-              this.overlayLayers["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"]
-          ]
-      } as L.MapOptions;
-      this.map = L.map(this.mapID, mapOptions);
+    var firstRunObject = this.availableScenarioInfo[0];
+    var firstRunDate = this.getISOString(firstRunObject.RunDate);
+    var lastRunObject = this.availableScenarioInfo[this.availableScenarioInfo.length - 1];
+    var lastRunDate = this.getISOString(lastRunObject.RunDate);
 
-      this.map.on('load', (event: L.LeafletEvent) => {
-          this.afterLoadMap.emit(event);
-      });
-      this.map.on("moveend", (event: L.LeafletEvent) => {
-          this.onMapMoveEnd.emit(event);
-      });
+    const mapOptions: L.MapOptions = {
+        minZoom: 6,
+        maxZoom: 17,
+        layers: [
+            this.tileLayers["Terrain"],
+            this.overlayLayers["<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)"],
+            this.overlayLayers["<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins"],
+            this.overlayLayers["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities"],
+            this.overlayLayers["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"]
+        ],
+        timeDimension: true,
+            timeDimensionOptions: {
+                timeInterval: firstRunDate + "/" + lastRunDate, //this.getISOString(JSON.parse(firstRunObject.FileDetails).RunResultName) + "/" + this.getISOString(JSON.parse(lastRunObject.FileDetails).RunResultName),
+                period: "P1M",
+                currentTime: Date.parse(firstRunDate) //Date.parse(this.getISOString(JSON.parse(firstRunObject.FileDetails).RunResultName))
+            },
+            timeDimensionControl: true,
+            timeDimensionControlOptions: {
+                loopButton: true,
+                autoPlay: true,
+                playerOptions: {
+                    loop: true
+                },
+                timeZones: ["Local"]
+            }
+    } as L.MapOptions;
+    this.map = L.map(this.mapID, mapOptions);
 
-      this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
+    this.map.on('load', (event: L.LeafletEvent) => {
+        this.afterLoadMap.emit(event);
+    });
+    this.map.on("moveend", (event: L.LeafletEvent) => {
+        this.onMapMoveEnd.emit(event);
+        var map = event.target;
+        console.log(map.getBounds());
+    });
 
-      this.setControl();
+    this.map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
+
+    var layer = {
+      "type":"FeatureCollection",
+      "features": new Array
+    };
+
+    for (var file of this.availableScenarioInfo)
+    {
+        //var fileOptions = JSON.parse(file.FileDetails);
+        var mapPoints = JSON.parse(file.RunFeatures); //JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
+        var time = this.getISOString(file.RunDate); //this.getISOString(fileOptions.RunResultName);
+        for (var mapPoint of mapPoints.features)
+        {
+            mapPoint.properties["time"] = time;
+            if (mapPoint.geometry.type == "MultiPolygon")
+            {
+                for (var coords of mapPoint.geometry.coordinates)
+                {
+                    var newGeometry = {...mapPoint.geometry};
+                    var splitMultiPolygon = {...mapPoint};
+                    newGeometry.type = "Polygon";
+                    newGeometry.coordinates = coords;
+                    splitMultiPolygon.geometry = newGeometry;
+                    layer.features.push(splitMultiPolygon);
+                }
+            }
+            else
+            {
+                layer.features.push(mapPoint);
+            }
+        }
+    }
+    
+    var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
+    //geoJSONLayer.addTo(this.map);
+    var geoJSONTDLayer = L.timeDimension.layer.geoJson(geoJSONLayer, {
+        duration:"PT1M"
+    });
+    geoJSONTDLayer.addTo(this.map);
+
+    var legendItems = firstRunObject.Legend;  //JSON.parse(firstRunObject.FileDetails);  
+    var legend = L.control({position:'bottomright'});
+    legend.onAdd = function(map: any): any {
+        var div = L.DomUtil.create('div', 'legend');
+        div.innerHTML = `<div class='legend-title'>
+                                <div class='legend-label'>
+                                    <i class='fas fa-arrow-up'></i>
+                                </div>
+                                <div class='legend-units'>
+                                    <span>Feet</span>
+                                </div>
+                                <div class='legend-label'>
+                                    <i class='fas fa-arrow-down'></i>
+                                </div>
+                        </div>`;
+                        
+                  
+        for (var legendItem of legendItems /*legendItems.ResultSets[0].MapData.Legend*/) {
+            div.innerHTML += `<div class='legend-item'>
+                                    <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
+                                    <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
+                                    <div class='legend-color' style='background-color:` + legendItem.DecreaseColor + `'></div>
+                                </div>`;
+        }
+        return div;
+    }
+
+    legend.addTo(this.map);
+    this.setControl();
+    $("g").css("opacity", 0.4);
   }
 
   public setStyle(feature:any): any {
@@ -141,4 +260,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
           .addTo(this.map);
       this.afterSetControl.emit(this.layerControl);
   }
+
+  public getISOString(fileDate: string): string {
+    var contents = fileDate.split(" ");
+    return new Date(contents[1] + "-" + this.months[contents[0]] + "-01").toISOString();  
+  }
+
 }

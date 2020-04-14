@@ -1,0 +1,15 @@
+<layer>
+  <name>ScenarioArsenicContaminationLocation</name>
+  <id>LayerInfoImpl-78495628:1717a311d2d:-4116</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl--7f3cf5fe:16ba026981c:-7ffc</id>
+  </defaultStyle>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-78495628:1717a311d2d:-4117</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+</layer>
