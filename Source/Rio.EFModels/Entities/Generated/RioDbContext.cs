@@ -51,9 +51,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbSet<Well> Well { get; set; }
-        public virtual DbSet<dac_layer> dac_layer { get; set; }
         public virtual DbSet<geometry_columns> geometry_columns { get; set; }
-        public virtual DbSet<kern_private_wells_clipped> kern_private_wells_clipped { get; set; }
         public virtual DbSet<spatial_ref_sys> spatial_ref_sys { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
         public virtual DbSet<vGeoServerDisadvantagedCommunity> vGeoServerDisadvantagedCommunity { get; set; }
@@ -643,12 +641,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WellTypeCodeName).IsUnicode(false);
             });
 
-            modelBuilder.Entity<dac_layer>(entity =>
-            {
-                entity.HasIndex(e => e.ogr_geometry)
-                    .HasName("ogr_dbo_dac_layer_ogr_geometry_sidx");
-            });
-
             modelBuilder.Entity<geometry_columns>(entity =>
             {
                 entity.HasKey(e => new { e.f_table_catalog, e.f_table_schema, e.f_table_name, e.f_geometry_column })
@@ -663,12 +655,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.f_geometry_column).IsUnicode(false);
 
                 entity.Property(e => e.geometry_type).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<kern_private_wells_clipped>(entity =>
-            {
-                entity.HasIndex(e => e.ogr_geometry)
-                    .HasName("ogr_dbo_kern_private_wells_clipped_ogr_geometry_sidx");
             });
 
             modelBuilder.Entity<spatial_ref_sys>(entity =>
