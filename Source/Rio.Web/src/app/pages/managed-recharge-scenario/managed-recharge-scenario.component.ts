@@ -34,13 +34,13 @@ export class ManagedRechargeScenarioComponent implements OnInit {
   private defaultParcelsWMSOptions: L.WMSOptions;
   private defaultDisadvantagedCommunitiesOptions: L.WMSOptions;
   private defaultWaterTradingScenarioWellOptions: L.WMSOptions;
-  private defaultScenarioArsenicContaminationOptions: L.WMSOptions;
+  private defaultScenarioArsenicContaminationLocationOptions: L.WMSOptions;
   private defaultScenarioRechargeBasinOptions: L.WMSOptions;
   public availableScenarioInfo = require('../../../assets/ManagedRechargeScenarioJSON/availableRunInfo_2073.json');
 
   public disadvantagedCommunityStyle = 'scenario_disadvantagedcommunity';
   public waterTradingScenarioWellStyle = 'scenario_watertradingscenariowells';
-  public arsenicContaminationStyle = 'point_circle_red';
+  public arsenicContaminationLocationStyle = 'point_circle_red';
   public rechargeBasinStyle = 'scenario_rechargebasin';
 
   public months = {
@@ -100,8 +100,8 @@ export class ManagedRechargeScenarioComponent implements OnInit {
           tiled: true
       } as L.WMSOptions);
 
-      this.defaultScenarioArsenicContaminationOptions = ({
-          layers: "Rio:ScenarioArsenicContamination",
+      this.defaultScenarioArsenicContaminationLocationOptions = ({
+          layers: "Rio:ScenarioArsenicContaminationLocation",
           transparent: true,
           format: "image/png",
           tiled: true
@@ -116,14 +116,14 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
       let disadvantagedCommunityOptions = Object.assign({styles:this.disadvantagedCommunityStyle}, this.defaultDisadvantagedCommunitiesOptions);
       let waterTradingScenarioWellOptions = Object.assign({styles:this.waterTradingScenarioWellStyle}, this.defaultWaterTradingScenarioWellOptions);
-      let scenarioArsenicContaminationOptions = Object.assign({styles:this.arsenicContaminationStyle}, this.defaultScenarioArsenicContaminationOptions);
+      let scenarioArsenicContaminationLocationOptions = Object.assign({styles:this.arsenicContaminationLocationStyle}, this.defaultScenarioArsenicContaminationLocationOptions);
       let scenarioRechargeBasin = Object.assign({styles:this.rechargeBasinStyle}, this.defaultScenarioRechargeBasinOptions);
       
       this.overlayLayers = Object.assign({
         "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
         "<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioRechargeBasin),
         "<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", waterTradingScenarioWellOptions),
-        "<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioArsenicContaminationOptions)
+        "<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioArsenicContaminationLocationOptions)
       }, this.overlayLayers);
       
 

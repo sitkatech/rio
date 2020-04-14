@@ -1,24 +1,14 @@
-﻿if exists (select * from dbo.sysobjects where id = object_id('dbo.vGeoServerScenarioArsenicContamination'))
-	drop view dbo.vGeoServerScenarioArsenicContamination
+﻿if exists (select * from dbo.sysobjects where id = object_id('dbo.vGeoServerScenarioArsenicContaminationLocation'))
+	drop view dbo.vGeoServerScenarioArsenicContaminationLocation
 go
 
-create view dbo.vGeoServerScenarioArsenicContamination
+create view dbo.vGeoServerScenarioArsenicContaminationLocation
 as
 
-select      ac.ScenarioArsenicContaminationID as PrimaryKey,
-			ac.ScenarioArsenicContaminationWellID,
-			acwt.ScenarioArsenicContaminationWellTypeName,
-			acs.ScenarioArsenicContaminationSourceName,
-			ac.ScenarioArsenicContaminationGeometry,
-			ac.ScenarioArsenicContaminationContaminationConcentration
-			
-
+select      ac.ScenarioArsenicContaminationLocationID as PrimaryKey,
+			ac.ScenarioArsenicContaminationLocationWellName,
+			ac.ScenarioArsenicContaminationLocationGeometry
                 
-FROM        dbo.ScenarioArsenicContamination ac
-JOIN		dbo.ScenarioArsenicContaminationWellType acwt on ac.ScenarioArsenicContaminationWellTypeID = ac.ScenarioArsenicContaminationWellTypeID
-JOIN		dbo.ScenarioArsenicContaminationSource acs on ac.ScenarioArsenicContaminationSourceID = acs.ScenarioArsenicContaminationSourceID
+FROM        dbo.ScenarioArsenicContaminationLocation ac
 
 GO
-/*
-select * from dbo.vGeoServerWaterTradingScenarioWell
-*/

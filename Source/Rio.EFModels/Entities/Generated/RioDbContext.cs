@@ -37,9 +37,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<RioPageImage> RioPageImage { get; set; }
         public virtual DbSet<RioPageType> RioPageType { get; set; }
         public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<ScenarioArsenicContamination> ScenarioArsenicContamination { get; set; }
-        public virtual DbSet<ScenarioArsenicContaminationSource> ScenarioArsenicContaminationSource { get; set; }
-        public virtual DbSet<ScenarioArsenicContaminationWellType> ScenarioArsenicContaminationWellType { get; set; }
+        public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocation { get; set; }
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
@@ -55,7 +53,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<spatial_ref_sys> spatial_ref_sys { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
         public virtual DbSet<vGeoServerDisadvantagedCommunity> vGeoServerDisadvantagedCommunity { get; set; }
-        public virtual DbSet<vGeoServerScenarioArsenicContamination> vGeoServerScenarioArsenicContamination { get; set; }
+        public virtual DbSet<vGeoServerScenarioArsenicContaminationLocation> vGeoServerScenarioArsenicContaminationLocation { get; set; }
         public virtual DbSet<vGeoServerScenarioRechargeBasin> vGeoServerScenarioRechargeBasin { get; set; }
         public virtual DbSet<vGeoServerWaterTradingScenarioWell> vGeoServerWaterTradingScenarioWell { get; set; }
         public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
@@ -434,35 +432,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.RoleName).IsUnicode(false);
             });
 
-            modelBuilder.Entity<ScenarioArsenicContamination>(entity =>
+            modelBuilder.Entity<ScenarioArsenicContaminationLocation>(entity =>
             {
-                entity.Property(e => e.ScenarioArsenicContaminationID).ValueGeneratedNever();
+                entity.Property(e => e.ScenarioArsenicContaminationLocationID).ValueGeneratedNever();
 
-                entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
-
-                entity.HasOne(d => d.ScenarioArsenicContaminationSource)
-                    .WithMany(p => p.ScenarioArsenicContamination)
-                    .HasForeignKey(d => d.ScenarioArsenicContaminationSourceID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.ScenarioArsenicContaminationWellType)
-                    .WithMany(p => p.ScenarioArsenicContamination)
-                    .HasForeignKey(d => d.ScenarioArsenicContaminationWellTypeID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ScenarioArsenicContaminationSource>(entity =>
-            {
-                entity.Property(e => e.ScenarioArsenicContaminationSourceID).ValueGeneratedNever();
-
-                entity.Property(e => e.ScenarioArsenicContaminationSourceName).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<ScenarioArsenicContaminationWellType>(entity =>
-            {
-                entity.Property(e => e.ScenarioArsenicContaminationWellTypeID).ValueGeneratedNever();
-
-                entity.Property(e => e.ScenarioArsenicContaminationWellTypeName).IsUnicode(false);
+                entity.Property(e => e.ScenarioArsenicContaminationLocationWellName).IsUnicode(false);
             });
 
             modelBuilder.Entity<ScenarioRechargeBasin>(entity =>
@@ -703,17 +677,13 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.GeoServerLayerColor).IsUnicode(false);
             });
 
-            modelBuilder.Entity<vGeoServerScenarioArsenicContamination>(entity =>
+            modelBuilder.Entity<vGeoServerScenarioArsenicContaminationLocation>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("vGeoServerScenarioArsenicContamination");
+                entity.ToView("vGeoServerScenarioArsenicContaminationLocation");
 
-                entity.Property(e => e.ScenarioArsenicContaminationSourceName).IsUnicode(false);
-
-                entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
-
-                entity.Property(e => e.ScenarioArsenicContaminationWellTypeName).IsUnicode(false);
+                entity.Property(e => e.ScenarioArsenicContaminationLocationWellName).IsUnicode(false);
             });
 
             modelBuilder.Entity<vGeoServerScenarioRechargeBasin>(entity =>
