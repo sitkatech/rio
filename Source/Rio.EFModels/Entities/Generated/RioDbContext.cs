@@ -434,7 +434,9 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ScenarioArsenicContaminationLocation>(entity =>
             {
-                entity.Property(e => e.ScenarioArsenicContaminationLocationID).ValueGeneratedNever();
+                entity.HasIndex(e => e.ScenarioArsenicContaminationLocationWellName)
+                    .HasName("AK_ScenarioArsenicContaminationLocation_ScenarioArsenicContaminationLocationWellName")
+                    .IsUnique();
 
                 entity.Property(e => e.ScenarioArsenicContaminationLocationWellName).IsUnicode(false);
             });
@@ -682,6 +684,8 @@ namespace Rio.EFModels.Entities
                 entity.HasNoKey();
 
                 entity.ToView("vGeoServerScenarioArsenicContaminationLocation");
+
+                entity.Property(e => e.PrimaryKey).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.ScenarioArsenicContaminationLocationWellName).IsUnicode(false);
             });
