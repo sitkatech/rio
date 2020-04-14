@@ -1,0 +1,41 @@
+::ng-deep .legend {
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+::ng-deep .legend-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    width: 100%;
+}
+
+::ng-deep .legend-label {
+    display: inline-block;
+    width: 15px;
+    text-align: center;
+}
+
+::ng-deep .legend-item {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-content: center;
+}
+
+::ng-deep .legend-color {
+    height: 20px;
+    width: 15px;
+    opacity: .35;
+}
+
+::ng-deep .legend-value {
+    flex-grow: 1;
+    text-align: center;
+    align-self: center;
+    margin-left: 5px;
+    margin-right: 5px;
+}
