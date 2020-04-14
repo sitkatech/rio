@@ -20,6 +20,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
+        public virtual DbSet<DisadvantagedCommunity> DisadvantagedCommunity { get; set; }
+        public virtual DbSet<DisadvantagedCommunityStatus> DisadvantagedCommunityStatus { get; set; }
         public virtual DbSet<FileResource> FileResource { get; set; }
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
         public virtual DbSet<Offer> Offer { get; set; }
@@ -35,16 +37,29 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<RioPageImage> RioPageImage { get; set; }
         public virtual DbSet<RioPageType> RioPageType { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<ScenarioArsenicContamination> ScenarioArsenicContamination { get; set; }
+        public virtual DbSet<ScenarioArsenicContaminationSource> ScenarioArsenicContaminationSource { get; set; }
+        public virtual DbSet<ScenarioArsenicContaminationWellType> ScenarioArsenicContaminationWellType { get; set; }
+        public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWell { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
         public virtual DbSet<WaterTransferRegistration> WaterTransferRegistration { get; set; }
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbSet<Well> Well { get; set; }
+        public virtual DbSet<dac_layer> dac_layer { get; set; }
+        public virtual DbSet<geometry_columns> geometry_columns { get; set; }
+        public virtual DbSet<kern_private_wells_clipped> kern_private_wells_clipped { get; set; }
+        public virtual DbSet<spatial_ref_sys> spatial_ref_sys { get; set; }
         public virtual DbSet<vGeoServerAllParcels> vGeoServerAllParcels { get; set; }
+        public virtual DbSet<vGeoServerDisadvantagedCommunity> vGeoServerDisadvantagedCommunity { get; set; }
+        public virtual DbSet<vGeoServerScenarioArsenicContamination> vGeoServerScenarioArsenicContamination { get; set; }
+        public virtual DbSet<vGeoServerScenarioRechargeBasin> vGeoServerScenarioRechargeBasin { get; set; }
+        public virtual DbSet<vGeoServerWaterTradingScenarioWell> vGeoServerWaterTradingScenarioWell { get; set; }
         public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
         public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
@@ -127,6 +142,35 @@ namespace Rio.EFModels.Entities
                     .HasName("PK_DatabaseMigration_DatabaseMigrationNumber");
 
                 entity.Property(e => e.DatabaseMigrationNumber).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<DisadvantagedCommunity>(entity =>
+            {
+                entity.HasIndex(e => new { e.DisadvantagedCommunityName, e.LSADCode })
+                    .HasName("AK_DisadvantagedCommunity_DisadvantagedCommunityName_LSADCode")
+                    .IsUnique();
+
+                entity.Property(e => e.DisadvantagedCommunityID).ValueGeneratedNever();
+
+                entity.Property(e => e.DisadvantagedCommunityName).IsUnicode(false);
+
+                entity.HasOne(d => d.DisadvantagedCommunityStatus)
+                    .WithMany(p => p.DisadvantagedCommunity)
+                    .HasForeignKey(d => d.DisadvantagedCommunityStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<DisadvantagedCommunityStatus>(entity =>
+            {
+                entity.HasIndex(e => e.DisadvantagedCommunityStatusName)
+                    .HasName("AK_DisadvantagedCommunityStatus_DisadvantagedCommunityStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.DisadvantagedCommunityStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.DisadvantagedCommunityStatusName).IsUnicode(false);
+
+                entity.Property(e => e.GeoServerLayerColor).IsUnicode(false);
             });
 
             modelBuilder.Entity<FileResource>(entity =>
@@ -392,6 +436,48 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.RoleName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<ScenarioArsenicContamination>(entity =>
+            {
+                entity.Property(e => e.ScenarioArsenicContaminationID).ValueGeneratedNever();
+
+                entity.Property(e => e.ScenarioArsenicContaminationUnits).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
+
+                entity.HasOne(d => d.ScenarioArsenicContaminationSource)
+                    .WithMany(p => p.ScenarioArsenicContamination)
+                    .HasForeignKey(d => d.ScenarioArsenicContaminationSourceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.ScenarioArsenicContaminationWellType)
+                    .WithMany(p => p.ScenarioArsenicContamination)
+                    .HasForeignKey(d => d.ScenarioArsenicContaminationWellTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ScenarioArsenicContaminationSource>(entity =>
+            {
+                entity.Property(e => e.ScenarioArsenicContaminationSourceID).ValueGeneratedNever();
+
+                entity.Property(e => e.ScenarioArsenicContaminationSourceName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ScenarioArsenicContaminationWellType>(entity =>
+            {
+                entity.Property(e => e.ScenarioArsenicContaminationWellTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.ScenarioArsenicContaminationWellTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ScenarioRechargeBasin>(entity =>
+            {
+                entity.Property(e => e.ScenarioRechargeBasinID).ValueGeneratedNever();
+
+                entity.Property(e => e.ScenarioRechargeBasinBasinName).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioRechargeBasinName).IsUnicode(false);
+            });
+
             modelBuilder.Entity<Trade>(entity =>
             {
                 entity.Property(e => e.TradeNumber).IsUnicode(false);
@@ -457,6 +543,13 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.RoleID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<WaterTradingScenarioWell>(entity =>
+            {
+                entity.Property(e => e.WaterTradingScenarioWellID).ValueGeneratedNever();
+
+                entity.Property(e => e.WaterTradingScenarioWellCountyName).IsUnicode(false);
             });
 
             modelBuilder.Entity<WaterTransfer>(entity =>
@@ -550,6 +643,48 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WellTypeCodeName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<dac_layer>(entity =>
+            {
+                entity.HasIndex(e => e.ogr_geometry)
+                    .HasName("ogr_dbo_dac_layer_ogr_geometry_sidx");
+            });
+
+            modelBuilder.Entity<geometry_columns>(entity =>
+            {
+                entity.HasKey(e => new { e.f_table_catalog, e.f_table_schema, e.f_table_name, e.f_geometry_column })
+                    .HasName("geometry_columns_pk");
+
+                entity.Property(e => e.f_table_catalog).IsUnicode(false);
+
+                entity.Property(e => e.f_table_schema).IsUnicode(false);
+
+                entity.Property(e => e.f_table_name).IsUnicode(false);
+
+                entity.Property(e => e.f_geometry_column).IsUnicode(false);
+
+                entity.Property(e => e.geometry_type).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<kern_private_wells_clipped>(entity =>
+            {
+                entity.HasIndex(e => e.ogr_geometry)
+                    .HasName("ogr_dbo_kern_private_wells_clipped_ogr_geometry_sidx");
+            });
+
+            modelBuilder.Entity<spatial_ref_sys>(entity =>
+            {
+                entity.HasKey(e => e.srid)
+                    .HasName("PK__spatial___36B11BD545349F5B");
+
+                entity.Property(e => e.srid).ValueGeneratedNever();
+
+                entity.Property(e => e.auth_name).IsUnicode(false);
+
+                entity.Property(e => e.proj4text).IsUnicode(false);
+
+                entity.Property(e => e.srtext).IsUnicode(false);
+            });
+
             modelBuilder.Entity<vGeoServerAllParcels>(entity =>
             {
                 entity.HasNoKey();
@@ -565,6 +700,54 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerDisadvantagedCommunity>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerDisadvantagedCommunity");
+
+                entity.Property(e => e.DisadvantagedCommunityName).IsUnicode(false);
+
+                entity.Property(e => e.DisadvantagedCommunityStatusName).IsUnicode(false);
+
+                entity.Property(e => e.GeoServerLayerColor).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerScenarioArsenicContamination>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerScenarioArsenicContamination");
+
+                entity.Property(e => e.ScenarioArsenicContaminationSourceName).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioArsenicContaminationUnits).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioArsenicContaminationWellTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerScenarioRechargeBasin>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerScenarioRechargeBasin");
+
+                entity.Property(e => e.ScenarioRechargeBasinBasinName).IsUnicode(false);
+
+                entity.Property(e => e.ScenarioRechargeBasinName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vGeoServerWaterTradingScenarioWell>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGeoServerWaterTradingScenarioWell");
+
+                entity.Property(e => e.WaterTradingScenarioWellCountyName).IsUnicode(false);
             });
 
             modelBuilder.Entity<vGeoServerWells>(entity =>
