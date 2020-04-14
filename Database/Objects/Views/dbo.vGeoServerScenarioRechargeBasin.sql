@@ -6,11 +6,9 @@ create view dbo.vGeoServerScenarioRechargeBasin
 as
 
 select      rb.ScenarioRechargeBasinID as PrimaryKey,
-			rb.ScenarioRechargeBasinGeometry,
 			rb.ScenarioRechargeBasinName,
-			rb.ScenarioRechargeBasinAcres,
-			rb.ScenarioRechargeBasinCapacity,
-			rb.ScenarioRechargeBasinBasinName
+			rb.ScenarioRechargeBasinDisplayName,
+			rb.ScenarioRechargeBasinGeometry
 
                 
 FROM        dbo.ScenarioRechargeBasin rb

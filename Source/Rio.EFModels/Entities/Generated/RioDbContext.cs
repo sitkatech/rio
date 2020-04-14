@@ -438,8 +438,6 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.ScenarioArsenicContaminationID).ValueGeneratedNever();
 
-                entity.Property(e => e.ScenarioArsenicContaminationUnits).IsUnicode(false);
-
                 entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
 
                 entity.HasOne(d => d.ScenarioArsenicContaminationSource)
@@ -469,9 +467,13 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ScenarioRechargeBasin>(entity =>
             {
+                entity.HasIndex(e => new { e.ScenarioRechargeBasinName, e.ScenarioRechargeBasinDisplayName })
+                    .HasName("AK_ScenarioRechargeBasin_ScenarioRechargeBasinName_ScenarioRechargeBasinDisplayName")
+                    .IsUnique();
+
                 entity.Property(e => e.ScenarioRechargeBasinID).ValueGeneratedNever();
 
-                entity.Property(e => e.ScenarioRechargeBasinBasinName).IsUnicode(false);
+                entity.Property(e => e.ScenarioRechargeBasinDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.ScenarioRechargeBasinName).IsUnicode(false);
             });
@@ -709,8 +711,6 @@ namespace Rio.EFModels.Entities
 
                 entity.Property(e => e.ScenarioArsenicContaminationSourceName).IsUnicode(false);
 
-                entity.Property(e => e.ScenarioArsenicContaminationUnits).IsUnicode(false);
-
                 entity.Property(e => e.ScenarioArsenicContaminationWellID).IsUnicode(false);
 
                 entity.Property(e => e.ScenarioArsenicContaminationWellTypeName).IsUnicode(false);
@@ -722,7 +722,7 @@ namespace Rio.EFModels.Entities
 
                 entity.ToView("vGeoServerScenarioRechargeBasin");
 
-                entity.Property(e => e.ScenarioRechargeBasinBasinName).IsUnicode(false);
+                entity.Property(e => e.ScenarioRechargeBasinDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.ScenarioRechargeBasinName).IsUnicode(false);
             });

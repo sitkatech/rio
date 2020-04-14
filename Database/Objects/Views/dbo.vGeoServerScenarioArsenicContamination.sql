@@ -6,15 +6,12 @@ create view dbo.vGeoServerScenarioArsenicContamination
 as
 
 select      ac.ScenarioArsenicContaminationID as PrimaryKey,
-			ac.ScenarioArsenicContaminationGeometry,
 			ac.ScenarioArsenicContaminationWellID,
-			ac.ScenarioArsenicContaminationContaminationConcentration,
-			ac.ScenarioArsenicContaminationDateAssessed,
-			ac.ScenarioArsenicContaminationUnits,
-			ac.ScenarioArsenicContaminationLatitude,
-			ac.ScenarioArsenicContaminationLongitude,
 			acwt.ScenarioArsenicContaminationWellTypeName,
-			acs.ScenarioArsenicContaminationSourceName
+			acs.ScenarioArsenicContaminationSourceName,
+			ac.ScenarioArsenicContaminationGeometry,
+			ac.ScenarioArsenicContaminationContaminationConcentration
+			
 
                 
 FROM        dbo.ScenarioArsenicContamination ac

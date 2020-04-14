@@ -4,15 +4,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ScenarioArsenicContamination](
 	[ScenarioArsenicContaminationID] [int] NOT NULL,
-	[ScenarioArsenicContaminationGeometry] [geometry] NOT NULL,
-	[ScenarioArsenicContaminationWellID] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[ScenarioArsenicContaminationContaminationConcentration] [float] NULL,
-	[ScenarioArsenicContaminationDateAssessed] [datetime] NULL,
-	[ScenarioArsenicContaminationUnits] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	[ScenarioArsenicContaminationLatitude] [float] NOT NULL,
-	[ScenarioArsenicContaminationLongitude] [float] NOT NULL,
+	[ScenarioArsenicContaminationWellID] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[ScenarioArsenicContaminationWellTypeID] [int] NOT NULL,
 	[ScenarioArsenicContaminationSourceID] [int] NOT NULL,
+	[ScenarioArsenicContaminationGeometry] [geometry] NOT NULL,
+	[ScenarioArsenicContaminationContaminationConcentration] [float] NULL,
  CONSTRAINT [PK_ScenarioArsenicContamination_ScenarioArsenicContaminationID] PRIMARY KEY CLUSTERED 
 (
 	[ScenarioArsenicContaminationID] ASC

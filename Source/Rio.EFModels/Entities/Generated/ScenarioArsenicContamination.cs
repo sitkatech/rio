@@ -11,19 +11,14 @@ namespace Rio.EFModels.Entities
         [Key]
         public int ScenarioArsenicContaminationID { get; set; }
         [Required]
-        [Column(TypeName = "geometry")]
-        public Geometry ScenarioArsenicContaminationGeometry { get; set; }
         [StringLength(50)]
         public string ScenarioArsenicContaminationWellID { get; set; }
-        public double? ScenarioArsenicContaminationContaminationConcentration { get; set; }
-        [Column(TypeName = "datetime")]
-        public DateTime? ScenarioArsenicContaminationDateAssessed { get; set; }
-        [StringLength(50)]
-        public string ScenarioArsenicContaminationUnits { get; set; }
-        public double ScenarioArsenicContaminationLatitude { get; set; }
-        public double ScenarioArsenicContaminationLongitude { get; set; }
         public int ScenarioArsenicContaminationWellTypeID { get; set; }
         public int ScenarioArsenicContaminationSourceID { get; set; }
+        [Required]
+        [Column(TypeName = "geometry")]
+        public Geometry ScenarioArsenicContaminationGeometry { get; set; }
+        public double? ScenarioArsenicContaminationContaminationConcentration { get; set; }
 
         [ForeignKey(nameof(ScenarioArsenicContaminationSourceID))]
         [InverseProperty("ScenarioArsenicContamination")]
