@@ -167,7 +167,7 @@ Respectfully, the {_rioConfiguration.PlatformLongName} team
 <br /><br />
 You have received this email because you are a registered user of the {_rioConfiguration.PlatformLongName}. 
 <br /><br />
-<a href=""mailto:{_rioConfiguration.LeadOrganizationEmail}"">{_rioConfiguration.LeadOrganizationEmail}</a>";
+Contact <a href=""mailto:{_rioConfiguration.LeadOrganizationEmail}"">{_rioConfiguration.LeadOrganizationEmail}</a> for more information";
             return defaultEmailSignature;
         }
 

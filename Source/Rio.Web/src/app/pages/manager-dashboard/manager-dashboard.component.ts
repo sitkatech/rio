@@ -64,7 +64,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializeLandownerUsageReportGrid();
 
       this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear=>{
-
         this.waterYearToDisplay = defaultYear;
         this.parcelService.getWaterYears().subscribe(waterYears =>{
           this.waterYears = waterYears;
@@ -389,6 +388,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public updateAnnualData() {
+    if (!this.waterYearToDisplay)
+    {
+      return;
+    }
+    
     this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
       this.parcels = parcels;
     })
