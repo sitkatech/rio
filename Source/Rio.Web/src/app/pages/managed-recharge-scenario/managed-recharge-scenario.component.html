@@ -47,7 +47,26 @@
             </ul>
         </div>
     </div>
-    <div class="card-body table-responsive">
-        <div id={{mapID}} class="location-card" [style.height]="mapHeight"></div>
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    Option 1: Utilize western recharge basins
+                </div>
+                <div class="card-body table-responsive">
+                    <div id={{westMapID}} class="location-card" [style.height]="mapHeight"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    Option 2: Utilize eastern recharge basins
+                </div>
+                <div class="card-body table-responsive">
+                    <div id={{eastMapID}} class="location-card" [style.height]="mapHeight"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
