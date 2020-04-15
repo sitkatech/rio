@@ -61,7 +61,7 @@ namespace Rio.API
                 options.SupportedTokens = SupportedTokens.Jwt;
             });
 
-            var connectionString = rioConfiguration.RIO_DB_CONNECTION_STRING;
+            var connectionString = rioConfiguration.DB_CONNECTION_STRING;
             services.AddDbContext<RioDbContext>(c => { c.UseSqlServer(connectionString, x => x.UseNetTopologySuite()); });
 
             services.AddSingleton(Configuration);
