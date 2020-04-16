@@ -26,12 +26,26 @@ abbr[data-original-title] {
   padding-right:0;
 }
 
+.breadcrumb-empty
+{
+  border-style: none;
+  background-color: transparent;
+  margin-bottom:0;
+  padding-left:0;
+  padding-right:0;
+  display: $breadcrumb-empty-display-type;
+}
+
+.breadcrumb-empty li {
+  color: $breadcrumb-background-color !important;
+}
+
 .breadcrumb-container {
   background-color: $breadcrumb-background-color;
   border-width: 1px 0px 1px 0px;
   border-style: $breadcrumb-border-style;
   border-color: #e9eeef;
-  min-height: 48px;
+  min-height: $breadcrumb-empty-display-height;
   margin-bottom:0.5rem;
 }
 
