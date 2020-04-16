@@ -51,10 +51,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -118.88031005859376;
-        this.boundingBox.Bottom = 35.17324704631253;
-        this.boundingBox.Right = -119.61502075195314;
-        this.boundingBox.Top = 35.50931279638352;
+        this.boundingBox.Left = -119.48936462402345;
+        this.boundingBox.Bottom = 35.231037671011904;
+        this.boundingBox.Right = -119.14741516113283;
+        this.boundingBox.Top = 35.45507693367292;
 
         const getTileLayers = () => {
             let tileLayer = {};
@@ -131,8 +131,11 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
     public ngAfterViewInit(): void {
 
-        this.initializeMap(this.westScenarioMap, this.westMapID);
-        this.initializeMap(this.eastScenarioMap, this.eastMapID);
+        [{map:this.westScenarioMap, id: this.westMapID},
+         {map:this.eastScenarioMap, id: this.eastMapID}].forEach((x) => this.initializeMap(x.map, x.id));
+
+        // this.initializeMap(this.westScenarioMap, this.westMapID);
+        // this.initializeMap(this.eastScenarioMap, this.eastMapID);
 
         var layer = {
             "type": "FeatureCollection",
@@ -218,12 +221,17 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
         map.on("moveend", (event: L.LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
+            var map = event.target;
+            console.log(map.getBounds());
         });
 
         map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
 
-        new L.Control.Layers(this.tileLayersArray[this.arrayPosition], this.overlayLayersArray[this.arrayPosition]).addTo(map);
+        new L.Control.Layers(this.tileLayersArray[this.arrayPosition], this.overlayLayersArray[this.arrayPosition], {collapsed:false}).addTo(map);
+
+        this.addCloseButton(map);
+
         this.arrayPosition = this.arrayPosition + 1;
     }
 
@@ -232,6 +240,33 @@ export class ManagedRechargeScenarioComponent implements OnInit {
             color: feature.properties.color,
             stroke: false,
             fillOpacity: 1
+        }
+    }
+
+    public addCloseButton(map: L.Map): void {
+        let mapContainer = $(map._container);
+        let closeButtonClass = "leaflet-control-layers-close";
+        let leafletControlLayersSelector = $(mapContainer.find(".leaflet-control-layers"));
+
+        let closeButton = L.DomUtil.create("a", closeButtonClass);
+        closeButton.innerHTML = "Close";       
+        leafletControlLayersSelector.append(closeButton);
+       
+        let toggleSelector = $(mapContainer.find(".leaflet-control-layers-toggle"));
+        let closeButtonSelector = $(mapContainer.find(".leaflet-control-layers-close"));
+
+        L.DomEvent.on(closeButton, "click", function(e) {
+            leafletControlLayersSelector.removeClass("leaflet-control-layers-expanded");
+            closeButtonSelector.toggle();
+        });
+
+        toggleSelector.on("click", function () {
+            closeButtonSelector.toggle()
+        });
+
+        map.closeMapLayersControl = function() {
+            leafletControlLayersSelector.removeClass("leaflet-control-layers-expanded");
+            closeButtonSelector.toggle();
         }
     }
 }

@@ -39,3 +39,9 @@
     margin-left: 5px;
     margin-right: 5px;
 }
+
+::ng-deep .leaflet-control-layers-close {
+    color: #0078A8 !important;
+    cursor: pointer;
+    float:right;
+}
