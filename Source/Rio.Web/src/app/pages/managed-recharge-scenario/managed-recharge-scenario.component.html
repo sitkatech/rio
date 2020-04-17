@@ -1,13 +1,13 @@
 <div class="breadcrumb-container">
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+            <ol class="breadcrumb breadcrumb-empty">
                 <li class="breadcrumb-item active" aria-current="page">Managed Recharge Scenario</li>
             </ol>
         </nav>
     </div>
 </div>
-<div class="container">
+<div class="container mt-sm-4" style="max-width:1400px">
     <app-alert-display></app-alert-display>
     <div class="row mb-2">
         <div class="col">
@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col">
             <p>
-                By integrating the Water Trading Platform with the <a routerLink="/about-groundwater-evaluation" routerLinkActive="true">Groundwater Evaluation Toolkit (GET)</a>, 
+                By integrating the Water Trading Platform with the <a routerLink="/about-groundwater-evaluation" routerLinkActive="true">Groundwater Evaluation Toolbox (GET)</a>, 
                 groundwater managers can better understand potential benefits and impacts of their groundwater 
                 recharge activities. For example, recent studies describe how groundwater subsidence due to 
                 over-pumping can release arsenic into productive aquifers where it can reach pumping wells. 
@@ -47,7 +47,26 @@
             </ul>
         </div>
     </div>
-    <div class="card-body table-responsive">
-        <div id={{mapID}} class="location-card" [style.height]="mapHeight"></div>
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    Option 1: Utilize western recharge basins
+                </div>
+                <div class="card-body table-responsive">
+                    <div id={{westMapID}} class="location-card" [style.height]="mapHeight"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    Option 2: Utilize eastern recharge basins
+                </div>
+                <div class="card-body table-responsive">
+                    <div id={{eastMapID}} class="location-card" [style.height]="mapHeight"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

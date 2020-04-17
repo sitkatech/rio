@@ -21,7 +21,7 @@
 				<Rule>
 					<Name>Rule 1</Name>
 					<Title>RedCircle</Title>
-					<Abstract>A red fill with an 11 pixel size</Abstract>
+					<Abstract>A red fill with a 6 pixel size</Abstract>
 
 					<!-- like a linesymbolizer but with a fill too -->
 					<PointSymbolizer>
@@ -29,14 +29,14 @@
 							<Mark>
 								<WellKnownName>circle</WellKnownName>
 								<Fill>
-									<CssParameter name="fill">#ff0000</CssParameter>
+									<CssParameter name="fill">#ff5151</CssParameter>
 								</Fill>
                                 <Stroke>
                                    <CssParameter name="stroke">#000000</CssParameter>
-                                   <CssParameter name="stroke-width">1</CssParameter>
+                                   <CssParameter name="stroke-width">0.5</CssParameter>
                                  </Stroke>
 							</Mark>
-							<Size>11</Size>
+							<Size>6</Size>
 						</Graphic>
 					</PointSymbolizer>
 				</Rule>
