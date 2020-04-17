@@ -26,14 +26,15 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
     public eastMapID = "ManagedRechargeScenarioMapEastern";
     public westMapID = "ManagedRechargeScenarioMapWestern";
-    public mapHeight = "400px";
+    public mapHeight = "450px";
     public eastScenarioMap: L.Map;
     public westScenarioMap: L.map;
     public featureLayer: any;
     public tileLayersArray: any = [];
     public overlayLayersArray: any = [];
     public arrayPosition: number = 0;
-    public availableScenarioInfo = require('../../../assets/ManagedRechargeScenarioJSON/availableRunInfo_2073.json');
+    public westernScenarioInfo = require('../../../assets/ManagedRechargeScenarioJSON/westernScenario_May2021_2093.json');
+    public easternScenarioInfo = require('../../../assets/ManagedRechargeScenarioJSON/easternScenario_May2021_2105.json');
 
     public disadvantagedCommunityStyle = 'scenario_disadvantagedcommunity';
     public waterTradingScenarioWellStyle = 'scenario_watertradingscenariowells';
@@ -51,10 +52,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -119.48936462402345;
-        this.boundingBox.Bottom = 35.231037671011904;
-        this.boundingBox.Right = -119.14741516113283;
-        this.boundingBox.Top = 35.45507693367292;
+        this.boundingBox.Left = -119.45228576660158;
+        this.boundingBox.Bottom = 35.237207054596404;
+        this.boundingBox.Right = -119.11033630371095;
+        this.boundingBox.Top = 35.46122923189147;
 
         const getTileLayers = () => {
             let tileLayer = {};
@@ -110,10 +111,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
             let overlayLayers = {};
             overlayLayers = Object.assign({
-                "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
-                "<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioRechargeBasin),
+                "<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged <br/> Communities": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", disadvantagedCommunityOptions),
                 "<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", waterTradingScenarioWellOptions),
-                "<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioArsenicContaminationLocationOptions)
+                "<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic <br/> Contamination (> 10&micro;g/L)": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioArsenicContaminationLocationOptions),
+                "<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins": L.tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", scenarioRechargeBasin)
             }, overlayLayers);
 
             this.overlayLayersArray.push(overlayLayers);
@@ -131,85 +132,27 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
     public ngAfterViewInit(): void {
 
-        [{map:this.westScenarioMap, id: this.westMapID},
-         {map:this.eastScenarioMap, id: this.eastMapID}].forEach((x) => this.initializeMap(x.map, x.id));
-
-        // this.initializeMap(this.westScenarioMap, this.westMapID);
-        // this.initializeMap(this.eastScenarioMap, this.eastMapID);
-
-        var layer = {
-            "type": "FeatureCollection",
-            "features": new Array
-        };
-
-        // for (var file of this.availableScenarioInfo)
-        // {
-        //     //var fileOptions = JSON.parse(file.FileDetails);
-        //     var mapPoints = JSON.parse(file.RunFeatures); //JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
-        //     var time = this.getISOString(file.RunDate); //this.getISOString(fileOptions.RunResultName);
-        //     for (var mapPoint of mapPoints.features)
-        //     {
-        //         mapPoint.properties["time"] = time;
-        //         if (mapPoint.geometry.type == "MultiPolygon")
-        //         {
-        //             for (var coords of mapPoint.geometry.coordinates)
-        //             {
-        //                 var newGeometry = {...mapPoint.geometry};
-        //                 var splitMultiPolygon = {...mapPoint};
-        //                 newGeometry.type = "Polygon";
-        //                 newGeometry.coordinates = coords;
-        //                 splitMultiPolygon.geometry = newGeometry;
-        //                 layer.features.push(splitMultiPolygon);
-        //             }
-        //         }
-        //         else
-        //         {
-        //             layer.features.push(mapPoint);
-        //         }
-        //     }
-        // }
-
-        //var geoJSONLayer = L.geoJSON(layer, {style:this.setStyle});
-        //geoJSONLayer.addTo(this.map);
-
-
-        // var legendItems = firstRunObject.Legend;  //JSON.parse(firstRunObject.FileDetails);  
-        // var legend = L.control({position:'bottomright'});
-        // legend.onAdd = function(map: any): any {
-        //     var div = L.DomUtil.create('div', 'legend');
-        //     div.innerHTML = `<div class='legend-title'>
-        //                             <div class='legend-label'>
-        //                                 <i class='fas fa-arrow-up'></i>
-        //                             </div>
-        //                             <div class='legend-units'>
-        //                                 <span>Feet</span>
-        //                             </div>
-        //                     </div>`;
-
-
-        //     for (var legendItem of legendItems /*legendItems.ResultSets[0].MapData.Legend*/) {
-        //         div.innerHTML += `<div class='legend-item'>
-        //                                 <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
-        //                                 <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
-        //                             </div>`;
-        //     }
-        //     return div;
-        // }
-
-        //legend.addTo(this.map);
+        [{map:this.westScenarioMap, id: this.westMapID, scenario: this.westernScenarioInfo},
+         {map:this.eastScenarioMap, id: this.eastMapID, scenario: this.easternScenarioInfo}].forEach(
+             (x) => {
+                 x.map = this.initializeMap(x.map, x.id);
+                 this.addScenarioToMap(x.map, x.scenario);
+                 this.addLegendToMap(x.map);
+             });
     }
 
-    public initializeMap(map: L.map, mapID: string): void {
+    public initializeMap(map: L.map, mapID: string): L.map {
 
         const mapOptions: L.MapOptions = {
             minZoom: 6,
             maxZoom: 17,
             layers: [
                 this.tileLayersArray[this.arrayPosition]["Terrain"],
-                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic Contamination (> 10&micro;g/L)"],
+                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/scenario_arsenic_contamination.png' style='height:16px'> Monitored Arsenic <br/> Contamination (> 10&micro;g/L)"],
+                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"],
                 this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins"],
-                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged Communities"],
-                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"]
+                this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged <br/> Communities"]
+                
             ]
         } as L.MapOptions;
 
@@ -233,13 +176,16 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         this.addCloseButton(map);
 
         this.arrayPosition = this.arrayPosition + 1;
+
+        return map;
     }
 
     public setStyle(feature: any): any {
         return {
             color: feature.properties.color,
-            stroke: false,
-            fillOpacity: 1
+            fillOpacity: 0.6,
+            stroke:false,
+            smoothFactor: 0.3
         }
     }
 
@@ -268,5 +214,41 @@ export class ManagedRechargeScenarioComponent implements OnInit {
             leafletControlLayersSelector.removeClass("leaflet-control-layers-expanded");
             closeButtonSelector.toggle();
         }
+
+        map.closeMapLayersControl();
+    }
+
+    public addScenarioToMap(map: L.map, scenario:any): void {
+        let fileOptions = JSON.parse(scenario.FileDetails);
+        let features = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
+        let geoJSONLayer = L.geoJSON(features, {style:this.setStyle});
+        geoJSONLayer.addTo(map);
+    }
+
+    public addLegendToMap(map: L.map): void {
+        var legendItems = JSON.parse(this.westernScenarioInfo.FileDetails);  
+        var legend = L.control({position:'bottomleft'});
+        legend.onAdd = function(map: any): any {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `<div class='legend-title'>
+                                    <div class='legend-label'>
+                                        <i class='fas fa-arrow-up'></i>
+                                    </div>
+                                    <div class='legend-units'>
+                                        <span>Feet</span>
+                                    </div>
+                            </div>`;
+
+
+            for (var legendItem of legendItems.ResultSets[0].MapData.Legend) {
+                div.innerHTML += `<div class='legend-item'>
+                                        <div class='legend-color' style='background-color:` + legendItem.IncreaseColor + `'></div>
+                                        <div class='legend-value'><span class='align-middle'>` + legendItem.Value.toFixed(2) + `</span></div>
+                                    </div>`;
+            }
+            return div;
+        }
+
+        legend.addTo(map);
     }
 }
