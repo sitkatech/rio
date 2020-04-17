@@ -9,25 +9,6 @@
                         <a class="nav-link top-bar-nav-link pb-lg-0" routerLink="/landowner-dashboard" routerLinkActive="active"
                             *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
                     </li>
-                    <li class="nav-item dropdown list-inline-item top-bar-item mr-0" routerLinkActive="active">
-                        <a href="#" class="nav-link top-bar-nav-link dropdown-toggle pb-lg-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Learn More
-                        </a>
-                        <div class="dropdown-menu top-bar-item" aria-labelledby="navbarDropdown">
-                            <a routerLink="/platform-overview" class="dropdown-item">
-                                Platform Overview
-                            </a>
-                            <a routerLink="/frequently-asked-questions" class="dropdown-item">
-                                Frequently Asked Questions
-                            </a>
-                            <a routerLink="/measuring-water-use-with-openet" class="dropdown-item">
-                                Measuring Water Use with OpenET
-                            </a>
-                            <a routerLink="/disclaimer/false" class="dropdown-item">
-                                Disclaimer
-                            </a>
-                        </div>
-                    </li>
                     <li class="nav-item list-inline-item top-bar-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                         <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link top-bar-nav-link pb-lg-0">Sign In</a>
                     </li>
@@ -72,20 +53,6 @@
                                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
                                     *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
                             </li>
-                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
-                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    Trade
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a routerLink="/trades" class="dropdown-item">
-                                        Buy and Sell Water
-                                    </a>
-                                    <a routerLink="/market-metrics" class="dropdown-item" *ngIf="isAdministrator()">
-                                        Market Metrics
-                                    </a>
-                                </div>
-                            </li>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
@@ -103,7 +70,37 @@
                                     </a>
                                 </div>
                             </li>
-                            <li class="nav-item dropdown d-lg-none" routerLinkActive="active">
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    Trade
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/trades" class="dropdown-item">
+                                        Buy and Sell Water
+                                    </a>
+                                    <a routerLink="/market-metrics" class="dropdown-item" *ngIf="isAdministrator()">
+                                        Market Metrics
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="hasGroundwaterModelingMenu()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Scenarios
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/about-groundwater-evaluation" class="dropdown-item">
+                                        About the Groundwater Evaluation Toolbox
+                                    </a>
+                                    <a routerLink="/water-trading-scenario" class="dropdown-item">
+                                        Water Trading Scenario
+                                    </a>
+                                    <a routerLink="/managed-recharge-scenario" class="dropdown-item">
+                                        Managed Recharge Scenario
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown" routerLinkActive="active">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Learn More
                                 </a>
@@ -119,22 +116,6 @@
                                     </a>
                                     <a routerLink="/disclaimer/false" class="dropdown-item">
                                         Disclaimer
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && hasGroundwaterModelingMenu()">
-                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Groundwater Modeling
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a routerLink="/about-groundwater-evaluation" class="dropdown-item">
-                                        About the Groundwater Evaluation Toolbox
-                                    </a>
-                                    <a routerLink="/water-trading-scenario" class="dropdown-item">
-                                        Water Trading Scenario
-                                    </a>
-                                    <a routerLink="/managed-recharge-scenario" class="dropdown-item">
-                                        Managed Recharge Scenario
                                     </a>
                                 </div>
                             </li>
