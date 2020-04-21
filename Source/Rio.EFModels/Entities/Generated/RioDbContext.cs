@@ -19,6 +19,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<AccountParcel> AccountParcel { get; set; }
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
+        public virtual DbSet<CustomRichText> CustomRichText { get; set; }
+        public virtual DbSet<CustomRichTextType> CustomRichTextType { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigration { get; set; }
         public virtual DbSet<DisadvantagedCommunity> DisadvantagedCommunity { get; set; }
         public virtual DbSet<DisadvantagedCommunityStatus> DisadvantagedCommunityStatus { get; set; }
@@ -130,6 +132,33 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.AccountUser)
                     .HasForeignKey(d => d.UserID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<CustomRichText>(entity =>
+            {
+                entity.Property(e => e.CustomRichTextContent).IsUnicode(false);
+
+                entity.HasOne(d => d.CustomRichTextType)
+                    .WithMany(p => p.CustomRichText)
+                    .HasForeignKey(d => d.CustomRichTextTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<CustomRichTextType>(entity =>
+            {
+                entity.HasIndex(e => e.CustomRichTextTypeDisplayName)
+                    .HasName("AK_CustomRichTextType_CustomRichTextTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.CustomRichTextTypeName)
+                    .HasName("AK_CustomRichTextType_CustomRichTextTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.CustomRichTextTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.CustomRichTextTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.CustomRichTextTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<DatabaseMigration>(entity =>

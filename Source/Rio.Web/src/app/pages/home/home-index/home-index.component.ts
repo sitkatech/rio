@@ -4,6 +4,7 @@ import { UserDto } from 'src/app/shared/models';
 import { error } from 'protractor';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 import { environment } from 'src/environments/environment';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
     selector: 'app-home-index',
@@ -13,6 +14,7 @@ import { environment } from 'src/environments/environment';
 export class HomeIndexComponent implements OnInit, OnDestroy {
     public watchUserChangeSubscription: any;
     public currentUser: UserDto;
+    public homepageRichTextTypeID: number = CustomRichTextType.Homepage;
 
     constructor(private authenticationService: AuthenticationService) {
     }

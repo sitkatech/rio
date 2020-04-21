@@ -1,0 +1,4 @@
+<div *ngIf="isLoading" class="text-center">
+    <span class="fa fa-spinner loading-spinner"></span>
+</div>
+<div *ngIf="!isLoading" [innerHtml]="customRichTextContent"></div>
