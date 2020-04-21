@@ -11,7 +11,8 @@ namespace Rio.EFModels.Entities
         {
             return new CustomRichTextDto
             {
-                CustomRichTextContent = customRichText.CustomRichTextContent
+                CustomRichTextContent = customRichText.CustomRichTextContent,
+                IsEmptyContent = string.IsNullOrWhiteSpace(customRichText.CustomRichTextContent)
             };
         }
     }

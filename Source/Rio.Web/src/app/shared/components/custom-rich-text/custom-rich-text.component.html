@@ -1,4 +1,19 @@
 <div *ngIf="isLoading" class="text-center">
     <span class="fa fa-spinner loading-spinner"></span>
 </div>
-<div *ngIf="!isLoading" [innerHtml]="customRichTextContent"></div>
+
+<div *ngIf="!isLoading">
+    <div *ngIf="showEditButton()" class="customRichTextContent" style="position: relative; min-height: 30px;">
+        <div class="hoverEditButton">
+            <div style="margin-top: 10px">
+                <button type="button" class=btn-rio btn-xs>
+                    Edit
+                </button>
+            </div>
+        </div>
+        <div *ngIf="!emptyContent" [innerHtml]="customRichTextContent"></div>
+
+        <div *ngIf="emptyContent" class="hoverEmptySpace"></div>
+    </div>
+    <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
+</div>
