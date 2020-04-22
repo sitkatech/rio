@@ -2,18 +2,22 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef }
 import { CustomRichTextService } from '../../services/custom-rich-text.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from '../../models';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 @Component({
   selector: 'rio-custom-rich-text',
   templateUrl: './custom-rich-text.component.html',
   styleUrls: ['./custom-rich-text.component.scss']
 })
-export class CustomRichTextComponent implements OnInit, OnChanges {
+export class CustomRichTextComponent implements OnInit {
   @Input() customRichTextTypeID: number;
   public customRichTextContent: string;
   public isLoading: boolean = true;
+  public isEditing: boolean = false;
   public isEmptyContent: boolean = false;
   public watchUserChangeSubscription: any;
+  public Editor = ClassicEditor;
+
   currentUser: UserDto;
 
   constructor(private customRichTextService: CustomRichTextService, private authenticationService: AuthenticationService,
@@ -36,6 +40,11 @@ export class CustomRichTextComponent implements OnInit, OnChanges {
     return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  public enterEdit(): void{
+    this.isEditing = true;
+  }
+
+  public cancelEdit(): void{
+    this.isEditing = false;
   }
 }

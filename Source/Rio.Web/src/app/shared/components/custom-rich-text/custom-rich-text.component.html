@@ -3,17 +3,23 @@
 </div>
 
 <div *ngIf="!isLoading">
-    <div *ngIf="showEditButton()" class="customRichTextContent" style="position: relative; min-height: 30px;">
-        <div class="hoverEditButton">
-            <div style="margin-top: 10px">
-                <button type="button" class=btn-rio btn-xs>
-                    Edit
-                </button>
+    <ng-container *ngIf="!isEditing">
+        <div *ngIf="showEditButton()" class="customRichTextContent" style="position: relative; min-height: 30px;">
+            <div class="hoverEditButton">
+                <div style="margin-top: 10px">
+                    <button type="button" class="btn-rio btn-xs" (click)="enterEdit()">
+                        Edit
+                    </button>
+                </div>
             </div>
-        </div>
-        <div *ngIf="!emptyContent" [innerHtml]="customRichTextContent"></div>
+            <div *ngIf="!emptyContent" [innerHtml]="customRichTextContent"></div>
 
-        <div *ngIf="emptyContent" class="hoverEmptySpace"></div>
-    </div>
-    <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
+            <div *ngIf="emptyContent" class="hoverEmptySpace"></div>
+        </div>
+        <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
+    </ng-container>
+    <ng-container *ngIf="isEditing">
+        <ckeditor [editor]="Editor" data="{{customRichTextContent}}"></ckeditor>
+        <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()" style="float: right;">Cancel</button>
+    </ng-container>
 </div>

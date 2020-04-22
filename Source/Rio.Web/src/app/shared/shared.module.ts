@@ -19,6 +19,7 @@ import { WaterYearSelectComponent } from './components/water-year-select/water-y
 import { AccountSelectComponent } from './components/account-select/account-select.component';
 import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
     declarations: [
@@ -44,6 +45,7 @@ import { CustomRichTextComponent } from './components/custom-rich-text/custom-ri
         NgProgressModule,
         RouterModule,
         SelectDropDownModule,
+        CKEditorModule
     ],
     exports: [
         CommonModule,
