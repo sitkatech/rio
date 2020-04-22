@@ -3,6 +3,10 @@ import { CustomRichTextService } from '../../services/custom-rich-text.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from '../../models';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { CustomRichTextDto } from '../../models/custom-rich-text-dto';
+import { AlertService } from '../../services/alert.service';
+import { Alert } from '../../models/alert';
+import { AlertContext } from '../../models/enums/alert-context.enum';
 
 @Component({
   selector: 'rio-custom-rich-text',
@@ -17,11 +21,14 @@ export class CustomRichTextComponent implements OnInit {
   public isEmptyContent: boolean = false;
   public watchUserChangeSubscription: any;
   public Editor = ClassicEditor;
+  public editedContent: string;
 
   currentUser: UserDto;
 
-  constructor(private customRichTextService: CustomRichTextService, private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef ) { }
+  constructor(private customRichTextService: CustomRichTextService,
+    private authenticationService: AuthenticationService,
+    private cdr: ChangeDetectorRef,
+    private alertService: AlertService ) { }
   
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
@@ -41,10 +48,25 @@ export class CustomRichTextComponent implements OnInit {
   }
 
   public enterEdit(): void{
+    this.editedContent = this.customRichTextContent;
     this.isEditing = true;
   }
 
   public cancelEdit(): void{
     this.isEditing = false;
+  }
+
+  public saveEdit(): void{
+    this.isEditing = false;
+    this.isLoading = true;
+    const updateDto = new CustomRichTextDto({CustomRichTextContent: this.editedContent});
+    console.log(updateDto);
+    this.customRichTextService.updateCustomRichText(this.customRichTextTypeID, updateDto).subscribe(x=>{
+      this.customRichTextContent = x.CustomRichTextContent;
+      this.isLoading = false;
+    }, error =>{
+      this.isLoading = false;
+      this.alertService.pushAlert(new Alert("There was an error updating the rich text content", AlertContext.Danger, true));
+    });
   }
 }

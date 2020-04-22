@@ -18,8 +18,9 @@
         </div>
         <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
     </ng-container>
-    <ng-container *ngIf="isEditing">
-        <ckeditor [editor]="Editor" data="{{customRichTextContent}}"></ckeditor>
-        <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()" style="float: right;">Cancel</button>
+    <ng-container *ngIf="isEditing" style="float:right;">
+        <ckeditor [editor]="Editor" [(ngModel)]="editedContent"></ckeditor>
+        <button type="button" class="btn-rio btn-xs mt-1" (click)="saveEdit()">Save</button>
+        <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
     </ng-container>
 </div>
