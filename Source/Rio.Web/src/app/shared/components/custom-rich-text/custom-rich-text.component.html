@@ -18,9 +18,19 @@
         </div>
         <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
     </ng-container>
-    <ng-container *ngIf="isEditing" style="float:right;">
+    <div *ngIf="isEditing" [ngClass]="{'ckEditorDisabled':isUploadingImage()}">
+        <div *ngIf="isUploadingImage()">
+            <em>Please wait while the image is uploaded...</em>
+            <span class="mt-1 fa fa-spinner loading-spinner" style="float:right;"></span>
+        </div>
         <ckeditor [editor]="Editor" [(ngModel)]="editedContent" (ready)="ckEditorReady($event)"></ckeditor>
-        <button type="button" class="btn-rio btn-xs mt-1" (click)="saveEdit()">Save</button>
-        <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
-    </ng-container>
+        <div style="float:right;" *ngIf="!isUploadingImage()">
+            <button type="button" class="btn-rio btn-xs mt-1" (click)="saveEdit()">Save</button>
+            <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
+        </div>
+        <div *ngIf="isUploadingImage()">
+            <em>Please wait while the image is uploaded...</em>
+            <span class="mt-1 fa fa-spinner loading-spinner" style="float:right;"></span>
+        </div>
+    </div>
 </div>
