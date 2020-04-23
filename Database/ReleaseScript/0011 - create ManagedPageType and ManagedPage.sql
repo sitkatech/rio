@@ -40,8 +40,21 @@ GO
 
 Insert into dbo.CustomRichTextType (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 values
-(1, 'Homepage', 'Homepage')
+
+(1, 'HomePage', 'Home Page'),
+(2, 'Contact', 'Contact'),
+(3, 'FrequentlyAskedQuestions', 'Frequently Asked Questons'),
+(4, 'AboutGET', 'About GET'),
+(5, 'Disclaimer', 'Disclaimer'),
+(6, 'PlatformOverview', 'Platform Overview'),
+(7, 'MeasuringWaterUse', 'Measureing Water Use With OpenET')
 
 Insert into dbo.CustomRichText(CustomRichTextTypeID, CustomRichTextContent)
 values
-(1, 'This is the custom rich text content for the homepage.')
+(1, 'Hompeage content'),
+(2, 'Contact info'),
+(3, 'FAQ'),
+(4, 'About GET'),
+(5, 'Disclaimer'),
+(6, 'Platform Overview'),
+(7, 'Measuring Water Use')

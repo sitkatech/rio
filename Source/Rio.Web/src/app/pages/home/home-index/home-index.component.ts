@@ -14,7 +14,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 export class HomeIndexComponent implements OnInit, OnDestroy {
     public watchUserChangeSubscription: any;
     public currentUser: UserDto;
-    public homepageRichTextTypeID: number = CustomRichTextType.Homepage;
+    public homepageRichTextTypeID: number = CustomRichTextType.HomePage;
 
     constructor(private authenticationService: AuthenticationService) {
     }

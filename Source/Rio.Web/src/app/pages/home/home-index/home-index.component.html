@@ -85,6 +85,9 @@
         </div>
         <div class="col-md-8 order-md-1 order-12 col-sm-12">
             <div class="mt-2">
+                <rio-custom-rich-text [customRichTextTypeID]="homepageRichTextTypeID"></rio-custom-rich-text>
+            </div>
+            <div class="mt-2">
                 <p class="lead">
                     Welcome to the <a href="{{leadOrganizationHomeUrl()}}" target="_blank">{{leadOrganizationLongName()}}</a> {{platformShortName()}}. The {{applicationType()}} is designed to meet these objectives:
                 </p>
@@ -95,9 +98,6 @@
                         understanding of water demands on their specific parcels.</li>
                     <li>Over the long term, develop the accounting platform into a trading platform, encouraging in-district water transfers.</li>
                 </ul>
-            </div>
-            <div class="mt-2">
-                <rio-custom-rich-text [customRichTextTypeID]="homepageRichTextTypeID"></rio-custom-rich-text>
             </div>
         </div>
     </div>
