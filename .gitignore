@@ -51,3 +51,4 @@ Source/Rio.GeoServer/data_dir/gwc-layers/*
 Source/Rio.GeoServer/docker_compose.localhost.yml
 /Source/Rio.Web/src/assets/config.edf.json.template
 /Source/Rio.Web/src/assets/config.rio.json.template
+Source/Rio.Web/src/assets/test.png
