@@ -35,9 +35,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
-        public virtual DbSet<RioPage> RioPage { get; set; }
-        public virtual DbSet<RioPageImage> RioPageImage { get; set; }
-        public virtual DbSet<RioPageType> RioPageType { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocation { get; set; }
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
@@ -397,49 +394,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.PostingTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.PostingTypeName).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<RioPage>(entity =>
-            {
-                entity.HasIndex(e => e.RioPageTypeID)
-                    .HasName("AK_RioPage_RioPageTypeID")
-                    .IsUnique();
-
-                entity.Property(e => e.RioPageContent).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<RioPageImage>(entity =>
-            {
-                entity.HasIndex(e => new { e.RioPageImageID, e.FileResourceID })
-                    .HasName("AK_RioPageImage_RioPageImageID_FileResourceID")
-                    .IsUnique();
-
-                entity.HasOne(d => d.FileResource)
-                    .WithMany(p => p.RioPageImage)
-                    .HasForeignKey(d => d.FileResourceID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.RioPage)
-                    .WithMany(p => p.RioPageImage)
-                    .HasForeignKey(d => d.RioPageID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<RioPageType>(entity =>
-            {
-                entity.HasIndex(e => e.RioPageTypeDisplayName)
-                    .HasName("AK_RioPageType_RioPageTypeDisplayName")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.RioPageTypeName)
-                    .HasName("AK_RioPageType_RioPageTypeName")
-                    .IsUnique();
-
-                entity.Property(e => e.RioPageTypeID).ValueGeneratedNever();
-
-                entity.Property(e => e.RioPageTypeDisplayName).IsUnicode(false);
-
-                entity.Property(e => e.RioPageTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<Role>(entity =>
