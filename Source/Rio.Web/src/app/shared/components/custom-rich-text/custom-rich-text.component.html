@@ -1,0 +1,36 @@
+<div *ngIf="isLoading" class="text-center">
+    <span class="fa fa-spinner loading-spinner"></span>
+</div>
+
+<div *ngIf="!isLoading">
+    <ng-container *ngIf="!isEditing">
+        <div *ngIf="showEditButton()" class="customRichTextContent" style="position: relative; min-height: 30px;">
+            <div class="hoverEditButton">
+                <div style="margin-top: 10px">
+                    <button type="button" class="btn-rio btn-xs" (click)="enterEdit()">
+                        Edit
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="!emptyContent" [innerHtml]="customRichTextContent"></div>
+
+            <div *ngIf="emptyContent" class="hoverEmptySpace"></div>
+        </div>
+        <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
+    </ng-container>
+    <div *ngIf="isEditing" [ngClass]="{'ckEditorDisabled':isUploadingImage()}">
+        <div *ngIf="isUploadingImage()">
+            <em>Please wait while the image is uploaded...</em>
+            <span class="mt-1 fa fa-spinner loading-spinner" style="float:right;"></span>
+        </div>
+        <ckeditor [editor]="Editor" [(ngModel)]="editedContent" (ready)="ckEditorReady($event)" [config]="ckConfig"></ckeditor>
+        <div style="float:right;" *ngIf="!isUploadingImage()">
+            <button type="button" class="btn-rio btn-xs mt-1" (click)="saveEdit()">Save</button>
+            <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
+        </div>
+        <div *ngIf="isUploadingImage()">
+            <em>Please wait while the image is uploaded...</em>
+            <span class="mt-1 fa fa-spinner loading-spinner" style="float:right;"></span>
+        </div>
+    </div>
+</div>

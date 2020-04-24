@@ -7,11 +7,6 @@ namespace Rio.EFModels.Entities
 {
     public partial class FileResource
     {
-        public FileResource()
-        {
-            RioPageImage = new HashSet<RioPageImage>();
-        }
-
         [Key]
         public int FileResourceID { get; set; }
         public int FileResourceMimeTypeID { get; set; }
@@ -34,7 +29,5 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(FileResourceMimeTypeID))]
         [InverseProperty("FileResource")]
         public virtual FileResourceMimeType FileResourceMimeType { get; set; }
-        [InverseProperty("FileResource")]
-        public virtual ICollection<RioPageImage> RioPageImage { get; set; }
     }
 }

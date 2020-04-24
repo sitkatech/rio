@@ -330,7 +330,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
     this.landownerUsageReportGridColumnDefs = [
       {
-        headerName: 'Landowner', valueGetter: function (params: any) {
+        headerName: 'Account Name', valueGetter: function (params: any) {
           return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
@@ -350,6 +350,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 155
       },
+      { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
       { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       { headerName: 'Native Yield', field: 'NativeYield', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       { headerName: 'Project Water', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },

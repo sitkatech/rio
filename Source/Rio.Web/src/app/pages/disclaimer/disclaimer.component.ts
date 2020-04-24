@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
 import { AuthenticationService } from 'src/app/services/authentication.service'
 import { UserDto } from 'src/app/shared/models';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
   selector: 'rio-disclaimer',
@@ -14,6 +15,7 @@ export class DisclaimerComponent implements OnInit {
   private watchUserChangeSubscription : any;
   private currentUser : UserDto;
   private forced : boolean = true;
+  public richTextTypeID: number = CustomRichTextType.Disclaimer;
 
   constructor(
     private userService: UserService,

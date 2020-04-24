@@ -1,0 +1,43 @@
+
+.hoverEditButton {
+    position: absolute;
+    right: 5px;
+    top: -10px;
+  }
+  .hoverEditButton a.btn-rio {
+    background-color: gray;
+    color: white;
+  }
+  .hoverEmptySpace {
+    width: 100%;
+    height: 30px;
+  }
+  .customRichTextContent {
+    background-color: inherit;
+    -ms-transition: all 100ms ease-out;
+    -o-transition: all 100ms ease-out;
+    -webkit-transition: all 100ms ease-out;
+    transition: all 100ms ease-out;
+  }
+  .customRichTextContent:hover {
+    background-color: #d3d3d3;
+    background-color: rgba(211, 211, 211, 0.2);
+  }
+  .customRichTextContent .hoverEditButton {
+    visibility: hidden;
+    -ms-opacity: 0;
+    opacity: 0;
+    -ms-transition: all 100ms ease-out;
+    -o-transition: all 100ms ease-out;
+    -webkit-transition: all 100ms ease-out;
+    transition: all 100ms ease-out;
+  }
+  .customRichTextContent:hover .hoverEditButton {
+    visibility: visible;
+    -ms-opacity: 1;
+    opacity: 1;
+  }
+
+  .ckEditorDisabled{
+    cursor: not-allowed
+  }

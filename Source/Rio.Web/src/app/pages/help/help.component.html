@@ -7,21 +7,11 @@
         </nav>
     </div>
 </div>
-<!--RRB/EDF's names should or should not be configurated on this page?-->
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
     <h2 class="d-inline-block">Contact Us</h2>
-    <p>
-        For more information please contact the {{getLeadOrganizationLongName()}}:
-    </p>
-    <dl>
-        <dt>Phone:</dt>
-        <dd>{{getContactInfoPhone()}}</dd>
-        <dt>Email:</dt>
-        <dd><a href="mailto:{{getContactInfoEmail()}}">{{getContactInfoEmail()}}</a></dd>
-        <dt *ngIf='getContactInfoPhysicalAddress() != ""'>Physical Address:</dt>
-        <dd *ngIf='getContactInfoPhysicalAddress() != ""'>{{getContactInfoPhysicalAddress()}}</dd>
-        <dt *ngIf='getContactInfoMailingAddress() != ""'>Mailing Address:</dt>
-        <dd *ngIf='getContactInfoMailingAddress() != ""'>{{getContactInfoMailingAddress()}}</dd>
-    </dl>
+    
+    <div class="mt-2">
+        <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+    </div>
 </div>
