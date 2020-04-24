@@ -27,6 +27,8 @@ export class CustomRichTextComponent implements OnInit {
 
   currentUser: UserDto;
 
+  public ckConfig = {"removePlugins": ["MediaEmbed"]}
+
   constructor(private customRichTextService: CustomRichTextService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
@@ -50,6 +52,8 @@ export class CustomRichTextComponent implements OnInit {
   public ckEditorReady(editor) {
     const customRichTextService = this.customRichTextService
     this.editor = editor;
+
+    console.log(this.Editor.builtinPlugins.map( plugin => plugin.pluginName ));
 
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
       // disable the editor until the image comes back
