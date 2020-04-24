@@ -6,7 +6,7 @@ USING (VALUES
 (4, 'AboutGET', 'About GET'),
 (5, 'Disclaimer', 'Disclaimer'),
 (6, 'PlatformOverview', 'Platform Overview'),
-(7, 'MeasuringWaterUse', 'Measureing Water Use With OpenET')
+(7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID
