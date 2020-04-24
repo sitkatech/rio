@@ -13,17 +13,111 @@
     </div>
 </div>
 <div class="container mt-sm-4">
-    <h2>
-        Set Allocation for All Parcels
-    </h2>
-    <p class="lead">
-        Use this page to assign a water allocation to all parcels in the platform. Enter the year, the allocation type,
-        and the unit quantity to allocate. Any existing allocations will be overwritten by the new data. You can also
-        manually allocate water one parcel at a time via the Parcel detail pages
-    </p>
-</div>
-<div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
+    <div class="row">
+        <div class="col-9">
+            <h2>
+                Set Allocation for All Parcels
+            </h2>
+        </div>
+        <div class="col-3 text-right">
+            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"></rio-water-year-select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="lead">
+                Use this page to assign a water allocation to all parcels in the platform. Enter the year, the allocation type,
+                and the unit quantity to allocate. Any existing allocations will be overwritten by the new data. You can also
+                manually allocate water one parcel at a time via the Parcel detail pages
+            </p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-7">
+            <div class="card">
+                <div class="card-header">
+                    {{selectedYear}} Allocation for all Parcels
+                </div>
+                <div class="card-body">
+                    <div class="row mb-1">
+                        <div class="col my-auto">
+                            <form class="form-inline">
+                                <div class="form-group row w-100">
+                                    <label for="projectWater" class="col-form-label col-3 d-inline-block">
+                                        <strong>Project Water</strong> 
+                                        <br class="br-special"/>
+                                        <span style="font-size:10px">Last set 2/20/2020</span>
+                                    </label>
+                                    <div class="col">
+                                        <input type="number" id="projectWater" class="form-control" placeholder="3.0" style="max-width:75px">
+                                        ac-ft per parcel acre
+                                    </div>
+                                    <button type="button" class="btn btn-rio">Save to all Parcels</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col my-auto">
+                            <form class="form-inline">
+                                <div class="form-group row w-100">
+                                    <label for="nativeYield" class="col-form-label col-3 d-inline-block">
+                                        <strong>Native Yield</strong>
+                                        <br class="br-special"/>
+                                        <span style="font-size:10px">Last set 2/20/2020</span>
+                                    </label>
+                                    <div class="col">
+                                        <input type="number" id="nativeYield" class="form-control" placeholder="0.15" style="max-width:75px">
+                                        ac-ft per parcel acre
+                                    </div>
+                                    <button type="button" class="btn btn-rio">Save to all Parcels</button>
+                                </div>
+                            </form>
+                            </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col my-auto">
+                            <strong>Reconciliation Water</strong>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-rio">Download Reconciliation Worksheet</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <span style="font-size:10px">Last uploaded 2/20/2020</span>
+                        </div>
+                        <div class="col-5 pl-0 pr-0">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload>
+                                    <label class="custom-file-label" for="reconciliationWaterFileUpload"></label>
+                                </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-rio" type="button" (click)="reconciliationWaterFileUpload.click()"><i class="fas fa-folder-open"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button type="button" class="btn btn-rio">Upload & Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Allocation History (All Years)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="container mt-sm-4">
     <form (ngSubmit)="onSubmit(bulkSetAllocationForm)" #bulkSetAllocationForm="ngForm">
         <div class="form-group mt-4">
             <div class="row">
@@ -76,4 +170,4 @@
             </div>
         </div>
     </form>
-</div>
+</div> -->

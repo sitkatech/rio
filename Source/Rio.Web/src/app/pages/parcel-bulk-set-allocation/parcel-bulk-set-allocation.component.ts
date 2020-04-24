@@ -20,7 +20,8 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
 
   public model: ParcelAllocationUpsertDto;
   public isLoadingSubmit: boolean = false;
-  public waterYears: number[];
+  public waterYearToDisplay: number;
+  public waterYears: Array<number>;
   public parcelAllocationTypes = [{ParcelAllocationTypeID: 1, Name: "Project Water"}, {ParcelAllocationTypeID: 2, Name: "Reconciliation"}, {ParcelAllocationTypeID: 3, Name: "Native Yield"}];
 
   constructor(private cdr: ChangeDetectorRef,
@@ -31,11 +32,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.model = new ParcelAllocationUpsertDto();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      forkJoin(
-        this.parcelService.getWaterYears()
-      ).subscribe(([waterYears]) => {
-        this.waterYears = waterYears;
-      });
+      
+      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear=>{
+        this.waterYearToDisplay = defaultYear;
+        this.parcelService.getWaterYears().subscribe(waterYears =>{
+          this.waterYears = waterYears;
+        }) 
+      })     
+
     });
   }
 

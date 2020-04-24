@@ -1,0 +1,9 @@
+.custom-file-label::after {
+    display: none;
+}
+
+.br-special {
+    content: " ";
+    display:block;
+    margin-top: -7px;
+}
