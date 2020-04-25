@@ -27,17 +27,22 @@
     <div class="row">
         <div class="col">
             <p class="lead">
-                Use this page to assign a water allocation to all parcels in the platform. Enter the year, the allocation type,
-                and the unit quantity to allocate. Any existing allocations will be overwritten by the new data. You can also
-                manually allocate water one parcel at a time via the Parcel detail pages
+                Use this page to assign a water allocation to all parcels in the platform. Enter the year, the
+                allocation type,and the unit quantity to allocate. Any existing allocations will be overwritten by the
+                new data. You can also manually allocate water one parcel at a time via the Parcel detail pages. For
+                Reconciliation Water please download the Account Usage Report from the <a
+                    routerLink="/manager-dashboard" routerLinkActive="true">Manager Dashboard</a> to perform the
+                off system reconciliation process. Upload a spreadsheet with columns for Account and Reconciliation
+                Volume to assign values in the Accounting Platform. The Reconciliation Volume will be applied
+                proportionally across parcels associated with an account based on acreage.
             </p>
         </div>
     </div>
     <div class="row mt-4">
-        <div class="col-7">
+        <div class="col-lg-9 col-xl-7">
             <div class="card">
                 <div class="card-header">
-                    {{selectedYear}} Allocation for all Parcels
+                    {{waterYearToDisplay}} Allocation for all Parcels
                 </div>
                 <div class="card-body">
                     <div class="row mb-1">
@@ -45,17 +50,26 @@
                             <form class="form-inline">
                                 <div class="form-group row w-100">
                                     <label for="projectWater" class="col-form-label col-3 d-inline-block">
-                                        <strong>Project Water</strong> 
-                                        <br class="br-special"/>
-                                        <span style="font-size:10px">Last set 2/20/2020</span>
+                                        <strong>Project Water</strong>
+                                        <br class="br-special" />
+                                        <span
+                                            style="font-size:10px">{{lastProjectWaterSetDate ? "Last set " + lastProjectWaterSetDate : "No record of last set date"}}</span>
                                     </label>
                                     <div class="col">
-                                        <input type="number" id="projectWater" class="form-control" placeholder="3.0" style="max-width:75px">
+                                        <input type="number" #projectWaterAllocation id="projectWater"
+                                            class="form-control" placeholder="3.0" style="max-width:75px" required>
                                         ac-ft per parcel acre
                                     </div>
-                                    <button type="button" class="btn btn-rio">Save to all Parcels</button>
+                                    <button type="button" class="btn btn-rio"
+                                        (click)="submitBulkAllocation(1,projectWaterAllocation.value)"
+                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                    <div *ngIf="displayProjectWaterError" class="row mb-1">
+                        <div class="col danger">
+                            Please enter a value before submitting
                         </div>
                     </div>
                     <div class="row mb-1">
@@ -64,43 +78,62 @@
                                 <div class="form-group row w-100">
                                     <label for="nativeYield" class="col-form-label col-3 d-inline-block">
                                         <strong>Native Yield</strong>
-                                        <br class="br-special"/>
-                                        <span style="font-size:10px">Last set 2/20/2020</span>
+                                        <br class="br-special" />
+                                        <span
+                                            style="font-size:10px">{{lastNativeYieldSetDate ? "Last set " + lastNativeYieldSetDate : "No record of last set date"}}</span>
                                     </label>
                                     <div class="col">
-                                        <input type="number" id="nativeYield" class="form-control" placeholder="0.15" style="max-width:75px">
+                                        <input type="number" #nativeYieldAllocation id="nativeYield"
+                                            class="form-control" placeholder="0.15" style="max-width:75px" required>
                                         ac-ft per parcel acre
                                     </div>
-                                    <button type="button" class="btn btn-rio">Save to all Parcels</button>
+                                    <button type="button" class="btn btn-rio"
+                                        (click)="submitBulkAllocation(3,nativeYieldAllocation.value)"
+                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                 </div>
                             </form>
-                            </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col my-auto">
-                            <strong>Reconciliation Water</strong>
                         </div>
-                        <div class="col">
-                            <button class="btn btn-rio">Download Reconciliation Worksheet</button>
+                    </div>
+                    <div *ngIf="displayNativeYieldError" class="row mb-1">
+                        <div class="col danger">
+                            Please enter a value before submitting
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-3">
-                            <span style="font-size:10px">Last uploaded 2/20/2020</span>
-                        </div>
-                        <div class="col-5 pl-0 pr-0">
-                            <div class="input-group">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload>
-                                    <label class="custom-file-label" for="reconciliationWaterFileUpload"></label>
+                        <div class="col">
+                            <form class="form-inline">
+                                <div class="form-group row w-100">
+                                    <label for="reconciliationWaterFileUpload"
+                                        class="col-form-label col-4 d-inline-block">
+                                        <strong>Reconciliation Water</strong>
+                                        <br class="br-special" />
+                                        <span
+                                            style="font-size:10px">{{lastReconciliationFileUploadDate ? "Last uploaded " + lastReconciliationFileUploadDate : "No record of last set date"}}</span>
+                                    </label>
+                                    <div class="input-group col p-0">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input"
+                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload>
+                                            <label class="custom-file-label"
+                                                for="reconciliationWaterFileUpload"></label>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-rio" type="button"
+                                                (click)="reconciliationWaterFileUpload.click()"><i
+                                                    class="fas fa-folder-open"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-3 text-right p-0">
+                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit">Upload &
+                                            Save</button>
+                                    </div>
                                 </div>
-                                <div class="input-group-append">
-                                    <button class="btn btn-rio" type="button" (click)="reconciliationWaterFileUpload.click()"><i class="fas fa-folder-open"></i></button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
-                        <div class="col-4 text-right">
-                            <button type="button" class="btn btn-rio">Upload & Save</button>
+                    </div>
+                    <div *ngIf="displayWaterReconciliationError" class="row mb-1">
+                        <div class="col danger">
+                            Please choose a file before submitting
                         </div>
                     </div>
                 </div>
@@ -113,61 +146,14 @@
                 <div class="card-header">
                     Allocation History (All Years)
                 </div>
+                <div class="card-body">
+                    <ag-grid-angular #parcelAllocationHistoryGrid style="width: 100%; height: 300px;"
+                        class="ag-theme-balham" [rowData]="parcelAllocationHistoryEntries"
+                        [columnDefs]="parcelAllocationHistoryGridColumnDefs" [pagination]="true"
+                        [paginationPageSize]="100">
+                    </ag-grid-angular>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- <div class="container mt-sm-4">
-    <form (ngSubmit)="onSubmit(bulkSetAllocationForm)" #bulkSetAllocationForm="ngForm">
-        <div class="form-group mt-4">
-            <div class="row">
-                <div class="col-sm-4 control-label">
-                    <label class="required">Year</label>
-                </div>
-                <div class="col-sm-3">
-                    <select name="WaterYear" class="form-control" [(ngModel)]="model.WaterYear" required>
-                        <option value=""></option>
-                        <option *ngFor="let waterYear of waterYears" value="{{waterYear}}">{{waterYear}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-4 control-label">
-                    <label class="required">Allocation Type</label>
-                </div>
-                <div class="col-sm-3">
-                    <select name="ParcelAllocationTypeID" class="form-control"
-                        [(ngModel)]="model.ParcelAllocationTypeID" required>
-                        <option value=""></option>
-                        <option *ngFor="let parcelAllocationType of parcelAllocationTypes" value="{{parcelAllocationType.ParcelAllocationTypeID}}">{{parcelAllocationType.Name}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-4 control-label">
-                    <label class="required">Allocation (acre-feet per parcel acre)</label>
-                </div>
-                <div class="col-sm-3">
-                    <input type="number" class="form-control" name="AcreFeetAllocated" step="1" required
-                        [(ngModel)]="model.AcreFeetAllocated" />
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <i class="fas fa-bolt"></i> Required field
-            </div>
-            <div class="col-sm-3 text-right">
-                <button type="submit" class="btn btn-rio" [disabled]="!bulkSetAllocationForm.form.valid || isLoadingSubmit">
-                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                    Submit
-                </button>
-                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
-            </div>
-        </div>
-    </form>
-</div> -->

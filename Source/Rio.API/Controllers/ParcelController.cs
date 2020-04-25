@@ -107,9 +107,9 @@ namespace Rio.API.Controllers
             return Ok(updatedParcelAllocationDtos);
         }
 
-        [HttpPost("parcels/bulkSetAnnualParcelAllocation")]
+        [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]
         [ParcelManageFeature]
-        public ActionResult BulkSetAnnualParcelAllocation([FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        public ActionResult BulkSetAnnualParcelAllocation([FromRoute] int userID, [FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
         {
             if (!ModelState.IsValid)
             {
@@ -117,9 +117,17 @@ namespace Rio.API.Controllers
             }
 
             var numberOfParcels = ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
+            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext, userID, parcelAllocationUpsertDto, null);
+
             return Ok(numberOfParcels);
         }
 
+        [HttpGet("parcels/getParcelAllocationHistory")]
+        [ParcelManageFeature]
+        public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
+        {
+            return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.Date));
+        }
 
         [HttpPost("parcels/getBoundingBox")]
         [ParcelViewFeature]

@@ -9,6 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public FileResource()
         {
+            ParcelAllocationHistory = new HashSet<ParcelAllocationHistory>();
             RioPageImage = new HashSet<RioPageImage>();
         }
 
@@ -34,6 +35,8 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(FileResourceMimeTypeID))]
         [InverseProperty("FileResource")]
         public virtual FileResourceMimeType FileResourceMimeType { get; set; }
+        [InverseProperty("FileResource")]
+        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
         [InverseProperty("FileResource")]
         public virtual ICollection<RioPageImage> RioPageImage { get; set; }
     }

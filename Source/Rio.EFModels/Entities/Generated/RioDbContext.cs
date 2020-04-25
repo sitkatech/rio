@@ -28,6 +28,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
+        public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
         public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
@@ -283,6 +284,19 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.Parcel)
                     .WithMany(p => p.ParcelAllocation)
                     .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelAllocationHistory>(entity =>
+            {
+                entity.HasOne(d => d.ParcelAllocationType)
+                    .WithMany(p => p.ParcelAllocationHistory)
+                    .HasForeignKey(d => d.ParcelAllocationTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ParcelAllocationHistory)
+                    .HasForeignKey(d => d.UserID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 

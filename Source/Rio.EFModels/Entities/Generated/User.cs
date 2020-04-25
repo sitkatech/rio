@@ -11,6 +11,7 @@ namespace Rio.EFModels.Entities
         {
             AccountUser = new HashSet<AccountUser>();
             FileResource = new HashSet<FileResource>();
+            ParcelAllocationHistory = new HashSet<ParcelAllocationHistory>();
         }
 
         [Key]
@@ -50,5 +51,7 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<AccountUser> AccountUser { get; set; }
         [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResource { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
     }
 }
