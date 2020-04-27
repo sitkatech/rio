@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
   selector: 'rio-about-groundwater-evaluation',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./about-groundwater-evaluation.component.scss']
 })
 export class AboutGroundwaterEvaluationComponent implements OnInit {
-
+  public richTextTypeID: number = CustomRichTextType.AboutGET;
   constructor() { }
 
   ngOnInit() {

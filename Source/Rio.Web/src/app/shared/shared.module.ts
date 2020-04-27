@@ -18,6 +18,8 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { WaterYearSelectComponent } from './components/water-year-select/water-year-select/water-year-select.component';
 import { AccountSelectComponent } from './components/account-select/account-select.component';
 import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
+import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
     declarations: [
@@ -33,7 +35,8 @@ import { ScenarioMapComponent } from './components/scenario-map/scenario-map.com
         MultiLinkRendererComponent,
         WaterYearSelectComponent,
         AccountSelectComponent,
-        ScenarioMapComponent
+        ScenarioMapComponent,
+        CustomRichTextComponent
     ],
     imports: [
         CommonModule,
@@ -42,6 +45,7 @@ import { ScenarioMapComponent } from './components/scenario-map/scenario-map.com
         NgProgressModule,
         RouterModule,
         SelectDropDownModule,
+        CKEditorModule
     ],
     exports: [
         CommonModule,
@@ -52,7 +56,8 @@ import { ScenarioMapComponent } from './components/scenario-map/scenario-map.com
         HeaderNavComponent,
         WaterYearSelectComponent,
         AccountSelectComponent, 
-        ScenarioMapComponent
+        ScenarioMapComponent,
+        CustomRichTextComponent
     ],
     entryComponents:[
         ParcelDetailPopupComponent

@@ -85,16 +85,7 @@
         </div>
         <div class="col-md-8 order-md-1 order-12 col-sm-12">
             <div class="mt-2">
-                <p class="lead">
-                    Welcome to the <a href="{{leadOrganizationHomeUrl()}}" target="_blank">{{leadOrganizationLongName()}}</a> {{platformShortName()}}. The {{applicationType()}} is designed to meet these objectives:
-                </p>
-                <ul>
-                    <li>Create a better understanding of water demand and supplies, for Landowners to effectively and efficiently 
-                        make informed decisions regarding water supply and land use.</li>
-                    <li>Utilize a satellite based evapotranspiration model, called OpenET, to give landowners a past and present 
-                        understanding of water demands on their specific parcels.</li>
-                    <li>Over the long term, develop the accounting platform into a trading platform, encouraging in-district water transfers.</li>
-                </ul>
+                <rio-custom-rich-text [customRichTextTypeID]="homepageRichTextTypeID"></rio-custom-rich-text>
             </div>
         </div>
     </div>

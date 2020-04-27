@@ -7,7 +7,6 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public int ParcelID { get; set; }
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
-
         public AccountSimpleDto LandOwner { get; set; }
     }
 }
