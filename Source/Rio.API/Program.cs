@@ -27,10 +27,11 @@ namespace Rio.API
                             {
                                 serverOptions.Listen(IPAddress.Any, 443, configure =>
                                 {
+                                    var devSSLCertLocation = Environment.GetEnvironmentVariable("DevSSLCertLocation");
                                     var httpsConnectionAdapterOptions = new HttpsConnectionAdapterOptions()
                                     {
                                         ClientCertificateMode = ClientCertificateMode.AllowCertificate,
-                                        ServerCertificate = new X509Certificate2("api-dev.rio.org.pfx", "password#1"),
+                                        ServerCertificate = new X509Certificate2(devSSLCertLocation, "password#1"),
                                         ClientCertificateValidation = (certificate2, chain, arg3) => true
                                     };
 

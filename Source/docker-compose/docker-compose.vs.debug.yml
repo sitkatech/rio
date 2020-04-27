@@ -11,3 +11,5 @@ services:
     ports:
       - "8888:80"
       - "8889:443"
+    environment:
+      - DevSSLCertLocation=${DevSSLCertLocation}
