@@ -11,7 +11,6 @@ namespace Rio.EFModels.Entities
         {
             ParcelAllocationHistory = new HashSet<ParcelAllocationHistory>();
         }
-
         [Key]
         public int FileResourceID { get; set; }
         public int FileResourceMimeTypeID { get; set; }
