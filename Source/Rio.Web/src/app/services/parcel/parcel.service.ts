@@ -10,6 +10,7 @@ import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
+import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -53,8 +54,8 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
-  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto): Observable<any[]> {
-    let route = `/parcels/bulkSetAnnualParcelAllocation`;
+  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto, userID: number): Observable<any[]> {
+    let route = `/parcels/${userID}/bulkSetAnnualParcelAllocation`;
     return this.apiService.postToApi(route, model);
   }
 
@@ -80,6 +81,11 @@ export class ParcelService {
 
   getParcelOwnershipHistory(parcelID: number): Observable<Array<ParcelOwnershipDto>> {
     let route = `/parcels/${parcelID}/getOwnershipHistory`
+    return this.apiService.getFromApi(route);
+  }
+
+  getParcelAllocationHistory(): Observable<Array<ParcelAllocationHistoryDto>> {
+    let route = `/parcels/getParcelAllocationHistory`
     return this.apiService.getFromApi(route);
   }
 

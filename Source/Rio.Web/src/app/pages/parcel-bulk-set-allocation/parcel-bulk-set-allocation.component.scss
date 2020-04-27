@@ -1,0 +1,26 @@
+.custom-file-label::after {
+    display: none;
+}
+
+.br-special {
+    content: " ";
+    display:block;
+    margin-top: -7px;
+}
+
+//Get rid of arrows on input of type number
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance:textfield;
+}
+
+.danger {
+    color:red
+}
