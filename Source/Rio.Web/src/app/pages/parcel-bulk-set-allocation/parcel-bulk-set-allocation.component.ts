@@ -68,10 +68,11 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.parcelAllocationHistoryGridColumnDefs = [
       { headerName: 'Date', field: 'Date', valueFormatter: function(params: any) {
         return datePipe.transform(params.data.Date, "M/d/yyyy")
-      }, sortable:true, filter: true},
-      { headerName: 'Water Year', field: 'WaterYear', sortable:true, filter: true},
-      { headerName: 'Allocation', field: 'Allocation', sortable:true, filter: true},
-      { headerName: 'Value', field: 'Value', sortable:true, filter: true},
+      }, sortable:true, filter: true, width:130},
+      { headerName: 'Water Year', field: 'WaterYear', sortable:true, filter: true, width:130},
+      { headerName: 'Allocation', field: 'Allocation', sortable:true, filter: true, width:150},
+      { headerName: 'Value (ac-ft/ac)', field: 'Value', sortable:true, filter: true},
+      { headerName: 'Uploaded Filename', field: 'Filename', sortable:true, filter:true},
       { headerName: 'User', field: 'User', sortable:true, filter: true}
     ];
   }

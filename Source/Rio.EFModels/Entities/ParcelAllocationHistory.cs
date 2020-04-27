@@ -42,9 +42,8 @@ namespace Rio.EFModels.Entities
                 Date = x.ParcelAllocationHistoryDate,
                 WaterYear = x.ParcelAllocationHistoryWaterYear,
                 Allocation = x.ParcelAllocationType.ParcelAllocationTypeDisplayName,
-                Value = x.FileResourceID != null
-                    ? x.FileResource.OriginalBaseFilename + x.FileResource.OriginalFileExtension
-                    : x.ParcelAllocationHistoryValue.Value.ToString("0.##") + " ac-ft/ac",
+                Value = x.ParcelAllocationHistoryValue,
+                Filename = x.FileResource == null ? null : x.FileResource.OriginalBaseFilename + x.FileResource.OriginalFileExtension,
                 User = x.User.FirstName + " " + x.User.LastName
             });
         }

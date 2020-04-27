@@ -9,7 +9,8 @@ namespace Rio.Models.DataTransferObjects
         public DateTime Date;
         public int WaterYear;
         public string Allocation;
-        public string Value;
+        public decimal? Value;
+        public string? Filename;
         public string User;
     }
 }

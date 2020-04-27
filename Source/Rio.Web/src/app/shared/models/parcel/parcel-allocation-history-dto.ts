@@ -2,7 +2,8 @@ export class ParcelAllocationHistoryDto {
     Date: Date;
     WaterYear: string;
     Allocation: string;
-    Value: string;
+    Value: number;
+    Filename: string;
     User: string;
 
     constructor(obj?: any) {
