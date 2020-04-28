@@ -55,6 +55,50 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 }
 // end ag-grid settings
 
+//ckeditor css
+
+.image {
+  display:table;
+  clear: both;
+  text-align:center;
+  margin:1em auto;
+}
+
+.image>img {
+  display:block;
+  margin:0 auto;
+  max-width:100%;
+  min-width: 50px;
+}
+
+.image-style-side,
+.image-style-align-left,
+.image-style-align-center,
+.image-style-align-right {
+  max-width: 50%;
+}
+
+.image-style-side {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+}
+
+.image-style-align-left {
+  float: left;
+  margin-right: var(--ck-image-style-spacing);
+}
+
+.image-style-align-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.image-style-align-right {
+  float: right;
+  margin-left: var(--ck-image-style-spacing);
+}
+
+//end ckeditor css
 
 .switch {
     position: relative;
