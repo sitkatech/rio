@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common'; 
+import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -11,6 +11,7 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { forkJoin } from 'rxjs';
+import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 
 @Component({
   selector: 'rio-parcel-bulk-set-allocation',
@@ -19,9 +20,9 @@ import { forkJoin } from 'rxjs';
 })
 export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid', { static: false }) parcelAllocationHistoryGrid: AgGridAngular;
-  @ViewChild('projectWaterAllocation', {static: false}) projectWaterAllocation: any;
-  @ViewChild('nativeYieldAllocation', {static: false}) nativeYieldAllocation: any;
-  @ViewChild('reconciliationWaterFileUpload', {static: false}) reconciliationWaterFileUpload: any;
+  @ViewChild('projectWaterAllocation', { static: false }) projectWaterAllocation: any;
+  @ViewChild('nativeYieldAllocation', { static: false }) nativeYieldAllocation: any;
+  @ViewChild('reconciliationWaterFileUpload', { static: false }) reconciliationWaterFileUpload: any;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
@@ -31,6 +32,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public isLoadingSubmit: boolean = false;
   public waterYearToDisplay: number;
   public waterYears: Array<number>;
+  public allocationHistoryEntries: Array<ParcelAllocationHistoryDto>;
 
   public lastProjectWaterSetDate: string;
   public lastNativeYieldSetDate: string;
@@ -40,8 +42,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public displayNativeYieldError: boolean = false;
   public displayWaterReconciliationError: boolean = false;
 
+  public allocationTypes = {
+    1: "Project Water",
+    2: "Reconciliation",
+    3: "Native Yield"
+  }
+
   public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError];
-  
+
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router, private parcelService: ParcelService, private authenticationService: AuthenticationService, private alertService: AlertService, private datePipe: DatePipe) { }
@@ -51,13 +59,13 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.initializeParcelAllocationHistoryGrid();
-      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear=>{
+      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear => {
         this.waterYearToDisplay = defaultYear;
-        this.parcelService.getWaterYears().subscribe(waterYears =>{
+        this.parcelService.getWaterYears().subscribe(waterYears => {
           this.waterYears = waterYears;
           this.updateParcelAllocationHistoryGrid();
-        }) 
-      })     
+        })
+      })
 
     });
   }
@@ -66,14 +74,16 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     let datePipe = this.datePipe;
 
     this.parcelAllocationHistoryGridColumnDefs = [
-      { headerName: 'Date', field: 'Date', valueFormatter: function(params: any) {
-        return datePipe.transform(params.data.Date, "M/d/yyyy")
-      }, sortable:true, filter: true, width:130},
-      { headerName: 'Water Year', field: 'WaterYear', sortable:true, filter: true, width:130},
-      { headerName: 'Allocation', field: 'Allocation', sortable:true, filter: true, width:150},
-      { headerName: 'Value (ac-ft/ac)', field: 'Value', sortable:true, filter: true},
-      { headerName: 'Uploaded Filename', field: 'Filename', sortable:true, filter:true},
-      { headerName: 'User', field: 'User', sortable:true, filter: true}
+      {
+        headerName: 'Date', field: 'Date', valueFormatter: function (params: any) {
+          return datePipe.transform(params.data.Date, "M/d/yyyy")
+        }, sortable: true, filter: true, width: 130
+      },
+      { headerName: 'Water Year', field: 'WaterYear', sortable: true, filter: true, width: 130 },
+      { headerName: 'Allocation', field: 'Allocation', sortable: true, filter: true, width: 150 },
+      { headerName: 'Value (ac-ft/ac)', field: 'Value', sortable: true, filter: true },
+      { headerName: 'Uploaded Filename', field: 'Filename', sortable: true, filter: true },
+      { headerName: 'User', field: 'User', sortable: true, filter: true }
     ];
   }
 
@@ -89,23 +99,23 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.turnOffErrors();
 
     if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
-    this.model.AcreFeetAllocated = +allocationValue;
-    this.model.ParcelAllocationTypeID = allocationType;
-    this.model.WaterYear = this.waterYearToDisplay;
+      this.model.AcreFeetAllocated = +allocationValue;
+      this.model.ParcelAllocationTypeID = allocationType;
+      this.model.WaterYear = this.waterYearToDisplay;
 
-    this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
-      .subscribe(response => {
+      this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
+        .subscribe(response => {
           this.clearInputs()
           this.isLoadingSubmit = false;
           this.updateParcelAllocationHistoryGrid();
-          this.alertService.pushAlert(new Alert("Successfully set Allocations for " + response + " parcels.", AlertContext.Success));
-      }
-        ,
-        error => {
-          this.isLoadingSubmit = false;
-          this.cdr.detectChanges();
+          this.alertService.pushAlert(new Alert("The " + this.allocationTypes[allocationType] + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
         }
-      );
+          ,
+          error => {
+            this.isLoadingSubmit = false;
+            this.cdr.detectChanges();
+          }
+        );
     }
     else {
       this.isLoadingSubmit = false;
@@ -115,10 +125,9 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
 
   public updateParcelAllocationHistoryGrid(): void {
     this.parcelService.getParcelAllocationHistory().subscribe(result => {
-      let datePipe = this.datePipe;
-      this.lastProjectWaterSetDate = datePipe.transform(result.filter(x => x.Allocation == "Project Water").reduce((x, y) => x.Date > y.Date ? x : y, {Date:null} ).Date, "M/d/yyyy");
-      this.lastNativeYieldSetDate = datePipe.transform(result.filter(x => x.Allocation == "Native Yield").reduce((x, y) => x.Date > y.Date ? x : y, {Date:null}).Date, "M/dd/yyyy");
-      this.lastReconciliationFileUploadDate = datePipe.transform(result.filter(x => x.Allocation == "Reconciliation").reduce((x, y) => x.Date > y.Date ? x : y, {Date:null}).Date, "M/dd/yyyy");
+      this.allocationHistoryEntries = result;
+      debugger;
+      this.updateAllocationSetDateDisplayVariables();
       this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(result) : null;
     });
   }
@@ -129,8 +138,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.reconciliationWaterFileUpload.nativeElement.value = null;
   }
 
-  public chooseErrorToDisplay(allocationType: number)
-  {
+  public chooseErrorToDisplay(allocationType: number) {
     if (allocationType == 1) {
       this.displayProjectWaterError = true;
     }
@@ -146,5 +154,15 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.displayNativeYieldError = false;
     this.displayProjectWaterError = false;
     this.displayWaterReconciliationError = false;
+  }
+
+  public updateAllocationSetDateDisplayVariables() {
+    if (this.allocationHistoryEntries)
+    {
+      let datePipe = this.datePipe;
+      this.lastProjectWaterSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Project Water" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
+      this.lastNativeYieldSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Native Yield" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
+      this.lastReconciliationFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Reconciliation" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
+    }
   }
 }

@@ -13,7 +13,6 @@
     </div>
 </div>
 <div class="container mt-sm-4">
-    <app-alert-display></app-alert-display>
     <div class="row">
         <div class="col-9">
             <h2>
@@ -21,9 +20,10 @@
             </h2>
         </div>
         <div class="col-3 text-right">
-            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"></rio-water-year-select>
+            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
         </div>
     </div>
+    <app-alert-display></app-alert-display>
     <div class="row">
         <div class="col">
             <p class="lead">
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <!-- To be reintroudced with card 175-->
-                    <!-- <div class="row">
+                    <div class="row d-none">
                         <div class="col">
                             <form class="form-inline">
                                 <div class="form-group row w-100">
@@ -131,8 +131,8 @@
                                 </div>
                             </form>
                         </div>
-                    </div> -->
-                    <div *ngIf="displayWaterReconciliationError" class="row mb-1">
+                    </div>
+                    <div *ngIf="displayWaterReconciliationError" class="row mb-1 d-none">
                         <div class="col danger">
                             Please choose a file before submitting
                         </div>

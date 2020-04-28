@@ -1,6 +1,6 @@
 export class ParcelAllocationHistoryDto {
     Date: Date;
-    WaterYear: string;
+    WaterYear: number;
     Allocation: string;
     Value: number;
     Filename: string;
