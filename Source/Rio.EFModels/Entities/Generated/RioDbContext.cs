@@ -36,6 +36,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
+        public virtual DbSet<ReconciliationAllocationUpload> ReconciliationAllocationUpload { get; set; }
+        public virtual DbSet<ReconciliationAllocationUploadStatus> ReconciliationAllocationUploadStatus { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocation { get; set; }
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
@@ -408,6 +410,42 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.PostingTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.PostingTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<ReconciliationAllocationUpload>(entity =>
+            {
+                entity.HasOne(d => d.FileResource)
+                    .WithMany(p => p.ReconciliationAllocationUpload)
+                    .HasForeignKey(d => d.FileResourceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.ReconciliationAllocationUploadStatus)
+                    .WithMany(p => p.ReconciliationAllocationUpload)
+                    .HasForeignKey(d => d.ReconciliationAllocationUploadStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.UploadUser)
+                    .WithMany(p => p.ReconciliationAllocationUpload)
+                    .HasForeignKey(d => d.UploadUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReconciliationAllocationUpload_User_UploadUserID_UserID");
+            });
+
+            modelBuilder.Entity<ReconciliationAllocationUploadStatus>(entity =>
+            {
+                entity.HasIndex(e => e.ReconciliationAllocationUploadStatusDisplayName)
+                    .HasName("AK_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ReconciliationAllocationUploadStatusName)
+                    .HasName("AK_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.ReconciliationAllocationUploadStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.ReconciliationAllocationUploadStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.ReconciliationAllocationUploadStatusName).IsUnicode(false);
             });
 
             modelBuilder.Entity<Role>(entity =>

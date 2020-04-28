@@ -1,0 +1,31 @@
+Create Table dbo.ReconciliationAllocationUploadStatus(
+ReconciliationAllocationUploadStatusID int not null constraint PK_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusID primary key,
+ReconciliationAllocationUploadStatusName varchar(20) constraint AK_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusName unique,
+ReconciliationAllocationUploadStatusDisplayName varchar(22) constraint AK_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusDisplayName unique
+)
+
+Create Table dbo.ReconciliationAllocationUpload(
+ReconciliationAllocationUploadID int not null identity(1,1) constraint PK_ReconciliationAllocationUpload_ReconciliationAllocationUploadID primary key,
+UploadUserID int not null constraint FK_ReconciliationAllocationUpload_User_UploadUserID_UserID foreign key references dbo.[User](UserID),
+FileResourceID int not null constraint FK_ReconciliationAllocationUpload_FileResource_FileResourceID foreign key references dbo.FileResource(FileResourceID),
+ReconciliationAllocationUploadStatusID int not null constraint FK_ReconciliationAllocationUpload_ReconciliationAllocationUploadStatus_ReconciliationAllocationUploadStatusID foreign key references dbo.ReconciliationAllocationUploadStatus(ReconciliationAllocationUploadStatusID)
+)
+
+MERGE INTO dbo.ReconciliationAllocationUploadStatus AS Target
+USING (VALUES
+(1, 'Pending', 'Pending'),
+(2, 'Accepted', 'Accepted'),
+(3, 'Canceled', 'Canceled'),
+(4, 'Rejected', 'Rejected')
+)
+AS Source (ReconciliationAllocationUploadStatusID, ReconciliationAllocationUploadStatusName, ReconciliationAllocationUploadStatusDisplayName)
+ON Target.ReconciliationAllocationUploadStatusID = Source.ReconciliationAllocationUploadStatusID
+WHEN MATCHED THEN
+UPDATE SET
+	ReconciliationAllocationUploadStatusName = Source.ReconciliationAllocationUploadStatusName,
+	ReconciliationAllocationUploadStatusDisplayName = Source.ReconciliationAllocationUploadStatusDisplayName
+WHEN NOT MATCHED BY TARGET THEN
+	INSERT (ReconciliationAllocationUploadStatusID, ReconciliationAllocationUploadStatusName, ReconciliationAllocationUploadStatusDisplayName)
+	VALUES (ReconciliationAllocationUploadStatusID, ReconciliationAllocationUploadStatusName, ReconciliationAllocationUploadStatusDisplayName)
+WHEN NOT MATCHED BY SOURCE THEN
+	DELETE;

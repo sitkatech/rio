@@ -51,6 +51,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
 
   public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError];
   public fileName: string;
+  displayFiletypeError: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -140,6 +141,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   }
 
   fileEvent(){
+    let file = this.getFile();
+
+    if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
+      this.displayFiletypeError = true;
+    } else {
+      this.displayFiletypeError = false;
+    }
+
     this.cdr.detectChanges();
   }
 

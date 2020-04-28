@@ -125,16 +125,21 @@
                                         </div>
                                     </div>
                                     <div class="col-3 text-right p-0">
-                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit" (click)="uploadReconciliationFile()">Upload &
+                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit || displayFiletypeError" (click)="uploadReconciliationFile()">Upload &
                                             Save</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayWaterReconciliationError" class="row mb-1 d-none">
+                    <div *ngIf="displayWaterReconciliationError" class="row mb-1">
                         <div class="col danger">
                             Please choose a file before submitting
+                        </div>
+                    </div>
+                    <div *ngIf="displayFiletypeError" class="row mb-1">
+                        <div class="col danger">
+                            You must select a CSV file to upload
                         </div>
                     </div>
                 </div>
