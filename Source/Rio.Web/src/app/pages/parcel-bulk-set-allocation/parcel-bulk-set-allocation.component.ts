@@ -137,6 +137,9 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       alert(x);
       this.isLoadingSubmit = false;
       this.clearInputs();
+    }, error => {
+      this.isLoadingSubmit = false;
+      this.cdr.detectChanges();
     });
   }
 
