@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <!-- To be reintroudced with card 175-->
-                    <div class="row d-none">
+                    <div class="row">
                         <div class="col">
                             <form class="form-inline">
                                 <div class="form-group row w-100">
@@ -114,9 +114,9 @@
                                     <div class="input-group col p-0">
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input"
-                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload>
+                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload (change)="fileEvent()">
                                             <label class="custom-file-label"
-                                                for="reconciliationWaterFileUpload"></label>
+                                                for="reconciliationWaterFileUpload">{{getFileName()}}</label>
                                         </div>
                                         <div class="input-group-append">
                                             <button class="btn btn-rio" type="button"
@@ -125,7 +125,7 @@
                                         </div>
                                     </div>
                                     <div class="col-3 text-right p-0">
-                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit">Upload &
+                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit" (click)="uploadReconciliationFile()">Upload &
                                             Save</button>
                                     </div>
                                 </div>

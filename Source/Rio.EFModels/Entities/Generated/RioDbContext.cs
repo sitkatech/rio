@@ -615,7 +615,7 @@ namespace Rio.EFModels.Entities
 
                 entity.Property(e => e.WellTypeCodeName).IsUnicode(false);
             });
-
+            
             modelBuilder.Entity<geometry_columns>(entity =>
             {
                 entity.HasKey(e => new { e.f_table_catalog, e.f_table_schema, e.f_table_name, e.f_geometry_column })
