@@ -134,11 +134,12 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public uploadReconciliationFile(): void{
     this.isLoadingSubmit = true;
     this.reconciliationAllocationService.uploadFile(this.getFile()).subscribe(x=>{
-      alert(x);
+      alert("Congrations! You done it!")
       this.isLoadingSubmit = false;
       this.clearInputs();
     }, error => {
       this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
       this.cdr.detectChanges();
     });
   }

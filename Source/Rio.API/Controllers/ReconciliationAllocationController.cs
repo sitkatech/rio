@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,20 +32,43 @@ namespace Rio.API.Controllers
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
 
+            using (var memoryStream = new MemoryStream(fileResource.FileResourceData))
+            using (var reader = new StreamReader(memoryStream))
+            using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                csvReader.Configuration.RegisterClassMap<ReconciliationAllocationCSVMap>();
+                var records = csvReader.GetRecords<ReconciliationAllocationCSV>().ToList();
+            }
+
             _dbContext.FileResource.Add(fileResource);
             _dbContext.SaveChanges();
 
             var reconciliationAllocationUpload = new ReconciliationAllocationUpload()
             {
                 FileResourceID = fileResource.FileResourceID,
-                ReconciliationAllocationUploadStatusID = (int) ReconciliationAllocationUploadStatusEnum.Pending,
+                ReconciliationAllocationUploadStatusID = (int)ReconciliationAllocationUploadStatusEnum.Pending,
                 UploadUserID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID
             };
 
             _dbContext.ReconciliationAllocationUpload.Add(reconciliationAllocationUpload);
             _dbContext.SaveChanges();
 
-            return Ok(new ReconciliationAllocationUploadConfirmDto(){ReconciliationAllocationUploadID = reconciliationAllocationUpload.ReconciliationAllocationUploadID});
+            return Ok(new ReconciliationAllocationUploadConfirmDto() { ReconciliationAllocationUploadID = reconciliationAllocationUpload.ReconciliationAllocationUploadID });
+        }
+    }
+
+    public class ReconciliationAllocationCSV
+    {
+        public int AccountNumber { get; set; }
+        public double ReconciliationVolume { get; set; }
+    }
+
+    public sealed class ReconciliationAllocationCSVMap : ClassMap<ReconciliationAllocationCSV>
+    {
+        public ReconciliationAllocationCSVMap()
+        {
+            Map(m => m.AccountNumber).Name("Account Number");
+            Map(m => m.ReconciliationVolume).Name("Reconciliation Volume");
         }
     }
 }
