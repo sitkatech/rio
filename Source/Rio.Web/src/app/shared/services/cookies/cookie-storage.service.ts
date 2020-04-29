@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { OAuthStorage } from 'angular-oauth2-oidc';
-import { CookieService } from 'ngx-cookie';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Injectable({
@@ -17,14 +16,14 @@ export class CookieStorageService extends OAuthStorage {
   }
 
   removeItem(key: string): void {
-    return this.cookieService.remove(key);
+    return this.cookieService.delete(key);
   }
 
   removeAll(): void {
-    return this.cookieService.removeAll();
+    return this.cookieService.deleteAll();
   }
 
   setItem(key: string, data: string): void {
-    return this.cookieService.put(key, data)
+    return this.cookieService.set(key, data)
   }
 }
