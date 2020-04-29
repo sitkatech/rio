@@ -37,7 +37,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public confirmedFullNameForCancelation: string;
   public confirmedFullNameForRegistration: string;
 
-  @ViewChild("parcelPicker", { static: false })
+  @ViewChild("parcelPicker")
   public parcelPicker: ParcelPickerComponent;
   activeAccount: AccountSimpleDto;
 

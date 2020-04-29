@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { OAuthService, JwksValidationHandler, OAuthSuccessEvent } from 'angular-oauth2-oidc';
+import { OAuthService, OAuthSuccessEvent } from 'angular-oauth2-oidc';
+import { JwksValidationHandler } from 'angular-oauth2-oidc-jwks';
 import { Subject, Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';

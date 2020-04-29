@@ -31,7 +31,7 @@ import { AccountDto } from 'src/app/shared/models/account/account-dto';
   styleUrls: ['./landowner-dashboard.component.scss']
 })
 export class LandownerDashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('landownerWaterUseChart', {static: false}) landownerWaterUseChart: LandownerWaterUseChartComponent;
+  @ViewChild('landownerWaterUseChart') landownerWaterUseChart: LandownerWaterUseChartComponent;
   
   public waterYearToDisplay: number;
   public currentUser: UserDto;

@@ -15,7 +15,7 @@ import { AgGridAngular } from 'ag-grid-angular';
   styleUrls: ['./posting-list.component.scss']
 })
 export class PostingListComponent implements OnInit, OnDestroy {
-  @ViewChild('postingsGrid', {static: false}) postingsGrid: AgGridAngular;
+  @ViewChild('postingsGrid') postingsGrid: AgGridAngular;
 
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;

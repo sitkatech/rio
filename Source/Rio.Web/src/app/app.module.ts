@@ -4,8 +4,8 @@ import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
-import { CookieModule } from 'ngx-cookie';
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/auth-interceptor';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
@@ -122,7 +122,6 @@ export function init_app(appLoadService: AppInitService) {
     NgbModule,
     RouterModule,
     OAuthModule.forRoot(),
-    CookieModule.forRoot(),
     SharedModule.forRoot(),
     FormsModule,
     NgxChartsModule,
@@ -132,7 +131,7 @@ export function init_app(appLoadService: AppInitService) {
     MyDatePickerModule
   ],  
   providers: [
-    
+    CookieService,
     AppInitService,
     { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
