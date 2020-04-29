@@ -48,23 +48,23 @@ namespace Rio.API.Controllers
             _dbContext.FileResource.Add(fileResource);
             _dbContext.SaveChanges();
 
-            var reconciliationAllocationUpload = new ReconciliationAllocationUpload()
-            {
-                FileResourceID = fileResource.FileResourceID,
-                ReconciliationAllocationUploadStatusID = (int)ReconciliationAllocationUploadStatusEnum.Pending,
-                UploadUserID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID
-            };
+            //var reconciliationAllocationUpload = new ReconciliationAllocationUpload()
+            //{
+            //    FileResourceID = fileResource.FileResourceID,
+            //    ReconciliationAllocationUploadStatusID = (int)ReconciliationAllocationUploadStatusEnum.Pending,
+            //    UploadUserID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID
+            //};
 
-            _dbContext.ReconciliationAllocationUpload.Add(reconciliationAllocationUpload);
-            _dbContext.SaveChanges();
+            //_dbContext.ReconciliationAllocationUpload.Add(reconciliationAllocationUpload);
+            //_dbContext.SaveChanges();
+
+            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
+                UserContext.GetUserFromHttpContext(_dbContext,HttpContext).UserID, fileResource.FileResourceID, waterYear,
+                (int) ParcelAllocationTypeEnum.Reconciliation, null);
 
             Account.SetReconciliationAllocation(_dbContext, records, waterYear);
 
-            reconciliationAllocationUpload.ReconciliationAllocationUploadStatusID =
-                (int) ReconciliationAllocationUploadStatusEnum.Accepted;
-            _dbContext.SaveChanges();
-
-            return Ok(new ReconciliationAllocationUploadConfirmDto() { ReconciliationAllocationUploadID = reconciliationAllocationUpload.ReconciliationAllocationUploadID });
+            return Ok();
         }
 
         private bool ParseReconciliationAllocationUpload(FileResource fileResource, out List<ReconciliationAllocationCSV> records, out ActionResult badRequest)
