@@ -16,7 +16,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   public activeAccount: AccountSimpleDto;
   public currentUser: UserDto;
-  @ViewChild("accountsDropdown", { static: false }) accountsDropdown: SelectDropDownComponent;
+  @ViewChild("accountsDropdown") accountsDropdown: SelectDropDownComponent;
 
   public accountDropdownConfig = {
     search: true,

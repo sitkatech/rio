@@ -64,17 +64,17 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
     ]
 })
 export class SharedModule {
-    static forRoot() {
-        return {
-            ngModule: SharedModule,
-            providers: []
-        };
-    }
+    static forRoot(): ModuleWithProviders<SharedModule> {
+    return {
+        ngModule: SharedModule,
+        providers: []
+    };
+}
 
-    static forChild() {
-        return {
-            ngModule: SharedModule,
-            providers: []
-        };
-    }
+    static forChild(): ModuleWithProviders<SharedModule> {
+    return {
+        ngModule: SharedModule,
+        providers: []
+    };
+}
 }

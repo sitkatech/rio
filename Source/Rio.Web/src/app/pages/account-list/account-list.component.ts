@@ -15,7 +15,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
   styleUrls: ['./account-list.component.scss']
 })
 export class AccountListComponent implements OnInit, OnDestroy {
-  @ViewChild("accountsGrid", { static: false }) accountsGrid: AgGridAngular;
+  @ViewChild("accountsGrid") accountsGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 

@@ -15,7 +15,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
   styleUrls: ['./parcel-list.component.scss']
 })
 export class ParcelListComponent implements OnInit, OnDestroy {
-  @ViewChild('parcelsGrid', {static: false}) parcelsGrid: AgGridAngular;
+  @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
 
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;

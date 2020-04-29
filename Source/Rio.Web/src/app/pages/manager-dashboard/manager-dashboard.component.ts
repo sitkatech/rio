@@ -25,9 +25,9 @@ declare var $:any;
   styleUrls: ['./manager-dashboard.component.scss']
 })
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
-  @ViewChild('landOwnerUsageReportGrid', { static: false }) landOwnerUsageReportGrid: AgGridAngular;
-  @ViewChild('tradeActivityGrid', { static: false }) tradeActivityGrid: AgGridAngular;
-  @ViewChild('postingsGrid', { static: false }) postingsGrid: AgGridAngular;
+  @ViewChild('landOwnerUsageReportGrid') landOwnerUsageReportGrid: AgGridAngular;
+  @ViewChild('tradeActivityGrid') tradeActivityGrid: AgGridAngular;
+  @ViewChild('postingsGrid') postingsGrid: AgGridAngular;
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;

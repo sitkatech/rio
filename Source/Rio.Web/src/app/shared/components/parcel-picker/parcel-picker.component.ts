@@ -29,7 +29,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     @Input("defaultExtent")
     public defaultExtent: any;
 
-    @ViewChild("parcelsMap", { static: false })
+    @ViewChild("parcelsMap")
     public parcelMap: ParcelMapComponent;
 
     public selectedParcelLayerName: string = 'Selected Parcels';

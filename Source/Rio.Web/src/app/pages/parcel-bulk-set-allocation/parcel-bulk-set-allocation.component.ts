@@ -19,10 +19,10 @@ import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-
   styleUrls: ['./parcel-bulk-set-allocation.component.scss']
 })
 export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
-  @ViewChild('parcelAllocationHistoryGrid', { static: false }) parcelAllocationHistoryGrid: AgGridAngular;
-  @ViewChild('projectWaterAllocation', { static: false }) projectWaterAllocation: any;
-  @ViewChild('nativeYieldAllocation', { static: false }) nativeYieldAllocation: any;
-  @ViewChild('reconciliationWaterFileUpload', { static: false }) reconciliationWaterFileUpload: any;
+  @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
+  @ViewChild('projectWaterAllocation') projectWaterAllocation: any;
+  @ViewChild('nativeYieldAllocation') nativeYieldAllocation: any;
+  @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
