@@ -133,10 +133,12 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
 
   public uploadReconciliationFile(): void{
     this.isLoadingSubmit = true;
-    this.reconciliationAllocationService.uploadFile(this.getFile()).subscribe(x=>{
-      alert("Congrations! You done it!")
+    this.reconciliationAllocationService.uploadFile(this.getFile(), this.waterYearToDisplay).subscribe(x=>{
+      this.alertService.pushAlert(new Alert(`Successfully set reconciiliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Danger, true));
+      this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
       this.clearInputs();
+      this.cdr.detectChanges();
     }, error => {
       if (error.error.validationMessage){
         this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
@@ -145,6 +147,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
         this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
       }
       this.isLoadingSubmit = false;
+      this.clearInputs();
       this.cdr.detectChanges();
     });
   }

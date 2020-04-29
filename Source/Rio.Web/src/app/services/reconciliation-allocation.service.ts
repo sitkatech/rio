@@ -10,9 +10,9 @@ export class ReconciliationAllocationService {
 
   constructor(private httpClient: HttpClient) { }
 
-  uploadFile(file: any): Observable<any> {
+  uploadFile(file: any, waterYear:number): Observable<any> {
     const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/reconciliationAllocation/upload`;
+    const route = `https://${apiHostName}/reconciliationAllocation/upload/${waterYear}`;
     var result = this.httpClient.post<any>(
       route,
       file, // Send the File Blob as the POST body.

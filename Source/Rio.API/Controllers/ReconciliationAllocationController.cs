@@ -28,51 +28,21 @@ namespace Rio.API.Controllers
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        [HttpPost("reconciliationAllocation/upload")]
-        public async Task<ActionResult> Upload()
+        [HttpPost("reconciliationAllocation/upload/{waterYear}")]
+        public async Task<ActionResult> Upload([FromRoute] int waterYear)
         {
             List<ReconciliationAllocationCSV> records;
 
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
 
-            try
+            if (!ParseReconciliationAllocationUpload(fileResource, out records, out var badRequestFromUpload))
             {
-                using (var memoryStream = new MemoryStream(fileResource.FileResourceData))
-                using (var reader = new StreamReader(memoryStream))
-                using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
-                {
-                    csvReader.Configuration.RegisterClassMap<ReconciliationAllocationCSVMap>();
-                    records = csvReader.GetRecords<ReconciliationAllocationCSV>().ToList();
-                }
-            }
-            catch
-            {
-                return BadRequest(new { validationMessage = "Could not parse CSV file. Check that no rows are blank or missing data." });
+                return badRequestFromUpload;
             }
 
-            // validate: no account number duplicated.
-            var duplicateAccountNumbers = records.GroupBy(x => x.AccountNumber).Where(x => x.Count() > 1).Select(x => x.Key).ToList();
-            if (duplicateAccountNumbers.Any())
+            if (ValidateReconciliationAllocationUpload(records, out var badRequestFromValidation))
             {
-                return BadRequest(new
-                {
-                    validationMessage = 
-                        "The upload contained multiples rows with these account numbers: " +
-                        string.Join(", ", duplicateAccountNumbers)
-                });
-            }
-
-            // validate: all account numbers match.
-            var allAccountNumbers = _dbContext.Account.Select(y => y.AccountNumber);
-            var unmatchedRecords = records.Where(x => !allAccountNumbers.Contains(x.AccountNumber)).ToList();
-            if (unmatchedRecords.Any())
-            {
-                return BadRequest(new
-                {
-                    validationMessage =
-                        "The upload contained these account numbers which did not match any record in the system: " +
-                        string.Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
-                });
+                return badRequestFromValidation;
             }
 
             _dbContext.FileResource.Add(fileResource);
@@ -88,14 +58,79 @@ namespace Rio.API.Controllers
             _dbContext.ReconciliationAllocationUpload.Add(reconciliationAllocationUpload);
             _dbContext.SaveChanges();
 
+            Account.SetReconciliationAllocation(_dbContext, records, waterYear);
+
+            reconciliationAllocationUpload.ReconciliationAllocationUploadStatusID =
+                (int) ReconciliationAllocationUploadStatusEnum.Accepted;
+            _dbContext.SaveChanges();
+
             return Ok(new ReconciliationAllocationUploadConfirmDto() { ReconciliationAllocationUploadID = reconciliationAllocationUpload.ReconciliationAllocationUploadID });
         }
-    }
 
-    public class ReconciliationAllocationCSV
-    {
-        public int AccountNumber { get; set; }
-        public double ReconciliationVolume { get; set; }
+        private bool ParseReconciliationAllocationUpload(FileResource fileResource, out List<ReconciliationAllocationCSV> records, out ActionResult badRequest)
+        {
+            try
+            {
+                using (var memoryStream = new MemoryStream(fileResource.FileResourceData))
+                using (var reader = new StreamReader(memoryStream))
+                using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csvReader.Configuration.RegisterClassMap<ReconciliationAllocationCSVMap>();
+                    records = csvReader.GetRecords<ReconciliationAllocationCSV>().ToList();
+                }
+            }
+            catch
+            {
+                {
+                    badRequest = BadRequest(new
+                        {validationMessage = "Could not parse CSV file. Check that no rows are blank or missing data."});
+                    records = null;
+                    return false;
+                }
+            }
+
+            badRequest = null;
+            return true;
+        }
+
+        private bool ValidateReconciliationAllocationUpload(List<ReconciliationAllocationCSV> records, out ActionResult badRequest)
+        {
+// validate: no account number duplicated.
+            var duplicateAccountNumbers =
+                records.GroupBy(x => x.AccountNumber).Where(x => x.Count() > 1).Select(x => x.Key).ToList();
+            if (duplicateAccountNumbers.Any())
+            {
+                {
+                    badRequest = BadRequest(new
+                    {
+                        validationMessage =
+                            "The upload contained multiples rows with these account numbers: " +
+                            string.Join(", ", duplicateAccountNumbers)
+                    });
+                    return true;
+                }
+            }
+
+            // validate: all account numbers match.
+            var allAccountNumbers = _dbContext.Account.Select(y => y.AccountNumber);
+            var unmatchedRecords = records.Where(x => !allAccountNumbers.Contains(x.AccountNumber)).ToList();
+            if (unmatchedRecords.Any())
+            {
+                {
+                    badRequest = BadRequest(new
+                    {
+                        validationMessage =
+                            "The upload contained these account numbers which did not match any record in the system: " +
+                            string.Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
+                    });
+                    return true;
+                }
+            }
+
+            badRequest = null;
+
+            return false;
+        }
     }
 
     public sealed class ReconciliationAllocationCSVMap : ClassMap<ReconciliationAllocationCSV>
