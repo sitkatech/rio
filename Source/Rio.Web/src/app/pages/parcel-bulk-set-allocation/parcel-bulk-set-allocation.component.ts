@@ -138,8 +138,13 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       this.isLoadingSubmit = false;
       this.clearInputs();
     }, error => {
+      if (error.error.validationMessage){
+        this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
+      }
+      else {
+        this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
+      }
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
       this.cdr.detectChanges();
     });
   }
