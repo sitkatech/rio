@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Rio.API.Util;
 using Rio.Models.DataTransferObjects.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rio.API.Util;
 
 namespace Rio.EFModels.Entities
 {

@@ -115,7 +115,6 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the User IDs was invalid.");
             }
 
-            // todo: get added users, send them each an email that they were added to this account
             var updatedAccount = Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs, out var addedUserIDs);
 
             var addedUsers = EFModels.Entities.User.GetByUserID(_dbContext, addedUserIDs);
@@ -131,7 +130,6 @@ namespace Rio.API.Controllers
         }
 
 
-        // todo: goes to account controller and gets a new route
         [HttpGet("accounts/{accountID}/getParcelsAllocations/{year}")]
         [UserViewFeature]
         public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByAccountID([FromRoute] int accountID, [FromRoute] int year)

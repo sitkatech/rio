@@ -11,16 +11,21 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext, int year)
         {
-            var parcels = dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account).AsNoTracking().Where(
-                    x =>
-                        x.RowNumber == 1 &&
-                        (x.EffectiveYear == null ||
-                         x.EffectiveYear <=
-                         year) &&
-                        (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).Select(x => x.AsParcelDto())
+            var parcels = vParcelOwnershipsByYear(dbContext, year).Select(x => x.AsParcelDto())
                 .AsEnumerable();
 
             return parcels;
+        }
+
+        public static IQueryable<vParcelOwnership> vParcelOwnershipsByYear(RioDbContext dbContext, int year)
+        {
+            return dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account).AsNoTracking().Where(
+                x =>
+                    x.RowNumber == 1 &&
+                    (x.EffectiveYear == null ||
+                     x.EffectiveYear <=
+                     year) &&
+                    (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31)));
         }
 
         public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID, int year)

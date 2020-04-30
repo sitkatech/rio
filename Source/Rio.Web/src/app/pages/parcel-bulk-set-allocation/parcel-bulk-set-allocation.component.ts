@@ -12,6 +12,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
+import { ReconciliationAllocationService } from 'src/app/services/reconciliation-allocation.service';
 
 @Component({
   selector: 'rio-parcel-bulk-set-allocation',
@@ -49,10 +50,17 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   }
 
   public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError];
+  public fileName: string;
+  displayFiletypeError: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router, private parcelService: ParcelService, private authenticationService: AuthenticationService, private alertService: AlertService, private datePipe: DatePipe) { }
+    private router: Router,
+    private parcelService: ParcelService,
+    private authenticationService: AuthenticationService,
+    private alertService: AlertService,
+    private datePipe: DatePipe,
+    private reconciliationAllocationService: ReconciliationAllocationService) { }
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
@@ -123,10 +131,58 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     }
   }
 
+  public uploadReconciliationFile(): void{
+    this.isLoadingSubmit = true;
+    this.reconciliationAllocationService.uploadFile(this.getFile(), this.waterYearToDisplay).subscribe(x=>{
+      this.alertService.pushAlert(new Alert(`Successfully set reconciiliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
+      this.updateParcelAllocationHistoryGrid();
+      this.isLoadingSubmit = false;
+      this.clearInputs();
+      this.cdr.detectChanges();
+    }, error => {
+      if (error.error.validationMessage){
+        this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
+      }
+      else {
+        this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
+      }
+      this.isLoadingSubmit = false;
+      this.clearInputs();
+      this.cdr.detectChanges();
+    });
+  }
+
+  fileEvent(){
+    let file = this.getFile();
+
+    if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
+      this.displayFiletypeError = true;
+    } else {
+      this.displayFiletypeError = false;
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  public getFile(): File{
+    if (!this.reconciliationWaterFileUpload){
+      return null;
+    }
+    return this.reconciliationWaterFileUpload.nativeElement.files[0]
+  }
+
+  public getFileName():string{
+    let file = this.getFile();
+    if (!file){
+      return "No file selected..."
+    }
+    
+    return file.name;
+  }
+
   public updateParcelAllocationHistoryGrid(): void {
     this.parcelService.getParcelAllocationHistory().subscribe(result => {
       this.allocationHistoryEntries = result;
-      debugger;
       this.updateAllocationSetDateDisplayVariables();
       this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(result) : null;
     });
@@ -136,6 +192,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.projectWaterAllocation.nativeElement.value = null;
     this.nativeYieldAllocation.nativeElement.value = null;
     this.reconciliationWaterFileUpload.nativeElement.value = null;
+    this.reconciliationWaterFileUpload.nativeElement.files = null;
   }
 
   public chooseErrorToDisplay(allocationType: number) {

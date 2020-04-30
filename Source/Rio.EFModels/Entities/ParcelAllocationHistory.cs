@@ -24,7 +24,24 @@ namespace Rio.EFModels.Entities
                 UserID = userID,
                 FileResourceID = fileResourceID,
                 ParcelAllocationHistoryValue =
-                    fileResourceID != null ? (decimal?) null : parcelAllocation.AcreFeetAllocated
+                    fileResourceID != null ? (decimal?)null : parcelAllocation.AcreFeetAllocated
+            };
+
+            dbContext.ParcelAllocationHistory.Add(parcelAllocationHistoryEntry);
+            dbContext.SaveChanges();
+        }
+
+        public static void CreateParcelAllocationHistoryEntity(RioDbContext dbContext, int userID, int? fileResourceID, int waterYear, int parcelAllocationTypeID, decimal? allocated)
+        {
+            var parcelAllocationHistoryEntry = new ParcelAllocationHistory()
+            {
+                ParcelAllocationHistoryDate = DateTime.Now,
+                ParcelAllocationHistoryWaterYear = waterYear,
+                ParcelAllocationTypeID = parcelAllocationTypeID,
+                UserID = userID,
+                FileResourceID = fileResourceID,
+                ParcelAllocationHistoryValue =
+                    fileResourceID != null ? (decimal?)null : allocated
             };
 
             dbContext.ParcelAllocationHistory.Add(parcelAllocationHistoryEntry);
@@ -38,14 +55,14 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.ParcelAllocationType)
                 .Include(x => x.FileResource)
                 .ToList().Select(x => new ParcelAllocationHistoryDto()
-            {
-                Date = x.ParcelAllocationHistoryDate,
-                WaterYear = x.ParcelAllocationHistoryWaterYear,
-                Allocation = x.ParcelAllocationType.ParcelAllocationTypeDisplayName,
-                Value = x.ParcelAllocationHistoryValue,
-                Filename = x.FileResource == null ? null : x.FileResource.OriginalBaseFilename + x.FileResource.OriginalFileExtension,
-                User = x.User.FirstName + " " + x.User.LastName
-            });
+                {
+                    Date = x.ParcelAllocationHistoryDate,
+                    WaterYear = x.ParcelAllocationHistoryWaterYear,
+                    Allocation = x.ParcelAllocationType.ParcelAllocationTypeDisplayName,
+                    Value = x.ParcelAllocationHistoryValue,
+                    Filename = x.FileResource?.OriginalBaseFilename,
+                    User = x.User.FirstName + " " + x.User.LastName
+                });
         }
     }
 }

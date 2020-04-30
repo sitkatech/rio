@@ -5,7 +5,6 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,43 +28,16 @@ namespace Rio.API.Controllers
         [ContentManageFeature]
         public async Task<ActionResult<object>> CkEditorUpload()
         {
-            byte[] bytes;
-
-
-            using (var ms = new MemoryStream(2048))
-            {
-                await Request.Body.CopyToAsync(ms);
-                bytes = ms.ToArray();
-            }
-
-            var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var queryCollection = Request.Query;
-
-            var fileResourceMimeType = FileResourceMimeType.GetFileResourceMimeTypeByContentTypeName(_dbContext,
-                queryCollection["mimeType"].ToString());
-
-            var clientFilename = queryCollection["clientFilename"].ToString();
-            var extension = clientFilename.Split('.').Last();
-            var fileResourceGuid = Guid.NewGuid();
-            var fileResource = new FileResource
-            {
-                CreateDate = DateTime.Now,
-                CreateUserID = userDto.UserID,
-                FileResourceData = bytes,
-                FileResourceGUID = fileResourceGuid,
-                FileResourceMimeTypeID = fileResourceMimeType.FileResourceMimeTypeID,
-                OriginalBaseFilename = clientFilename,
-                OriginalFileExtension = extension,
-            };
+            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
 
             _dbContext.FileResource.Add(fileResource);
             _dbContext.SaveChanges();
 
 
-            return Ok(new {imageUrl = $"/FileResource/{fileResourceGuid}"});
+            return Ok(new {imageUrl = $"/FileResource/{fileResource.FileResourceGUID}"});
         }
 
-        
+
         [HttpGet("FileResource/{fileResourceGuidAsString}")]
         public ActionResult DisplayResource(string fileResourceGuidAsString)
         {

@@ -20,7 +20,8 @@
             </h2>
         </div>
         <div class="col-3 text-right">
-            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
+            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
         </div>
     </div>
     <app-alert-display></app-alert-display>
@@ -29,11 +30,14 @@
             <p class="lead">
                 Use this page to assign a water allocation to all parcels in the platform. Enter the year, the
                 allocation type,and the unit quantity to allocate. Any existing allocations will be overwritten by the
-                new data. You can also manually allocate water one parcel at a time via the Parcel detail pages. For
-                Reconciliation Water please download the Account Usage Report from the <a
-                    routerLink="/manager-dashboard" routerLinkActive="true">Manager Dashboard</a> to perform the
-                off system reconciliation process. Upload a spreadsheet with columns for Account and Reconciliation
-                Volume to assign values in the Accounting Platform. The Reconciliation Volume will be applied
+                new data. You can also manually allocate water one parcel at a time via the Parcel detail pages.
+            </p>
+
+            <p class="lead">
+                For Reconciliation Water please download the Account Usage Report from the
+                <a routerLink="/manager-dashboard" routerLinkActive="true">Manager Dashboard</a> to perform the
+                off system reconciliation process. Upload a CSV file with columns called "Account Number" and "Reconciliation
+                Volume" to assign values in the Accounting Platform. The Reconciliation Volume will be applied
                 proportionally across parcels associated with an account based on acreage.
             </p>
         </div>
@@ -99,8 +103,7 @@
                             Please enter a value before submitting
                         </div>
                     </div>
-                    <!-- To be reintroudced with card 175-->
-                    <div class="row d-none">
+                    <div class="row">
                         <div class="col">
                             <form class="form-inline">
                                 <div class="form-group row w-100">
@@ -114,9 +117,10 @@
                                     <div class="input-group col p-0">
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input"
-                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload>
+                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload
+                                                (change)="fileEvent()">
                                             <label class="custom-file-label"
-                                                for="reconciliationWaterFileUpload"></label>
+                                                for="reconciliationWaterFileUpload">{{getFileName()}}</label>
                                         </div>
                                         <div class="input-group-append">
                                             <button class="btn btn-rio" type="button"
@@ -125,16 +129,23 @@
                                         </div>
                                     </div>
                                     <div class="col-3 text-right p-0">
-                                        <button type="button" class="btn btn-rio" [disabled]="isLoadingSubmit">Upload &
+                                        <button type="button" class="btn btn-rio"
+                                            [disabled]="isLoadingSubmit || displayFiletypeError"
+                                            (click)="uploadReconciliationFile()">Upload &
                                             Save</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayWaterReconciliationError" class="row mb-1 d-none">
+                    <div *ngIf="displayWaterReconciliationError" class="row mb-1">
                         <div class="col danger">
                             Please choose a file before submitting
+                        </div>
+                    </div>
+                    <div *ngIf="displayFiletypeError" class="row mb-1">
+                        <div class="col danger">
+                            You must select a CSV file to upload
                         </div>
                     </div>
                 </div>
@@ -149,8 +160,7 @@
                 </div>
                 <div class="card-body">
                     <ag-grid-angular #parcelAllocationHistoryGrid style="width: 100%; height: 300px;"
-                        class="ag-theme-balham"
-                        [columnDefs]="parcelAllocationHistoryGridColumnDefs" [pagination]="true"
+                        class="ag-theme-balham" [columnDefs]="parcelAllocationHistoryGridColumnDefs" [pagination]="true"
                         [paginationPageSize]="100">
                     </ag-grid-angular>
                 </div>
