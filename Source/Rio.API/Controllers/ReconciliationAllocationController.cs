@@ -58,10 +58,24 @@ namespace Rio.API.Controllers
                 csvReader.Configuration.RegisterClassMap<ReconciliationAllocationCSVMap>();
                 records = csvReader.GetRecords<ReconciliationAllocationCSV>().ToList();
             }
+            catch (HeaderValidationException e)
+            {
+                var headerMessage = e.Message.Split('.')[0];
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"{headerMessage}. Please check that the column name is not missing or mispelled."
+                });
+                records = null;
+                return false;
+            }
             catch
             {
                 badRequest = BadRequest(new
-                    {validationMessage = "Could not parse CSV file. Check that no rows are blank or missing data."});
+                {
+                    validationMessage =
+                       "There was an error parsing the CSV. Please ensure the file was formatted correctly."
+                });
                 records = null;
                 return false;
             }
@@ -72,6 +86,19 @@ namespace Rio.API.Controllers
 
         private bool ValidateReconciliationAllocationUpload(List<ReconciliationAllocationCSV> records, out ActionResult badRequest)
         {
+            // no null recvol
+            var nullReconciliationVolumes = records.Where(x=>x.ReconciliationVolume == null).ToList();
+            if (nullReconciliationVolumes.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        "The following Account Numbers had no Reconciliation Volume entered: " +
+                        string.Join(", ", nullReconciliationVolumes.Select(x => x.AccountNumber))
+                });
+                return false;
+            }
+
             // no duplicate account numbers permitted
             var duplicateAccountNumbers = records.GroupBy(x => x.AccountNumber).Where(x => x.Count() > 1)
                 .Select(x => x.Key).ToList();
