@@ -43,7 +43,7 @@
     "font-awesome": "^4.7.0",
     "google-palette": "^1.1.0",
     "iso8601-js-period": "^0.2.1",
-    "jquery": "^3.5.0",
+    "jquery": "^3.4.1",
     "leaflet": "^1.6.0",
     "leaflet-timedimension": "^1.1.1",
     "mydatepicker": "^9.0.1",
