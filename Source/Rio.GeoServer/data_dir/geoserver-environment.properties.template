@@ -1,0 +1,4 @@
+datastore-host = host.docker.internal
+datastore-password = /run/secrets/GeoserverSqlServerPassword.txt
+datastore-user = RioWebLocal
+datastore-database = RioDB

@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  geoserver:
+    container_name: rio_geoserver
+    image: kartoza/geoserver:2.16.2
+    entrypoint: /bin/bash /opt/geoserver/data_dir/sitka-geoserver-config/scripts/sitka-entry-point.sh
+    environment:
+      - ENABLE_JSONP=true
+      - CATALINA_OPTS=-DALLOW_ENV_PARAMETRIZATION=true
+      # These are the stable extensions in the kartoza geoserver repository.
+      - STABLE_EXTENSIONS=sqlserver-plugin
+      # default login is admin unless a different value is specified here
+      - GEOSERVER_ADMIN_USER=admin
+      # default password is geoserver unless specified differently in the secret
+      - GEOSERVER_ADMIN_PASSWORD_SECRET=/run/secrets/GeoserverAdminPassword.txt
+      - GEOSERVER_SQL_SERVER_PASSWORD_SECRET=/run/secrets/GeoserverSqlServerPassword.txt
+      # The following environment variables are for local SSL certificates. NOT needed in QA and PROD
+      # SSL=true
+      # HTTP_REDIRECT_PORT=7743
+      # LETSENCRYPT_CERT_DIR=/opt/geoserver/data_dir/sitka-geoserver-config/ssl
+      # PKCS12_PASSWORD=password
+      # JKS_KEY_PASSWORD=password
+      # JKS_STORE_PASSWORD=password
+    ports: 
+      - 127.0.0.1:8780:8080
+      # 127.0.0.1:8743:8443
+    volumes:
+      - c:/git/sitkatech/rio/Source/Rio.GeoServer/data_dir:/opt/geoserver/data_dir
+# Try just having part of it so we don't have to svn ignore a bunch of stuff
+#      - ./data_dir/styles:/opt/geoserver/data_dir/styles
+#      - ./data_dir/workspaces:/opt/geoserver/data_dir/workspaces
+#      - ./localhost-rsa.jks:/usr/local/tomcat/conf/localhost-rsa.jks
+
+      # - c:/git/YOURPROJECTPATH/server.xml:/usr/local/tomcat/conf/server.xml
+    secrets:
+    #  These will be mounted in your container to /run/secrets/<secretname>
+      - GeoserverSqlServerPassword.txt
+      - GeoserverAdminPassword.txt
+
+secrets:
+  GeoserverSqlServerPassword.txt:
+    file: C:\Sitka\Rio\Geoserver\GeoserverSqlServerPassword.txt
+      # using "file:"  allows you to mimic docker secrets on your dev machine by pointing to a plaintext file
+  GeoserverAdminPassword.txt:
+    file: C:\Sitka\Rio\Geoserver\GeoserverAdminPassword.txt
