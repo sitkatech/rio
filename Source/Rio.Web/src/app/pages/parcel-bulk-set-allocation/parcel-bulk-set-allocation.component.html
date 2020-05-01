@@ -19,10 +19,6 @@
                 Set Allocation for All Parcels
             </h2>
         </div>
-        <div class="col-3 text-right">
-            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-                (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
-        </div>
     </div>
     <app-alert-display></app-alert-display>
     <div class="row">
@@ -42,8 +38,16 @@
             </p>
         </div>
     </div>
+    <div class="row">
+        <div class="col-lg-10">
+            <div class="float-right">
+                <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                    (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
+            </div>
+        </div>
+    </div>
     <div class="row mt-4">
-        <div class="col-lg-9 col-xl-7">
+        <div class="col-lg-10">
             <div class="card">
                 <div class="card-header">
                     {{waterYearToDisplay}} Allocation for all Parcels
@@ -108,13 +112,13 @@
                             <form class="form-inline">
                                 <div class="form-group row w-100">
                                     <label for="reconciliationWaterFileUpload"
-                                        class="col-form-label col-4 d-inline-block">
+                                        class="col-form-label col-3 d-inline-block">
                                         <strong>Reconciliation Water</strong>
                                         <br class="br-special" />
                                         <span
                                             style="font-size:10px">{{lastReconciliationFileUploadDate ? "Last uploaded " + lastReconciliationFileUploadDate : "No record of last set date"}}</span>
                                     </label>
-                                    <div class="input-group col p-0">
+                                    <div class="input-group col ml-3 p-0">
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input"
                                                 id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload

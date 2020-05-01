@@ -89,10 +89,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Water Year', field: 'WaterYear', sortable: true, filter: true, width: 130 },
       { headerName: 'Allocation', field: 'Allocation', sortable: true, filter: true, width: 150 },
-      { headerName: 'Value (ac-ft/ac)', field: 'Value', sortable: true, filter: true },
-      { headerName: 'Uploaded Filename', field: 'Filename', sortable: true, filter: true },
+      { headerName: 'Value (ac-ft/ac)', field: 'Value', sortable: true, filter: true, width: 150 },
+      { headerName: 'Uploaded Filename', field: 'Filename', sortable: true, filter: true, width: 275 },
       { headerName: 'User', field: 'User', sortable: true, filter: true }
     ];
+        
+    this.parcelAllocationHistoryGridColumnDefs.forEach(x => {
+      x.resizable = true;
+    });
   }
 
   ngOnDestroy() {
