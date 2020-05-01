@@ -85,7 +85,7 @@ namespace Rio.API.Controllers
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateConfirmTransferEmail(_rioConfiguration.RIO_WEB_URL, waterTransferDto, smtpClient);
+                var mailMessages = GenerateConfirmTransferEmail(_rioConfiguration.WEB_URL, waterTransferDto, smtpClient);
                 foreach (var mailMessage in mailMessages)
                 {
                     SendEmailMessage(smtpClient, mailMessage);
@@ -123,7 +123,7 @@ namespace Rio.API.Controllers
             waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto,
                 WaterTransferRegistrationStatusEnum.Canceled);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateCancelTransferEmail(_rioConfiguration.RIO_WEB_URL, waterTransferDto, smtpClient);
+            var mailMessages = GenerateCancelTransferEmail(_rioConfiguration.WEB_URL, waterTransferDto, smtpClient);
             foreach (var mailMessage in mailMessages)
             {
                 SendEmailMessage(smtpClient, mailMessage);

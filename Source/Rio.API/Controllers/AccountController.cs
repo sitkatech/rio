@@ -120,7 +120,7 @@ namespace Rio.API.Controllers
             var addedUsers = EFModels.Entities.User.GetByUserID(_dbContext, addedUserIDs);
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateAddedUserEmails(_rioConfiguration.RIO_WEB_URL, updatedAccount, addedUsers);
+            var mailMessages = GenerateAddedUserEmails(_rioConfiguration.WEB_URL, updatedAccount, addedUsers);
             foreach (var mailMessage in mailMessages)
             {
                 SendEmailMessage(smtpClient, mailMessage);

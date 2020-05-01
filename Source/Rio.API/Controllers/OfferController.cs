@@ -57,7 +57,7 @@ namespace Rio.API.Controllers
             var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var currentTrade = Trade.GetByTradeID(_dbContext, offer.TradeID);
-            var rioUrl = _rioConfiguration.RIO_WEB_URL;
+            var rioUrl = _rioConfiguration.WEB_URL;
 
             // update trades status if needed
             if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Accepted)

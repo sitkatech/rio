@@ -7,7 +7,7 @@
         public string SMTP_HOST { get; set; }
         public int SMTP_PORT { get; set; }
         public string SITKA_EMAIL_REDIRECT { get; set; }
-        public string RIO_WEB_URL { get; set; }
+        public string WEB_URL { get; set; }
         public string KEYSTONE_REDIRECT_URL { get; set; }
         public bool ALLOW_TRADING { get; set; }
         public string PlatformLongName { get; set; }

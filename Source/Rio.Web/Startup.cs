@@ -72,9 +72,6 @@ namespace Rio.Web
     {
         public ConfigDto(IConfiguration configuration)
         {
-            Production = bool.Parse(configuration["Production"]);
-            Staging = bool.Parse(configuration["Staging"]);
-            Dev = bool.Parse(configuration["Dev"]);
             ApiHostName = configuration["ApiHostName"];
             CreateAccountUrl = configuration["CreateAccountUrl"];
             CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
@@ -98,12 +95,6 @@ namespace Rio.Web
             ApplicationType = configuration["ApplicationType"];
         }
 
-        [JsonProperty("production")]
-        public bool Production { get; set; }
-        [JsonProperty("staging")]
-        public bool Staging { get; set; }
-        [JsonProperty("dev")]
-        public bool Dev { get; set; }
         [JsonProperty("apiHostName")]
         public string ApiHostName { get; set; }
         [JsonProperty("createAccountUrl")]

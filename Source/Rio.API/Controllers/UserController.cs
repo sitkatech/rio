@@ -116,7 +116,7 @@ namespace Rio.API.Controllers
                 userUpsertDto.UserGuid);
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.RIO_WEB_URL, user, _dbContext, smtpClient);
+            var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.WEB_URL, user, _dbContext, smtpClient);
             SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
                         EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             SendEmailMessage(smtpClient, mailMessage);
@@ -253,7 +253,7 @@ namespace Rio.API.Controllers
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.RIO_WEB_URL, updatedUserDto, addedAccounts);
+            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
             foreach (var mailMessage in mailMessages)
             {
                 SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, 
