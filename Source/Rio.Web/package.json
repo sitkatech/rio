@@ -8,7 +8,7 @@
     "build": "ng build",
     "build-dev": "ng build",
     "build-qa": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=qa --prod",
-    "build-prod": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=prod --prod",
+    "build-prod": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=production --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
