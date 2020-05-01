@@ -57,6 +57,10 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
   }
   
 
+  ngx-select-dropdown#accountSelectDropdown > div > button > span:nth-child(2):before {
+    border-style: none;
+  }
+
   ngx-select-dropdown#accountSelectDropdown > div > button > span:nth-child(2):after {
     display: inline-block;
     margin-left: 0.255em;
