@@ -38,19 +38,15 @@
             </p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-10">
-            <div class="float-right">
-                <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-                    (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
-            </div>
-        </div>
-    </div>
     <div class="row mt-4">
         <div class="col-lg-10">
             <div class="card">
                 <div class="card-header">
-                    {{waterYearToDisplay}} Allocation for all Parcels
+                    <div class="float-right">
+                        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" [selectYearLabel]="'Setting Data for Year'"
+                            (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
+                    </div>
+                    <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>                    
                 </div>
                 <div class="card-body">
                     <div class="row mb-1">

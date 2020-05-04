@@ -60,11 +60,11 @@ namespace Rio.API.Controllers
             return Ok(parcelAllocationDtos);
         }
 
-        [HttpGet("getWaterYears")]
+        [HttpGet("getWaterYears/{includeCurrentYear}")]
         [ParcelViewFeature]
-        public ActionResult<List<int>> GetWaterYears()
+        public ActionResult<List<int>> GetWaterYears(bool includeCurrentYear)
         {
-            return Ok(DateUtilities.GetWaterYears());
+            return Ok(DateUtilities.GetWaterYears(includeCurrentYear));
         }
 
         [HttpGet("getDefaultWaterYearToDisplay")]

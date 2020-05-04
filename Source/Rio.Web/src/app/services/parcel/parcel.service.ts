@@ -34,7 +34,12 @@ export class ParcelService {
   }
 
   getWaterYears(): Observable<Array<number>> {
-    let route = `/getWaterYears`;
+    let route = `/getWaterYears/false`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getWaterYearsIncludingCurrentYear(): Observable<Array<number>> {
+    let route = `/getWaterYears/true`;
     return this.apiService.getFromApi(route);
   }
 

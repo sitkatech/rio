@@ -241,9 +241,10 @@ namespace Rio.API.Services
             return Enumerable.Range(startYear, (endYear - startYear) + 1).ToList();
         }
 
-        public static List<int> GetWaterYears()
+        public static List<int> GetWaterYears(bool includeCurrentYear)
         {
-            return DateUtilities.GetRangeOfYears(DateUtilities.MinimumYear, DateUtilities.GetLatestWaterYear());
+            var latestWaterYear = includeCurrentYear ? DateTime.Today.Year : GetLatestWaterYear();
+            return GetRangeOfYears(DateUtilities.MinimumYear, latestWaterYear);
         }
 
         public static int GetDefaultWaterYearToDisplay(RioDbContext dbContext)
