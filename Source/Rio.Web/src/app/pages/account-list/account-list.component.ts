@@ -9,6 +9,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { AccountStatusEnum } from 'src/app/shared/models/enums/account-status-enum';
 @Component({
   selector: 'rio-account-list',
   templateUrl: './account-list.component.html',
@@ -85,7 +86,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
           x.resizable = true;
         });
 
-        this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
+        this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusID === AccountStatusEnum.Active);
         this.cdr.detectChanges();
       });
     });
@@ -101,7 +102,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
     this.showOnlyActiveAccounts = !this.showOnlyActiveAccounts;
 
     if (this.showOnlyActiveAccounts) {
-      this.rowData = this.accounts.filter(x => x.AccountStatus.AccountStatusDisplayName == "Active");
+      this.rowData = this.accounts.filter(x => x.AccountStatus.AccountStatusID === AccountStatusEnum.Active);
     } else {
       this.rowData = this.accounts;
     }

@@ -21,5 +21,6 @@ namespace Rio.Models.DataTransferObjects.User
         public bool? HasActiveTrades { get; set; }
         public int? AcreFeetOfWaterPurchased { get; set; }
         public int? AcreFeetOfWaterSold { get; set; }
+        public bool IsActive { get; set; }
     }
 }

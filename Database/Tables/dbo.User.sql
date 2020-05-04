@@ -14,7 +14,6 @@ CREATE TABLE [dbo].[User](
 	[UpdateDate] [datetime] NULL,
 	[LastActivityDate] [datetime] NULL,
 	[DisclaimerAcknowledgedDate] [datetime] NULL,
-	[IsActive] [bit] NOT NULL,
 	[ReceiveSupportEmails] [bit] NOT NULL,
 	[LoginName] [varchar](128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[Company] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,

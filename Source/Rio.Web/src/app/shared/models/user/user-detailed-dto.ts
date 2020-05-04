@@ -17,6 +17,7 @@ export class UserDetailedDto {
     AcreFeetOfWaterPurchased: number;
     AcreFeetOfWaterSold: number;
     ReceiveSupportEmails: boolean;
+    IsActive: boolean;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

@@ -243,13 +243,13 @@ namespace Rio.API.Services
 
         public static List<int> GetWaterYears(bool includeCurrentYear)
         {
-            var latestWaterYear = includeCurrentYear ? DateTime.Today.Year : GetLatestWaterYear();
+            var latestWaterYear = includeCurrentYear ? DateTime.Today.Year + 1 : GetLatestWaterYear();
             return GetRangeOfYears(DateUtilities.MinimumYear, latestWaterYear);
         }
 
         public static int GetDefaultWaterYearToDisplay(RioDbContext dbContext)
         {
-            return dbContext.ParcelMonthlyEvapotranspiration.Max(x => x.WaterYear);
+            return DateTime.Today.Year;
         }
     }
 }

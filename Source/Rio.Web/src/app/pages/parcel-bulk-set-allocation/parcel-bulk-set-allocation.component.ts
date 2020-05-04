@@ -69,7 +69,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       this.initializeParcelAllocationHistoryGrid();
       this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear => {
         this.waterYearToDisplay = defaultYear;
-        this.parcelService.getWaterYears().subscribe(waterYears => {
+        this.parcelService.getWaterYearsIncludingCurrentYear().subscribe(waterYears => {
           this.waterYears = waterYears;
           this.updateParcelAllocationHistoryGrid();
         })

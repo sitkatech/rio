@@ -24,7 +24,6 @@ namespace Rio.EFModels.Entities
                 Email = userToCreate.Email,
                 FirstName = userToCreate.FirstName,
                 LastName = userToCreate.LastName,
-                IsActive = true,
                 RoleID = userToCreate.RoleID.Value,
                 CreateDate = DateTime.UtcNow,
             };
@@ -66,7 +65,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<UserDto> ListByRole(RioDbContext dbContext, RoleEnum roleEnum)
         {
             var users = GetUserImpl(dbContext)
-                .Where(x => x.IsActive && x.RoleID == (int) roleEnum)
+                .Where(x => x.RoleID == (int) roleEnum)
                 .OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
@@ -77,7 +76,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<string> GetEmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
         {
             var users = GetUserImpl(dbContext)
-                .Where(x => x.IsActive && x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
+                .Where(x => x.RoleID == (int) RoleEnum.Admin && x.ReceiveSupportEmails)
                 .Select(x => x.Email)
                 .AsEnumerable();
 

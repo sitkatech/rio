@@ -31,6 +31,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   columnDefsUnassigned: ColDef[];
   users: UserDetailedDto[];
   unassignedUsers: UserDetailedDto[];
+  public showOnlyActiveUsers: boolean = true;
 
   constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private utilityFunctionsService: UtilityFunctionsService, private userService: UserService, private decimalPipe: DecimalPipe) { }
 
@@ -79,7 +80,7 @@ export class UserListComponent implements OnInit, OnDestroy {
           x.resizable = true;
         });
 
-        this.rowData = users;
+        this.rowData = users.filter(x => x.RoleID !== RoleEnum.Disabled);
         this.users = users;
         
         this.unassignedUsers = users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
@@ -89,9 +90,14 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
-  private refreshView(){
-    debugger;
-    this.unassignedUsersGrid.api.refreshView();
+  public toggleUserStatusShown(): void {
+    this.showOnlyActiveUsers = !this.showOnlyActiveUsers;
+
+    if (this.showOnlyActiveUsers) {
+      this.rowData = this.users.filter(x => x.RoleID !== RoleEnum.Disabled);
+    } else {
+      this.rowData = this.users;
+    }
   }
 
   ngOnDestroy() {

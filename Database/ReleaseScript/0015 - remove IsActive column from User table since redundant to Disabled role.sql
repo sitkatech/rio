@@ -1,0 +1,1 @@
+alter table dbo.[User] drop column IsActive
