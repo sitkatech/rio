@@ -65,7 +65,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
       this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear=>{
         this.waterYearToDisplay = defaultYear;
-        this.parcelService.getWaterYears().subscribe(waterYears =>{
+        this.parcelService.getWaterYearsIncludingCurrentYear().subscribe(waterYears =>{
           this.waterYears = waterYears;
           this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
             this.parcels = parcels;
