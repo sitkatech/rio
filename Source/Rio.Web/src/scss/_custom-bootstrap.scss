@@ -54,6 +54,10 @@ abbr[data-original-title] {
   color: $breadcrumb-item-active-color;
 }
 
+.breadcrumb-item a {
+  color: $breadcrumb-item-color;
+}
+
 // Maintain link color on hover
 a:hover {
   color: #205c90;
