@@ -119,4 +119,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
     columnIds.splice(0, 1);
     this.utilityFunctionsService.exportGridToCsv(this.accountsGrid, 'accounts.csv', columnIds);
   }
+  
+  public isAdministrator() : boolean
+  {
+    return this.authenticationService.isCurrentUserAnAdministrator();
+  }  
 }
