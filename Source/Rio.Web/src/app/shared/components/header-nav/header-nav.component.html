@@ -68,6 +68,10 @@
                                     <a routerLink="/parcels" class="dropdown-item">
                                         View all Parcels
                                     </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a routerLink="/manager-dashboard" class="dropdown-item">
+                                        Manager Dashboard
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
