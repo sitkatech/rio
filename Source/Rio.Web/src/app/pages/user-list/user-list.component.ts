@@ -117,5 +117,10 @@ export class UserListComponent implements OnInit, OnDestroy {
       });
     columnIds.splice(0, 1);
     this.utilityFunctionsService.exportGridToCsv(this.usersGrid, 'users.csv', columnIds);
+  }
+
+  public isAdministrator() : boolean
+  {
+    return this.authenticationService.isCurrentUserAnAdministrator();
   }  
 }

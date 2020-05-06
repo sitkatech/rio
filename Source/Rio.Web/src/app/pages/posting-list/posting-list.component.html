@@ -8,6 +8,7 @@
     </div>
 </div>
 <div class="container" *ngIf="postings">
+    <app-alert-display></app-alert-display>
     <div style="margin: 1rem 0 1rem 0;">
         <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/new-posting">New Posting</a>
     </div>
@@ -19,8 +20,6 @@
         advertise your intent to buy/sell
         water
     </p>
-</div>
-<div class="container mt-sm-4">
     <div class="table-responsive">
         <div style="margin: 1rem 0 1rem 0;" class="text-sm-right">
             <strong>Show these postings:</strong>
