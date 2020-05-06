@@ -3,4 +3,5 @@ export enum RoleEnum {
   LandOwner = 2,
   Unassigned = 3,
   Disabled = 4,
+  DemoUser = 5
 }

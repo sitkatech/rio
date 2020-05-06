@@ -128,11 +128,14 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getCurrentOwner(): ParcelOwnershipDto{
-    
+  public getCurrentOwner(): ParcelOwnershipDto{    
     return this.parcelOwnershipHistory.filter(x=>{
       return x.EffectiveYear <= this.today.getFullYear();      
     })[0]
   }
   
+  public isAdministrator() : boolean
+  {
+    return this.authenticationService.isCurrentUserAnAdministrator();
+  }
 }

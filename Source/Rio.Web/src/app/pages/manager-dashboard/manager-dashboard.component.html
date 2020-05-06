@@ -18,7 +18,7 @@
       </h2>
     </div>
     <div class="col-sm-6 text-right">
-      <a class="btn btn-rio btn-sm mt-1" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
+      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/bulk-set-allocation">Set Allocation for All
         Parcels</a>
         <div class="float-right pl-2">
       <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"

@@ -196,8 +196,19 @@ export class AuthenticationService {
     return role === RoleEnum.Admin;
   }
 
+  public isUserADemoUserOrAdministrator(user: UserDto): boolean {
+    const role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.DemoUser || role === RoleEnum.Admin;
+  }
+
   public isCurrentUserAnAdministrator(): boolean {
     return this.isUserAnAdministrator(this.currentUser);
+  }
+
+  public isCurrentUserADemoUserOrAdministrator(): boolean {
+    return this.isUserADemoUserOrAdministrator(this.currentUser);
   }
 
   public isUserUnassigned(user: UserDto): boolean {

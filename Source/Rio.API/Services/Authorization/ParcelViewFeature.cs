@@ -4,7 +4,7 @@ namespace Rio.API.Services.Authorization
 {
     public class ParcelViewFeature : BaseAuthorizationAttribute
     {
-        public ParcelViewFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner})
+        public ParcelViewFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner, RoleEnum.DemoUser })
         {
         }
     }

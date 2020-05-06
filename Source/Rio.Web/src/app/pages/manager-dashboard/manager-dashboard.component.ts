@@ -4,7 +4,6 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
-import { forkJoin } from 'rxjs';
 import { ColDef } from 'ag-grid-community';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
@@ -504,5 +503,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public allowTrading():boolean{
     return environment.allowTrading;
+  }
+
+  public isAdministrator() : boolean
+  {
+    return this.authenticationService.isCurrentUserAnAdministrator();
   }
 }

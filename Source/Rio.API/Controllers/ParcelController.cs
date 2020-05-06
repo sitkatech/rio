@@ -26,7 +26,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
@@ -34,7 +34,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<ParcelDto> GetByParcelID([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -47,7 +47,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getAllocations")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -75,7 +75,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -123,7 +123,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/getParcelAllocationHistory")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
         {
             return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.Date));
@@ -144,7 +144,7 @@ namespace Rio.API.Controllers
 
 
         [HttpGet("parcels/getParcelsWithLandOwners/{year}")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners([FromRoute] int year)
         {
             var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext, year);
@@ -152,7 +152,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getOwnershipHistory")]
-        [ParcelManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
             var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x=>x.SaleDate);

@@ -44,7 +44,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("/accounts")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<AccountDto>> ListAllAccounts()
         {
             var accountDtos = Account.List(_dbContext);
@@ -52,7 +52,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("/account/{accountID}")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<AccountDto> GetAccountByID([FromRoute] int accountID)
         {
             var accountDto = Account.GetByAccountID(_dbContext, accountID);

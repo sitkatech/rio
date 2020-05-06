@@ -62,7 +62,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             }
 
 
-            if (currentUser && this.isAdministrator()){
+            if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)){
                 this.userService.getUnassignedUserReport().subscribe(report =>{
                     if (report.Count > 0){
                         this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`, AlertContext.Info, true, AlertService.USERS_AWAITING_CONFIGURATION));
@@ -87,7 +87,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public isAdministrator(): boolean {
-        return this.authenticationService.isUserAnAdministrator(this.currentUser);
+        return this.authenticationService.isUserADemoUserOrAdministrator(this.currentUser);
     }
 
     public isUnassigned(): boolean{

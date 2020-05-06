@@ -29,7 +29,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("market-metrics")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<MarketMetricsDto> Get()
         {
             var marketMetricsDto = new MarketMetricsDto();
@@ -77,7 +77,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("market-metrics/monthly-trade-activity")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<TradeActivityByMonthDto>> GetLast12MonthsTradeActivity()
         {
             var now = DateTime.Now;

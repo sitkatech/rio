@@ -4,7 +4,7 @@ namespace Rio.API.Services.Authorization
 {
     public class PostingManageFeature : BaseAuthorizationAttribute
     {
-        public PostingManageFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner})
+        public PostingManageFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner, RoleEnum.DemoUser})
         {
         }
     }

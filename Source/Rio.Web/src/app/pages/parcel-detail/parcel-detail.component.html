@@ -68,7 +68,7 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <a class="btn btn-rio btn-sm float-right"
+          <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right"
             routerLink="/parcels/{{parcel.ParcelID}}/edit-annual-allocation">
             <span class="fas fa-edit"></span> Edit Allocation
           </a>
@@ -129,7 +129,7 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <a class="btn btn-rio btn-sm float-right" routerLink="/parcels/{{parcel.ParcelID}}/change-owner">
+          <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right" routerLink="/parcels/{{parcel.ParcelID}}/change-owner">
             <span class="fas fa-edit"></span> Change Parcel Owner
           </a>
 

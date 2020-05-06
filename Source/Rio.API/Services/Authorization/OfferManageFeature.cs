@@ -4,7 +4,7 @@ namespace Rio.API.Services.Authorization
 {
     public class OfferManageFeature : BaseAuthorizationAttribute
     {
-        public OfferManageFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner})
+        public OfferManageFeature() : base(new []{RoleEnum.Admin, RoleEnum.LandOwner, RoleEnum.DemoUser })
         {
         }
     }

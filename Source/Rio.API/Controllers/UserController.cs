@@ -125,7 +125,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("users")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<IEnumerable<UserDetailedDto>> List()
         {
             var userDtos = EFModels.Entities.User.List(_dbContext);
@@ -278,7 +278,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("landowner-usage-report/{year}")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
         {
             var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
