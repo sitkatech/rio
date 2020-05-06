@@ -61,7 +61,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
       return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
 
-  public canViewLandOwnerDashboard(): boolean {
-      return this.currentUserIsAdmin();
+  public currentUserIsADemoUserOrAdministrator(): boolean {
+    return this.authenticationService.isUserADemoUserOrAdministrator(this.currentUser);
   }
 }
