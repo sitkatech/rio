@@ -138,7 +138,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public uploadReconciliationFile(): void{
     this.isLoadingSubmit = true;
     this.reconciliationAllocationService.uploadFile(this.getFile(), this.waterYearToDisplay).subscribe(x=>{
-      this.alertService.pushAlert(new Alert(`Successfully set reconciiliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
+      this.alertService.pushAlert(new Alert(`Successfully set reconciliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
       this.clearInputs();
