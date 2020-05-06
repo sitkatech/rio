@@ -56,6 +56,19 @@ namespace Rio.API.Controllers
                 using var reader = new StreamReader(memoryStream);
                 using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
                 csvReader.Configuration.RegisterClassMap<ReconciliationAllocationCSVMap>();
+                csvReader.Read();
+                csvReader.ReadHeader();
+                var headerNamesDuplicated = csvReader.Context.HeaderRecord.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                if (headerNamesDuplicated.Any())
+                {
+                    badRequest = BadRequest(new
+                    {
+                        validationMessage =
+                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
+                    });
+                    records = null;
+                    return false;
+                }
                 records = csvReader.GetRecords<ReconciliationAllocationCSV>().ToList();
             }
             catch (HeaderValidationException e)
