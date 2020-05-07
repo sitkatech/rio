@@ -1,11 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { UserDto } from 'src/app/shared/models';
-import { UserUpdateDto } from 'src/app/shared/models/user/user-update-dto';
-import { RoleDto } from 'src/app/shared/models/role/role-dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { RoleService } from 'src/app/services/role/role.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { forkJoin } from 'rxjs';
 import { Alert } from 'src/app/shared/models/alert';

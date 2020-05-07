@@ -55,7 +55,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                 this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account;});
 
                 forkJoin(
-                    this.tradeService.getTradeActivityByAccountID(currentUser.UserID),
+                    this.tradeService.getTradeActivityByAccountID(this.activeAccount.AccountID),
                 ).subscribe(([trades]) => {
                     this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                 });
