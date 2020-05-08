@@ -10,4 +10,3 @@ Source/docker-compose/.env.rio
 /Source/Rio.GeoServer/data_dir/geoserver-environment.properties
 /Source/Rio.GeoServer/data_dir/.updatepassword.lock
 /Source/Rio.GeoServer/data_dir/security/*
-/Source/Rio.GeoServer/data_dir/wps.xml
