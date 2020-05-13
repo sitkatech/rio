@@ -39,7 +39,7 @@ namespace Rio.API.Controllers
             _dbContext.FileResource.Add(fileResource);
             _dbContext.SaveChanges();
 
-            ParcelAllocation.SetReconciliationAllocation(_dbContext, records, waterYear);
+            //ParcelAllocation.SetReconciliationAllocation(_dbContext, records, waterYear);
             
             ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
                 UserContext.GetUserFromHttpContext(_dbContext,HttpContext).UserID, fileResource.FileResourceID, waterYear,

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Rio.API.Util;
 using Rio.Models.DataTransferObjects;
@@ -37,29 +38,42 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<UserDetailedDto> List(RioDbContext dbContext)
         {
+            var AccountUsers = dbContext.AccountUser
+                .Include(x => x.Account)
+                .ToList()
+                .GroupBy(x => x.UserID)
+                .Select(x => new {UserID = x.Key, Accounts = x.Select(y => y.Account.AsSimpleDto()).ToList()});
+
             // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.vUserDetailed.OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToList()
+            var users = dbContext.vUserDetailed
+                .ToList()
+                .GroupJoin(AccountUsers,
+                    x => x.UserID,
+                    y => y.UserID,
+                    (x,y) => new {vUserDetailed = x, Accounts = y.DefaultIfEmpty()})
+                .OrderBy(x => x.vUserDetailed.LastName).ThenBy(x => x.vUserDetailed.FirstName).ToList()
                 .Select(user =>
                 {
                     var userDetailedDto = new UserDetailedDto()
                     {
-                        UserID = user.UserID,
-                        UserGuid = user.UserGuid,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email,
-                        LoginName = user.LoginName,
-                        RoleID = user.RoleID,
-                        RoleDisplayName = user.RoleDisplayName,
-                        Phone = user.Phone,
-                        HasActiveTrades = user.HasActiveTrades,
-                        AcreFeetOfWaterPurchased = user.AcreFeetOfWaterPurchased,
-                        AcreFeetOfWaterSold = user.AcreFeetOfWaterSold,
-                        ReceiveSupportEmails = user.ReceiveSupportEmails
+                        UserID = user.vUserDetailed.UserID,
+                        UserGuid = user.vUserDetailed.UserGuid,
+                        FirstName = user.vUserDetailed.FirstName,
+                        LastName = user.vUserDetailed.LastName,
+                        Email = user.vUserDetailed.Email,
+                        LoginName = user.vUserDetailed.LoginName,
+                        RoleID = user.vUserDetailed.RoleID,
+                        RoleDisplayName = user.vUserDetailed.RoleDisplayName,
+                        Phone = user.vUserDetailed.Phone,
+                        HasActiveTrades = user.vUserDetailed.HasActiveTrades,
+                        AcreFeetOfWaterPurchased = user.vUserDetailed.AcreFeetOfWaterPurchased,
+                        AcreFeetOfWaterSold = user.vUserDetailed.AcreFeetOfWaterSold,
+                        ReceiveSupportEmails = user.vUserDetailed.ReceiveSupportEmails,
+                        AssociatedAccounts = user.Accounts.Select(x => x?.Accounts).SingleOrDefault()
                     };
                     return userDetailedDto;
                 }).ToList();
-            return parcels;
+            return users;
         }
 
         public static IEnumerable<UserDto> ListByRole(RioDbContext dbContext, RoleEnum roleEnum)

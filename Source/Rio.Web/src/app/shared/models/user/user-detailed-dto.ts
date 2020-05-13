@@ -1,3 +1,5 @@
+import { AccountSimpleDto } from '../account/account-simple-dto';
+
 export class UserDetailedDto {
     UserID: number;
     UserGuid: string;
@@ -18,6 +20,8 @@ export class UserDetailedDto {
     AcreFeetOfWaterSold: number;
     ReceiveSupportEmails: boolean;
     IsActive: boolean;
+
+    AssociatedAccounts: Array<AccountSimpleDto>
 
     constructor(obj?: any) {
         Object.assign(this, obj);

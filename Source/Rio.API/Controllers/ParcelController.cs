@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
@@ -15,6 +16,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ReconciliationAllocation;
+using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
 {
@@ -227,10 +229,12 @@ namespace Rio.API.Controllers
                 using var memoryStream = new MemoryStream(fileResource.FileResourceData);
                 using var reader = new StreamReader(memoryStream);
                 using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-                csvReader.Configuration.RegisterClassMap(new BulkSetAllocationCSVMap(_dbContext, parcelTypeDisplayName));
+                csvReader.Configuration.RegisterClassMap(new BulkSetAllocationCSVMap(_dbContext,
+                    parcelTypeDisplayName));
                 csvReader.Read();
                 csvReader.ReadHeader();
-                var headerNamesDuplicated = csvReader.Context.HeaderRecord.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                var headerNamesDuplicated =
+                    csvReader.Context.HeaderRecord.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
                     badRequest = BadRequest(new
@@ -241,6 +245,7 @@ namespace Rio.API.Controllers
                     records = null;
                     return false;
                 }
+
                 records = csvReader.GetRecords<BulkSetAllocationCSV>().ToList();
             }
             catch (HeaderValidationException e)
@@ -254,7 +259,18 @@ namespace Rio.API.Controllers
                 records = null;
                 return false;
             }
-            catch
+            catch (MissingFieldException e)
+            {
+                var headerMessage = e.Message.Split('.')[0];
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
+                });
+                records = null;
+                return false;
+            }
+            catch (Exception e)
             {
                 badRequest = BadRequest(new
                 {
@@ -321,6 +337,12 @@ namespace Rio.API.Controllers
 
     public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>
     {
+        public BulkSetAllocationCSVMap()
+        {
+            Map(m => m.AccountNumber).Name("Account Number");
+            Map(m => m.AllocationVolume).Name("Allocation Volume");
+        }
+
         public BulkSetAllocationCSVMap(RioDbContext dbContext, string parcelAllocationTypeDisplayName)
         {
             Map(m => m.AccountNumber).Name("Account Number");

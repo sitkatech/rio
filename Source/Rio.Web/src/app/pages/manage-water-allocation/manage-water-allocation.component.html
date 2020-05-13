@@ -6,7 +6,7 @@
                     <a routerLink="/manager-dashboard">Manager Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Set Allocation for All Parcels
+                    Manage Water Allocation
                 </li>
             </ol>
         </nav>
@@ -16,7 +16,7 @@
     <div class="row">
         <div class="col-9">
             <h2>
-                Set Allocation for All Parcels
+                Manage Water Allocation
             </h2>
         </div>
     </div>
@@ -27,15 +27,17 @@
                 Use this page to assign a water allocation to all parcels in the platform. Enter the year, the
                 allocation type,and the unit quantity to allocate. Any existing allocations will be overwritten by the
                 new data. You can also manually allocate water one parcel at a time via the Parcel detail pages.
-                Allocation set for the next water year will be visible to Landowners starting in November of the current year.
+                Allocation set for the next water year will be visible to Landowners starting in November of the current
+                year.
             </p>
 
             <p class="lead">
-                For Reconciliation Water please download the Account Usage Report from the
-                <a routerLink="/manager-dashboard" routerLinkActive="true">Manager Dashboard</a> to perform the
-                off system reconciliation process. Upload a CSV file with columns called "Account Number" and "Reconciliation
-                Volume" to assign values in the Accounting Platform. The Reconciliation Volume will be applied
-                proportionally across parcels associated with an account based on acreage.
+                Please download the Account Usage Report from the <a routerLink="/manager-dashboard"
+                    routerLinkActive="true">Manager Dashboard</a> to perform the off system
+                reconciliation process and calculate stored water. Assign Reconciliation values by uploading a CSV file
+                with columns called "Account Number" and "Reconciliation Volume". For Stored Water upload a CSV file
+                with columns called "Account Number" and "Stored Water Volume". The Reconciliation or Stored Water values will
+                be applied proportionally across parcels associated with an account based on acreage.
             </p>
         </div>
     </div>
@@ -44,10 +46,11 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay" [selectYearLabel]="'Setting Data for Year'"
+                        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                            [selectYearLabel]="'Setting Data for Year'"
                             (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
                     </div>
-                    <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>                    
+                    <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>
                 </div>
                 <div class="card-body">
                     <div class="row mb-1">
@@ -55,7 +58,7 @@
                             <form class="form-inline">
                                 <div class="form-group row w-100">
                                     <label for="projectWater" class="col-form-label col-3 d-inline-block">
-                                        <strong>Project Water</strong>
+                                        <strong>{{ParcelAllocationTypeStatic.ProjectWater}}</strong>
                                         <br class="br-special" />
                                         <span
                                             style="font-size:10px">{{lastProjectWaterSetDate ? "Last set " + lastProjectWaterSetDate : "No record of last set date"}}</span>
@@ -72,7 +75,7 @@
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayProjectWaterError" class="row mb-1">
+                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.ProjectWater.toString()]" class="row mb-1">
                         <div class="col danger">
                             Please enter a value before submitting
                         </div>
@@ -82,7 +85,7 @@
                             <form class="form-inline">
                                 <div class="form-group row w-100">
                                     <label for="nativeYield" class="col-form-label col-3 d-inline-block">
-                                        <strong>Native Yield</strong>
+                                        <strong>{{ParcelAllocationTypeStatic.NativeYield}}</strong>
                                         <br class="br-special" />
                                         <span
                                             style="font-size:10px">{{lastNativeYieldSetDate ? "Last set " + lastNativeYieldSetDate : "No record of last set date"}}</span>
@@ -99,7 +102,7 @@
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayNativeYieldError" class="row mb-1">
+                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.NativeYield.toString()]" class="row mb-1">
                         <div class="col danger">
                             Please enter a value before submitting
                         </div>
@@ -108,43 +111,44 @@
                         <div class="col">
                             <form class="form-inline">
                                 <div class="form-group row w-100">
-                                    <label for="reconciliationWaterFileUpload"
-                                        class="col-form-label col-3 d-inline-block">
-                                        <strong>Reconciliation Water</strong>
+                                    <label for="reconciliationFileUpload" class="col-form-label col-3 d-inline-block">
+                                        <strong>{{ParcelAllocationTypeStatic.Reconciliation}}</strong>
                                         <br class="br-special" />
                                         <span
                                             style="font-size:10px">{{lastReconciliationFileUploadDate ? "Last uploaded " + lastReconciliationFileUploadDate : "No record of last set date"}}</span>
                                     </label>
                                     <div class="input-group col ml-3 p-0">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input"
-                                                id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload
+                                            <input type="file" class="custom-file-input" id="reconciliationFileUpload"
+                                                #fileUpload
                                                 (change)="fileEvent(ParcelAllocationTypeStatic.Reconciliation)">
                                             <label class="custom-file-label"
-                                                for="reconciliationWaterFileUpload">{{getFileName(ParcelAllocationTypeStatic.Reconciliation)}}</label>
+                                                for="reconciliationFileUpload">{{getFileName(ParcelAllocationTypeStatic.Reconciliation)}}</label>
                                         </div>
                                         <div class="input-group-append">
                                             <button class="btn btn-rio" type="button"
-                                                (click)="reconciliationWaterFileUpload.click()"><i
+                                                (click)="openFileUpload(ParcelAllocationTypeStatic.Reconciliation)"><i
                                                     class="fas fa-folder-open"></i></button>
                                         </div>
                                     </div>
                                     <div class="col-3 text-right p-0">
                                         <button type="button" class="btn btn-rio"
-                                            [disabled]="isLoadingSubmit || displayFiletypeError"
-                                            (click)="uploadReconciliationFile()">Upload &
+                                            [disabled]="isLoadingSubmit || displayFileErrors[ParcelAllocationTypeStatic.Reconciliation.toString()]"
+                                            (click)="uploadAllocationFile(ParcelAllocationTypeStatic.Reconciliation)">Upload
+                                            &
                                             Save</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayWaterReconciliationError" class="row mb-1">
+                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.Reconciliation.toString()]" class="row mb-1">
                         <div class="col danger">
                             Please choose a file before submitting
                         </div>
                     </div>
-                    <div *ngIf="displayFiletypeError" class="row mb-1">
+                    <div *ngIf="displayFileErrors[ParcelAllocationTypeStatic.Reconciliation.toString()]"
+                        class="row mb-1">
                         <div class="col danger">
                             You must select a CSV file to upload
                         </div>
@@ -153,43 +157,43 @@
                         <div class="col">
                             <form class="form-inline">
                                 <div class="form-group row w-100">
-                                    <label for="storedWaterFileUpload"
-                                        class="col-form-label col-3 d-inline-block">
-                                        <strong>Stored Water</strong>
+                                    <label for="storedWaterFileUpload" class="col-form-label col-3 d-inline-block">
+                                        <strong>{{ParcelAllocationTypeStatic.StoredWater}}</strong>
                                         <br class="br-special" />
                                         <span
                                             style="font-size:10px">{{lastStoredWaterFileUploadDate ? "Last uploaded " + lastStoredWaterFileUploadDate : "No record of last set date"}}</span>
                                     </label>
                                     <div class="input-group col ml-3 p-0">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input"
-                                                id="storedWaterFileUpload" #storedWaterFileUpload
+                                            <input type="file" class="custom-file-input" id="storedWaterFileUpload"
+                                                #fileUpload
                                                 (change)="fileEvent(ParcelAllocationTypeStatic.StoredWater)">
                                             <label class="custom-file-label"
                                                 for="storedWaterFileUpload">{{getFileName(ParcelAllocationTypeStatic.StoredWater)}}</label>
                                         </div>
                                         <div class="input-group-append">
                                             <button class="btn btn-rio" type="button"
-                                                (click)="storedWaterFileUpload.click()"><i
+                                                (click)="openFileUpload(ParcelAllocationTypeStatic.StoredWater)"><i
                                                     class="fas fa-folder-open"></i></button>
                                         </div>
                                     </div>
                                     <div class="col-3 text-right p-0">
                                         <button type="button" class="btn btn-rio"
-                                            [disabled]="isLoadingSubmit || displayFiletypeError"
-                                            (click)="uploadStoredWaterFile()">Upload &
+                                            [disabled]="isLoadingSubmit || displayFileErrors[ParcelAllocationTypeStatic.StoredWater.toString()]"
+                                            (click)="uploadAllocationFile(ParcelAllocationTypeStatic.StoredWater)">Upload
+                                            &
                                             Save</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                     </div>
-                    <div *ngIf="displayStoredWaterError" class="row mb-1">
+                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.StoredWater.toString()]" class="row mb-1">
                         <div class="col danger">
                             Please choose a file before submitting
                         </div>
                     </div>
-                    <div *ngIf="displayFiletypeError" class="row mb-1">
+                    <div *ngIf="displayFileErrors[ParcelAllocationTypeStatic.StoredWater.toString()]" class="row mb-1">
                         <div class="col danger">
                             You must select a CSV file to upload
                         </div>
