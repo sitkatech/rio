@@ -38,7 +38,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<UserDetailedDto> List(RioDbContext dbContext)
         {
-            var AccountUsers = dbContext.AccountUser
+            var accountUsers = dbContext.AccountUser
                 .Include(x => x.Account)
                 .ToList()
                 .GroupBy(x => x.UserID)
@@ -47,7 +47,7 @@ namespace Rio.EFModels.Entities
             // right now we are assuming a parcel can only be associated to one user
             var users = dbContext.vUserDetailed
                 .ToList()
-                .GroupJoin(AccountUsers,
+                .GroupJoin(accountUsers,
                     x => x.UserID,
                     y => y.UserID,
                     (x,y) => new {vUserDetailed = x, Accounts = y.DefaultIfEmpty()})
