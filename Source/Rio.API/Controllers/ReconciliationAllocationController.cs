@@ -77,7 +77,7 @@ namespace Rio.API.Controllers
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        $"{headerMessage}. Please check that the column name is not missing or mispelled."
+                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
                 });
                 records = null;
                 return false;
