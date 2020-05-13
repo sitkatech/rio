@@ -15,7 +15,6 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
-using Rio.Models.DataTransferObjects.ReconciliationAllocation;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers

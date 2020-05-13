@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
-using Rio.Models.DataTransferObjects.ReconciliationAllocation;
 
 namespace Rio.EFModels.Entities
 {
