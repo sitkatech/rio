@@ -72,7 +72,7 @@ export class UserListComponent implements OnInit, OnDestroy {
           { headerName: 'Email', field: 'Email', sortable: true, filter: true },
           { headerName: 'Role', field: 'RoleDisplayName', sortable: true, filter: true, width: 100 },
           {
-            headerName: 'Associated Accounts',
+            headerName: 'Associated Account(s)',
             valueGetter: function (params) {
               let names = params.data.AssociatedAccounts?.map(x => {
                 return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
