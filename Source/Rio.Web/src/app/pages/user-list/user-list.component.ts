@@ -74,14 +74,33 @@ export class UserListComponent implements OnInit, OnDestroy {
           {
             headerName: 'Associated Accounts',
             valueGetter: function (params) {
-              console.log(params);
               let names = params.data.AssociatedAccounts?.map(x => {
                 return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
               });
               const downloadDisplay = names?.map(x => x.LinkDisplay).join(", ");
 
-              return { links: names, DownloadDisplay: downloadDisplay };
-            }, sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/accounts/" }, cellRendererFramework: MultiLinkRendererComponent
+              return { links: names, DownloadDisplay: downloadDisplay ?? "" };
+            },
+            filterValueGetter: function (params: any) {
+              let names = params.data.AssociatedAccounts?.map(x => {
+                return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
+              });
+              const downloadDisplay = names?.map(x => x.LinkDisplay).join(", ");
+
+              return downloadDisplay ?? "";
+            },
+            comparator: function (id1: any, id2: any) {
+              let link1 = id1.DownloadDisplay;
+              let link2 = id2.DownloadDisplay;
+              if (link1 < link2) {
+                return -1;
+              }
+              if (link1 > link2) {
+                return 1;
+              }
+              return 0;
+            }
+            , sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/accounts/" }, cellRendererFramework: MultiLinkRendererComponent
           },
           { headerName: 'Has Active Trades?', valueGetter: function (params) { return params.data.HasActiveTrades ? "Yes" : "No"; }, sortable: true, filter: true, width: 160 },
           { headerName: 'Water Purchased (ac-ft)', field: 'AcreFeetOfWaterPurchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 200 },
