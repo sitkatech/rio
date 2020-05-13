@@ -7,7 +7,14 @@ using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
+using Rio.Models.DataTransferObjects.ReconciliationAllocation;
 
 namespace Rio.API.Controllers
 {
@@ -122,6 +129,36 @@ namespace Rio.API.Controllers
             return Ok(numberOfParcels);
         }
 
+        [HttpPost("parcels/{waterYear}/{parcelAllocationTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
+        public async Task<ActionResult> BulkSetAnnualParcelAllocationFileUpload([FromRoute] int waterYear,
+            [FromRoute] int parcelAllocationTypeID)
+        {
+            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
+            var parcelAllocationTypeDisplayName =
+                _dbContext.ParcelAllocationType.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeDisplayName;
+
+            if (!ParseBulkSetAllocationUpload(fileResource, parcelAllocationTypeDisplayName, out var records, out var badRequestFromUpload))
+            {
+                return badRequestFromUpload;
+            }
+
+            if (!ValidateBulkSetAllocationUpload(records, parcelAllocationTypeDisplayName, out var badRequestFromValidation))
+            {
+                return badRequestFromValidation;
+            }
+
+            _dbContext.FileResource.Add(fileResource);
+            _dbContext.SaveChanges();
+
+            ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, parcelAllocationTypeID);
+
+            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
+                UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID, fileResource.FileResourceID, waterYear,
+                parcelAllocationTypeID, null);
+
+            return Ok();
+        }
+
         [HttpGet("parcels/getParcelAllocationHistory")]
         [ManagerDashboardFeature]
         public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
@@ -183,5 +220,111 @@ namespace Rio.API.Controllers
             return Ok();
         }
 
+        private bool ParseBulkSetAllocationUpload(FileResource fileResource, string parcelTypeDisplayName, out List<BulkSetAllocationCSV> records, out ActionResult badRequest)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream(fileResource.FileResourceData);
+                using var reader = new StreamReader(memoryStream);
+                using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+                csvReader.Configuration.RegisterClassMap(new BulkSetAllocationCSVMap(_dbContext, parcelTypeDisplayName));
+                csvReader.Read();
+                csvReader.ReadHeader();
+                var headerNamesDuplicated = csvReader.Context.HeaderRecord.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                if (headerNamesDuplicated.Any())
+                {
+                    badRequest = BadRequest(new
+                    {
+                        validationMessage =
+                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
+                    });
+                    records = null;
+                    return false;
+                }
+                records = csvReader.GetRecords<BulkSetAllocationCSV>().ToList();
+            }
+            catch (HeaderValidationException e)
+            {
+                var headerMessage = e.Message.Split('.')[0];
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
+                });
+                records = null;
+                return false;
+            }
+            catch
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                       "There was an error parsing the CSV. Please ensure the file was formatted correctly."
+                });
+                records = null;
+                return false;
+            }
+
+            badRequest = null;
+            return true;
+        }
+
+        private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string parcelAllocationTypeDisplayName, out ActionResult badRequest)
+        {
+            // no null allocation volumes
+            var nullAllocationVolumes = records.Where(x => x.AllocationVolume == null).ToList();
+            if (nullAllocationVolumes.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The following Account Numbers had no {parcelAllocationTypeDisplayName} Volume entered: " +
+                        string.Join(", ", nullAllocationVolumes.Select(x => x.AccountNumber))
+                });
+                return false;
+            }
+
+            // no duplicate account numbers permitted
+            var duplicateAccountNumbers = records.GroupBy(x => x.AccountNumber).Where(x => x.Count() > 1)
+                .Select(x => x.Key).ToList();
+
+            if (duplicateAccountNumbers.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        "The upload contained multiples rows with these account numbers: " +
+                        string.Join(", ", duplicateAccountNumbers)
+                });
+                return false;
+            }
+
+            // all account numbers must match
+            var allAccountNumbers = _dbContext.Account.Select(y => y.AccountNumber);
+            var unmatchedRecords = records.Where(x => !allAccountNumbers.Contains(x.AccountNumber)).ToList();
+
+            if (unmatchedRecords.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        "The upload contained these account numbers which did not match any record in the system: " +
+                        string.Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
+                });
+                return false;
+            }
+
+            badRequest = null;
+            return true;
+        }
+    }
+
+    public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>
+    {
+        public BulkSetAllocationCSVMap(RioDbContext dbContext, string parcelAllocationTypeDisplayName)
+        {
+            Map(m => m.AccountNumber).Name("Account Number");
+            Map(m => m.AllocationVolume).Name(parcelAllocationTypeDisplayName + " Volume");
+        }
     }
 }

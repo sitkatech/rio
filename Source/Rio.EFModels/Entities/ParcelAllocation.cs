@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.ReconciliationAllocation;
 
@@ -66,6 +67,44 @@ namespace Rio.EFModels.Entities
             return parcels.Count;
         }
 
+        public static void BulkSetAllocation(RioDbContext dbContext, List<BulkSetAllocationCSV> records, int waterYear, int parcelAllocationType)
+        {
+            // delete existing parcel allocations
+            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x =>
+                x.WaterYear == waterYear && x.ParcelAllocationTypeID == parcelAllocationType);
+            if (existingParcelAllocations.Any())
+            {
+                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.SaveChanges();
+            }
+
+            // select parcels owned by accounts from upload and group by accounts to associate allocation volumes with list of parcels
+            var accountAllocationVolumes = Parcel.vParcelOwnershipsByYear(dbContext, waterYear).ToList().GroupBy(x => x.Account.AccountNumber)
+                .Where(x => records.Select(y => y.AccountNumber).Contains(x.Key)).Join(records,
+                    account => account.Key, record => record.AccountNumber,
+                    (x, y) => new { Parcels = x.Select(z => z.Parcel).ToList(), y.AllocationVolume });
+
+
+            var parcelAllocations = new List<ParcelAllocation>();
+            // apportion the reconciliation volumes to their lists of parcels by area percentage
+            foreach (var record in accountAllocationVolumes)
+            {
+                var parcels = record.Parcels;
+                var sum = parcels.Sum(x => x.ParcelAreaInAcres);
+                parcelAllocations.AddRange(parcels.Select(x => new ParcelAllocation()
+                {
+                    ParcelID = x.ParcelID,
+                    AcreFeetAllocated =
+                        (decimal)(record.AllocationVolume * (x.ParcelAreaInAcres / sum)),
+                    WaterYear = waterYear,
+                    ParcelAllocationTypeID = parcelAllocationType
+                }));
+            }
+
+            dbContext.ParcelAllocation.AddRange(parcelAllocations);
+            dbContext.SaveChanges();
+        }
+
         public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {
             var parcelAllocations = dbContext.ParcelAllocation
@@ -86,44 +125,6 @@ namespace Rio.EFModels.Entities
             return parcelAllocations.Any()
                 ? parcelAllocations.Select(x => x.AsDto()).ToList()
                 : new List<ParcelAllocationDto>();
-        }
-
-        public static void SetReconciliationAllocation(RioDbContext dbContext, List<ReconciliationAllocationCSV> records, int waterYear)
-        {
-            // delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x =>
-                x.WaterYear == waterYear && x.ParcelAllocationTypeID == (int) ParcelAllocationTypeEnum.Reconciliation);
-            if (existingParcelAllocations.Any())
-            {
-                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
-                dbContext.SaveChanges();
-            }
-
-            // select parcels owned by accounts from upload and group by accounts to associate reconciliation volumes with list of parcels
-            var accountReconciliationVolumes = Parcel.vParcelOwnershipsByYear(dbContext,waterYear).ToList().GroupBy(x => x.Account.AccountNumber)
-                .Where(x => records.Select(y => y.AccountNumber).Contains(x.Key)).Join(records,
-                    account => account.Key, record => record.AccountNumber,
-                    (x, y) => new {Parcels = x.Select(z=>z.Parcel).ToList(), y.ReconciliationVolume});
-
-
-            var parcelAllocations = new List<ParcelAllocation>();
-            // apportion the reconciliation volumes to their lists of parcels by area percentage
-            foreach (var record in accountReconciliationVolumes)
-            {
-                var parcels = record.Parcels;
-                var sum = parcels.Sum(x=>x.ParcelAreaInAcres);
-                parcelAllocations.AddRange(parcels.Select(x => new ParcelAllocation()
-                {
-                    ParcelID = x.ParcelID,
-                    AcreFeetAllocated =
-                        (decimal) (record.ReconciliationVolume * (x.ParcelAreaInAcres / sum)),
-                    WaterYear = waterYear,
-                    ParcelAllocationTypeID = (int) ParcelAllocationTypeEnum.Reconciliation
-                }));
-            }
-
-            dbContext.ParcelAllocation.AddRange(parcelAllocations);
-            dbContext.SaveChanges();
         }
     }
 }

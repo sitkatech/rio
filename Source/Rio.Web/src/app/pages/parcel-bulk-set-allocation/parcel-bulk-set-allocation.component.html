@@ -66,7 +66,7 @@
                                         ac-ft per parcel acre
                                     </div>
                                     <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(1,projectWaterAllocation.value)"
+                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.ProjectWater,projectWaterAllocation.value)"
                                         [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                 </div>
                             </form>
@@ -93,7 +93,7 @@
                                         ac-ft per parcel acre
                                     </div>
                                     <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(3,nativeYieldAllocation.value)"
+                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.NativeYield,nativeYieldAllocation.value)"
                                         [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                 </div>
                             </form>
@@ -119,9 +119,9 @@
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input"
                                                 id="reconciliationWaterFileUpload" #reconciliationWaterFileUpload
-                                                (change)="fileEvent()">
+                                                (change)="fileEvent(ParcelAllocationTypeStatic.Reconciliation)">
                                             <label class="custom-file-label"
-                                                for="reconciliationWaterFileUpload">{{getFileName()}}</label>
+                                                for="reconciliationWaterFileUpload">{{getFileName(ParcelAllocationTypeStatic.Reconciliation)}}</label>
                                         </div>
                                         <div class="input-group-append">
                                             <button class="btn btn-rio" type="button"
@@ -140,6 +140,51 @@
                         </div>
                     </div>
                     <div *ngIf="displayWaterReconciliationError" class="row mb-1">
+                        <div class="col danger">
+                            Please choose a file before submitting
+                        </div>
+                    </div>
+                    <div *ngIf="displayFiletypeError" class="row mb-1">
+                        <div class="col danger">
+                            You must select a CSV file to upload
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-inline">
+                                <div class="form-group row w-100">
+                                    <label for="storedWaterFileUpload"
+                                        class="col-form-label col-3 d-inline-block">
+                                        <strong>Stored Water</strong>
+                                        <br class="br-special" />
+                                        <span
+                                            style="font-size:10px">{{lastStoredWaterFileUploadDate ? "Last uploaded " + lastStoredWaterFileUploadDate : "No record of last set date"}}</span>
+                                    </label>
+                                    <div class="input-group col ml-3 p-0">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input"
+                                                id="storedWaterFileUpload" #storedWaterFileUpload
+                                                (change)="fileEvent(ParcelAllocationTypeStatic.StoredWater)">
+                                            <label class="custom-file-label"
+                                                for="storedWaterFileUpload">{{getFileName(ParcelAllocationTypeStatic.StoredWater)}}</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-rio" type="button"
+                                                (click)="storedWaterFileUpload.click()"><i
+                                                    class="fas fa-folder-open"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-3 text-right p-0">
+                                        <button type="button" class="btn btn-rio"
+                                            [disabled]="isLoadingSubmit || displayFiletypeError"
+                                            (click)="uploadStoredWaterFile()">Upload &
+                                            Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div *ngIf="displayStoredWaterError" class="row mb-1">
                         <div class="col danger">
                             Please choose a file before submitting
                         </div>

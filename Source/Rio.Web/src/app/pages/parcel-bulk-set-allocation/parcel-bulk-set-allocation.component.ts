@@ -13,6 +13,8 @@ import { ColDef } from 'ag-grid-community';
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { ReconciliationAllocationService } from 'src/app/services/reconciliation-allocation.service';
+import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
+import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocation-type-static';
 
 @Component({
   selector: 'rio-parcel-bulk-set-allocation',
@@ -24,6 +26,9 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('projectWaterAllocation') projectWaterAllocation: any;
   @ViewChild('nativeYieldAllocation') nativeYieldAllocation: any;
   @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
+  @ViewChild('storedWaterFileUpload') storedWaterFileUpload: any;
+
+  public ParcelAllocationTypeStatic = ParcelAllocationTypeStatic;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
@@ -38,18 +43,19 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public lastProjectWaterSetDate: string;
   public lastNativeYieldSetDate: string;
   public lastReconciliationFileUploadDate: string;
+  public lastStoredWaterFileUploadDate: string;
 
   public displayProjectWaterError: boolean = false;
   public displayNativeYieldError: boolean = false;
   public displayWaterReconciliationError: boolean = false;
+  public displayStoredWaterError: boolean = false;
 
-  public allocationTypes = {
-    1: "Project Water",
-    2: "Reconciliation",
-    3: "Native Yield"
+  public fileUploadArray = {
+    "Reconciliation": this.reconciliationWaterFileUpload,
+    "Stored Water": this.storedWaterFileUpload
   }
 
-  public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError];
+  public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError, this.displayStoredWaterError];
   public fileName: string;
   displayFiletypeError: boolean = false;
 
@@ -105,14 +111,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public submitBulkAllocation(allocationType: number, allocationValue: string): void {
+  public submitBulkAllocation(allocationType: ParcelAllocationTypeStatic, allocationValue: string): void {
     this.isLoadingSubmit = true;
 
     this.turnOffErrors();
 
     if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
       this.model.AcreFeetAllocated = +allocationValue;
-      this.model.ParcelAllocationTypeID = allocationType;
+      this.model.ParcelAllocationTypeID = allocationType.id;
       this.model.WaterYear = this.waterYearToDisplay;
 
       this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
@@ -120,7 +126,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
           this.clearInputs()
           this.isLoadingSubmit = false;
           this.updateParcelAllocationHistoryGrid();
-          this.alertService.pushAlert(new Alert("The " + this.allocationTypes[allocationType] + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+          this.alertService.pushAlert(new Alert("The " + allocationType + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
         }
           ,
           error => {
@@ -131,13 +137,13 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     }
     else {
       this.isLoadingSubmit = false;
-      this.chooseErrorToDisplay(allocationType);
+      this.chooseErrorToDisplay(allocationType.id);
     }
   }
 
-  public uploadReconciliationFile(): void{
+  public uploadAllocationFile(allocationType: ParcelAllocationTypeStatic): void{
     this.isLoadingSubmit = true;
-    this.reconciliationAllocationService.uploadFile(this.getFile(), this.waterYearToDisplay).subscribe(x=>{
+    this.reconciliationAllocationService.uploadFile(this.getFile(allocationType), this.waterYearToDisplay).subscribe(x=>{
       this.alertService.pushAlert(new Alert(`Successfully set reconciliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
@@ -156,8 +162,8 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     });
   }
 
-  fileEvent(){
-    let file = this.getFile();
+  fileEvent(allocationType: ParcelAllocationTypeStatic){
+    let file = this.getFile(allocationType);
 
     if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
       this.displayFiletypeError = true;
@@ -168,15 +174,15 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  public getFile(): File{
-    if (!this.reconciliationWaterFileUpload){
+  public getFile(fileUploadType: ParcelAllocationTypeStatic): File{
+    if (!this.fileUploadArray[fileUploadType.toString()]){
       return null;
     }
-    return this.reconciliationWaterFileUpload.nativeElement.files[0]
+    return this.fileUploadArray[fileUploadType.toString()].nativeElement.files[0]
   }
 
-  public getFileName():string{
-    let file = this.getFile();
+  public getFileName(fileUploadType: ParcelAllocationTypeStatic):string{
+    let file = this.getFile(fileUploadType);
     if (!file){
       return "No file selected..."
     }
@@ -200,21 +206,13 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   }
 
   public chooseErrorToDisplay(allocationType: number) {
-    if (allocationType == 1) {
-      this.displayProjectWaterError = true;
-    }
-    else if (allocationType == 2) {
-      this.displayWaterReconciliationError = true;
-    }
-    else if (allocationType == 3) {
-      this.displayNativeYieldError = true;
-    }
+    this.displayErrors[allocationType - 1] = true;
   }
 
   public turnOffErrors() {
-    this.displayNativeYieldError = false;
-    this.displayProjectWaterError = false;
-    this.displayWaterReconciliationError = false;
+    this.displayErrors.forEach(displayError => {
+      displayError = false;
+    });
   }
 
   public updateAllocationSetDateDisplayVariables() {
