@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ParcelBulkSetAllocationComponent } from './parcel-bulk-set-allocation.component';
+import { ManageWaterAllocationComponent } from './manage-water-allocation.component';
 
 describe('ParcelBulkSetAllocationComponent', () => {
-  let component: ParcelBulkSetAllocationComponent;
-  let fixture: ComponentFixture<ParcelBulkSetAllocationComponent>;
+  let component: ManageWaterAllocationComponent;
+  let fixture: ComponentFixture<ManageWaterAllocationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ParcelBulkSetAllocationComponent ]
+      declarations: [ ManageWaterAllocationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ParcelBulkSetAllocationComponent);
+    fixture = TestBed.createComponent(ManageWaterAllocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
