@@ -11,7 +11,6 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
-import { ReconciliationAllocationService } from 'src/app/services/reconciliation-allocation.service';
 import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocation-type-static';
 
 @Component({
@@ -63,8 +62,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private datePipe: DatePipe,
-    private reconciliationAllocationService: ReconciliationAllocationService) { }
+    private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
