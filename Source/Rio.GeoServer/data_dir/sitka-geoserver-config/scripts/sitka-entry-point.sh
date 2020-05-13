@@ -41,7 +41,7 @@ perl -i -pe "s|<param-value>If-Modified-Since,Range,Origin</param-value>|${ENABL
 ##### END ENABLE CORS
 
 ##### BEGIN INCREASE MAXHTTPHEADERSIZE
-perl -i -pe 's|port="8080"|port="8080" maxHttpHeaderSize="65536"|g' /usr/local/tomcat/conf/server.xml
+perl -i -pe 's|port="8080"( maxHttpHeaderSize="[0-9]+")?|port="8080" maxHttpHeaderSize="65536"|g' /usr/local/tomcat/conf/server.xml
 ##### END INCREASE MAXHTTPHEADERSIZE
 
 
