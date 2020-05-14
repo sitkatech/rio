@@ -221,7 +221,7 @@ namespace Rio.API.Controllers
                 .Select(x =>
                     new MonthlyWaterUsageDto()
                     {
-                        Month = ((DateUtilities.Month) x.Key).ToString(),
+                        Month = ((DateUtilities.Month) x.Key).ShortMonthName(),
                         WaterUsageByParcel = x.OrderBy(y => y.ParcelNumber).Select(y => new ParcelWaterUsageDto
                         {
                             ParcelNumber = y.ParcelNumber,
@@ -281,7 +281,7 @@ namespace Rio.API.Controllers
                 cumulativeTotal += grouping?.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate) ?? 0;
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
-                    Month = ((DateUtilities.Month)i).ToString(),
+                    Month = ((DateUtilities.Month)i).ShortMonthName(),
                     CumulativeWaterUsageInAcreFeet = grouping == null ? (decimal?)null : Math.Round(cumulativeTotal, 1)
                 };
 

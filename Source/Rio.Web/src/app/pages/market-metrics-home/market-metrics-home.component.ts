@@ -41,17 +41,17 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
         this.marketMetrics = marketMetrics;
         this.tradeActivityByMonth = tradeActivityByMonth;
         this.tradeVolumeByMonthSeries = tradeActivityByMonth.map(x => {
-          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.TradeVolume }
+          return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.TradeVolume }
         });
         this.offerHistorySeries = [];
         this.offerHistorySeries.push({name: "Avg Price" , series: tradeActivityByMonth.map(x => {
-          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.AveragePrice }
+          return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.AveragePrice }
         })});
         this.offerHistorySeries.push({name: "Min Price" , series: tradeActivityByMonth.map(x => {
-          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MinimumPrice }
+          return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.MinimumPrice }
         })});
         this.offerHistorySeries.push({name: "Max Price" , series: tradeActivityByMonth.map(x => {
-          return { name: this.datePipe.transform(x.GroupingDate, "MMMM yyyy"), value: x.MaximumPrice }
+          return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.MaximumPrice }
         })});
 
         this.colorScheme = {

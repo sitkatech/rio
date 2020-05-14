@@ -25,7 +25,7 @@ namespace Rio.API.Services
             December = 12
         }
 
-        public static string ShortMonthName(Month month)
+        public static string ShortMonthName(this Month month)
         {
             // "Jan", "Feb", etc.
             return month.ToString().Substring(0, 3);

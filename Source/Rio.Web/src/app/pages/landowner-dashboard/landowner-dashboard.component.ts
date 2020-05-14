@@ -79,19 +79,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
-  public emptyCumulativeWaterUsage: SeriesEntry[] = [
-    { name: "January", value: 0 },
-    { name: "February", value: 0 },
-    { name: "March", value: 0 },
-    { name: "April", value: 0 },
-    { name: "May", value: 0 },
-    { name: "June", value: 0 },
-    { name: "July", value: 0 },
-    { name: "August", value: 0 },
-    { name: "September", value: 0 },
-    { name: "October", value: 0 },
-    { name: "November", value: 0 },
-    { name: "December", value: 0 }];
+  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
 
   constructor(
     private route: ActivatedRoute,
