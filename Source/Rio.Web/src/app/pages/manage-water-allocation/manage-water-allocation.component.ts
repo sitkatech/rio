@@ -234,9 +234,10 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     if (this.allocationHistoryEntries)
     {
       let datePipe = this.datePipe;
-      this.lastProjectWaterSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Project Water" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
-      this.lastNativeYieldSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Native Yield" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
-      this.lastReconciliationFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Reconciliation" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
+      this.lastProjectWaterSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.ProjectWater.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
+      this.lastNativeYieldSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.NativeYield.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
+      this.lastReconciliationFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.Reconciliation.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
+      this.lastStoredWaterFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.StoredWater.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
     }
   }
 
