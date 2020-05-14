@@ -43,16 +43,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public lastReconciliationFileUploadDate: string;
   public lastStoredWaterFileUploadDate: string;
 
-  public displayErrors = {
-    "Project Water": false,
-    "Reconciliation": false,
-    "Native Yield": false,
-    "Stored Water": false
-  }; 
-  public displayFileErrors = {
-    "Reconciliation": false,
-    "Stored Water": false
-  };
+  public displayErrors:any = {}; 
+  public displayFileErrors:any = {};
 
   public fileName: string;
 
@@ -66,6 +58,12 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
+
+    Object.keys(ParcelAllocationTypeStatic).forEach(key => {
+      this.displayErrors[key] = false;
+      this.displayFileErrors[key] = false;
+    })
+
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.initializeParcelAllocationHistoryGrid();
