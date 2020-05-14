@@ -44,11 +44,6 @@ export class UserListComponent implements OnInit, OnDestroy {
 
         this.columnDefs = [
           {
-            headerName: '', field: 'UserID', cellRendererFramework: FontAwesomeIconLinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/landowner-dashboard", fontawesomeIconName: 'tasks' },
-            sortable: false, filter: false, width: 40
-          },
-          {
             headerName: 'Name', valueGetter: function (params: any) {
               return { LinkValue: params.data.UserID, LinkDisplay: params.data.FullName };
             }, cellRendererFramework: LinkRendererComponent,

@@ -54,7 +54,8 @@ abbr[data-original-title] {
   color: $breadcrumb-item-active-color;
 }
 
-.breadcrumb-item a {
+.breadcrumb-item a,
+.breadcrumb-item span {
   color: $breadcrumb-item-color;
 }
 

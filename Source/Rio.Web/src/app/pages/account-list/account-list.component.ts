@@ -39,11 +39,6 @@ export class AccountListComponent implements OnInit, OnDestroy {
 
         this.columnDefs = [
           {
-            headerName: '', field: 'AccountID', cellRendererFramework: FontAwesomeIconLinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/accounts/", fontawesomeIconName: 'tasks' },
-            sortable: false, filter: false, width: 40
-          },
-          {
             headerName: 'Account Name', valueGetter: function (params: any) {
               return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
             }, cellRendererFramework: LinkRendererComponent,

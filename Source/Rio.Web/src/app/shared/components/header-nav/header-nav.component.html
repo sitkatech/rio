@@ -53,7 +53,7 @@
                                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
                                     *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
                             </li>
-                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministrator()">
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministratorOrDemoUser()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     Manage
@@ -72,7 +72,7 @@
                                     <a routerLink="/manager-dashboard" class="dropdown-item">
                                         Manager Dashboard
                                     </a>
-                                    <a routerLink="/parcels/manage-water-allocation" class="dropdown-item">
+                                    <a *ngIf="isAdministrator()" routerLink="/parcels/manage-water-allocation" class="dropdown-item">
                                         Manage Water Allocation
                                     </a>
                                 </div>

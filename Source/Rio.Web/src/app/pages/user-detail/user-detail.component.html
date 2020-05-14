@@ -3,8 +3,8 @@
         <nav aria-label="breadcrumb" *ngIf="user">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item" aria-current="page">
-                    <a routerLink="/users" *ngIf="currentUserIsAdmin()">Users</a>
-                    <span *ngIf="!currentUserIsAdmin()">Users</span>
+                    <a routerLink="/users" *ngIf="currentUserIsAdminOrDemoUser()">Users</a>
+                    <span *ngIf="!currentUserIsAdminOrDemoUser()">Users</span>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
                     {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
