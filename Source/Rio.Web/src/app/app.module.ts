@@ -42,7 +42,7 @@ import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-gri
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
-import { ParcelBulkSetAllocationComponent } from './pages/parcel-bulk-set-allocation/parcel-bulk-set-allocation.component';
+import { ManageWaterAllocationComponent } from './pages/manage-water-allocation/manage-water-allocation.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
@@ -96,7 +96,7 @@ export function init_app(appLoadService: AppInitService) {
     PostingDeleteComponent,
     LoginCallbackComponent,
     HelpComponent,
-    ParcelBulkSetAllocationComponent,
+    ManageWaterAllocationComponent,
     GlossaryComponent,
     ParcelChangeOwnerComponent,
     ParcelOverrideEtDataComponent,

@@ -11,6 +11,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
+import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 
 declare var $:any;
 
@@ -70,6 +71,37 @@ export class UserListComponent implements OnInit, OnDestroy {
           },
           { headerName: 'Email', field: 'Email', sortable: true, filter: true },
           { headerName: 'Role', field: 'RoleDisplayName', sortable: true, filter: true, width: 100 },
+          {
+            headerName: 'Associated Account(s)',
+            valueGetter: function (params) {
+              let names = params.data.AssociatedAccounts?.map(x => {
+                return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
+              });
+              const downloadDisplay = names?.map(x => x.LinkDisplay).join(", ");
+
+              return { links: names, DownloadDisplay: downloadDisplay ?? "" };
+            },
+            filterValueGetter: function (params: any) {
+              let names = params.data.AssociatedAccounts?.map(x => {
+                return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
+              });
+              const downloadDisplay = names?.map(x => x.LinkDisplay).join(", ");
+
+              return downloadDisplay ?? "";
+            },
+            comparator: function (id1: any, id2: any) {
+              let link1 = id1.DownloadDisplay;
+              let link2 = id2.DownloadDisplay;
+              if (link1 < link2) {
+                return -1;
+              }
+              if (link1 > link2) {
+                return 1;
+              }
+              return 0;
+            }
+            , sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/accounts/" }, cellRendererFramework: MultiLinkRendererComponent
+          },
           { headerName: 'Has Active Trades?', valueGetter: function (params) { return params.data.HasActiveTrades ? "Yes" : "No"; }, sortable: true, filter: true, width: 160 },
           { headerName: 'Water Purchased (ac-ft)', field: 'AcreFeetOfWaterPurchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 200 },
           { headerName: 'Water Sold (ac-ft)', field: 'AcreFeetOfWaterSold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.0'); }, sortable: true, filter: true, width: 160 },

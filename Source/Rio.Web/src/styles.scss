@@ -48,6 +48,10 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
     color: rgba(0, 0, 0, 0.54);
 }
 
+.ag-header-icon > .ag-icon {
+  color: rgba(255, 255, 255, 0.54);
+}
+
 .ag-theme-balham .ag-header
 {
     background-color: $grid-header-background;

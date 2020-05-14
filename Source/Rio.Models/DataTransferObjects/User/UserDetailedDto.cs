@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Rio.Models.DataTransferObjects.Account;
 
 namespace Rio.Models.DataTransferObjects.User
 {
@@ -22,5 +24,7 @@ namespace Rio.Models.DataTransferObjects.User
         public int? AcreFeetOfWaterPurchased { get; set; }
         public int? AcreFeetOfWaterSold { get; set; }
         public bool IsActive { get; set; }
+
+        public List<AccountSimpleDto> AssociatedAccounts { get; set; }
     }
 }

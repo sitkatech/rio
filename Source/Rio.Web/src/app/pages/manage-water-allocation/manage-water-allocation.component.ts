@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -10,20 +10,23 @@ import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
-import { forkJoin } from 'rxjs';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
-import { ReconciliationAllocationService } from 'src/app/services/reconciliation-allocation.service';
+import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocation-type-static';
 
 @Component({
-  selector: 'rio-parcel-bulk-set-allocation',
-  templateUrl: './parcel-bulk-set-allocation.component.html',
-  styleUrls: ['./parcel-bulk-set-allocation.component.scss']
+  selector: 'rio-manage-water-allocation',
+  templateUrl: './manage-water-allocation.component.html',
+  styleUrls: ['./manage-water-allocation.component.scss']
 })
-export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
+export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
   @ViewChild('projectWaterAllocation') projectWaterAllocation: any;
   @ViewChild('nativeYieldAllocation') nativeYieldAllocation: any;
-  @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
+  @ViewChildren('fileUpload') fileUploads:QueryList<any>;
+  // @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
+  // @ViewChild('storedWaterFileUpload') storedWaterFileUpload: any;
+
+  public ParcelAllocationTypeStatic = ParcelAllocationTypeStatic;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
@@ -38,20 +41,20 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public lastProjectWaterSetDate: string;
   public lastNativeYieldSetDate: string;
   public lastReconciliationFileUploadDate: string;
+  public lastStoredWaterFileUploadDate: string;
 
-  public displayProjectWaterError: boolean = false;
-  public displayNativeYieldError: boolean = false;
-  public displayWaterReconciliationError: boolean = false;
+  public displayErrors = {
+    "Project Water": false,
+    "Reconciliation": false,
+    "Native Yield": false,
+    "Stored Water": false
+  }; 
+  public displayFileErrors = {
+    "Reconciliation": false,
+    "Stored Water": false
+  };
 
-  public allocationTypes = {
-    1: "Project Water",
-    2: "Reconciliation",
-    3: "Native Yield"
-  }
-
-  public displayErrors = [this.displayProjectWaterError, this.displayWaterReconciliationError, this.displayNativeYieldError];
   public fileName: string;
-  displayFiletypeError: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -59,8 +62,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private datePipe: DatePipe,
-    private reconciliationAllocationService: ReconciliationAllocationService) { }
+    private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
@@ -105,14 +107,14 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public submitBulkAllocation(allocationType: number, allocationValue: string): void {
+  public submitBulkAllocation(allocationType: ParcelAllocationTypeStatic, allocationValue: string): void {
     this.isLoadingSubmit = true;
 
     this.turnOffErrors();
 
     if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
       this.model.AcreFeetAllocated = +allocationValue;
-      this.model.ParcelAllocationTypeID = allocationType;
+      this.model.ParcelAllocationTypeID = allocationType.id;
       this.model.WaterYear = this.waterYearToDisplay;
 
       this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
@@ -120,7 +122,7 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
           this.clearInputs()
           this.isLoadingSubmit = false;
           this.updateParcelAllocationHistoryGrid();
-          this.alertService.pushAlert(new Alert("The " + this.allocationTypes[allocationType] + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+          this.alertService.pushAlert(new Alert("The " + allocationType + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
         }
           ,
           error => {
@@ -135,10 +137,16 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     }
   }
 
-  public uploadReconciliationFile(): void{
+  public uploadAllocationFile(allocationType: ParcelAllocationTypeStatic): void{
+    var file = this.getFile(allocationType);
+    if (!file) {
+      this.chooseErrorToDisplay(allocationType);
+      return null;
+    }
+
     this.isLoadingSubmit = true;
-    this.reconciliationAllocationService.uploadFile(this.getFile(), this.waterYearToDisplay).subscribe(x=>{
-      this.alertService.pushAlert(new Alert(`Successfully set reconciliation water allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
+    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.id).subscribe(x=>{
+      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
       this.clearInputs();
@@ -156,32 +164,41 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
     });
   }
 
-  fileEvent(){
-    let file = this.getFile();
+  fileEvent(allocationType: ParcelAllocationTypeStatic){
+    let file = this.getFile(allocationType);
+    this.displayErrors[allocationType.toString()] = false;
 
     if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
-      this.displayFiletypeError = true;
+      this.displayFileErrors[allocationType.toString()] = true;
     } else {
-      this.displayFiletypeError = false;
+      this.displayFileErrors[allocationType.toString()] = false;
     }
 
     this.cdr.detectChanges();
   }
 
-  public getFile(): File{
-    if (!this.reconciliationWaterFileUpload){
+  public getFile(fileUploadType: ParcelAllocationTypeStatic): File{
+    if (!this.fileUploads) {
       return null;
     }
-    return this.reconciliationWaterFileUpload.nativeElement.files[0]
+    var element = this.fileUploads.filter(x => x.nativeElement.id == this.lowerCaseFirstLetterNoSpaces(fileUploadType.toString()) + "FileUpload")[0];
+    if (!element){
+      return null;
+    }
+    return element.nativeElement.files[0];
   }
 
-  public getFileName():string{
-    let file = this.getFile();
+  public getFileName(fileUploadType: ParcelAllocationTypeStatic):string{
+    let file = this.getFile(fileUploadType);
     if (!file){
       return "No file selected..."
     }
     
     return file.name;
+  }
+
+  public openFileUpload(fileUploadType: ParcelAllocationTypeStatic){
+    this.fileUploads.filter(x => x.nativeElement.id == this.lowerCaseFirstLetterNoSpaces(fileUploadType.toString()) + "FileUpload")[0].nativeElement.click();
   }
 
   public updateParcelAllocationHistoryGrid(): void {
@@ -195,26 +212,24 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
   public clearInputs() {
     this.projectWaterAllocation.nativeElement.value = null;
     this.nativeYieldAllocation.nativeElement.value = null;
-    this.reconciliationWaterFileUpload.nativeElement.value = null;
-    this.reconciliationWaterFileUpload.nativeElement.files = null;
+    this.fileUploads.forEach(element => {
+      element.nativeElement.value = null;
+      element.nativeElement.files = null;
+    })
   }
 
-  public chooseErrorToDisplay(allocationType: number) {
-    if (allocationType == 1) {
-      this.displayProjectWaterError = true;
-    }
-    else if (allocationType == 2) {
-      this.displayWaterReconciliationError = true;
-    }
-    else if (allocationType == 3) {
-      this.displayNativeYieldError = true;
-    }
+  public chooseErrorToDisplay(allocationType: ParcelAllocationTypeStatic) {
+    this.displayErrors[allocationType.toString()] = true;
   }
 
   public turnOffErrors() {
-    this.displayNativeYieldError = false;
-    this.displayProjectWaterError = false;
-    this.displayWaterReconciliationError = false;
+    Object.keys(this.displayErrors).forEach(key => {
+      this.displayErrors[key] = false;
+    });
+
+    Object.keys(this.displayFileErrors).forEach(key => {
+      this.displayFileErrors[key] = false;
+    })
   }
 
   public updateAllocationSetDateDisplayVariables() {
@@ -225,5 +240,9 @@ export class ParcelBulkSetAllocationComponent implements OnInit, OnDestroy {
       this.lastNativeYieldSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Native Yield" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
       this.lastReconciliationFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == "Reconciliation" && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
     }
+  }
+
+  public lowerCaseFirstLetterNoSpaces(lowerFirst: string):string {
+    return (lowerFirst.charAt(0).toLowerCase() + lowerFirst.slice(1)).replace(" ", "");
   }
 }

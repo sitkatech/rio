@@ -11,12 +11,14 @@ import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-a
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParcelService {
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private httpClient: HttpClient) { }
 
   getParcelsByAccountID(accountID: number, year: number): Observable<any[]> {
     let route = `/accounts/${accountID}/parcels/${year}`;
@@ -62,6 +64,30 @@ export class ParcelService {
   bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto, userID: number): Observable<any[]> {
     let route = `/parcels/${userID}/bulkSetAnnualParcelAllocation`;
     return this.apiService.postToApi(route, model);
+  }
+
+  bulkSetAnnualAllocationsFileUpload(file: any, waterYear:number, allocationTypeID:number): Observable<any> {
+    const apiHostName = environment.apiHostName
+    const route = `https://${apiHostName}/parcels/${waterYear}/${allocationTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
+    var result = this.httpClient.post<any>(
+      route,
+      file, // Send the File Blob as the POST body.
+      {
+        // NOTE: Because we are posting a Blob (File is a specialized Blob
+        // object) as the POST body, we have to include the Content-Type
+        // header. If we don't, the server will try to parse the body as
+        // plain text.
+        headers: {
+          "Content-Type": file.type
+        },
+        params: {
+          clientFilename: file.name,
+          mimeType: file.type
+        }
+      }
+    );
+
+    return result;
   }
 
   getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {

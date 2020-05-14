@@ -77,6 +77,25 @@ export class AccountListComponent implements OnInit, OnDestroy {
               const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
 
               return { links: names, DownloadDisplay: downloadDisplay };
+            },
+            filterValueGetter: function (params) {
+              let names = params.data.Users.map(x => {
+                return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
+              });
+              const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
+
+              return downloadDisplay;
+            },
+            comparator: function (id1: any, id2: any) {
+              let link1 = id1.DownloadDisplay;
+              let link2 = id2.DownloadDisplay;
+              if (link1 < link2) {
+                return -1;
+              }
+              if (link1 > link2) {
+                return 1;
+              }
+              return 0;
             }, sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/users/" }, cellRendererFramework: MultiLinkRendererComponent
           },
           { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
