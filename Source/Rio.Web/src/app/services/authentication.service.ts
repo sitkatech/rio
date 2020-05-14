@@ -189,6 +189,13 @@ export class AuthenticationService {
     return role === RoleEnum.LandOwner;
   }
 
+  public isUserALandOwnerOrDemoUser(user: UserDto): boolean {
+    let role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.LandOwner || role === RoleEnum.DemoUser;
+  }
+
   public isUserAnAdministrator(user: UserDto): boolean {
     const role = user && user.Role
       ? user.Role.RoleID

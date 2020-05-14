@@ -83,10 +83,14 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public isLandOwner(): boolean {
-        return this.authenticationService.isUserALandOwner(this.currentUser);
+        return this.authenticationService.isUserALandOwnerOrDemoUser(this.currentUser);
     }
 
     public isAdministrator(): boolean {
+        return this.authenticationService.isUserAnAdministrator(this.currentUser);
+    }
+
+    public isAdministratorOrDemoUser(): boolean {
         return this.authenticationService.isUserADemoUserOrAdministrator(this.currentUser);
     }
 

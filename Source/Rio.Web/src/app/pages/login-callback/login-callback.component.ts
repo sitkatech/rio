@@ -18,7 +18,7 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
           window.localStorage.removeItem("activeAccount");
           this.authenticationService.setActiveAccount(undefined);
           this.router.navigate(['/manager-dashboard']);
-        } else if (this.authenticationService.isUserALandOwner(currentUser)){
+        } else if (this.authenticationService.isUserALandOwnerOrDemoUser(currentUser)){
           this.router.navigate(['/landowner-dashboard']);
         } else{
           this.router.navigate(['/']);

@@ -52,6 +52,10 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
       this.authenticationService.dispose();
       this.cdr.detach();
   }
+
+  public currentUserHasAccount(): boolean {
+      return this.authenticationService.getAvailableAccounts().map(x => x.AccountID).includes(this.account.AccountID);
+  }
   
   public currentUserIsAdmin(): boolean {
       return this.authenticationService.isUserAnAdministrator(this.currentUser);
@@ -59,6 +63,10 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
       return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
+  }
+
+  public currentUserIsAnAdministrator(): boolean {
+      return this.authenticationService.isUserAnAdministrator(this.currentUser);
   }
 
   public currentUserIsADemoUserOrAdministrator(): boolean {

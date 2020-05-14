@@ -54,7 +54,7 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
     }
 
     public isUserALandowner(){
-        return this.authenticationService.isUserALandOwner(this.currentUser);
+        return this.authenticationService.isUserALandOwnerOrDemoUser(this.currentUser);
     }
 
     public login(): void {

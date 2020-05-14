@@ -65,6 +65,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
         return this.authenticationService.isUserAnAdministrator(this.currentUser);
     }
 
+    public currentUserIsAdminOrDemoUser(): boolean {
+        return this.authenticationService.isUserADemoUserOrAdministrator(this.currentUser);
+    }
+
     public userIsAdministrator(): boolean{
         return this.authenticationService.isUserAnAdministrator(this.user);
     }

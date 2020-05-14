@@ -40,7 +40,7 @@ export class DisclaimerComponent implements OnInit {
       this.authenticationService.refreshUserInfo(x);
       if (this.authenticationService.isUserAnAdministrator(x)){
         this.router.navigate(['/manager-dashboard']);
-      } else if (this.authenticationService.isUserALandOwner(x)){
+      } else if (this.authenticationService.isUserALandOwnerOrDemoUser(x)){
         this.router.navigate(['/landowner-dashboard']);
       } else{
         this.router.navigate(['/']);
