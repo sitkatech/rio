@@ -64,6 +64,7 @@ import { AppInitService } from './app.init';
 import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
+import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -113,7 +114,8 @@ export function init_app(appLoadService: AppInitService) {
     DisclaimerComponent,
     AboutGroundwaterEvaluationComponent,
     WaterTradingScenarioComponent,
-    ManagedRechargeScenarioComponent
+    ManagedRechargeScenarioComponent,
+    RolesAndPermissionsComponent
   ],
   imports: [
     AppRoutingModule,

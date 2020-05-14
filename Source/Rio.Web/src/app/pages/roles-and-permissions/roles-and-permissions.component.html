@@ -1,0 +1,51 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-empty">
+                <li class="breadcrumb-item active" aria-current="page">Roles and Permissions</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <h2>Roles and Permissions</h2>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <dl>
+                <dt>Public Users</dt>
+                <dd class="p-2">
+                    Public users do not have an account or are not logged into the web application. Public
+                    users can only view the homepage and pages under the Learn More menu.
+                </dd>
+                <dt>Landowner</dt>
+                <dd class="p-2">
+                    Landowners use the platform to manage their water usage and trade water (if trading is
+                    enabled in the platform). A user with the Landowner role must be assigned at least one billing
+                    account before they can meaningfully use the platform. Landowners can view their Landowner Dashboard
+                    and access all items in the Trade Menu. A Landowner cannot view any of the pages under the Manage
+                    Menu.
+                </dd>
+                <dt>Administrator</dt>
+                <dd class="p-2">
+                    Administrators have access to all pages in the application. Administrators can assign other users a
+                    role, as well as manage the system (including customizing rich text pages). The Administrator role
+                    should be limited to a few users who understand the tool and need access to add/edit accounts and
+                    manage user roles.
+                </dd>
+                <dt>Demo User</dt>
+                <dd class="p-2">
+                    A Demo User has similar access as a Landowner and must be assigned at least one billing account to
+                    start trading. However, they have additional read-only permission to view all pages in the Manage
+                    Menu.
+                </dd>
+                <dt>Unassigned</dt>
+                <dd class="p-2">
+                    Unassigned users have a system account but have not been assigned a role by an Administrator. These
+                    users have the same permissions as Public users. A new user who signs up on their own will
+                    automatically be assigned this role.
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>

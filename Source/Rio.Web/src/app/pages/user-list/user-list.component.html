@@ -18,6 +18,8 @@
     <p class="lead" *ngIf="users && !unassignedUsers.length">
       Congratulations! All users have been assigned a role.
     </p>
+    <br *ngIf="!users">
+    <a routerLink="/roles-and-permissions" routerLinkActive=true target="_blank">Learn more about Roles and Permissions</a>
     <div class="container mt-sm-4" *ngIf="users && unassignedUsers.length">
       <div class="table-responsive">
         <ag-grid-angular #unassignedUsersGrid style="width: 100%; height: 300px;" class="ag-theme-balham"

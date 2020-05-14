@@ -44,6 +44,7 @@ import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scena
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 import { GETIntegrationEnabledGuard } from './shared/guards/unauthenticated-access/GET-integration-enabled-guard';
 import { ManagerOrDemoUserOnlyGuard } from './shared/guards/unauthenticated-access/manager-or-demouser-only-guard';
+import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -84,6 +85,7 @@ const routes: Routes = [
   { path: "frequently-asked-questions", component: GeneralFaqComponent},
   { path: "measuring-water-use-with-openet", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
+  { path: "roles-and-permissions", component: RolesAndPermissionsComponent },
   { path: "login-callback", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
