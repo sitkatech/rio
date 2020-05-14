@@ -52,19 +52,17 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
                 // display the correct active account in the dropdown below the username.
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account;});
-
-                forkJoin(
-                    this.tradeService.getTradeActivityByAccountID(this.activeAccount.AccountID),
-                ).subscribe(([trades]) => {
-                    this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
+                    this.activeAccount = account;
+                    this.tradeService.getTradeActivityByAccountID(account.AccountID).subscribe((trades) => {
+                        this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+                    });
                 });
             }
 
-
-            if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)){
-                this.userService.getUnassignedUserReport().subscribe(report =>{
-                    if (report.Count > 0){
+            if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)) {
+                this.userService.getUnassignedUserReport().subscribe(report => {
+                    if (report.Count > 0) {
                         this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`, AlertContext.Info, true, AlertService.USERS_AWAITING_CONFIGURATION));
                     }
                 })
@@ -94,11 +92,11 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return this.authenticationService.isUserADemoUserOrAdministrator(this.currentUser);
     }
 
-    public isUnassigned(): boolean{
+    public isUnassigned(): boolean {
         return this.authenticationService.isUserUnassigned(this.currentUser);
     }
 
-    public isUnassignedOrDisabled(): boolean{
+    public isUnassignedOrDisabled(): boolean {
         return this.authenticationService.isUserUnassigned(this.currentUser) || this.authenticationService.isUserRoleDisabled(this.currentUser);
     }
 
@@ -144,13 +142,12 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public isTradePendingRegistrationForAccount(trade: TradeWithMostRecentOfferDto) {
-        if(!trade.BuyerRegistration && !trade.SellerRegistration)
-        {
+        if (!trade.BuyerRegistration && !trade.SellerRegistration) {
             return false;
         }
-        let isCanceled =  trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
-        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.AccountID === this.activeAccount.AccountID) 
-        || (trade.SellerRegistration.IsPending && trade.Seller.AccountID === this.activeAccount.AccountID));
+        let isCanceled = trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
+        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.AccountID === this.activeAccount.AccountID)
+            || (trade.SellerRegistration.IsPending && trade.Seller.AccountID === this.activeAccount.AccountID));
     }
 
     public isTradePending(trade: TradeWithMostRecentOfferDto) {
@@ -162,11 +159,11 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return 5;
     }
 
-    public getAvailableAccounts(): Array<AccountSimpleDto>{
+    public getAvailableAccounts(): Array<AccountSimpleDto> {
         return this.authenticationService.getAvailableAccounts();
     }
 
-    public setCurrentAccount(): void{
+    public setCurrentAccount(): void {
         this.authenticationService.setActiveAccount(this.activeAccount);
     }
 
@@ -178,15 +175,15 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return environment.allowTrading;
     }
 
-    public platformShortName(): string{
+    public platformShortName(): string {
         return environment.platformShortName;
     }
 
-    public leadOrganizationHomeUrl(): string{
+    public leadOrganizationHomeUrl(): string {
         return environment.leadOrganizationHomeUrl;
     }
 
-    public leadOrganizationLogoSrc(): string{
+    public leadOrganizationLogoSrc(): string {
         return `assets/main/logos/${environment.leadOrganizationLogoFilename}`;
     }
 
