@@ -4,7 +4,6 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDto } from '../../models';
 import { TradeWithMostRecentOfferDto } from '../../models/offer/trade-with-most-recent-offer-dto';
 import { TradeService } from 'src/app/services/trade.service';
-import { forkJoin } from 'rxjs';
 import { OfferStatusEnum } from '../../models/enums/offer-status-enum';
 import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
@@ -13,7 +12,6 @@ import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { environment } from 'src/environments/environment';
 import { AlertContext } from '../../models/enums/alert-context.enum';
-import { AccountDto } from '../../models/account/account-dto';
 
 @Component({
     selector: 'header-nav',
@@ -54,7 +52,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
                 this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
                     this.activeAccount = account;
-                    this.tradeService.getTradeActivityByAccountID(account.AccountID).subscribe((trades) => {
+                    this.tradeService.getTradeActivityByAccountID(account?.AccountID ?? 0).subscribe((trades) => {
                         this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                     });
                 });
@@ -125,7 +123,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public doesMostRecentOfferBelongToCurrentAccount(trade: TradeWithMostRecentOfferDto): boolean {
-        return trade.OfferCreateAccount.AccountID === this.activeAccount.AccountID;
+        return trade.OfferCreateAccount.AccountID === this.activeAccount?.AccountID;
     }
 
     public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
