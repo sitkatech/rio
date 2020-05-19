@@ -34,7 +34,7 @@
                                     <ngx-select-dropdown class="selectAccount" [multiple]="false" [config]="accountDropdownConfig" name="selectedAccount" [(ngModel)]="selectedAccount"
                                         [options]="filteredAccounts"></ngx-select-dropdown>
                                         <div class="input-group-append">
-                                            <a class="btn btn-rio btn-sm addAccount" (click)="addAccount(selectedAccount)">Add</a>
+                                            <button class="btn btn-rio btn-sm addAccount" (click)="addAccount(selectedAccount)" [disabled]="!selectedAccount">Add</button>
                                         </div>
                                 </div>
                             </div>

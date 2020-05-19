@@ -20,6 +20,14 @@
 <div class="container mt-sm-4" *ngIf="account && allUsers">
     <h2 class="d-inline-block">Add or Remove Users</h2>
     <app-alert-display></app-alert-display>
+    <p>
+        Use the form below to change which Users are associated with this Account. Only Users with role Landowner or
+        Demo User can be associated with an Account. Users with role Administrator automatically have access to all
+        Accounts. Users with role Unassigned or Disabled may not be associated with Accounts.
+    </p>
+    <p>
+        <a routerLink="/roles-and-permissions" routerLinkActive="true">Learn more about Roles and Permissions</a>
+    </p>
 
     <form (ngSubmit)="onSubmit(editAccountUsersForm)" #editAccountUsersForm="ngForm">
         <div class="row mt-4">
@@ -31,18 +39,21 @@
                             <div class="col-sm-12">
                                 <p>Select user(s) to associate with this account:</p>
                                 <div class="input-group">
-                                    <ngx-select-dropdown class="selectUser" [multiple]="false" [config]="userDropdownConfig" name="selectedUser" [(ngModel)]="selectedUser"
+                                    <ngx-select-dropdown class="selectUser" [multiple]="false"
+                                        [config]="userDropdownConfig" name="selectedUser" [(ngModel)]="selectedUser"
                                         [options]="filteredUsers"></ngx-select-dropdown>
-                                        <div class="input-group-append">
-                                            <a class="btn btn-rio btn-sm addUser" (click)="addUser(selectedUser)">Add</a>
-                                        </div>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-rio btn-sm addUser" (click)="addUser(selectedUser)"
+                                            [disabled]="!selectedUser">Add</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <hr />
                         <div class="row">
                             <div class="col-sm-12">
-                                <p>These users will be associated with the account. Click the <span class="fas fa-trash"></span> icon next to a user to remove it:</p>
+                                <p>These users will be associated with the account. Click the <span
+                                        class="fas fa-trash"></span> icon next to a user to remove it:</p>
                             </div>
                         </div>
 

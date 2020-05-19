@@ -32,67 +32,72 @@ export class PostingListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.postingTypeFilter = 0;
       this.currentUser = currentUser;
+      this.postingsGrid.api.showLoadingOverlay();
       this.postingService.getPostings().subscribe(result => {
-        let _datePipe = this.datePipe;
-        let _currencyPipe = this.currencyPipe;
-        let _decimalPipe = this.decimalPipe;
         this.postings = result;
-        this.columnDefs = [
-          {
-            headerName: '', valueGetter: function (params: any) {
-              return { LinkValue: params.data.PostingID, LinkDisplay: "View Posting", CssClasses: "btn btn-sm btn-rio" };
-            }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/postings/" },
-            sortable: false, filter: false, width: 130
+        this.postingsGrid.api.hideOverlay();
+      });
+
+      let _datePipe = this.datePipe;
+      let _currencyPipe = this.currencyPipe;
+      let _decimalPipe = this.decimalPipe;
+
+      this.columnDefs = [
+        {
+          headerName: '', valueGetter: function (params: any) {
+            return { LinkValue: params.data.PostingID, LinkDisplay: "View Posting", CssClasses: "btn btn-sm btn-rio" };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/postings/" },
+          sortable: false, filter: false, width: 130
+        },
+        {
+          headerName: 'Posting Date', field: 'PostingDate', valueFormatter: function (params) {
+            return _datePipe.transform(params.value, "short")
           },
-          {
-            headerName: 'Posting Date', field: 'PostingDate', valueFormatter: function (params) {
-              return _datePipe.transform(params.value, "short")
-            },
-            filterValueGetter: function (params: any) {
-              return _datePipe.transform(params.data.PostingDate, "M/d/yyyy");
-            },
-            filterParams: {
-              // provide comparator function
-              comparator: function (filterLocalDate, cellValue) {
-                var dateAsString = cellValue;
-                if (dateAsString == null) return -1;
-                var cellDate = Date.parse(dateAsString);
-                const filterLocalDateAtMidnight = filterLocalDate.getTime();
-                if (filterLocalDateAtMidnight == cellDate) {
-                  return 0;
-                }
-                if (cellDate < filterLocalDateAtMidnight) {
-                  return -1;
-                }
-                if (cellDate > filterLocalDateAtMidnight) {
-                  return 1;
-                }
+          filterValueGetter: function (params: any) {
+            return _datePipe.transform(params.data.PostingDate, "M/d/yyyy");
+          },
+          filterParams: {
+            // provide comparator function
+            comparator: function (filterLocalDate, cellValue) {
+              var dateAsString = cellValue;
+              if (dateAsString == null) return -1;
+              var cellDate = Date.parse(dateAsString);
+              const filterLocalDateAtMidnight = filterLocalDate.getTime();
+              if (filterLocalDateAtMidnight == cellDate) {
+                return 0;
               }
-            },
-            comparator: function (id1: any, id2: any) {
-              if (id1.value < id2.value) {
+              if (cellDate < filterLocalDateAtMidnight) {
                 return -1;
               }
-              if (id1.value > id2.value) {
+              if (cellDate > filterLocalDateAtMidnight) {
                 return 1;
               }
-              return 0;
-            },
-            sortable: true, filter: 'agDateColumnFilter', width: 140
+            }
           },
-          { headerName: 'Type', field: 'PostingType.PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
-          { headerName: 'Available Quantity', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
-          { headerName: 'Unit Price (ac-ft)', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 140 },
-          { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
-          { headerName: 'Description', field: 'PostingDescription', sortable: true, filter: true },
-        ];
-        
-        this.columnDefs.forEach(x => {
-          x.resizable = true;
-        });
-        
+          comparator: function (id1: any, id2: any) {
+            if (id1.value < id2.value) {
+              return -1;
+            }
+            if (id1.value > id2.value) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: 'agDateColumnFilter', width: 140
+        },
+        { headerName: 'Type', field: 'PostingType.PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
+        { headerName: 'Available Quantity', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
+        { headerName: 'Unit Price (ac-ft)', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 140 },
+        { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
+        { headerName: 'Description', field: 'PostingDescription', sortable: true, filter: true },
+      ];
+      
+      this.columnDefs.forEach(x => {
+        x.resizable = true;
       });
+
+
     });
   }
 

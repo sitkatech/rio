@@ -36,6 +36,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
+      this.parcelsGrid.api.showLoadingOverlay();
       this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear => {
         this.waterYearToDisplay = defaultYear;
         forkJoin(
@@ -43,6 +44,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           this.parcelService.getWaterYears()
         ).subscribe(([parcelsWithWaterUsage, waterYears]) => {
           this.rowData = parcelsWithWaterUsage;
+          this.parcelsGrid.api.hideOverlay();
           this.waterYears = waterYears;
           this.cdr.detectChanges();
         });

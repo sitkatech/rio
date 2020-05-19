@@ -269,7 +269,7 @@ namespace Rio.API.Controllers
                 records = null;
                 return false;
             }
-            catch (Exception e)
+            catch
             {
                 badRequest = BadRequest(new
                 {

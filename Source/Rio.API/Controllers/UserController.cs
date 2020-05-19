@@ -132,6 +132,15 @@ namespace Rio.API.Controllers
             return Ok(userDtos);
         }
 
+        [HttpGet("users/landowners-and-demo-users")]
+        [ManagerDashboardFeature]
+        public ActionResult<IEnumerable<UserDetailedDto>> ListLandownerAndDemoUsers()
+        {
+            var userDtos = EFModels.Entities.User.ListByRole(_dbContext,
+                new List<int>() {(int) RoleEnum.LandOwner, (int) RoleEnum.DemoUser});
+            return Ok(userDtos);
+        }
+
         [HttpGet("users/unassigned-report")]
         [UserManageFeature]
         public ActionResult<UnassignedUserReportDto> GetUnassignedUserReport()
