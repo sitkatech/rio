@@ -151,12 +151,12 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Role)
                 .Single(x => x.UserID == userID);
 
-            user.RoleID = userEditDto.RoleID.Value;
-
-            if (user.RoleID == (int) RoleEnum.Admin)
+            if (user.RoleID != (int)RoleEnum.Admin && userEditDto.RoleID == (int)RoleEnum.Admin)
             {
                 dbContext.AccountUser.RemoveRange(dbContext.AccountUser.Where(x => x.UserID == user.UserID));
             }
+
+            user.RoleID = userEditDto.RoleID.Value;
 
             user.ReceiveSupportEmails = userEditDto.RoleID.Value == 1 && userEditDto.ReceiveSupportEmails;
             user.UpdateDate = DateTime.UtcNow;
