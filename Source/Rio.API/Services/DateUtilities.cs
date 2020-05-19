@@ -238,7 +238,7 @@ namespace Rio.API.Services
 
         public static List<int> GetRangeOfYears(int startYear, int endYear)
         {
-            return Enumerable.Range(startYear, (endYear - startYear) + 1).ToList();
+            return Enumerable.Range(startYear, (endYear - startYear) + 1).OrderByDescending(x => x).ToList();
         }
 
         public static List<int> GetWaterYears(bool includeCurrentYear)

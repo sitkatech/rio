@@ -87,6 +87,16 @@ namespace Rio.EFModels.Entities
             return users;
         }
 
+        public static IEnumerable<UserDto> ListByRole(RioDbContext dbContext, List<int> roles)
+        {
+            var users = GetUserImpl(dbContext)
+                .Where(x => roles.Contains(x.RoleID))
+                .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return users;
+        }
+
         public static IEnumerable<string> GetEmailAddressesForAdminsThatReceiveSupportEmails(RioDbContext dbContext)
         {
             var users = GetUserImpl(dbContext)
@@ -142,6 +152,12 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID);
 
             user.RoleID = userEditDto.RoleID.Value;
+
+            if (user.RoleID == (int) RoleEnum.Admin)
+            {
+                dbContext.AccountUser.RemoveRange(dbContext.AccountUser.Where(x => x.UserID == user.UserID));
+            }
+
             user.ReceiveSupportEmails = userEditDto.RoleID.Value == 1 && userEditDto.ReceiveSupportEmails;
             user.UpdateDate = DateTime.UtcNow;
 
@@ -208,6 +224,11 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
 
             return GetByUserID(dbContext, userDto.UserID);
+        }
+
+        public static bool CheckIfUsersAreAdministrators(RioDbContext dbContext, List<int> userIDs)
+        {
+            return dbContext.User.Any(x => userIDs.Contains(x.UserID) && x.RoleID == (int) RoleEnum.Admin);
         }
     }
 }

@@ -19,7 +19,7 @@ $secondary-font-size: 13px;
 $header-icon-size: 13px;
 $cell-horizontal-padding: 12px;
 $tooltip-padding: 0px;
-$header-background-color: #448AC6;
+$header-background-color: #448ac6;
 $header-foreground-color: #fff;
 
 // changes the default icon color
@@ -37,151 +37,161 @@ $ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/legacy/ag-theme-balham-v22-compat.scss";
 
-.ag-theme-balham
-{
-    font-family: $grid-font-family;
+.ag-theme-balham {
+  font-family: $grid-font-family;
 }
 
-
-.ag-paging-panel .ag-icon
-{
-    color: rgba(0, 0, 0, 0.54);
+.ag-paging-panel .ag-icon {
+  color: rgba(0, 0, 0, 0.54);
 }
 
 .ag-header-icon > .ag-icon {
   color: rgba(255, 255, 255, 0.54);
 }
 
-.ag-theme-balham .ag-header
-{
-    background-color: $grid-header-background;
-    font-family: $grid-font-header-family;
+.ag-theme-balham .ag-header {
+  background-color: $grid-header-background;
+  font-family: $grid-font-header-family;
 }
 // end ag-grid settings
 
 //ckeditor css
+.customRichTextContent {
+  .image {
+    display: table;
+    clear: both;
+    text-align: center;
+    margin: 1em auto;
+  }
 
-.image {
-  display:table;
-  clear: both;
-  text-align:center;
-  margin:1em auto;
-}
+  .image > img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    min-width: 50px;
+  }
 
-.image>img {
-  display:block;
-  margin:0 auto;
-  max-width:100%;
-  min-width: 50px;
-}
+  .image-style-side,
+  .image-style-align-left,
+  .image-style-align-center,
+  .image-style-align-right {
+    max-width: 50%;
+  }
 
-.image-style-side,
-.image-style-align-left,
-.image-style-align-center,
-.image-style-align-right {
-  max-width: 50%;
-}
+  .image-style-side {
+    float: right;
+    margin-left: var(--ck-image-style-spacing);
+  }
 
-.image-style-side {
-  float: right;
-  margin-left: var(--ck-image-style-spacing);
-}
+  .image-style-align-left {
+    float: left;
+    margin-right: var(--ck-image-style-spacing);
+  }
 
-.image-style-align-left {
-  float: left;
-  margin-right: var(--ck-image-style-spacing);
-}
+  .image-style-align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-.image-style-align-center {
-  margin-left: auto;
-  margin-right: auto;
-}
+  .image-style-align-right {
+    float: right;
+    margin-left: var(--ck-image-style-spacing);
+  }
 
-.image-style-align-right {
-  float: right;
-  margin-left: var(--ck-image-style-spacing);
+  blockquote {
+    overflow: hidden;
+    padding-right: 1.5em;
+    padding-left: 1.5em;
+    margin-left: 0;
+    margin-right: 0;
+    font-style: italic;
+    border-left: 5px solid #ccc;
+  }
 }
 
 //end ckeditor css
 
 .switch {
-    position: relative;
-    display: inline-block;
-    width: 98px;
-    height: 21px;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .switch input {display:none;}
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #6b6b6b;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 17px;
-    width: 17px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    background-color: $button-border-and-background;
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px $button-border-and-background;
-  }
-  
-  input:checked + .slider:before {
-    -webkit-transform: translateX(77px);
-    -ms-transform: translateX(7px);
-    transform: translateX(77px);
-  }
-  
-  /*------ ADDED CSS ---------*/
-  .on
-  {
-    display: none;
-  }
-  
-  .on, .off
-  {
-    color: white;
-    position: absolute;
-    transform: translate(-50%,-50%);
-    top: 50%;
-    left: 50%;
-    font-size: 10px;
-  }
-  
-  input:checked+ .slider .on
-  {display: block;}
-  
-  input:checked + .slider .off
-  {display: none;}
-  
-  /*--------- END --------*/
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
-  }
+  position: relative;
+  display: inline-block;
+  width: 98px;
+  height: 21px;
+  padding: 0;
+  margin: 0;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #6b6b6b;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: $button-border-and-background;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px $button-border-and-background;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(77px);
+  -ms-transform: translateX(7px);
+  transform: translateX(77px);
+}
+
+/*------ ADDED CSS ---------*/
+.on {
+  display: none;
+}
+
+.on,
+.off {
+  color: white;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  font-size: 10px;
+}
+
+input:checked + .slider .on {
+  display: block;
+}
+
+input:checked + .slider .off {
+  display: none;
+}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}

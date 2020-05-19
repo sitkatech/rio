@@ -39,8 +39,19 @@ export class UserListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+      this.usersGrid.api.showLoadingOverlay();
       this.userService.getUsers().subscribe(users => {
-        let _decimalPipe = this.decimalPipe;
+        this.rowData = users.filter(x => x.RoleID !== RoleEnum.Disabled);
+        this.users = users;
+        
+        this.unassignedUsers = users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
+
+        this.usersGrid.api.hideOverlay();
+        
+        this.cdr.detectChanges();
+      });
+
+      let _decimalPipe = this.decimalPipe;
 
         this.columnDefs = [
           {
@@ -106,14 +117,6 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.columnDefs.forEach(x => {
           x.resizable = true;
         });
-
-        this.rowData = users.filter(x => x.RoleID !== RoleEnum.Disabled);
-        this.users = users;
-        
-        this.unassignedUsers = users.filter(u =>{ return u.RoleID === RoleEnum.Unassigned});
-
-        this.cdr.detectChanges();
-      });
     });
   }
 

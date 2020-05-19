@@ -115,6 +115,13 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the User IDs was invalid.");
             }
 
+            if (EFModels.Entities.User.CheckIfUsersAreAdministrators(_dbContext, accountEditUsersDto.UserIDs))
+            {
+                return BadRequest(
+                    ("One or more of the users in the list are Administrators. Administrators have access to all accounts by default, so please remove any Administrators from the list and try again."
+                    ));
+            }
+
             var updatedAccount = Account.SetAssociatedUsers(_dbContext, accountDto, accountEditUsersDto.UserIDs, out var addedUserIDs);
 
             var addedUsers = EFModels.Entities.User.GetByUserID(_dbContext, addedUserIDs);

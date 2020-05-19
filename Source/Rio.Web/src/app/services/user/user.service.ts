@@ -34,6 +34,11 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
+    getLandownersAndDemoUsers(): Observable<UserDto[]> {
+        let route = '/users/landowners-and-demo-users';
+        return this.apiService.getFromApi(route);
+    }
+
     getUserFromUserID(userID: number): Observable<UserDto> {
         let route = `/users/${userID}`;
         return this.apiService.getFromApi(route);

@@ -23,7 +23,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   public currentUser: UserDto;
   public accountID: number;
   public account: AccountDto;
-  public allUsers: UserDetailedDto[];
+  public allUsers: UserDto[];
   public usersToSave: UserSimpleDto[];
 
   public userDropdownConfig = {
@@ -35,7 +35,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   };
 
   public selectedUser: UserDto[];
-  public filteredUsers: UserDetailedDto[];
+  public filteredUsers: UserDto[];
 
   public isLoadingSubmit: boolean = false;
 
@@ -50,14 +50,14 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.allUsers = new Array<UserDetailedDto>();
+    this.allUsers = new Array<UserDto>();
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.accountID = parseInt(this.route.snapshot.paramMap.get("id"));
 
       forkJoin(
         this.accountService.getAccountByID(this.accountID),
-        this.userService.getUsers()
+        this.userService.getLandownersAndDemoUsers()
       ).subscribe(([account, users]) => {
         this.account = account;
         this.allUsers = users;

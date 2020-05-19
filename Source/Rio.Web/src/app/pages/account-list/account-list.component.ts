@@ -34,74 +34,75 @@ export class AccountListComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+      this.accountsGrid.api.showLoadingOverlay();
       this.accountService.listAllAccounts().subscribe(accounts => {
         this.accounts = accounts;
-
-        this.columnDefs = [
-          {
-            headerName: 'Account Name', valueGetter: function (params: any) {
-              return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
-            }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/accounts/" },
-            filterValueGetter: function (params: any) {
-              return params.data.AccountName;
-            },
-            comparator: function (id1: any, id2: any) {
-              let link1 = id1.LinkDisplay;
-              let link2 = id2.LinkDisplay;
-              if (link1 < link2) {
-                return -1;
-              }
-              if (link1 > link2) {
-                return 1;
-              }
-              return 0;
-            },
-            sortable: true, filter: true, width: 170
-          },
-          { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
-          { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
-          { headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
-          { headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
-          {
-            headerName: 'Users',
-            valueGetter: function (params) {
-              let names = params.data.Users.map(x => {
-                return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
-              });
-              const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
-
-              return { links: names, DownloadDisplay: downloadDisplay };
-            },
-            filterValueGetter: function (params) {
-              let names = params.data.Users.map(x => {
-                return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
-              });
-              const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
-
-              return downloadDisplay;
-            },
-            comparator: function (id1: any, id2: any) {
-              let link1 = id1.DownloadDisplay;
-              let link2 = id2.DownloadDisplay;
-              if (link1 < link2) {
-                return -1;
-              }
-              if (link1 > link2) {
-                return 1;
-              }
-              return 0;
-            }, sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/users/" }, cellRendererFramework: MultiLinkRendererComponent
-          },
-          { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
-        ];
-
-        this.columnDefs.forEach(x => {
-          x.resizable = true;
-        });
-
         this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusID === AccountStatusEnum.Active);
+        this.accountsGrid.api.hideOverlay();
         this.cdr.detectChanges();
+      });
+
+      this.columnDefs = [
+        {
+          headerName: 'Account Name', valueGetter: function (params: any) {
+            return { LinkValue: params.data.AccountID, LinkDisplay: params.data.AccountName };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/accounts/" },
+          filterValueGetter: function (params: any) {
+            return params.data.AccountName;
+          },
+          comparator: function (id1: any, id2: any) {
+            let link1 = id1.LinkDisplay;
+            let link2 = id2.LinkDisplay;
+            if (link1 < link2) {
+              return -1;
+            }
+            if (link1 > link2) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true, width: 170
+        },
+        { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
+        { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
+        { headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
+        { headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
+        {
+          headerName: 'Users',
+          valueGetter: function (params) {
+            let names = params.data.Users.map(x => {
+              return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
+            });
+            const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
+
+            return { links: names, DownloadDisplay: downloadDisplay };
+          },
+          filterValueGetter: function (params) {
+            let names = params.data.Users.map(x => {
+              return { LinkValue: x.UserID, LinkDisplay: `${x.FirstName} ${x.LastName}` }
+            });
+            const downloadDisplay = names.map(x => x.LinkDisplay).join(", ");
+
+            return downloadDisplay;
+          },
+          comparator: function (id1: any, id2: any) {
+            let link1 = id1.DownloadDisplay;
+            let link2 = id2.DownloadDisplay;
+            if (link1 < link2) {
+              return -1;
+            }
+            if (link1 > link2) {
+              return 1;
+            }
+            return 0;
+          }, sortable: true, filter: true, width: 315, cellRendererParams: { inRouterLink: "/users/" }, cellRendererFramework: MultiLinkRendererComponent
+        },
+        { headerName: 'Notes', field: 'Notes', sortable: true, filter: true, width: 315 }
+      ];
+
+      this.columnDefs.forEach(x => {
+        x.resizable = true;
       });
     });
   }
