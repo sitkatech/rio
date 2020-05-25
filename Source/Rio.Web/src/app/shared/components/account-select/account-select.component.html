@@ -1,5 +1,5 @@
 <ng-container *ngIf="showDropdown()">
-    <a class="float-lg-right" style="font-size:12px; padding-right:0.5rem" routerLink="/landowner-dashboard" routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
+    <a class="float-lg-right top-bar-nav-link" style="font-size:12px; padding-right:0.5rem" routerLink="/landowner-dashboard" routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
     <br/>
     <ngx-select-dropdown id="accountSelectDropdown" class="float-lg-right" #accountsDropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
         name="selectedAccount" [(ngModel)]="selectedAccount" [options]="getAvailableAccounts()"

@@ -110,3 +110,7 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
       white-space: nowrap !important;
       overflow-x: hidden !important;
     }
+
+    .top-bar-nav-link {
+      color: $header-nav-link;
+    }
