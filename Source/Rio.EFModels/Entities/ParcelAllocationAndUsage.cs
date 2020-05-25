@@ -57,7 +57,7 @@ namespace Rio.EFModels.Entities
                         AccountID = parcel.AccountID.Value,
                         AccountName = parcel.AccountName,
                         AccountNumber = parcel.AccountNumber,
-                        AccountDisplayName = $"Account #{parcel.AccountNumber} ({parcel.AccountName})"
+                        AccountDisplayName = $"#{parcel.AccountNumber} ({parcel.AccountName.Trim()})"
                     };
                 }
 

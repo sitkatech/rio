@@ -73,12 +73,12 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
           {
-            headerName: 'Landowner', valueGetter: function (params: any) {
+            headerName: 'Account', valueGetter: function (params: any) {
               return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
             }, cellRendererFramework: LinkRendererComponent,
             cellRendererParams: { inRouterLink: "/accounts/" },
             filterValueGetter: function (params: any) {
-              return (params.data.LandOwner) ? params.data.LandOwner.FullName : null;
+              return (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null;
             },
             comparator: function (id1: any, id2: any) {
               let link1 = id1.LinkDisplay;
@@ -114,6 +114,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   }
 
   public updateGridData(){
+    if (!this.waterYearToDisplay) {
+      return;
+    }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
         this.parcelsGrid.api.setRowData(result);
     });

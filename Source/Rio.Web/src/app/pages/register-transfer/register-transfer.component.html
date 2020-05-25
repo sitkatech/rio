@@ -30,14 +30,14 @@
                             {{waterTransfer.TransferDate | date:'short'}}
                         </dd>
 
-                        <dt class="text-md-right col-md-4 col-sm-12">Buyer</dt>
+                        <dt class="text-md-right col-md-4 col-sm-12">Buyer Account</dt>
                         <dd class="col-md-8 col-sm-12">
-                            {{waterTransfer.BuyerRegistration.Account.AccountNumber }} - {{waterTransfer.BuyerRegistration.Account.AccountName }}<br />
+                            {{waterTransfer.BuyerRegistration.Account.ShortAccountDisplayName}}<br />
                         </dd>
 
-                        <dt class="text-md-right col-md-4 col-sm-12">Seller</dt>
+                        <dt class="text-md-right col-md-4 col-sm-12">Seller Account</dt>
                         <dd class="col-md-8 col-sm-12">
-                            {{waterTransfer.SellerRegistration.Account.AccountNumber }} - {{waterTransfer.SellerRegistration.Account.AccountName }}<br />
+                            {{waterTransfer.SellerRegistration.Account.ShortAccountDisplayName}}<br />
                         </dd>
 
                         <dt class="text-md-right col-md-4 col-sm-12">Quantity</dt>
