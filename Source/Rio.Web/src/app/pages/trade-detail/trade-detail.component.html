@@ -195,7 +195,7 @@
               <div class="col-md-8 col-sm-12">
                 <dl class="row">
                   <dd class="col-sm-5 col-xs-12">Transaction {{getWaterTransferRegistrationStatus(waterTransferRegistration.WaterTransferRegistrationStatusID)}}</dd>
-                  <dd class="col-sm-7 col-xs-12">
+                  <dd class="col-sm-7 col-xs-12" *ngIf="waterTransferRegistration.User">
                     {{waterTransferRegistration.User.FullName}} ({{waterTransferRegistration.User.Email}})
                   </dd>
                 </dl>

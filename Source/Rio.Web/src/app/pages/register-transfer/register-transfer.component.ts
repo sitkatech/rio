@@ -25,6 +25,7 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
 })
 export class RegisterTransferComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
+  private watchAccountChangeSubscription: any;
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDto;
   public isRegisteringTransfer: boolean = false;
@@ -59,7 +60,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
-      this.authenticationService.getActiveAccount().subscribe(account =>{
+      this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe(account =>{
         this.activeAccount = account;
         if (waterTransferID && account) {
           this.getData(waterTransferID);``
@@ -70,6 +71,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
+    this.watchAccountChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
   }

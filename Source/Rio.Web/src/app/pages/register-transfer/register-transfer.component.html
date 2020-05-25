@@ -73,7 +73,12 @@
                             <p>If you or the other party are unable to complete this transaction, you may cancel this trade by typing your full name in the box below and using the Cancel Trade button.</p>
                             <dl>
                                 <dt>Type your Full Name to confirm the Cancelation of this Transfer</dt>
-                                <dd><input type="text" [(ngModel)]="confirmedFullNameForCancelation" /></dd>
+                                <dd>
+                                    <input type="text" [(ngModel)]="confirmedFullNameForCancelation" />
+                                    <br/>
+                                    {{currentUser.FullName}}
+                                </dd>
+                                
                             </dl>            
                             <div class="text-center">
                                 <button [disabled]="!isFullNameConfirmedForCancelation() || isLoadingSubmit" type="submit" class="btn btn-sm btn-rio"
@@ -141,7 +146,11 @@
                     </small>
                     <dl class="row">
                         <dt class="col-md-7">Type your Full Name before Registering the Transfer</dt>
-                        <dd class="col-md-5"><input type="text" [(ngModel)]="confirmedFullNameForRegistration" /></dd>
+                        <dd class="col-md-5">
+                            <input type="text" [(ngModel)]="confirmedFullNameForRegistration" />
+                            <br/>
+                            {{currentUser.FullName}}
+                        </dd>
                     </dl>
                     <div class="text-center">
                         <button class="btn btn-rio btn-sm mr-1" (click)="submitRegistration()"
