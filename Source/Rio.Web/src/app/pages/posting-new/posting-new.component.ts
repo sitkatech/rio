@@ -61,7 +61,7 @@ export class PostingNewComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         this.isLoadingSubmit = false;
         invitePostingForm.reset();
-        this.router.navigateByUrl("/landowner-dashboard").then(x => {
+        this.router.navigateByUrl("/trades").then(x => {
           this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
         });
       }

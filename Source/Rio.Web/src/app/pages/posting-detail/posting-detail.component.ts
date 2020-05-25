@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ɵConsole } from '@angular/core';
 import { PostingService } from 'src/app/services/posting.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -17,6 +17,7 @@ import { PostingUpdateStatusDto } from 'src/app/shared/models/posting/posting-up
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { UserDto } from 'src/app/shared/models';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { PostingStatusDto } from 'src/app/shared/models/posting/posting-status-dto';
 
 @Component({
     selector: 'template-posting-detail',
@@ -36,11 +37,12 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     public isConfirmingTrade: boolean = false;
     public isRejectingTrade: boolean = false;
     public isRescindingTrade: boolean = false;
+    public offerSubmittedSuccessfully: boolean = false;
 
     public originalPostingType: PostingTypeDto;
     public offerType: string;
     public counterOfferRecipientType: string;
-    currentAccount: AccountSimpleDto;
+    public currentAccount: AccountSimpleDto;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -68,7 +70,6 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                     this.posting = posting instanceof Array
                         ? null
                         : posting as PostingDto;
-
                     this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
                     this.resetModelToPosting();
                     this.originalPostingType = this.posting.PostingType;
@@ -85,6 +86,25 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription.unsubscribe();
         this.authenticationService.dispose();
         this.cdr.detach();
+    }
+
+    private getData(postingID:number) {
+        forkJoin(
+            this.postingService.getPostingFromPostingID(postingID),
+            this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
+        ).subscribe(([posting, offers]) => {
+            this.posting = posting instanceof Array
+                ? null
+                : posting as PostingDto;
+            console.log(offers);
+            this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+            this.resetModelToPosting();
+            this.originalPostingType = this.posting.PostingType;
+            this.offerType = this.isPostingOwner ?
+                (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+            this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+        });
     }
 
     public isPostingOwner(): boolean{
@@ -159,9 +179,8 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.postingService.closePosting(this.posting.PostingID, postingUpdateStatusDto)
             .subscribe(response => {
                 this.isLoadingSubmit = false;
-                this.router.navigateByUrl("/landowner-dashboard").then(x => {
-                    this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-                });
+                this.posting = response;
+                this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
             }
                 ,
                 error => {
@@ -184,10 +203,11 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.model.CreateAccountID = this.currentAccount.AccountID;
         this.offerService.newOffer(this.posting.PostingID, this.model)
             .subscribe(response => {
+                this.isConfirmingTrade = false;
+                this.isCounterOffering = false;
                 this.isLoadingSubmit = false;
-                this.router.navigateByUrl("/landowner-dashboard").then(x => {
-                    this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-                });
+                this.offerSubmittedSuccessfully = true;
+                this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
             }
                 ,
                 error => {

@@ -15,6 +15,7 @@ declare var jQuery: any;
 export class AccountSelectComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   public activeAccount: AccountSimpleDto;
+  public selectedAccount: any;
   public currentUser: UserDto;
   @ViewChild("accountsDropdown") accountsDropdown: SelectDropDownComponent;
 
@@ -62,7 +63,11 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   }
 
   public setCurrentAccount(): void {
-    this.authenticationService.setActiveAccount(this.activeAccount);
+    if (this.selectedAccount) {
+    this.authenticationService.setActiveAccount(this.selectedAccount);
+    this.activeAccount = this.selectedAccount;
+    this.accountsDropdown.deselectItem(this.selectedAccount, 0);
+    }
   }
 
   public compareAccountsFn(c1: AccountSimpleDto, c2: AccountSimpleDto): boolean {

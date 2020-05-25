@@ -146,7 +146,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        this.router.navigateByUrl("/landowner-dashboard")
+        this.router.navigateByUrl("/trades/" + this.waterTransfer.TradeNumber)
           .then(() => {
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });

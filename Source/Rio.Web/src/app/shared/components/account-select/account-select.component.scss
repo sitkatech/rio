@@ -48,6 +48,11 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
     }
   }
 
+  .ngx-dropdown-list-container {
+    width:auto !important;
+    right:0;
+  }
+
   .ngx-dropdown-list-container ul li:hover {
     background-color: $select-and-nav-dropdown-hover;
   }
