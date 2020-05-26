@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering">
+      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
         <div class="card-header">
           Your Offer
         </div>
@@ -116,6 +116,19 @@
               Offer</button>
             <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Rescind Offer</button>
           </div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="offerSubmittedSuccessfully">
+        <div class="card-header">
+          Your Offer
+        </div>
+        <div class="card-body">
+          <p>Offer successfully submitted, no further actions needed.</p>
+          <div class="text-center">
+          <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
+          <a class="btn btn-rio btn-sm mr-1" routerLink="/trades">View Postings List</a>
+        </div>
         </div>
       </div>
 

@@ -36,6 +36,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
+  private watchAccountChangeSubscription: any;
   public showAcresManagedDetails: boolean;
   public showAllocationDetails: boolean;
   public showPurchasedDetails: boolean;
@@ -126,7 +127,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToActiveAccount() {
-    this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
+    this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
       if (account) {
         this.activeAccount = account;
         this.updateAccountData(account);
@@ -199,6 +200,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
+    this.watchAccountChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
   }
@@ -453,7 +455,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.allocationChartRange = [0, 1.2 * Math.max(...values)];
     this.waterUsageOverview = waterUsageOverview;
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == "December").value as number);
+    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
 
   public getWaterUsageForWaterYear(): MultiSeriesEntry[] {

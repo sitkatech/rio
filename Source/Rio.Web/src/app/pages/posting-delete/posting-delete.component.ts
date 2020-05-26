@@ -27,6 +27,7 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
   public isLoadingSubmit: boolean = false;
 
   public isDeletingPosting: boolean = false;
+  public  successfullyDeleted: boolean = false;
 
   constructor(
       private cdr: ChangeDetectorRef,
@@ -80,9 +81,8 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
       this.postingService.deletePosting(this.posting.PostingID)
           .subscribe(response => {
               this.isLoadingSubmit = false;
-              this.router.navigateByUrl("/manager-dashboard").then(x => {
-                  this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-              });
+              this.successfullyDeleted = true;
+              this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           }
               ,
               error => {

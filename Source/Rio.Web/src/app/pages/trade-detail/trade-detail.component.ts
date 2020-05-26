@@ -51,6 +51,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public buyer: AccountDto;
   public seller: AccountDto;
   activeAccount: AccountSimpleDto;
+  public tradeActionConfirmed: boolean = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -248,17 +249,31 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     this.offerService.newOffer(this.trade.Posting.PostingID, this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        this.router.navigateByUrl("/landowner-dashboard")
-          .then(() => {
-            // TODO: better success message depending on what kind of action we posted
-            this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
-          });
+        this.isConfirmingTrade = false;
+        this.alertService.pushAlert(new Alert(this.getAlertMessage(), AlertContext.Success));
+        this.getData(this.route.snapshot.paramMap.get("tradeNumber"));
       },
         error => {
           this.isLoadingSubmit = false;
           this.cdr.detectChanges();
         }
       );
+  }
+
+  public getAlertMessage():string {
+    switch(this.model.OfferStatusID)
+    {
+      case OfferStatusEnum.Accepted:
+        return "Offer successfully accepted.";
+      case OfferStatusEnum.Rejected:
+        return "Offer successfully rejected.";
+      case OfferStatusEnum.Rescinded:
+        return "Offer successfully rescinded.";
+      case OfferStatusEnum.Pending:
+        if (this.isCounterOffering) {
+          return "Counter offer successfully submitted.";
+        }
+    }
   }
 
   public isOfferFormValid(): boolean {

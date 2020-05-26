@@ -252,12 +252,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 200
       },
       {
-        headerName: 'Buyer', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Buyer.AccountID, LinkDisplay: params.data.Buyer.AccountName };
+        headerName: 'Buyer Account', valueGetter: function (params: any) {
+          return { LinkValue: params.data.Buyer.AccountID, LinkDisplay: params.data.Buyer.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: function (params: any) {
-          return params.data.Buyer.FullName;
+          return params.data.Buyer.ShortAccountDisplayName;
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;
@@ -273,12 +273,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       {
-        headerName: 'Seller', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Seller.AccountID, LinkDisplay: params.data.Seller.AccountName };
+        headerName: 'Seller Account', valueGetter: function (params: any) {
+          return { LinkValue: params.data.Seller.AccountID, LinkDisplay: params.data.Seller.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: function (params: any) {
-          return params.data.Seller.FullName;
+          return params.data.Seller.ShortAccountDisplayName;
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;

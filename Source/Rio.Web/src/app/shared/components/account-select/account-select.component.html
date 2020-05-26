@@ -1,7 +1,9 @@
 <ng-container *ngIf="showDropdown()">
-    <ngx-select-dropdown id="accountSelectDropdown" #accountsDropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
-        name="selectedAccount" [(ngModel)]="activeAccount" [options]="getAvailableAccounts()"
-        (change)="setCurrentAccount()" style="display:inline-block; width:100%; font-size:12px;">
+    <a class="float-lg-right top-bar-nav-link" style="font-size:12px; padding-right:0.5rem" routerLink="/landowner-dashboard" routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
+    <br/>
+    <ngx-select-dropdown id="accountSelectDropdown" class="float-lg-right" #accountsDropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Select an account"
+        name="selectedAccount" [(ngModel)]="selectedAccount" [options]="getAvailableAccounts()"
+        (change)="setCurrentAccount()" style="display:inline-block; font-size:12px;">
     </ngx-select-dropdown>
 </ng-container>
 <ng-container *ngIf="!showDropdown() && activeAccount"> <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
