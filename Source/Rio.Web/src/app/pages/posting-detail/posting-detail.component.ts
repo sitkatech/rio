@@ -88,25 +88,6 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.cdr.detach();
     }
 
-    private getData(postingID:number) {
-        forkJoin(
-            this.postingService.getPostingFromPostingID(postingID),
-            this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
-        ).subscribe(([posting, offers]) => {
-            this.posting = posting instanceof Array
-                ? null
-                : posting as PostingDto;
-            console.log(offers);
-            this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-            this.resetModelToPosting();
-            this.originalPostingType = this.posting.PostingType;
-            this.offerType = this.isPostingOwner ?
-                (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-            this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-        });
-    }
-
     public isPostingOwner(): boolean{
         return (this.currentAccount) && this.posting.CreateAccount.AccountID === this.currentAccount.AccountID;
     }
