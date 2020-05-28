@@ -23,7 +23,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
     search: true,
     searchPlaceholder: "Search Account...",
     height: '320px',
-    placeholder: "Select an account",
+    placeholder: "Switch account",
     displayKey: "ShortAccountDisplayName",
     searchOnKey: "ShortAccountDisplayName",
   }
