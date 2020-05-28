@@ -1,25 +1,27 @@
 <div class="breadcrumb-container">
   <div class="container">
-    <nav aria-label="breadcrumb" *ngIf="posting">
+    <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item" aria-current="page">
           <a routerLink="/trades">Buy and Sell Water</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-          Posting: {{posting.PostingType.PostingTypeDisplayName}}
-          {{posting.Quantity | number: "1.0"}} ac-ft
+          Posting: <span *ngIf="posting">{{posting.PostingType.PostingTypeDisplayName}}
+          {{posting.Quantity | number: "1.0"}} ac-ft </span>
+          <span *ngIf="!posting">Loading...</span>
         </li>
       </ol>
     </nav>
   </div>
 </div>
-<div class="container mt-sm-4" *ngIf="posting">
+<div class="container mt-sm-4">
   <h2 style="display: inline-block">
-    Posting: {{posting.PostingType.PostingTypeDisplayName}}
-    {{posting.Quantity | number: "1.0"}} ac-ft
+    Posting: <span *ngIf="posting">{{posting.PostingType.PostingTypeDisplayName}}
+    {{posting.Quantity | number: "1.0"}} ac-ft </span>
+    <span *ngIf="!posting">Loading...</span>
   </h2>
   <app-alert-display></app-alert-display>
-  <div class="row mt-4">
+  <div class="row mt-4" *ngIf="posting">
     <div class="col-sm-12 col-md-6">
       <div class="card">
         <div class="card-header">

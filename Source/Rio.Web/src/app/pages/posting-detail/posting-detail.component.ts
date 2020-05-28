@@ -77,6 +77,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
                         : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
                     this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                    this.cdr.detectChanges();
                 });
             }
         });

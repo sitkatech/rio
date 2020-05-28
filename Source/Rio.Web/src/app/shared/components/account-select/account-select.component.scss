@@ -114,3 +114,15 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
     .top-bar-nav-link {
       color: $header-nav-link;
     }
+
+  .top-bar-nav-link,
+  .top-bar-nav-link::before,
+  .top-bar-nav-link::after {
+    transition: all .5s;
+  }
+  
+  .top-bar-nav-link:hover {
+    color:$select-and-nav-hover;
+    text-decoration:none;
+    cursor:pointer;
+  }
