@@ -36,18 +36,14 @@ export class WaterTradingScenarioComponent implements OnInit, AfterViewInit {
     public availableScenarioInfo = require('../../../assets/WaterTradingScenarioJSON/availableRunInfo.json');
     
     public sellerParcels = [
-        29,
-        30,
-        36,
-        37,
-        59,
-        61,
-        74,
-        75
+        199,
+        316,
+        346,
+        348
     ];
 
     public buyerParcels = [
-        494
+        290
     ];
 
     public buyerStyle = 'parcel_red';
