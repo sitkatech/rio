@@ -3,11 +3,8 @@
         <div class="row d-none d-lg-flex" style="margin-bottom:-3px">
             <div class="col-12">
                 <ul class="mb-0 list-inline text-right top-bar">
-                    <li class="list-inline-item nav-item top-bar-item mr-0">
-                        <a class="nav-link top-bar-nav-link pb-lg-0" routerLink="/manager-dashboard" routerLinkActive="active" 
-                        *ngIf="isAuthenticated() && isAdministrator()">My Dashboard</a>
-                        <a class="nav-link top-bar-nav-link pb-lg-0" routerLink="/landowner-dashboard" routerLinkActive="active"
-                            *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
+                    <li class="list-inline-item nav-item top-bar-item mr-0" *ngIf="isAuthenticated">
+                        <rio-account-select></rio-account-select>
                     </li>
                     <li class="nav-item list-inline-item top-bar-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                         <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link top-bar-nav-link pb-lg-0">Sign In</a>
@@ -128,11 +125,11 @@
                                 </div>
                             </li>
                         </ul>
-                        <ul class="navbar-nav flex-column ml-lg-auto mt-2 mt-xl-0 w-100" style="max-width:430px;">
+                        <ul class="navbar-nav flex-column ml-lg-auto mt-2 mt-xl-0 w-100 d-lg-none" style="max-width:430px;">
                             <li class="nav-item d-lg-none" routerLinkActive="active" *ngIf="!isAuthenticated()">
                                 <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link">Sign In</a>
                             </li>
-                            <li class="nav-item dropdown welcomeUser d-lg-none" routerLinkActive="active" *ngIf="isAuthenticated()"> 
+                            <li class="nav-item dropdown welcomeUser" routerLinkActive="active" *ngIf="isAuthenticated()"> 
                                 <a href="#" class="nav-link dropdown-toggle pr-3" role="button" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
                                     Welcome {{getUserName()}}

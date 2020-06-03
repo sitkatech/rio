@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestro
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
-import { SelectDropDownComponent } from 'ngx-select-dropdown';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 declare var jQuery: any;
 
@@ -17,18 +17,11 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   public activeAccount: AccountSimpleDto;
   public selectedAccount: any;
   public currentUser: UserDto;
-  @ViewChild("accountsDropdown") accountsDropdown: SelectDropDownComponent;
+  public searchText: string;
+  public modalReference: NgbModalRef;
 
-  public accountDropdownConfig = {
-    search: true,
-    searchPlaceholder: "Search Account...",
-    height: '320px',
-    placeholder: "Switch account",
-    displayKey: "ShortAccountDisplayName",
-    searchOnKey: "ShortAccountDisplayName",
-  }
-
-  constructor(private authenticationService: AuthenticationService) { }
+  constructor(private authenticationService: AuthenticationService,
+              private modalService: NgbModal) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -42,16 +35,10 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
         this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
       }
     })
-    
-    jQuery(document).on("show.bs.dropdown", function(event){
-        if (this.accountsDropdown && this.accountsDropdown.toggleDropdown) {
-          this.accountsDropdown.toggleSelectDropdown();
-        }
-    }.bind(this));
   }
 
   ngOnDestroy(): void {
-    jQuery(document).off("show.bs.dropdown")
+    this.watchUserChangeSubscription.unsubscribe();
   }
 
   public isUnassignedOrDisabled(): boolean {
@@ -59,14 +46,21 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   }
 
   public getAvailableAccounts(): Array<AccountSimpleDto> {
-    return this.authenticationService.getAvailableAccounts();
+    return this.authenticationService.getAvailableAccounts()
+  }
+
+  public getFilteredAccounts(): Array<AccountSimpleDto> {
+    return this.getAvailableAccounts()?.filter(x => (this.searchText == null || x.ShortAccountDisplayName.includes(this.searchText)) && x != this.activeAccount);
   }
 
   public setCurrentAccount(): void {
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
     if (this.selectedAccount) {
     this.authenticationService.setActiveAccount(this.selectedAccount);
     this.activeAccount = this.selectedAccount;
-    this.accountsDropdown.deselectItem(this.selectedAccount, 0);
     }
   }
 
@@ -77,5 +71,16 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   public showDropdown(): boolean {
     const accountList = this.getAvailableAccounts();
     return accountList && accountList.length > 1;
+  }
+
+  public launchModal(modalContent: any) {
+    this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', ariaLabelledBy: 'selectAccountModalTitle', backdrop: 'static', keyboard: false });
+    this.modalReference.result.then((result) => {
+      this.searchText = null;
+      this.selectedAccount = null;
+    }, (reason) => {
+      this.searchText = null;
+      this.selectedAccount = null;
+    });
   }
 }

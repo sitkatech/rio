@@ -1,11 +1,47 @@
 <ng-container *ngIf="showDropdown()">
-    <a class="float-lg-right top-bar-nav-link" style="font-size:14px; padding-right:0.5rem" routerLink="/landowner-dashboard" routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
-    <br/>
-    <ngx-select-dropdown id="accountSelectDropdown" class="float-lg-right" #accountsDropdown [multiple]="false" [config]="accountDropdownConfig" placeholder="Switch account"
-        name="selectedAccount" [(ngModel)]="selectedAccount" [options]="getAvailableAccounts()"
-        (change)="setCurrentAccount()" style="display:inline-block; font-size:14px;">
-    </ngx-select-dropdown>
+    <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
+        routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
+    <button class="btn btn-link top-bar-nav-link align-middle p-0 pr-1" (click)="launchModal(selectAccountModalContent)">
+        <i class="fa fa-random medium"></i>
+    </button>
 </ng-container>
-<ng-container *ngIf="!showDropdown() && activeAccount"> <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
-    <span class="accountLabelNoDropdown pr-3">{{activeAccount.AccountDisplayName}}</span>
+<ng-container *ngIf="!showDropdown() && activeAccount">
+    <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
+    <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
+        routerLinkActive="true">{{activeAccount.DisplayName}}</a>
 </ng-container>
+
+<ng-template #selectAccountModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="selectAccountModalTitle">Select Account</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <p>Your current selected account is:
+                {{activeAccount ? activeAccount.ShortAccountDisplayName : "No account selected"}}.</p>
+            <p>The selected account controls which dashboard you view and which account you're trading on behalf of. If
+                you'd like to switch accounts, select one of the available accounts below.</p>
+        </div>
+        <div class="search-container">
+            <input [(ngModel)]="searchText">
+            <label [ngClass]="{'active': searchText}">
+                Search Accounts...
+            </label>
+        </div>
+        <div class="mt-2" style="max-height:200px; overflow:auto">
+            <ul class="available-items pl-0" *ngIf="getFilteredAccounts().length > 0">
+                <li *ngFor="let account of getFilteredAccounts()" [ngClass]="{'selected': selectedAccount == account}" (click)="selectedAccount = account">
+                    {{account.ShortAccountDisplayName}}</li>
+            </ul>
+            <span *ngIf="getFilteredAccounts().length == 0">No accounts to show</span>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" (click)="setCurrentAccount()" [disabled]="!selectedAccount">
+              Continue</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+          </div>
+    </div>
+</ng-template>
