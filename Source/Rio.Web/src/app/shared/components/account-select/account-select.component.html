@@ -1,7 +1,7 @@
 <ng-container *ngIf="showDropdown()">
     <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
         routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
-    <button class="btn btn-link top-bar-nav-link align-middle" (click)="launchModal(selectAccountModalContent)">
+    <button class="btn btn-link top-bar-nav-link align-middle p-0 pr-1" (click)="launchModal(selectAccountModalContent)">
         <i class="fa fa-random medium"></i>
     </button>
 </ng-container>
