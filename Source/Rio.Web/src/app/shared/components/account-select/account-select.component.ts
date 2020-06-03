@@ -2,8 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestro
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
-import { SelectDropDownComponent } from 'ngx-select-dropdown';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 declare var jQuery: any;
 
@@ -19,17 +18,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   public selectedAccount: any;
   public currentUser: UserDto;
   public searchText: string;
-  @ViewChild("accountsDropdown") accountsDropdown: SelectDropDownComponent;
-
-  public accountDropdownConfig = {
-    search: true,
-    searchPlaceholder: "Search Account...",
-    height: '320px',
-    placeholder: "Switch account",
-    displayKey: "ShortAccountDisplayName",
-    searchOnKey: "ShortAccountDisplayName",
-  }
-  modalReference: any;
+  public modalReference: NgbModalRef;
 
   constructor(private authenticationService: AuthenticationService,
               private modalService: NgbModal) { }
@@ -46,16 +35,10 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
         this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
       }
     })
-    
-    jQuery(document).on("show.bs.dropdown", function(event){
-        if (this.accountsDropdown && this.accountsDropdown.toggleDropdown) {
-          this.accountsDropdown.toggleSelectDropdown();
-        }
-    }.bind(this));
   }
 
   ngOnDestroy(): void {
-    jQuery(document).off("show.bs.dropdown")
+    this.watchUserChangeSubscription.unsubscribe();
   }
 
   public isUnassignedOrDisabled(): boolean {
