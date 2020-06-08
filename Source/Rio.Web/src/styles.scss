@@ -11,49 +11,6 @@
 @import "scss/_forms.scss";
 @import "scss/_custom-bootstrap.scss";
 
-// begin ag-grid settings
-$grid-size: 4px;
-$font-size: 12px;
-$secondary-font-size: 13px;
-$header-icon-size: 13px;
-$cell-horizontal-padding: 12px;
-$tooltip-padding: 0px;
-$header-background-color: #448ac6;
-$header-foreground-color: #fff;
-
-// changes the default icon color
-$icon-color: #fff;
-
-// changes the selected checkbox check mark color
-$accent-color: $grid-accent-color;
-$hover-color: $grid-hover-color;
-
-$ag-range-selected-color-1: rgb(250, 235, 215);
-$ag-range-selected-color-2: darken($ag-range-selected-color-1, 10%);
-$ag-range-selected-color-3: darken($ag-range-selected-color-1, 20%);
-$ag-range-selected-color-4: darken($ag-range-selected-color-1, 30%);
-
-@import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-balham/sass/legacy/ag-theme-balham-v22-compat.scss";
-
-.ag-theme-balham {
-  font-family: $grid-font-family;
-}
-
-.ag-paging-panel .ag-icon {
-  color: rgba(0, 0, 0, 0.54);
-}
-
-.ag-header-icon > .ag-icon {
-  color: rgba(255, 255, 255, 0.54);
-}
-
-.ag-theme-balham .ag-header {
-  background-color: $grid-header-background;
-  font-family: $grid-font-header-family;
-}
-// end ag-grid settings
-
 //ckeditor css
 rio-custom-rich-text {
   .image {
