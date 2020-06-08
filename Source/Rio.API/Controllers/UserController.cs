@@ -261,13 +261,16 @@ namespace Rio.API.Controllers
             var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
-            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
-            foreach (var mailMessage in mailMessages)
+            if (addedAccounts != null && addedAccounts.Count > 0)
             {
-                SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, 
-                    EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-                SendEmailMessage(smtpClient, mailMessage);
+                var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+                var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
+                foreach (var mailMessage in mailMessages)
+                {
+                    SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
+                        EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                    SendEmailMessage(smtpClient, mailMessage);
+                }
             }
 
             return Ok(updatedUserDto);
