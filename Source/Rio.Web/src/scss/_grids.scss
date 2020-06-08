@@ -1,20 +1,13 @@
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham-mixin";
 
-$grid-header-background: #343b85;
-
 .ag-theme-balham {
   @include ag-theme-balham((
       // use theme parameters where possible
       balham-active-color: purple,
-      font-family: ($grid-font-family)
+      font-family: ($grid-font-family),
+      header-background-color: $grid-header-background
   ));
-
-
-
-  .ag-header {
-    background-color: $grid-header-background;
-  }
 
   .ag-header-row {
     color: #fff;
