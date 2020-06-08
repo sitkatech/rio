@@ -27,7 +27,8 @@ $theme-colors: (
         "header-gradient-end": transparent,
         "breadcrumb-background-color": #253D86,
         "breadcrumb-border-color": transparent,
-        "breadcrumb-item-active-color": #fff
+        "breadcrumb-item-active-color": #fff,
+        "select-selected-text": #fff
 );
 
 // this looks redundant, but we need to make the override in both ways
@@ -62,6 +63,7 @@ $header-nav-link: #253D86;
 $header-nav-link-font-weight: bold;
 $h4-styled: #194349;
 $select: #253D86;
+$select-selected-text: #fff;
 $select-and-nav-dropdown-hover: rgba(29,92,66,0.3);
 $select-and-nav-hover: #1D5D43;
 $text-muted: darken(#d3d3d3, 15%);

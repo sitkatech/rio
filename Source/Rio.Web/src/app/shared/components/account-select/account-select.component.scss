@@ -7,6 +7,7 @@ or else you'll end up styling all the ngx-select-dropdowns in the site D=
 
 .top-bar-nav-link {
   color: $header-nav-link;
+  font-weight:$header-nav-link-font-weight;
 }
 
 .top-bar-nav-link,
@@ -32,7 +33,7 @@ ul.available-items li:hover {
 
 ul.available-items li.selected {
     background-color: $select !important;
-    color: $header-nav-link;
+    color: $select-selected-text;
 }
 
 .search-container {
@@ -101,4 +102,17 @@ ul.available-items li.selected {
   @media only screen and (max-width: 600px) {
     width:75%;
   }
+}
+
+button {
+  border:0px;
+}
+
+.select-icon {
+  line-height:1;
+  font-size:12px;
+  border:0;
+  padding-bottom:2px;
+  padding-top:0px;
+  padding-left:0px;
 }

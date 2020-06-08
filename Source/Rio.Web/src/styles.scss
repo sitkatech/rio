@@ -2,7 +2,6 @@
 
 // import Bootstrap AFTER variables
 @import "~bootstrap/scss/bootstrap";
-@import "~font-awesome/css/font-awesome.css";
 
 @import "scss/_grids.scss";
 @import "~leaflet/dist/leaflet.css";
@@ -195,3 +194,4 @@ input:checked + .slider .off {
 .slider.round:before {
   border-radius: 50%;
 }
+

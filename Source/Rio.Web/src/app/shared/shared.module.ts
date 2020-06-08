@@ -20,6 +20,7 @@ import { AccountSelectComponent } from './components/account-select/account-sele
 import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
         NgProgressModule,
         RouterModule,
         SelectDropDownModule,
-        CKEditorModule
+        CKEditorModule,
+        NgbModule
     ],
     exports: [
         CommonModule,

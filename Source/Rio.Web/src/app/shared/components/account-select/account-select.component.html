@@ -1,14 +1,14 @@
 <ng-container *ngIf="showDropdown()">
     <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
-        routerLinkActive="true">{{activeAccount?.ShortAccountDisplayName}}</a>
-    <button class="btn btn-link top-bar-nav-link align-middle p-0 pr-1" (click)="launchModal(selectAccountModalContent)">
-        <i class="fa fa-random medium"></i>
+        routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount?.ShortAccountDisplayName}}</a>
+    <button class="btn btn-link top-bar-nav-link align-middle pr-1 select-icon" aria-label="Change Active Account" ngbTooltip="Change Active Account" placement="bottom" (click)="launchModal(selectAccountModalContent)">
+        <i class="fas fa-people-arrows"></i>
     </button>
 </ng-container>
 <ng-container *ngIf="!showDropdown() && activeAccount">
     <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
     <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
-        routerLinkActive="true">{{activeAccount.DisplayName}}</a>
+        routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount.DisplayName}}</a>
 </ng-container>
 
 <ng-template #selectAccountModalContent let-modal>
