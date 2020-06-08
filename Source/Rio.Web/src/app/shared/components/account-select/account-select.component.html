@@ -1,7 +1,7 @@
 <ng-container *ngIf="showDropdown()">
     <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
         routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount?.ShortAccountDisplayName}}</a>
-    <button class="btn btn-link top-bar-nav-link align-middle pr-1 select-icon" aria-label="Change Active Account" ngbTooltip="Change Active Account" placement="bottom" (click)="launchModal(selectAccountModalContent)">
+    <button class="btn btn-link top-bar-nav-link align-middle pr-1 select-icon" aria-label="Change Active Account" ngbTooltip="Change Active Account" placement="bottom" triggers="hover" (click)="launchModal(selectAccountModalContent)">
         <i class="fas fa-people-arrows"></i>
     </button>
 </ng-container>
