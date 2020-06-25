@@ -111,12 +111,15 @@
             </dd>
           </dl>
           <div class="text-center">
+            <div class="alert alert-primary text-left" *ngIf="!currentAccountSet()">
+              No account is selected; please select an account before choosing an offer action.
+            </div>
             <button class="btn btn-rio btn-sm mr-1" *ngIf="offers.length == 0"
-              (click)="acceptCurrentOffer()">Accept Offer</button>
+              (click)="acceptCurrentOffer()" [disabled]="!currentAccountSet()">Accept Offer</button>
             <button class="btn btn-rio btn-sm mr-1" (click)="isCounterOffering = true"
-              *ngIf="!isPendingOffer()">Make Counter
+              *ngIf="!isPendingOffer()" [disabled]="!currentAccountSet()">Make Counter
               Offer</button>
-            <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()">Rescind Offer</button>
+            <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()" [disabled]="!currentAccountSet()">Rescind Offer</button>
           </div>
         </div>
       </div>
