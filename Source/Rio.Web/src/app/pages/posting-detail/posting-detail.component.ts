@@ -198,4 +198,8 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                 }
             );
     }
+
+    public currentAccountSet(): boolean {
+        return this.currentAccount !== null && this.currentAccount !== undefined;
+    }
 }
