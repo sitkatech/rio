@@ -53,6 +53,12 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (Posting.HasOpenOffer(_dbContext, posting))
+            {
+                ModelState.AddModelError("Posting", "Posting already has an open offer");
+                return BadRequest(ModelState);
+            }
+
             var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
@@ -124,7 +130,10 @@ namespace Rio.API.Controllers
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
-            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
+            if (! string.IsNullOrWhiteSpace(_rioConfiguration.LeadOrganizationEmail))
+            {
+                mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
+            }
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
             smtpClient.Send(mailMessage);
         }

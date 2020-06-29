@@ -143,5 +143,12 @@ namespace Rio.EFModels.Entities
             var offer = GetPostingImpl(dbContext).Where(x => x.PostingTypeID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
             return offer?.AsDto();
         }
+
+        public static bool HasOpenOffer(RioDbContext dbContext, PostingDto posting)
+        {
+            return dbContext.Trade.Any(x =>
+                x.PostingID == posting.PostingID && x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
+                x.TradeStatusID == (int) TradeStatusEnum.Countered);
+        }
     }
 }
