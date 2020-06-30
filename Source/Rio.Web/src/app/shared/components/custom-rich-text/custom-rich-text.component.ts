@@ -8,6 +8,7 @@ import { Alert } from '../../models/alert';
 import { AlertContext } from '../../models/enums/alert-context.enum';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { environment } from 'src/environments/environment';
+import { DomSanitizer,  SafeHtml } from '@angular/platform-browser'
 
 @Component({
   selector: 'rio-custom-rich-text',
@@ -16,7 +17,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CustomRichTextComponent implements OnInit {
   @Input() customRichTextTypeID: number;
-  public customRichTextContent: string;
+  public customRichTextContent: SafeHtml;
   public isLoading: boolean = true;
   public isEditing: boolean = false;
   public isEmptyContent: boolean = false;
@@ -27,12 +28,15 @@ export class CustomRichTextComponent implements OnInit {
 
   currentUser: UserDto;
 
-  public ckConfig = {"removePlugins": ["MediaEmbed"]}
+  //For media embed https://ckeditor.com/docs/ckeditor5/latest/api/module_media-embed_mediaembed-MediaEmbedConfig.html
+  //Only some embeds will work, and if we want others to work we'll likely need to write some extra functions
+  public ckConfig = {mediaEmbed: {previewsInData: true}};
 
   constructor(private customRichTextService: CustomRichTextService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
-    private alertService: AlertService) { }
+    private alertService: AlertService,
+    private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -41,7 +45,8 @@ export class CustomRichTextComponent implements OnInit {
     //window.Editor = this.Editor;
 
     this.customRichTextService.getCustomRichText(this.customRichTextTypeID).subscribe(x => {
-      this.customRichTextContent = x.CustomRichTextContent;
+      this.customRichTextContent = this.sanitizer.bypassSecurityTrustHtml(x.CustomRichTextContent);
+      this.editedContent = x.CustomRichTextContent;
       this.isEmptyContent = x.IsEmptyContent;
       this.isLoading = false;
     });
@@ -67,7 +72,6 @@ export class CustomRichTextComponent implements OnInit {
   }
 
   public enterEdit(): void {
-    this.editedContent = this.customRichTextContent;
     this.isEditing = true;
   }
 
@@ -81,7 +85,8 @@ export class CustomRichTextComponent implements OnInit {
     const updateDto = new CustomRichTextDto({ CustomRichTextContent: this.editedContent });
     console.log(updateDto);
     this.customRichTextService.updateCustomRichText(this.customRichTextTypeID, updateDto).subscribe(x => {
-      this.customRichTextContent = x.CustomRichTextContent;
+      this.customRichTextContent = this.sanitizer.bypassSecurityTrustHtml(x.CustomRichTextContent);
+      this.editedContent = x.CustomRichTextContent
       this.isLoading = false;
     }, error => {
       this.isLoading = false;
