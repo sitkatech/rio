@@ -147,8 +147,8 @@ namespace Rio.EFModels.Entities
         public static bool HasOpenOffer(RioDbContext dbContext, PostingDto posting)
         {
             return dbContext.Trade.Any(x =>
-                x.PostingID == posting.PostingID && x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
-                x.TradeStatusID == (int) TradeStatusEnum.Countered);
+                x.PostingID == posting.PostingID && (x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
+                x.TradeStatusID == (int) TradeStatusEnum.Countered));
         }
     }
 }
