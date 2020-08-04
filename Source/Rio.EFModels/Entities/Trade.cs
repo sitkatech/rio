@@ -65,7 +65,7 @@ namespace Rio.EFModels.Entities
             return dbContext.Trade
                 .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
                 .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
-                .Include(x => x.Offer).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUser).ThenInclude(x => x.User)
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateAccount)
                 .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)

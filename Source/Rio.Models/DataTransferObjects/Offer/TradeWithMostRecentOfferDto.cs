@@ -1,6 +1,7 @@
 ﻿using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 using System;
+using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.Models.DataTransferObjects.Offer
 {
@@ -15,6 +16,7 @@ namespace Rio.Models.DataTransferObjects.Offer
         public decimal Price { get; set; }
         public DateTime OfferDate { get; set; }
         public AccountSimpleDto OfferCreateAccount { get; set; }
+        public UserSimpleDto? OfferCreateAccountUser { get; set; }
         public OfferStatusDto OfferStatus { get; set; }
         public AccountSimpleDto Buyer { get; set; }
         public AccountSimpleDto Seller { get; set; }

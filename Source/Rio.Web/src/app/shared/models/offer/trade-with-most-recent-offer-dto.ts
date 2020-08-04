@@ -14,6 +14,7 @@ export class TradeWithMostRecentOfferDto {
     Price: number;
     OfferDate: Date;
     OfferCreateAccount: AccountSimpleDto;
+    OfferCreatedAccountUser?: UserSimpleDto;
     OfferStatus: OfferStatusDto;
     Buyer: AccountSimpleDto;
     Seller: AccountSimpleDto;

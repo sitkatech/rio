@@ -112,11 +112,10 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<PostingDetailedDto> ListDetailedByYear(RioDbContext dbContext, int year)
         {
-            // right now we are assuming a parcel can only be associated to one user
-            var parcels = dbContext.vPostingDetailed.Where(x => x.PostingDate.Year == year).OrderByDescending(x => x.PostingDate).ToList()
+            var postings = dbContext.vPostingDetailed.Where(x => x.PostingDate.Year == year).OrderByDescending(x => x.PostingDate).ToList()
                 .Select(posting =>
                 {
-                    var userDetailedDto = new PostingDetailedDto()
+                    var postingDetailedDto = new PostingDetailedDto()
                     {
                         PostingID = posting.PostingID,
                         PostingDate = posting.PostingDate,
@@ -133,9 +132,9 @@ namespace Rio.EFModels.Entities
                         AvailableQuantity = posting.AvailableQuantity,
                         NumberOfOffers = posting.NumberOfOffers,
                     };
-                    return userDetailedDto;
+                    return postingDetailedDto;
                 }).ToList();
-            return parcels;
+            return postings;
         }
 
         public static PostingDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
