@@ -105,7 +105,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Date', valueGetter: function (params: any) {
-          return { LinkValue: params.data.PostingID, LinkDisplay: _datePipe.transform(params.data.PostingDate, "short"), PostingDate: params.data.PostingDate };
+          return { LinkValue: params.data.PostingID, LinkDisplay: _datePipe.transform(params.data.PostingDate, "M/d/yyyy, h:mm a"), PostingDate: params.data.PostingDate };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/postings/" },
         filterValueGetter: function (params: any) {
@@ -142,11 +142,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Posted By', valueGetter: function (params: any) {
-          return { LinkValue: params.data.PostedByUserID, LinkDisplay: params.data.PostedByFullName };
+          return { LinkValue: params.data.PostedByUserID ?? '', LinkDisplay: (params.data.PostedByFullName !== " " ? params.data.PostedByFullName : 'User Not Found') };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
-          return params.data.PostedByFullName;
+          return params.data.PostedByFullName !== " " ? params.data.PostedByFullName : 'User Not Found';
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;
@@ -199,7 +199,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Date', field: 'OfferDate', valueFormatter: function (params) {
-          return _datePipe.transform(params.value, "short")
+          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
         },
         filterValueGetter: function (params: any) {
           return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
@@ -298,11 +298,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {
         headerName: 'Posted By', valueGetter: function (params: any) {
-          return { LinkValue: params.data.OfferCreateAccount.UserID, LinkDisplay: params.data.OfferCreateAccount.FullName };
+          return { LinkValue: params.data.OfferCreateAccountUser?.UserID ?? '', LinkDisplay: (params.data.OfferCreateAccountUser !== null && params.data.OfferCreateAccountUser.FullName !== " " ? params.data.OfferCreateAccountUser.FullName : 'User Not Found') };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
-          return params.data.OfferCreateAccount.FullName;
+          return params.data.OfferCreateAccountUser !== null && params.data.OfferCreateAccountUser.FullName !== " " ? params.data.OfferCreateAccountUser.FullName : 'User Not Found';
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;

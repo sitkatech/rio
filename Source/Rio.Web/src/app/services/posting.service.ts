@@ -3,6 +3,7 @@ import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { PostingDto } from '../shared/models/posting/posting-dto';
 import { TradeDto } from '../shared/models/offer/trade-dto';
+import { PostingDetailedDto } from '../shared/models/posting/posting-detailed-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -41,7 +42,7 @@ export class PostingService {
         return this.apiService.deleteToApi(route);
     }
 
-    getPostingsDetailedByYear(year: number): Observable<PostingDto[]> {
+    getPostingsDetailedByYear(year: number): Observable<PostingDetailedDto[]> {
         let route = `/postings-activity/${year}`;
         return this.apiService.getFromApi(route);
     }
