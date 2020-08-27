@@ -303,9 +303,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  public getAnnualAllocation(year: number): number {
+  public getAnnualAllocation(year: number, skipConvertToUnitsShown?: boolean): number {
     let parcelAllocations = this.getAllocationsForWaterYear(year);
-    return this.getTotalAcreFeetAllocated(parcelAllocations);
+    return this.getTotalAcreFeetAllocated(parcelAllocations, skipConvertToUnitsShown);
+    
   }
 
   public getAnnualProjectWater(): number {
@@ -328,12 +329,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalAcreFeetAllocated(parcelAllocations);
   }
 
-  public getTotalAcreFeetAllocated(parcelAllocations: Array<ParcelAllocationDto>): number {
+  public getTotalAcreFeetAllocated(parcelAllocations: Array<ParcelAllocationDto>, skipConvertToUnitsShown?: boolean): number {
     var result = 0;
     if (parcelAllocations.length > 0) {
       result = parcelAllocations.reduce(function (a, b) {
         return (a + b.AcreFeetAllocated);
       }, 0);
+    }
+    if (skipConvertToUnitsShown){
+      return result
     }
     return this.getResultInUnitsShown(result);
   }
@@ -378,19 +382,22 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
-  public getPurchasedAcreFeet(year?: number): number {
+  public getPurchasedAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
     return this.getTradedQuantity(this.getPurchasedWaterTransfersForWaterYear(year));
   }
 
-  public getSoldAcreFeet(year?: number): number {
-    return this.getTradedQuantity(this.getSoldWaterTransfersForWaterYear(year));
+  public getSoldAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
+    return this.getTradedQuantity(this.getSoldWaterTransfersForWaterYear(year), skipConvertToUnitsShown);
   }
 
-  private getTradedQuantity(waterTransfersForWaterYear: WaterTransferDto[]): number {
+  private getTradedQuantity(waterTransfersForWaterYear: WaterTransferDto[], skipConvertToUnitsShown?: boolean): number {
     if (waterTransfersForWaterYear.length > 0) {
       let result = waterTransfersForWaterYear.reduce(function (a, b) {
         return (a + b.AcreFeetTransferred);
       }, 0);
+      if (skipConvertToUnitsShown){
+        return result;
+      }
       return this.getResultInUnitsShown(result);
     }
     return null;
@@ -437,9 +444,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     const allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
     
     this.annualAllocationChartData = this.waterYears.map(x => {
-      const allocation = this.getAnnualAllocation(x);
-      const sold = this.getSoldAcreFeet(x);
-      const purchased = this.getPurchasedAcreFeet(x);
+      const allocation = this.getAnnualAllocation(x, true);
+      const sold = this.getSoldAcreFeet(x, true);
+      const purchased = this.getPurchasedAcreFeet(x, true);
 
       values.push(allocation + purchased - sold);      
 

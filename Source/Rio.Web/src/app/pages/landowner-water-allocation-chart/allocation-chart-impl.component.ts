@@ -144,7 +144,7 @@ export class AllocationChartImplComponent extends BaseChartComponent {
     this.combinedSeries.push(this.annualAllocationSeries);
     this.combinedSeries.push(this.historicCumulativeWaterUsageSeries);
     this.combinedSeries.push({
-      name: "Monthly Usage",
+      name: "Cumulative Monthly Usage",
       series: this.currentCumulativeWaterUsageSeries
     });
 
