@@ -17,7 +17,7 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
   
   allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
 
-  seriesDomain = ["Cuulative Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
+  seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
 
   @Input() yDomain;
 
