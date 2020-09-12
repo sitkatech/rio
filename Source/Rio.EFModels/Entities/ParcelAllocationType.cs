@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelAllocationTypeDto> GetParcelAllocationTypes(RioDbContext dbContext)
         {
-            return dbContext.ParcelAllocationType.AsNoTracking().Select(x => x.AsDto()).ToList();
+            return dbContext.ParcelAllocationType.AsNoTracking().OrderBy(x=>x.ParcelAllocationTypeID).Select(x => x.AsDto()).ToList();
         }
     }
 }

@@ -32,10 +32,13 @@
                 <tbody>
                     <tr *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
                         <td>
-                            <span class="fas fa-trash" (click)="deleteParcelAllocationType(parcelAllocationType)"></span>
+                            <span class="fas fa-trash"
+                                (click)="deleteParcelAllocationType(parcelAllocationType)"></span>
                         </td>
                         <td>
-                            <input type="text" class="form-control" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName" name="ParcelAllocationTypeName[{{i}}]"/>
+                            <input type="text" class="form-control"
+                                [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName"
+                                name="ParcelAllocationTypeName[{{i}}]" />
                         </td>
                         <td>
                             Todo
@@ -50,7 +53,8 @@
                 <i class="fas fa-bolt"></i> Required field
             </div>
             <div class="col-sm text-right">
-                <button type="submit" class="btn btn-rio" [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit">
+                <button type="submit" class="btn btn-rio"
+                    [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Submit
                 </button>
@@ -59,3 +63,24 @@
         </div>
     </form>
 </div>
+
+<ng-template #deleteWarningModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="deleteWarningModalTitle">Warning</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>You are about to delete one or more Parcel Allocation Types.
+            This will delete all Parcel Allocations and Parcel Allocation History associated with these Parcel
+            Allocation types.
+            This action cannot be undone.</p>
+        <p>Are you sure you wish to proceed?</p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" (click)="submitImpl()">
+                Continue</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>
