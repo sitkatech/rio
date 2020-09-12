@@ -47,7 +47,7 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
 
   deleteParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): void {
     const index = this.parcelAllocationTypes.indexOf(parcelAllocationType);
-    this.parcelAllocationTypes.splice(index);
+    this.parcelAllocationTypes.splice(index, 1);
   }
 
   addParcelAllocationType(): void {

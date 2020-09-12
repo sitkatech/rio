@@ -44,6 +44,12 @@ namespace Rio.API.Controllers
 
             var existingParcelAllocationTypes = _dbContext.ParcelAllocationType.ToList();
             
+            // blast parcel allocations for deleted types
+            var deletedParcelAllocationTypeIDs = existingParcelAllocationTypes.Select(x => x.ParcelAllocationTypeID).Where(x =>
+                !parcelAllocationTypeDtos.Select(y => y.ParcelAllocationTypeID).Contains(x));
+            _dbContext.ParcelAllocation.RemoveRange(_dbContext.ParcelAllocation.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
+            _dbContext.ParcelAllocationHistory.RemoveRange(_dbContext.ParcelAllocationHistory.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
+            
             var allInDatabase = _dbContext.ParcelAllocationType;
 
             existingParcelAllocationTypes.Merge(updatedParcelAllocationTypes, allInDatabase,

@@ -25,13 +25,17 @@
         <div class="row mt-2">
             <table class="table table-responsive table-condensed">
                 <thead>
+                    <th></th>
                     <th>Name</th>
                     <th>Allocation Method</th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
                         <td>
-                            <input type="text" class="form-control" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeDisplayName" name="ParcelAllocationTypeDisplayName[{{i}}]"/>
+                            <span class="fas fa-trash" (click)="deleteParcelAllocationType(parcelAllocationType)"></span>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName" name="ParcelAllocationTypeName[{{i}}]"/>
                         </td>
                         <td>
                             Todo
