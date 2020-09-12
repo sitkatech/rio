@@ -33,10 +33,7 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      this.parcelAllocationTypeService.getParcelAllocationTypes().subscribe(parcelAllocationTypes => {
-        this.existingParcelAllocationTypes = [...parcelAllocationTypes];
-        this.resetParcelAllocationTypes();
-      })
+      this.resetParcelAllocationTypes();
     })
   }
 
@@ -45,8 +42,15 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   }
 
   resetParcelAllocationTypes(): void {
-    this.parcelAllocationTypes = [...this.existingParcelAllocationTypes];
-    this.cdr.detectChanges();
+    this.isLoadingSubmit = true;
+    this.parcelAllocationTypeService.getParcelAllocationTypes().subscribe(parcelAllocationTypes => {
+      this.isLoadingSubmit = false;
+      this.parcelAllocationTypes = parcelAllocationTypes;
+      this.cdr.detectChanges();
+    }, error => {
+      this.isLoadingSubmit = false;
+      this.cdr.detectChanges();
+    })
   }
 
   deleteParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): void {
@@ -62,7 +66,7 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   onSubmit(form: any) {
     if (!this.anyDeleted) {
       this.submitImpl();
-    } else{
+    } else {
       this.launchModal(this.deleteWarningModalContent)
     }
   }
@@ -83,11 +87,11 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
       this.isLoadingSubmit = false;
       this.cdr.detectChanges();
     })
-  }  
+  }
 
   public launchModal(modalContent: any) {
     this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', ariaLabelledBy: 'deleteWarningModalTitle', backdrop: 'static', keyboard: false });
-    
-    
+
+
   }
 }

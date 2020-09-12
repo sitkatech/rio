@@ -19,6 +19,9 @@
                 Configure Water Types
             </h2>
         </div>
+        <div class="col-3 text-right">
+            <button type="button" class="btn btn-rio" (click)="resetParcelAllocationTypes()">Reset</button>
+        </div>
     </div>
     <app-alert-display></app-alert-display>
     <form (ngSubmit)="onSubmit(editParcelAllocationTypesForm)" #editParcelAllocationTypesForm="ngForm">
