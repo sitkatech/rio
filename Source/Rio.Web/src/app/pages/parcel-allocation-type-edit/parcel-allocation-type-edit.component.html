@@ -1,0 +1,57 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/manager-dashboard">Manager Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Configure Water Types
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <div class="row">
+        <div class="col-9">
+            <h2>
+                Configure Water Types
+            </h2>
+        </div>
+    </div>
+    <app-alert-display></app-alert-display>
+    <form (ngSubmit)="onSubmit(editParcelAllocationTypesForm)" #editParcelAllocationTypesForm="ngForm">
+        <div class="row mt-2">
+            <table class="table table-responsive table-condensed">
+                <thead>
+                    <th>Name</th>
+                    <th>Allocation Method</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
+                        <td>
+                            <input type="text" class="form-control" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeDisplayName" name="ParcelAllocationTypeDisplayName[{{i}}]"/>
+                        </td>
+                        <td>
+                            Todo
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-sm">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-sm text-right">
+                <button type="submit" class="btn btn-rio" [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

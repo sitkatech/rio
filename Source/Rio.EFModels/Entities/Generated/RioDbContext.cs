@@ -328,17 +328,9 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ParcelAllocationType>(entity =>
             {
-                entity.HasIndex(e => e.ParcelAllocationTypeDisplayName)
-                    .HasName("AK_ParcelAllocationType_ParcelAllocationTypeDisplayName")
-                    .IsUnique();
-
                 entity.HasIndex(e => e.ParcelAllocationTypeName)
                     .HasName("AK_ParcelAllocationType_ParcelAllocationTypeName")
                     .IsUnique();
-
-                entity.Property(e => e.ParcelAllocationTypeID).ValueGeneratedNever();
-
-                entity.Property(e => e.ParcelAllocationTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
             });

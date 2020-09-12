@@ -32,11 +32,11 @@ export class UserEditComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private alertService: AlertService,
     private authenticationService: AuthenticationService,
     private userService: UserService,
     private roleService: RoleService,
-    private cdr: ChangeDetectorRef,
-    private alertService: AlertService
+    private cdr: ChangeDetectorRef
   ) {
   }
 
