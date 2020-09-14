@@ -108,7 +108,7 @@
       </div>
 
       <div class="card"
-        *ngIf="currentAccountSet() && isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
+        *ngIf="currentAccountSet() && offersSet() && isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
         <div class="card-header">
           Your Offer
         </div>

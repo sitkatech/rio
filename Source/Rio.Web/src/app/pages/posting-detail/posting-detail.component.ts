@@ -72,6 +72,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                         this.cdr.detectChanges();
                     });
                 }
+                this.cdr.detectChanges();
             });
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             if (postingID) {
@@ -206,6 +207,10 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
 
     public currentAccountSet(): boolean {
         return this.currentAccount !== null && this.currentAccount !== undefined;
+    }
+
+    public offersSet(): boolean {
+        return  this.offers !== null &&  this.offers !== undefined;
     }
 
     public landownerHasAnyAccounts(){
