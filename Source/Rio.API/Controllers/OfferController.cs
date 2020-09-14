@@ -55,7 +55,7 @@ namespace Rio.API.Controllers
 
             if (offerUpsertDto.OfferStatusID != (int) OfferStatusEnum.Rescinded && Posting.HasOpenOfferByMe(_dbContext, posting, offerUpsertDto.CreateAccountID))
             {
-                ModelState.AddModelError("Posting", "Posting already has an open offer");
+                ModelState.AddModelError("Posting", "You currently have an open offer on this posting. Please wait until the other party responds to the current offer.");
                 return BadRequest(ModelState);
             }
 
@@ -316,6 +316,14 @@ An offer to {offerAction} water {properPreposition} Account #{fromAccount.Accoun
         {
             var userDto = GetCurrentUser();
             var offerDtos = Offer.GetActiveOffersFromPostingIDAndUserID(_dbContext, postingID, userDto.UserID);
+            return Ok(offerDtos);
+        }
+
+        [HttpGet("current-account-active-offers/{accountID}/{postingID}")]
+        [OfferManageFeature]
+        public ActionResult<IEnumerable<OfferDto>> GetActiveOffersForCurrentAccountByPosting([FromRoute] int accountID, [FromRoute] int postingID)
+        {
+            var offerDtos = Offer.GetActiveOffersFromPostingIDAndCreateAccountID(_dbContext, postingID, accountID);
             return Ok(offerDtos);
         }
 

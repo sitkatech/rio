@@ -1,10 +1,20 @@
 .cancelTradeTitle a:before {
-    font-family:Fontawesome;
-    content:'\f077';
-    font-size:10px;
-    font-weight:300;
+    font-family:"Font Awesome 5 Free";
+    content:'\f0d7';
+    font-size:15px;
+    font-weight:900;
 }
 .cancelTradeTitle a.collapsed:before {
-    font-family:Fontawesome;
-    content:'\f078';
+    font-family:"Font Awesome 5 Free";
+    font-weight:900;
+    font-size:15px;
+    content:'\f0da';
 }
+
+.icon::before {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+  }

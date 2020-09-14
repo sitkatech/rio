@@ -16,6 +16,11 @@ export class OfferService {
         return this.apiService.getFromApi(route);
     }
 
+    getActiveOffersFromPostingIDForCurrentAccount(postingID: number, accountID: number): Observable<OfferDto[]> {
+        let route = `/current-account-active-offers/${accountID}/${postingID}`;
+        return this.apiService.getFromApi(route);
+    }
+
     getOfferFromOfferID(offerID: number): Observable<OfferDto> {
         let route = `/offers/${offerID}`;
         return this.apiService.getFromApi(route);
