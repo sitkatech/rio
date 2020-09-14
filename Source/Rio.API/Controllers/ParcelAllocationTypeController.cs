@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.API.Util;
 using Rio.Models.DataTransferObjects;
@@ -27,6 +28,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("/parcel-allocation-types/")]
+        [ManagerDashboardFeature]
         public ActionResult<List<ParcelAllocationTypeDto>> GetParcelAllocationTypes()
         {
             var parcelAllocationTypeDtos = ParcelAllocationType.GetParcelAllocationTypes(_dbContext);
@@ -34,6 +36,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPut("/parcel-allocation-types/")]
+        [ManagerDashboardFeature]
         public IActionResult MergeParcelAllocationTypes([FromBody] List<ParcelAllocationTypeDto> parcelAllocationTypeDtos)
         {
             var updatedParcelAllocationTypes = parcelAllocationTypeDtos.Select(x => new ParcelAllocationType()

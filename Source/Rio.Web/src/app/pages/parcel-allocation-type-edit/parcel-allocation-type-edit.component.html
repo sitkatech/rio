@@ -41,7 +41,7 @@
                         <td>
                             <input type="text" class="form-control"
                                 [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName"
-                                name="ParcelAllocationTypeName[{{i}}]" />
+                                name="ParcelAllocationTypeName[{{i}}]" required/>
                         </td>
                         <td>
                             Todo
@@ -49,6 +49,7 @@
                     </tr>
                 </tbody>
             </table>
+            <button type="button" class="btn btn-rio" (click)="addParcelAllocationType()">Add</button>
         </div>
 
         <div class="row mt-2">
