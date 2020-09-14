@@ -52,6 +52,35 @@
                     </div>
                     <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>
                 </div>
+                <div class="card-body" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
+                    <ng-container *ngFor="let parcelAllocationType of getAcreageBasedAllocationTypes()">
+                        <div class="row mb-1">
+                            <div class="col my-auto">
+                                <form class="form-inline">
+                                    <div class="form-group row w-100">
+                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
+                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                            <br class="br-special" />
+                                            <span
+                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last set " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                        </label>
+                                        <div class="col">
+                                            <input type="number" #waterAllocation id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                class="form-control" placeholder="3.0" style="max-width:75px" required>
+                                            ac-ft per parcel acre
+                                        </div>
+                                        <button type="button" class="btn btn-rio"
+                                            (click)="submitBulkAllocation(parcelAllocationType)"
+                                            [disabled]="isLoadingSubmit">Save to all Parcels</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+
+                <!--TODO: this is the old card. Get rid once the new card is working-->
                 <div class="card-body">
                     <div class="row mb-1">
                         <div class="col my-auto">

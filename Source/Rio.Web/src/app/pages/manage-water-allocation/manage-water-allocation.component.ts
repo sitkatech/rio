@@ -12,6 +12,9 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocation-type-static';
+import { forkJoin } from 'rxjs';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 
 @Component({
   selector: 'rio-manage-water-allocation',
@@ -25,6 +28,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChildren('fileUpload') fileUploads:QueryList<any>;
   // @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
   // @ViewChild('storedWaterFileUpload') storedWaterFileUpload: any;
+
+  @ViewChildren('waterAllocation') waterAllocations: QueryList<any>;
 
   public ParcelAllocationTypeStatic = ParcelAllocationTypeStatic;
 
@@ -47,6 +52,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public displayFileErrors:any = {};
 
   public fileName: string;
+  parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -54,27 +60,29 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
 
-    Object.keys(ParcelAllocationTypeStatic).forEach(key => {
-      this.displayErrors[key] = false;
-      this.displayFileErrors[key] = false;
-    })
-
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.initializeParcelAllocationHistoryGrid();
-      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear => {
-        this.waterYearToDisplay = defaultYear;
-        this.parcelService.getWaterYearsIncludingCurrentYear().subscribe(waterYears => {
-          this.waterYears = waterYears;
-          this.updateParcelAllocationHistoryGrid();
-        })
-      })
 
+      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
+        this.parcelService.getWaterYearsIncludingCurrentYear(),
+        this.parcelAllocationTypeService.getParcelAllocationTypes()
+      ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
+        this.waterYearToDisplay = defaultYear;
+        this.waterYears = waterYears;
+        this.parcelAllocationTypes = parcelAllocationTypes;
+        this.parcelAllocationTypes.forEach(x=>{
+          this.displayErrors[x.ParcelAllocationTypeName] = false;
+          this.displayFileErrors[x.ParcelAllocationTypeName] = false;
+        })
+        this.updateParcelAllocationHistoryGrid();
+      });
     });
   }
 
@@ -105,14 +113,14 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public submitBulkAllocation(allocationType: ParcelAllocationTypeStatic, allocationValue: string): void {
+  public submitBulkAllocation(allocationType: ParcelAllocationTypeDto): void {
     this.isLoadingSubmit = true;
-
+    const allocationValue = this.waterAllocations.find(x=>x.nativeElement.id =="ProjectWater").nativeElement.value;
     this.turnOffErrors();
 
     if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
       this.model.AcreFeetAllocated = +allocationValue;
-      this.model.ParcelAllocationTypeID = allocationType.id;
+      this.model.ParcelAllocationTypeID = allocationType.ParcelAllocationTypeID;
       this.model.WaterYear = this.waterYearToDisplay;
 
       this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
@@ -120,7 +128,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
           this.clearInputs()
           this.isLoadingSubmit = false;
           this.updateParcelAllocationHistoryGrid();
-          this.alertService.pushAlert(new Alert("The " + allocationType + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+          this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
         }
           ,
           error => {
@@ -135,6 +143,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     }
   }
 
+  // todo
   public uploadAllocationFile(allocationType: ParcelAllocationTypeStatic): void{
     var file = this.getFile(allocationType);
     if (!file) {
@@ -200,10 +209,10 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public updateParcelAllocationHistoryGrid(): void {
-    this.parcelService.getParcelAllocationHistory().subscribe(result => {
-      this.allocationHistoryEntries = result;
+    this.parcelService.getParcelAllocationHistory().subscribe(parcelAllocationHistory => {
+      this.allocationHistoryEntries = parcelAllocationHistory;
       this.updateAllocationSetDateDisplayVariables();
-      this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(result) : null;
+      this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(parcelAllocationHistory) : null;
     });
   }
 
@@ -216,8 +225,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     })
   }
 
-  public chooseErrorToDisplay(allocationType: ParcelAllocationTypeStatic) {
-    this.displayErrors[allocationType.toString()] = true;
+  public chooseErrorToDisplay(allocationType: ParcelAllocationTypeDto) {
+    this.displayErrors[allocationType.ParcelAllocationTypeName] = true;
   }
 
   public turnOffErrors() {
@@ -243,5 +252,21 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
 
   public lowerCaseFirstLetterNoSpaces(lowerFirst: string):string {
     return (lowerFirst.charAt(0).toLowerCase() + lowerFirst.slice(1)).replace(" ", "");
+  }
+
+  public getAcreageBasedAllocationTypes() {
+    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally);
+  }
+
+  public getSpreadsheetDrivenAllocationTypes() {
+    return this.parcelAllocationTypes.filter(x=>!x.IsAppliedProportionally);
+  }
+
+  public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string{
+    return parcelAllocationType.ParcelAllocationTypeName.replace(" ", "");
+  }
+
+  public getLastSetDateForParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): string{
+    return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == parcelAllocationType.ParcelAllocationTypeName && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
   }
 }

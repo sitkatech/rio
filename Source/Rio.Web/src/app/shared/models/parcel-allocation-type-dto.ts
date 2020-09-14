@@ -1,6 +1,6 @@
 export class ParcelAllocationTypeDto {
     ParcelAllocationTypeID: number;
-    ParcelAllocationtypeName: string;
+    ParcelAllocationTypeName: string;
     IsAppliedProportionally: boolean;
 
     constructor(obj?: any){

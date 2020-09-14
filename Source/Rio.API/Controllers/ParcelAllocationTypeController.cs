@@ -46,7 +46,8 @@ namespace Rio.API.Controllers
                 ParcelAllocationTypeID = x.ParcelAllocationTypeID 
             }).ToList();
 
-            var newParcelAllocationTypes = updatedParcelAllocationTypes.Where(x=>x.ParcelAllocationTypeID == 0);
+            // add and save new PATs before the merge.
+            var newParcelAllocationTypes = updatedParcelAllocationTypes.Where(x => x.ParcelAllocationTypeID == 0);
             _dbContext.ParcelAllocationType.AddRange(newParcelAllocationTypes);
             _dbContext.SaveChanges();
 
