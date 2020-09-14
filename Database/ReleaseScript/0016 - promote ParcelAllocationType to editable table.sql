@@ -53,3 +53,20 @@ GO
 ALTER TABLE [dbo].[ParcelAllocation]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocation_ParcelAllocationType_ParcelAllocationTypeID] FOREIGN KEY([ParcelAllocationTypeID])
 REFERENCES [dbo].[ParcelAllocationType] ([ParcelAllocationTypeID])
 GO
+
+
+-- add column for allocation method
+Alter Table dbo.ParcelAllocationType
+Add IsAppliedProportionally bit null
+go
+
+Update dbo.ParcelAllocationType
+set IsAppliedProportionally = 1
+where ParcelAllocationTypeName in ('Project Water', 'Native Yield')
+
+Update dbo.ParcelAllocationType
+set IsAppliedProportionally = 0
+where ParcelAllocationTypeName in ('Reconciliation', 'Stored Water')
+
+Alter table dbo.ParcelAllocationType
+Alter Column IsAppliedProportionally bit not null

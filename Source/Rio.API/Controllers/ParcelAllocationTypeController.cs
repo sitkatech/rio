@@ -42,12 +42,17 @@ namespace Rio.API.Controllers
             var updatedParcelAllocationTypes = parcelAllocationTypeDtos.Select(x => new ParcelAllocationType()
             {
                 ParcelAllocationTypeName = x.ParcelAllocationTypeName,
-                ParcelAllocationTypeID = x.ParcelAllocationTypeID
+                IsAppliedProportionally = x.IsAppliedProportionally,
+                ParcelAllocationTypeID = x.ParcelAllocationTypeID 
             }).ToList();
+
+            var newParcelAllocationTypes = updatedParcelAllocationTypes.Where(x=>x.ParcelAllocationTypeID == 0);
+            _dbContext.ParcelAllocationType.AddRange(newParcelAllocationTypes);
+            _dbContext.SaveChanges();
 
             var existingParcelAllocationTypes = _dbContext.ParcelAllocationType.ToList();
             
-            // blast parcel allocations for deleted types
+            // blast parcel allocations/history for deleted types
             var deletedParcelAllocationTypeIDs = existingParcelAllocationTypes.Select(x => x.ParcelAllocationTypeID).Where(x =>
                 !parcelAllocationTypeDtos.Select(y => y.ParcelAllocationTypeID).Contains(x));
             _dbContext.ParcelAllocation.RemoveRange(_dbContext.ParcelAllocation.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));

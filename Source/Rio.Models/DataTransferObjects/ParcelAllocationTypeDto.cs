@@ -8,5 +8,6 @@ namespace Rio.Models.DataTransferObjects
     {
         public int ParcelAllocationTypeID { get; set; }
         public string ParcelAllocationTypeName { get; set; }
+        public bool IsAppliedProportionally { get; set; }
     }
 }

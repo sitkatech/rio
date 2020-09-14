@@ -44,7 +44,10 @@
                                 name="ParcelAllocationTypeName[{{i}}]" required/>
                         </td>
                         <td>
-                            Todo
+                            <select class="form-control" name="ParcelAllocationTypeIsAppliedProportionally[{{i}}]" [(ngModel)]="parcelAllocationType.IsAppliedProportionally" required>
+                                <option [value]="true">Apply proportionally across acreage</option>
+                                <option [value]="false">Upload a spreadsheet</option>
+                            </select>
                         </td>
                     </tr>
                 </tbody>
