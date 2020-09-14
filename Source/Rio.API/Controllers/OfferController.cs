@@ -53,7 +53,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (offerUpsertDto.OfferStatusID != (int) OfferStatusEnum.Rescinded && Posting.HasOpenOfferByMe(_dbContext, posting, offerUpsertDto.CreateAccountID))
+            if (offerUpsertDto.OfferStatusID != (int) OfferStatusEnum.Rescinded && Posting.HasOpenOfferByAccountID(_dbContext, posting, offerUpsertDto.CreateAccountID))
             {
                 ModelState.AddModelError("Posting", "You currently have an open offer on this posting. Please wait until the other party responds to the current offer.");
                 return BadRequest(ModelState);
