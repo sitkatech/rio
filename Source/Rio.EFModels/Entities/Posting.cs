@@ -144,7 +144,7 @@ namespace Rio.EFModels.Entities
             return offer?.AsDto();
         }
 
-        public static bool HasOpenOfferByMe(RioDbContext dbContext, PostingDto posting, int createAccountID)
+        public static bool HasOpenOfferByAccountID(RioDbContext dbContext, PostingDto posting, int createAccountID)
         {
             return dbContext.Trade.Any(x =>
                 x.PostingID == posting.PostingID && 
