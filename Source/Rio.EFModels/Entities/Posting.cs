@@ -3,6 +3,7 @@ using Rio.Models.DataTransferObjects.Posting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.Models.DataTransferObjects.Offer;
 
 namespace Rio.EFModels.Entities
 {
@@ -143,10 +144,12 @@ namespace Rio.EFModels.Entities
             return offer?.AsDto();
         }
 
-        public static bool HasOpenOffer(RioDbContext dbContext, PostingDto posting)
+        public static bool HasOpenOfferByMe(RioDbContext dbContext, PostingDto posting, int createAccountID)
         {
             return dbContext.Trade.Any(x =>
-                x.PostingID == posting.PostingID && (x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
+                x.PostingID == posting.PostingID && 
+                x.CreateAccountID == createAccountID &&
+                (x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
                 x.TradeStatusID == (int) TradeStatusEnum.Countered));
         }
     }
