@@ -125,5 +125,20 @@ namespace Rio.EFModels.Entities
                 ? parcelAllocations.Select(x => x.AsDto()).ToList()
                 : new List<ParcelAllocationDto>();
         }
+
+        public static List<ParcelAllocationBreakdown> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
+        {
+            return dbContext.ParcelAllocation.AsNoTracking()
+                .Where(x => x.WaterYear == year)
+                .ToList()
+                .GroupBy(x => x.ParcelID)
+                .Select(x => new ParcelAllocationBreakdown
+                {
+                    ParcelID = x.Key,
+                    Allocations = new Dictionary<int, decimal>(x.Select(y =>
+                        new KeyValuePair<int, decimal>(y.ParcelAllocationTypeID ,
+                            y.AcreFeetAllocated)))
+                }).ToList();
+        }
     }
 }

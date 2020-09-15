@@ -8,6 +8,8 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -25,84 +27,108 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public gridOptions: GridOptions;
   public rowData = [];
   columnDefs: any;
+  parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      this.gridOptions = <GridOptions>{};
-      this.currentUser = currentUser;
-      this.parcelsGrid.api.showLoadingOverlay();
-      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear => {
-        this.waterYearToDisplay = defaultYear;
-        forkJoin(
-          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay), 
-          this.parcelService.getWaterYears()
-        ).subscribe(([parcelsWithWaterUsage, waterYears]) => {
-          this.rowData = parcelsWithWaterUsage;
-          this.parcelsGrid.api.hideOverlay();
-          this.waterYears = waterYears;
-          this.cdr.detectChanges();
-        });
-      })
+
 
       let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
-          {
-            headerName: 'APN', valueGetter: function (params: any) {
-              return { LinkDisplay: params.data.ParcelNumber, LinkValue: params.data.ParcelID };
-            }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/parcels/" },
-            filterValueGetter: function (params: any) {
-              return params.data.ParcelNumber;
-            },
-            comparator: function (id1: any, id2: any) {
-              if (id1.LinkDisplay < id2.LinkDisplay) {
-                return -1;
-              }
-              if (id1.LinkDisplay > id2.LinkDisplay) {
-                return 1;
-              }
-              return 0;
-            },
-            sortable: true, filter: true, width: 100
+        {
+          headerName: 'APN', valueGetter: function (params: any) {
+            return { LinkDisplay: params.data.ParcelNumber, LinkValue: params.data.ParcelID };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/parcels/" },
+          filterValueGetter: function (params: any) {
+            return params.data.ParcelNumber;
           },
-          { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
-          {
-            headerName: 'Account', valueGetter: function (params: any) {
-              return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
-            }, cellRendererFramework: LinkRendererComponent,
-            cellRendererParams: { inRouterLink: "/accounts/" },
-            filterValueGetter: function (params: any) {
-              return (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null;
-            },
-            comparator: function (id1: any, id2: any) {
-              let link1 = id1.LinkDisplay;
-              let link2 = id2.LinkDisplay;
-              if (link1 < link2) {
-                return -1;
-              }
-              if (link1 > link2) {
-                return 1;
-              }
-              return 0;
-            },
-            sortable: true, filter: true, width: 170
+          comparator: function (id1: any, id2: any) {
+            if (id1.LinkDisplay < id2.LinkDisplay) {
+              return -1;
+            }
+            if (id1.LinkDisplay > id2.LinkDisplay) {
+              return 1;
+            }
+            return 0;
           },
+          sortable: true, filter: true, width: 100
+        },
+        { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
+        {
+          headerName: 'Account', valueGetter: function (params: any) {
+            return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/accounts/" },
+          filterValueGetter: function (params: any) {
+            return (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null;
+          },
+          comparator: function (id1: any, id2: any) {
+            let link1 = id1.LinkDisplay;
+            let link2 = id2.LinkDisplay;
+            if (link1 < link2) {
+              return -1;
+            }
+            if (link1 > link2) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true, width: 170
+        },
         { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
         { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-        { headerName: 'Native Yield', field: 'NativeYield', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Project Water', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Stored Water', field: 'StoredWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Reconciliation', field: 'Reconciliation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       ];
-      
-      this.columnDefs.forEach(x => {
-        x.resizable = true;
+
+      this.gridOptions = <GridOptions>{};
+      this.currentUser = currentUser;
+      this.parcelsGrid.api.showLoadingOverlay();
+      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
+        this.parcelAllocationTypeService.getParcelAllocationTypes()
+      ).subscribe(([defaultYear, parcelAllocationTypes]) => {
+        this.waterYearToDisplay = defaultYear;
+        this.parcelAllocationTypes = parcelAllocationTypes;
+        debugger;
+
+        // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
+        this.parcelAllocationTypes.forEach(parcelAllocationType => {
+          this.columnDefs.push({
+            headerName: parcelAllocationType.ParcelAllocationTypeName,
+            valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
+            sortable: true,
+            filter: true,
+            width: 130,
+            valueGetter: function (params) {
+              return params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0;
+            }
+          })
+        });
+
+        this.columnDefs.forEach(x => {
+          x.resizable = true;
+        });
+
+        this.parcelsGrid.api.setColumnDefs(this.columnDefs);
+
+        forkJoin(
+          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay),
+          this.parcelService.getWaterYears(),
+          this.parcelAllocationTypeService.getParcelAllocationTypes()
+        ).subscribe(([parcelsWithWaterUsage, waterYears, parcelAllocationTypes]) => {
+          this.rowData = parcelsWithWaterUsage;
+          this.parcelsGrid.api.hideOverlay();
+          this.waterYears = waterYears;
+          console.log(parcelsWithWaterUsage);
+          this.cdr.detectChanges();
+        });
+
       });
     });
   }
@@ -113,12 +139,12 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public updateGridData(){
+  public updateGridData() {
     if (!this.waterYearToDisplay) {
       return;
     }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
-        this.parcelsGrid.api.setRowData(result);
+      this.parcelsGrid.api.setRowData(result);
     });
   }
 

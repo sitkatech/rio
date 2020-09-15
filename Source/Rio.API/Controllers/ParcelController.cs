@@ -38,7 +38,13 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            return Ok(parcelDtos);
+            var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
+            var parcelDtosWithAllocation = parcelDtos.Join(parcelAllocationBreakdownForYear, x => x.ParcelID, y => y.ParcelID, (x, y) =>
+            {
+                x.Allocations = y.Allocations;
+                return x;
+            });
+            return Ok(parcelDtosWithAllocation);
         }
 
         [HttpGet("parcels/{parcelID}")]
