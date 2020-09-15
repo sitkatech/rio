@@ -141,7 +141,6 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     }
   }
 
-  // todo
   public uploadAllocationFile(allocationType: ParcelAllocationTypeDto): void{
     var file = this.getFile(allocationType);
     if (!file) {

@@ -114,15 +114,15 @@
                                         <div class="col-3 text-right p-0">
                                             <button type="button" class="btn btn-rio"
                                                 [disabled]="isLoadingSubmit || displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]"
-                                                (click)="uploadAllocationFile(parcelAllocationType)">Upload
-                                                &
-                                                Save</button>
+                                                (click)="uploadAllocationFile(parcelAllocationType)">
+                                                Upload & Save
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-                        <div *ngIf="displayErrors[parcelAllocationType]" class="row mb-1">
+                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
                             <div class="col danger">
                                 Please choose a file before submitting
                             </div>
