@@ -53,9 +53,9 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (Posting.HasOpenOffer(_dbContext, posting))
+            if (offerUpsertDto.OfferStatusID != (int) OfferStatusEnum.Rescinded && Posting.HasOpenOfferByAccountID(_dbContext, posting, offerUpsertDto.CreateAccountID))
             {
-                ModelState.AddModelError("Posting", "Posting already has an open offer");
+                ModelState.AddModelError("Posting", "You currently have an open offer on this posting. Please wait until the other party responds to the current offer.");
                 return BadRequest(ModelState);
             }
 
@@ -66,33 +66,27 @@ namespace Rio.API.Controllers
             var rioUrl = _rioConfiguration.WEB_URL;
 
             // update trades status if needed
-            if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Accepted)
+            switch (offerUpsertDto.OfferStatusID)
             {
-                var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
-                // write a water transfer record
-                var waterTransfer = WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
-                var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer, smtpClient);
-                foreach (var mailMessage in mailMessages)
-                {
-                    SendEmailMessage(smtpClient, mailMessage);
-                }
-            }
-            else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rejected)
-            {
-                Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rejected);
-                var mailMessage = GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient);
-                SendEmailMessage(smtpClient, mailMessage);
-            }
-            else if (offerUpsertDto.OfferStatusID == (int)OfferStatusEnum.Rescinded)
-            {
-                Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Rescinded);
-                var mailMessage = GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient);
-                SendEmailMessage(smtpClient, mailMessage);
-            }
-            else
-            {
-                var mailMessage = GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting, smtpClient);
-                SendEmailMessage(smtpClient, mailMessage);
+                case (int)OfferStatusEnum.Accepted:
+                    var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
+                    // write a water transfer record
+                    var waterTransfer = WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
+                    var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer, smtpClient);
+                    foreach (var mailMessage in mailMessages)
+                    {
+                        SendEmailMessage(smtpClient, mailMessage);
+                    }
+                    break;
+                case (int)OfferStatusEnum.Rejected:
+                    UpdateTradeStatusSendEmail(offer, smtpClient, GenerateRejectedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient), TradeStatusEnum.Rejected);
+                    break;
+                case (int)OfferStatusEnum.Rescinded:
+                    UpdateTradeStatusSendEmail(offer, smtpClient, GenerateRescindedOfferEmail(rioUrl, offer, currentTrade, posting, smtpClient), TradeStatusEnum.Rescinded);
+                    break;
+                default:
+                    SendEmailMessage(smtpClient, GeneratePendingOfferEmail(rioUrl, currentTrade, offer, posting, smtpClient));
+                    break;
             }
 
             // get current balance of posting
@@ -103,7 +97,7 @@ namespace Rio.API.Controllers
                 postingStatusToUpdateTo = (int)PostingStatusEnum.Closed;
                 // expire all other outstanding offers
                 var postingCreateAccountID = posting.CreateAccount.AccountID;
-                var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID);
+                var activeTradesForPosting = Trade.GetPendingTradesForPostingID(_dbContext, postingID).ToList();
                 foreach (var activeTrade in activeTradesForPosting)
                 {
                     var offerStatus = activeTrade.OfferCreateAccount.AccountID == postingCreateAccountID
@@ -113,17 +107,35 @@ namespace Rio.API.Controllers
                     {
                         TradeID = activeTrade.TradeID,
                         Price = activeTrade.Price,
+                        CreateAccountID = postingCreateAccountID,
                         Quantity = activeTrade.Quantity,
                         OfferStatusID = (int) offerStatus,
                         OfferNotes = $"Offer {offerStatus} because original posting is now closed"
                     };
-                    Offer.CreateNew(_dbContext, postingID, offerUpsertDtoForRescindReject);
+                    var resultingOffer = Offer.CreateNew(_dbContext, postingID, offerUpsertDtoForRescindReject);
+                    switch (offerStatus)
+                    {
+                        case OfferStatusEnum.Rejected:
+                            UpdateTradeStatusSendEmail(resultingOffer, smtpClient, GenerateRejectedOfferEmail(rioUrl, resultingOffer, Trade.GetByTradeID(_dbContext, activeTrade.TradeID), posting, smtpClient), TradeStatusEnum.Rejected);
+                            break;
+                        case OfferStatusEnum.Rescinded:
+                            UpdateTradeStatusSendEmail(resultingOffer, smtpClient, GenerateRescindedOfferEmail(rioUrl, resultingOffer, Trade.GetByTradeID(_dbContext, activeTrade.TradeID), posting, smtpClient), TradeStatusEnum.Rescinded);
+                            break;
+                    }
+
                 }
             }
             Posting.UpdateStatus(_dbContext, postingID,
                 new PostingUpdateStatusDto { PostingStatusID = postingStatusToUpdateTo }, posting.Quantity - acreFeetOfAcceptedTrades);
 
             return Ok(offer);
+        }
+
+        private void UpdateTradeStatusSendEmail(OfferDto offer, SitkaSmtpClientService smtpClient, MailMessage mailMessage,
+            TradeStatusEnum updatedStatus)
+        {
+            Trade.Update(_dbContext, offer.TradeID, updatedStatus);
+            SendEmailMessage(smtpClient, mailMessage);
         }
 
         private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
@@ -304,6 +316,14 @@ An offer to {offerAction} water {properPreposition} Account #{fromAccount.Accoun
         {
             var userDto = GetCurrentUser();
             var offerDtos = Offer.GetActiveOffersFromPostingIDAndUserID(_dbContext, postingID, userDto.UserID);
+            return Ok(offerDtos);
+        }
+
+        [HttpGet("current-account-active-offers/{accountID}/{postingID}")]
+        [OfferManageFeature]
+        public ActionResult<IEnumerable<OfferDto>> GetActiveOffersForCurrentAccountByPosting([FromRoute] int accountID, [FromRoute] int postingID)
+        {
+            var offerDtos = Offer.GetActiveOffersFromPostingIDAndCreateAccountID(_dbContext, postingID, accountID);
             return Ok(offerDtos);
         }
 

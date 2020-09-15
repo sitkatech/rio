@@ -91,5 +91,16 @@ namespace Rio.EFModels.Entities
                                 x.Trade.Posting.CreateAccountID != x.CreateAccountID)).OrderByDescending(x => x.OfferDate).FirstOrDefault();
             return offer?.AsDto();
         }
+
+        public static object GetActiveOffersFromPostingIDAndCreateAccountID(RioDbContext dbContext, int postingID, int accountID)
+        {
+            var offers = GetOffersImpl(dbContext)
+                .Where(x => x.Trade.PostingID == postingID && x.CreateAccountID == accountID && x.Trade.TradeStatusID == (int)TradeStatusEnum.Countered)
+                .OrderByDescending(x => x.OfferDate)
+                .Select(x => x.AsDto())
+                .AsEnumerable();
+
+            return offers;
+        }
     }
 }
