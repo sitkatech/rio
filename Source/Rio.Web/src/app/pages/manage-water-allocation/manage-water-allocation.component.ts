@@ -23,9 +23,7 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 })
 export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
-  @ViewChild('projectWaterAllocation') projectWaterAllocation: any;
-  @ViewChild('nativeYieldAllocation') nativeYieldAllocation: any;
-
+  
   @ViewChildren('fileUpload') fileUploads:QueryList<any>;
   @ViewChildren('waterAllocation') waterAllocations: QueryList<any>;
 
@@ -40,11 +38,6 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
   public waterYears: Array<number>;
   public allocationHistoryEntries: Array<ParcelAllocationHistoryDto>;
-
-  public lastProjectWaterSetDate: string;
-  public lastNativeYieldSetDate: string;
-  public lastReconciliationFileUploadDate: string;
-  public lastStoredWaterFileUploadDate: string;
 
   public displayErrors:any = {}; 
   public displayFileErrors:any = {};
@@ -113,7 +106,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
 
   public submitBulkAllocation(allocationType: ParcelAllocationTypeDto): void {
     this.isLoadingSubmit = true;
-    const allocationValue = this.waterAllocations.find(x=>x.nativeElement.id =="ProjectWater").nativeElement.value;
+    const allocationValue = this.waterAllocations.find(x=>x.nativeElement.id == this.getParcelAllocationTypeLabel(allocationType)).nativeElement.value;
     this.turnOffErrors();
 
     if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
@@ -208,7 +201,6 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public updateParcelAllocationHistoryGrid(): void {
     this.parcelService.getParcelAllocationHistory().subscribe(parcelAllocationHistory => {
       this.allocationHistoryEntries = parcelAllocationHistory;
-      this.updateAllocationSetDateDisplayVariables();
       this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(parcelAllocationHistory) : null;
     });
   }
@@ -235,17 +227,6 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     Object.keys(this.displayFileErrors).forEach(key => {
       this.displayFileErrors[key] = false;
     })
-  }
-
-  public updateAllocationSetDateDisplayVariables() {
-    if (this.allocationHistoryEntries)
-    {
-      let datePipe = this.datePipe;
-      this.lastProjectWaterSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.ProjectWater.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
-      this.lastNativeYieldSetDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.NativeYield.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
-      this.lastReconciliationFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.Reconciliation.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
-      this.lastStoredWaterFileUploadDate = datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == ParcelAllocationTypeStatic.StoredWater.toString() && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/dd/yyyy");
-    }
   }
 
   public lowerCaseFirstLetterNoSpaces(lowerFirst: string):string {
