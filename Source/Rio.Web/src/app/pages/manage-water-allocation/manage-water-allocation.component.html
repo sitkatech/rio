@@ -39,6 +39,10 @@
                 with columns called "Account Number" and "Stored Water Volume". The Reconciliation or Stored Water values will
                 be applied proportionally across parcels associated with an account based on acreage.
             </p>
+
+            <p class="lead">Dear Kathleen or Other Tester, we need to update these instructions.
+                The column name for the actual volume just needs to match the name of the allocation type;
+                I just don't know the best way to express that. Sincerely, Developer.</p>
         </div>
     </div>
     <div class="row mt-4">
@@ -76,66 +80,58 @@
                                 </form>
                             </div>
                         </div>
-
+                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                            <div class="col danger">
+                                Please enter a value before submitting
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngFor="let parcelAllocationType of getSpreadsheetDrivenAllocationTypes()">
+                        <div class="row">
+                            <div class="col">
+                                <form class="form-inline">
+                                    <div class="form-group row w-100">
+                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
+                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                            <br class="br-special" />
+                                            <span
+                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last uploaded " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                        </label>
+                                        <div class="input-group col ml-3 p-0">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                    #fileUpload
+                                                    (change)="fileEvent(parcelAllocationType)">
+                                                <label class="custom-file-label"
+                                                    for="getParcelAllocationTypeLabel(parcelAllocationType)">{{getFileName(parcelAllocationType)}}</label>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-rio" type="button"
+                                                    (click)="openFileUpload(parcelAllocationType)"><i
+                                                        class="fas fa-folder-open"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 text-right p-0">
+                                            <button type="button" class="btn btn-rio"
+                                                [disabled]="isLoadingSubmit || displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]"
+                                                (click)="uploadAllocationFile(parcelAllocationType)">Upload
+                                                &
+                                                Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div *ngIf="displayErrors[parcelAllocationType]" class="row mb-1">
+                            <div class="col danger">
+                                Please choose a file before submitting
+                            </div>
+                        </div>
                     </ng-container>
                 </div>
 
                 <!--TODO: this is the old card. Get rid once the new card is working-->
-                <div class="card-body">
-                    <div class="row mb-1">
-                        <div class="col my-auto">
-                            <form class="form-inline">
-                                <div class="form-group row w-100">
-                                    <label for="projectWater" class="col-form-label col-3 d-inline-block">
-                                        <strong>{{ParcelAllocationTypeStatic.ProjectWater}}</strong>
-                                        <br class="br-special" />
-                                        <span
-                                            style="font-size:10px">{{lastProjectWaterSetDate ? "Last set " + lastProjectWaterSetDate : "No record of last set date"}}</span>
-                                    </label>
-                                    <div class="col">
-                                        <input type="number" #projectWaterAllocation id="projectWater"
-                                            class="form-control" placeholder="3.0" style="max-width:75px" required>
-                                        ac-ft per parcel acre
-                                    </div>
-                                    <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.ProjectWater,projectWaterAllocation.value)"
-                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.ProjectWater.toString()]" class="row mb-1">
-                        <div class="col danger">
-                            Please enter a value before submitting
-                        </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col my-auto">
-                            <form class="form-inline">
-                                <div class="form-group row w-100">
-                                    <label for="nativeYield" class="col-form-label col-3 d-inline-block">
-                                        <strong>{{ParcelAllocationTypeStatic.NativeYield}}</strong>
-                                        <br class="br-special" />
-                                        <span
-                                            style="font-size:10px">{{lastNativeYieldSetDate ? "Last set " + lastNativeYieldSetDate : "No record of last set date"}}</span>
-                                    </label>
-                                    <div class="col">
-                                        <input type="number" #nativeYieldAllocation id="nativeYield"
-                                            class="form-control" placeholder="0.15" style="max-width:75px" required>
-                                        ac-ft per parcel acre
-                                    </div>
-                                    <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.NativeYield,nativeYieldAllocation.value)"
-                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.NativeYield.toString()]" class="row mb-1">
-                        <div class="col danger">
-                            Please enter a value before submitting
-                        </div>
-                    </div>
+                <!-- <div class="card-body">
                     <div class="row">
                         <div class="col">
                             <form class="form-inline">
@@ -227,7 +223,7 @@
                             You must select a CSV file to upload
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

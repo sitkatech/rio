@@ -25,10 +25,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
   @ViewChild('projectWaterAllocation') projectWaterAllocation: any;
   @ViewChild('nativeYieldAllocation') nativeYieldAllocation: any;
-  @ViewChildren('fileUpload') fileUploads:QueryList<any>;
-  // @ViewChild('reconciliationWaterFileUpload') reconciliationWaterFileUpload: any;
-  // @ViewChild('storedWaterFileUpload') storedWaterFileUpload: any;
 
+  @ViewChildren('fileUpload') fileUploads:QueryList<any>;
   @ViewChildren('waterAllocation') waterAllocations: QueryList<any>;
 
   public ParcelAllocationTypeStatic = ParcelAllocationTypeStatic;
@@ -144,7 +142,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   // todo
-  public uploadAllocationFile(allocationType: ParcelAllocationTypeStatic): void{
+  public uploadAllocationFile(allocationType: ParcelAllocationTypeDto): void{
     var file = this.getFile(allocationType);
     if (!file) {
       this.chooseErrorToDisplay(allocationType);
@@ -152,8 +150,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingSubmit = true;
-    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.id).subscribe(x=>{
-      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
+    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.ParcelAllocationTypeID).subscribe(x=>{
+      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
       this.clearInputs();
@@ -171,31 +169,31 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     });
   }
 
-  fileEvent(allocationType: ParcelAllocationTypeStatic){
+  fileEvent(allocationType: ParcelAllocationTypeDto){
     let file = this.getFile(allocationType);
     this.displayErrors[allocationType.toString()] = false;
 
     if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
-      this.displayFileErrors[allocationType.toString()] = true;
+      this.displayFileErrors[allocationType.ParcelAllocationTypeName] = true;
     } else {
-      this.displayFileErrors[allocationType.toString()] = false;
+      this.displayFileErrors[allocationType.ParcelAllocationTypeName] = false;
     }
 
     this.cdr.detectChanges();
   }
 
-  public getFile(fileUploadType: ParcelAllocationTypeStatic): File{
+  public getFile(fileUploadType: ParcelAllocationTypeDto): File{
     if (!this.fileUploads) {
       return null;
     }
-    var element = this.fileUploads.filter(x => x.nativeElement.id == this.lowerCaseFirstLetterNoSpaces(fileUploadType.toString()) + "FileUpload")[0];
+    var element = this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0];
     if (!element){
       return null;
     }
     return element.nativeElement.files[0];
   }
 
-  public getFileName(fileUploadType: ParcelAllocationTypeStatic):string{
+  public getFileName(fileUploadType: ParcelAllocationTypeDto):string{
     let file = this.getFile(fileUploadType);
     if (!file){
       return "No file selected..."
@@ -204,8 +202,8 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
     return file.name;
   }
 
-  public openFileUpload(fileUploadType: ParcelAllocationTypeStatic){
-    this.fileUploads.filter(x => x.nativeElement.id == this.lowerCaseFirstLetterNoSpaces(fileUploadType.toString()) + "FileUpload")[0].nativeElement.click();
+  public openFileUpload(fileUploadType: ParcelAllocationTypeDto){
+    this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0].nativeElement.click();
   }
 
   public updateParcelAllocationHistoryGrid(): void {
@@ -217,8 +215,9 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public clearInputs() {
-    this.projectWaterAllocation.nativeElement.value = null;
-    this.nativeYieldAllocation.nativeElement.value = null;
+    this.waterAllocations.forEach(x=>{
+      x.nativeElement.value = null;
+    })
     this.fileUploads.forEach(element => {
       element.nativeElement.value = null;
       element.nativeElement.files = null;
@@ -263,6 +262,9 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string{
+    if (!parcelAllocationType){
+      debugger;
+    }
     return parcelAllocationType.ParcelAllocationTypeName.replace(" ", "");
   }
 
