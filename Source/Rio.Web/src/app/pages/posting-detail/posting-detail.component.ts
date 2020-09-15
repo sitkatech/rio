@@ -58,9 +58,22 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
-            this.authenticationService.getActiveAccount().subscribe(account=>{
-                this.currentAccount = account;
-            })
+            this.authenticationService.getActiveAccount().subscribe(account => {
+                if (account) {
+                    this.currentAccount = account;
+                    this.offerService.getActiveOffersFromPostingIDForCurrentAccount(postingID, account.AccountID).subscribe(offers => {
+                        this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+                        this.resetModelToPosting();
+                        this.originalPostingType = this.posting.PostingType;
+                        this.offerType = this.isPostingOwner ?
+                            (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                            : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+                        this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                        this.cdr.detectChanges();
+                    });
+                }
+                this.cdr.detectChanges();
+            });
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             if (postingID) {
                 forkJoin(
@@ -70,13 +83,6 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                     this.posting = posting instanceof Array
                         ? null
                         : posting as PostingDto;
-                    this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-                    this.resetModelToPosting();
-                    this.originalPostingType = this.posting.PostingType;
-                    this.offerType = this.isPostingOwner ?
-                        (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                        : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-                    this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
                     this.cdr.detectChanges();
                 });
             }
@@ -89,7 +95,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.cdr.detach();
     }
 
-    public isPostingOwner(): boolean{
+    public isPostingOwner(): boolean {
         return (this.currentAccount) && this.posting.CreateAccount.AccountID === this.currentAccount.AccountID;
     }
 
@@ -202,4 +208,13 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     public currentAccountSet(): boolean {
         return this.currentAccount !== null && this.currentAccount !== undefined;
     }
+
+    public offersSet(): boolean {
+        return  this.offers !== null &&  this.offers !== undefined;
+    }
+
+    public landownerHasAnyAccounts(){
+        var result = this.authenticationService.getAvailableAccounts();
+        return result != null && result.length > 0;
+      }
 }

@@ -7,7 +7,7 @@
         </li>
         <li class="breadcrumb-item active" aria-current="page">
           Posting: <span *ngIf="posting">{{posting.PostingType.PostingTypeDisplayName}}
-          {{posting.Quantity | number: "1.0"}} ac-ft </span>
+            {{posting.Quantity | number: "1.0"}} ac-ft </span>
           <span *ngIf="!posting">Loading...</span>
         </li>
       </ol>
@@ -17,7 +17,7 @@
 <div class="container mt-sm-4">
   <h2 style="display: inline-block">
     Posting: <span *ngIf="posting">{{posting.PostingType.PostingTypeDisplayName}}
-    {{posting.Quantity | number: "1.0"}} ac-ft </span>
+      {{posting.Quantity | number: "1.0"}} ac-ft </span>
     <span *ngIf="!posting">Loading...</span>
   </h2>
   <app-alert-display></app-alert-display>
@@ -78,18 +78,37 @@
           Your Actions
         </div>
         <div class="card-body" *ngIf="isPostingOpen()">
-          <p>This is your posting.  View any offers on your dashboard.</p>
+          <p>This is your posting. View any offers on your dashboard.</p>
           <div class="text-center">
             <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
             <button class="btn btn-rio btn-sm" (click)="closePosting()">Close Posting</button>
           </div>
         </div>
         <div class="card-body" *ngIf="!isPostingOpen()">
-          <p>Your posting is closed.  No further actions are allowed.</p>
+          <p>Your posting is closed. No further actions are allowed.</p>
         </div>
       </div>
 
-      <div class="card" *ngIf="isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
+      <div class="card" *ngIf="!currentAccountSet()">
+        <div class="card-header">
+          Your Offer
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <div class="alert alert-primary text-left" *ngIf="landownerHasAnyAccounts()">
+                No account is selected. Use the dropdown in the top right to select an account to make or view offers on this posting.
+              </div>
+              <div class="alert alert-primary text-left" *ngIf="!landownerHasAnyAccounts()">
+                You do not have any assigned accounts and cannot make any offers on this post.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card"
+        *ngIf="currentAccountSet() && offersSet() && isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
         <div class="card-header">
           Your Offer
         </div>
@@ -114,12 +133,13 @@
             <div class="alert alert-primary text-left" *ngIf="!currentAccountSet()">
               No account is selected; please select an account before choosing an offer action.
             </div>
-            <button class="btn btn-rio btn-sm mr-1" *ngIf="offers.length == 0"
-              (click)="acceptCurrentOffer()" [disabled]="!currentAccountSet()">Accept Offer</button>
-            <button class="btn btn-rio btn-sm mr-1" (click)="isCounterOffering = true"
-              *ngIf="!isPendingOffer()" [disabled]="!currentAccountSet()">Make Counter
+            <button class="btn btn-rio btn-sm mr-1" *ngIf="offers.length == 0" (click)="acceptCurrentOffer()"
+              [disabled]="!currentAccountSet()">Accept Offer</button>
+            <button class="btn btn-rio btn-sm mr-1" (click)="isCounterOffering = true" *ngIf="!isPendingOffer()"
+              [disabled]="!currentAccountSet()">Make Counter
               Offer</button>
-            <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()" [disabled]="!currentAccountSet()">Rescind Offer</button>
+            <button class="btn btn-rio btn-sm" (click)="rescindOffer()" *ngIf="isPendingOffer()"
+              [disabled]="!currentAccountSet()">Rescind Offer</button>
           </div>
         </div>
       </div>
@@ -131,9 +151,9 @@
         <div class="card-body">
           <p>Offer successfully submitted, no further actions needed.</p>
           <div class="text-center">
-          <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
-          <a class="btn btn-rio btn-sm mr-1" routerLink="/trades">View Postings List</a>
-        </div>
+            <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard">View Dashboard</a>
+            <a class="btn btn-rio btn-sm mr-1" routerLink="/trades">View Postings List</a>
+          </div>
         </div>
       </div>
 
@@ -146,7 +166,8 @@
             <dt class="text-sm-right col-sm-5 col-xs-12">{{offerType}} Quantity</dt>
             <dd class="col-sm-7 col-xs-12">
               <div class="input-group">
-                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" min="1" step="1" />
+                <input type="number" class="form-control" name="Quantity" required [(ngModel)]="model.Quantity" min="1"
+                  step="1" />
                 <div class="input-group-append">
                   <span class="input-group-text"> ac-ft</span>
                 </div>
@@ -159,7 +180,8 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">$</span>
                 </div>
-                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" min="1" step=".01" />
+                <input type="number" class="form-control" name="Price" required [(ngModel)]="model.Price" min="1"
+                  step=".01" />
                 <div class="input-group-append">
                   <span class="input-group-text"> per ac-ft</span>
                 </div>
@@ -174,11 +196,12 @@
             <dt class="text-sm-right col-sm-5 col-xs-12">Notes</dt>
             <dd class="col-sm-7 col-xs-12">
               <textarea class="form-control" name="OfferNotes" style="height: 200px"
-              [(ngModel)]="model.OfferNotes"></textarea>
+                [(ngModel)]="model.OfferNotes"></textarea>
             </dd>
           </dl>
           <div class="text-center">
-            <button class="btn btn-rio btn-sm mr-1" (click)="isConfirmingTrade = true" [disabled]="!isOfferFormValid()">Present Counter
+            <button class="btn btn-rio btn-sm mr-1" (click)="isConfirmingTrade = true"
+              [disabled]="!isOfferFormValid()">Present Counter
               Offer</button>
             <button class="btn btn-rio btn-sm" (click)="cancelCounterOffer()">Cancel</button>
           </div>
@@ -191,9 +214,10 @@
         <div class="card-body">
           <p *ngIf="!isRescindingTrade && !isRejectingTrade && !isCounterOffering">Please confirm your intent to execute
             this trade agreement.<br />
-            <strong>This action is final</strong> and obligates you to complete the financial 
-            transaction according to the quantity and price specified here. You will receive email confirmation of the 
-            pending trade, including the contact information of the other party. After the financial transaction is complete 
+            <strong>This action is final</strong> and obligates you to complete the financial
+            transaction according to the quantity and price specified here. You will receive email confirmation of the
+            pending trade, including the contact information of the other party. After the financial transaction is
+            complete
             and acknowledged by both parties your annual water allocation will be adjusted accordingly.</p>
           <p *ngIf="isRescindingTrade">Please confirm you wish to rescind your current offer.</p>
           <p *ngIf="isRejectingTrade">Please confirm you wish to reject further negotiations. You will no longer be able
