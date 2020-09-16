@@ -16,6 +16,10 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { environment } from 'src/environments/environment';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { forkJoin } from 'rxjs';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
+import { ParcelAllocationTypeEditComponent } from '../parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 
 declare var $:any;
 @Component({
@@ -43,6 +47,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public unitsShown: string = "ac-ft";
   public displayTradeGrid: boolean = false;
   public displayPostingsGrid: boolean = false;
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -50,6 +55,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private tradeService: TradeService,
     private parcelService: ParcelService,
     private postingService: PostingService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private userService: UserService,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
@@ -62,16 +68,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
 
-      this.parcelService.getDefaultWaterYearToDisplay().subscribe(defaultYear=>{
+      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
+        this.parcelService.getWaterYearsIncludingCurrentYear(),
+        this.parcelAllocationTypeService.getParcelAllocationTypes()
+      ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
-        this.parcelService.getWaterYearsIncludingCurrentYear().subscribe(waterYears =>{
-          this.waterYears = waterYears;
-          this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
-            this.parcels = parcels;
-            this.updateAnnualData();        
-          })
-        }) 
-      })     
+        this.waterYears = waterYears;
+        this.parcelAllocationTypes = parcelAllocationTypes;
+        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
+          this.parcels = parcels;
+          this.updateAnnualData();        
+        });
+      });     
     });    
   }
 
@@ -351,6 +359,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
       { headerName: 'Total Allocation (ac-ft)', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
+      // TODO: kill next four lines, insert column definitions in the subscription to parcelAllocationTypes
       { headerName: 'Native Yield (ac-ft)', field: 'NativeYield', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       { headerName: 'Project Water (ac-ft)', field: 'ProjectWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 160 },
       { headerName: 'Stored Water (ac-ft)', field: 'StoredWater', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
@@ -449,6 +458,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalAcreFeetAllocated(parcelAllocations, "UsageToDate");
   }
 
+  public getAnnualAllocationByAllocationType(parcelAllocationType: ParcelAllocationTypeDto): number {
+    let parcelAllocations = this.parcelAllocationAndUsages;
+    return this.getTotalAcreFeetAllocatedByAllocationType(parcelAllocations, parcelAllocationType);
+  }
+
   public getAnnualProjectWater(): number {
     let parcelAllocations = this.parcelAllocationAndUsages;
     return this.getTotalAcreFeetAllocated(parcelAllocations, "ProjectWater");
@@ -479,14 +493,22 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.getResultInUnitsShown(result);
   }
 
+  public getTotalAcreFeetAllocatedByAllocationType(parcelAllocations: Array<ParcelAllocationAndUsageDto>, parcelAllocationType: ParcelAllocationTypeDto): number{
+    var result = 0;
+    if (parcelAllocations.length > 0){
+      result = parcelAllocations.reduce(function(a,b) {
+        return (a + (b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0))
+      }, 0);
+    }
+    return this.getResultInUnitsShown(result);
+  }
+
   public getResultInUnitsShown(result: number) : number
   {
-    if(this.unitsShown === "ac-ft / ac")
-    {
+    if (this.unitsShown === "ac-ft / ac") {
       return result / this.getTotalAPNAcreage();
     }
-    else
-    {
+    else {
       return result;
     }
   }
@@ -501,6 +523,19 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return 0;
   }
 
+  // batch the parcel allocation types into twos for the district wide statistics panel
+  public getParcelAllocationTypesBatched(): ParcelAllocationTypeDto[][]{
+    const batched = [];
+    let copy = [...this.parcelAllocationTypes];
+    const batches = Math.ceil(copy.length / 2);
+    
+    for (let i = 0; i< batches; i++){
+      batched.push(copy.splice(0,2));
+    }
+
+    return batched;
+  }
+
   public allowTrading():boolean{
     return environment.allowTrading;
   }
@@ -509,4 +544,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
+
+  
 }

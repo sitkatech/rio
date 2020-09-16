@@ -54,33 +54,21 @@
               {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
             </div>
           </div>
-          <div class="row">
+          <div class="row" *ngFor="let batch of getParcelAllocationTypesBatched()">
             <div class="col-sm-3 text-sm-left">
-              <strong>Total Native Yield</strong>
+              <strong>Total {{batch[0].ParcelAllocationTypeName}}</strong>
             </div>
             <div class="col-sm-3 text-sm-right">
-              {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
+              {{getAnnualAllocationByAllocationType(batch[0]) | number: '1.1-1'}} {{unitsShown}}
             </div>
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Project Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Reconciliation Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Stored Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
-            </div>
+            <ng-container *ngIf="batch.length > 1">
+              <div class="col-sm-3 text-sm-left">
+                <strong>Total {{batch[1].ParcelAllocationTypeName}}</strong>
+              </div>
+              <div class="col-sm-3 text-sm-right">
+                {{getAnnualAllocationByAllocationType(batch[1]) | number: '1.1-1'}} {{unitsShown}}
+              </div>
+            </ng-container>
           </div>
         </div>
       </div>
