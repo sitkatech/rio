@@ -294,7 +294,19 @@ namespace Rio.API.Controllers
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
         {
             var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
-            return Ok(landownerUsageReportDtos);
+
+            var landownerAllocationBreakdownForYear = ParcelAllocation.GetLandownerAllocationBreakdownForYear(_dbContext, year);
+
+            var landownerUsageReportDtosWithAllocation = landownerUsageReportDtos.Join(
+                landownerAllocationBreakdownForYear, x => x.AccountID, y => y.AccountID,
+                (x, y) =>
+                {
+                    x.Allocations = y.Allocations;
+                    return x;
+                });
+
+
+            return Ok(landownerUsageReportDtosWithAllocation);
         }
 
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)

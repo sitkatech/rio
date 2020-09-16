@@ -1,4 +1,6 @@
-﻿namespace Rio.Models.DataTransferObjects
+﻿using System.Collections.Generic;
+
+namespace Rio.Models.DataTransferObjects
 {
     public class LandownerUsageReportDto
     {
@@ -21,5 +23,6 @@
         public int NumberOfTrades { get; set; }
         public string MostRecentTradeNumber { get; set; }
         public string FullName => $"{AccountName} {AccountNumber}";
+        public Dictionary<int, decimal> Allocations { get; set; }
     }
 }

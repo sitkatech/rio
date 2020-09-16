@@ -95,7 +95,6 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       ).subscribe(([defaultYear, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
         this.parcelAllocationTypes = parcelAllocationTypes;
-        debugger;
 
         // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
         this.parcelAllocationTypes.forEach(parcelAllocationType => {
@@ -115,6 +114,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           x.resizable = true;
         });
 
+        // this is necessary because by the time we enter this subscribe, ngOnInit has concluded and the ag-grid has read its column defs
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin(
