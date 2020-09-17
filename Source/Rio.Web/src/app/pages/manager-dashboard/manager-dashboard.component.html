@@ -71,6 +71,9 @@
             </ng-container>
           </div>
         </div>
+        <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
+          <i class="fa fa-spinner loading-spinner"></i>
+      </div>
       </div>
     </div>
   </div>
@@ -96,7 +99,7 @@
     </div>
   </div>
   <div class="row mt-4" *ngIf="allowTrading()">
-    <div class="col-sm-12"> <!--Todo: Why is this ngIf parcels??-->
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
