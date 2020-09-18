@@ -332,6 +332,8 @@ namespace Rio.EFModels.Entities
                     .HasName("AK_ParcelAllocationType_ParcelAllocationTypeName")
                     .IsUnique();
 
+                entity.Property(e => e.ParcelAllocationTypeDefinition).IsUnicode(false);
+
                 entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
             });
 

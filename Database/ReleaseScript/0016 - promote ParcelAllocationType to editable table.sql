@@ -70,3 +70,14 @@ where ParcelAllocationTypeName in ('Reconciliation', 'Stored Water')
 
 Alter table dbo.ParcelAllocationType
 Alter Column IsAppliedProportionally bit not null
+
+Alter table dbo.ParcelAllocationType
+Add ParcelAllocationTypeDefinition varchar(max) null
+
+Insert into dbo.CustomRichTextType (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
+values
+(8, 'ConfigureWaterTypes', 'Configure Water Types'),
+(9, 'SetWaterAllocation', 'SetWaterAllocation')
+
+Insert into dbo.CustomRichText(CustomRichTextTypeID)
+values (8), (9)

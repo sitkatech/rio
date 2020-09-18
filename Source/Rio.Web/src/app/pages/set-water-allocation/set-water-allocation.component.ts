@@ -15,13 +15,14 @@ import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocat
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
-  selector: 'rio-manage-water-allocation',
-  templateUrl: './manage-water-allocation.component.html',
-  styleUrls: ['./manage-water-allocation.component.scss']
+  selector: 'rio-set-water-allocation',
+  templateUrl: './set-water-allocation.component.html',
+  styleUrls: ['./set-water-allocation.component.scss']
 })
-export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
+export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
   
   @ViewChildren('fileUpload') fileUploads:QueryList<any>;
@@ -32,6 +33,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
+  public richTextTypeID: number = CustomRichTextType.SetWaterAllocation;
 
   public model: ParcelAllocationUpsertDto;
   public isLoadingSubmit: boolean = false;
@@ -43,7 +45,7 @@ export class ManageWaterAllocationComponent implements OnInit, OnDestroy {
   public displayFileErrors:any = {};
 
   public fileName: string;
-  parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,

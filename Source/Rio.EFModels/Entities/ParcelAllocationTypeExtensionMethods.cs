@@ -10,7 +10,8 @@ namespace Rio.EFModels.Entities
             {
                 ParcelAllocationTypeID = parcelAllocationType.ParcelAllocationTypeID,
                 ParcelAllocationTypeName = parcelAllocationType.ParcelAllocationTypeName,
-                IsAppliedProportionally = parcelAllocationType.IsAppliedProportionally
+                IsAppliedProportionally = parcelAllocationType.IsAppliedProportionally,
+                ParcelAllocationTypeDefinition = parcelAllocationType.ParcelAllocationTypeDefinition
             };
         }
     }

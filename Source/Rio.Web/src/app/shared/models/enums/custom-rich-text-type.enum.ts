@@ -5,5 +5,7 @@ export enum CustomRichTextType{
     AboutGET = 4,
     Disclaimer = 5,
     PlatformOverview = 6,
-    MeasuringWaterUse = 7
+    MeasuringWaterUse = 7,
+    ConfigureWaterTypes = 8,
+    SetWaterAllocation = 9
 }

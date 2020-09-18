@@ -19,6 +19,7 @@ namespace Rio.EFModels.Entities
         [StringLength(50)]
         public string ParcelAllocationTypeName { get; set; }
         public bool IsAppliedProportionally { get; set; }
+        public string ParcelAllocationTypeDefinition { get; set; }
 
         [InverseProperty("ParcelAllocationType")]
         public virtual ICollection<ParcelAllocation> ParcelAllocation { get; set; }

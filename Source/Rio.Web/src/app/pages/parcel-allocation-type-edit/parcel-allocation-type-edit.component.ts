@@ -7,6 +7,8 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CustomRichTextComponent } from 'src/app/shared/components/custom-rich-text/custom-rich-text.component';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
   selector: 'rio-parcel-allocation-type-edit',
@@ -17,9 +19,9 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   watchUserChangeSubscription: any;
   existingParcelAllocationTypes: ParcelAllocationTypeDto[];
   parcelAllocationTypes: ParcelAllocationTypeDto[];
-  anyDeleted: boolean;
   isLoadingSubmit: boolean = false;
-  public modalReference: NgbModalRef;
+  modalReference: NgbModalRef;
+  richTextTypeID: number = CustomRichTextType.ConfigureWaterTypes;
   @ViewChild("deleteWarningModalContent") deleteWarningModalContent
 
   constructor(
@@ -54,7 +56,6 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   }
 
   deleteParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): void {
-    this.anyDeleted = true;
     const index = this.parcelAllocationTypes.indexOf(parcelAllocationType);
     this.parcelAllocationTypes.splice(index, 1);
   }
@@ -64,11 +65,7 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(form: any) {
-    if (!this.anyDeleted) {
-      this.submitImpl();
-    } else {
-      this.launchModal(this.deleteWarningModalContent)
-    }
+    this.launchModal(this.deleteWarningModalContent)
   }
 
   submitImpl(): void {
@@ -81,7 +78,7 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
     this.parcelAllocationTypeService.mergeParcelAllocationTypes(this.parcelAllocationTypes).subscribe(x => {
       this.isLoadingSubmit = false;
       this.router.navigateByUrl("/manager-dashboard").then(x => {
-        this.alertService.pushAlert(new Alert("The user was successfully updated.", AlertContext.Success));
+        this.alertService.pushAlert(new Alert("Water types successfully updated.", AlertContext.Success));
       });
     }, error => {
       this.isLoadingSubmit = false;

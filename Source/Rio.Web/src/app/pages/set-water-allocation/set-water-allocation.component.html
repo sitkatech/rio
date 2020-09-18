@@ -6,7 +6,7 @@
                     <a routerLink="/manager-dashboard">Manager Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Manage Water Allocation
+                    Set Water Allocation
                 </li>
             </ol>
         </nav>
@@ -16,33 +16,14 @@
     <div class="row">
         <div class="col-9">
             <h2>
-                Manage Water Allocation
+                Set Water Allocation
             </h2>
         </div>
     </div>
     <app-alert-display></app-alert-display>
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
-            <p class="lead">
-                Use this page to assign a water allocation to all parcels in the platform. Enter the year, the
-                allocation type,and the unit quantity to allocate. Any existing allocations will be overwritten by the
-                new data. You can also manually allocate water one parcel at a time via the Parcel detail pages.
-                Allocation set for the next water year will be visible to Landowners starting in November of the current
-                year.
-            </p>
-
-            <p class="lead">
-                Please download the Account Usage Report from the <a routerLink="/manager-dashboard"
-                    routerLinkActive="true">Manager Dashboard</a> to perform the off system
-                reconciliation process and calculate stored water. Assign Reconciliation values by uploading a CSV file
-                with columns called "Account Number" and "Reconciliation Volume". For Stored Water upload a CSV file
-                with columns called "Account Number" and "Stored Water Volume". The Reconciliation or Stored Water values will
-                be applied proportionally across parcels associated with an account based on acreage.
-            </p>
-
-            <p class="lead">If applicable, for other water allocation types that are driven by a spreadsheet,
-                ensure that there is a column called "Account Number" and a column called "[Allocation Type Name] Volume"
-            </p>
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
         </div>
     </div>
     <div class="row mt-4">

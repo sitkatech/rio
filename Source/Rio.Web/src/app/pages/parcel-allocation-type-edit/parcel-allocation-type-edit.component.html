@@ -14,29 +14,32 @@
 </div>
 <div class="container mt-sm-4">
     <div class="row">
-        <div class="col-9">
+        <div class="col">
             <h2>
                 Configure Water Types
             </h2>
         </div>
-        <div class="col-3 text-right">
-            <button type="button" class="btn btn-rio" (click)="resetParcelAllocationTypes()">Reset</button>
-        </div>
     </div>
     <app-alert-display></app-alert-display>
+    <div class="row mt-2">
+        <div class="col">
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+        </div>
+    </div>
     <form (ngSubmit)="onSubmit(editParcelAllocationTypesForm)" #editParcelAllocationTypesForm="ngForm">
-        <div class="row mt-2">
+        <div class="row mt-4">
             <table class="table table-responsive table-condensed">
                 <thead>
                     <th></th>
                     <th>Name</th>
                     <th>Allocation Method</th>
+                    <th style="width:35%">Definition</th>
                 </thead>
                 <tbody>
                     <tr *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
                         <td>
-                            <span class="fas fa-trash"
-                                (click)="deleteParcelAllocationType(parcelAllocationType)"></span>
+                            <i class="fas fa-trash deleteParcelAllocationType" title="Delete water type"
+                                (click)="deleteParcelAllocationType(parcelAllocationType)"></i>
                         </td>
                         <td>
                             <input type="text" class="form-control"
@@ -45,14 +48,18 @@
                         </td>
                         <td>
                             <select class="form-control" name="ParcelAllocationTypeIsAppliedProportionally[{{i}}]" [(ngModel)]="parcelAllocationType.IsAppliedProportionally" required>
-                                <option [value]="true">Apply proportionally across acreage</option>
+                                <option [value]="true">Apply proportionally to parcel area</option>
                                 <option [value]="false">Upload a spreadsheet</option>
                             </select>
+                        </td>
+                        <td>
+                            <textarea class="form-control" rows="4" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeDefinition" name="ParcelAllocationTypeDefinition[{{i}}]">
+                            </textarea>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <button type="button" class="btn btn-rio" (click)="addParcelAllocationType()">Add</button>
+            <button type="button" class="btn btn-rio" (click)="addParcelAllocationType()">Add Water Type</button>
         </div>
 
         <div class="row mt-2">
@@ -63,8 +70,9 @@
                 <button type="submit" class="btn btn-rio"
                     [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-                    Submit
+                    Save
                 </button>
+                <button type="button" class="btn btn-secondary ml-1" (click)="resetParcelAllocationTypes()">Reset</button>
                 <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
             </div>
         </div>
@@ -79,10 +87,12 @@
         </button>
     </div>
     <div class="modal-body">
-        <p>You are about to delete one or more Parcel Allocation Types.
-            This will delete all Parcel Allocations and Parcel Allocation History associated with these Parcel
-            Allocation types.
-            This action cannot be undone.</p>
+        <p>
+            You are about to modify the Water Types.
+            Any allocation associated with a deleted Water Type will be permanently removed from the platform.
+            Any Water Types that are added will need to have their allocation set via the Set Water Allocation page.
+            These actions are permanent.
+        </p>
         <p>Are you sure you wish to proceed?</p>
         <div class="modal-footer">
             <button type="button" class="btn btn-rio btn-sm" (click)="submitImpl()">

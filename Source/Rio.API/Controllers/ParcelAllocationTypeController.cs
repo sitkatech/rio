@@ -43,7 +43,8 @@ namespace Rio.API.Controllers
             {
                 ParcelAllocationTypeName = x.ParcelAllocationTypeName,
                 IsAppliedProportionally = x.IsAppliedProportionally,
-                ParcelAllocationTypeID = x.ParcelAllocationTypeID 
+                ParcelAllocationTypeID = x.ParcelAllocationTypeID,
+                ParcelAllocationTypeDefinition = x.ParcelAllocationTypeDefinition
             }).ToList();
 
             // add and save new PATs before the merge.
@@ -66,6 +67,8 @@ namespace Rio.API.Controllers
                 (x, y) =>
                 {
                     x.ParcelAllocationTypeName = y.ParcelAllocationTypeName;
+                    x.IsAppliedProportionally = y.IsAppliedProportionally;
+                    x.ParcelAllocationTypeDefinition = y.ParcelAllocationTypeDefinition;
                 });
 
             _dbContext.SaveChanges();
