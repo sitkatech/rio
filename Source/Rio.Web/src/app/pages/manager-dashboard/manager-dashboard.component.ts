@@ -20,6 +20,7 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
+import { PostingDetailedDto } from 'src/app/shared/models/posting/posting-detailed-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -49,6 +50,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
   private allocationColumnDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
+  postingActivity: PostingDetailedDto[];
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -441,6 +443,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.displayTradeGrid = result.length > 0 ? true : false;
     });
     this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay).subscribe(result => {
+      this.postingActivity = result;
       this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
       this.displayPostingsGrid = result.length > 0 ? true : false;
     });

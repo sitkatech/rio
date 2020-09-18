@@ -73,12 +73,12 @@
         </div>
         <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
           <i class="fa fa-spinner loading-spinner"></i>
-      </div>
+        </div>
       </div>
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-sm-12" *ngIf="parcels">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -89,11 +89,14 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="parcels">
           <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
             [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true"
             [paginationPageSize]="100">
           </ag-grid-angular>
+        </div>
+        <div class="card-body text-center" *ngIf="!parcels">
+          <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
     </div>
@@ -127,7 +130,7 @@
     </div>
   </div>
   <div class="row mt-4" *ngIf="allowTrading()">
-    <div class="col-sm-12" *ngIf="parcels">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -140,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="postingActivity">
           <div *ngIf="!displayPostingsGrid">
             No postings to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager Dashboard to view postings for other years.
           </div>
@@ -148,18 +151,24 @@
             [columnDefs]="postingsGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
+        <div class="card-body text-center" *ngIf="!postingActivity">
+          <i class="fa fa-spinner loading-spinner"></i>
+        </div>
       </div>
     </div>
   </div>
-  <div class="row mt-sm-4" *ngIf="parcels">
+  <div class="row mt-sm-4">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           Parcels
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="parcels">
           <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="600px">
           </parcel-map>
+        </div>
+        <div class="card-body text-center" *ngIf="!parcels">
+          <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
     </div>
