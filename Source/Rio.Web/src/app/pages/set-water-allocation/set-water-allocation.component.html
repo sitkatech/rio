@@ -6,7 +6,7 @@
                     <a routerLink="/manager-dashboard">Manager Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Manage Water Allocation
+                    Set Water Allocation
                 </li>
             </ol>
         </nav>
@@ -16,29 +16,14 @@
     <div class="row">
         <div class="col-9">
             <h2>
-                Manage Water Allocation
+                Set Water Allocation
             </h2>
         </div>
     </div>
     <app-alert-display></app-alert-display>
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
-            <p class="lead">
-                Use this page to assign a water allocation to all parcels in the platform. Enter the year, the
-                allocation type,and the unit quantity to allocate. Any existing allocations will be overwritten by the
-                new data. You can also manually allocate water one parcel at a time via the Parcel detail pages.
-                Allocation set for the next water year will be visible to Landowners starting in November of the current
-                year.
-            </p>
-
-            <p class="lead">
-                Please download the Account Usage Report from the <a routerLink="/manager-dashboard"
-                    routerLinkActive="true">Manager Dashboard</a> to perform the off system
-                reconciliation process and calculate stored water. Assign Reconciliation values by uploading a CSV file
-                with columns called "Account Number" and "Reconciliation Volume". For Stored Water upload a CSV file
-                with columns called "Account Number" and "Stored Water Volume". The Reconciliation or Stored Water values will
-                be applied proportionally across parcels associated with an account based on acreage.
-            </p>
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
         </div>
     </div>
     <div class="row mt-4">
@@ -47,66 +32,86 @@
                 <div class="card-header">
                     <div class="float-right">
                         <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-                            [selectYearLabel]="'Setting Data for Year'"
-                            (selectedYearChange)="updateAllocationSetDateDisplayVariables()"></rio-water-year-select>
+                            [selectYearLabel]="'Setting Data for Year'"></rio-water-year-select>
                     </div>
                     <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>
                 </div>
-                <div class="card-body">
-                    <div class="row mb-1">
-                        <div class="col my-auto">
-                            <form class="form-inline">
-                                <div class="form-group row w-100">
-                                    <label for="projectWater" class="col-form-label col-3 d-inline-block">
-                                        <strong>{{ParcelAllocationTypeStatic.ProjectWater}}</strong>
-                                        <br class="br-special" />
-                                        <span
-                                            style="font-size:10px">{{lastProjectWaterSetDate ? "Last set " + lastProjectWaterSetDate : "No record of last set date"}}</span>
-                                    </label>
-                                    <div class="col">
-                                        <input type="number" #projectWaterAllocation id="projectWater"
-                                            class="form-control" placeholder="3.0" style="max-width:75px" required>
-                                        ac-ft per parcel acre
+                <div class="card-body" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
+                    <ng-container *ngFor="let parcelAllocationType of getAcreageBasedAllocationTypes()">
+                        <div class="row mb-1">
+                            <div class="col my-auto">
+                                <form class="form-inline">
+                                    <div class="form-group row w-100">
+                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
+                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                            <br class="br-special" />
+                                            <span
+                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last set " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                        </label>
+                                        <div class="col">
+                                            <input type="number" #waterAllocation id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                class="form-control" placeholder="3.0" style="max-width:75px" required>
+                                            ac-ft per parcel acre
+                                        </div>
+                                        <button type="button" class="btn btn-rio"
+                                            (click)="submitBulkAllocation(parcelAllocationType)"
+                                            [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                     </div>
-                                    <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.ProjectWater,projectWaterAllocation.value)"
-                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.ProjectWater.toString()]" class="row mb-1">
-                        <div class="col danger">
-                            Please enter a value before submitting
+                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                            <div class="col danger">
+                                Please enter a value before submitting
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col my-auto">
-                            <form class="form-inline">
-                                <div class="form-group row w-100">
-                                    <label for="nativeYield" class="col-form-label col-3 d-inline-block">
-                                        <strong>{{ParcelAllocationTypeStatic.NativeYield}}</strong>
-                                        <br class="br-special" />
-                                        <span
-                                            style="font-size:10px">{{lastNativeYieldSetDate ? "Last set " + lastNativeYieldSetDate : "No record of last set date"}}</span>
-                                    </label>
-                                    <div class="col">
-                                        <input type="number" #nativeYieldAllocation id="nativeYield"
-                                            class="form-control" placeholder="0.15" style="max-width:75px" required>
-                                        ac-ft per parcel acre
+                    </ng-container>
+                    <ng-container *ngFor="let parcelAllocationType of getSpreadsheetDrivenAllocationTypes()">
+                        <div class="row">
+                            <div class="col">
+                                <form class="form-inline">
+                                    <div class="form-group row w-100">
+                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
+                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                            <br class="br-special" />
+                                            <span
+                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last uploaded " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                        </label>
+                                        <div class="input-group col ml-3 p-0">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input" id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                    #fileUpload
+                                                    (change)="fileEvent(parcelAllocationType)">
+                                                <label class="custom-file-label"
+                                                    for="getParcelAllocationTypeLabel(parcelAllocationType)">{{getFileName(parcelAllocationType)}}</label>
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-rio" type="button"
+                                                    (click)="openFileUpload(parcelAllocationType)"><i
+                                                        class="fas fa-folder-open"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="col-3 text-right p-0">
+                                            <button type="button" class="btn btn-rio"
+                                                [disabled]="isLoadingSubmit || displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]"
+                                                (click)="uploadAllocationFile(parcelAllocationType)">
+                                                Upload & Save
+                                            </button>
+                                        </div>
                                     </div>
-                                    <button type="button" class="btn btn-rio"
-                                        (click)="submitBulkAllocation(ParcelAllocationTypeStatic.NativeYield,nativeYieldAllocation.value)"
-                                        [disabled]="isLoadingSubmit">Save to all Parcels</button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <div *ngIf="displayErrors[ParcelAllocationTypeStatic.NativeYield.toString()]" class="row mb-1">
-                        <div class="col danger">
-                            Please enter a value before submitting
+                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                            <div class="col danger">
+                                Please choose a file before submitting
+                            </div>
                         </div>
-                    </div>
+                    </ng-container>
+                </div>
+
+                <!--TODO: this is the old card. Get rid once the new card is working-->
+                <!-- <div class="card-body">
                     <div class="row">
                         <div class="col">
                             <form class="form-inline">
@@ -198,7 +203,7 @@
                             You must select a CSV file to upload
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

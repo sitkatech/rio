@@ -100,44 +100,14 @@
                     <hr class="p-0 m-0" />
                   </td>
                 </tr>
-                <tr>
+                <tr *ngFor="let parcelAllocationType of parcelAllocationTypes">
                   <th class="text-sm-right">
-                    Native Yield
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Native Yield"><i
+                    {{parcelAllocationType.ParcelAllocationTypeName}}
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about {{parcelAllocationType.ParcelAllocationTypeName}}"><i
                       class="fas fa-question-circle small"></i></a>
                   </th>
                   <td class="text-sm-right">
-                    {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
-                  </td>
-                </tr>
-                <tr>
-                  <th class="text-right">
-                    Project Water
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Project Water"><i
-                      class="fas fa-question-circle small"></i></a>
-                  </th>
-                  <td class="text-sm-right">
-                    {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
-                  </td>
-                </tr>
-                <tr>
-                  <th class="text-right">
-                    Stored Water
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Stored Water"><i
-                      class="fas fa-question-circle small"></i></a> 
-                  </th>
-                  <td class="text-sm-right">
-                    {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
-                  </td>
-                </tr>
-                <tr>
-                  <th class="text-right">
-                    Reconciliation
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top" ngbTooltip="Learn about Reconciliation"><i
-                      class="fas fa-question-circle small"></i></a> 
-                  </th>
-                  <td class="text-sm-right">
-                    {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
+                    {{getAllocationByAllocationType(parcelAllocationType) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
               </ng-container>

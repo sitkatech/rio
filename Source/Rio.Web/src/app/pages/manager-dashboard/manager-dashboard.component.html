@@ -18,7 +18,7 @@
       </h2>
     </div>
     <div class="col-sm-6 text-right">
-      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/manage-water-allocation">Manage Water Allocation</a>
+      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/set-water-allocation">Manage Water Allocation</a>
         <div class="float-right pl-2">
       <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
         (selectedYearChange)="updateAnnualData()"></rio-water-year-select></div>
@@ -54,40 +54,31 @@
               {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
             </div>
           </div>
-          <div class="row">
+          <div class="row" *ngFor="let batch of getParcelAllocationTypesBatched()">
             <div class="col-sm-3 text-sm-left">
-              <strong>Total Native Yield</strong>
+              <strong>Total {{batch[0].ParcelAllocationTypeName}}</strong>
             </div>
             <div class="col-sm-3 text-sm-right">
-              {{getAnnualNativeYield() | number: '1.1-1'}} {{unitsShown}}
+              {{getAnnualAllocationByAllocationType(batch[0]) | number: '1.1-1'}} {{unitsShown}}
             </div>
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Project Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualProjectWater() | number: '1.1-1'}} {{unitsShown}}
-            </div>
+            <ng-container *ngIf="batch.length > 1">
+              <div class="col-sm-3 text-sm-left">
+                <strong>Total {{batch[1].ParcelAllocationTypeName}}</strong>
+              </div>
+              <div class="col-sm-3 text-sm-right">
+                {{getAnnualAllocationByAllocationType(batch[1]) | number: '1.1-1'}} {{unitsShown}}
+              </div>
+            </ng-container>
           </div>
-          <div class="row">
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Reconciliation Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualReconciliation() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Stored Water</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualStoredWater() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-          </div>
+        </div>
+        <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
+          <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
     </div>
   </div>
   <div class="row mt-4">
-    <div class="col-sm-12" *ngIf="parcels">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -98,17 +89,20 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="parcels">
           <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
             [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true"
             [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
+        <div class="card-body text-center" *ngIf="!parcels">
+          <i class="fa fa-spinner loading-spinner"></i>
+        </div>
       </div>
     </div>
   </div>
   <div class="row mt-4" *ngIf="allowTrading()">
-    <div class="col-sm-12" *ngIf="parcels">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -121,7 +115,7 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="tradeActivity">
           <div *ngIf="!displayTradeGrid">
             No trade activity to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager Dashboard to view postings for other years.
           </div>
@@ -129,11 +123,14 @@
             [columnDefs]="tradesGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
+        <div class="card-body text-center" *ngIf="!tradeActivity">
+            <i class="fa fa-spinner loading-spinner"></i>
+        </div>
       </div>
     </div>
   </div>
   <div class="row mt-4" *ngIf="allowTrading()">
-    <div class="col-sm-12" *ngIf="parcels">
+    <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           <div class="row">
@@ -146,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="postingActivity">
           <div *ngIf="!displayPostingsGrid">
             No postings to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager Dashboard to view postings for other years.
           </div>
@@ -154,18 +151,24 @@
             [columnDefs]="postingsGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
+        <div class="card-body text-center" *ngIf="!postingActivity">
+          <i class="fa fa-spinner loading-spinner"></i>
+        </div>
       </div>
     </div>
   </div>
-  <div class="row mt-sm-4" *ngIf="parcels">
+  <div class="row mt-sm-4">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
           Parcels
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body table-responsive" *ngIf="parcels">
           <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="600px">
           </parcel-map>
+        </div>
+        <div class="card-body text-center" *ngIf="!parcels">
+          <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
     </div>

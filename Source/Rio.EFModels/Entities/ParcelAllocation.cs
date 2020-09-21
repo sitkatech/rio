@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
+using Rio.Models.DataTransferObjects.WaterUsage;
 
 namespace Rio.EFModels.Entities
 {
@@ -125,5 +126,46 @@ namespace Rio.EFModels.Entities
                 ? parcelAllocations.Select(x => x.AsDto()).ToList()
                 : new List<ParcelAllocationDto>();
         }
+
+        public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
+        {
+            return dbContext.ParcelAllocation.AsNoTracking()
+                .Where(x => x.WaterYear == year)
+                .ToList()
+                .GroupBy(x => x.ParcelID)
+                .Select(x => new ParcelAllocationBreakdownDto
+                {
+                    ParcelID = x.Key,
+                    // There's at most one ParcelAllocation per Parcel per AllocationType, so we just need to read elements of the group into this dictionary
+                    Allocations = new Dictionary<int, decimal>(x.Select(y =>
+                        new KeyValuePair<int, decimal>(y.ParcelAllocationTypeID ,
+                            y.AcreFeetAllocated)))
+                }).ToList();
+        }
+
+        public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
+        {
+            var vParcelOwnershipsByYear = Entities.Parcel.vParcelOwnershipsByYear(dbContext, year).Where(x=>x.AccountID != null);
+
+            var parcelAllocations = dbContext.ParcelAllocation.AsNoTracking().Where(x => x.WaterYear == year);
+
+            return vParcelOwnershipsByYear.Join(parcelAllocations, x => x.ParcelID, y => y.ParcelID, (x, y) => new
+                {
+                    x.AccountID,
+                    y.ParcelAllocationTypeID,
+                    y.AcreFeetAllocated
+                }).ToList().GroupBy(x => x.AccountID)
+                .Select(x => new LandownerAllocationBreakdownDto()
+                {
+                    AccountID = x.Key.Value,
+                    Allocations = new Dictionary<int, decimal>(
+                        //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
+                        x.GroupBy(z => z.ParcelAllocationTypeID)
+                        .Select(y =>
+                        new KeyValuePair<int, decimal>(y.Key,
+                            y.Sum(x=>x.AcreFeetAllocated))))
+                }).ToList();
+        }
+
     }
 }

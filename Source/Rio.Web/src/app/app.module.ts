@@ -42,7 +42,7 @@ import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-gri
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
-import { ManageWaterAllocationComponent } from './pages/manage-water-allocation/manage-water-allocation.component';
+import { SetWaterAllocationComponent } from './pages/set-water-allocation/set-water-allocation.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
@@ -65,6 +65,7 @@ import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-e
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
+import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -97,7 +98,7 @@ export function init_app(appLoadService: AppInitService) {
     PostingDeleteComponent,
     LoginCallbackComponent,
     HelpComponent,
-    ManageWaterAllocationComponent,
+    SetWaterAllocationComponent,
     GlossaryComponent,
     ParcelChangeOwnerComponent,
     ParcelOverrideEtDataComponent,
@@ -115,7 +116,8 @@ export function init_app(appLoadService: AppInitService) {
     AboutGroundwaterEvaluationComponent,
     WaterTradingScenarioComponent,
     ManagedRechargeScenarioComponent,
-    RolesAndPermissionsComponent
+    RolesAndPermissionsComponent,
+    ParcelAllocationTypeEditComponent
   ],
   imports: [
     AppRoutingModule,

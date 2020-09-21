@@ -11,6 +11,7 @@ export class ParcelAllocationAndUsageDto {
     NativeYield: number;
     StoredWater: number;
     UsageToDate: number;
+    Allocations: {[key : number]: number};
 
     constructor(obj?: any) {
         Object.assign(this, obj);

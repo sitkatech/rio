@@ -58,7 +58,7 @@ namespace Rio.EFModels.Entities
                 {
                     Date = x.ParcelAllocationHistoryDate,
                     WaterYear = x.ParcelAllocationHistoryWaterYear,
-                    Allocation = x.ParcelAllocationType.ParcelAllocationTypeDisplayName,
+                    Allocation = x.ParcelAllocationType.ParcelAllocationTypeName,
                     Value = x.ParcelAllocationHistoryValue,
                     Filename = x.FileResource?.OriginalBaseFilename,
                     User = x.User.FirstName + " " + x.User.LastName

@@ -56,6 +56,10 @@
                                     Manage
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/manager-dashboard" class="dropdown-item">
+                                        Manager Dashboard
+                                    </a>
+                                    <div class="dropdown-divider"></div>
                                     <a routerLink="/users" class="dropdown-item">
                                         View all Users
                                     </a>
@@ -66,11 +70,11 @@
                                         View all Parcels
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <a routerLink="/manager-dashboard" class="dropdown-item">
-                                        Manager Dashboard
+                                    <a *ngIf="isAdministrator()" routerLink="/parcels/set-water-allocation" class="dropdown-item">
+                                        Set Water Allocation
                                     </a>
-                                    <a *ngIf="isAdministrator()" routerLink="/parcels/manage-water-allocation" class="dropdown-item">
-                                        Manage Water Allocation
+                                    <a *ngIf="isAdministrator()" routerLink="/parcel-allocation-types/edit" class="dropdown-item">
+                                        Configure Water Types
                                     </a>
                                 </div>
                             </li>

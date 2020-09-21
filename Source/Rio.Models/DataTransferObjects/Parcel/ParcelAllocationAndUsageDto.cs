@@ -11,5 +11,6 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public decimal? NativeYield { get; set; }
         public decimal? StoredWater { get; set; }
         public decimal? UsageToDate { get; set; }
+        public Dictionary<int, decimal> Allocations { get; set; }
     }
 }

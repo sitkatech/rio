@@ -38,7 +38,13 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            return Ok(parcelDtos);
+            var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
+            var parcelDtosWithAllocation = parcelDtos.Join(parcelAllocationBreakdownForYear, x => x.ParcelID, y => y.ParcelID, (x, y) =>
+            {
+                x.Allocations = y.Allocations;
+                return x;
+            });
+            return Ok(parcelDtosWithAllocation);
         }
 
         [HttpGet("parcels/{parcelID}")]
@@ -136,7 +142,7 @@ namespace Rio.API.Controllers
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
             var parcelAllocationTypeDisplayName =
-                _dbContext.ParcelAllocationType.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeDisplayName;
+                _dbContext.ParcelAllocationType.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeName;
 
             if (!ParseBulkSetAllocationUpload(fileResource, parcelAllocationTypeDisplayName, out var records, out var badRequestFromUpload))
             {

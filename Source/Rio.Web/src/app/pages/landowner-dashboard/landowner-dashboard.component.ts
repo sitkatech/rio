@@ -24,6 +24,8 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -81,6 +83,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Dec"];
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(
     private route: ActivatedRoute,
@@ -89,6 +92,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private tradeService: TradeService,
     private authenticationService: AuthenticationService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService
   ) {
@@ -105,18 +109,21 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.currentDate = (new Date());
 
-      let accountID = parseInt(this.route.snapshot.paramMap.get("id"));
-      if (accountID) {
-        this.accountService.getAccountByID(accountID).subscribe(account => {
-          this.activeAccount = account instanceof Array
-            ? null
-            : account as AccountSimpleDto;
-          this.setActiveAccount(this.activeAccount);
-          this.subscribeToActiveAccount();          
-        });
-      } else {
-        this.subscribeToActiveAccount();
-      }
+      this.parcelAllocationTypeService.getParcelAllocationTypes().subscribe(parcelAllocationTypes => {
+        this.parcelAllocationTypes = parcelAllocationTypes;
+        let accountID = parseInt(this.route.snapshot.paramMap.get("id"));
+        if (accountID) {
+          this.accountService.getAccountByID(accountID).subscribe(account => {
+            this.activeAccount = account instanceof Array
+              ? null
+              : account as AccountSimpleDto;
+            this.setActiveAccount(this.activeAccount);
+            this.subscribeToActiveAccount();
+          });
+        } else {
+          this.subscribeToActiveAccount();
+        }
+      })
 
       this.cdr.detectChanges();      
     });   
@@ -309,23 +316,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     
   }
 
-  public getAnnualProjectWater(): number {
-    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === ParcelAllocationTypeEnum.ProjectWater);
-    return this.getTotalAcreFeetAllocated(parcelAllocations);
-  }
-
-  public getAnnualReconciliation(): number {
-    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === ParcelAllocationTypeEnum.Reconciliation);
-    return this.getTotalAcreFeetAllocated(parcelAllocations);
-  }
-
-  public getAnnualNativeYield(): number {
-    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === ParcelAllocationTypeEnum.NativeYield);
-    return this.getTotalAcreFeetAllocated(parcelAllocations);
-  }
-
-  public getAnnualStoredWater(): number {
-    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === ParcelAllocationTypeEnum.StoredWater);
+  public getAllocationByAllocationType(parcelAllocationType: ParcelAllocationTypeDto): number{
+    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID);
     return this.getTotalAcreFeetAllocated(parcelAllocations);
   }
 
