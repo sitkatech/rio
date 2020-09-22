@@ -103,26 +103,7 @@ namespace Rio.API.Controllers
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
-
-        [HttpPost("parcels/{parcelID}/updateAnnualAllocations")]
-        [ParcelManageFeature]
-        public ActionResult<List<ParcelAllocationDto>> UpdateParcelAllocation([FromRoute] int parcelID, [FromBody] ParcelAllocationUpsertWrapperDto parcelAllocationUpsertWrapperDto)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
-            {
-                return NotFound();
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var updatedParcelAllocationDtos = ParcelAllocation.Upsert(_dbContext, parcelID, parcelAllocationUpsertWrapperDto.ParcelAllocations);
-            return Ok(updatedParcelAllocationDtos);
-        }
-
+        
         [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
         [ParcelManageFeature]
         public IActionResult MergeParcelAllocations([FromRoute] int parcelID,

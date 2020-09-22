@@ -56,11 +56,6 @@ export class ParcelService {
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  updateAnnualAllocations(parcelID: number, model: ParcelAllocationUpsertWrapperDto): Observable<any[]> {
-    let route = `/parcels/${parcelID}/updateAnnualAllocations`;
-    return this.apiService.postToApi(route, model);
-  }
-
   mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]) : Observable<any>{
     let route = `parcels/${parcelID}/mergeParcelAllocations`;
     return this.apiService.postToApi(route, model);
