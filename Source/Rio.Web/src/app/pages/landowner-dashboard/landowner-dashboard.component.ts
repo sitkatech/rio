@@ -18,12 +18,10 @@ import { WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 
@@ -61,9 +59,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] };
   private waterUsageOverview: WaterAllocationOverviewDto;
-  private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
-  private allocationChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsages: any;
@@ -87,7 +83,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
     private postingService: PostingService,
     private parcelService: ParcelService,
     private tradeService: TradeService,
@@ -374,7 +369,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
-  public getPurchasedAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
+  public getPurchasedAcreFeet(year?: number): number {
     return this.getTradedQuantity(this.getPurchasedWaterTransfersForWaterYear(year));
   }
 
@@ -438,7 +433,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.annualAllocationChartData = this.waterYears.map(x => {
       const allocation = this.getAnnualAllocation(x, true);
       const sold = this.getSoldAcreFeet(x, true);
-      const purchased = this.getPurchasedAcreFeet(x, true);
+      const purchased = this.getPurchasedAcreFeet(x);
 
       values.push(allocation + purchased - sold);      
 
@@ -451,9 +446,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.allocationChartRange = [0, 1.2 * Math.max(...values)];
     this.waterUsageOverview = waterUsageOverview;
-    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
     this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
 

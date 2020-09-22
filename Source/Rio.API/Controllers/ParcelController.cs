@@ -1,10 +1,14 @@
-﻿using System;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
+using Rio.API.Util;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
@@ -12,11 +16,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Rio.API.Util;
-using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers

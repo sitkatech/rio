@@ -11,7 +11,6 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
-import { ParcelAllocationTypeStatic } from 'src/app/shared/models/parcel-allocation-type-static';
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
@@ -27,8 +26,6 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   
   @ViewChildren('fileUpload') fileUploads:QueryList<any>;
   @ViewChildren('waterAllocation') waterAllocations: QueryList<any>;
-
-  public ParcelAllocationTypeStatic = ParcelAllocationTypeStatic;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;

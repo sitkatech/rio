@@ -1,17 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
-import { UserDto } from 'src/app/shared/models';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { ParcelAllocationTypeEnum } from 'src/app/shared/models/enums/parcel-allocation-type-enum';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 
@@ -22,12 +18,10 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 })
 export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
-  private currentUser: UserDto;
 
   public waterYears: Array<number>;
   public parcel: ParcelDto;
   public parcelAllocations: Array<ParcelAllocationDto>;
-  public model: any;
   public isLoadingSubmit: boolean = false;
   parcelAllocationTypes: ParcelAllocationTypeDto[];
 
@@ -43,8 +37,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      this.currentUser = currentUser;
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(() => {
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       if (id) {
         forkJoin(
@@ -65,24 +58,11 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
 
             this.parcelAllocationTypes = parcelAllocationTypes;
 
-            this.model = waterYears.map(year => {
-              return {
-                WaterYear: year,
-                ProjectWater: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.ProjectWater),
-                Reconciliation: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.Reconciliation),
-                NativeYield: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.NativeYield),
-                StoredWater: this.getAnnualAllocationForType(year, ParcelAllocationTypeEnum.StoredWater)
-              };
-            });
+            
           }
         );
       }
     });
-  }
-
-  private getAnnualAllocationForType(year: number, parcelAllocationTypeEnum: ParcelAllocationTypeEnum) {
-    const parcelAllocation = this.parcelAllocations.find(pa => pa.WaterYear === year && pa.ParcelAllocationTypeID === parcelAllocationTypeEnum);
-    return parcelAllocation ? parcelAllocation.AcreFeetAllocated : null;
   }
 
   ngOnDestroy() {
@@ -113,15 +93,15 @@ debugger;
   public onSubmit(editAllocationForm: HTMLFormElement): void {
          
     this.parcelService.mergeParcelAllocations(this.parcel.ParcelID, this.parcelAllocations)
-      .subscribe(response => {
+      .subscribe(() => {
         this.isLoadingSubmit = false;
         editAllocationForm.reset();
-        this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
+        this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(() => {
           this.alertService.pushAlert(new Alert(`The allocations for ${this.parcel.ParcelNumber} were successfully updated.`, AlertContext.Success));
         });
       }
         ,
-        error => {
+        () => {
           this.isLoadingSubmit = false;
           this.cdr.detectChanges();
         }

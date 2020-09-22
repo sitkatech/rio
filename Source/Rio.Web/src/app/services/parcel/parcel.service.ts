@@ -3,7 +3,6 @@ import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
-import { ParcelAllocationUpsertWrapperDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-wrapper-dto.';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
