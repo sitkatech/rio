@@ -87,23 +87,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     var monthlyEvapotranspiration = this.waterUsage.find(x => x.WaterYear === year && x.WaterMonth === month);
     return isNullOrUndefined(monthlyEvapotranspiration) ? "-" : isNullOrUndefined(monthlyEvapotranspiration.OverriddenEvapotranspirationRate) ? monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1) : monthlyEvapotranspiration.OverriddenEvapotranspirationRate.toFixed(1);
   }
-
-  // public getProjectWaterForYear(year: number): string {
-  //   return this.getAllocationForYearByType(ParcelAllocationTypeEnum.ProjectWater, year);
-  // }
-
-  // public getReconciliationForYear(year: number): string {
-  //   return this.getAllocationForYearByType(ParcelAllocationTypeEnum.Reconciliation, year);
-  // }
-
-  // public getNativeYieldForYear(year: number): string {
-  //   return this.getAllocationForYearByType(ParcelAllocationTypeEnum.NativeYield, year);
-  // }
-
-  // public getStoredWaterForYear(year: number): string {
-  //   return this.getAllocationForYearByType(ParcelAllocationTypeEnum.StoredWater, year);
-  // }
-
+  
   public getTotalAllocationForYear(year: number): string {
     var parcelAllocationsForYear = this.parcelAllocations.filter(x => x.WaterYear === year);
     if (parcelAllocationsForYear.length > 0) {
@@ -117,7 +101,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getAllocationForYearByType(parcelAllocationType: ParcelAllocationTypeDto, year: number): string {
+  public getAllocationForYearByType(parcelAllocationType: ParcelAllocationTypeDto, year: number): string {
     var parcelAllocation = this.parcelAllocations.find(x => x.WaterYear === year && x.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID);
     return parcelAllocation ? parcelAllocation.AcreFeetAllocated.toFixed(1) : "-";
   }

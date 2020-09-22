@@ -30,30 +30,17 @@
                 <thead>
                   <tr>
                     <th>Year</th>
-                    <th>Native Yield (Acre Feet)</th>
-                    <th>Project Water (Acre Feet)</th>
-                    <th>Stored Water (Acre Feet)</th>
-                    <th>Reconciliation (Acre Feet)</th>
+                    <th *ngFor="let parcelAllocationType of parcelAllocationTypes">
+                      {{parcelAllocationType.ParcelAllocationTypeName}} (Acre Feet)
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let parcelAllocation of model; let i = index">
-                    <td>{{parcelAllocation.WaterYear}}</td>
-                    <td>
-                      <input type="number" class="form-control" name="NativeYield{{i}}"
-                        [(ngModel)]="parcelAllocation.NativeYield" step=".1" />
-                    </td>
-                    <td>
-                      <input type="number" class="form-control" name="ProjectWater{{i}}"
-                        [(ngModel)]="parcelAllocation.ProjectWater" step=".1" />
-                    </td>
-                    <td>
-                      <input type="number" class="form-control" name="StoredWater{{i}}"
-                        [(ngModel)]="parcelAllocation.StoredWater" step=".1" />
-                    </td>
-                    <td>
-                      <input type="number" class="form-control" name="Reconciliation{{i}}"
-                        [(ngModel)]="parcelAllocation.Reconciliation" step=".1" />
+                  <tr *ngFor="let waterYear of waterYears; let i = index">
+                    <td>{{waterYear}}</td>
+                    
+                    <td *ngFor="let parcelAllocationType of parcelAllocationTypes; let j=index">
+                      <input type="number" class="form-control" name="{{i}}_{{j}}" [value]="getAllocationForYearByType(parcelAllocationType, waterYear)" (change)="updateAllocationModel(parcelAllocationType, waterYear, $event)" />
                     </td>
                   </tr>
                 </tbody>

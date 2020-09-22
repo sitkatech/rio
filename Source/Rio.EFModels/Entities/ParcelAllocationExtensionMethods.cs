@@ -11,7 +11,8 @@ namespace Rio.EFModels.Entities
                 ParcelAllocationTypeID = parcelAllocation.ParcelAllocationTypeID,
                 ParcelID = parcelAllocation.ParcelID,
                 WaterYear = parcelAllocation.WaterYear,
-                AcreFeetAllocated = parcelAllocation.AcreFeetAllocated
+                AcreFeetAllocated = parcelAllocation.AcreFeetAllocated,
+                ParcelAllocationID = parcelAllocation.ParcelAllocationID
             };
         }
     }

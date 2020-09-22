@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Rio.API.Util;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
@@ -121,6 +123,46 @@ namespace Rio.API.Controllers
             return Ok(updatedParcelAllocationDtos);
         }
 
+        [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
+        [ParcelManageFeature]
+        public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
+            [FromBody] List<ParcelAllocationDto> parcelAllocationDtos)
+        {
+            var parcel = _dbContext.Parcel.Include(x => x.ParcelAllocation)
+                .SingleOrDefault(x => x.ParcelID == parcelID);
+
+            if (parcel == null)
+            {
+                return NotFound($"Did not find Parcel with ID {parcelID}");
+            }
+
+            var updatedParcelAllocations = parcelAllocationDtos.Select(x => new ParcelAllocation()
+            {
+                ParcelID = x.ParcelID,
+                ParcelAllocationTypeID = x.ParcelAllocationTypeID,
+                WaterYear = x.WaterYear,
+                AcreFeetAllocated = x.AcreFeetAllocated,
+                ParcelAllocationID = x.ParcelAllocationID
+            }).ToList();
+
+            // add new PAs before the merge.
+            var newParcelAllocations = updatedParcelAllocations.Where(x => x.ParcelAllocationID == 0);
+            _dbContext.ParcelAllocation.AddRange(newParcelAllocations);
+
+            var existingParcelAllocations = parcel.ParcelAllocation;
+            var allInDatabase = _dbContext.ParcelAllocation;
+
+            existingParcelAllocations.Merge(updatedParcelAllocations, allInDatabase,
+                (x, y) => x.ParcelAllocationTypeID == y.ParcelAllocationTypeID && x.ParcelID == y.ParcelID && x.WaterYear == y.WaterYear,
+                (x, y) => x.AcreFeetAllocated = y.AcreFeetAllocated
+                );
+
+            _dbContext.SaveChanges();
+
+            return Ok();
+
+        }
+
         [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]
         [ParcelManageFeature]
         public ActionResult BulkSetAnnualParcelAllocation([FromRoute] int userID, [FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
@@ -199,8 +241,8 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
-            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x=>x.SaleDate);
-            
+            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.SaleDate);
+
             return Ok(parcelOwnershipDtos);
         }
 
@@ -223,7 +265,7 @@ namespace Rio.API.Controllers
             }
 
             UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
-            
+
             return Ok();
         }
 
