@@ -59,7 +59,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] };
   private waterUsageOverview: WaterAllocationOverviewDto;
+  private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
+  private allocationChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsages: any;
