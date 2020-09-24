@@ -28,7 +28,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("/parcel-allocation-types/")]
-        [ManagerDashboardFeature]
+        [LoggedInUnclassifiedFeature]
         public ActionResult<List<ParcelAllocationTypeDto>> GetParcelAllocationTypes()
         {
             var parcelAllocationTypeDtos = ParcelAllocationType.GetParcelAllocationTypes(_dbContext);
@@ -50,6 +50,7 @@ namespace Rio.API.Controllers
             // add new PATs before the merge.
             var newParcelAllocationTypes = updatedParcelAllocationTypes.Where(x => x.ParcelAllocationTypeID == 0);
             _dbContext.ParcelAllocationType.AddRange(newParcelAllocationTypes);
+            _dbContext.SaveChanges();
             
             var existingParcelAllocationTypes = _dbContext.ParcelAllocationType.ToList();
             

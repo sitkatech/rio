@@ -128,6 +128,7 @@ namespace Rio.API.Controllers
             // add new PAs before the merge.
             var newParcelAllocations = updatedParcelAllocations.Where(x => x.ParcelAllocationID == 0);
             _dbContext.ParcelAllocation.AddRange(newParcelAllocations);
+            _dbContext.SaveChanges();
 
             var existingParcelAllocations = parcel.ParcelAllocation;
             var allInDatabase = _dbContext.ParcelAllocation;
