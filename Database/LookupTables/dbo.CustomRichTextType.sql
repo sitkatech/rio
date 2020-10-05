@@ -8,7 +8,8 @@ USING (VALUES
 (6, 'PlatformOverview', 'Platform Overview'),
 (7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET'),
 (8, 'ConfigureWaterTypes', 'Configure Water Types'),
-(9, 'SetWaterAllocation', 'SetWaterAllocation')
+(9, 'SetWaterAllocation', 'SetWaterAllocation'),
+(10, 'TrainingVideos', 'Training Videos')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

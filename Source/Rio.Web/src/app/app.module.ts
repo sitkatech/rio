@@ -66,6 +66,7 @@ import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/wa
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
+import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -117,7 +118,8 @@ export function init_app(appLoadService: AppInitService) {
     WaterTradingScenarioComponent,
     ManagedRechargeScenarioComponent,
     RolesAndPermissionsComponent,
-    ParcelAllocationTypeEditComponent
+    ParcelAllocationTypeEditComponent,
+    TrainingVideosComponent
   ],
   imports: [
     AppRoutingModule,
