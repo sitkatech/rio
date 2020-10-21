@@ -10,6 +10,10 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="Hangfire" Version="1.7.17" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.17" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.17" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.17" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">

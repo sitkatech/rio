@@ -1,4 +1,6 @@
-﻿using IdentityServer4.AccessTokenValidation;
+﻿using System;
+using Hangfire;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +12,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Hangfire.SqlServer;
 
 namespace Rio.API
 {
@@ -73,6 +77,23 @@ namespace Rio.API
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
+
+
+            var rioDBbConnectionString = Configuration["DB_CONNECTION_STRING"];
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(rioDBbConnectionString, new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                }));
+
             services.AddControllers();
         }
 
@@ -108,6 +129,18 @@ namespace Rio.API
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter(Configuration) }
+            });
+            app.UseHangfireServer(new BackgroundJobServerOptions()
+            {
+                WorkerCount = 1
+            });
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
+
+            HangfireJobScheduler.ScheduleRecurringJobs();
         }
     }
 }
