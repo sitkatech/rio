@@ -8,7 +8,14 @@ namespace Rio.Models.DataTransferObjects
     {
         public int ParcelAllocationTypeID { get; set; }
         public string ParcelAllocationTypeName { get; set; }
-        public bool IsAppliedProportionally { get; set; }
+        public ParcelAllocationTypeApplicationTypeEnum IsAppliedProportionally { get; set; }
         public string ParcelAllocationTypeDefinition { get; set; }
+    }
+
+    public enum ParcelAllocationTypeApplicationTypeEnum
+    {
+        Spreadsheet = 0,
+        Proportionally = 1,
+        Api = 2
     }
 }

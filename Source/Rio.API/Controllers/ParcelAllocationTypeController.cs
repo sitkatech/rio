@@ -42,7 +42,8 @@ namespace Rio.API.Controllers
             var updatedParcelAllocationTypes = parcelAllocationTypeDtos.Select(x => new ParcelAllocationType()
             {
                 ParcelAllocationTypeName = x.ParcelAllocationTypeName,
-                IsAppliedProportionally = x.IsAppliedProportionally,
+                IsAppliedProportionally = x.IsAppliedProportionally == ParcelAllocationTypeApplicationTypeEnum.Proportionally,
+                IsSourcedFromApi = x.IsAppliedProportionally == ParcelAllocationTypeApplicationTypeEnum.Api,
                 ParcelAllocationTypeID = x.ParcelAllocationTypeID,
                 ParcelAllocationTypeDefinition = x.ParcelAllocationTypeDefinition
             }).ToList();
@@ -69,6 +70,7 @@ namespace Rio.API.Controllers
                     x.ParcelAllocationTypeName = y.ParcelAllocationTypeName;
                     x.IsAppliedProportionally = y.IsAppliedProportionally;
                     x.ParcelAllocationTypeDefinition = y.ParcelAllocationTypeDefinition;
+                    x.IsSourcedFromApi = y.IsSourcedFromApi;
                 });
 
             _dbContext.SaveChanges();

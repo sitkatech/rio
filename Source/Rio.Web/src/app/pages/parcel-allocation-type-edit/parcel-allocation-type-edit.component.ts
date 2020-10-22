@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeDto, ParcelAllocationTypeApplicationTypeEnum } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
@@ -18,11 +18,13 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   watchUserChangeSubscription: any;
   existingParcelAllocationTypes: ParcelAllocationTypeDto[];
-  parcelAllocationTypes: ParcelAllocationTypeDto[];
+  parcelAllocationTypes: ParcelAllocationTypeDto[] = [];
   isLoadingSubmit: boolean = false;
   modalReference: NgbModalRef;
   richTextTypeID: number = CustomRichTextType.ConfigureWaterTypes;
   @ViewChild("deleteWarningModalContent") deleteWarningModalContent
+
+  ParcelAllocationTypeApplicationTypeEnum = ParcelAllocationTypeApplicationTypeEnum;
 
   constructor(
     private router: Router,
@@ -66,6 +68,12 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
 
   onSubmit(form: any) {
     this.launchModal(this.deleteWarningModalContent)
+  }
+
+  isSourcedFromApiValid():boolean{
+    debugger;
+    const sourcedfromApiCount = this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally ==  ParcelAllocationTypeApplicationTypeEnum.Api).length ;
+    return sourcedfromApiCount <= 1;
   }
 
   submitImpl(): void {

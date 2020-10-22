@@ -48,8 +48,9 @@
                         </td>
                         <td>
                             <select class="form-control" name="ParcelAllocationTypeIsAppliedProportionally[{{i}}]" [(ngModel)]="parcelAllocationType.IsAppliedProportionally" required>
-                                <option [value]="true">Apply proportionally to parcel area</option>
-                                <option [value]="false">Upload a spreadsheet</option>
+                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Proportional">Apply proportionally to parcel area</option>
+                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Spreadsheet">Upload a spreadsheet</option>
+                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Api">Sourced from API</option>
                             </select>
                         </td>
                         <td>
@@ -68,12 +69,17 @@
             </div>
             <div class="col-sm text-right">
                 <button type="submit" class="btn btn-rio"
-                    [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit">
+                    [disabled]="!editParcelAllocationTypesForm.form.valid || isLoadingSubmit || !isSourcedFromApiValid()">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Save
                 </button>
                 <button type="button" class="btn btn-secondary ml-1" (click)="resetParcelAllocationTypes()">Reset</button>
                 <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
+            </div>
+        </div>
+        <div class="row mt-1">
+            <div class="col text-right">
+                <small *ngIf="!isSourcedFromApiValid()" class="text-danger">Only one Water Type can be sourced from the CIMIS API</small>
             </div>
         </div>
     </form>
