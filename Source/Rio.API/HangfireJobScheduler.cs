@@ -15,7 +15,7 @@ namespace Rio.API
             var recurringJobIds = new List<string>();
 
             // todo: what's the right cron
-            AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), Cron.Daily(8, 30), recurringJobIds);
+            AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), Cron.Daily(1, 30), recurringJobIds);
 
             // Remove any jobs we haven't explicitly scheduled
             RemoveExtraneousJobs(recurringJobIds);

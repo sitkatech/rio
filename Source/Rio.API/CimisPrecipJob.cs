@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Rio.API.Services;
 
 namespace Rio.API
 {
@@ -33,30 +34,27 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-
             var parcelAllocationType = _rioDbContext.ParcelAllocationType.SingleOrDefault(x => x.IsSourcedFromApi);
             if (parcelAllocationType == null)
             {
                 return;
             }
             var parcelAllocationTypeID = parcelAllocationType.ParcelAllocationTypeID;
-            // todo: parameterize this boi
-            int? startYear = null;
-
-
+            
+            int startYear = DateUtilities.MinimumYear;
 
             var endDate = DateTime.Now.ToLocalTime();
-            var startDate = new DateTime(startYear ?? endDate.Year, 1, 1);
+            var startDate = new DateTime(startYear, 1, 1);
 
             var endDateString = endDate.ToString("yyyy-MM-dd");
             var startDateString = startDate.ToString("yyyy-MM-dd");
 
             var cimisRequestUrl = CimisBaseUrl + $"&startDate={startDateString}&endDate={endDateString}";
-
+            
+            HttpClient.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
             var responseContent = HttpClient.GetAsync(cimisRequestUrl).Result.Content.ReadAsStringAsync().Result;
 
             var cimisPrecipitationResponse = JsonConvert.DeserializeObject<CimisPrecipitationResponse>(responseContent);
-
 
             var precipitationGroupedByYear = cimisPrecipitationResponse.Data.Providers.Single().Records
                 .GroupBy(x => x.Date.Year).ToList();
@@ -76,14 +74,11 @@ namespace Rio.API
                     WaterYear = year
                 }));
 
-                
-                _rioDbContext.ParcelAllocation.RemoveRange(_rioDbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
+            }
+
+            _rioDbContext.ParcelAllocation.RemoveRange(_rioDbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
                 _rioDbContext.ParcelAllocation.AddRange(parcelAllocations);
                 _rioDbContext.SaveChanges();
-
-
-
-            }
         }
     }
 
