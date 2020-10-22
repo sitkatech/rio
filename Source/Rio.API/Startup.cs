@@ -77,8 +77,8 @@ namespace Rio.API
 
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
-
-
+            services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
+            
             var rioDBbConnectionString = Configuration["DB_CONNECTION_STRING"];
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration

@@ -328,6 +328,11 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ParcelAllocationType>(entity =>
             {
+                entity.HasIndex(e => e.IsSourcedFromApi)
+                    .HasName("CK_ParcelAllocationType_AtMostOne_IsSourcedFromApi_True")
+                    .IsUnique()
+                    .HasFilter("([IsSourcedFromApi]=(1))");
+
                 entity.HasIndex(e => e.ParcelAllocationTypeName)
                     .HasName("AK_ParcelAllocationType_ParcelAllocationTypeName")
                     .IsUnique();

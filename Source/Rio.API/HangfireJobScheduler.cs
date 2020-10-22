@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using static Hangfire.JobCancellationToken;
 
 namespace Rio.API
 {
@@ -13,7 +14,8 @@ namespace Rio.API
         {
             var recurringJobIds = new List<string>();
 
-            //AddRecurringJob<BeehiveSyncJob>(BeehiveSyncJob.JobName, x => x.RunJob(Null), Cron.Daily(8, 30), recurringJobIds);
+            // todo: what's the right cron
+            AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), Cron.Daily(8, 30), recurringJobIds);
 
             // Remove any jobs we haven't explicitly scheduled
             RemoveExtraneousJobs(recurringJobIds);
