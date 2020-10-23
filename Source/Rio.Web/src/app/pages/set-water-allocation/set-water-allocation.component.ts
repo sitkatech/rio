@@ -13,7 +13,7 @@ import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
@@ -233,11 +233,11 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public getAcreageBasedAllocationTypes() {
-    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally);
+    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally ===ParcelAllocationTypeApplicationTypeEnum.Proportional);
   }
 
   public getSpreadsheetDrivenAllocationTypes() {
-    return this.parcelAllocationTypes.filter(x=>!x.IsAppliedProportionally);
+    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Spreadsheet);
   }
 
   public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string{

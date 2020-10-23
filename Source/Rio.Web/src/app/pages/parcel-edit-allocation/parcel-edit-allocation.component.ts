@@ -9,7 +9,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
@@ -24,6 +24,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   public parcelAllocations: Array<ParcelAllocationDto>;
   public isLoadingSubmit: boolean = false;
   parcelAllocationTypes: ParcelAllocationTypeDto[];
+  ParcelAllocationTypeApplicationType = ParcelAllocationTypeApplicationTypeEnum;
 
   constructor(
     private route: ActivatedRoute,
