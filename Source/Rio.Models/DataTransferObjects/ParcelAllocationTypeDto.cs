@@ -10,6 +10,7 @@ namespace Rio.Models.DataTransferObjects
         public string ParcelAllocationTypeName { get; set; }
         public ParcelAllocationTypeApplicationTypeEnum IsAppliedProportionally { get; set; }
         public string ParcelAllocationTypeDefinition { get; set; }
+        public int SortOrder { get; set; }
     }
 
     public enum ParcelAllocationTypeApplicationTypeEnum

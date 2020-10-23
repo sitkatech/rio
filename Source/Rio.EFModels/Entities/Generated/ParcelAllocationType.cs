@@ -21,6 +21,7 @@ namespace Rio.EFModels.Entities
         public bool IsAppliedProportionally { get; set; }
         public string ParcelAllocationTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
+        public int SortOrder { get; set; }
 
         [InverseProperty("ParcelAllocationType")]
         public virtual ICollection<ParcelAllocation> ParcelAllocation { get; set; }

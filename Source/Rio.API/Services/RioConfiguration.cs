@@ -18,5 +18,6 @@
         public string LeadOrganizationEmail { get; set; }
         public string HangfireUserName { get; set; }
         public string HangfirePassword { get; set; }
+        public string CimisAppKey { get; set; }
     }
 }

@@ -16,7 +16,8 @@ namespace Rio.EFModels.Entities
                         parcelAllocationType.IsAppliedProportionally ? 
                             ParcelAllocationTypeApplicationTypeEnum.Proportionally :
                             ParcelAllocationTypeApplicationTypeEnum.Spreadsheet,
-                ParcelAllocationTypeDefinition = parcelAllocationType.ParcelAllocationTypeDefinition
+                ParcelAllocationTypeDefinition = parcelAllocationType.ParcelAllocationTypeDefinition,
+                SortOrder = parcelAllocationType.SortOrder
             };
 
         }

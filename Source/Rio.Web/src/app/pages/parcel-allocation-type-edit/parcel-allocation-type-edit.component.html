@@ -30,34 +30,57 @@
         <div class="row mt-4">
             <table class="table table-responsive table-condensed">
                 <thead>
-                    <th></th>
-                    <th>Name</th>
-                    <th>Allocation Method</th>
-                    <th style="width:35%">Definition</th>
+
                 </thead>
                 <tbody>
-                    <tr *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
-                        <td>
-                            <i class="fas fa-trash deleteParcelAllocationType" title="Delete water type"
-                                (click)="deleteParcelAllocationType(parcelAllocationType)"></i>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control"
-                                [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName"
-                                name="ParcelAllocationTypeName[{{i}}]" required/>
-                        </td>
-                        <td>
-                            <select class="form-control" name="ParcelAllocationTypeIsAppliedProportionally[{{i}}]" [(ngModel)]="parcelAllocationType.IsAppliedProportionally" required>
-                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Proportional">Apply proportionally to parcel area</option>
-                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Spreadsheet">Upload a spreadsheet</option>
-                                <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Api">Sourced from API</option>
-                            </select>
-                        </td>
-                        <td>
-                            <textarea class="form-control" rows="4" [(ngModel)]="parcelAllocationType.ParcelAllocationTypeDefinition" name="ParcelAllocationTypeDefinition[{{i}}]">
-                            </textarea>
-                        </td>
-                    </tr>
+                    <ng-container *ngFor="let parcelAllocationType of parcelAllocationTypes; let i = index">
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Allocation Method</th>
+                            <th>Sort Order</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fas fa-trash deleteParcelAllocationType" title="Delete water type"
+                                    (click)="deleteParcelAllocationType(parcelAllocationType)"></i>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="parcelAllocationType.ParcelAllocationTypeName"
+                                    name="ParcelAllocationTypeName[{{i}}]" required />
+                            </td>
+                            <td>
+                                <select class="form-control" name="ParcelAllocationTypeIsAppliedProportionally[{{i}}]"
+                                    [(ngModel)]="parcelAllocationType.IsAppliedProportionally" required>
+                                    <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Proportional">Apply
+                                        proportionally to parcel area</option>
+                                    <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Spreadsheet">Upload a
+                                        spreadsheet</option>
+                                    <option [ngValue]="ParcelAllocationTypeApplicationTypeEnum.Api">Sourced from API
+                                    </option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" step="1" class="form-control"
+                                [(ngModel)]="parcelAllocationType.SortOrder"
+                                name="ParcelAllocationTypeSortOrder[{{i}}]" required/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th colspan="3"> Definition </th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="3">
+                                <textarea class="form-control" rows="4"
+                                    [(ngModel)]="parcelAllocationType.ParcelAllocationTypeDefinition"
+                                    name="ParcelAllocationTypeDefinition[{{i}}]">
+                                </textarea>
+                            </td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
             <button type="button" class="btn btn-rio" (click)="addParcelAllocationType()">Add Water Type</button>
@@ -73,13 +96,15 @@
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Save
                 </button>
-                <button type="button" class="btn btn-secondary ml-1" (click)="resetParcelAllocationTypes()">Reset</button>
+                <button type="button" class="btn btn-secondary ml-1"
+                    (click)="resetParcelAllocationTypes()">Reset</button>
                 <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
             </div>
         </div>
         <div class="row mt-1">
             <div class="col text-right">
-                <small *ngIf="!isSourcedFromApiValid()" class="text-danger">Only one Water Type can be sourced from the CIMIS API</small>
+                <small *ngIf="!isSourcedFromApiValid()" class="text-danger">Only one Water Type can be sourced from the
+                    CIMIS API</small>
             </div>
         </div>
     </form>

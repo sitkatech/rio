@@ -3,6 +3,7 @@ export class ParcelAllocationTypeDto {
     ParcelAllocationTypeName: string;
     IsAppliedProportionally: ParcelAllocationTypeApplicationTypeEnum;
     ParcelAllocationTypeDefinition: string;
+    SortOrder: number;
 
     constructor(obj?: any){
         Object.assign(this, obj);

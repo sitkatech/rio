@@ -45,7 +45,8 @@ namespace Rio.API.Controllers
                 IsAppliedProportionally = x.IsAppliedProportionally == ParcelAllocationTypeApplicationTypeEnum.Proportionally,
                 IsSourcedFromApi = x.IsAppliedProportionally == ParcelAllocationTypeApplicationTypeEnum.Api,
                 ParcelAllocationTypeID = x.ParcelAllocationTypeID,
-                ParcelAllocationTypeDefinition = x.ParcelAllocationTypeDefinition
+                ParcelAllocationTypeDefinition = x.ParcelAllocationTypeDefinition,
+                SortOrder = x.SortOrder
             }).ToList();
 
             // add new PATs before the merge.
@@ -71,6 +72,7 @@ namespace Rio.API.Controllers
                     x.IsAppliedProportionally = y.IsAppliedProportionally;
                     x.ParcelAllocationTypeDefinition = y.ParcelAllocationTypeDefinition;
                     x.IsSourcedFromApi = y.IsSourcedFromApi;
+                    x.SortOrder = y.SortOrder;
                 });
 
             _dbContext.SaveChanges();

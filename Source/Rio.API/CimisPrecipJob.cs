@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 
 namespace Rio.API
@@ -14,19 +15,15 @@ namespace Rio.API
 
     public class CimisPrecipJob : ScheduledBackgroundJobBase<CimisPrecipJob>, ICimisPrecipJob
     {
-        public static HttpClient HttpClient { get; set; }
+        private readonly RioConfiguration _rioConfiguration;
 
-        // todo: break this up a little, including constifying the base URL, the items, the targets, and make the key into a config
         public const string CimisBaseUrl =
-            "http://et.water.ca.gov/api/data?appKey=70d96ca9-efe3-4bed-b53c-f627145a3928&dataItems=day-precip&targets=5";
+            "http://et.water.ca.gov/api/data?dataItems=day-precip&targets=5";
 
-        static CimisPrecipJob()
-        {
-            HttpClient = new HttpClient();
-        }
 
-        public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext) : base("Precipitation Update Job", logger, webHostEnvironment, rioDbContext)
+        public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext, IOptions<RioConfiguration> rioConfiguration) : base("Precipitation Update Job", logger, webHostEnvironment, rioDbContext)
         {
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment> { RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production };
@@ -41,7 +38,7 @@ namespace Rio.API
             }
             var parcelAllocationTypeID = parcelAllocationType.ParcelAllocationTypeID;
             
-            int startYear = DateUtilities.MinimumYear;
+            var startYear = DateUtilities.MinimumYear;
 
             var endDate = DateTime.Now.AddDays(-1);
             var startDate = new DateTime(startYear, 1, 1);
@@ -49,10 +46,14 @@ namespace Rio.API
             var endDateString = endDate.ToString("yyyy-MM-dd");
             var startDateString = startDate.ToString("yyyy-MM-dd");
 
-            var cimisRequestUrl = CimisBaseUrl + $"&startDate={startDateString}&endDate={endDateString}";
+            var appKey = _rioConfiguration.CimisAppKey;
+
+            var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}";
             
-            HttpClient.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
-            var responseContent = HttpClient.GetAsync(cimisRequestUrl).Result.Content.ReadAsStringAsync().Result;
+            var httpClient = new HttpClient();
+
+            httpClient.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
+            var responseContent = httpClient.GetAsync(cimisRequestUrl).Result.Content.ReadAsStringAsync().Result;
 
             var cimisPrecipitationResponse = JsonConvert.DeserializeObject<CimisPrecipitationResponse>(responseContent);
 

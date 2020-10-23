@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[ParcelAllocationType](
 	[IsAppliedProportionally] [bit] NOT NULL,
 	[ParcelAllocationTypeDefinition] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[IsSourcedFromApi] [bit] NOT NULL,
+	[SortOrder] [int] NOT NULL,
  CONSTRAINT [PK_ParcelAllocationType_ParcelAllocationTypeID] PRIMARY KEY CLUSTERED 
 (
 	[ParcelAllocationTypeID] ASC

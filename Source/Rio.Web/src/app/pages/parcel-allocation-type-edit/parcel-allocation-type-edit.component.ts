@@ -71,7 +71,6 @@ export class ParcelAllocationTypeEditComponent implements OnInit, OnDestroy {
   }
 
   isSourcedFromApiValid():boolean{
-    debugger;
     const sourcedfromApiCount = this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally ==  ParcelAllocationTypeApplicationTypeEnum.Api).length ;
     return sourcedfromApiCount <= 1;
   }
