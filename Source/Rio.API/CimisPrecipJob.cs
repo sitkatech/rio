@@ -43,7 +43,7 @@ namespace Rio.API
             
             int startYear = DateUtilities.MinimumYear;
 
-            var endDate = DateTime.Now.ToLocalTime();
+            var endDate = DateTime.Now.AddDays(-1);
             var startDate = new DateTime(startYear, 1, 1);
 
             var endDateString = endDate.ToString("yyyy-MM-dd");
