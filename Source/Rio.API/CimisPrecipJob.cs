@@ -68,7 +68,7 @@ namespace Rio.API
 
                 parcelAllocations.AddRange(_rioDbContext.Parcel.Select(x => new ParcelAllocation()
                 {
-                    AcreFeetAllocated = totalPrecipitation * (decimal)x.ParcelAreaInAcres,
+                    AcreFeetAllocated = totalPrecipitation * (decimal)x.ParcelAreaInAcres / 12.0,
                     ParcelAllocationTypeID = parcelAllocationTypeID,
                     ParcelID = x.ParcelID,
                     WaterYear = year
