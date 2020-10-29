@@ -57,6 +57,7 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   onSubmit(invitePostingForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
     this.model.CreateAccountID = this.currentAccount.AccountID;
+    this.model.CreateUserID = this.currentUser.UserID;
     this.postingService.newPosting(this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;

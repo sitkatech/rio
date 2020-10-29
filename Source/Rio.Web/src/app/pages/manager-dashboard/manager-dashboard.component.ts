@@ -178,12 +178,33 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: 'agDateColumnFilter', width: 140
       },
       {
-        headerName: 'Posted By', valueGetter: function (params: any) {
+        headerName: 'Posted By (User)', valueGetter: function (params: any) {
           return { LinkValue: params.data.PostedByUserID ?? '', LinkDisplay: (params.data.PostedByFullName !== " " ? params.data.PostedByFullName : 'User Not Found') };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/users/" },
         filterValueGetter: function (params: any) {
           return params.data.PostedByFullName !== " " ? params.data.PostedByFullName : 'User Not Found';
+        },
+        comparator: function (id1: any, id2: any) {
+          let link1 = id1.LinkDisplay;
+          let link2 = id2.LinkDisplay;
+          if (link1 < link2) {
+            return -1;
+          }
+          if (link1 > link2) {
+            return 1;
+          }
+          return 0;
+        },
+        sortable: true, filter: true, width: 155
+      },
+      {
+        headerName: 'Posted By (Account)', valueGetter: function (params: any) {
+          return { LinkValue: params.data.PostedByAccountID ?? '', LinkDisplay: (params.data.PostedByAccountName !== " " ? params.data.PostedByAccountName : 'User Not Found') };
+        }, cellRendererFramework: LinkRendererComponent,
+        cellRendererParams: { inRouterLink: "/accounts/" },
+        filterValueGetter: function (params: any) {
+          return params.data.PostedByAccountName !== " " ? params.data.PostedByAccountName : 'Account Not Found';
         },
         comparator: function (id1: any, id2: any) {
           let link1 = id1.LinkDisplay;

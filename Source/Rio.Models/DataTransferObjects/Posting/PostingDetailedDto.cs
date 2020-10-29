@@ -17,6 +17,7 @@ namespace Rio.Models.DataTransferObjects.Posting
         public string PostingStatusDisplayName { get; set; }
 
         public int? PostedByUserID { get; set; }
+        public int PostedByAccountID { get; set; }
         public string PostedByFirstName { get; set; }
         public string PostedByLastName { get; set; }
         public string PostedByEmail { get; set; }
@@ -26,5 +27,6 @@ namespace Rio.Models.DataTransferObjects.Posting
         public int Quantity { get; set; }
         public int AvailableQuantity { get; set; }
         public int? NumberOfOffers { get; set; }
+        public string PostedByAccountName { get; set; }
     }
 }

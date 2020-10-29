@@ -25,10 +25,14 @@ namespace Rio.EFModels.Entities
         public string PostingDescription { get; set; }
         public int PostingStatusID { get; set; }
         public int AvailableQuantity { get; set; }
+        public int? CreateUserID { get; set; }
 
         [ForeignKey(nameof(CreateAccountID))]
         [InverseProperty(nameof(Account.Posting))]
         public virtual Account CreateAccount { get; set; }
+        [ForeignKey(nameof(CreateUserID))]
+        [InverseProperty(nameof(User.Posting))]
+        public virtual User CreateUser { get; set; }
         [ForeignKey(nameof(PostingStatusID))]
         [InverseProperty("Posting")]
         public virtual PostingStatus PostingStatus { get; set; }

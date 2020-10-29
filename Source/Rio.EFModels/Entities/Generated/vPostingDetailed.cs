@@ -29,6 +29,9 @@ namespace Rio.EFModels.Entities
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public int AvailableQuantity { get; set; }
+        public int PostedByAccountID { get; set; }
+        [StringLength(255)]
+        public string PostedByAccountName { get; set; }
         public int? NumberOfOffers { get; set; }
     }
 }

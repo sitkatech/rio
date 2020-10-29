@@ -364,6 +364,11 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Posting_Account_CreateAccountID_AccountID");
 
+                entity.HasOne(d => d.CreateUser)
+                    .WithMany(p => p.Posting)
+                    .HasForeignKey(d => d.CreateUserID)
+                    .HasConstraintName("FK_Posting_User_CreateUserID_UserID");
+
                 entity.HasOne(d => d.PostingStatus)
                     .WithMany(p => p.Posting)
                     .HasForeignKey(d => d.PostingStatusID)
@@ -733,6 +738,8 @@ namespace Rio.EFModels.Entities
                 entity.HasNoKey();
 
                 entity.ToView("vPostingDetailed");
+
+                entity.Property(e => e.PostedByAccountName).IsUnicode(false);
 
                 entity.Property(e => e.PostedByEmail).IsUnicode(false);
 

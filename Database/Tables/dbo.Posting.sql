@@ -12,6 +12,7 @@ CREATE TABLE [dbo].[Posting](
 	[PostingDescription] [varchar](2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[PostingStatusID] [int] NOT NULL,
 	[AvailableQuantity] [int] NOT NULL,
+	[CreateUserID] [int] NULL,
  CONSTRAINT [PK_Posting_PostingID] PRIMARY KEY CLUSTERED 
 (
 	[PostingID] ASC
@@ -33,3 +34,8 @@ ALTER TABLE [dbo].[Posting]  WITH CHECK ADD  CONSTRAINT [FK_Posting_PostingType_
 REFERENCES [dbo].[PostingType] ([PostingTypeID])
 GO
 ALTER TABLE [dbo].[Posting] CHECK CONSTRAINT [FK_Posting_PostingType_PostingTypeID]
+GO
+ALTER TABLE [dbo].[Posting]  WITH CHECK ADD  CONSTRAINT [FK_Posting_User_CreateUserID_UserID] FOREIGN KEY([CreateUserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[Posting] CHECK CONSTRAINT [FK_Posting_User_CreateUserID_UserID]

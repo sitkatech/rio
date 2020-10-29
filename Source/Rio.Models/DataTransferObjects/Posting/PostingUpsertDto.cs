@@ -16,5 +16,7 @@ namespace Rio.Models.DataTransferObjects.Posting
         public string PostingDescription { get; set; }
         [Required]
         public int CreateAccountID { get; set; }
+        [Required]
+        public int CreateUserID { get; set; }
     }
 }

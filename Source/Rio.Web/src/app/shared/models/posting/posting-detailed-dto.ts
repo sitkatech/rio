@@ -7,6 +7,8 @@ export class PostingDetailedDto {
     PostingStatusDisplayName: string;
 
     PostedByUserID: number;
+    PostedByAccountID: number;
+    PostedByAccountName: string;
     PostedByFirstName: string;
     PostedByLastName: string;
     PostedByEmail: string;

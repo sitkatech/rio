@@ -5,6 +5,7 @@ export class PostingUpsertDto {
     Quantity: number;
     PostingDescription: string;
     CreateAccountID: number;
+    CreateUserID: number;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

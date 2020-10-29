@@ -2,8 +2,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-SET ARITHABORT ON
-GO
 CREATE TABLE [dbo].[Account](
 	[AccountID] [int] IDENTITY(1,1) NOT NULL,
 	[AccountNumber]  AS (isnull([AccountID]+(10000),(0))),
