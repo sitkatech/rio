@@ -639,7 +639,7 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<spatial_ref_sys>(entity =>
             {
                 entity.HasKey(e => e.srid)
-                    .HasName("PK__spatial___36B11BD545349F5B");
+                    .HasName("PK__spatial___36B11BD5990DD5CE");
 
                 entity.Property(e => e.srid).ValueGeneratedNever();
 

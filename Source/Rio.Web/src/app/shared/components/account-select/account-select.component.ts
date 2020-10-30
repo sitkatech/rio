@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
@@ -21,7 +21,8 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   public modalReference: NgbModalRef;
 
   constructor(private authenticationService: AuthenticationService,
-              private modalService: NgbModal) { }
+              private modalService: NgbModal,
+              private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -32,7 +33,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
 
         // display the correct active account in the dropdown below the username.
         // on pages which need to react to the active account, include this call in ngInit and put reactive logic in the subscribe statement.
-        this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; });
+        this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; this.cdr.detectChanges(); console.log(this.activeAccount); });
       }
     })
   }

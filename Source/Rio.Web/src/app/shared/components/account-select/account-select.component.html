@@ -8,7 +8,7 @@
 <ng-container *ngIf="!showDropdown() && activeAccount">
     <!--Don't bother showing at all if they are unassigned/disabled/not having accounts-->
     <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
-        routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount.DisplayName}}</a>
+        routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount.ShortAccountDisplayName}}</a>
 </ng-container>
 
 <ng-template #selectAccountModalContent let-modal>

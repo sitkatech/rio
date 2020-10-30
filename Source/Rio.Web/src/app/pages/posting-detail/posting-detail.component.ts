@@ -58,34 +58,34 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
+            const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             this.authenticationService.getActiveAccount().subscribe(account => {
                 if (account) {
                     this.currentAccount = account;
-                    this.offerService.getActiveOffersFromPostingIDForCurrentAccount(postingID, account.AccountID).subscribe(offers => {
-                        this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-                        this.resetModelToPosting();
-                        this.originalPostingType = this.posting.PostingType;
-                        this.offerType = this.isPostingOwner ?
-                            (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                            : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-                        this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-                        this.cdr.detectChanges();
-                    });
+
+                    if (postingID) {
+                        forkJoin(
+                            this.postingService.getPostingFromPostingID(postingID),
+                            this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
+                        ).subscribe(([posting, offers]) => {
+                            this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+                            this.posting = posting instanceof Array
+                                ? null
+                                : posting as PostingDto;
+
+                            this.originalPostingType = this.posting.PostingType;
+                            this.offerType = this.isPostingOwner() ?
+                                (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                                : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+                            this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                            this.cdr.detectChanges();
+
+                            this.resetModelToPosting();
+                        });
+                    }
                 }
                 this.cdr.detectChanges();
             });
-            const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
-            if (postingID) {
-                forkJoin(
-                    this.postingService.getPostingFromPostingID(postingID),
-                    this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
-                ).subscribe(([posting, offers]) => {
-                    this.posting = posting instanceof Array
-                        ? null
-                        : posting as PostingDto;
-                    this.cdr.detectChanges();
-                });
-            }
         });
     }
 
@@ -100,6 +100,13 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     private resetModelToPosting() {
+        if (!this.offers) {
+            throw new Error("Offers not intialized!");
+        }
+        if (!this.posting) {
+            throw new Error("Posting not initialized!");
+        }
+
         let offer = new OfferUpsertDto();
         if (this.offers.length > 0) {
             // get most recent offer
@@ -210,11 +217,11 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     public offersSet(): boolean {
-        return  this.offers !== null &&  this.offers !== undefined;
+        return this.offers !== null && this.offers !== undefined;
     }
 
-    public landownerHasAnyAccounts(){
+    public landownerHasAnyAccounts() {
         var result = this.authenticationService.getAvailableAccounts();
         return result != null && result.length > 0;
-      }
+    }
 }
