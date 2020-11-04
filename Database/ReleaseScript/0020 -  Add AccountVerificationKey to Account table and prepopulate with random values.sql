@@ -14,18 +14,23 @@ DECLARE @RowCount BIGINT;
 DECLARE @CountContainingKey INT = 1;
 DECLARE @NewKey varchar(6);
 
+DECLARE @AlphaUpperBound INT = 27;
+DECLARE @AlphaLowerBound INT = 1;
+DECLARE @IntUpperBound INT = 10;
+DECLARE @IntLowerBound INT =  0;
+
 SELECT @RowCount = COUNT(*) FROM dbo.AccountTemp;
  
 WHILE @CurrentRowNum <= @RowCount
 BEGIN
    WHILE @CountContainingKey > 0
    BEGIN
-		SET @NewKey = (char(64 + ROUND(((27-1-1) * RAND() + 1), 0)) 
-					+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
-					+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
-					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
-					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
-					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar))
+		SET @NewKey = (char(64 + ROUND(((@AlphaUpperBound-@AlphaLowerBound-1) * RAND() + @AlphaLowerBound), 0)) 
+					+ char(64 + ROUND(((@AlphaUpperBound-@AlphaLowerBound-1) * RAND() + @AlphaLowerBound), 0))
+					+ char(64 + ROUND(((@AlphaUpperBound-@AlphaLowerBound-1) * RAND() + @AlphaLowerBound), 0))
+					+ CAST(ROUND(((@IntUpperBound-@IntLowerBound-1) * RAND()), + @IntLowerBound) as varchar)
+					+ CAST(ROUND(((@IntUpperBound-@IntLowerBound-1) * RAND()), + @IntLowerBound) as varchar)
+					+ CAST(ROUND(((@IntUpperBound-@IntLowerBound-1) * RAND()), + @IntLowerBound) as varchar))
 		SELECT @CountContainingKey = COUNT(*) FROM dbo.AccountTemp WHERE AccountVerificationKey = @NewKey
    END
    UPDATE dbo.AccountTemp 
