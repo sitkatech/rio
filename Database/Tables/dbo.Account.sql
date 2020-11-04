@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[Account](
 	[AccountStatusID] [int] NOT NULL,
 	[Notes] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[UpdateDate] [datetime] NULL,
+	[AccountVerificationKey] [varchar](6) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
  CONSTRAINT [PK_Account_AccountID] PRIMARY KEY CLUSTERED 
 (
 	[AccountID] ASC
@@ -16,6 +17,10 @@ CREATE TABLE [dbo].[Account](
  CONSTRAINT [AK_Account_AccountNumber] UNIQUE NONCLUSTERED 
 (
 	[AccountNumber] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [AK_Account_AccountVerificationKey] UNIQUE NONCLUSTERED 
+(
+	[AccountVerificationKey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 

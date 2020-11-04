@@ -78,9 +78,15 @@ namespace Rio.EFModels.Entities
                     .HasName("AK_Account_AccountNumber")
                     .IsUnique();
 
+                entity.HasIndex(e => e.AccountVerificationKey)
+                    .HasName("AK_Account_AccountVerificationKey")
+                    .IsUnique();
+
                 entity.Property(e => e.AccountName).IsUnicode(false);
 
                 entity.Property(e => e.AccountNumber).HasComputedColumnSql("(isnull([AccountID]+(10000),(0)))");
+
+                entity.Property(e => e.AccountVerificationKey).IsUnicode(false);
 
                 entity.Property(e => e.Notes).IsUnicode(false);
 
@@ -639,7 +645,7 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<spatial_ref_sys>(entity =>
             {
                 entity.HasKey(e => e.srid)
-                    .HasName("PK__spatial___36B11BD5990DD5CE");
+                    .HasName("PK__spatial___36B11BD545349F5B");
 
                 entity.Property(e => e.srid).ValueGeneratedNever();
 

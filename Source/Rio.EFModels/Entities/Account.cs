@@ -49,14 +49,16 @@ namespace Rio.EFModels.Entities
             return GetByAccountID(dbContext, accountID);
         }
 
-        public static AccountDto CreateAccountEntity(RioDbContext dbContext, AccountUpdateDto accountUpdateDto)
+        public static AccountDto CreateAccountEntity(RioDbContext dbContext, AccountUpdateDto accountUpdateDto,
+            string rioConfigurationVerificationKeyChars)
         {
             var account = new Account()
             {
                 AccountStatusID = accountUpdateDto.AccountStatusID,
                 Notes = accountUpdateDto.Notes,
                 AccountName = accountUpdateDto.AccountName,
-                UpdateDate = DateTime.UtcNow
+                UpdateDate = DateTime.UtcNow,
+                AccountVerificationKey = GenerateAndVerifyAccountVerificationKey(dbContext, rioConfigurationVerificationKeyChars)
             };
 
             dbContext.Account.Add(account);
@@ -64,6 +66,30 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(account).Reload();
 
             return GetByAccountID(dbContext, account.AccountID);
+        }
+
+        private static string GenerateAndVerifyAccountVerificationKey(RioDbContext dbContext,
+            string rioConfigurationVerificationKeyChars)
+        {
+            var currentAccountVerificationKeys = dbContext.Account.Select(x => x.AccountVerificationKey).ToList();
+            var accountVerificationKey = GenerateAccountVerificationKey(rioConfigurationVerificationKeyChars);
+            while (currentAccountVerificationKeys.Contains(accountVerificationKey))
+            {
+                accountVerificationKey = GenerateAccountVerificationKey(rioConfigurationVerificationKeyChars);
+            }
+
+            return accountVerificationKey;
+        }
+
+        private static string GenerateAccountVerificationKey(string rioConfigurationVerificationKeyChars)
+        {
+
+            var applicableVerificationKeyChars = rioConfigurationVerificationKeyChars.Split(',');
+            Random random = new Random();
+
+            return 
+                new string(Enumerable.Repeat(applicableVerificationKeyChars[0], 3).Select(x => x[random.Next(x.Length)]).ToArray()) + 
+                new string(Enumerable.Repeat(applicableVerificationKeyChars[1], 3).Select(x => x[random.Next(x.Length)]).ToArray());
         }
 
         public static AccountDto SetAssociatedUsers(RioDbContext dbContext, AccountDto accountDto, List<int> userIDs, out List<int> addedUserIDs)
