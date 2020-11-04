@@ -10,22 +10,30 @@ from dbo.Account
 go
 
 DECLARE @CurrentRowNum INT = 1;
-DECLARE @RowCnt BIGINT;
+DECLARE @RowCount BIGINT;
+DECLARE @CountContainingKey INT = 1;
+DECLARE @NewKey varchar(6);
 
-SELECT @RowCnt = COUNT(*) FROM dbo.AccountTemp;
+SELECT @RowCount = COUNT(*) FROM dbo.AccountTemp;
  
-WHILE @CurrentRowNum <= @RowCnt
+WHILE @CurrentRowNum <= @RowCount
 BEGIN
+   WHILE @CountContainingKey > 0
+   BEGIN
+		SET @NewKey = (char(64 + ROUND(((27-1-1) * RAND() + 1), 0)) 
+					+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
+					+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
+					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
+					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
+					+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar))
+		SELECT @CountContainingKey = COUNT(*) FROM dbo.AccountTemp WHERE AccountVerificationKey = @NewKey
+   END
    UPDATE dbo.AccountTemp 
-   SET AccountVerificationKey = (char(64 + ROUND(((27-1-1) * RAND() + 1), 0)) 
-+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
-+ char(64 + ROUND(((27-1-1) * RAND() + 1), 0))
-+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
-+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar)
-+ CAST(ROUND(((10-0-1) * RAND()), 0) as varchar))
+   SET AccountVerificationKey = @NewKey
    WHERE RowNum = @CurrentRowNum;
     
    SET @CurrentRowNum = @CurrentRowNum + 1 
+   SET @CountContainingKey = 1
 END
 
 alter table dbo.Account
