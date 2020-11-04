@@ -7,7 +7,7 @@ set AccountVerificationKey = concat(
 	char(65 + cast(substring(cast(AccountNumber as varchar), 5, 1) as int)),
 	char(65 + cast(substring(cast(AccountNumber as varchar), 4, 1) as int)),
 	char(65 + cast(substring(cast(AccountNumber as varchar), 3, 1) as int)),
-	RIGHT('000'+CAST((AccountID * AccountNumber) % 1000 AS VARCHAR(3)),3)
+	RIGHT('000'+CAST((AccountID * AccountNumber) % 999 AS VARCHAR(3)),3)
 	)
 go
 
