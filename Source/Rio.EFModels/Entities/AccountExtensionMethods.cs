@@ -28,6 +28,7 @@ namespace Rio.EFModels.Entities
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
                 Notes = account.Notes,
+                AccountVerificationKey = account.AccountVerificationKey,
                 Users = userSimpleDtos,
                 NumberOfUsers = userSimpleDtos.Count,
                 AccountStatus = account.AccountStatus.AsDto(),

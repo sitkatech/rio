@@ -5,6 +5,7 @@ export class AccountDto {
     AccountName: string;
     AccountNumber: number;
     Notes: string;
+    AccountVerificationKey: string;
     AccountStatus: AccountStatusDto;
     Users: Array<UserSimpleDto>;
     AccountDisplayName: string;

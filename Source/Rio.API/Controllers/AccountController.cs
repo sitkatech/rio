@@ -95,7 +95,7 @@ namespace Rio.API.Controllers
                 return NotFound($"Could not find an Account Status with the ID {accountUpdateDto.AccountStatusID}");
             }
 
-            var updatedUserDto = Account.CreateAccountEntity(_dbContext, accountUpdateDto);
+            var updatedUserDto = Account.CreateAccountEntity(_dbContext, accountUpdateDto, _rioConfiguration.VerificationKeyChars);
             return Ok(updatedUserDto);
         }
 

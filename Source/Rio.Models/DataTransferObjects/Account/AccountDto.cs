@@ -9,6 +9,7 @@ namespace Rio.Models.DataTransferObjects.Account
         public int? AccountNumber { get; set; }
         public string AccountName { get; set; }
         public string Notes { get; set; }
+        public string AccountVerificationKey { get; set; }
         public List<UserSimpleDto> Users { get; set; }
         public AccountStatusDto AccountStatus { get; set; }
         public string AccountDisplayName { get; set; }
