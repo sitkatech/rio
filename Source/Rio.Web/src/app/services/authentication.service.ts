@@ -210,12 +210,31 @@ export class AuthenticationService {
     return role === RoleEnum.DemoUser || role === RoleEnum.Admin;
   }
 
+  public isUserALandOwnerOrDemoUserOrAdministrator(user: UserDto): boolean {
+    let role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.DemoUser || role === RoleEnum.Admin || role == RoleEnum.LandOwner;
+  }
+
+  public isCurrentUserNullOrUndefined(): boolean {
+    return !this.currentUser;
+  }
+
+  public isCurrentUserDisabled(): boolean {
+    return this.isUserRoleDisabled(this.currentUser);
+  }
+
   public isCurrentUserAnAdministrator(): boolean {
     return this.isUserAnAdministrator(this.currentUser);
   }
 
   public isCurrentUserADemoUserOrAdministrator(): boolean {
     return this.isUserADemoUserOrAdministrator(this.currentUser);
+  }
+
+  public isCurrentUserALandOwnerOrDemoUserOrAdministrator(): boolean {
+    return this.isUserALandOwnerOrDemoUserOrAdministrator(this.currentUser);
   }
 
   public isUserUnassigned(user: UserDto): boolean {
@@ -230,10 +249,6 @@ export class AuthenticationService {
       ? user.Role.RoleID
       : null;
     return role === RoleEnum.Disabled;
-  }
-
-  public isCurrentUserNullOrUndefined(): boolean {
-    return !this.currentUser;
   }
 
   public hasCurrentUserAcknowledgedDisclaimer(): boolean {

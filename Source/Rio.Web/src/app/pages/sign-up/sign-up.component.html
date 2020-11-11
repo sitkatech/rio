@@ -1,1 +1,45 @@
-<p>sign-up works!</p>
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb breadcrumb-empty">
+                <li class="breadcrumb-item active" aria-current="page">Sign Up</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <div class="row mb-3">
+        <div class="col">
+            <h2 class="d-inline-block">Signup for the Platform</h2>
+
+            <div class="mt-2">
+                <rio-custom-rich-text [customRichTextTypeID]="introRichText"></rio-custom-rich-text>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <div>
+                <rio-custom-rich-text [customRichTextTypeID]="stepOneRichText"></rio-custom-rich-text>
+            </div>
+            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio mt-1" [ngClass]="{'disabled' : !isCurrentUserNullOrUndefined()}">Create User Profile</a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <div>
+                <rio-custom-rich-text [customRichTextTypeID]="stepTwoRichText"></rio-custom-rich-text>
+            </div>
+            <a routerLink="/add-water-accounts" class="btn btn-rio mt-1" [ngClass]="{'disabled' : (isCurrentUserNullOrUndefined() || isCurrentUserDisabled())}">Enter Account Verification Key</a>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col">
+            <div>
+                <rio-custom-rich-text [customRichTextTypeID]="stepThreeRichText"></rio-custom-rich-text>
+            </div>
+            <a href="/manage-water-accounts" class="btn btn-rio mt-1" [ngClass]="{'disabled' : !isCurrentUserLandownerDemoUserOrAdmin()}">Manage Water Accounts</a>
+        </div>
+    </div>
+</div>
