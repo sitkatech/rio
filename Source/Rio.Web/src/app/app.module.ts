@@ -67,6 +67,7 @@ import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scena
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
+import { SignUpComponent } from './pages/sign-up/sign-up.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -119,7 +120,8 @@ export function init_app(appLoadService: AppInitService) {
     ManagedRechargeScenarioComponent,
     RolesAndPermissionsComponent,
     ParcelAllocationTypeEditComponent,
-    TrainingVideosComponent
+    TrainingVideosComponent,
+    SignUpComponent
   ],
   imports: [
     AppRoutingModule,

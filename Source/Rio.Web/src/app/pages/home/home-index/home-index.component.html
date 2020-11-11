@@ -44,14 +44,15 @@
                 <div class="card-body" *ngIf="!currentUser">
                     <div class="row">
                         <div class="col">
-                            Log in to view your Water Account. Create an Account if you don't have one yet.
+                            Log in to view your Water Account. Sign up to create a Water Account if you don't have one yet.
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col mx-1">
                             <a href="javascript:void(0);" (click)="login()" class="btn btn-rio mr-2 mt-1">Login</a>
-                            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio mt-1">Create
-                                Account</a>
+                            <a routerLink="/sign-up" class="btn btn-rio mr-2 mt-1">Sign Up</a>
+                            <!-- <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio mt-1">Create
+                                Account</a> -->
                         </div>
                     </div>
                     <hr />
