@@ -12,5 +12,7 @@ export enum CustomRichTextType {
   SignUp = 11,
   SignUpStepOne = 12,
   SignUpStepTwo = 13,
-  SignUpStepThree = 14
+  SignUpStepThree = 14,
+  WaterAccountsAdd = 15,
+  WaterAccountsAddLegalText = 16
 }

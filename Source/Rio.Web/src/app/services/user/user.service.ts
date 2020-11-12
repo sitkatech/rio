@@ -58,6 +58,11 @@ export class UserService {
         let route = `/users/${userID}`;
         return this.apiService.putToApi(route, userUpdateDto);
     }
+
+    addAccounts(userID: number, userEditAccountsDto: UserEditAccountsDto) {
+        let route = `/users/${userID}/add-accounts`;
+        return this.apiService.putToApi(route, userEditAccountsDto);
+    }
     
     editAccounts(userID: number, userEditAccountsDto: UserEditAccountsDto): Observable<UserDto> {
         let route = `/users/${userID}/edit-accounts`;

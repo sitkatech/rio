@@ -68,6 +68,8 @@ import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/role
 import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
+import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
+import { WaterAccountsManageComponent } from './pages/water-accounts-manage/water-accounts-manage.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -121,7 +123,9 @@ export function init_app(appLoadService: AppInitService) {
     RolesAndPermissionsComponent,
     ParcelAllocationTypeEditComponent,
     TrainingVideosComponent,
-    SignUpComponent
+    SignUpComponent,
+    WaterAccountsAddComponent,
+    WaterAccountsManageComponent
   ],
   imports: [
     AppRoutingModule,

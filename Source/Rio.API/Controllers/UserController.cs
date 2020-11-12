@@ -242,23 +242,69 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
-        [HttpPut("/users/{userID}/edit-accounts")]
-        [UserManageFeature]
-        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)
+        [HttpPut("/users/{userID}/add-accounts")]
+        [UserViewFeature]
+        public ActionResult<UserDto> AddAccounts([FromRoute] int userID,
+            [FromBody] UserEditAcountsDto userEditAccountsDto)
         {
-            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            var userFromUrlDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
-            if (userDto == null)
+            if (userFromUrlDto == null)
             {
                 return NotFound($"Could not find an User with the ID {userID}.");
             }
 
-            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
+            if (userFromContextDto == null)
             {
-                return NotFound("One or more of the Account IDs was invalid.");
+                return NotFound($"Could not find Current User");
             }
 
-            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            if (userFromUrlDto.UserID != userFromContextDto.UserID &&
+                userFromContextDto.Role.RoleID != (int) RoleEnum.Admin)
+            {
+                return BadRequest($"Cannot update accounts for another user");
+            }
+
+            if (AddAccountsToUserAndSendAccountsAddedEmail(userEditAccountsDto, userFromUrlDto, out var updatedUserDto,
+                out var operationError))
+            {
+                return operationError;
+            }
+
+            if (updatedUserDto.Role.RoleID == (int) RoleEnum.Unassigned)
+            {
+                var userUpsertDto = new UserUpsertDto
+                {
+                    Email = updatedUserDto.Email,
+                    FirstName = updatedUserDto.FirstName,
+                    LastName = updatedUserDto.LastName,
+                    RoleID = (int)RoleEnum.LandOwner,
+                    PhoneNumber = updatedUserDto.Phone
+                };
+
+                updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, updatedUserDto.UserID, userUpsertDto);
+            }
+
+            return Ok(updatedUserDto);
+        }
+
+        private bool AddAccountsToUserAndSendAccountsAddedEmail(UserEditAcountsDto userEditAccountsDto, UserDto userDto,
+            out UserDto updatedUserDto, out ActionResult<UserDto> operationError)
+        {
+            operationError = null;
+            updatedUserDto = null;
+
+            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
+            {
+                {
+                    operationError = NotFound("One or more of the Account IDs was invalid.");
+                    return true;
+                }
+            }
+
+            updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs,
+                out var addedAccountIDs);
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
             if (addedAccounts != null && addedAccounts.Count > 0)
@@ -271,6 +317,26 @@ namespace Rio.API.Controllers
                         EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
                     SendEmailMessage(smtpClient, mailMessage);
                 }
+            }
+
+            return false;
+        }
+
+        [HttpPut("/users/{userID}/edit-accounts")]
+        [UserManageFeature]
+        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)
+        {
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+
+            if (userDto == null)
+            {
+                return NotFound($"Could not find an User with the ID {userID}.");
+            }
+
+            if (AddAccountsToUserAndSendAccountsAddedEmail(userEditAccountsDto, userDto, out var updatedUserDto,
+                out var operationError))
+            {
+                return operationError;
             }
 
             return Ok(updatedUserDto);

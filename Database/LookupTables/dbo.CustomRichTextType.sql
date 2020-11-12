@@ -13,7 +13,9 @@ USING (VALUES
 (11, 'SignUp', 'Sign Up'),
 (12, 'SignUpStepOne', 'Sign Up Step One'),
 (13, 'SignUpStepTwo', 'Sign Up Step Two'),
-(14, 'SignUpStepThree', 'Sign Up Step Three')
+(14, 'SignUpStepThree', 'Sign Up Step Three'),
+(15, 'WaterAccountsAdd', 'Water Accounts Add'),
+(16, 'WaterAccountsAddLegalText', 'Water Accounts Add Legal Text')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID
