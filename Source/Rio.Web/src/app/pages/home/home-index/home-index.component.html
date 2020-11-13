@@ -18,7 +18,7 @@
         <span>
             Welcome {{currentUser.FullName}}. You have successfully logged in to the {{platformLongName()}},
             but your
-            account is not yet configured. <strong><a routerLink="/water-accounts/add">Enter an Account Verification Key</a> to finish setting up your account</strong>. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or
+            account is not yet configured. <strong><a routerLink="/add-water-accounts">Enter an Account Verification Key</a> to finish setting up your account</strong>. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or
             comments.
         </span>
     </ngb-alert>
@@ -79,7 +79,7 @@
                                 Dashboard</a>
                             <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1 w-100" routerLink="/landowner-dashboard">Landowner
                                 Dashboard</a>
-                            <a *ngIf="userIsUnassigned()" class="btn btn-rio mb-1 w-100" routerLink="/water-accounts/add">Enter Account Verification Key</a>
+                            <a *ngIf="userIsUnassigned()" class="btn btn-rio mb-1 w-100" routerLink="/add-water-accounts">Enter Account Verification Key</a>
                         </div>
                     </div>
                     <div class="row">
