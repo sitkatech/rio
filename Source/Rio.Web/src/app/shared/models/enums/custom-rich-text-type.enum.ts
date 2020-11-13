@@ -10,9 +10,9 @@ export enum CustomRichTextType {
   SetWaterAllocation = 9,
   TrainingVideos = 10,
   CreateUserProfile = 11,
-  SignUpStepOne = 12,
-  SignUpStepTwo = 13,
-  SignUpStepThree = 14,
+  CreateUserProfileStepOne = 12,
+  CreateUserProfileStepTwo = 13,
+  CreateUserProfileStepThree = 14,
   WaterAccountsAdd = 15,
   WaterAccountsAddLegalText = 16
 }

@@ -14,9 +14,9 @@ export class SignUpComponent implements OnInit {
   public currentUser: UserDto;
   
   public introRichText : number = CustomRichTextType.CreateUserProfile;
-  public stepOneRichText : number = CustomRichTextType.SignUpStepOne;
-  public stepTwoRichText : number = CustomRichTextType.SignUpStepTwo;
-  public stepThreeRichText : number = CustomRichTextType.SignUpStepThree;
+  public stepOneRichText : number = CustomRichTextType.CreateUserProfileStepOne;
+  public stepTwoRichText : number = CustomRichTextType.CreateUserProfileStepTwo;
+  public stepThreeRichText : number = CustomRichTextType.CreateUserProfileStepThree;
 
   constructor(
     private authenticationService : AuthenticationService
@@ -26,6 +26,11 @@ export class SignUpComponent implements OnInit {
       this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
         this.currentUser = currentUser;
     });
+  }
+
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
   }
 
   public isCurrentUserNullOrUndefined(): boolean {
