@@ -208,7 +208,7 @@ namespace Rio.EFModels.Entities
             return dbContext.User.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
         }
 
-        public static UserDto SetAssociatedAccounts(RioDbContext dbContext, int userID, List<int> accountIDs,
+        public static void SetAssociatedAccounts(RioDbContext dbContext, int userID, List<int> accountIDs,
             out List<int> addedAccountIDs)
         {
             var newAccountUsers = accountIDs.Select(accountID => new AccountUser() { UserID = userID, AccountID = accountID }).ToList();
@@ -223,8 +223,6 @@ namespace Rio.EFModels.Entities
             existingAccountUsers.Merge(newAccountUsers, allInDatabase, (x, y) => x.UserID == y.UserID && x.AccountID == y.AccountID);
 
             dbContext.SaveChanges();
-
-            return GetByUserID(dbContext, userID);
         }
 
         public static bool CheckIfUsersAreAdministrators(RioDbContext dbContext, List<int> userIDs)

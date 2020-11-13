@@ -261,23 +261,23 @@ namespace Rio.API.Controllers
             var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
             var allAccountIDsForUser = userEditAccountsDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
 
-            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser, out var addedAccountIDs);
+            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser, out var addedAccountIDs);
 
-            if (updatedUserDto.Role.RoleID == (int) RoleEnum.Unassigned)
+            if (userFromContextDto.Role.RoleID == (int) RoleEnum.Unassigned)
             {
                 var userUpsertDto = new UserUpsertDto
                 {
-                    Email = updatedUserDto.Email,
-                    FirstName = updatedUserDto.FirstName,
-                    LastName = updatedUserDto.LastName,
+                    Email = userFromContextDto.Email,
+                    FirstName = userFromContextDto.FirstName,
+                    LastName = userFromContextDto.LastName,
                     RoleID = (int)RoleEnum.LandOwner,
-                    PhoneNumber = updatedUserDto.Phone
+                    PhoneNumber = userFromContextDto.Phone
                 };
 
-                updatedUserDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, updatedUserDto.UserID, userUpsertDto);
+                userFromContextDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, userFromContextDto.UserID, userUpsertDto);
             }
 
-            return Ok(updatedUserDto);
+            return Ok(userFromContextDto);
         }
 
         [HttpPut("/users/{userID}/edit-accounts")]
@@ -296,21 +296,21 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the Account IDs was invalid.");
             }
 
-            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
             if (addedAccounts != null && addedAccounts.Count > 0)
             {
-                SendEmailToLandownerAndAdmins(updatedUserDto, addedAccounts);
+                SendEmailToLandownerAndAdmins(userDto, addedAccounts);
             }
 
-            return Ok(updatedUserDto);
+            return Ok(userDto);
         }
 
-        private void SendEmailToLandownerAndAdmins(UserDto updatedUserDto, List<AccountDto> addedAccounts)
+        private void SendEmailToLandownerAndAdmins(UserDto userDto, List<AccountDto> addedAccounts)
         {
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
+            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, userDto, addedAccounts);
             foreach (var mailMessage in mailMessages)
             {
                 SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
