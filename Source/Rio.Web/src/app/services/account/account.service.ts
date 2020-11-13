@@ -31,13 +31,8 @@ export class AccountService {
   }
 
   public getAccountByAccountVerificationKey(accountVerificationKey: string): Observable<any>{
-    let httpParams = new HttpParams();
-    httpParams = httpParams.append("accountVerificationKey", accountVerificationKey);
-    const apiHostName = environment.apiHostName;
-    const route = `https://${apiHostName}/account`;
-    return this.httpClient.get(route, {
-        params: httpParams
-    });
+    const route = `/account/account-verification-key/${accountVerificationKey}`
+    return this.apiService.getFromApi(route);
   }
 
   public updateAccount(accountID: number, accountUpdateDto: any): Observable<AccountDto> {

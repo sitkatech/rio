@@ -14,107 +14,116 @@
     <app-alert-display></app-alert-display>
     <ngb-alert *ngIf="currentUserIsAdmin()" [type]="'info'" [dismissible]="false">
         <span>
-            Administrators cannot register accounts through this page, it can be accessed for support reasons only. 
-            To edit a particular user's accounts, please use the 'Edit Accounts' link found by selecting a user from the <a routerLink="/users">User list</a>.
+            You are an Adminstrator of the Water Accounting Platform. 
+            This page is optimized for user by Authorized Users such as landowners and their partners. 
+            You have access to this page so you can view and understand the landowner user experience, 
+            but it is more effecient to manage Water Accounts and Users through the <a routerLink="/users">User Index</a> page.
         </span>
     </ngb-alert>
     <div class="row mb-2">
         <div class="col">
             <h2 class="d-inline-block">Add Water Accounts to your Profile</h2>
-
             <div class="mt-2">
                 <rio-custom-rich-text [customRichTextTypeID]="introRichText"></rio-custom-rich-text>
             </div>
         </div>
     </div>
-    <div class="row mb-2">
-        <div class="col-sm-7 col-md-6 col-lg-3 mb-1">
-            <input type="text" class="form-control" [(ngModel)]="verificationKeyToSearchFor"
-                (ngModelChange)="turnOffAccountSearchAlerts()" />
+    <div class="row">
+        <div class="col-md-8 col-lg-6 order-2 order-md-1">
+            <div class="row mb-2">
+                <div class="col-sm-7 col-md-6 col-lg-6 mb-1">
+                    <input type="text" class="form-control" [(ngModel)]="verificationKeyToSearchFor"
+                        (ngModelChange)="turnOffAccountSearchErrors()" />
+                </div>
+                <div class="col-sm-5 col-md-4">
+                    <button class="btn btn-rio float-right float-sm-none" (click)="findAccount()">Find Account</button>
+                </div>
+                <div class="col-12">
+                    <small><a routerLink="/help">Didn't receieve a mailer? Request Support to contact the district</a></small>
+                </div>
+            </div>
+            <div class="row" *ngIf="accountNotFound">
+                <div class="col-12">
+                    <div class="alert alert-danger alert-dismissible">
+                        Could not find an account with the Account Verification Key 
+                        <strong>{{verificationKeyToSearchFor}}</strong>.
+                        Please verify your key is correct and try again.
+                        <button type="button" class="close" data-dismiss="alert" (click)="accountNotFound=false"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="accountAlreadyPresentInList">
+                <div class="col-12">
+                    <div class="alert alert-danger alert-dismissible">
+                        Account with the Account Verification Key 
+                        <strong>{{verificationKeyToSearchFor}}</strong>
+                        is already present in the list. 
+                        Please update search request if more accounts are desired.
+                        <button type="button" class="close" data-dismiss="alert" (click)="accountAlreadyPresentInList=false"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="userAlreadyHasAccessToAccount">
+                <div class="col-12">
+                    <div class="alert alert-danger alert-dismissible">
+                        Account with the Account Verification Key 
+                        <strong>{{verificationKeyToSearchFor}}</strong> 
+                        is already in the accounts you actively manage. 
+                        Please update search request if more accounts are desired.
+                        <button type="button" class="close" data-dismiss="alert" (click)="userAlreadyHasAccessToAccount=false"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="accountSuccessfullyFoundAndAddedToList">
+                <div class="col-12">
+                    <div class="alert alert-success alert-dismissible">
+                        Account with the Account Verification Key 
+                        <strong>{{lastSuccessfullyAddedAccountVerificationKey}}</strong> 
+                        was found and has been added to the list! 
+                        Add more accounts if desired, otherwise make sure to enter your name below and click 'Register Account(s)'.
+                        <button type="button" class="close" data-dismiss="alert" (click)="accountSuccessfullyFoundAndAddedToList=false"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="(accountsToAdd && accountsToAdd.length > 0) || currentUserIsAdmin()">
+                <div class="row mb-2" [ngClass]="i == 0 ? 'mt-4': 'mt-2'" *ngFor="let account of accountsToAdd; let i = index">
+                    <div class="col">
+                        <i class="fas fa-trash remove-account" title="Remove Account from Accounts to Add"
+                            (click)="accountsToAdd.splice(i,1)"></i>
+                        Account #{{account.AccountNumber}} - {{account.AccountName}}
+                    </div>
+                </div>
+                <div class="row mt-4 mb-2">
+                    <div class="col-12">
+                        <rio-custom-rich-text [customRichTextTypeID]="legalText"></rio-custom-rich-text>               
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-7 col-md-6 mb-1">
+                        <input type="text" class="form-control" [(ngModel)]="confirmedFullNameForRegistration" />
+                        {{currentUser?.FullName}}
+                    </div>
+                    <div class="col-sm-5 col-md-6">
+                        <button class="btn btn-rio float-right float-sm-none" [disabled]="!isFullNameConfirmedForRegistration() || currentUserIsAdmin()" (click)="registerAccounts()">Register Account(s)</button>
+                    </div>
+                </div>
+            </ng-container>
         </div>
-        <div class="col-sm-5 col-md-3">
-            <button class="btn btn-rio float-right float-sm-none" (click)="findAccount()">Find Account</button>
-        </div>
-        <div class="col-12">
-            <small><a routerLink="/help">Didn't receieve a mailer? Request Support to contact the district</a></small>
+        <div class="col-md-4 col-lg-6 order-1 order-md-2 mb-2">
+            Example mailer with Account Verification Key
+            <img src="../../../assets/main/images/mailer_placeholder.png">
         </div>
     </div>
-    <div class="row" *ngIf="accountNotFound">
-        <div class="col-sm-10 col-md-8 col-lg-6">
-            <div class="alert alert-danger alert-dismissible">
-                Could not find an account with the Account Verification Key 
-                <strong>{{verificationKeyToSearchFor}}</strong>.
-                Please verify your key is correct and try again.
-                <button type="button" class="close" data-dismiss="alert" (click)="accountNotFound=false"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="row" *ngIf="accountAlreadyPresentInList">
-        <div class="col-sm-6">
-            <div class="alert alert-danger alert-dismissible">
-                Account with the Account Verification Key 
-                <strong>{{verificationKeyToSearchFor}}</strong>
-                is already present in the list. <br />
-                Please update search request if more accounts are desired.
-                <button type="button" class="close" data-dismiss="alert" (click)="accountAlreadyPresentInList=false"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="row" *ngIf="userAlreadyHasAccessToAccount">
-        <div class="col-sm-6">
-            <div class="alert alert-danger alert-dismissible">
-                Account with the Account Verification Key 
-                <strong>{{verificationKeyToSearchFor}}</strong> 
-                is already in the accounts you actively manage. 
-                Please update search request if more accounts are desired.
-                <button type="button" class="close" data-dismiss="alert" (click)="userAlreadyHasAccessToAccount=false"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="row" *ngIf="accountSuccessfullyFoundAndAddedToList">
-        <div class="col-sm-6">
-            <div class="alert alert-success alert-dismissible">
-                Account with the Account Verification Key 
-                <strong>{{lastSuccessfullyAddedAccountVerificationKey}}</strong> 
-                was found and has been added to the list! 
-                Add more accounts if desired, otherwise make sure to enter your name below and click 'Register Account(s)'.
-                <button type="button" class="close" data-dismiss="alert" (click)="accountSuccessfullyFoundAndAddedToList=false"
-                    aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <ng-container *ngIf="(accountsToAdd && accountsToAdd.length > 0) || currentUserIsAdmin()">
-        <div class="row mb-2" [ngClass]="i == 0 ? 'mt-4': 'mt-2'" *ngFor="let account of accountsToAdd; let i = index">
-            <div class="col">
-                <i class="fas fa-trash remove-account" title="Remove Account from Accounts to Add"
-                    (click)="accountsToAdd.splice(i,1)"></i>
-                Account #{{account.AccountNumber}} - {{account.AccountName}}
-            </div>
-        </div>
-        <div class="row mt-4 mb-2">
-            <div class="col col-sm-10 col-md-8 col-lg-6">
-                <rio-custom-rich-text [customRichTextTypeID]="legalText"></rio-custom-rich-text>               
-            </div>
-        </div>
-        <div class="row mb-2">
-            <div class="col-sm-7 col-md-6 col-lg-3 mb-1">
-                <input type="text" class="form-control" [(ngModel)]="confirmedFullNameForRegistration" />
-                {{currentUser?.FullName}}
-            </div>
-            <div class="col-sm-5 col-md-6">
-                <button class="btn btn-rio float-right float-sm-none" [disabled]="!isFullNameConfirmedForRegistration() || currentUserIsAdmin()" (click)="registerAccounts()">Register Account(s)</button>
-            </div>
-        </div>
-    </ng-container>
 </div>

@@ -85,7 +85,9 @@ export class WaterAccountsAddComponent implements OnInit {
       return;
     }
 
-    this.turnOffAccountSearchAlerts();
+    this.turnOffAccountSearchErrors();   
+    this.accountSuccessfullyFoundAndAddedToList = false;
+    
     this.searchingForAccount = true;
     this.accountService.getAccountByAccountVerificationKey(this.verificationKeyToSearchFor).subscribe(accountDto => {
       this.searchingForAccount = false;
@@ -108,11 +110,10 @@ export class WaterAccountsAddComponent implements OnInit {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
-  public turnOffAccountSearchAlerts() {
+  public turnOffAccountSearchErrors() {
     this.accountAlreadyPresentInList = false;
     this.accountNotFound = false;
     this.userAlreadyHasAccessToAccount = false;
-    this.accountSuccessfullyFoundAndAddedToList = false;
   }
 
   public isFullNameConfirmedForRegistration(): boolean {
@@ -127,13 +128,12 @@ export class WaterAccountsAddComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     let userEditAccountsDto = new UserEditAccountsDto();
-    userEditAccountsDto.AccountIDs = this.currentUserAccounts.map(x => x.AccountID);
-    userEditAccountsDto.AccountIDs.push(...this.accountsToAdd.map(x => x.AccountID));
+    userEditAccountsDto.AccountIDs = this.accountsToAdd.map(x => x.AccountID);
 
     this.updatingUserRole = this.currentUser.Role.RoleID == RoleEnum.Unassigned;
-    this.userService.addAccounts(this.currentUser.UserID, userEditAccountsDto).subscribe(async user => {
+    this.userService.addAccountsToCurrentUser(userEditAccountsDto).subscribe(user => {
       this.isLoadingSubmit = false;
-      this.router.navigateByUrl(`/manage-water-accounts`).then(x => {
+      this.router.navigateByUrl(`/water-accounts/manage`).then(x => {
         this.alertService.pushAlert(new Alert(`Water Accounts successfully added!`, AlertContext.Success));
         if (this.updatingUserRole) {
           this.alertService.pushAlert(new Alert(`Congratulations! You have completed sign-up for the ${environment.platformShortName}`, AlertContext.Success));

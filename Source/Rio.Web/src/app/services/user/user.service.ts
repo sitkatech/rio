@@ -59,8 +59,8 @@ export class UserService {
         return this.apiService.putToApi(route, userUpdateDto);
     }
 
-    addAccounts(userID: number, userEditAccountsDto: UserEditAccountsDto) {
-        let route = `/users/${userID}/add-accounts`;
+    addAccountsToCurrentUser(userEditAccountsDto: UserEditAccountsDto) {
+        let route = `/user/add-accounts`;
         return this.apiService.putToApi(route, userEditAccountsDto);
     }
     

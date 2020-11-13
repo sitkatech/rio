@@ -64,23 +64,10 @@ namespace Rio.API.Controllers
             return Ok(accountDto);
         }
 
-        [HttpGet("/account")]
-        public ActionResult<AccountDto> GetAccountByField([FromQuery] string accountVerificationKey)
+        [HttpGet("/account/account-verification-key/{accountVerificationKey}")]
+        public ActionResult<AccountDto> GetAccountByAccountVerificationKey([FromRoute] string accountVerificationKey)
         {
-            if (string.IsNullOrEmpty(accountVerificationKey))
-            {
-                return BadRequest(new
-                {
-                    validationMessage = "No arguments provided, please provide an argument to filter by."
-                });
-            }
-
-            AccountDto accountDto = null;
-            if (accountVerificationKey != null)
-            {
-                accountDto = Account.GetByAccountVerificationKey(_dbContext, accountVerificationKey);
-            }
-            
+            var accountDto = Account.GetByAccountVerificationKey(_dbContext, accountVerificationKey);
             if (accountDto == null)
             {
                 return NotFound();

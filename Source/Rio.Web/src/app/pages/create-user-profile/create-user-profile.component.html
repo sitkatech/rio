@@ -34,7 +34,7 @@
             <div>
                 <rio-custom-rich-text [customRichTextTypeID]="stepTwoRichText"></rio-custom-rich-text>
             </div>
-            <a routerLink="/add-water-accounts" class="btn btn-rio mt-1" [ngClass]="{'disabled' : (isCurrentUserNullOrUndefined() || isCurrentUserDisabled())}">Enter Account Verification Key</a>
+            <a routerLink="/water-accounts/add" class="btn btn-rio mt-1" [ngClass]="{'disabled' : (isCurrentUserNullOrUndefined() || isCurrentUserDisabled())}">Enter Account Verification Key</a>
         </div>
     </div>
     <div class="row mb-3">
@@ -42,7 +42,7 @@
             <div>
                 <rio-custom-rich-text [customRichTextTypeID]="stepThreeRichText"></rio-custom-rich-text>
             </div>
-            <a href="/manage-water-accounts" class="btn btn-rio mt-1" [ngClass]="{'disabled' : (isCurrentUserNullOrUndefined() || !isCurrentUserLandownerDemoUserOrAdmin())}">Manage Water Accounts</a>
+            <a href="/water-accounts/manage" class="btn btn-rio mt-1" [ngClass]="{'disabled' : (isCurrentUserNullOrUndefined() || !isCurrentUserLandownerDemoUserOrAdmin())}">Manage Water Accounts</a>
         </div>
     </div>
 </div>

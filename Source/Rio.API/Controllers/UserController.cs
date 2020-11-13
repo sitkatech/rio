@@ -242,35 +242,26 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
-        [HttpPut("/users/{userID}/add-accounts")]
+        [HttpPut("/user/add-accounts")]
         [UserViewFeature]
-        public ActionResult<UserDto> AddAccounts([FromRoute] int userID,
-            [FromBody] UserEditAcountsDto userEditAccountsDto)
+        public ActionResult<UserDto> AddAccountsForCurrentUser([FromBody] UserEditAcountsDto userEditAccountsDto)
         {
-            var userFromUrlDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
             var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-
-            if (userFromUrlDto == null)
-            {
-                return NotFound($"Could not find an User with the ID {userID}.");
-            }
 
             if (userFromContextDto == null)
             {
                 return NotFound($"Could not find Current User");
             }
 
-            if (userFromUrlDto.UserID != userFromContextDto.UserID &&
-                userFromContextDto.Role.RoleID != (int) RoleEnum.Admin)
+            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
             {
-                return BadRequest($"Cannot update accounts for another user");
+               return NotFound("One or more of the Account IDs was invalid.");
             }
 
-            if (AddAccountsToUserAndSendAccountsAddedEmail(userEditAccountsDto, userFromUrlDto, out var updatedUserDto,
-                out var operationError))
-            {
-                return operationError;
-            }
+            var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
+            var allAccountIDsForUser = userEditAccountsDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
+
+            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser, out var addedAccountIDs);
 
             if (updatedUserDto.Role.RoleID == (int) RoleEnum.Unassigned)
             {
@@ -283,43 +274,10 @@ namespace Rio.API.Controllers
                     PhoneNumber = updatedUserDto.Phone
                 };
 
-                updatedUserDto = Rio.EFModels.Entities.User.UpdateUserEntity(_dbContext, updatedUserDto.UserID, userUpsertDto);
+                updatedUserDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, updatedUserDto.UserID, userUpsertDto);
             }
 
             return Ok(updatedUserDto);
-        }
-
-        private bool AddAccountsToUserAndSendAccountsAddedEmail(UserEditAcountsDto userEditAccountsDto, UserDto userDto,
-            out UserDto updatedUserDto, out ActionResult<UserDto> operationError)
-        {
-            operationError = null;
-            updatedUserDto = null;
-
-            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
-            {
-                {
-                    operationError = NotFound("One or more of the Account IDs was invalid.");
-                    return true;
-                }
-            }
-
-            updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs,
-                out var addedAccountIDs);
-            var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
-
-            if (addedAccounts != null && addedAccounts.Count > 0)
-            {
-                var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
-                foreach (var mailMessage in mailMessages)
-                {
-                    SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
-                        EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-                    SendEmailMessage(smtpClient, mailMessage);
-                }
-            }
-
-            return false;
         }
 
         [HttpPut("/users/{userID}/edit-accounts")]
@@ -333,13 +291,32 @@ namespace Rio.API.Controllers
                 return NotFound($"Could not find an User with the ID {userID}.");
             }
 
-            if (AddAccountsToUserAndSendAccountsAddedEmail(userEditAccountsDto, userDto, out var updatedUserDto,
-                out var operationError))
+            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
             {
-                return operationError;
+                return NotFound("One or more of the Account IDs was invalid.");
+            }
+
+            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
+
+            if (addedAccounts != null && addedAccounts.Count > 0)
+            {
+                SendEmailToLandownerAndAdmins(updatedUserDto, addedAccounts);
             }
 
             return Ok(updatedUserDto);
+        }
+
+        private void SendEmailToLandownerAndAdmins(UserDto updatedUserDto, List<AccountDto> addedAccounts)
+        {
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
+            foreach (var mailMessage in mailMessages)
+            {
+                SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
+                    EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                SendEmailMessage(smtpClient, mailMessage);
+            }
         }
 
         [HttpGet("users/{userID}/parcels/{year}")]
