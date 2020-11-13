@@ -9,7 +9,7 @@ export enum CustomRichTextType {
   ConfigureWaterTypes = 8,
   SetWaterAllocation = 9,
   TrainingVideos = 10,
-  SignUp = 11,
+  CreateUserProfile = 11,
   SignUpStepOne = 12,
   SignUpStepTwo = 13,
   SignUpStepThree = 14,

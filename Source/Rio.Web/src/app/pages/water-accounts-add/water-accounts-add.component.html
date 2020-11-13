@@ -27,20 +27,20 @@
     <div class="row mb-2">
         <div class="col-sm-7 col-md-6 col-lg-3 mb-1">
             <input type="text" class="form-control" [(ngModel)]="verificationKeyToSearchFor"
-                (ngModelChange)="turnOffAccountSearchErrors()" />
+                (ngModelChange)="turnOffAccountSearchAlerts()" />
         </div>
         <div class="col-sm-5 col-md-3">
             <button class="btn btn-rio float-right float-sm-none" (click)="findAccount()">Find Account</button>
         </div>
         <div class="col-12">
-            <small><a routerLink="/help">Didn't receieve a mailer, Request Support to contact the district</a></small>
+            <small><a routerLink="/help">Didn't receieve a mailer? Request Support to contact the district</a></small>
         </div>
     </div>
     <div class="row" *ngIf="accountNotFound">
-        <div class="col-sm-6">
+        <div class="col-sm-10 col-md-8 col-lg-6">
             <div class="alert alert-danger alert-dismissible">
-                Could not find an account with the Account Verification Key: <br />
-                <strong>{{verificationKeyToSearchFor}}</strong> <br />
+                Could not find an account with the Account Verification Key 
+                <strong>{{verificationKeyToSearchFor}}</strong>.
                 Please verify your key is correct and try again.
                 <button type="button" class="close" data-dismiss="alert" (click)="accountNotFound=false"
                     aria-label="Close">
@@ -52,8 +52,8 @@
     <div class="row" *ngIf="accountAlreadyPresentInList">
         <div class="col-sm-6">
             <div class="alert alert-danger alert-dismissible">
-                Account with the Account Verification Key: <br />
-                <strong>{{verificationKeyToSearchFor}}</strong> <br />
+                Account with the Account Verification Key 
+                <strong>{{verificationKeyToSearchFor}}</strong>
                 is already present in the list. <br />
                 Please update search request if more accounts are desired.
                 <button type="button" class="close" data-dismiss="alert" (click)="accountAlreadyPresentInList=false"
@@ -66,11 +66,25 @@
     <div class="row" *ngIf="userAlreadyHasAccessToAccount">
         <div class="col-sm-6">
             <div class="alert alert-danger alert-dismissible">
-                Account with the Account Verification Key: <br />
-                <strong>{{verificationKeyToSearchFor}}</strong> <br />
-                is already in the accounts you actively manage. <br />
+                Account with the Account Verification Key 
+                <strong>{{verificationKeyToSearchFor}}</strong> 
+                is already in the accounts you actively manage. 
                 Please update search request if more accounts are desired.
                 <button type="button" class="close" data-dismiss="alert" (click)="userAlreadyHasAccessToAccount=false"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="accountSuccessfullyFoundAndAddedToList">
+        <div class="col-sm-6">
+            <div class="alert alert-success alert-dismissible">
+                Account with the Account Verification Key 
+                <strong>{{lastSuccessfullyAddedAccountVerificationKey}}</strong> 
+                was found and has been added to the list! 
+                Add more accounts if desired, otherwise make sure to enter your name below and click 'Register Account(s)'.
+                <button type="button" class="close" data-dismiss="alert" (click)="accountSuccessfullyFoundAndAddedToList=false"
                     aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -86,7 +100,7 @@
             </div>
         </div>
         <div class="row mt-4 mb-2">
-            <div class="col col-sm-8 col-md-6">
+            <div class="col col-sm-10 col-md-8 col-lg-6">
                 <rio-custom-rich-text [customRichTextTypeID]="legalText"></rio-custom-rich-text>               
             </div>
         </div>
@@ -95,14 +109,9 @@
                 <input type="text" class="form-control" [(ngModel)]="confirmedFullNameForRegistration" />
                 {{currentUser?.FullName}}
             </div>
-            <div class="col-sm-5 col-md-3">
+            <div class="col-sm-5 col-md-6">
                 <button class="btn btn-rio float-right float-sm-none" [disabled]="!isFullNameConfirmedForRegistration() || currentUserIsAdmin()" (click)="registerAccounts()">Register Account(s)</button>
             </div>
         </div>
     </ng-container>
-    <div class="row">
-        <div class="col">
-            <a routerLink="/" class="float-right btn btn-secondary">Cancel</a>
-        </div>
-    </div>
 </div>

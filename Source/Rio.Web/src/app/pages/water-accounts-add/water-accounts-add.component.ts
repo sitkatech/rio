@@ -33,10 +33,12 @@ export class WaterAccountsAddComponent implements OnInit {
   public accountNotFound: boolean = false;
   public accountAlreadyPresentInList: boolean = false;
   public userAlreadyHasAccessToAccount: boolean = false;
+  public accountSuccessfullyFoundAndAddedToList: boolean = false;
+  public lastSuccessfullyAddedAccountVerificationKey: string;
   
   public confirmedFullNameForRegistration: string;
 
-  public introRichText: number = CustomRichTextType.SignUp;
+  public introRichText: number = CustomRichTextType.WaterAccountsAdd;
   public legalText: number = CustomRichTextType.WaterAccountsAddLegalText;
 
   isLoadingSubmit: boolean;
@@ -83,10 +85,13 @@ export class WaterAccountsAddComponent implements OnInit {
       return;
     }
 
-    this.turnOffAccountSearchErrors();
+    this.turnOffAccountSearchAlerts();
     this.searchingForAccount = true;
     this.accountService.getAccountByAccountVerificationKey(this.verificationKeyToSearchFor).subscribe(accountDto => {
       this.searchingForAccount = false;
+      this.lastSuccessfullyAddedAccountVerificationKey = this.verificationKeyToSearchFor;
+      this.accountSuccessfullyFoundAndAddedToList = true;
+      this.verificationKeyToSearchFor = null;
       this.accountsToAdd.push(accountDto);
       this.cdr.detectChanges();
     },
@@ -103,10 +108,11 @@ export class WaterAccountsAddComponent implements OnInit {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
-  public turnOffAccountSearchErrors() {
+  public turnOffAccountSearchAlerts() {
     this.accountAlreadyPresentInList = false;
     this.accountNotFound = false;
     this.userAlreadyHasAccessToAccount = false;
+    this.accountSuccessfullyFoundAndAddedToList = false;
   }
 
   public isFullNameConfirmedForRegistration(): boolean {

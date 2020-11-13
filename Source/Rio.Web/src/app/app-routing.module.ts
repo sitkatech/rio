@@ -47,7 +47,7 @@ import { ManagerOrDemoUserOnlyGuard } from './shared/guards/unauthenticated-acce
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
-import { SignUpComponent } from './pages/sign-up/sign-up.component';
+import { SignUpComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
 import { WaterAccountsManageComponent } from './pages/water-accounts-manage/water-accounts-manage.component';
 
@@ -85,7 +85,7 @@ const routes: Routes = [
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
-  { path: "sign-up", component: SignUpComponent },
+  { path: "create-user-profile", component: SignUpComponent },
   { path: "training-videos", component: TrainingVideosComponent},
   { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },

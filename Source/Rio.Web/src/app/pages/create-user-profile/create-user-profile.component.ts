@@ -4,16 +4,16 @@ import { UserDto } from 'src/app/shared/models';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
-  selector: 'rio-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
+  selector: 'rio-create-user-profile',
+  templateUrl: './create-user-profile.component.html',
+  styleUrls: ['./create-user-profile.component.scss']
 })
 export class SignUpComponent implements OnInit {
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
   
-  public introRichText : number = CustomRichTextType.SignUp;
+  public introRichText : number = CustomRichTextType.CreateUserProfile;
   public stepOneRichText : number = CustomRichTextType.SignUpStepOne;
   public stepTwoRichText : number = CustomRichTextType.SignUpStepTwo;
   public stepThreeRichText : number = CustomRichTextType.SignUpStepThree;
