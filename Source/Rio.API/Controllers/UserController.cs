@@ -261,7 +261,7 @@ namespace Rio.API.Controllers
             var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
             var allAccountIDsForUser = userEditAccountsDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
 
-            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser, out var addedAccountIDs);
+            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser);
 
             if (userFromContextDto.Role.RoleID == (int) RoleEnum.Unassigned)
             {
@@ -296,7 +296,7 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the Account IDs was invalid.");
             }
 
-            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            var addedAccountIDs = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs);
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
             if (addedAccounts != null && addedAccounts.Count > 0)
