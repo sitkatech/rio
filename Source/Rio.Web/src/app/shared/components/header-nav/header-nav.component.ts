@@ -52,9 +52,11 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
                 this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
                     this.activeAccount = account;
-                    this.tradeService.getTradeActivityByAccountID(account?.AccountID ?? 0).subscribe((trades) => {
-                        this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
-                    });
+                    if (environment.allowTrading) {
+                        this.tradeService.getTradeActivityByAccountID(account?.AccountID ?? 0).subscribe((trades) => {
+                            this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+                        });
+                    }
                 });
             }
 

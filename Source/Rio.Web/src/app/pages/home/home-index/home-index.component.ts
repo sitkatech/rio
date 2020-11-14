@@ -5,6 +5,7 @@ import { error } from 'protractor';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
 import { environment } from 'src/environments/environment';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { ApplicationInternalNameEnum } from 'src/app/shared/models/enums/application-internal-name.enum';
 
 @Component({
     selector: 'app-home-index',
@@ -15,6 +16,8 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
     public watchUserChangeSubscription: any;
     public currentUser: UserDto;
     public homepageRichTextTypeID: number = CustomRichTextType.HomePage;
+    public applicationInternalName: string = environment.applicationInternalName;
+    public ApplicationInternalNameEnum = ApplicationInternalNameEnum;
 
     constructor(private authenticationService: AuthenticationService) {
     }
@@ -27,12 +30,14 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
             this.currentUser = currentUser;
         });
+
+        console.log(environment);
     }
 
     ngOnDestroy(): void {
       this.watchUserChangeSubscription.unsubscribe();
     }
-
+    
     public userIsUnassigned(){
         if (!this.currentUser){
             return false; // doesn't exist != unassigned

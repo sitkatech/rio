@@ -14,6 +14,7 @@ namespace Rio.EFModels.Entities
                 AccountID = account.AccountID,
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
+                AccountVerificationKey = account.AccountVerificationKey,
                 Notes = account.Notes,
                 AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
                 ShortAccountDisplayName = $"#{account.AccountNumber} ({account.AccountName})"

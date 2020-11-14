@@ -9,7 +9,13 @@ USING (VALUES
 (7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET'),
 (8, 'ConfigureWaterTypes', 'Configure Water Types'),
 (9, 'SetWaterAllocation', 'SetWaterAllocation'),
-(10, 'TrainingVideos', 'Training Videos')
+(10, 'TrainingVideos', 'Training Videos'),
+(11, 'CreateUserProfile', 'Create User Profile'),
+(12, 'CreateUserProfileStepOne', 'Create User Profile Step One'),
+(13, 'CreateUserProfileStepTwo', 'Create User Profile Step Two'),
+(14, 'CreateUserProfileStepThree', 'Create User Profile Step Three'),
+(15, 'WaterAccountsAdd', 'Water Accounts Add'),
+(16, 'WaterAccountsAddLegalText', 'Water Accounts Add Legal Text')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

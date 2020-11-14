@@ -17,7 +17,11 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if(!this.authenticationService.isCurrentUserNullOrUndefined()) {
         if (!this.authenticationService.hasCurrentUserAcknowledgedDisclaimer()) {
-          this.router.navigate(["/disclaimer/true"]);
+          this.router.navigate(["/disclaimer/true"], {
+            queryParams: {
+              return: state.url
+            }
+          });
           return false;
         }
         else {
@@ -31,7 +35,11 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
           if (x.DisclaimerAcknowledgedDate != null) {
             return true;
           } else {
-            this.router.navigate(["/disclaimer/true"]);
+            this.router.navigate(["/disclaimer/true"], {
+              queryParams: {
+                return: state.url
+              }
+            });
             return false;
           }
         })

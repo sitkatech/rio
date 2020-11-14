@@ -14,8 +14,16 @@
 </div>
 
 <div class="container mt-4">
+    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName == ApplicationInternalNameEnum.Rio" [type]="'danger'" [dismissible]="false">
+        <span>
+            Welcome {{currentUser.FullName}}. You have successfully logged in to the {{platformLongName()}},
+            but your
+            account is not yet configured. <strong><a routerLink="/water-accounts/add">Enter an Account Verification Key</a> to finish setting up your account</strong>. You may <a routerLink="/help">Request Support</a> to contact the Administrators with any questions or
+            comments.
+        </span>
+    </ngb-alert>
 
-    <ngb-alert *ngIf="userIsUnassigned()" [type]="'info'" [dismissible]="false">
+    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName != ApplicationInternalNameEnum.Rio" [type]="'info'" [dismissible]="false">
         <span>
             Welcome {{currentUser.FullName}}. You have successfully logged in to the {{platformLongName()}},
             but your
@@ -38,20 +46,19 @@
         <div class="col-md-4 order-md-12 order-1 col-sm-12">
             <div class="card">
                 <div class="card-header">
-                    <ng-container *ngIf="!currentUser">Access your water account</ng-container>
-                    <ng-container *ngIf="currentUser">View your dashboard</ng-container>
+                    <ng-container *ngIf="!currentUser">Access Your Water Account</ng-container>
+                    <ng-container *ngIf="currentUser">View Your Dashboard</ng-container>
                 </div>
                 <div class="card-body" *ngIf="!currentUser">
                     <div class="row">
                         <div class="col">
-                            Log in to view your Water Account. Create an Account if you don't have one yet.
+                            Sign In to view your Water Account. Create a Water Account if you don't have one yet.
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col mx-1">
-                            <a href="javascript:void(0);" (click)="login()" class="btn btn-rio mr-2 mt-1">Login</a>
-                            <a href="javascript:void(0);" (click)="createAccount()" class="btn btn-rio mt-1">Create
-                                Account</a>
+                            <a href="javascript:void(0);" (click)="login()" class="btn btn-rio mr-2 mt-1 w-100">Sign In</a>
+                            <a routerLink="/create-user-profile" class="btn btn-rio mr-2 mt-1 w-100">Create Water Account</a>
                         </div>
                     </div>
                     <hr />
@@ -68,15 +75,16 @@
                 <div class="card-body" *ngIf="currentUser">
                     <div class="row">
                         <div class="col">
-                            <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1" routerLink="/manager-dashboard">Manager
+                            <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1 w-100" routerLink="/manager-dashboard">Manager
                                 Dashboard</a>
-                            <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1" routerLink="/landowner-dashboard">Landowner
+                            <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1 w-100" routerLink="/landowner-dashboard">Landowner
                                 Dashboard</a>
+                            <a *ngIf="userIsUnassigned()" class="btn btn-rio mb-1 w-100" routerLink="/water-accounts/add">Enter Account Verification Key</a>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-rio mb-1 ml-sm-auto ml-lg-0" routerLink="/help">Request Support</a>
+                            <a class="btn btn-rio mb-1 ml-sm-auto ml-lg-0 w-100" routerLink="/help">Request Support</a>
                         </div>
                     </div>
                     

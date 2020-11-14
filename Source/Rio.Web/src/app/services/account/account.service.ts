@@ -8,13 +8,17 @@ import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Environment } from 'ag-grid-community';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService,
+    private httpClient: HttpClient) { }
 
   public listAllAccounts(): Observable<Array<AccountDto>>{
     const route = "/accounts"
@@ -23,6 +27,11 @@ export class AccountService {
 
   public getAccountByID(accountID): Observable<AccountDto>{
     const route = `/account/${accountID}`
+    return this.apiService.getFromApi(route);
+  }
+
+  public getAccountByAccountVerificationKey(accountVerificationKey: string): Observable<any>{
+    const route = `/account/account-verification-key/${accountVerificationKey}`
     return this.apiService.getFromApi(route);
   }
 

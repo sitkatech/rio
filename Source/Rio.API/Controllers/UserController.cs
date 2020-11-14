@@ -242,6 +242,44 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
+        [HttpPut("/user/add-accounts")]
+        [UserViewFeature]
+        public ActionResult<UserDto> AddAccountsForCurrentUser([FromBody] UserEditAcountsDto userEditAccountsDto)
+        {
+            var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+
+            if (userFromContextDto == null)
+            {
+                return NotFound($"Could not find Current User");
+            }
+
+            if (!Account.ValidateAllExist(_dbContext, userEditAccountsDto.AccountIDs))
+            {
+               return NotFound("One or more of the Account IDs was invalid.");
+            }
+
+            var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
+            var allAccountIDsForUser = userEditAccountsDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
+
+            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userFromContextDto.UserID, allAccountIDsForUser);
+
+            if (userFromContextDto.Role.RoleID == (int) RoleEnum.Unassigned)
+            {
+                var userUpsertDto = new UserUpsertDto
+                {
+                    Email = userFromContextDto.Email,
+                    FirstName = userFromContextDto.FirstName,
+                    LastName = userFromContextDto.LastName,
+                    RoleID = (int)RoleEnum.LandOwner,
+                    PhoneNumber = userFromContextDto.Phone
+                };
+
+                userFromContextDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, userFromContextDto.UserID, userUpsertDto);
+            }
+
+            return Ok(userFromContextDto);
+        }
+
         [HttpPut("/users/{userID}/edit-accounts")]
         [UserManageFeature]
         public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)
@@ -258,22 +296,27 @@ namespace Rio.API.Controllers
                 return NotFound("One or more of the Account IDs was invalid.");
             }
 
-            var updatedUserDto = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userDto, userEditAccountsDto.AccountIDs, out var addedAccountIDs);
+            var addedAccountIDs = EFModels.Entities.User.SetAssociatedAccounts(_dbContext, userID, userEditAccountsDto.AccountIDs);
             var addedAccounts = Account.GetByAccountID(_dbContext, addedAccountIDs);
 
             if (addedAccounts != null && addedAccounts.Count > 0)
             {
-                var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-                var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, updatedUserDto, addedAccounts);
-                foreach (var mailMessage in mailMessages)
-                {
-                    SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
-                        EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-                    SendEmailMessage(smtpClient, mailMessage);
-                }
+                SendEmailToLandownerAndAdmins(userDto, addedAccounts);
             }
 
-            return Ok(updatedUserDto);
+            return Ok(userDto);
+        }
+
+        private void SendEmailToLandownerAndAdmins(UserDto userDto, List<AccountDto> addedAccounts)
+        {
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, userDto, addedAccounts);
+            foreach (var mailMessage in mailMessages)
+            {
+                SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
+                    EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+                SendEmailMessage(smtpClient, mailMessage);
+            }
         }
 
         [HttpGet("users/{userID}/parcels/{year}")]

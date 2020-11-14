@@ -27,6 +27,12 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.AccountID == accountID).AsDto();
         }
 
+        public static AccountDto GetByAccountVerificationKey(RioDbContext dbContext, string accountVerificationKey)
+        {
+            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+                .SingleOrDefault(x => x.AccountVerificationKey == accountVerificationKey)?.AsDto();
+        }
+
         public static List<AccountDto> GetByAccountID(RioDbContext dbContext, List<int> accountIDs)
         {
             return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)

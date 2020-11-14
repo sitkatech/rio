@@ -64,6 +64,18 @@ namespace Rio.API.Controllers
             return Ok(accountDto);
         }
 
+        [HttpGet("/account/account-verification-key/{accountVerificationKey}")]
+        public ActionResult<AccountDto> GetAccountByAccountVerificationKey([FromRoute] string accountVerificationKey)
+        {
+            var accountDto = Account.GetByAccountVerificationKey(_dbContext, accountVerificationKey);
+            if (accountDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(accountDto);
+        }
+
         [HttpPut("/account/{accountID}")]
         [UserManageFeature]
         public ActionResult<AccountDto> UpdateAccount([FromRoute] int accountID, [FromBody] AccountUpdateDto accountUpdateDto)

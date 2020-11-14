@@ -104,4 +104,8 @@ export class DynamicEnvironment {
     public get applicationType() {
         return window.config.applicationType;
     }
+
+    public get applicationInternalName() {
+        return window.config.applicationInternalName;
+    }
 }

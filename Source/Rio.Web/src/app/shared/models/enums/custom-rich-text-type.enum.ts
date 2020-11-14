@@ -8,5 +8,11 @@ export enum CustomRichTextType {
   MeasuringWaterUse = 7,
   ConfigureWaterTypes = 8,
   SetWaterAllocation = 9,
-  TrainingVideos = 10
+  TrainingVideos = 10,
+  CreateUserProfile = 11,
+  CreateUserProfileStepOne = 12,
+  CreateUserProfileStepTwo = 13,
+  CreateUserProfileStepThree = 14,
+  WaterAccountsAdd = 15,
+  WaterAccountsAddLegalText = 16
 }
