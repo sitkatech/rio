@@ -17,5 +17,14 @@ namespace Rio.EFModels.Entities
                 LandOwner = parcel.AccountParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.Account?.AsSimpleDto()
             };
         }
+
+        public static ParcelSimpleDto AsSimpleDto(this Parcel parcel)
+        {
+            return new ParcelSimpleDto()
+            {
+                ParcelID = parcel.ParcelID,
+                ParcelNumber =  parcel.ParcelNumber
+            };
+        }
     }
 }

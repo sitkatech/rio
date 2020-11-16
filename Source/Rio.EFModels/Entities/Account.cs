@@ -15,6 +15,35 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsSimpleDto()).ToList();
         }
 
+        public static List<AccountIncludeParcelsDto> ListByUserIDIncludeParcels(RioDbContext dbContext, int userID)
+        {
+            return dbContext.User
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountStatus)
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountUser)
+                .ThenInclude(x => x.User)
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountParcel)
+                .ThenInclude(x => x.Parcel)
+                .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
+        }
+
+        public static List<AccountIncludeParcelsDto> ListIncludeParcels(RioDbContext dbContext)
+        {
+            return dbContext.Account
+                .Include(x => x.AccountStatus)
+                .Include(x => x.AccountParcel)
+                .ThenInclude(x => x.Parcel)
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.User)
+                .Select(x => x.AsAccountWithParcelsDto())
+                .ToList();
+        }
+
         public static List<AccountDto> List(RioDbContext dbContext)
         {
             return dbContext.Account.Include(x => x.AccountStatus).Include(x=>x.AccountParcel).Include(x => x.AccountUser).ThenInclude(x => x.User).Select(x => x.AsDto())

@@ -48,6 +48,7 @@
     "mydatepicker": "^9.0.1",
     "ngprogress": "^1.1.3",
     "ngx-cookie-service": "^3.0.4",
+    "ngx-pagination": "^5.0.0",
     "ngx-select-dropdown": "^1.4.2",
     "popper.js": "^1.16.1",
     "rxjs": "^6.5.5",

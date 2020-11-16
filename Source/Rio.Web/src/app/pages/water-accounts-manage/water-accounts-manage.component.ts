@@ -1,4 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserService } from 'src/app/services/user/user.service';
+import { UserDto } from 'src/app/shared/models';
+import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Alert } from 'src/app/shared/models/alert';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
   selector: 'rio-water-accounts-manage',
@@ -6,10 +17,58 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./water-accounts-manage.component.scss']
 })
 export class WaterAccountsManageComponent implements OnInit {
+  public watchUserChangeSubscription: any;
+  public currentUser: UserDto;
+  public currentPage: number =  1;
 
-  constructor() { }
+  public currentUserAccounts: AccountIncludeParcelsDto[];
+  public loadingAccounts: boolean =  false;
+
+  public modalReference: NgbModalRef;
+
+  public accountToRemove: AccountDto;
+
+  constructor(private authenticationService: AuthenticationService,
+    private userService: UserService,
+    private alertService: AlertService,
+    private router: Router,
+    private modalService: NgbModal
+    ) { }
 
   ngOnInit(): void {
+    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.loadingAccounts = true;
+      this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
+        this.currentUserAccounts = userAccounts;
+        this.loadingAccounts = false;
+      });
+    });
   }
 
+  public currentUserIsAdmin() {
+    return this.authenticationService.isCurrentUserAnAdministrator();
+  }
+
+  public setCurrentAccountAndRedirectToLandownerDashboard(account: AccountDto) {
+    this.authenticationService.setActiveAccount(account);
+    this.router.navigate(["/landowner-dashboard"]);
+  }
+
+  public launchModal(modalContent: any, accountToRemove: AccountDto) {
+    this.accountToRemove = accountToRemove;
+    this.modalReference = this.modalService.open(modalContent, { ariaLabelledBy: 'removeAccountModalContent', backdrop: 'static', keyboard: false });
+  }
+
+  public removeAccountToRemove() {
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
+    this.userService.removeAccountByIDForCurrentUser(this.accountToRemove.AccountID).subscribe(response => {
+      this.currentUserAccounts = this.currentUserAccounts.filter(x => x.Account.AccountID != this.accountToRemove.AccountID);
+      this.alertService.pushAlert(new Alert(`Account #${this.accountToRemove.AccountNumber} (${this.accountToRemove.AccountName}) successfully removed from accounts you manage.`, AlertContext.Success));
+      this.accountToRemove = null;
+    })
+  }
 }

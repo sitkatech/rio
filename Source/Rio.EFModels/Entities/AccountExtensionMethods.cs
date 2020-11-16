@@ -38,5 +38,14 @@ namespace Rio.EFModels.Entities
                 NumberOfParcels = account.AccountParcel.Count
             };
         }
+
+        public static AccountIncludeParcelsDto AsAccountWithParcelsDto(this Account account)
+        {
+            return new AccountIncludeParcelsDto()
+            {
+                Account = account.AsDto(),
+                Parcels = account.AccountParcel.Select(x => x.Parcel.AsSimpleDto()).ToList()
+            };
+        }
     }
 }

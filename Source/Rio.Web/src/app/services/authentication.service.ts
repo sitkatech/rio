@@ -225,6 +225,10 @@ export class AuthenticationService {
     return this.isUserRoleDisabled(this.currentUser);
   }
 
+  public isCurrentUserUnassigned(): boolean {
+    return this.isUserUnassigned(this.currentUser);
+  }
+
   public isCurrentUserAnAdministrator(): boolean {
     return this.isUserAnAdministrator(this.currentUser);
   }

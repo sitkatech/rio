@@ -199,6 +199,24 @@ namespace Rio.API.Controllers
             return Ok(Account.ListByUserID(_dbContext, userID));
         }
 
+        [HttpGet("user/{userID}/accounts-include-parcels")]
+        [UserViewFeature]
+        public ActionResult<List<AccountIncludeParcelsDto>> ListAccountsByUserIDIncludeParcels([FromRoute] int userID)
+        {
+            var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
+            if (userDto == null)
+            {
+                return NotFound();
+            }
+
+            if (userDto.Role.RoleID == (int)RoleEnum.Admin)
+            {
+                return Ok(Account.ListIncludeParcels(_dbContext));
+            }
+
+            return Ok(Account.ListByUserIDIncludeParcels(_dbContext, userID));
+        }
+
         [HttpPut("users/{userID}")]
         [UserManageFeature]
         public ActionResult<UserDto> UpdateUser([FromRoute] int userID, [FromBody] UserUpsertDto userUpsertDto)
@@ -278,6 +296,27 @@ namespace Rio.API.Controllers
             }
 
             return Ok(userFromContextDto);
+        }
+
+        [HttpDelete("/user/remove-account/{accountID}")]
+        [UserViewFeature]
+        public ActionResult RemoveAccountByIDForCurrentUser([FromRoute] int accountID)
+        {
+            var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+
+            if (userFromContextDto == null)
+            {
+                return NotFound($"Could not find Current User");
+            }
+
+            if (Account.GetByAccountID(_dbContext, accountID) == null)
+            {
+                return NotFound("One or more of the Account IDs was invalid.");
+            }
+
+            EFModels.Entities.User.RemoveAssociatedAccount(_dbContext, userFromContextDto.UserID, accountID);
+
+            return Ok();
         }
 
         [HttpPut("/users/{userID}/edit-accounts")]
