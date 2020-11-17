@@ -60,7 +60,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
       this.modalReference = null;
     }
     if (this.selectedAccount) {
-    this.authenticationService.setActiveAccount(this.selectedAccount);
+    this.authenticationService.setActiveAccount(this.selectedAccount, false);
     this.activeAccount = this.selectedAccount;
     }
   }

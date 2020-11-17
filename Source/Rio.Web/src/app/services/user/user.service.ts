@@ -13,6 +13,7 @@ import { UnassignedUserReportDto } from 'src/app/shared/models/user/unassigned-u
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
 import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
+import { UserPartnerInviteDto } from 'src/app/shared/models/user/user-partner-invite-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -23,6 +24,11 @@ export class UserService {
     inviteUser(userInviteDto: any): Observable<UserDto> {
         let route = `/users/invite`;
         return this.apiService.postToApi(route, userInviteDto);
+    }
+
+    invitePartner(userPartnerInviteDto: UserPartnerInviteDto) {
+        let route = `/users/invite-partner`;
+        return this.apiService.postToApi(route, userPartnerInviteDto);
     }
 
     createNewUser(userCreateDto: UserCreateDto): Observable<UserDto> {

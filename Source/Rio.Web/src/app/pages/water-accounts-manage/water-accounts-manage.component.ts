@@ -66,7 +66,7 @@ export class WaterAccountsManageComponent implements OnInit {
       this.modalReference = null;
     }
     this.userService.removeAccountByIDForCurrentUser(this.accountToRemove.AccountID).subscribe(response => {
-      this.currentUserAccounts = this.currentUserAccounts.filter(x => x.Account.AccountID != this.accountToRemove.AccountID);
+      this.authenticationService.refreshUserInfo(this.currentUser);
       this.alertService.pushAlert(new Alert(`Account #${this.accountToRemove.AccountNumber} (${this.accountToRemove.AccountName}) successfully removed from accounts you manage.`, AlertContext.Success));
       this.accountToRemove = null;
     })

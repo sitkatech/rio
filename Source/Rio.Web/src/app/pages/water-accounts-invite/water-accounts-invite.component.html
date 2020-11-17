@@ -1,0 +1,119 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Invite Partners</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <div class="row mb-2">
+        <div class="col">
+            <h2 class="d-inline-block">Invite Partners</h2>
+            <div class="mt-2">
+                <rio-custom-rich-text [customRichTextTypeID]="introRichText"></rio-custom-rich-text>
+            </div>
+        </div>
+    </div>
+    <form (ngSubmit)="onSubmit(inviteUserForm)" #inviteUserForm="ngForm">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">First Name</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="FirstName" placeholder="First Name" required
+                                [(ngModel)]="model.FirstName"  #firstName="ngModel" />
+                        </div>
+                    </div>
+                    <div class="mt-2" *ngIf="firstName.errors && (firstName.touched || firstName.dirty)">
+                        <div class="col-sm-10">
+                            <div class="alert alert-danger" *ngIf="firstName.errors.required">
+                                First Name is required 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">Last Name</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="LastName" placeholder="Last Name" required
+                                [(ngModel)]="model.LastName" #lastName="ngModel"/>
+                        </div>
+                    </div>
+                    <div class="mt-2" *ngIf="lastName.errors && (lastName.touched || lastName.dirty)">
+                        <div class="col-sm-10">
+                            <div class="alert alert-danger" *ngIf="lastName.errors.required">
+                                Last Name is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">
+                            <label class="required">Email</label>
+                        </div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="Email" placeholder="Email" required
+                                [(ngModel)]="model.Email" #email="ngModel"/>
+                        </div>
+                    </div>
+                    <div class="mt-2" *ngIf="email.errors && (email.touched || email.dirty)">
+                        <div class="col-sm-10">
+                            <div class="alert alert-danger" *ngIf="email.errors.required">
+                                Email is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 control-label">
+                            <label>Check at least one account you would like to grant access to:</label>
+                        </div>
+                        <div class="col-sm-10" *ngIf="!loadingAccounts">
+                            <div class="row accounts-container">
+                                <div class="col-sm-12" *ngFor="let account of currentUserAccounts; let i = index">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" id="accountToGrantAccess[{{i}}]" class="custom-control-input" (change)="updateSelectedAccountIDs(account.AccountID)">
+                                        <label class="custom-control-label" for="accountToGrantAccess[{{i}}]">Account #{{account.AccountNumber}} ({{account.AccountName}}</label>
+                                    </div>                             
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-10" *ngIf="loadingAccounts">
+                            <span class="fa fa-spinner loading-spinner"></span> Loading Accounts
+                        </div>
+                        <div class="col-sm-10 mt-2" *ngIf="accountSelectError">
+                            <div class="alert alert-danger">
+                                Please select at least one account you would like to grant access to
+                            </div>
+                        </div>
+                        <div class="col-sm-10 mt-2">
+                            <p>As an Authorized User, by inviting this person to the platform you are granting them access to view and manage your water account(s).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <hr />
+            <div class="col-xs-12 col-sm-2">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <div class="col-xs-12 col-sm-10 text-right">
+                <button type="submit" class="btn btn-rio"
+                    [disabled]="submitButtonDisabled(inviteUserForm)">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Send Invitation
+                </button>
+                <a class="btn btn-secondary ml-1" routerLink="/users">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

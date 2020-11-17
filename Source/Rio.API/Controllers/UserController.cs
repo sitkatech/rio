@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Rio.API.Controllers
@@ -50,24 +51,101 @@ namespace Rio.API.Controllers
                 return BadRequest("Role ID is required.");
             }
 
+            string welcomeText =
+                $"You are receiving this notification because an administrator of the {_rioConfiguration.PlatformLongName}, an online service of the {_rioConfiguration.LeadOrganizationLongName}, has invited you to create an account.";
+            var response = KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = GetAndUpdateUserFromEmailOrReturnNewUser(response, inviteDto.Email, (int) inviteDto.RoleID);
+            return Ok(user);
+        }
+
+        [HttpPost("/users/invite-partner")]
+        [UserViewFeature]
+        public IActionResult InvitePartner([FromBody] UserPartnerInviteDto inviteDto)
+        {
+            var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+
+            if (userFromContextDto == null)
+            {
+                return NotFound($"Could not find Current User");
+            }
+
+            if (!Account.ValidateAllExist(_dbContext, inviteDto.AccountIDs))
+            {
+                return NotFound("One or more of the Account IDs was invalid.");
+            }
+
+            var welcomeText =
+                $"You are receiving this notification because {userFromContextDto.FullName} has invited you to create a user profile for the {_rioConfiguration.PlatformLongName}, an online service of the {_rioConfiguration.LeadOrganizationLongName}, and granted you access to view their Water Account Dashboard.";
+            var response = KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = GetAndUpdateUserFromEmailOrReturnNewUser(response, inviteDto.Email, (int) RoleEnum.LandOwner);
+
+            //Because there's a chance the user already exists, just grab accounts for them and merge with the ids that came in
+            var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
+            var allAccountIDsForUser = inviteDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
+
+            EFModels.Entities.User.SetAssociatedAccounts(_dbContext, user.UserID, allAccountIDsForUser);
+            return Ok(user);
+        }
+
+        private UserDto GetAndUpdateUserFromEmailOrReturnNewUser(KeystoneService.KeystoneApiResponse<KeystoneService.KeystoneNewUserModel> response, string email, int roleID)
+        {
+            var keystoneUser = response.Payload.Claims;
+            var existingUser = EFModels.Entities.User.GetByEmail(_dbContext, email);
+            if (existingUser != null)
+            {
+                existingUser = EFModels.Entities.User.UpdateUserGuid(_dbContext, existingUser.UserID, keystoneUser.UserGuid);
+                return existingUser;
+            }
+
+            var newUser = new UserUpsertDto
+            {
+                FirstName = keystoneUser.FirstName,
+                LastName = keystoneUser.LastName,
+                OrganizationName = keystoneUser.OrganizationName,
+                Email = keystoneUser.Email,
+                PhoneNumber = keystoneUser.PrimaryPhone,
+                RoleID = roleID
+            };
+
+            var user = EFModels.Entities.User.CreateNewUser(_dbContext, newUser, keystoneUser.LoginName,
+                keystoneUser.UserGuid);
+            return user;
+        }
+
+        private KeystoneService.KeystoneApiResponse<KeystoneService.KeystoneNewUserModel> KeystoneInviteUserApiResponse(string firstName, string lastName, string email, string welcomeText)
+        {
             string applicationName = $"{_rioConfiguration.PlatformLongName}";
             string rioBravoWaterStorageDistrict = $"{_rioConfiguration.LeadOrganizationLongName}";
             var inviteModel = new KeystoneService.KeystoneInviteModel
             {
-                FirstName = inviteDto.FirstName,
-                LastName = inviteDto.LastName,
-                Email = inviteDto.Email,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
                 Subject = $"Invitation to the {applicationName}",
-                WelcomeText = $"You are receiving this notification because an administrator of the {applicationName}, an online service of the {rioBravoWaterStorageDistrict}, has invited you to create an account.",
+                WelcomeText = welcomeText,
                 SiteName = applicationName,
-                SignatureBlock = $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
+                SignatureBlock =
+                    $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
                 RedirectURL = _rioConfiguration.KEYSTONE_REDIRECT_URL
             };
 
             var response = _keystoneService.Invite(inviteModel);
             if (response.StatusCode != HttpStatusCode.OK || response.Error != null)
             {
-                ModelState.AddModelError("Email", $"There was a problem inviting the user to Keystone: {response.Error.Message}.");
+                ModelState.AddModelError("Email",
+                    $"There was a problem inviting the user to Keystone: {response.Error.Message}.");
                 if (response.Error.ModelState != null)
                 {
                     foreach (var modelStateKey in response.Error.ModelState.Keys)
@@ -80,32 +158,7 @@ namespace Rio.API.Controllers
                 }
             }
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var keystoneUser = response.Payload.Claims;
-            var existingUser = EFModels.Entities.User.GetByEmail(_dbContext, inviteDto.Email);
-            if (existingUser != null)
-            {
-                existingUser = EFModels.Entities.User.UpdateUserGuid(_dbContext, existingUser.UserID, keystoneUser.UserGuid);
-                return Ok(existingUser);
-            }
-
-            var newUser = new UserUpsertDto
-            {
-                FirstName = keystoneUser.FirstName,
-                LastName = keystoneUser.LastName,
-                OrganizationName = keystoneUser.OrganizationName,
-                Email = keystoneUser.Email,
-                PhoneNumber = keystoneUser.PrimaryPhone,
-                RoleID = inviteDto.RoleID.Value
-            };
-
-            var user = EFModels.Entities.User.CreateNewUser(_dbContext, newUser, keystoneUser.LoginName,
-                keystoneUser.UserGuid);
-            return Ok(user);
+            return response;
         }
 
         [HttpPost("users")]

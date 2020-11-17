@@ -160,3 +160,7 @@ a:hover {
   background-color: $button-toggle-hover;
   border-color: $button-toggle-hover;
 }
+
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color:$button-border-and-background;
+}

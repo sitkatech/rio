@@ -65,6 +65,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
                 this.userService.listAccountsByUserID(currentUser.UserID).subscribe(userAccounts => {
                     this.currentUserAccounts = userAccounts;
+                    debugger;
+                    this.cdr.detectChanges();
                 })
             }
 
@@ -128,6 +130,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             this.cookieStorageService.removeAll();
             this.cdr.detectChanges();
         });
+    }
+
+    public showMyDashboardsDropdown(): boolean {
+        return this.isAdministratorOrDemoUser() || (this.currentUserAccounts && this.currentUserAccounts.length > 0 && this.currentUserAccounts.length < 6);
     }
 
     public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
