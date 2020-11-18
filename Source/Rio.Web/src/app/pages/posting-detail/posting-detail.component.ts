@@ -121,6 +121,7 @@ private watchUserChangeSubscription: any;
         }
         offer.OfferStatusID = OfferStatusEnum.Pending;
         this.model = offer;
+        this.offerSubmittedSuccessfully = false;
     }
 
     public canEditCurrentPosting(): boolean {
