@@ -12,6 +12,8 @@ import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { environment } from 'src/environments/environment';
 import { AlertContext } from '../../models/enums/alert-context.enum';
+import { AccountDto } from '../../models/account/account-dto';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'header-nav',
@@ -26,6 +28,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public trades: Array<TradeWithMostRecentOfferDto>;
 
     windowWidth: number;
+    public currentUserAccounts: AccountSimpleDto[];
 
     @HostListener('window:resize', ['$event'])
     resize(ev?: Event) {
@@ -38,6 +41,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         private tradeService: TradeService,
         private userService: UserService,
         private alertService: AlertService,
+        private router: Router,
         private cdr: ChangeDetectorRef) {
     }
 
@@ -58,6 +62,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                         });
                     }
                 });
+
+                this.userService.listAccountsByUserID(currentUser.UserID).subscribe(userAccounts => {
+                    this.currentUserAccounts = userAccounts;
+                })
             }
 
             if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)) {
@@ -96,6 +104,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return this.authenticationService.isUserUnassigned(this.currentUser);
     }
 
+    public isDisabled(): boolean {
+        return this.authenticationService.isUserRoleDisabled(this.currentUser);
+    }
+
     public isUnassignedOrDisabled(): boolean {
         return this.authenticationService.isUserUnassigned(this.currentUser) || this.authenticationService.isUserRoleDisabled(this.currentUser);
     }
@@ -116,6 +128,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             this.cookieStorageService.removeAll();
             this.cdr.detectChanges();
         });
+    }
+
+    public showMyDashboardsDropdown(): boolean {
+        return this.isAdministratorOrDemoUser() || (this.currentUserAccounts && this.currentUserAccounts.length > 0 && this.currentUserAccounts.length < 6);
     }
 
     public getPendingTrades(): Array<TradeWithMostRecentOfferDto> {
@@ -193,5 +209,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     public getNavThemeColor(): string {
         return environment.navThemeColor;
+    }
+
+    public setCurrentAccountAndRedirectToLandownerDashboard(account: AccountDto) {
+        this.authenticationService.setActiveAccount(account);
+        this.router.navigate(["/landowner-dashboard"]);
     }
 }

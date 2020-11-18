@@ -25,7 +25,7 @@ import { PostingStatusDto } from 'src/app/shared/models/posting/posting-status-d
     styleUrls: ['./posting-detail.component.scss']
 })
 export class PostingDetailComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+private watchUserChangeSubscription: any;
     private currentUser: UserDto;
 
     public posting: PostingDto;
@@ -59,33 +59,30 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
-            this.authenticationService.getActiveAccount().subscribe(account => {
-                if (account) {
-                    this.currentAccount = account;
-
-                    if (postingID) {
-                        forkJoin(
-                            this.postingService.getPostingFromPostingID(postingID),
-                            this.offerService.getActiveOffersFromPostingIDForCurrentUser(postingID)
-                        ).subscribe(([posting, offers]) => {
-                            this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-                            this.posting = posting instanceof Array
-                                ? null
-                                : posting as PostingDto;
-
-                            this.originalPostingType = this.posting.PostingType;
-                            this.offerType = this.isPostingOwner() ?
-                                (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                                : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-                            this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-                            this.cdr.detectChanges();
-
-                            this.resetModelToPosting();
-                        });
-                    }
-                }
-                this.cdr.detectChanges();
-            });
+            if (postingID) {
+                    this.postingService.getPostingFromPostingID(postingID).subscribe(posting => {
+                    this.posting = posting instanceof Array
+                        ? null
+                        : posting as PostingDto;
+                    this.originalPostingType = this.posting.PostingType;
+                    this.authenticationService.getActiveAccount().subscribe(account => {
+                        if (account) {
+                            this.currentAccount = account;
+                            this.offerService.getActiveOffersFromPostingIDForCurrentAccount(postingID, this.currentAccount.AccountID).subscribe(offers => {
+                                this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+                                this.offerType = this.isPostingOwner() ?
+                                    (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                                    : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+                                this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                                this.cdr.detectChanges();
+    
+                                this.resetModelToPosting();
+                            });
+                        }
+                        this.cdr.detectChanges();
+                    });
+                });
+            }
         });
     }
 
@@ -124,6 +121,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         }
         offer.OfferStatusID = OfferStatusEnum.Pending;
         this.model = offer;
+        this.offerSubmittedSuccessfully = false;
     }
 
     public canEditCurrentPosting(): boolean {
@@ -223,5 +221,10 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     public landownerHasAnyAccounts() {
         var result = this.authenticationService.getAvailableAccounts();
         return result != null && result.length > 0;
+    }
+
+    public userHasMoreThanOneAccount() {
+        var result = this.authenticationService.getAvailableAccounts();
+        return result != null && result.length > 1;
     }
 }

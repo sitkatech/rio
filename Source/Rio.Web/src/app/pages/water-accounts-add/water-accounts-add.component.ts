@@ -134,7 +134,7 @@ export class WaterAccountsAddComponent implements OnInit {
     this.userService.addAccountsToCurrentUser(userEditAccountsDto).subscribe(user => {
       this.isLoadingSubmit = false;
       this.router.navigateByUrl(`/water-accounts/manage`).then(x => {
-        this.alertService.pushAlert(new Alert(`Water Accounts successfully added!`, AlertContext.Success));
+        this.alertService.pushAlert(new Alert(`Water Account(s) successfully added!`, AlertContext.Success));
         if (this.updatingUserRole) {
           this.alertService.pushAlert(new Alert(`Congratulations! You have completed sign-up for the ${environment.platformShortName}`, AlertContext.Success));
         }

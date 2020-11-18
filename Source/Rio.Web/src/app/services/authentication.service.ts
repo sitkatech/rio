@@ -104,8 +104,9 @@ export class AuthenticationService {
       }
     }
 
-    if (!this._currentAccountSubject.value) {
-      // no current account: leave active account undefined if manager, default to first on list otherwise.
+    let currentAccounts = this.getAvailableAccounts();
+    if (!this._currentAccountSubject.value || !currentAccounts.some(x => x.AccountID == this._currentAccountSubject.value.AccountID)) {
+      // no current account or no longer have access to current account: leave active account undefined if manager or if you don't have any accounts, default to first on list otherwise.
       if (this.getAvailableAccounts() && this.currentUser.Role.RoleID != RoleEnum.Admin) {
         this._currentAccountSubject.next(this.getAvailableAccounts()[0]);
       } else {
@@ -117,7 +118,6 @@ export class AuthenticationService {
   private getUserCallback(user: UserDto) {
     this.currentUser = user;
     this._currentUserSetSubject.next(this.currentUser);
-
     if (!this.isUserRoleDisabled(this.currentUser)) {
       this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
 
@@ -139,10 +139,10 @@ export class AuthenticationService {
   }
 
   // Stores the new company value in local storage and pushes it to the subject
-  public setActiveAccount(account: AccountSimpleDto) {
+  public setActiveAccount(account: AccountSimpleDto, navigate: boolean = true) {
     window.localStorage.setItem('activeAccount', JSON.stringify(account));
     this._currentAccountSubject.next(account);
-    if (this.router.url !== "/landowner-dashboard") {
+    if (this.router.url !== "/landowner-dashboard" && navigate) {
       this.router.navigateByUrl("/landowner-dashboard");
     }
   }
@@ -223,6 +223,10 @@ export class AuthenticationService {
 
   public isCurrentUserDisabled(): boolean {
     return this.isUserRoleDisabled(this.currentUser);
+  }
+
+  public isCurrentUserUnassigned(): boolean {
+    return this.isUserUnassigned(this.currentUser);
   }
 
   public isCurrentUserAnAdministrator(): boolean {

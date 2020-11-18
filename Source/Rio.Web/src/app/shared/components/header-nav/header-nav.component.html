@@ -3,8 +3,9 @@
         <div class="row d-none d-lg-flex" style="margin-bottom:-3px">
             <div class="col-12">
                 <ul class="mb-0 list-inline text-right top-bar">
-                    <li class="list-inline-item nav-item top-bar-item mr-0" *ngIf="isAuthenticated()">
-                        <rio-account-select></rio-account-select>
+                    <li class="list-inline-item nav-item top-bar-item mr-0" *ngIf="isAuthenticated() && activeAccount">
+                        <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
+                            routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount?.ShortAccountDisplayName}}</a>
                     </li>
                     <li class="nav-item list-inline-item top-bar-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                         <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link top-bar-nav-link pb-lg-0">Sign In</a>
@@ -50,16 +51,29 @@
                                 <a class="nav-link" routerLink="/landowner-dashboard" routerLinkActive="active"
                                     *ngIf="isAuthenticated() && isLandOwner()">My Dashboard</a>
                             </li>
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="this.isAuthenticated() && !this.isUnassignedOrDisabled() && showMyDashboardsDropdown()">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    My Dashboards
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a routerLink="/manager-dashboard" class="dropdown-item" *ngIf="isAdministratorOrDemoUser()">
+                                        Manager Dashboard
+                                    </a>
+                                    <ng-container *ngIf="currentUserAccounts && currentUserAccounts.length < 6">
+                                        <button *ngFor="let account of currentUserAccounts" class="dropdown-item" (click)="setCurrentAccountAndRedirectToLandownerDashboard(account)">#{{account.AccountNumber}} ({{account.AccountName}})</button>
+                                    </ng-container>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" routerLink="/water-accounts/manage">Manage Water Accounts</a>
+                                </div>
+                            </li>
+                            <a class="nav-link" routerLink="/water-accounts/manage" *ngIf="this.isAuthenticated() && !this.isUnassignedOrDisabled() && !showMyDashboardsDropdown()">Manage Water Accounts</a>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministratorOrDemoUser()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     Manage
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a routerLink="/manager-dashboard" class="dropdown-item">
-                                        Manager Dashboard
-                                    </a>
-                                    <div class="dropdown-divider"></div>
                                     <a routerLink="/users" class="dropdown-item">
                                         View all Users
                                     </a>

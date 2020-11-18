@@ -16,7 +16,7 @@ import { AlertContext } from '../../models/enums/alert-context.enum';
 })
 export class ApiService {
 
-    constructor(private busyService: BusyService, private apiRoute: ApiRouteService, private http: HttpClient, private alertService: AlertService, private oauthService: OAuthService, private router: Router, ) {
+    constructor(private busyService: BusyService, private apiRoute: ApiRouteService, private http: HttpClient, private alertService: AlertService, private oauthService: OAuthService, private router: Router,) {
     }
 
     postToApi(relativeRoute: string, data: any): Observable<any> {
@@ -134,10 +134,19 @@ export class ApiService {
             } else if (error.error && error.status === 404) {
                 // let the caller handle not found appropriate to whatever it was doing
             } else if (error.error && !(error.error instanceof ProgressEvent)) {
-                for (const key of Object.keys(error.error)) {
-                    // FIXME: will break if errror.error[key] is not a string[]
-                    const newLocal = new Alert((error.error[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","));
-                    this.alertService.pushAlert(newLocal);
+                //https://docs.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-5.0#automatic-http-400-responses
+                if (typeof error.error === 'object' && error.error !== null && error.error.hasOwnProperty("errors")) {
+                    for (const key of Object.keys(error.error.errors)) {
+                        const newLocal = new Alert((error.error.errors[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","));
+                        this.alertService.pushAlert(newLocal);
+                    }
+                }
+                else {
+                    for (const key of Object.keys(error.error)) {
+                        // FIXME: will break if errror.error[key] is not a string[]
+                        const newLocal = new Alert((error.error[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","));
+                        this.alertService.pushAlert(newLocal);
+                    }
                 }
             } else {
                 this.alertService.pushAlert(new Alert("Oops! Something went wrong and we couldn't complete the action..."));

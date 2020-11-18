@@ -226,6 +226,13 @@ namespace Rio.EFModels.Entities
             return addedAccountIDs;
         }
 
+        public static void RemoveAssociatedAccount(RioDbContext dbContext, int userID, int accountID)
+        {
+            var currentAccountUser = dbContext.AccountUser.Single(x => x.UserID == userID && x.AccountID == accountID);
+            dbContext.AccountUser.Remove(currentAccountUser);
+            dbContext.SaveChanges();
+        }
+
         public static bool CheckIfUsersAreAdministrators(RioDbContext dbContext, List<int> userIDs)
         {
             return dbContext.User.Any(x => userIDs.Contains(x.UserID) && x.RoleID == (int) RoleEnum.Admin);

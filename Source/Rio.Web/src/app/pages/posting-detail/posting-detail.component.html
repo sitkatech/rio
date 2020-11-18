@@ -21,7 +21,13 @@
     <span *ngIf="!posting">Loading...</span>
   </h2>
   <app-alert-display></app-alert-display>
-  <div class="row mt-4" *ngIf="posting">
+  <div class="row mt-4">
+    <div class="d-none d-md-block col-md-6 offset-md-6" *ngIf="userHasMoreThanOneAccount() && posting">
+      <span *ngIf="currentAccount">Viewing posting as Account #{{currentAccount.AccountNumber}} ({{currentAccount.AccountName}})</span><br/>
+      <rio-account-select></rio-account-select>
+    </div>
+  </div>
+  <div class="row" *ngIf="posting">
     <div class="col-sm-12 col-md-6">
       <div class="card">
         <div class="card-header">
@@ -72,7 +78,11 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-12 col-md-6" *ngIf="model">
+    <div class="col-sm-12 d-md-none" *ngIf="userHasMoreThanOneAccount() && posting">
+      <span *ngIf="currentAccount">Viewing posting as Account #{{currentAccount.AccountNumber}} ({{currentAccount.AccountName}})</span><br/>
+      <rio-account-select></rio-account-select>
+    </div>
+    <div class="col-sm-12 col-md-6" *ngIf="posting">
       <div class="card" *ngIf="isPostingOwner()">
         <div class="card-header">
           Your Actions
@@ -97,7 +107,7 @@
           <div class="row">
             <div class="col-12">
               <div class="alert alert-primary text-left" *ngIf="landownerHasAnyAccounts()">
-                No account is selected. Use the dropdown in the top right to select an account to make or view offers on this posting.
+                No account is selected. Use the link above to select an account to make or view offers on this posting.
               </div>
               <div class="alert alert-primary text-left" *ngIf="!landownerHasAnyAccounts()">
                 You do not have any assigned accounts and cannot make any offers on this post.
@@ -108,7 +118,7 @@
       </div>
 
       <div class="card"
-        *ngIf="currentAccountSet() && offersSet() && isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
+        *ngIf="currentAccountSet() && model && offersSet() && isPostingOpen() && !isPostingOwner() && !isConfirmingTrade && !isCounterOffering && !offerSubmittedSuccessfully">
         <div class="card-header">
           Your Offer
         </div>

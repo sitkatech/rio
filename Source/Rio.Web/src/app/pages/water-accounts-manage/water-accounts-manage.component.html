@@ -2,9 +2,9 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-<li class="breadcrumb-item">
-     <a routerLink="/">Home</a>
- </li>
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">Manage Water Accounts</li>
             </ol>
         </nav>
@@ -15,10 +15,124 @@
     <div class="row mb-2">
         <div class="col">
             <h2 class="d-inline-block">Manage Water Accounts</h2>
-
+            <ngb-alert *ngIf="currentUserIsAdmin()" [type]="'info'" [dismissible]="false">
+                <span>
+                    You are an Adminstrator of the Water Accounting Platform.
+                    This page is optimized for user by Authorized Users such as landowners and their partners.
+                    You have access to this page so you can view and understand the landowner user experience,
+                    but it is more efficient to manage Water Accounts and Users through the <a routerLink="/users">User
+                        Index</a> page.
+                </span>
+            </ngb-alert>
             <!-- <div class="mt-2">
                 <rio-custom-rich-text [customRichTextTypeID]="introRichText"></rio-custom-rich-text>
             </div> -->
         </div>
     </div>
+    <div class="row mb-1">
+        <div class="col-sm-6">
+            <span class="align-middle">You are assigned to manage the following Water Accounts.</span>
+        </div>
+        <div class="col-sm-6 float-right">
+            <div class="float-right">
+                <a class="btn btn-rio mr-2" routerLink="/water-accounts/add">+ Add Account</a>
+                <a class="btn btn-rio" routerLink="/invite-partner">Invite Partners</a>
+            </div>
+        </div>
+    </div>
+    <ng-container *ngIf="!loadingAccounts">
+        <div class="row mb-4" *ngIf="currentUserAccounts && currentUserAccounts.length > 0">
+            <div class="col-sm-12" *ngFor="let currentAccount of currentUserAccounts | paginate: {itemsPerPage: 10, currentPage: page}">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Account #{{currentAccount.Account.AccountNumber}} ({{currentAccount.Account.AccountName}})
+                        <span class="float-right" (click)="launchModal(removeAccountModalContent, currentAccount.Account)"><i class="fas fa-trash remove-account"
+                                title="Remove Account from Accounts you manage"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p>Account Name: {{currentAccount.Account.AccountName}}</p>
+                                <p>Account Number: {{currentAccount.Account.AccountNumber}}</p>
+                                <p>Account Status: {{currentAccount.Account.AccountStatus.AccountStatusDisplayName}}</p>
+                                <p>APNs:
+                                    <ng-container *ngIf="currentAccount.Parcels.length == 0">None assigned</ng-container>
+                                    <ng-container *ngIf="currentUserIsAdmin()"><a
+                                            *ngFor="let parcel of currentAccount.Parcels; let i = index"
+                                            routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}{{(i < currentAccount.Parcels.length - 1) ? ", " : ""}}</a>
+                                    </ng-container>
+                                    <ng-container *ngIf="!currentUserIsAdmin()"><span
+                                            *ngFor="let parcel of currentAccount.Parcels; let i = index">{{parcel.ParcelNumber}}{{(i < currentAccount.Parcels.length - 1) ? ", " : ""}}</span>
+                                    </ng-container>
+                                </p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p>Users with Permission:
+                                    <ng-container *ngIf="currentAccount.Account.Users.length == 0">None assigned
+                                    </ng-container>
+                                    <ng-container *ngIf="currentUserIsAdmin()"><a
+                                            *ngFor="let user of currentAccount.Account.Users; let i = index"
+                                            routerLink="/users/{{user.userID}}">{{user.FullName}}{{(i < currentAccount.Account.Users.length -  1) ? ", " : ""}}</a>
+                                    </ng-container>
+                                    <ng-container *ngIf="!currentUserIsAdmin()"><span
+                                            *ngFor="let user of currentAccount.Account.Users; let i = index">{{user.FullName}}{{(i < currentAccount.Account.Users.length - 1) ? ", " : ""}}</span>
+                                    </ng-container>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <btn class="btn btn-rio float-right"
+                                    (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
+                                    dashboard</btn>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="currentUserAccounts && currentUserAccounts.length > 10">
+            <div class="col-sm-12">
+                <div class="text-center has-text-centered">
+                    <pagination-controls (pageChange)="page = $event"></pagination-controls>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4" *ngIf="!currentUserAccounts || currentUserAccounts.length == 0">
+            <div class="col-sm-12">
+                No accounts to show. Click the 'Add Account' button to start adding accounts!
+            </div>
+        </div>
+    </ng-container>
+    <ng-template #loadingUserAccounts>
+        <i class="fa fa-spinner loading-spinner"></i> Loading User Accounts
+    </ng-template>
 </div>
+
+<ng-template #removeAccountModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="selectAccountModalTitle">Remove Account</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div>
+            <ngb-alert *ngIf="currentUserIsAdmin()" [type]="'info'" [dismissible]="false">
+                <span>
+                    You are an Adminstrator of the Water Accounting Platform.
+                    This page is optimized for user by Authorized Users such as landowners and their partners.
+                    You have access to this page so you can view and understand the landowner user experience,
+                    but you cannot remove accounts through this view. It is more efficient to manage Water Accounts and Users through the <a routerLink="/users">User
+                        Index</a> page.
+                </span>
+            </ngb-alert>
+            <p>Are you sure you want to remove Account #{{accountToRemove.AccountNumber}} ({{accountToRemove.AccountName}}) from the list of accounts you manage? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" (click)="removeAccountToRemove()" [disabled]="!accountToRemove || currentUserIsAdmin()">
+              Remove</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+          </div>
+    </div>
+</ng-template>

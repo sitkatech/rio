@@ -163,3 +163,12 @@ input:checked + .slider .off {
   border-radius: 50%;
 }
 
+/*-----ngx-pagination styles------*/
+.ngx-pagination {
+  padding-left:0;
+}
+
+.ngx-pagination .current {
+  background: $button-border-and-background !important;
+}
+
