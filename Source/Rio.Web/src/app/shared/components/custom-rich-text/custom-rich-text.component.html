@@ -25,8 +25,8 @@
         </div>
         <ckeditor [editor]="Editor" [(ngModel)]="editedContent" (ready)="ckEditorReady($event)" [config]="ckConfig"></ckeditor>
         <div style="float:right;" *ngIf="!isUploadingImage()">
-            <button type="button" class="btn-rio btn-xs mt-1" (click)="saveEdit()">Save</button>
-            <button type="button" class="btn-rio btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
+            <button type="button" class="btn-rio btn-xs mt-1 mr-1" (click)="saveEdit()">Save</button>
+            <button type="button" class="btn-secondary btn-xs mt-1" (click)="cancelEdit()">Cancel</button>
         </div>
         <div *ngIf="isUploadingImage()">
             <em>Please wait while the image is uploaded...</em>

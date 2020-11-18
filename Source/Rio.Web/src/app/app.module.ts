@@ -67,7 +67,7 @@ import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scena
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
 import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
-import { SignUpComponent } from './pages/create-user-profile/create-user-profile.component';
+import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
 import { WaterAccountsManageComponent } from './pages/water-accounts-manage/water-accounts-manage.component';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
@@ -125,7 +125,7 @@ export function init_app(appLoadService: AppInitService) {
     RolesAndPermissionsComponent,
     ParcelAllocationTypeEditComponent,
     TrainingVideosComponent,
-    SignUpComponent,
+    CreateUserProfileComponent,
     WaterAccountsAddComponent,
     WaterAccountsManageComponent,
     WaterAccountsInviteComponent

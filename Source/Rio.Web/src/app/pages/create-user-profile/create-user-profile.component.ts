@@ -8,7 +8,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
   templateUrl: './create-user-profile.component.html',
   styleUrls: ['./create-user-profile.component.scss']
 })
-export class SignUpComponent implements OnInit {
+export class CreateUserProfileComponent implements OnInit {
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
@@ -23,14 +23,6 @@ export class SignUpComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-      this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
-        this.currentUser = currentUser;
-    });
-  }
-
-  ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
   }
 
   public isCurrentUserNullOrUndefined(): boolean {
