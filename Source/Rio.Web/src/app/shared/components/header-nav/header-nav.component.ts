@@ -65,8 +65,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
                 this.userService.listAccountsByUserID(currentUser.UserID).subscribe(userAccounts => {
                     this.currentUserAccounts = userAccounts;
-                    debugger;
-                    this.cdr.detectChanges();
                 })
             }
 

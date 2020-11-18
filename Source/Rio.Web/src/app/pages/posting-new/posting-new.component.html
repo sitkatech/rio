@@ -12,7 +12,7 @@
         </nav>
     </div>
 </div>
-<div class="container mt-sm-4" *ngIf="postingTypes && currentAccount">
+<div class="container mt-sm-4" *ngIf="postingTypes && currentUserAccounts">
     <h2>New Posting</h2>
     <p class="lead">
         Create a new offer to either buy or sell an allocation.
@@ -23,10 +23,15 @@
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-4 control-label">
-                        <label>Account</label>
+                        <label class="required">Account</label>
                     </div>
                     <div class="col-sm-8">
-                        {{currentAccount.AccountDisplayName}}
+                        <select name="CreateAccountID" class="form-control" [(ngModel)]="model.CreateAccountID" required>
+                            <option [ngValue]="undefined"></option>
+                            <option *ngFor="let account of currentUserAccounts" [ngValue]="account.AccountID">
+                                {{account.AccountName}}
+                            </option>
+                        </select>
                     </div>
                 </div>
                 <div class="row mt-2">
@@ -102,7 +107,7 @@
                     </div>
                     <div class="col-sm-8 text-right">
                         <button type="submit" class="btn btn-rio"
-                            [disabled]="!isOfferFormValid() || isLoadingSubmit">
+                            [disabled]="newPostingForm.form.invalid || !isOfferFormValid() || isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Save
                         </button>
@@ -113,8 +118,8 @@
         </div>
     </form>
 </div>
-<div class="container" *ngIf="!currentAccount">
+<!-- <div class="container" *ngIf="!currentAccount">
   <ngb-alert [type]="'info'" [dismissible]="false">
     No account is selected. Use the dropdown in the top right to select an account to view the Landowner Dashboard.
 </ngb-alert>
-</div>
+</div> -->

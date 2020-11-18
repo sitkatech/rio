@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, HostListener, OnDestroy, ChangeDetectorRef, Input } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserDto } from '../../models';
@@ -13,7 +13,10 @@ declare var jQuery: any;
   encapsulation: ViewEncapsulation.None
 })
 export class AccountSelectComponent implements OnInit, OnDestroy {
+  @Input() linkText = "Click here to change your selected account";
+  
   private watchUserChangeSubscription: any;
+  private watchAccountChangeSubscription: any;
   public activeAccount: AccountSimpleDto;
   public selectedAccount: any;
   public currentUser: UserDto;
@@ -27,19 +30,24 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-
-      // do not attempt any API hits if the user is known to be unassigned.
-      if (currentUser && !this.isUnassignedOrDisabled()) {
-
-        // display the correct active account in the dropdown below the username.
-        // on pages which need to react to the active account, include this call in ngInit and put reactive logic in the subscribe statement.
-        this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => { this.activeAccount = account; this.cdr.detectChanges(); console.log(this.activeAccount); });
-      }
     })
+
+    this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe(account => { 
+      if (account) {
+        this.activeAccount = account;
+        this.cdr.detectChanges();            
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.watchUserChangeSubscription.unsubscribe();
+    this.watchAccountChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+  }
+
+  public getActiveAccountName() : string {
+    return this.activeAccount ? this.activeAccount.ShortAccountDisplayName : "No account selected";
   }
 
   public isUnassignedOrDisabled(): boolean {
@@ -51,7 +59,7 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
   }
 
   public getFilteredAccounts(): Array<AccountSimpleDto> {
-    return this.getAvailableAccounts()?.filter(x => (this.searchText == null || x.ShortAccountDisplayName.includes(this.searchText)) && x != this.activeAccount);
+    return this.getAvailableAccounts()?.filter(x => (this.searchText == null || x.ShortAccountDisplayName.includes(this.searchText)) && x.AccountID != this.activeAccount?.AccountID);
   }
 
   public setCurrentAccount(): void {
@@ -60,18 +68,12 @@ export class AccountSelectComponent implements OnInit, OnDestroy {
       this.modalReference = null;
     }
     if (this.selectedAccount) {
-    this.authenticationService.setActiveAccount(this.selectedAccount, false);
-    this.activeAccount = this.selectedAccount;
+      this.authenticationService.setActiveAccount(this.selectedAccount, false);
     }
   }
 
   public compareAccountsFn(c1: AccountSimpleDto, c2: AccountSimpleDto): boolean {
     return c1 && c2 ? c1.AccountID === c2.AccountID : c1 === c2;
-  }
-
-  public showDropdown(): boolean {
-    const accountList = this.getAvailableAccounts();
-    return accountList && accountList.length > 1;
   }
 
   public launchModal(modalContent: any) {

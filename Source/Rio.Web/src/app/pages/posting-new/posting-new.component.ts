@@ -11,6 +11,7 @@ import { isNullOrUndefined } from 'util';
 import { UserDto } from 'src/app/shared/models';
 import { PostingUpsertDto } from 'src/app/shared/models/posting/posting-upsert-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'rio-posting-new',
@@ -25,12 +26,14 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   public model: PostingUpsertDto = new PostingUpsertDto();
   public isLoadingSubmit: boolean = false;
   currentAccount: AccountSimpleDto;
+  currentUserAccounts: AccountSimpleDto[];
 
   constructor(
     private cdr: ChangeDetectorRef,
     private router: Router,
     private postingService: PostingService,
     private postingTypeService: PostingTypeService,
+    private userService: UserService,
     private alertService: AlertService,
     private authenticationService: AuthenticationService
   ) { }
@@ -38,8 +41,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.authenticationService.getActiveAccount().subscribe(account=>{
-        this.currentAccount = account;
+      this.userService.listAccountsByUserID(currentUser.UserID).subscribe(currentUserAccountDtos=>{
+        this.currentUserAccounts = currentUserAccountDtos;
       })
       this.postingTypeService.getPostingTypes().subscribe(result => {
         this.postingTypes = result;
@@ -56,7 +59,6 @@ export class PostingNewComponent implements OnInit, OnDestroy {
 
   onSubmit(invitePostingForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.model.CreateAccountID = this.currentAccount.AccountID;
     this.model.CreateUserID = this.currentUser.UserID;
     this.postingService.newPosting(this.model)
       .subscribe(response => {

@@ -118,7 +118,6 @@ export class AuthenticationService {
   private getUserCallback(user: UserDto) {
     this.currentUser = user;
     this._currentUserSetSubject.next(this.currentUser);
-
     if (!this.isUserRoleDisabled(this.currentUser)) {
       this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
 
