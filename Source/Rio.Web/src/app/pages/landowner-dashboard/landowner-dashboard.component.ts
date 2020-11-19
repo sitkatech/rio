@@ -67,6 +67,17 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
 
+  public highlightedParcelDto: ParcelDto;
+  private _highlightedParcelID: number;
+  set highlightedParcelID(value: number) {
+    this._highlightedParcelID = value;
+    this.highlightedParcelDto = this.parcels.filter(x => x.ParcelID == value)[0];
+ }
+ 
+  get highlightedParcelID(): number {     
+      return this._highlightedParcelID;    
+  }
+
   public months = ["Jan",
         "Feb",
         "Mar",
@@ -346,6 +357,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     return this.parcelAllocations.filter(p => p.WaterYear.toString() === year.toString());
+  }
+
+  public getAllocationForParcelAndYear(parcelID: number, year: number): number {
+    if (!this.parcelAllocations) {
+      return null;
+    }
+
+    return this.parcelAllocations.filter(p => p.WaterYear == year && p.ParcelID == parcelID)[0]?.AcreFeetAllocated;
   }
 
   public getLastETReadingDate(): string {
