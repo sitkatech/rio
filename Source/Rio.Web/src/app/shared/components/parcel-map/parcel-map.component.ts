@@ -44,6 +44,25 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public selectedParcelIDs: Array<number> = [];
 
     @Input()
+    public highlightedParcelStyle: string = 'parcel_yellow';
+
+    private _highlightedParcelID: number = null;
+
+    @Input() set highlightedParcelID(value: number) {
+        if (this.highlightedParcelID != value) {
+            this._highlightedParcelID = value;
+            this.highlightParcel();
+        }
+     }
+     
+    get highlightedParcelID(): number {     
+        return this._highlightedParcelID;    
+    }
+
+    @Output()
+    public highlightedParcelIDChange: EventEmitter<number> = new EventEmitter<number>();
+
+    @Input()
     public onEachFeatureCallback?: (feature, layer) => void;
 
     @Input()
@@ -51,6 +70,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
 
     @Input()
     public disableDefaultClick: boolean = false;
+
+    @Input()
+    public highlightParcelOnClick: boolean = false;
 
     @Input()
     public displayparcelsLayerOnLoad: boolean = true;
@@ -82,6 +104,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public overlayLayers: { [key: string]: any } = {};
     boundingBox: BoundingBoxDto;
     private selectedParcelLayer: any;
+    private highlightedParcelLayer: any;
     private defaultParcelsWMSOptions: WMSOptions;
 
     constructor(
@@ -119,7 +142,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             tiled: true
         } as WMSOptions);
 
-        let parcelsWMSOptions = Object.assign({styles: this.visibleParcelStyle}, this.defaultParcelsWMSOptions);
+        let parcelsWMSOptions = Object.assign({ styles: this.visibleParcelStyle }, this.defaultParcelsWMSOptions);
         if (this.visibleParcelIDs.length > 0) {
             parcelsWMSOptions.cql_filter = this.createParcelMapFilter(this.visibleParcelIDs);
             this.fitBoundsToSelectedParcels(this.visibleParcelIDs);
@@ -146,7 +169,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             this.map.removeLayer(this.selectedParcelLayer);
         }
 
-        var wmsParameters = Object.assign({styles: this.selectedParcelStyle, cql_filter: this.createParcelMapFilter(parcelIDs)}, this.defaultParcelsWMSOptions);
+        var wmsParameters = Object.assign({ styles: this.selectedParcelStyle, cql_filter: this.createParcelMapFilter(parcelIDs) }, this.defaultParcelsWMSOptions);
         this.selectedParcelLayer = tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsParameters);
         this.layerControl.addOverlay(this.selectedParcelLayer, this.selectedParcelLayerName);
 
@@ -218,6 +241,36 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                             });
                     });
             });
+        }
+
+        if (this.highlightParcelOnClick) {
+            const wfsService = this.wfsService;
+            this.map.on("click", (event: LeafletMouseEvent): void => {
+                wfsService.getParcelByCoordinate(event.latlng.lng, event.latlng.lat)
+                    .subscribe((parcelFeatureCollection: FeatureCollection) => {
+                        if (parcelFeatureCollection.features) {
+                            console.log(parcelFeatureCollection.features);
+                            let parcelID = parcelFeatureCollection.features[0].properties.ParcelID;
+                            if (this.highlightedParcelID != parcelID && this.selectedParcelIDs.some(x => x == parcelID)) {
+                                this.highlightedParcelID = parcelID;
+                                this.highlightedParcelIDChange.emit(this.highlightedParcelID);
+                            }
+                        }
+                    });
+            });
+        }
+    }
+
+    public highlightParcel() {
+        if (this.highlightedParcelLayer) {
+            this.map.removeLayer(this.highlightedParcelLayer);
+            this.highlightedParcelLayer = null;
+        }
+        if (this.highlightedParcelID) {
+            let wmsParameters = Object.assign({ styles: this.highlightedParcelStyle, cql_filter: `ParcelID = ${this.highlightedParcelID}` }, this.defaultParcelsWMSOptions);
+            this.highlightedParcelLayer = tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsParameters);
+            this.highlightedParcelLayer.addTo(this.map).bringToFront();
+            this.fitBoundsToSelectedParcels([this.highlightedParcelID])
         }
     }
 
