@@ -12,7 +12,9 @@ namespace Rio.EFModels.Entities
         public static List<AccountSimpleDto> ListByUserID(RioDbContext dbContext, int userID)
         {
             return dbContext.User.Include(x => x.AccountUser).ThenInclude(x => x.Account)
-                .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsSimpleDto()).ToList();
+                .Single(x => x.UserID == userID).AccountUser
+                .OrderBy(x => x.Account.AccountName)
+                .Select(x => x.Account.AsSimpleDto()).ToList();
         }
 
         public static List<AccountIncludeParcelsDto> ListByUserIDIncludeParcels(RioDbContext dbContext, int userID)
@@ -29,7 +31,9 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.Account)
                 .ThenInclude(x => x.AccountParcel)
                 .ThenInclude(x => x.Parcel)
-                .Single(x => x.UserID == userID).AccountUser.Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
+                .Single(x => x.UserID == userID).AccountUser
+                .OrderBy(x => x.Account.AccountName)
+                .Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
         }
 
         public static List<AccountIncludeParcelsDto> ListIncludeParcels(RioDbContext dbContext)
