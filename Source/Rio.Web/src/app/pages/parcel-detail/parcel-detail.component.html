@@ -56,7 +56,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-sm-12" *ngIf="parcel">
-              <parcel-map mapID="parcelsMapForParcel" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="500px">
+              <parcel-map mapID="parcelsMapForParcel" [selectedParcelIDs]="getSelectedParcelIDs()" [disableDefaultClick]="true" mapHeight="500px">
               </parcel-map>
             </div>
           </div>

@@ -84,7 +84,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public defaultFitBoundsOptions?: FitBoundsOptions = null;
 
     @Input()
-    public selectedParcelLayerName: string = 'Selected Parcels';
+    public selectedParcelLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Selected Parcels";
 
     @Output()
     public afterSetControl: EventEmitter<Control.Layers> = new EventEmitter();
@@ -95,6 +95,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Output()
     public onMapMoveEnd: EventEmitter<LeafletEvent> = new EventEmitter();
 
+    public wellLayerName: string = "<img src='./assets/main/images/well.png' style='height:16px; margin-bottom:3px'> Wells";
+    public parcelLayerName: string = "<img src='./assets/main/images/parcel.png' style='height:16px; margin-bottom:3px'> Parcels";
     public component: any;
 
     public map: Map;
@@ -156,8 +158,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         } as WMSOptions);
 
         this.overlayLayers = Object.assign({
-            "Parcels": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", parcelsWMSOptions),
-            "Wells": tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wellsWMSOptions)
+            [this.parcelLayerName]: tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", parcelsWMSOptions),
+            [this.wellLayerName]: tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wellsWMSOptions)
         }, this.overlayLayers);
 
         this.compileService.configure(this.appRef);
@@ -174,6 +176,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         this.layerControl.addOverlay(this.selectedParcelLayer, this.selectedParcelLayerName);
 
         this.selectedParcelLayer.addTo(this.map).bringToFront();
+        this.overlayLayers[this.wellLayerName].bringToFront();
     }
 
     private fitBoundsToSelectedParcels(parcelIDs: Array<number>) {
@@ -270,7 +273,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             let wmsParameters = Object.assign({ styles: this.highlightedParcelStyle, cql_filter: `ParcelID = ${this.highlightedParcelID}` }, this.defaultParcelsWMSOptions);
             this.highlightedParcelLayer = tileLayer.wms(environment.geoserverMapServiceUrl + "/wms?", wmsParameters);
             this.highlightedParcelLayer.addTo(this.map).bringToFront();
-            this.fitBoundsToSelectedParcels([this.highlightedParcelID])
+            this.fitBoundsToSelectedParcels([this.highlightedParcelID]);
+            this.overlayLayers[this.wellLayerName].bringToFront();
         }
     }
 
@@ -278,8 +282,8 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         this.layerControl = new Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         if (this.displayparcelsLayerOnLoad) {
-            this.overlayLayers["Parcels"].addTo(this.map);
-            this.overlayLayers["Wells"].addTo(this.map);
+            this.overlayLayers[this.parcelLayerName].addTo(this.map);
+            this.overlayLayers[this.wellLayerName].addTo(this.map);
         }
         this.afterSetControl.emit(this.layerControl);
     }

@@ -42,7 +42,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public postingsGridColumnDefs: ColDef[];
   public landownerUsageReportGridColumnDefs: ColDef[];
 
-  public waterYearToDisplay: number;
+  public waterYearToDisplay: number;a
   public waterYears: Array<number>;
   public unitsShown: string = "ac-ft";
   public displayTradeGrid: boolean = false;
@@ -51,6 +51,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private allocationColumnDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   postingActivity: PostingDetailedDto[];
+
+  public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,

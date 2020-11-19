@@ -94,6 +94,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
+  public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
+
   constructor(
     private route: ActivatedRoute,
     private postingService: PostingService,
@@ -359,12 +361,21 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcelAllocations.filter(p => p.WaterYear.toString() === year.toString());
   }
 
-  public getAllocationForParcelAndYear(parcelID: number, year: number): number {
+  public getAllocationForParcelAndYear(parcelID: number, year: number): string {
     if (!this.parcelAllocations) {
       return null;
     }
 
-    return this.parcelAllocations.filter(p => p.WaterYear == year && p.ParcelID == parcelID)[0]?.AcreFeetAllocated;
+    var parcelAllocationsForYear = this.parcelAllocations.filter(p => p.WaterYear == year && p.ParcelID == parcelID)
+    if (parcelAllocationsForYear.length > 0) {
+      let result = parcelAllocationsForYear.reduce(function (a, b) {
+        return (a + b.AcreFeetAllocated);
+      }, 0);
+      return result.toFixed(1);
+    }
+    else {
+      return "-";
+    }
   }
 
   public getLastETReadingDate(): string {
@@ -521,6 +532,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       });
     }
     return sum;
+  }
+
+  public getTotalWaterUsageForParcelToDisplay(parcelNum: string) : string {
+    return this.getTotalWaterUsageForParcel(parcelNum).toFixed(1);
   }
 
   public getTotalWaterUsageForParcel(parcelNum : string) : number {

@@ -167,7 +167,7 @@
           Parcels
         </div>
         <div class="card-body table-responsive" *ngIf="parcels">
-          <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" mapHeight="600px">
+          <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelsLayerName" mapHeight="600px">
           </parcel-map>
         </div>
         <div class="card-body text-center" *ngIf="!parcels">

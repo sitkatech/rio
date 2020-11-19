@@ -26,7 +26,8 @@
         (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
     </div>
   </div>
-  <div class="row mt-4" *ngIf="parcels && parcels.length > 0 && waterUsages">
+  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
+  <div class="row mt-4" *ngIf="userHasParcels() && waterUsages">
     <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">
@@ -295,15 +296,15 @@
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-allocation-chart>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row mt-4">
+  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
+  <div *ngIf="userHasParcels() && waterUsages && waterUsageChartData" class="row mt-4">
     <div class="col-sm-12">
-      <div *ngIf="userHasParcels() && waterUsageChartData" class="card">
+      <div class="card">
         <div class="card-header">
           <div class="btn-group btn-group-toggle float-right">
             <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'chart' ? 'active' : ''"
@@ -389,7 +390,8 @@
       <em>No data available: this Account is not associated with any parcels in {{waterYearToDisplay}}</em>
     </div>
   </div>
-  <div class="row mt-4" *ngIf="trades && allowTrading()">
+  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
+  <div class="row mt-4" *ngIf="userHasParcels() && allowTrading() && waterUsages && waterUsageChartData && trades">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
@@ -495,9 +497,10 @@
       </div>
     </div>
   </div>
-  <div class="row mt-4 mb-4" *ngIf="parcels && parcels.length > 0">
+  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
+  <div class="row mt-4 mb-4" *ngIf="userHasParcels() && waterUsages && waterUsageChartData && trades">
     <div class="col-sm-12 col-md-12">
-      <div class="card mt-4">
+      <div class="card">
         <div class="card-header">
           Parcel Map
         </div>
@@ -515,6 +518,7 @@
             </div>
             <div class="col-sm-8 col-md-9 col-sm-push-4 col-md-push-3">
               <parcel-map mapID="parcelsMapForUser" [(highlightedParcelID)]="highlightedParcelID"
+                [selectedParcelLayerName]="selectedParcelsLayerName"
                 [selectedParcelIDs]="getSelectedParcelIDs()" [disableDefaultClick]="true"
                 [highlightParcelOnClick]="true" mapHeight="500px">
               </parcel-map>
@@ -531,10 +535,10 @@
                     </strong>{{highlightedParcelDto.ParcelAreaInAcres | number: "1.1-1"}}
                   </p>
                   <p class="ml-3"><strong>Allocation (ac-ft)
-                    </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay) | number: "1.1-1"}}
+                    </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay)}}
                   </p>
                   <p class="ml-3"><strong>Total Usage (ac-ft)
-                  </strong>{{getTotalWaterUsageForParcel(highlightedParcelDto.ParcelNumber) | number: "1.1-1"}}
+                  </strong>{{getTotalWaterUsageForParcelToDisplay(highlightedParcelDto.ParcelNumber)}}
                 </p>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-lg-4 mt-4 text-sm-center">
