@@ -88,7 +88,7 @@ export class AuthenticationService {
 
 
     this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
-
+    this._availableAccountsSubject = new BehaviorSubject<AccountSimpleDto[]>(undefined);
   }
 
   private updateCurrentAccountSubject() {
@@ -120,17 +120,24 @@ export class AuthenticationService {
     this._currentUserSetSubject.next(this.currentUser);
     if (!this.isUserRoleDisabled(this.currentUser)) {
       this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
-
         this._availableAccounts = result;
+        this._availableAccountsSubject.next(result);
         this.updateCurrentAccountSubject();
       })
     }
   }
 
   private _availableAccounts: Array<AccountSimpleDto>;
+  //There are many places where we don't use the subject version defined here.
+  //It may be better to use the observable in some of those places, but that's beyond the current scope of work
+  private _availableAccountsSubject: BehaviorSubject<AccountSimpleDto[]>;
 
   public getAvailableAccounts(): Array<AccountSimpleDto> {
     return this._availableAccounts;
+  }
+
+  public getAvailableAccountsObservable(): Observable<AccountSimpleDto[]> {
+    return this._availableAccountsSubject.asObservable();
   }
 
   // Returns the observable (read-only) part of this subject

@@ -1,5 +1,6 @@
 import { OfferStatusDto } from './offer-status-dto';
 import { AccountSimpleDto } from '../account/account-simple-dto';
+import { TradeDto } from './trade-dto';
 
 export class OfferDto {
     OfferID: number;
@@ -9,7 +10,7 @@ export class OfferDto {
     OfferNotes: string;
     CreateAccount: AccountSimpleDto;
     OfferStatus: OfferStatusDto;
-    TradeID: number;
+    Trade: TradeDto;
     WaterTransferID: number;
 
     constructor(obj?: any) {

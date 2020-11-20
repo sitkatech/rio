@@ -26,7 +26,7 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   public model: PostingUpsertDto = new PostingUpsertDto();
   public isLoadingSubmit: boolean = false;
   currentAccount: AccountSimpleDto;
-  currentUserAccounts: AccountSimpleDto[];
+  public currentUserAccounts: AccountSimpleDto[];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -41,8 +41,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.userService.listAccountsByUserID(currentUser.UserID).subscribe(currentUserAccountDtos=>{
-        this.currentUserAccounts = currentUserAccountDtos;
+      this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
+        this.currentUserAccounts = currentAccounts;
       })
       this.postingTypeService.getPostingTypes().subscribe(result => {
         this.postingTypes = result;

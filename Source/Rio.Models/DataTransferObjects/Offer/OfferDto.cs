@@ -12,7 +12,7 @@ namespace Rio.Models.DataTransferObjects.Offer
         public string OfferNotes { get; set; }
         public AccountDto CreateAccount { get; set; }
         public OfferStatusDto OfferStatus { get; set; }
-        public int TradeID { get; set; }
+        public TradeDto Trade { get; set; }
         public int? WaterTransferID { get; set; }
     }
 }

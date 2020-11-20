@@ -62,16 +62,17 @@ namespace Rio.API.Controllers
             var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
-            var currentTrade = Trade.GetByTradeID(_dbContext, offer.TradeID);
+            var currentTrade = Trade.GetByTradeID(_dbContext, offer.Trade.TradeID);
             var rioUrl = _rioConfiguration.WEB_URL;
 
             // update trades status if needed
             switch (offerUpsertDto.OfferStatusID)
             {
                 case (int)OfferStatusEnum.Accepted:
-                    var tradeDto = Trade.Update(_dbContext, offer.TradeID, TradeStatusEnum.Accepted);
+                    var tradeDto = Trade.Update(_dbContext, offer.Trade.TradeID, TradeStatusEnum.Accepted);
                     // write a water transfer record
                     var waterTransfer = WaterTransfer.CreateNew(_dbContext, offer, tradeDto, posting);
+                    offer.WaterTransferID = waterTransfer.WaterTransferID;
                     var mailMessages = GenerateAcceptedOfferEmail(rioUrl, offer, currentTrade, posting, waterTransfer, smtpClient);
                     foreach (var mailMessage in mailMessages)
                     {
@@ -134,7 +135,7 @@ namespace Rio.API.Controllers
         private void UpdateTradeStatusSendEmail(OfferDto offer, SitkaSmtpClientService smtpClient, MailMessage mailMessage,
             TradeStatusEnum updatedStatus)
         {
-            Trade.Update(_dbContext, offer.TradeID, updatedStatus);
+            Trade.Update(_dbContext, offer.Trade.TradeID, updatedStatus);
             SendEmailMessage(smtpClient, mailMessage);
         }
 
