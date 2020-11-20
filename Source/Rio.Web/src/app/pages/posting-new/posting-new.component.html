@@ -12,7 +12,7 @@
         </nav>
     </div>
 </div>
-<div class="container mt-sm-4" *ngIf="postingTypes && currentUserAccounts">
+<div class="container mt-sm-4" *ngIf="postingTypes && currentUserAccounts?.length > 0">
     <h2>New Posting</h2>
     <p class="lead">
         Create a new offer to either buy or sell an allocation.
@@ -23,11 +23,11 @@
             <div class="col-sm-6">
                 <div class="row">
                     <div class="col-sm-4 control-label">
-                        <label class="required">Account</label>
+                        <label class="required">Water Account</label>
                     </div>
                     <div class="col-sm-8">
                         <select name="CreateAccountID" class="form-control" [(ngModel)]="model.CreateAccountID" required>
-                            <option [ngValue]="undefined"></option>
+                            <option [ngValue]="undefined" disabled>Select an Account</option>
                             <option *ngFor="let account of currentUserAccounts" [ngValue]="account.AccountID">
                                 {{account.AccountName}}
                             </option>

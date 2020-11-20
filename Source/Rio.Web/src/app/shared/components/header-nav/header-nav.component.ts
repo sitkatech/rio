@@ -56,16 +56,13 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
                 // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
                 this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
                     this.activeAccount = account;
+                    this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
                     if (environment.allowTrading) {
                         this.tradeService.getTradeActivityByAccountID(account?.AccountID ?? 0).subscribe((trades) => {
                             this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
                         });
                     }
                 });
-
-                this.userService.listAccountsByUserID(currentUser.UserID).subscribe(userAccounts => {
-                    this.currentUserAccounts = userAccounts;
-                })
             }
 
             if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)) {
@@ -173,10 +170,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
         //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
         return 5;
-    }
-
-    public getAvailableAccounts(): Array<AccountSimpleDto> {
-        return this.authenticationService.getAvailableAccounts();
     }
 
     public setCurrentAccount(): void {

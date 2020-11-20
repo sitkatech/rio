@@ -25,12 +25,13 @@ import { PostingStatusDto } from 'src/app/shared/models/posting/posting-status-d
     styleUrls: ['./posting-detail.component.scss']
 })
 export class PostingDetailComponent implements OnInit, OnDestroy {
-private watchUserChangeSubscription: any;
+    private watchUserChangeSubscription: any;
     private currentUser: UserDto;
 
     public posting: PostingDto;
     public offers: Array<OfferDto>;
     public model: OfferUpsertDto;
+    public successfulOfferDto: OfferDto;
     public isLoadingSubmit: boolean = false;
 
     public isCounterOffering: boolean = false;
@@ -43,6 +44,9 @@ private watchUserChangeSubscription: any;
     public offerType: string;
     public counterOfferRecipientType: string;
     public currentAccount: AccountSimpleDto;
+    public currentUserAccounts: AccountSimpleDto[];
+    public currentAccountChosen: boolean =  false;
+    confirmedTrade: boolean;
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -60,27 +64,18 @@ private watchUserChangeSubscription: any;
             this.currentUser = currentUser;
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             if (postingID) {
-                    this.postingService.getPostingFromPostingID(postingID).subscribe(posting => {
+                this.postingService.getPostingFromPostingID(postingID).subscribe(posting => {
                     this.posting = posting instanceof Array
                         ? null
                         : posting as PostingDto;
                     this.originalPostingType = this.posting.PostingType;
-                    this.authenticationService.getActiveAccount().subscribe(account => {
-                        if (account) {
-                            this.currentAccount = account;
-                            this.offerService.getActiveOffersFromPostingIDForCurrentAccount(postingID, this.currentAccount.AccountID).subscribe(offers => {
-                                this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
-                                this.offerType = this.isPostingOwner() ?
-                                    (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
-                                    : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
-                                this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-                                this.cdr.detectChanges();
-    
-                                this.resetModelToPosting();
-                            });
+                    this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
+                        this.currentUserAccounts = currentAccounts;
+                        if (this.currentUserAccounts?.length == 1) {
+                            this.currentAccount = currentAccounts[0];
+                            this.getOffersForCurrentAccount();
                         }
-                        this.cdr.detectChanges();
-                    });
+                    })
                 });
             }
         });
@@ -90,6 +85,21 @@ private watchUserChangeSubscription: any;
         this.watchUserChangeSubscription.unsubscribe();
         this.authenticationService.dispose();
         this.cdr.detach();
+    }
+
+    public getOffersForCurrentAccount() {
+        if (this.currentAccount) {
+            this.currentAccountChosen = true;
+            this.offerService.getActiveOffersFromPostingIDForCurrentAccount(this.posting.PostingID, this.currentAccount.AccountID).subscribe(offers => {
+                this.offers = offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0);
+                this.offerType = this.isPostingOwner() ?
+                    (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
+                    : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
+                this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
+                this.cdr.detectChanges();
+                this.resetModelToPosting();
+            });
+        }
     }
 
     public isPostingOwner(): boolean {
@@ -108,7 +118,7 @@ private watchUserChangeSubscription: any;
         if (this.offers.length > 0) {
             // get most recent offer
             var mostRecentOffer = this.offers.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0)[0];
-            offer.TradeID = mostRecentOffer.TradeID;
+            offer.TradeID = mostRecentOffer.Trade?.TradeID;
             offer.OfferID = mostRecentOffer.OfferID;
             offer.Price = mostRecentOffer.Price;
             offer.Quantity = mostRecentOffer.Quantity;
@@ -200,6 +210,7 @@ private watchUserChangeSubscription: any;
                 this.isCounterOffering = false;
                 this.isLoadingSubmit = false;
                 this.offerSubmittedSuccessfully = true;
+                this.successfulOfferDto = response;
                 this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
             }
                 ,
@@ -211,20 +222,35 @@ private watchUserChangeSubscription: any;
     }
 
     public currentAccountSet(): boolean {
-        return this.currentAccount !== null && this.currentAccount !== undefined;
+        return this.currentAccount !== null && this.currentAccount !== undefined && this.currentAccountChosen;
+    }
+
+    public resetCurrentAccount() {
+        this.currentAccount = undefined;
+        this.currentAccountChosen = false;
     }
 
     public offersSet(): boolean {
         return this.offers !== null && this.offers !== undefined;
     }
 
-    public landownerHasAnyAccounts() {
-        var result = this.authenticationService.getAvailableAccounts();
-        return result != null && result.length > 0;
+    public offerAccepted(): boolean {
+        return this.model.OfferStatusID == OfferStatusEnum.Accepted;
     }
 
-    public userHasMoreThanOneAccount() {
-        var result = this.authenticationService.getAvailableAccounts();
-        return result != null && result.length > 1;
+    public landownerHasAnyAccounts(): boolean {
+        return this.currentUserAccounts?.length > 0;
+    }
+
+    public userHasMoreThanOneAccount(): boolean {
+        return this.currentUserAccounts?.length > 1;
+    }
+
+    public setActiveAccountAndNavigateToDashboard() {
+        if (!this.currentAccount) {
+            return;
+        }
+
+        this.authenticationService.setActiveAccount(this.currentAccount);
     }
 }

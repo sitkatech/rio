@@ -42,12 +42,18 @@
     </div>
     <ng-container *ngIf="!loadingAccounts">
         <div class="row mb-4" *ngIf="currentUserAccounts && currentUserAccounts.length > 0">
-            <div class="col-sm-12" *ngFor="let currentAccount of currentUserAccounts | paginate: {itemsPerPage: 10, currentPage: page}">
-                <div class="card mb-4">
+            <div class="col-lg-6 mb-4" *ngFor="let currentAccount of currentUserAccounts | paginate: {itemsPerPage: 10, currentPage: page}">
+                <div class="card h-100">
                     <div class="card-header">
-                        Account #{{currentAccount.Account.AccountNumber}} ({{currentAccount.Account.AccountName}})
-                        <span class="float-right" (click)="launchModal(removeAccountModalContent, currentAccount.Account)"><i class="fas fa-trash remove-account"
-                                title="Remove Account from Accounts you manage"></i></span>
+                        <div class="row">
+                            <div class="col-11 card-header-name">
+                                Account #{{currentAccount.Account.AccountNumber}} ({{currentAccount.Account.AccountName}})
+                            </div>
+                            <div class="col-1">
+                                <span class="float-right" (click)="launchModal(removeAccountModalContent, currentAccount.Account)"><i class="fas fa-trash remove-account"
+                                    title="Remove Account from Accounts you manage"></i></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -79,14 +85,16 @@
                                     </ng-container>
                                 </p>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-12 d-lg-none">
                                 <btn class="btn btn-rio float-right"
-                                    (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
-                                    dashboard</btn>
+                            (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
+                            Dashboard</btn>
                             </div>
                         </div>
+                    <br class="d-none d-lg-block">
+                        <btn class="btn btn-rio d-none d-lg-block" style="position:absolute; bottom:3%; right:3%"
+                            (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
+                            Dashboard</btn>
                     </div>
                 </div>
             </div>

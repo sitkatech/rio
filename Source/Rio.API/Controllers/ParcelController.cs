@@ -49,7 +49,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}")]
-        [ManagerDashboardFeature]
+        [ParcelViewFeature]
         public ActionResult<ParcelDto> GetByParcelID([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -62,7 +62,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getAllocations")]
-        [ManagerDashboardFeature]
+        [ParcelViewFeature]
         public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -90,7 +90,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
-        [ManagerDashboardFeature]
+        [ParcelViewFeature]
         public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
@@ -219,7 +219,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getOwnershipHistory")]
-        [ManagerDashboardFeature]
+        [ParcelViewFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
             var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.SaleDate);

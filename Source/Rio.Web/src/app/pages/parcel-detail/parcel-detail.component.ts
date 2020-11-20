@@ -11,6 +11,7 @@ import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -20,6 +21,7 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 export class ParcelDetailComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
+  private currentUserAccounts: AccountSimpleDto[];
 
   public waterYears: Array<number>;
   public parcel: ParcelDto;
@@ -46,7 +48,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-
+      this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
+        this.currentUserAccounts = currentAccounts;
+      })
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       if (id) {
         forkJoin(
@@ -127,5 +131,20 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public isAdministrator() : boolean
   {
     return this.authenticationService.isCurrentUserAnAdministrator();
+  }
+
+  public isDemoUser() : boolean
+  {
+    return this.authenticationService.isCurrentUserADemoUser();
+  }
+
+  public isLandowner(): boolean
+  {
+    return this.authenticationService.isCurrentUserALandOwner();
+  }
+
+  public showGoToDashboardButton(): boolean {
+    let currentOwner = this.getCurrentOwner();
+    return this.isLandowner() && this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID)
   }
 }

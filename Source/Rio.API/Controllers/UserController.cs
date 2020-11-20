@@ -92,7 +92,7 @@ namespace Rio.API.Controllers
             var user = GetAndUpdateUserFromEmailOrReturnNewUser(response, inviteDto.Email, (int) RoleEnum.LandOwner);
 
             //Because there's a chance the user already exists, just grab accounts for them and merge with the ids that came in
-            var currentAccountIDsForUser = Account.ListByUserID(_dbContext, userFromContextDto.UserID).Select(x => x.AccountID).ToList();
+            var currentAccountIDsForUser = Account.ListByUserID(_dbContext, user.UserID).Select(x => x.AccountID).ToList();
             var allAccountIDsForUser = inviteDto.AccountIDs.Union(currentAccountIDsForUser).ToList();
 
             EFModels.Entities.User.SetAssociatedAccounts(_dbContext, user.UserID, allAccountIDsForUser);
