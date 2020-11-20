@@ -65,7 +65,7 @@ const routes: Routes = [
   { path: "parcel-allocation-types/edit", component: ParcelAllocationTypeEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/set-water-allocation", component: SetWaterAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id/edit-annual-allocation", component: ParcelEditAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id/change-owner", component: ParcelChangeOwnerComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},

@@ -1,6 +1,6 @@
 export class ParcelOwnershipDto {
     OwnerName: string;
-    OwnerUserID: number;
+    OwnerAccountID: number;
     EffectiveYear: number;
     SaleDate: string;
     Note: string;

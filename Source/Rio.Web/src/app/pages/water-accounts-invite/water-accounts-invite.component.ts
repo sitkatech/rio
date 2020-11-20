@@ -33,7 +33,8 @@ export class WaterAccountsInviteComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef,
     private userService: UserService,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService) { }
+    private alertService: AlertService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.model = new UserPartnerInviteDto();
@@ -64,7 +65,7 @@ export class WaterAccountsInviteComponent implements OnInit {
     }
 
     if (this.selectedAccountIDs.some(x => x == selectedID)) {
-      this.selectedAccountIDs = this.selectedAccountIDs.filter(x => x == selectedID);
+      this.selectedAccountIDs = this.selectedAccountIDs.filter(x => x != selectedID);
       if (this.selectedAccountIDs.length == 0) {
         this.accountSelectError = true;
       }
@@ -82,9 +83,10 @@ export class WaterAccountsInviteComponent implements OnInit {
       this.userService.invitePartner(this.model)
         .subscribe(response => {
           this.isLoadingSubmit = false;
-          inviteUserForm.reset();
           window.scrollTo(0, 0);
-          this.alertService.pushAlert(new Alert("The user invite was successful.", AlertContext.Success));
+          this.router.navigate(['/water-accounts/manage']).then(() => {
+            this.alertService.pushAlert(new Alert(`An invitation email has been sent to ${this.model.Email}`, AlertContext.Success));
+          })
         }
           ,
           error => {

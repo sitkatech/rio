@@ -196,6 +196,13 @@ export class AuthenticationService {
     return role === RoleEnum.LandOwner;
   }
 
+  isUserADemoUser(user: UserDto): boolean {
+    let role = user && user.Role
+      ? user.Role.RoleID
+      : null;
+    return role === RoleEnum.DemoUser;
+  }
+
   public isUserALandOwnerOrDemoUser(user: UserDto): boolean {
     let role = user && user.Role
       ? user.Role.RoleID
@@ -238,6 +245,14 @@ export class AuthenticationService {
 
   public isCurrentUserAnAdministrator(): boolean {
     return this.isUserAnAdministrator(this.currentUser);
+  }
+
+  public isCurrentUserALandOwner(): boolean {
+    return this.isUserALandOwner(this.currentUser);
+  }
+
+  public isCurrentUserADemoUser(): boolean {
+    return this.isUserADemoUser(this.currentUser);
   }
 
   public isCurrentUserADemoUserOrAdministrator(): boolean {
