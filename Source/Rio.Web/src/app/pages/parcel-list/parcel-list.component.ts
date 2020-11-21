@@ -26,8 +26,30 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public waterYearToDisplay: number;
   public gridOptions: GridOptions;
   public rowData = [];
-  columnDefs: any;
-  parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public mapHeight: string = "500px"
+  public columnDefs: any;
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
+
+  public gridApi: any;
+  public highlightedParcel: any;
+
+
+  private _highlightedParcelID: number;
+  public set highlightedParcelID(value : number) {
+    if (value != this._highlightedParcelID) {
+      this._highlightedParcelID = value;
+      this.highlightedParcel = this.rowData.filter(x => x.ParcelID == value)[0];
+      this.gridApi.forEachNode((rowNode, index) => {
+        if (rowNode.data.ParcelID == value) {
+          rowNode.setSelected(true);
+          this.gridApi.ensureIndexVisible(index, 'top');
+        }
+      })
+    }
+  }
+  public get highlightedParcelID() {
+    return this._highlightedParcelID;
+  }
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -144,11 +166,29 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       return;
     }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
-      this.parcelsGrid.api.setRowData(result);
+      this.rowData = result;
+      this.parcelsGrid.api.setRowData(this.rowData);
     });
   }
 
   public exportToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.parcelsGrid, 'parcels.csv', null);
+  }
+
+  public getSelectedParcelIDs(): number[] {
+    return this.rowData.map(x => x.ParcelID);
+  }
+
+  public onGridReady(params) {
+    this.gridApi = params.api;
+  }
+
+  public onSelectionChanged(event) {
+    console.log(event);
+    console.log(this.gridApi.getSelectedRows()[0]);
+    let selection = this.gridApi.getSelectedRows()[0];
+    if (selection && selection.ParcelID) {
+      this.highlightedParcelID = selection.ParcelID;
+    }
   }
 }
