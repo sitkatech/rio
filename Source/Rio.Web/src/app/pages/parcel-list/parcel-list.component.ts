@@ -39,7 +39,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     if (value != this._highlightedParcelID) {
       this._highlightedParcelID = value;
       this.highlightedParcel = this.rowData.filter(x => x.ParcelID == value)[0];
-      this.gridApi.forEachNode((rowNode, index) => {
+      this.gridApi.forEachNodeAfterFilterAndSort((rowNode, index) => {
         if (rowNode.data.ParcelID == value) {
           rowNode.setSelected(true);
           this.gridApi.ensureIndexVisible(index, 'top');

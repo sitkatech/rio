@@ -39,18 +39,17 @@
           <dl class="row">
             <dt class="text-sm-right col-sm-5 col-xs-12"><span *ngIf="isLandowner()">Water </span>Account</dt>
             <dd class="col-sm-7 col-xs-12">
-              <ng-container *ngIf="isAdministrator() || isDemoUser(); else landOwnerBlock">
-              <a *ngIf="getCurrentOwner() && getCurrentOwner().OwnerAccountID"
+              <a *ngIf="(isAdministrator() || isDemoUser()) && getCurrentOwner() && getCurrentOwner().OwnerAccountID"
                 routerLink="/accounts/{{getCurrentOwner().OwnerAccountID}}">{{getCurrentOwner().OwnerName}}</a>
-              <span *ngIf="getCurrentOwner() && !getCurrentOwner().OwnerAccountID">{{getCurrentOwner().OwnerName}}</span>
+              <span *ngIf="getCurrentOwner() && (isLandowner() || !getCurrentOwner().OwnerAccountID)">{{getCurrentOwner().OwnerName}}</span>
               <em *ngIf="!getCurrentOwner()" class="text-muted">Not Set</em>
-            </ng-container>
-            <ng-template #landOwnerBlock>
-              <a *ngIf="showGoToDashboardButton()" class="btn btn-rio" routerLink="/accounts/{{getCurrentOwner().OwnerAccountID}}">Go to Dashboard</a>
-              <em *ngIf="!showGoToDashboardButton()">Not available</em>
-            </ng-template>
             </dd>
           </dl>
+          <div class="row" *ngIf="showGoToDashboardButton()">
+            <div class="col-sm-12 text-center">
+              <a class="btn btn-rio" routerLink="/accounts/{{getCurrentOwner().OwnerAccountID}}">Go to Dashboard</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -133,7 +132,7 @@
       </div>
     </div>
   </div>
-  <div class="row mt-4">
+  <div class="row mt-4" *ngIf="isAdministrator() || isDemoUser()">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">

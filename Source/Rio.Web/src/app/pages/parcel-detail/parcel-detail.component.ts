@@ -145,6 +145,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public showGoToDashboardButton(): boolean {
     let currentOwner = this.getCurrentOwner();
-    return this.isLandowner() && this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID)
+    return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID);
   }
 }
