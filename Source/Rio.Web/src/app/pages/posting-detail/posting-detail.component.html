@@ -142,7 +142,7 @@
               <div class="text-center">
                 <a class="btn btn-rio btn-sm mr-1 mb-1" *ngIf="successfulOfferDto"
                   routerLink="/trades/{{successfulOfferDto.Trade.TradeNumber}}">View Trade Details</a>
-                <a *ngIf="offerAccepted()" class="btn btn-rio btn-sm mb-1 mr-auto"
+                <a *ngIf="offerAccepted()" class="btn btn-rio btn-sm mb-1 mr-1"
                   routerLink="/register-transfer/{{successfulOfferDto.WaterTransferID}}">Register Transfer</a>
                 <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/trades">View Postings List</a>
               </div>

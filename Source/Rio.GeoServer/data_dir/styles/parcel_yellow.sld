@@ -7,13 +7,13 @@
     <UserStyle>
       <Name>parcel_yellow</Name>
       <Title>Parcel custom styled polygon but YELLOW</Title>
-      <Abstract>YELLOW fill with 60% transparency and parcel-blue opaque outline</Abstract>
+      <Abstract>YELLOW fill with 90% transparency and parcel-yellow opaque outline</Abstract>
       <FeatureTypeStyle>
         <Rule>
           <PolygonSymbolizer>
             <Fill>
               <CssParameter name="fill">#ffff00</CssParameter>
-              <CssParameter name="fill-opacity">0.4</CssParameter>
+              <CssParameter name="fill-opacity">0.1</CssParameter>
             </Fill>
             <Stroke>
               <CssParameter name="stroke">#ffff00</CssParameter>

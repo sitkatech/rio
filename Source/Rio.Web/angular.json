@@ -31,7 +31,8 @@
             "styles": [
               "src/styles.scss",
               "node_modules/leaflet-timedimension/dist/leaflet.timedimension.control.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.css"
+              "node_modules/@fortawesome/fontawesome-free/css/all.css",
+              "node_modules/leaflet.fullscreen/Control.FullScreen.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.slim.min.js",

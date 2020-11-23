@@ -2,9 +2,9 @@
     <div class="container">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-<li class="breadcrumb-item">
-     <a routerLink="/">Home</a>
- </li>
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">Parcels</li>
             </ol>
         </nav>
@@ -18,6 +18,46 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-sm-4 col-md-3 col-sm-pull-8 col-md-pull-9" [style.height]="mapHeight" style="overflow-y: auto;">
+            <ng-container *ngIf="highlightedParcel; else selectParcel">
+                <dl class="row">
+                    <dt class="text-sm-right col-sm-5 col-xs-12">APN</dt>
+                    <dd class="col-sm-7 col-xs-12">
+                      <a routerLink="/parcels/{{highlightedParcel.ParcelID}}">{{highlightedParcel.ParcelNumber}}</a>
+                    </dd>
+                  </dl>
+                  <dl class="row">
+                    <dt class="text-sm-right col-sm-5 col-xs-12">Area</dt>
+                    <dd class="col-sm-7 col-xs-12">
+                      {{highlightedParcel.ParcelAreaInAcres | number: '1.1-1'}} acres
+                    </dd>
+                  </dl>
+                  <dl class="row">
+                    <dt class="text-sm-right col-sm-5 col-xs-12">Water Account</dt>
+                    <dd class="col-sm-7 col-xs-12">
+                      <a *ngIf="highlightedParcel.LandOwner && highlightedParcel.LandOwner.AccountID"
+                        routerLink="/accounts/{{highlightedParcel.LandOwner.AccountID}}">{{highlightedParcel.LandOwner.AccountName}}</a>
+                      <span *ngIf="highlightedParcel.LandOwner && !highlightedParcel.LandOwner.AccountID">{{highlightedParcel.LandOwner.AccountName}}</span>
+                      <em *ngIf="!highlightedParcel.LandOwner" class="text-muted">Not Set</em>
+                    </dd>
+                  </dl>
+                  <div class="row">
+                    <div class="col-sm-12 text-center">
+                      <a class="btn btn-rio" routerLink="/landowner-dashboard/{{highlightedParcel.LandOwner.AccountID}}">Go to Dashboard</a>
+                    </div>
+                  </div>
+            </ng-container>
+            <ng-template #selectParcel>Select a Parcel from the map or the grid</ng-template> 
+        </div>
+        <div class="col-sm-8 col-md-9 col-sm-push-4 col-md-push-3" *ngIf="!loadingParcels">
+            <parcel-map mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelsLayerName" [(highlightedParcelID)]="highlightedParcelID" [disableDefaultClick]="true" [highlightParcelOnClick]="true" mapHeight="500px">
+            </parcel-map>
+        </div>
+        <div class="col-sm-8 col-md-9 col-sm-push-4 col-md-push-3 text-center" *ngIf="loadingParcels" [style.height]="mapHeight" [style.line-height]="mapHeight" style="background-color:#f3f3f3">
+                <span class="fa fa-spinner loading-spinner"></span> Loading Parcels for Map
+        </div>
+    </div>
+    <div class="row mt-4">
         <div class="col-auto mr-auto">
             <p class="lead mt-1">
                 List of parcels in the system
@@ -38,7 +78,7 @@
     </div>
     <div class="table-responsive">
         <ag-grid-angular #parcelsGrid style="width: 100%; height: 800px;" class="ag-theme-balham" [rowData]="rowData"
-            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100">
+            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">
         </ag-grid-angular>
     </div>
 </div>
