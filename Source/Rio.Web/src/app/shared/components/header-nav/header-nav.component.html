@@ -3,10 +3,6 @@
         <div class="row d-none d-lg-flex" style="margin-bottom:-3px">
             <div class="col-12">
                 <ul class="mb-0 list-inline text-right top-bar">
-                    <li class="list-inline-item nav-item top-bar-item mr-0" *ngIf="isAuthenticated() && activeAccount">
-                        <a class="top-bar-nav-link mr-1" routerLink="/landowner-dashboard"
-                            routerLinkActive="true" aria-label="Go to Landowner Dashboard" ngbTooltip="Go to Landowner Dashboard" placement="bottom">{{activeAccount?.ShortAccountDisplayName}}</a>
-                    </li>
                     <li class="nav-item list-inline-item top-bar-item" routerLinkActive="active" *ngIf="!isAuthenticated()">
                         <a href="javascript:void(0);" (click)="login()" routerLinkActive="active" class="nav-link top-bar-nav-link pb-lg-0">Sign In</a>
                     </li>

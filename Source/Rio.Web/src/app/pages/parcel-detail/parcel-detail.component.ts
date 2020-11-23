@@ -12,6 +12,7 @@ import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownershi
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -39,6 +40,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private accountService: AccountService,
     private cdr: ChangeDetectorRef
   ) {
     // force route reload whenever params change;
@@ -146,5 +148,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public showGoToDashboardButton(): boolean {
     let currentOwner = this.getCurrentOwner();
     return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID);
+  }
+
+  public setActiveAccount() {
+    let currentOwner = this.getCurrentOwner();
+    if (!currentOwner || !currentOwner.OwnerAccountID) {
+      return;
+    }
+    
+    this.accountService.getAccountByID(currentOwner.OwnerAccountID).subscribe(account => {
+      this.authenticationService.setActiveAccount(account);
+    });
   }
 }

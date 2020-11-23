@@ -15,6 +15,7 @@ import {
     tileLayer,
     WMSOptions
 } from 'leaflet';
+import '../../../../../node_modules/leaflet.fullscreen/Control.FullScreen.js';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
@@ -176,6 +177,9 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         this.layerControl.addOverlay(this.selectedParcelLayer, this.selectedParcelLayerName);
 
         this.selectedParcelLayer.addTo(this.map).bringToFront();
+        if (this.highlightedParcelLayer) {
+            this.highlightedParcelLayer.bringToFront();
+        }
         this.overlayLayers[this.wellLayerName].bringToFront();
     }
 
@@ -200,6 +204,7 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
             layers: [
                 this.tileLayers["Aerial"],
             ],
+            fullscreenControl: true
         } as MapOptions;
         this.map = map(this.mapID, mapOptions);
 
