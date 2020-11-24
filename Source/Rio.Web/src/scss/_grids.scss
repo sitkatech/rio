@@ -5,9 +5,9 @@
   @include ag-theme-balham((
       // use theme parameters where possible
       balham-active-color: purple,
-      selected-row-background-color: $button-hover,
+      selected-row-background-color: #FFFF5A,
       header-background-color: $grid-header-background,
-      range-selection-border-color: $grid-header-background
+      range-selection-border-color: none
   ));
 
   .ag-header-row {

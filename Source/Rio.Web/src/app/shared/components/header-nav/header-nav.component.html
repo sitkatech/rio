@@ -60,10 +60,10 @@
                                         <button *ngFor="let account of currentUserAccounts" class="dropdown-item" (click)="setCurrentAccountAndRedirectToLandownerDashboard(account)">#{{account.AccountNumber}} ({{account.AccountName}})</button>
                                     </ng-container>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" routerLink="/water-accounts/manage">Manage Water Accounts</a>
+                                    <a class="dropdown-item" routerLink="//water-accounts">View My Water Accounts</a>
                                 </div>
                             </li>
-                            <a class="nav-link" routerLink="/water-accounts/manage" *ngIf="this.isAuthenticated() && !this.isUnassignedOrDisabled() && !showMyDashboardsDropdown()">Manage Water Accounts</a>
+                            <a class="nav-link" routerLink="//water-accounts" *ngIf="this.isAuthenticated() && !this.isUnassignedOrDisabled() && !showMyDashboardsDropdown()">View My Water Accounts</a>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAdministratorOrDemoUser()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">

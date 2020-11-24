@@ -49,7 +49,7 @@ import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-typ
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
-import { WaterAccountsManageComponent } from './pages/water-accounts-manage/water-accounts-manage.component';
+import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { AssignedNotDisabledGuard } from './shared/guards/unauthenticated-access/assigned-not-disabled-guard';
 import { UserPartnerInviteDto } from './shared/models/user/user-partner-invite-dto';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
@@ -85,7 +85,7 @@ const routes: Routes = [
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-partner", component: WaterAccountsInviteComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard]},
   { path: "water-accounts/add", component: WaterAccountsAddComponent, canActivate: [UnauthenticatedAccessGuard, AcknowledgedDisclaimerGuard] },
-  { path: "water-accounts/manage", component: WaterAccountsManageComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
+  { path: "water-accounts", component: WaterAccountsListComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},

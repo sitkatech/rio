@@ -10,6 +10,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -18,6 +19,8 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 })
 export class ParcelListComponent implements OnInit, OnDestroy {
   @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
+
+  public richTextTypeID: number = CustomRichTextType.ParcelList;
 
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;

@@ -152,12 +152,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public setActiveAccount() {
     let currentOwner = this.getCurrentOwner();
-    if (!currentOwner || !currentOwner.OwnerAccountID) {
+    if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
       return;
     }
     
-    this.accountService.getAccountByID(currentOwner.OwnerAccountID).subscribe(account => {
-      this.authenticationService.setActiveAccount(account);
-    });
+    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
+
+    if (!account) {
+      return;
+    }
+    
+    this.authenticationService.setActiveAccount(account);
   }
 }

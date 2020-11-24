@@ -36,78 +36,88 @@
                     </div>
                     <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>
                 </div>
-                <div class="card-body" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
-                    <ng-container *ngFor="let parcelAllocationType of getAcreageBasedAllocationTypes()">
-                        <div class="row mb-1">
-                            <div class="col my-auto">
-                                <form class="form-inline">
-                                    <div class="form-group row w-100">
-                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
-                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
-                                            <br class="br-special" />
-                                            <span
-                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last set " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
-                                        </label>
-                                        <div class="col">
-                                            <input type="number" #waterAllocation id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
-                                                class="form-control" placeholder="3.0" style="max-width:75px" required>
-                                            ac-ft per parcel acre
-                                        </div>
-                                        <button type="button" class="btn btn-rio"
-                                            (click)="submitBulkAllocation(parcelAllocationType)"
-                                            [disabled]="isLoadingSubmit">Save to all Parcels</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
-                            <div class="col danger">
-                                Please enter a value before submitting
-                            </div>
-                        </div>
-                    </ng-container>
-                    <ng-container *ngFor="let parcelAllocationType of getSpreadsheetDrivenAllocationTypes()">
-                        <div class="row">
-                            <div class="col">
-                                <form class="form-inline">
-                                    <div class="form-group row w-100">
-                                        <label for="getParcelAllocationTypeLabel(parcelAllocationType)" class="col-form-label col-3 d-inline-block">
-                                            <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
-                                            <br class="br-special" />
-                                            <span
-                                                style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last uploaded " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
-                                        </label>
-                                        <div class="input-group col ml-3 p-0">
-                                            <div class="custom-file">
-                                                <input type="file" class="custom-file-input" id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
-                                                    #fileUpload
-                                                    (change)="fileEvent(parcelAllocationType)">
-                                                <label class="custom-file-label"
-                                                    for="getParcelAllocationTypeLabel(parcelAllocationType)">{{getFileName(parcelAllocationType)}}</label>
+                <div class="card-body" style="position:relative" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
+                    <ng-container *ngFor="let parcelAllocationType of parcelAllocationTypes">
+                        <ng-container *ngIf="isAcreageBasedAllocationType(parcelAllocationType)">
+                            <div class="row mb-1">
+                                <div class="col my-auto">
+                                    <form class="form-inline">
+                                        <div class="form-group row w-100">
+                                            <label for="getParcelAllocationTypeLabel(parcelAllocationType)"
+                                                class="col-form-label col-3 d-inline-block">
+                                                <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                                <br class="br-special" />
+                                                <span
+                                                    style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last set " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                            </label>
+                                            <div class="col">
+                                                <input type="number" #waterAllocation
+                                                    id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                    class="form-control" style="max-width:75px" required>
+                                                ac-ft per parcel acre
                                             </div>
-                                            <div class="input-group-append">
-                                                <button class="btn btn-rio" type="button"
-                                                    (click)="openFileUpload(parcelAllocationType)"><i
-                                                        class="fas fa-folder-open"></i></button>
-                                            </div>
-                                        </div>
-                                        <div class="col-3 text-right p-0">
                                             <button type="button" class="btn btn-rio"
-                                                [disabled]="isLoadingSubmit || displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]"
-                                                (click)="uploadAllocationFile(parcelAllocationType)">
-                                                Upload & Save
-                                            </button>
+                                                (click)="setAllocationTypeToUpdateAndLaunchModal(updateWaterAllocationModalContent, parcelAllocationType)"
+                                                [disabled]="isLoadingSubmit">Save to all Parcels</button>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                        <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
-                            <div class="col danger">
-                                Please choose a file before submitting
+                            <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                                <div class="col danger">
+                                    Please enter a value before submitting
+                                </div>
                             </div>
-                        </div>
+                        </ng-container>
+                        <ng-container *ngIf="isSpreadsheetDrivenAllocationType(parcelAllocationType)">
+                            <div class="row">
+                                <div class="col">
+                                    <form class="form-inline">
+                                        <div class="form-group row w-100">
+                                            <label for="getParcelAllocationTypeLabel(parcelAllocationType)"
+                                                class="col-form-label col-3 d-inline-block">
+                                                <strong>{{parcelAllocationType.ParcelAllocationTypeName}}</strong>
+                                                <br class="br-special" />
+                                                <span
+                                                    style="font-size:10px">{{getLastSetDateForParcelAllocationType(parcelAllocationType) ? "Last uploaded " + getLastSetDateForParcelAllocationType(parcelAllocationType) : "No record of last set date"}}</span>
+                                            </label>
+                                            <div class="input-group col ml-3 p-0">
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input"
+                                                        id="{{getParcelAllocationTypeLabel(parcelAllocationType)}}"
+                                                        #fileUpload (change)="fileEvent(parcelAllocationType)">
+                                                    <label class="custom-file-label"
+                                                        for="getParcelAllocationTypeLabel(parcelAllocationType)">{{getFileName(parcelAllocationType)}}</label>
+                                                </div>
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-rio" type="button"
+                                                        (click)="openFileUpload(parcelAllocationType)"><i
+                                                            class="fas fa-folder-open"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 text-right p-0">
+                                                <button type="button" class="btn btn-rio"
+                                                    [disabled]="isLoadingSubmit || displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]"
+                                                    (click)="setAllocationTypeToUpdateAndLaunchModal(updateWaterAllocationModalContent, parcelAllocationType)">
+                                                    Upload & Save
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div *ngIf="displayErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                                <div class="col danger">
+                                    Please choose a file before submitting
+                                </div>
+                            </div>
+                        </ng-container>
                     </ng-container>
+                    <div class="updating-allocation" *ngIf="isLoadingSubmit">
+                        <div class="updating-allocation-text">
+                            <span class="fa fa-spinner loading-spinner"></span> Updating Allocation
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,3 +138,25 @@
         </div>
     </div>
 </div>
+
+<ng-template #updateWaterAllocationModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="updateWaterAllocationModalTitle">Update Water Allocation</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to update <strong>{{parcelAllocationTypeToUpdate.ParcelAllocationTypeName}}</strong> for the Water Year <strong>{{waterYearToDisplay}}</strong>?
+            This change will affect all Parcels.  
+        </p>
+        <div class="modal-footer">
+            <button *ngIf="isAcreageBasedAllocationType(parcelAllocationTypeToUpdate)" type="button" class="btn btn-rio btn-sm" (click)="submitBulkAllocation(parcelAllocationTypeToUpdate)">
+                Save</button>
+            <button *ngIf="isSpreadsheetDrivenAllocationType(parcelAllocationTypeToUpdate)" type="button" class="btn btn-rio btn-sm" (click)="uploadAllocationFile(parcelAllocationTypeToUpdate)">
+                Save</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="resetParcelAllocationTypeToUpdateAndCloseModal(modal)">Cancel</button>
+        </div>
+    </div>
+</ng-template>

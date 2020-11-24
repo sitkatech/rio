@@ -12,11 +12,11 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
-  selector: 'rio-water-accounts-manage',
-  templateUrl: './water-accounts-manage.component.html',
-  styleUrls: ['./water-accounts-manage.component.scss']
+  selector: 'rio-water-accounts-list',
+  templateUrl: './water-accounts-list.component.html',
+  styleUrls: ['./water-accounts-list.component.scss']
 })
-export class WaterAccountsManageComponent implements OnInit {
+export class WaterAccountsListComponent implements OnInit {
   public watchUserChangeSubscription: any;
   public currentUser: UserDto;
   public currentPage: number =  1;

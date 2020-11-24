@@ -15,6 +15,7 @@ import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'rio-set-water-allocation',
@@ -23,9 +24,12 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 })
 export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
-  
-  @ViewChildren('fileUpload') fileUploads:QueryList<any>;
+  @ViewChild("updateWaterAllocationModalContent") updateWaterAllocationModalContent
+
+  @ViewChildren('fileUpload') fileUploads: QueryList<any>;
   @ViewChildren('waterAllocation') waterAllocations: QueryList<any>;
+
+  public modalReference: NgbModalRef;
 
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
@@ -38,11 +42,15 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   public waterYears: Array<number>;
   public allocationHistoryEntries: Array<ParcelAllocationHistoryDto>;
 
-  public displayErrors:any = {}; 
-  public displayFileErrors:any = {};
+  public displayErrors: any = {};
+  public displayFileErrors: any = {};
 
   public fileName: string;
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public applicationTypeToUpdate: ParcelAllocationTypeDto;
+  public acreageBasedAllocationTypes: ParcelAllocationTypeDto[];
+  public spreadsheetDrivenAllocationTypes: ParcelAllocationTypeDto[];
+  public parcelAllocationTypeToUpdate: ParcelAllocationTypeDto;
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -51,7 +59,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.model = new ParcelAllocationUpsertDto();
@@ -67,7 +76,9 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
         this.parcelAllocationTypes = parcelAllocationTypes;
-        this.parcelAllocationTypes.forEach(x=>{
+        this.acreageBasedAllocationTypes = this.parcelAllocationTypes.filter(x => x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Proportional);
+        this.spreadsheetDrivenAllocationTypes = this.parcelAllocationTypes.filter(x => x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Spreadsheet);
+        this.parcelAllocationTypes.forEach(x => {
           this.displayErrors[x.ParcelAllocationTypeName] = false;
           this.displayFileErrors[x.ParcelAllocationTypeName] = false;
         })
@@ -91,7 +102,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       { headerName: 'Uploaded Filename', field: 'Filename', sortable: true, filter: true, width: 275 },
       { headerName: 'User', field: 'User', sortable: true, filter: true }
     ];
-        
+
     this.parcelAllocationHistoryGridColumnDefs.forEach(x => {
       x.resizable = true;
     });
@@ -104,67 +115,99 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public submitBulkAllocation(allocationType: ParcelAllocationTypeDto): void {
+    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(allocationType)) {
+      this.parcelAllocationTypeToUpdate = null;
+      return;
+    }
+
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
+    
     this.isLoadingSubmit = true;
-    const allocationValue = this.waterAllocations.find(x=>x.nativeElement.id == this.getParcelAllocationTypeLabel(allocationType)).nativeElement.value;
-    this.turnOffErrors();
+    const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(allocationType)).nativeElement.value;
+    this.model.AcreFeetAllocated = +allocationValue;
+    this.model.ParcelAllocationTypeID = allocationType.ParcelAllocationTypeID;
+    this.model.WaterYear = this.waterYearToDisplay;
 
-    if (allocationValue !== undefined && allocationValue !== null && allocationValue !== "") {
-      this.model.AcreFeetAllocated = +allocationValue;
-      this.model.ParcelAllocationTypeID = allocationType.ParcelAllocationTypeID;
-      this.model.WaterYear = this.waterYearToDisplay;
-
-      this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
-        .subscribe(response => {
-          this.clearInputs()
+    this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
+      .subscribe(response => {
+        this.parcelAllocationTypeToUpdate = null;
+        this.clearInputs()
+        this.isLoadingSubmit = false;
+        this.updateParcelAllocationHistoryGrid();
+        this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+      }
+        ,
+        error => {
+          this.parcelAllocationTypeToUpdate = null;
           this.isLoadingSubmit = false;
-          this.updateParcelAllocationHistoryGrid();
-          this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+          this.cdr.detectChanges();
         }
-          ,
-          error => {
-            this.isLoadingSubmit = false;
-            this.cdr.detectChanges();
-          }
-        );
-    }
-    else {
-      this.isLoadingSubmit = false;
-      this.chooseErrorToDisplay(allocationType);
-    }
+      );
   }
 
-  public uploadAllocationFile(allocationType: ParcelAllocationTypeDto): void{
-    var file = this.getFile(allocationType);
-    if (!file) {
-      this.chooseErrorToDisplay(allocationType);
-      return null;
+  public uploadAllocationFile(allocationType: ParcelAllocationTypeDto): void {
+    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(allocationType)) {
+      this.parcelAllocationTypeToUpdate = null;
+      return;
     }
 
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
+
+    var file = this.getFile(allocationType);
+
     this.isLoadingSubmit = true;
-    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.ParcelAllocationTypeID).subscribe(x=>{
+    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.ParcelAllocationTypeID).subscribe(x => {
       this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
+      this.parcelAllocationTypeToUpdate = null;
       this.clearInputs();
       this.cdr.detectChanges();
     }, error => {
-      if (error.error.validationMessage){
+      if (error.error.validationMessage) {
         this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
       }
       else {
         this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
       }
+      this.parcelAllocationTypeToUpdate = null;
       this.isLoadingSubmit = false;
       this.clearInputs();
       this.cdr.detectChanges();
     });
   }
 
-  fileEvent(allocationType: ParcelAllocationTypeDto){
+  public doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(parcelAllocationType: ParcelAllocationTypeDto): boolean {
+    this.turnOffErrors();
+    if (this.isAcreageBasedAllocationType(parcelAllocationType)) {
+      const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(parcelAllocationType)).nativeElement.value;
+      if (allocationValue === undefined || allocationValue === null || allocationValue === "") {
+        this.chooseErrorToDisplay(parcelAllocationType);
+        return true;
+      }
+    }
+
+    if (this.isSpreadsheetDrivenAllocationType(parcelAllocationType)) {
+      var file = this.getFile(parcelAllocationType);
+      if (!file) {
+        this.chooseErrorToDisplay(parcelAllocationType);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  fileEvent(allocationType: ParcelAllocationTypeDto) {
     let file = this.getFile(allocationType);
     this.displayErrors[allocationType.toString()] = false;
 
-    if (file && file.name.split(".").pop().toUpperCase() != "CSV"){
+    if (file && file.name.split(".").pop().toUpperCase() != "CSV") {
       this.displayFileErrors[allocationType.ParcelAllocationTypeName] = true;
     } else {
       this.displayFileErrors[allocationType.ParcelAllocationTypeName] = false;
@@ -173,27 +216,27 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  public getFile(fileUploadType: ParcelAllocationTypeDto): File{
+  public getFile(fileUploadType: ParcelAllocationTypeDto): File {
     if (!this.fileUploads) {
       return null;
     }
     var element = this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0];
-    if (!element){
+    if (!element) {
       return null;
     }
     return element.nativeElement.files[0];
   }
 
-  public getFileName(fileUploadType: ParcelAllocationTypeDto):string{
+  public getFileName(fileUploadType: ParcelAllocationTypeDto): string {
     let file = this.getFile(fileUploadType);
-    if (!file){
-      return "No file selected..."
+    if (!file) {
+      return ""
     }
-    
+
     return file.name;
   }
 
-  public openFileUpload(fileUploadType: ParcelAllocationTypeDto){
+  public openFileUpload(fileUploadType: ParcelAllocationTypeDto) {
     this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0].nativeElement.click();
   }
 
@@ -205,7 +248,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public clearInputs() {
-    this.waterAllocations.forEach(x=>{
+    this.waterAllocations.forEach(x => {
       x.nativeElement.value = null;
     })
     this.fileUploads.forEach(element => {
@@ -228,26 +271,47 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     })
   }
 
-  public lowerCaseFirstLetterNoSpaces(lowerFirst: string):string {
+  public lowerCaseFirstLetterNoSpaces(lowerFirst: string): string {
     return (lowerFirst.charAt(0).toLowerCase() + lowerFirst.slice(1)).replace(" ", "");
   }
 
-  public getAcreageBasedAllocationTypes() {
-    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally ===ParcelAllocationTypeApplicationTypeEnum.Proportional);
+  public isAcreageBasedAllocationType(parcelAllocationType: ParcelAllocationTypeDto): boolean {
+    return this.acreageBasedAllocationTypes.some(x => x.ParcelAllocationTypeID == parcelAllocationType.ParcelAllocationTypeID);
   }
 
-  public getSpreadsheetDrivenAllocationTypes() {
-    return this.parcelAllocationTypes.filter(x=>x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Spreadsheet);
+  public isSpreadsheetDrivenAllocationType(parcelAllocationType: ParcelAllocationTypeDto) {
+    return this.spreadsheetDrivenAllocationTypes.some(x => x.ParcelAllocationTypeID == parcelAllocationType.ParcelAllocationTypeID);
   }
 
-  public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string{
-    if (!parcelAllocationType){
+  public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string {
+    if (!parcelAllocationType) {
       debugger;
     }
     return parcelAllocationType.ParcelAllocationTypeName.replace(" ", "");
   }
 
-  public getLastSetDateForParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): string{
+  public getLastSetDateForParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): string {
     return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == parcelAllocationType.ParcelAllocationTypeName && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
+  }
+
+  public setAllocationTypeToUpdateAndLaunchModal(modalContent: any, parcelAllocationType: ParcelAllocationTypeDto) {
+    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(parcelAllocationType)) {
+      return;
+    }
+    this.parcelAllocationTypeToUpdate = parcelAllocationType;
+    this.launchModal(modalContent);
+  }
+
+  public launchModal(modalContent: any) {
+    this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', ariaLabelledBy: 'updateWaterAllocationModalTitle', backdrop: 'static', keyboard: false });
+  }
+
+  public resetParcelAllocationTypeToUpdateAndCloseModal(modal: any) {
+    this.parcelAllocationTypeToUpdate = null;
+    this.closeModal(modal, "Cancel click")
+  }
+
+  public closeModal(modal: any, reason: string) {
+    modal.close(reason);
   }
 }
