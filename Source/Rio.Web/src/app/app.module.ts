@@ -69,7 +69,7 @@ import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-typ
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
-import { WaterAccountsManageComponent } from './pages/water-accounts-manage/water-accounts-manage.component';
+import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -127,7 +127,7 @@ export function init_app(appLoadService: AppInitService) {
     TrainingVideosComponent,
     CreateUserProfileComponent,
     WaterAccountsAddComponent,
-    WaterAccountsManageComponent,
+    WaterAccountsListComponent,
     WaterAccountsInviteComponent
   ],
   imports: [

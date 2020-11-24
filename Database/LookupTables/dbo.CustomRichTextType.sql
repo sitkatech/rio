@@ -16,7 +16,8 @@ USING (VALUES
 (14, 'CreateUserProfileStepThree', 'Create User Profile Step Three'),
 (15, 'WaterAccountsAdd', 'Water Accounts Add'),
 (16, 'WaterAccountsAddLegalText', 'Water Accounts Add Legal Text'),
-(17, 'WaterAccountsInvite', 'Water Accounts Invite')
+(17, 'WaterAccountsInvite', 'Water Accounts Invite'),
+(18, 'ParcelList', 'Parcel List')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

@@ -24,3 +24,24 @@ input[type=number] {
 .danger {
     color:red
 }
+
+.updating-allocation {
+  background-color: rgba(0, 0, 0, 0.6);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+.updating-allocation-text {
+    color: #ffffff;
+    float: left;
+    font-size: 22px;
+    left: 38%;
+    padding: 20px;
+    position: absolute;
+    top: 40%;
+    width: auto;
+}

@@ -5,7 +5,7 @@
                 <li class="breadcrumb-item">
                     <a routerLink="/">Home</a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">Manage Water Accounts</li>
+                <li class="breadcrumb-item active" aria-current="page">View My Water Accounts</li>
             </ol>
         </nav>
     </div>
@@ -14,13 +14,13 @@
     <app-alert-display></app-alert-display>
     <div class="row mb-2">
         <div class="col">
-            <h2 class="d-inline-block">Manage Water Accounts</h2>
+            <h2 class="d-inline-block">View My Water Accounts</h2>
             <ngb-alert *ngIf="currentUserIsAdmin()" [type]="'info'" [dismissible]="false">
                 <span>
                     You are an Administrator of the Water Accounting Platform.
                     This page is optimized for use by landowners and their partners.
                     You have access to this page so you can view and understand the landowner user experience,
-                    but it is more efficient to manage Water Accounts and Users through the <a routerLink="/users">User
+                    but it is more efficient to View My Water Accounts and Users through the <a routerLink="/users">User
                         Index</a> page.
                 </span>
             </ngb-alert>
@@ -131,7 +131,7 @@
                     You are an Administrator of the Water Accounting Platform.
                     This page is optimized for use by landowners and their partners.
                     You have access to this page so you can view and understand the landowner user experience,
-                    but you cannot remove accounts through this view. It is more efficient to manage Water Accounts and Users through the <a routerLink="/users">User
+                    but you cannot remove accounts through this view. It is more efficient to View My Water Accounts and Users through the <a routerLink="/users">User
                         Index</a> page.
                 </span>
             </ngb-alert>
