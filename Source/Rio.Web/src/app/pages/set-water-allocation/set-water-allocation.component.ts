@@ -230,7 +230,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   public getFileName(fileUploadType: ParcelAllocationTypeDto): string {
     let file = this.getFile(fileUploadType);
     if (!file) {
-      return "No file selected..."
+      return ""
     }
 
     return file.name;
