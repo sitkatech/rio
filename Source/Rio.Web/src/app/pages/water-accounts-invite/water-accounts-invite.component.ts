@@ -84,7 +84,7 @@ export class WaterAccountsInviteComponent implements OnInit {
         .subscribe(response => {
           this.isLoadingSubmit = false;
           window.scrollTo(0, 0);
-          this.router.navigate(['//water-accounts']).then(() => {
+          this.router.navigate(['/water-accounts']).then(() => {
             this.alertService.pushAlert(new Alert(`An invitation email has been sent to ${this.model.Email}`, AlertContext.Success));
           })
         }
