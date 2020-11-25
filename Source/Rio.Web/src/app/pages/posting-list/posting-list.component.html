@@ -36,7 +36,7 @@
             <label class="ml-2"><input type="radio" name="postingTypeFilter" [(ngModel)]="postingTypeFilter" [value]="2" (change)="updateGridData()" /> Offers to Sell</label>
         </div>
         <ag-grid-angular #postingsGrid style="width: 100%; height: 800px;" class="ag-theme-balham" [rowData]="postings"
-            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowHeight]="40">
+            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowHeight]="40" [suppressMenuHide]="true">
         </ag-grid-angular>
     </div>
 </div>
