@@ -329,7 +329,7 @@ namespace Rio.API.Controllers
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
                     Month = ((DateUtilities.Month)i).ShortMonthName(),
-                    CumulativeWaterUsageInAcreFeet = grouping == null ? (decimal?)null : Math.Round(cumulativeTotal, 1)
+                    CumulativeWaterUsageInAcreFeet = grouping == null ? (decimal?)null : cumulativeTotal
                 };
 
                 monthlyWaterUsageOverviewDtos.Add(monthlyWaterUsageOverviewDto);

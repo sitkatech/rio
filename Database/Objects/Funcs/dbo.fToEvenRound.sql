@@ -4,7 +4,7 @@ IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fToEvenRou
     drop procedure dbo.fToEvenRound
 go
 
---Function found here http://blogs.lessthandot.com/index.php/DataMgmt/DataDesign/sql-server-rounding-methods under "Banker's Round"
+--Function found here http://blogs.lessthandot.com/index.php/DataMgmt/DataDesign/sql-server-rounding-methods under "Round Toward Even"
 Create Function dbo.fToEvenRound(@Val Decimal(32,16), @Digits Int)
 Returns Decimal(32,16)
 AS
