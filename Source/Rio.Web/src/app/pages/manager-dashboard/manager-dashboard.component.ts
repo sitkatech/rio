@@ -77,6 +77,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   allocationChartRange: number[];
   historicCumulativeWaterUsage: MultiSeriesEntry;
   historicAverageAnnualUsage: number;
+  loadingParcelAllocationsAndUsages: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -527,8 +528,16 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
       this.parcels = parcels;
     })
+    if (this.landOwnerUsageReportGrid) {
+      this.landOwnerUsageReportGrid.api.showLoadingOverlay();
+    }
     this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
-      this.landOwnerUsageReportGrid ? this.landOwnerUsageReportGrid.api.setRowData(result) : null;
+      if (!this.landOwnerUsageReportGrid) {
+        return;
+      }
+      
+      this.landOwnerUsageReportGrid.api.setRowData(result);
+      this.landOwnerUsageReportGrid.api.hideOverlay();
     });
     this.tradeService.getTradeActivityForYear(this.waterYearToDisplay).subscribe(result => {
       this.tradeActivity = result;
@@ -540,6 +549,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
       this.displayPostingsGrid = result.length > 0 ? true : false;
     });
+    this.loadingParcelAllocationsAndUsages = true;
     forkJoin([
       this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay),
       this.accountService.getWaterUsageOverview(this.waterYearToDisplay)
@@ -547,6 +557,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     .subscribe(([result, waterUsageOverview]) => {
       this.parcelAllocationAndUsages = result;
       this.waterUsageOverview = waterUsageOverview;
+      this.loadingParcelAllocationsAndUsages = false;
       this.initializeCharts(this.waterUsageOverview);
     });
   }

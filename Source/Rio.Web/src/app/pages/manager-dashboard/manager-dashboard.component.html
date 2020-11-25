@@ -45,7 +45,7 @@
           </div>
           <span class="align-middle"> District-Wide Statistics </span>
         </div>
-        <div class="card-body" *ngIf="parcelAllocationAndUsages">
+        <div class="card-body" style="position:relative" *ngIf="parcelAllocationAndUsages">
           <table class="table table-sm table-borderless">
             <tr>
               <th class="text-sm-left pb-0 mb-0">
@@ -87,6 +87,11 @@
               </td>
             </tr>
           </table>
+          <div class="updating" *ngIf="loadingParcelAllocationsAndUsages">
+            <div class="updating-text">
+                <span class="fa fa-spinner loading-spinner"></span>
+            </div>
+          </div>  
         </div>
         <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
           <i class="fa fa-spinner loading-spinner"></i>
@@ -98,18 +103,23 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay}} Allocation and Usage
+              {{waterYearToDisplay}} District Allocation and Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>
               </a>
             </div>
-            <div class="card-body" *ngIf="annualAllocationChartData && waterUsageOverview">
+            <div class="card-body" style="position:relative" *ngIf="annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [allocationLabel]="allocationLabel"
                 [annualAllocationSeries]="getAnnualAllocationSeries()" [yDomain]="allocationChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-allocation-chart>
+              <div class="updating" *ngIf="loadingParcelAllocationsAndUsages">
+                <div class="updating-text">
+                    <span class="fa fa-spinner loading-spinner"></span>
+                </div>
+              </div>  
             </div>
             <div class="card-body text-center" *ngIf="!annualAllocationChartData || !waterUsageOverview">
               <i class="fa fa-spinner loading-spinner"></i>

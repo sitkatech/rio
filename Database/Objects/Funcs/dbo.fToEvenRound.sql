@@ -1,11 +1,11 @@
 --This exists to be consistent with C# rounding
 --See here https://stackoverflow.com/questions/41592666/tsql-rounding-vs-c-sharp-rounding
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fBankersRound'))
-    drop procedure dbo.fBankersRound
+IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.fToEvenRound'))
+    drop procedure dbo.fToEvenRound
 go
 
---Function found here http://blogs.lessthandot.com/index.php/DataMgmt/DataDesign/sql-server-rounding-methods
-Create Function dbo.fBankersRound(@Val Decimal(32,16), @Digits Int)
+--Function found here http://blogs.lessthandot.com/index.php/DataMgmt/DataDesign/sql-server-rounding-methods under "Banker's Round"
+Create Function dbo.fToEvenRound(@Val Decimal(32,16), @Digits Int)
 Returns Decimal(32,16)
 AS
 Begin
