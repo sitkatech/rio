@@ -534,10 +534,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return sum;
   }
 
-  public getTotalWaterUsageForParcelToDisplay(parcelNum: string) : string {
-    return this.getTotalWaterUsageForParcel(parcelNum).toFixed(1);
-  }
-
   public getTotalWaterUsageForParcel(parcelNum : string) : number {
     let currentWaterUsage = this.getWaterUsageForWaterYear();
     let sum = 0;

@@ -73,11 +73,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
 
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
-  waterUsageOverview: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/water-usage-dto").WaterAllocationOverviewDto;
-  allocationChartRange: number[];
-  historicCumulativeWaterUsage: MultiSeriesEntry;
-  historicAverageAnnualUsage: number;
-  loadingParcelAllocationsAndUsages: boolean = false;
+  public waterUsageOverview: WaterAllocationOverviewDto;
+  public allocationChartRange: number[];
+  public historicCumulativeWaterUsage: MultiSeriesEntry;
+  public historicAverageAnnualUsage: number;
+  public loadingParcelAllocationsAndUsages: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,

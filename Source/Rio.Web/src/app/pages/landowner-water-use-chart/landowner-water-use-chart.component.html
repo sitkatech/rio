@@ -3,7 +3,12 @@
         <ngx-charts-bar-vertical-stacked [scheme]="colorScheme" [results]="waterUsageData"
             [gradient]="true" [xAxis]="true" [yAxis]="true" [legend]="false" [activeEntries]='activeEntries'
             [legendPosition]="'right'" [showXAxisLabel]="false" [showYAxisLabel]="true"
-            [yAxisLabel]="'Volume (acre-feet)'" [tooltipDisabled]="false" [noBarWhenZero]="false">
+            [yAxisLabel]="'Volume (acre-feet)'" [tooltipDisabled]="false" [noBarWhenZero]="false"
+            >
+            <ng-template #tooltipTemplate let-model="model">
+                <span class="tooltip-label">{{model.series}} • {{model.label}}</span>
+                <span class="tooltip-val">{{model.value | number: "1.1-1"}}</span> 
+            </ng-template>
         </ngx-charts-bar-vertical-stacked>
     </div>
     <div class="col-sm-2">
