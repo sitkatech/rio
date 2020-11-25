@@ -1,13 +1,13 @@
 <div class="breadcrumb-container">
   <div class="container">
-      <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-<li class="breadcrumb-item">
-     <a routerLink="/">Home</a>
- </li>
-              <li class="breadcrumb-item active" aria-current="page">Manager Dashboard</li>
-          </ol>
-      </nav>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a routerLink="/">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Manager Dashboard</li>
+      </ol>
+    </nav>
   </div>
 </div>
 <div class="container mt-sm-4" *ngIf="currentUser">
@@ -21,19 +21,22 @@
       </h2>
     </div>
     <div class="col-sm-6 text-right">
-      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/set-water-allocation">Set Water Allocation</a>
-        <div class="float-right pl-2">
-      <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
-        (selectedYearChange)="updateAnnualData()"></rio-water-year-select></div>
+      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/set-water-allocation">Set Water
+        Allocation</a>
+      <div class="float-right pl-2">
+        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+          (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+      </div>
     </div>
   </div>
 
   <div class="row mt-4">
-    <div class="col-sm-12">
+    <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">
           <div class="btn-group btn-group-toggle float-right">
-            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''" style="width:65px;">
+            <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
+              style="width:65px;">
               <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
             </label>
             <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
@@ -43,39 +46,75 @@
           <span class="align-middle"> District-Wide Statistics </span>
         </div>
         <div class="card-body" *ngIf="parcelAllocationAndUsages">
-          <div class="row">
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Allocation</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualAllocation() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total Usage</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
-            </div>
-          </div>
-          <div class="row" *ngFor="let batch of getParcelAllocationTypesBatched()">
-            <div class="col-sm-3 text-sm-left">
-              <strong>Total {{batch[0].ParcelAllocationTypeName}}</strong>
-            </div>
-            <div class="col-sm-3 text-sm-right">
-              {{getAnnualAllocationByAllocationType(batch[0]) | number: '1.1-1'}} {{unitsShown}}
-            </div>
-            <ng-container *ngIf="batch.length > 1">
-              <div class="col-sm-3 text-sm-left">
-                <strong>Total {{batch[1].ParcelAllocationTypeName}}</strong>
-              </div>
-              <div class="col-sm-3 text-sm-right">
-                {{getAnnualAllocationByAllocationType(batch[1]) | number: '1.1-1'}} {{unitsShown}}
-              </div>
+          <table class="table table-sm table-borderless">
+            <tr>
+              <th class="text-sm-left pb-0 mb-0">
+                Total Allocation
+              </th>
+              <td class="text-sm-right pb-0 mb-0">
+                {{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <hr class="p-0 m-0" />
+              </td>
+            </tr>
+            <ng-container *ngFor="let batch of getParcelAllocationTypesBatched()">
+              <tr *ngFor="let allocationType of batch">
+                <th class="text-sm-right">
+                  {{allocationType.ParcelAllocationTypeName}}
+                  <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                      ngbTooltip="Learn about {{allocationType.ParcelAllocationTypeName}}"><i
+                        class="fas fa-question-circle small"></i></a>
+                </th>
+                <td class="text-sm-right">
+                  {{getAnnualAllocationByAllocationType(allocationType) | number: '1.1-1'}} {{unitsShown}}
+                </td>
+              </tr>
             </ng-container>
-          </div>
+            <tr>
+              <td colspan="2">
+                <hr style="border: 1px solid #000;" />
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-0 mb-0">
+                Total Usage
+              </th>
+              <td class="text-sm-right pb-0 mb-0">
+                {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
+          </table>
         </div>
         <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
           <i class="fa fa-spinner loading-spinner"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-7">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              {{waterYearToDisplay}} Allocation and Usage
+              <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
+                ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
+                  class="fas fa-question-circle small"></i>
+              </a>
+            </div>
+            <div class="card-body" *ngIf="annualAllocationChartData && waterUsageOverview">
+              <rio-landowner-water-allocation-chart [allocationLabel]="allocationLabel"
+                [annualAllocationSeries]="getAnnualAllocationSeries()" [yDomain]="allocationChartRange"
+                [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
+                [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
+              </rio-landowner-water-allocation-chart>
+            </div>
+            <div class="card-body text-center" *ngIf="!annualAllocationChartData || !waterUsageOverview">
+              <i class="fa fa-spinner loading-spinner"></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -86,16 +125,16 @@
         <div class="card-header">
           <div class="row">
             <div class="col">
-                <span class="align-middle">Account Usage Report</span>
-                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                  (click)="exportLandOwnerUsageReportToCsv()" placement="top" ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+              <span class="align-middle">Account Usage Report</span>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportLandOwnerUsageReportToCsv()" placement="top"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
             </div>
           </div>
         </div>
         <div class="card-body table-responsive" *ngIf="parcels">
           <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
-            [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true"
-            [paginationPageSize]="100">
+            [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
         <div class="card-body text-center" *ngIf="!parcels">
@@ -120,14 +159,15 @@
         </div>
         <div class="card-body table-responsive" *ngIf="tradeActivity">
           <div *ngIf="!displayTradeGrid">
-            No trade activity to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager Dashboard to view postings for other years.
+            No trade activity to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager
+            Dashboard to view postings for other years.
           </div>
-          <ag-grid-angular #tradeActivityGrid *ngIf="displayTradeGrid" style="width: 100%; height: 300px;" class="ag-theme-balham"
-            [columnDefs]="tradesGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
+          <ag-grid-angular #tradeActivityGrid *ngIf="displayTradeGrid" style="width: 100%; height: 300px;"
+            class="ag-theme-balham" [columnDefs]="tradesGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
         <div class="card-body text-center" *ngIf="!tradeActivity">
-            <i class="fa fa-spinner loading-spinner"></i>
+          <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
     </div>
@@ -148,10 +188,12 @@
         </div>
         <div class="card-body table-responsive" *ngIf="postingActivity">
           <div *ngIf="!displayPostingsGrid">
-            No postings to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager Dashboard to view postings for other years.
+            No postings to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager
+            Dashboard to view postings for other years.
           </div>
-          <ag-grid-angular *ngIf="displayPostingsGrid" #postingsGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
-            [columnDefs]="postingsGridColumnDefs" [pagination]="true" [paginationPageSize]="100">
+          <ag-grid-angular *ngIf="displayPostingsGrid" #postingsGrid style="width: 100%; height: 300px;"
+            class="ag-theme-balham" [columnDefs]="postingsGridColumnDefs" [pagination]="true"
+            [paginationPageSize]="100">
           </ag-grid-angular>
         </div>
         <div class="card-body text-center" *ngIf="!postingActivity">
@@ -167,7 +209,8 @@
           Parcels
         </div>
         <div class="card-body table-responsive" *ngIf="parcels">
-          <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelsLayerName" mapHeight="600px">
+          <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()"
+            [selectedParcelLayerName]="selectedParcelsLayerName" mapHeight="600px">
           </parcel-map>
         </div>
         <div class="card-body text-center" *ngIf="!parcels">

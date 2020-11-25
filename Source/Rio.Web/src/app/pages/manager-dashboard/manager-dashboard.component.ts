@@ -21,6 +21,9 @@ import { forkJoin } from 'rxjs';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
 import { PostingDetailedDto } from 'src/app/shared/models/posting/posting-detailed-dto';
+import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entry';
+import { AccountService } from 'src/app/services/account/account.service';
+import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -50,9 +53,30 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
   private allocationColumnDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
+  public allocationLabel: string = "Annual Supply";
   postingActivity: PostingDetailedDto[];
 
+  public months = ["Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"];
+
+  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
+  private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
+
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
+  waterUsageOverview: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/water-usage-dto").WaterAllocationOverviewDto;
+  allocationChartRange: number[];
+  historicCumulativeWaterUsage: MultiSeriesEntry;
+  historicAverageAnnualUsage: number;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -64,6 +88,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
+    private accountService: AccountService,
     private datePipe: DatePipe) { }
 
   ngOnInit() {
@@ -122,6 +147,51 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
+  }
+
+  initializeCharts(waterUsageOverview: WaterAllocationOverviewDto) {
+    let values = [];
+    for (const series of waterUsageOverview.Current) {
+      for (const entry of series.CumulativeWaterUsage) {
+        values.push(entry.value);
+      }
+    }
+    
+    this.annualAllocationChartData = this.waterYears.map(x => {
+      const allocation = this.getAnnualAllocation(true);
+      values.push(allocation);
+
+      return {
+        Year: x,
+        ChartData: {
+          name: this.allocationLabel,
+          series: this.months.map(y => { return { name: y, value: allocation } })
+        }
+      }
+    });
+
+    this.allocationChartRange = [0, 1.2 * Math.max(...values)];
+    this.waterUsageOverview = waterUsageOverview;
+    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
+    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+  }
+
+  public getAnnualAllocationSeries(): MultiSeriesEntry {
+    if (!this.annualAllocationChartData) {
+      return null;
+    }
+
+    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
+    return annualAllocation ? annualAllocation.ChartData : null;
+  }
+
+  public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
+    if (!this.waterUsageOverview) {
+      return this.emptyCumulativeWaterUsage
+    }
+
+    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay);
+    return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
   private initializePostingActivityGrid(): void {
@@ -470,8 +540,14 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
       this.displayPostingsGrid = result.length > 0 ? true : false;
     });
-    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
+    forkJoin([
+      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay),
+      this.accountService.getWaterUsageOverview(this.waterYearToDisplay)
+    ])
+    .subscribe(([result, waterUsageOverview]) => {
       this.parcelAllocationAndUsages = result;
+      this.waterUsageOverview = waterUsageOverview;
+      this.initializeCharts(this.waterUsageOverview);
     });
   }
 
@@ -502,7 +578,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.unitsShown = units;
   }
 
-  public getAnnualAllocation(): number {
+  public getAnnualAllocation(skipConvertToUnitsShown?: boolean): number {
     let parcelAllocations = this.parcelAllocationAndUsages;
     return this.getTotalAcreFeetAllocated(parcelAllocations, "Allocation");
   }
@@ -537,12 +613,15 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalAcreFeetAllocated(parcelAllocations, "StoredWater");
   }
 
-  public getTotalAcreFeetAllocated(parcelAllocations : Array<ParcelAllocationAndUsageDto>, field: string): number {
+  public getTotalAcreFeetAllocated(parcelAllocations : Array<ParcelAllocationAndUsageDto>, field: string, skipConvertToUnitsShown?: boolean): number {
     var result = 0;
     if (parcelAllocations.length > 0) {
       result = parcelAllocations.reduce(function (a, b) {
         return (a + b[field]);
       }, 0);
+    }
+    if (skipConvertToUnitsShown) {
+      return result;
     }
     return this.getResultInUnitsShown(result);
   }

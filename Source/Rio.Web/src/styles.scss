@@ -171,4 +171,10 @@ input:checked + .slider .off {
 .ngx-pagination .current {
   background: $button-border-and-background !important;
 }
+/*------end-------*/
 
+/*------ngx-charts styles-------*/
+.chart-legend .legend-labels {
+  background: none !important;
+}
+/*------end--------*/
