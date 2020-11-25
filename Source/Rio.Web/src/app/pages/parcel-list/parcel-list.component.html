@@ -91,7 +91,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <ag-grid-angular #parcelsGrid style="width: 100%; height: 800px;" class="ag-theme-balham" [rowData]="rowData"
-                            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">
+                            [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" [suppressMenuHide]="true" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">
                         </ag-grid-angular>
                     </div>
                 </div>
