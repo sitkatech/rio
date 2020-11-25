@@ -70,6 +70,11 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
+  getWaterUsageOverview(year: number): Observable<WaterAllocationOverviewDto> {
+    let route = `/accounts/water-usage-overview/${year}`;
+      return this.apiService.getFromApi(route);
+  }
+
   getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
       let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
       return this.apiService.getFromApi(route);

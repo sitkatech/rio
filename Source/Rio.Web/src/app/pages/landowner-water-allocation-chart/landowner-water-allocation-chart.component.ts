@@ -10,14 +10,11 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
   @Input() annualAllocationSeries: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
+  @Input() allocationLabel: string = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
 
   fake: MultiSeriesEntry[] = [];
 
   view: any[] = [755, 400];
-  
-  allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
-
-  seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
 
   @Input() yDomain;
 
@@ -34,7 +31,10 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
     group: 'Ordinal',
     domain: ['#0400d6']
   };
+  seriesDomain: string[];
 
   constructor() { }
-  ngOnInit() {}
+  ngOnInit() {
+    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
+  }
 }

@@ -354,20 +354,20 @@
                       <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''"
                         *ngIf="seriesData.name === parcel.ParcelNumber"><span
                           *ngIf="seriesData.IsOverridden === true">*</span>
-                        {{seriesData.IsEmpty === true && seriesData.IsOverridden === false ? "-" : (seriesData.value | number:"1.1")}}
+                        {{seriesData.IsEmpty === true && seriesData.IsOverridden === false ? "-" : (seriesData.value | number:"1.1-1")}}
                       </td>
                     </ng-container>
                   </ng-container>
                   <td class="text-right">
-                    <strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1"}}</strong></td>
+                    <strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1-1"}}</strong></td>
                 </tr>
               </tbody>
               <tfoot>
                 <th><strong>Total</strong></th>
                 <th class="text-right" *ngFor="let month of months; let i = index">
-                  {{getTotalWaterUsageForMonth(i) | number:"1.1"}}
+                  {{getTotalWaterUsageForMonth(i) | number:"1.1-1"}}
                 </th>
-                <th class="text-right">{{getWaterUsageToDate() | number: "1.1"}}</th>
+                <th class="text-right">{{getWaterUsageToDate() | number: "1.1-1"}}</th>
               </tfoot>
             </table>
             <p class="small">
@@ -538,7 +538,7 @@
                     </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay)}}
                   </p>
                   <p class="ml-3"><strong>Total Usage (ac-ft)
-                  </strong>{{getTotalWaterUsageForParcelToDisplay(highlightedParcelDto.ParcelNumber)}}
+                  </strong>{{getTotalWaterUsageForParcel(highlightedParcelDto.ParcelNumber) | number: "1.1-1"}}
                 </p>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-lg-4 mt-4 text-sm-center">

@@ -13,8 +13,8 @@ namespace Rio.EFModels.Entities
                 ParcelNumber = parcelMonthlyEvapotranspiration.Parcel.ParcelNumber,
                 WaterYear = parcelMonthlyEvapotranspiration.WaterYear,
                 WaterMonth = parcelMonthlyEvapotranspiration.WaterMonth,
-                EvapotranspirationRate = parcelMonthlyEvapotranspiration.EvapotranspirationRate.HasValue ? Math.Round(parcelMonthlyEvapotranspiration.EvapotranspirationRate.Value, 1) : (decimal?)null,
-                OverriddenEvapotranspirationRate = parcelMonthlyEvapotranspiration.OverriddenEvapotranspirationRate.HasValue ? Math.Round(parcelMonthlyEvapotranspiration.OverriddenEvapotranspirationRate.Value, 1) : (decimal?)null,
+                EvapotranspirationRate = parcelMonthlyEvapotranspiration.EvapotranspirationRate,
+                OverriddenEvapotranspirationRate = parcelMonthlyEvapotranspiration.OverriddenEvapotranspirationRate,
                 IsEmpty = parcelMonthlyEvapotranspiration.EvapotranspirationRate == null
             };
         }
