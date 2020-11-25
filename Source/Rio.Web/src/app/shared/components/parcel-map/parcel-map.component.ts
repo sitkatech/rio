@@ -255,10 +255,11 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
         if (this.highlightParcelOnClick) {
             const wfsService = this.wfsService;
             this.map.on("click", (event: LeafletMouseEvent): void => {
+                this.map.fireEvent("dataloading");
                 wfsService.getParcelByCoordinate(event.latlng.lng, event.latlng.lat)
                     .subscribe((parcelFeatureCollection: FeatureCollection) => {
+                        this.map.fireEvent("dataload");
                         if (parcelFeatureCollection.features) {
-                            console.log(parcelFeatureCollection.features);
                             let parcelID = parcelFeatureCollection.features[0].properties.ParcelID;
                             if (this.highlightedParcelID != parcelID && this.selectedParcelIDs.some(x => x == parcelID)) {
                                 this.highlightedParcelID = parcelID;
