@@ -44,6 +44,7 @@
     "iso8601-js-period": "^0.2.1",
     "jquery": "^3.4.1",
     "leaflet": "^1.6.0",
+    "leaflet-loading": "^0.1.24",
     "leaflet-timedimension": "^1.1.1",
     "leaflet.fullscreen": "^1.6.0",
     "mydatepicker": "^9.0.1",

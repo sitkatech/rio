@@ -8,3 +8,12 @@
         display: none !important;
     }
 }
+
+//This is hijacking the top left control and using it
+//for the loading icon that will sit in the middle of
+//the screen
+::ng-deep .leaflet-bottom.leaflet-left {
+    left:50%;
+    top: 51%;
+    transform: translate(-75%, 0%);
+}

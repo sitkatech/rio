@@ -16,6 +16,7 @@ import {
     WMSOptions
 } from 'leaflet';
 import '../../../../../node_modules/leaflet.fullscreen/Control.FullScreen.js';
+import '../../../../../node_modules/leaflet-loading/src/Control.Loading.js';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { BoundingBoxDto } from '../../models/bounding-box-dto';
@@ -284,6 +285,12 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     }
 
     public setControl(): void {
+        var loadingControl = Control.loading({
+            separate: true,
+            position: 'bottomleft'
+        });
+        this.map.addControl(loadingControl);
+
         this.layerControl = new Control.Layers(this.tileLayers, this.overlayLayers)
             .addTo(this.map);
         if (this.displayparcelsLayerOnLoad) {
