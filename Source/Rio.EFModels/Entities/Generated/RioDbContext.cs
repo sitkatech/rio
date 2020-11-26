@@ -28,6 +28,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<FileResourceMimeType> FileResourceMimeType { get; set; }
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
+        public virtual DbSet<OpenETGoogleBucketResponseEvapotranspirationData> OpenETGoogleBucketResponseEvapotranspirationData { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
@@ -283,6 +284,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OfferStatusDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.OfferStatusName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<OpenETGoogleBucketResponseEvapotranspirationData>(entity =>
+            {
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
             modelBuilder.Entity<Parcel>(entity =>

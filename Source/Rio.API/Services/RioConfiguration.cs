@@ -20,5 +20,6 @@
         public string HangfirePassword { get; set; }
         public string CimisAppKey { get; set; }
         public string VerificationKeyChars { get; set; }
+        public string OpenETAPIKey { get; set; }
     }
 }
