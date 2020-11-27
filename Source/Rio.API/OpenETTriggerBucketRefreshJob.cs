@@ -76,7 +76,7 @@ namespace Rio.API
                 return;
             }
 
-            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(1));
+            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(15));
         }
     }
 
