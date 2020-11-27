@@ -41,15 +41,16 @@ namespace Rio.API.Controllers
         [HttpGet("triggerOpenETRetrieveJob")]
         public ActionResult TriggerOpenETJob()
         {
-            var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration,  "2016-01-01", "2016-12-31");
-            if (!response.IsSuccessStatusCode)
-            {
-                return BadRequest(response.ReasonPhrase);
-            }
+            RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
+            //var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration,  "2016-01-01", "2016-12-31");
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //    return BadRequest(response.ReasonPhrase);
+            //}
 
-            Task.Delay(TimeSpan.FromMinutes(15)).ContinueWith(_ =>
-                OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_dbContext,
-                    _rioConfiguration));
+            //Task.Delay(TimeSpan.FromMinutes(15)).ContinueWith(_ =>
+            //    OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_dbContext,
+            //        _rioConfiguration));
             return Ok();
         }
     }

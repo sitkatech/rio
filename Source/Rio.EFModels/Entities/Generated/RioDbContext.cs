@@ -29,6 +29,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<OpenETGoogleBucketResponseEvapotranspirationData> OpenETGoogleBucketResponseEvapotranspirationData { get; set; }
+        public virtual DbSet<OpenETSyncStatusType> OpenETSyncStatusType { get; set; }
+        public virtual DbSet<OpenETSyncWaterYearStatus> OpenETSyncWaterYearStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
@@ -289,6 +291,35 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<OpenETGoogleBucketResponseEvapotranspirationData>(entity =>
             {
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<OpenETSyncStatusType>(entity =>
+            {
+                entity.HasIndex(e => e.OpenETSyncStatusTypeDisplayName)
+                    .HasName("AK_OpenETSyncStatusType_OpenETSyncStatusTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.OpenETSyncStatusTypeName)
+                    .HasName("AK_OpenETSyncStatusType_OpenETSyncStatusTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.OpenETSyncStatusTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.OpenETSyncStatusTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.OpenETSyncStatusTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<OpenETSyncWaterYearStatus>(entity =>
+            {
+                entity.HasIndex(e => e.WaterYear)
+                    .HasName("AK_OpenETSyncWaterYearStatus_WaterYear")
+                    .IsUnique();
+
+                entity.HasOne(d => d.OpenETSyncStatusType)
+                    .WithMany(p => p.OpenETSyncWaterYearStatus)
+                    .HasForeignKey(d => d.OpenETSyncStatusTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Parcel>(entity =>
