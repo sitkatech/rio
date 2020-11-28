@@ -72,6 +72,7 @@ import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-acco
 import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -128,7 +129,8 @@ export function init_app(appLoadService: AppInitService) {
     CreateUserProfileComponent,
     WaterAccountsAddComponent,
     WaterAccountsListComponent,
-    WaterAccountsInviteComponent
+    WaterAccountsInviteComponent,
+    OpenetSyncWaterYearStatusListComponent
   ],
   imports: [
     AppRoutingModule,

@@ -86,6 +86,9 @@
                                     <a *ngIf="isAdministrator()" routerLink="/parcel-allocation-types/edit" class="dropdown-item">
                                         Configure Water Types
                                     </a>
+                                    <a *ngIf="isAdministrator()" routerLink="/openet-integration" class="dropdown-item">
+                                        View OpenET Integration Status
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">

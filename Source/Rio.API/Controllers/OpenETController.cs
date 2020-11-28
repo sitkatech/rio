@@ -12,7 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {
@@ -23,35 +25,70 @@ namespace Rio.API.Controllers
         private readonly ILogger<OpenETController> _logger;
         private readonly KeystoneService _keystoneService;
         private readonly RioConfiguration _rioConfiguration;
+        private IBackgroundJobClient _backgroundJobClient;
 
-        public const string OpenETBucketURL =
-            "https://storage.googleapis.com/openet_raster_api_storage/openet_timeseries_multi_output/testing_multi_mean_API_KEY.csv";
-
-        public const string TriggerTimeSeriesURL =
-            "http://3.228.142.200/timeseries_multipolygon?shapefile_fn=projects/openet/featureCollections/Use_Case_Data/Rosedale-RioBravoWSD/RRBWSD_2019parcels_wgs84&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&aggregation_type=mean&api_key=API_KEY&to_cloud=openet_raster_api_storage";
-
-        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
+        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
             _rioConfiguration = rioConfiguration.Value;
+            _backgroundJobClient = backgroundJobClient;
         }
 
-        [HttpGet("triggerOpenETRetrieveJob")]
-        public ActionResult TriggerOpenETJob()
+        //For testing purposes
+        [HttpGet("triggerOpenETRetrieveBackgroundJob")] public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
         {
             RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
-            //var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration,  "2016-01-01", "2016-12-31");
-            //if (!response.IsSuccessStatusCode)
-            //{
-            //    return BadRequest(response.ReasonPhrase);
-            //}
-
-            //Task.Delay(TimeSpan.FromMinutes(15)).ContinueWith(_ =>
-            //    OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_dbContext,
-            //        _rioConfiguration));
             return Ok();
+        }
+
+        [HttpPost("openet-sync-water-year-status/trigger-openet-google-bucket-refresh")]
+        public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
+        {
+            string startDate = new DateTime(waterYear, 1, 1).ToString("yyyy-MM-dd");
+            string endDate = new DateTime(waterYear, 12, 31).ToString("yyyy-MM-dd");
+
+            var triggerResponse =
+                OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, startDate, endDate);
+
+            if (!triggerResponse.IsSuccessStatusCode)
+            {
+                ObjectResult ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);
+                return ores;
+            }
+
+            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(15));
+
+            return Ok();
+        }
+
+        [HttpGet("openet-sync-water-year-status")]
+        [ManagerDashboardFeature]
+        public ActionResult<OpenETSyncWaterYearStatusDto> List()
+        {
+            var response = OpenETSyncWaterYearStatus.List(_dbContext);
+            return Ok(response);
+        }
+
+        [HttpPut("openet-sync-water-year-status/finalize")]
+        public ActionResult<OpenETSyncWaterYearStatusDto> FinalizeOpenETSyncWaterYearStatus([FromBody] int openETSyncWaterYearStatusID)
+        {
+            var openETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.GetByOpenETSyncWaterYearStatusID(_dbContext, openETSyncWaterYearStatusID);
+            if (openETSyncWaterYearStatusDto == null)
+            {
+                return NotFound();
+            }
+
+            var updatedOpenETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.Finalize(_dbContext, openETSyncWaterYearStatusID);
+            return Ok(updatedOpenETSyncWaterYearStatusDto);
+        }
+
+        [HttpGet("openet-sync-history/current-in-progress")]
+        public ActionResult<OpenETSyncHistoryDto> GetInProgressOpenSyncHistoryDto()
+        {
+            var inProgressDto = OpenETSyncHistory.GetInProgress(_dbContext);
+            return Ok(inProgressDto);
         }
     }
 }

@@ -29,6 +29,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<OpenETGoogleBucketResponseEvapotranspirationData> OpenETGoogleBucketResponseEvapotranspirationData { get; set; }
+        public virtual DbSet<OpenETSyncHistory> OpenETSyncHistory { get; set; }
+        public virtual DbSet<OpenETSyncResultType> OpenETSyncResultType { get; set; }
         public virtual DbSet<OpenETSyncStatusType> OpenETSyncStatusType { get; set; }
         public virtual DbSet<OpenETSyncWaterYearStatus> OpenETSyncWaterYearStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
@@ -291,6 +293,33 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<OpenETGoogleBucketResponseEvapotranspirationData>(entity =>
             {
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<OpenETSyncHistory>(entity =>
+            {
+                entity.Property(e => e.YearsInUpdateSeparatedByComma).IsUnicode(false);
+
+                entity.HasOne(d => d.OpenETSyncResultType)
+                    .WithMany(p => p.OpenETSyncHistory)
+                    .HasForeignKey(d => d.OpenETSyncResultTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<OpenETSyncResultType>(entity =>
+            {
+                entity.HasIndex(e => e.OpenETSyncResultTypeDisplayName)
+                    .HasName("AK_OpenETSyncResultType_OpenETSyncResultTypeDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.OpenETSyncResultTypeName)
+                    .HasName("AK_OpenETSyncResultType_AK_OpenETSyncResultTypeName")
+                    .IsUnique();
+
+                entity.Property(e => e.OpenETSyncResultTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.OpenETSyncResultTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.OpenETSyncResultTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<OpenETSyncStatusType>(entity =>

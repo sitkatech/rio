@@ -69,7 +69,7 @@ namespace Rio.API
             var endDateString = endDate.ToString("yyyy-MM-dd");
             var startDateString = startDate.ToString("yyyy-MM-dd");
 
-            var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, startDateString, endDateString);
+            var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, startDateString, endDateString);
             if (!response.IsSuccessStatusCode)
             {
                 //throw error

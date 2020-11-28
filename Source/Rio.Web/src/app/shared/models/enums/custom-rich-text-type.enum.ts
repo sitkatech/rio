@@ -16,5 +16,6 @@ export enum CustomRichTextType {
   WaterAccountsAdd = 15,
   WaterAccountsAddLegalText = 16,
   WaterAccountsInvite = 17,
-  ParcelList = 18
+  ParcelList = 18,
+  OpenETIntegration = 19
 }

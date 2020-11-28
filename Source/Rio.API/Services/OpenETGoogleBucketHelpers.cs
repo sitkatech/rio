@@ -79,7 +79,7 @@ namespace Rio.API.Services
 
 
         public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(
-            RioConfiguration rioConfiguration, string startDate, string endDate)
+            RioConfiguration rioConfiguration, RioDbContext rioDbContext, string startDate, string endDate)
         {
             var openETRequestURL = TriggerTimeSeriesURL.Replace("API_KEY", rioConfiguration.OpenETAPIKey).Replace("START_DATE", startDate).Replace("END_DATE", endDate);
 
@@ -87,9 +87,16 @@ namespace Rio.API.Services
             {
                 Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
             };
-            
+
+            var responseResult = httpClient.GetAsync(openETRequestURL).Result;
+
+            if (responseResult.IsSuccessStatusCode)
+            {
+                OpenETSyncHistory.New(rioDbContext, startDate, endDate);
+            }
+
             //Really all we care about is if the request  was successful, but if we identify down the line that we can do anything with the response then could get that and save it
-            return httpClient.GetAsync(openETRequestURL).Result;
+            return responseResult;
         }
 
         public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext, RioConfiguration rioConfiguration)
@@ -116,6 +123,7 @@ namespace Rio.API.Services
 
             if (!response.IsSuccessStatusCode)
             {
+                OpenETSyncHistory.UpdateAnyInProgress(rioDbContext, OpenETSyncResultTypeEnum.Failed);
                 return;
             }
 
@@ -139,6 +147,7 @@ namespace Rio.API.Services
 
                 var waterYearsUpdated = updatedEvapotranspirationDtos.Select(x => x.WaterYear).Distinct().ToList();
                 OpenETSyncWaterYearStatus.UpdateUpdatedDateAndAddIfNecessary(rioDbContext, waterYearsUpdated);
+                OpenETSyncHistory.UpdateAnyInProgress(rioDbContext, OpenETSyncResultTypeEnum.Succeeded);
             }
         }
     }
