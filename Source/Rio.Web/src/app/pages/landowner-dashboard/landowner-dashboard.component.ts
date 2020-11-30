@@ -69,6 +69,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
+  public loadingActiveAccount: boolean = false;
   set highlightedParcelID(value: number) {
     this._highlightedParcelID = value;
     this.highlightedParcelDto = this.parcels.filter(x => x.ParcelID == value)[0];
@@ -109,6 +110,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loadingActiveAccount = true;
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
       this.tradeStatusIDs = [TradeStatusEnum.Countered];
@@ -144,11 +146,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToActiveAccount() {
+    this.loadingActiveAccount = true;
     this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
       if (account) {
         this.activeAccount = account;
         this.updateAccountData(account);
       }
+      this.loadingActiveAccount = false;
     });
   }
 
