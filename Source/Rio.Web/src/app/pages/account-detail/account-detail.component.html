@@ -17,7 +17,7 @@
 </div>
 <div class="container mt-sm-4" *ngIf="account">
     <app-alert-display></app-alert-display>
-    <div style="margin: 1rem 0 1rem 0;" *ngIf="currentUserIsAnAdministrator() || currentUserHasAccount()">
+    <div style="margin: 1rem 0 1rem 0;" *ngIf="currentUserIsADemoUserOrAdministrator() || currentUserHasAccount()">
         <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{account.AccountID}}">View
             Landowner Dashboard</a>
     </div>

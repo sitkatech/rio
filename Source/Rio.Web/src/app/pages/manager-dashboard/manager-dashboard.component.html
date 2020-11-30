@@ -52,7 +52,7 @@
                 Total Allocation
               </th>
               <td class="text-sm-right pb-0 mb-0">
-                {{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} {{unitsShown}}
+                {{getAnnualAllocation(false) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
@@ -84,6 +84,14 @@
               </th>
               <td class="text-sm-right pb-0 mb-0">
                 {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-0 mb-0">
+                Average Annual Usage
+              </th>
+              <td class="text-sm-right pb-0 mb-0">
+                {{getResultInUnitsShown(historicAverageAnnualUsage) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
           </table>

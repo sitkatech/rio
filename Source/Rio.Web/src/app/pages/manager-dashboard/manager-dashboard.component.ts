@@ -183,6 +183,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
+    debugger;
     return annualAllocation ? annualAllocation.ChartData : null;
   }
 
@@ -591,7 +592,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public getAnnualAllocation(skipConvertToUnitsShown?: boolean): number {
     let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "Allocation");
+    return this.getTotalAcreFeetAllocated(parcelAllocations, "Allocation", skipConvertToUnitsShown);
   }
 
   public getAnnualUsage(): number {

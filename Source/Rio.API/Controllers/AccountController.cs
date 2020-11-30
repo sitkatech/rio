@@ -267,7 +267,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("accounts/water-usage-overview/{year}")]
-        [UserManageFeature]
+        [ManagerDashboardFeature]
         public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverview([FromRoute] int year)
         {
             var parcelDtos = Parcel.ListByAccountIDs(_dbContext, _dbContext.Account.Select(x => (int?)x.AccountID).ToList(), year);

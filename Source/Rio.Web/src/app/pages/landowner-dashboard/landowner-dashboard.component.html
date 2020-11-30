@@ -10,6 +10,7 @@
     </nav>
   </div>
 </div>
+<ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
 <div class="container mt-sm-4" *ngIf="activeAccount">
   <app-alert-display></app-alert-display>
   <p>
@@ -555,9 +556,15 @@
 </div>
 <div class="container mt-sm-4" *ngIf="!activeAccount">
   <ngb-alert [type]="'info'" [dismissible]="false" *ngIf="landownerHasAnyAccounts()">
-    No account is selected. Use the dropdown in the top right to select an account to view the Landowner Dashboard.
+    No account is selected. Select an account from the 'My Dashboards' menu or <a routerLink="/water-accounts">View your Water Accounts here.</a>
   </ngb-alert>
   <ngb-alert [type]="'info'" [dismissible]="false" *ngIf="!landownerHasAnyAccounts()">
     You do not have any assigned accounts.
   </ngb-alert>
 </div>
+</ng-container>
+<ng-template #loadingBlock>
+  <div class="container mt-sm-4">
+    <i class="fa fa-spinner loading-spinner"></i> Loading
+  </div>
+</ng-template>
