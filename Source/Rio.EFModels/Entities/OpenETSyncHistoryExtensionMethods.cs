@@ -14,6 +14,7 @@ namespace Rio.EFModels.Entities
                 OpenETSyncHistoryID = openETSyncHistory.OpenETSyncHistoryID,
                 OpenETSyncResultType = openETSyncHistory.OpenETSyncResultType.AsDto(),
                 YearsInUpdateSeparatedByComma = openETSyncHistory.YearsInUpdateSeparatedByComma,
+                UpdatedFileSuffix = openETSyncHistory.UpdatedFileSuffix,
                 LastUpdatedDate = openETSyncHistory.LastUpdatedDate
             };
         }

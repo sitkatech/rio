@@ -31,6 +31,11 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
+            RunJobImplementation(null);
+        }
+
+        protected override void RunJobImplementation(string additionalArguments)
+        {
             var parcelAllocationType = _rioDbContext.ParcelAllocationType.SingleOrDefault(x => x.IsSourcedFromApi);
             if (parcelAllocationType == null)
             {

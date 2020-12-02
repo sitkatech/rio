@@ -13,5 +13,6 @@ create table dbo.OpenETSyncHistory (
 	OpenETSyncHistoryID int not null identity(1,1) constraint PK_OpenETSyncHistory_OpenETSyncHistoryID primary key,
 	OpenETSyncResultTypeID int not null constraint FK_OpenETSyncHistory_OpenETSyncResultType_OpenETSyncResultTypeID foreign key references dbo.OpenETSyncResultType(OpenETSyncResultTypeID),
 	YearsInUpdateSeparatedByComma varchar(100) not null,
+	UpdatedFileSuffix varchar(20) not null,
 	LastUpdatedDate DateTime not null
 ) 

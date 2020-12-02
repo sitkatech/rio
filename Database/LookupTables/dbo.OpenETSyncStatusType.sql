@@ -1,7 +1,8 @@
 MERGE INTO dbo.OpenETSyncStatusType AS Target
 USING (VALUES
 (1, 'Nightly', 'Nightly'),
-(2, 'Finalized', 'Finalized')
+(2, 'Finalized', 'Finalized'),
+(3, 'CurrentlyUpdating', 'Currently Updating')
 )
 AS Source (OpenETSyncStatusTypeID, OpenETSyncStatusTypeName, OpenETSyncStatusTypeDisplayName)
 ON Target.OpenETSyncStatusTypeID = Source.OpenETSyncStatusTypeID

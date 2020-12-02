@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[OpenETSyncHistory](
 	[OpenETSyncHistoryID] [int] IDENTITY(1,1) NOT NULL,
 	[OpenETSyncResultTypeID] [int] NOT NULL,
 	[YearsInUpdateSeparatedByComma] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[UpdatedFileSuffix] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[LastUpdatedDate] [datetime] NOT NULL,
  CONSTRAINT [PK_OpenETSyncHistory_OpenETSyncHistoryID] PRIMARY KEY CLUSTERED 
 (

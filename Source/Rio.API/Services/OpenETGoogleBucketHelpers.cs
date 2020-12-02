@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -20,10 +23,10 @@ namespace Rio.API.Services
     public static class OpenETGoogleBucketHelpers
     {
         public const string OpenETBucketURL =
-            "https://storage.googleapis.com/openet_raster_api_storage/openet_timeseries_multi_output/testing_multi_mean_API_KEY.csv";
+            "https://storage.googleapis.com/openet_raster_api_storage/openet_timeseries_multi_output/testing_multi_mean_API_KEY_FILE_SUFFIX.csv";
 
         public const string TriggerTimeSeriesURL =
-            "http://3.228.142.200/timeseries_multipolygon?shapefile_fn=projects/openet/featureCollections/Use_Case_Data/Rosedale-RioBravoWSD/RRBWSD_2019parcels_wgs84&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&aggregation_type=mean&api_key=API_KEY&to_cloud=openet_raster_api_storage";
+            "http://3.228.142.200/timeseries_multipolygon?shapefile_fn=SHAPEFILE_PATH&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&aggregation_type=mean&api_key=API_KEY&to_cloud=openet_raster_api_storage&suffix=FILE_SUFFIX&out_columns=ParcelID,ParcelAre0";
 
         public const string CheckRasterUpdatedDateURL =
             "http://3.228.142.200//raster_collection_metadata?geom=-120.30921936035156,36.99542364399086,-120.30887603759766,36.98143783973302,-120.2918815612793,36.982260605282676,-120.29170989990234,36.99556074698967,-120.30921936035156,36.99542364399086&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&api_key=API_KEY&prop=date_ingested";
@@ -78,10 +81,16 @@ namespace Rio.API.Services
         }
 
 
-        public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(
-            RioConfiguration rioConfiguration, RioDbContext rioDbContext, string startDate, string endDate)
+        public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(RioConfiguration rioConfiguration,
+            RioDbContext rioDbContext, IBackgroundJobClient backgroundJobClient, string startDate, string endDate,
+            string suffix)
         {
-            var openETRequestURL = TriggerTimeSeriesURL.Replace("API_KEY", rioConfiguration.OpenETAPIKey).Replace("START_DATE", startDate).Replace("END_DATE", endDate);
+            var openETRequestURL = TriggerTimeSeriesURL
+                .Replace("API_KEY", rioConfiguration.OpenETAPIKey)
+                .Replace("SHAPEFILE_PATH", rioConfiguration.OpenETShapefilePath)
+                .Replace("START_DATE", startDate)
+                .Replace("END_DATE", endDate)
+                .Replace("FILE_SUFFIX", suffix);
 
             var httpClient = new HttpClient
             {
@@ -92,23 +101,34 @@ namespace Rio.API.Services
 
             if (responseResult.IsSuccessStatusCode)
             {
-                OpenETSyncHistory.New(rioDbContext, startDate, endDate);
+                var syncHistoryObject = OpenETSyncHistory.New(rioDbContext, startDate, endDate, suffix);
+                backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null, syncHistoryObject.OpenETSyncHistoryID.ToString()), TimeSpan.FromMinutes(15));
             }
 
-            //Really all we care about is if the request  was successful, but if we identify down the line that we can do anything with the response then could get that and save it
             return responseResult;
         }
 
-        public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext, RioConfiguration rioConfiguration)
+        public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext, RioConfiguration rioConfiguration, string syncHistoryIDAsString)
         {
-            var openETRequestURL = OpenETBucketURL.Replace("API_KEY", rioConfiguration.OpenETAPIKey);
+            var syncHistoryID = Int32.Parse(syncHistoryIDAsString);
+
+            var syncHistoryObject = OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, syncHistoryID);
+
+            if (syncHistoryObject == null || syncHistoryObject.OpenETSyncResultType.OpenETSyncResultTypeID !=
+                (int) OpenETSyncResultTypeEnum.InProgress)
+            {
+                //Bad request, we completed already and somehow were called again, or someone else decided we were done
+                return;
+            }
+
+            var openETRequestURL = OpenETBucketURL
+                .Replace("API_KEY", rioConfiguration.OpenETAPIKey)
+                .Replace("FILE_SUFFIX", syncHistoryObject.UpdatedFileSuffix);
             
             var httpClient = new HttpClient
             {
                 Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
             };
-
-            List<OpenETGoogleBucketResponseEvapotranspirationData> updatedEvapotranspirationDtos;
 
             var response = httpClient.GetAsync(openETRequestURL).Result;
 
@@ -123,31 +143,57 @@ namespace Rio.API.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                OpenETSyncHistory.UpdateAnyInProgress(rioDbContext, OpenETSyncResultTypeEnum.Failed);
+                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed);
                 return;
             }
 
+            List<OpenETGoogleBucketResponseEvapotranspirationData> distinctRecords;
             using (var reader = new StreamReader(response.Content.ReadAsStreamAsync().Result))
             {
                 var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
-                var records = csvr.GetRecords<OpenETCSVFormat>();
                 var finalizedWaterYears = rioDbContext.OpenETSyncWaterYearStatus
-                    .Where(x => x.OpenETSyncStatusTypeID == (int) OpenETSyncStatusTypeEnum.Finalized).Select(x => x.WaterYear).ToList();
-                updatedEvapotranspirationDtos =
-                    records.Where(x => !finalizedWaterYears.Contains(x.Date.Year)).Distinct(new DistinctOpenETCSVFormatComparer()).Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData()).ToList();
+                    .Where(x => x.OpenETSyncStatusTypeID == (int)OpenETSyncStatusTypeEnum.Finalized)
+                    .Select(x => x.WaterYear)
+                    .ToList();
+                distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYears.Contains(x.Date.Year))
+                    .Distinct(new DistinctOpenETCSVFormatComparer())
+                    .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
+                    .ToList(); ;
             }
 
-            if (updatedEvapotranspirationDtos.Any())
+            if (distinctRecords.Any())
             {
                 rioDbContext.Database.ExecuteSqlRaw(
                     "TRUNCATE TABLE dbo.OpenETGoogleBucketResponseEvapotranspirationData");
-                rioDbContext.OpenETGoogleBucketResponseEvapotranspirationData.AddRange(updatedEvapotranspirationDtos);
-                rioDbContext.SaveChanges();
+                DataTable table = new DataTable();
+                table.Columns.Add("OpenETGoogleBucketResponseEvapotranspirationDataID", typeof(int));
+                table.Columns.Add("ParcelID", typeof(int));
+                table.Columns.Add("WaterMonth", typeof(int));
+                table.Columns.Add("WaterYear", typeof(int));
+                table.Columns.Add("EvapotranspirationRate", typeof(decimal));
+
+                int i = 0;
+                distinctRecords.ForEach(x =>
+                    {
+                        table.Rows.Add(++i, x.ParcelID, x.WaterMonth, x.WaterYear, x.EvapotranspirationRate);
+                    });
+
+                using (SqlConnection con = new SqlConnection(rioConfiguration.DB_CONNECTION_STRING))
+                {
+                    using (SqlBulkCopy sqlBulkCopy = new SqlBulkCopy(con))
+                    {
+                        sqlBulkCopy.DestinationTableName = "dbo.OpenETGoogleBucketResponseEvapotranspirationData";
+                        con.Open();
+                        sqlBulkCopy.WriteToServer(table);
+                        con.Close();
+                    }
+                }
+
                 rioDbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelMonthlyEvapotranspirationWithETData");
 
-                var waterYearsUpdated = updatedEvapotranspirationDtos.Select(x => x.WaterYear).Distinct().ToList();
+                var waterYearsUpdated = distinctRecords.Select(x => x.WaterYear).Distinct().ToList();
                 OpenETSyncWaterYearStatus.UpdateUpdatedDateAndAddIfNecessary(rioDbContext, waterYearsUpdated);
-                OpenETSyncHistory.UpdateAnyInProgress(rioDbContext, OpenETSyncResultTypeEnum.Succeeded);
+                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Succeeded);
             }
         }
     }
@@ -156,12 +202,8 @@ namespace Rio.API.Services
     {
         [Name("system:index")]
         public string SystemIndex { get; set; }
-
-        [Name("APN_LABEL")]
-        public string ParcelNumber { get; set; }
-
-        [Name("OBJECTID")]
-        public int ObjectID { get; set; }
+        public int ParcelID { get; set; }
+        [Name("ParcelAre0")] public decimal ParcelAreaInAcres { get; set; }
 
         [Name("date")]
         public DateTime Date { get; set; }
@@ -178,14 +220,14 @@ namespace Rio.API.Services
 
         public bool Equals(OpenETCSVFormat x, OpenETCSVFormat y)
         {
-            return x.ParcelNumber == y.ParcelNumber &&
+            return x.ParcelID == y.ParcelID &&
                    x.Date == y.Date &&
                    x.EvapotranspirationRate == y.EvapotranspirationRate;
         }
 
         public int GetHashCode(OpenETCSVFormat obj)
         {
-            return obj.ParcelNumber.GetHashCode() ^
+            return obj.ParcelID.GetHashCode() ^
                    obj.Date.GetHashCode() ^
                    obj.EvapotranspirationRate.GetHashCode();
         }
@@ -197,10 +239,10 @@ namespace Rio.API.Services
         {
             return new OpenETGoogleBucketResponseEvapotranspirationData()
             {
-                ParcelNumber = openETCSVFormat.ParcelNumber,
+                ParcelID = openETCSVFormat.ParcelID,
                 WaterYear = openETCSVFormat.Date.Year,
                 WaterMonth = openETCSVFormat.Date.Month,
-                EvapotranspirationRate = openETCSVFormat.EvapotranspirationRate
+                EvapotranspirationRate = ((openETCSVFormat.EvapotranspirationRate / (decimal)25.4) / 12) * openETCSVFormat.ParcelAreaInAcres
             };
         }
     }

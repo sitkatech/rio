@@ -62,5 +62,19 @@ namespace Rio.EFModels.Entities
 
             return GetByOpenETSyncWaterYearStatusID(dbContext, openETSyncWaterYearStatusId);
         }
+
+        public static void UpdateSyncStatusTypeByYear(RioDbContext dbContext, List<int> yearsBeingUpdated, OpenETSyncStatusTypeEnum newStatus)
+        {
+            var openETSyncWaterYearStatus = dbContext.OpenETSyncWaterYearStatus
+                .Where(x => yearsBeingUpdated.Contains(x.WaterYear)).ToList();
+
+            if (!openETSyncWaterYearStatus.Any())
+            {
+                return;
+            }
+
+            openETSyncWaterYearStatus.ForEach(x => x.OpenETSyncStatusTypeID = (int)newStatus);
+            dbContext.SaveChanges();
+        }
     }
 }

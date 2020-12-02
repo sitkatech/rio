@@ -40,7 +40,12 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext, _rioConfiguration);
+            RunJobImplementation(null);
+        }
+
+        protected override void RunJobImplementation(string additionalArguments)
+        {
+            OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext, _rioConfiguration, additionalArguments);
         }
     }
 

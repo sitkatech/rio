@@ -13,6 +13,9 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(100)]
         public string YearsInUpdateSeparatedByComma { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string UpdatedFileSuffix { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime LastUpdatedDate { get; set; }
 

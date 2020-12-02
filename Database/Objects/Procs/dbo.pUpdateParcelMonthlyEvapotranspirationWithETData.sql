@@ -7,12 +7,11 @@ as
 
 begin
 	MERGE INTO dbo.ParcelMonthlyEvapotranspiration AS Target
-	USING (select p.ParcelID, oet.WaterYear, oet.WaterMonth, oet.EvapotranspirationRate
-		   from dbo.OpenETGoogleBucketResponseEvapotranspirationData oet
-		   join dbo.Parcel p on p.ParcelNumber = oet.ParcelNumber) AS Source
+	USING dbo.ParcelMonthlyEvapotranspiration AS Source
 	ON Target.ParcelID = Source.ParcelID and Target.WaterYear = Source.WaterYear and Target.WaterMonth = Source.WaterMonth
 	WHEN MATCHED THEN
 	UPDATE SET
+		--Need to convert mm into Acre-Feet
 		Target.EvapotranspirationRate = Source.EvapotranspirationRate
 	WHEN NOT MATCHED BY TARGET THEN
 		INSERT (ParcelID, WaterYear, WaterMonth, EvapotranspirationRate)

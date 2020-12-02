@@ -9,6 +9,7 @@ namespace Rio.Models.DataTransferObjects
         public int OpenETSyncHistoryID { get; set; }
         public OpenETSyncResultTypeDto OpenETSyncResultType { get; set; }
         public string YearsInUpdateSeparatedByComma { get; set; }
+        public string UpdatedFileSuffix { get; set; }
         public DateTime LastUpdatedDate { get; set; }
     }
 

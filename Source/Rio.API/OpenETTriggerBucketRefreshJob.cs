@@ -1,19 +1,11 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Rio.EFModels.Entities;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration.Attributes;
-using Microsoft.EntityFrameworkCore;
+using System.Net;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 
@@ -42,6 +34,11 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
+            RunJobImplementation(null);
+        }
+
+        protected override void RunJobImplementation(string additionalArguments)
+        {
             var startYear = DateUtilities.MinimumYear;
 
             if (_rioDbContext.OpenETSyncWaterYearStatus.Any())
@@ -69,19 +66,14 @@ namespace Rio.API
             var endDateString = endDate.ToString("yyyy-MM-dd");
             var startDateString = startDate.ToString("yyyy-MM-dd");
 
-            var response = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, startDateString, endDateString);
-            if (!response.IsSuccessStatusCode)
-            {
-                //throw error
-                return;
-            }
-
-            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(15));
+            var fileSuffix = _rioConfiguration.LeadOrganizationShortName + "_Nightly";
+            OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, _backgroundJobClient, startDateString, endDateString, fileSuffix);
         }
     }
 
     public interface IOpenETTriggerBucketRefreshJob
     {
         void RunJob(IJobCancellationToken token);
+        void RunJob(IJobCancellationToken token, string additionalArguments);
     }
 }

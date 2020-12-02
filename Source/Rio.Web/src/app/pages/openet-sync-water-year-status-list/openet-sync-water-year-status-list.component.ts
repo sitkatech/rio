@@ -76,9 +76,19 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
         return "Checking for Updates Nightly";
       case OpenETSyncStatusTypeEnum.Finalized:
         return "Finalized " + this.datePipe.transform(dtoForWaterYear.LastUpdatedDate, this.dateFormatString);
+      case OpenETSyncStatusTypeEnum.CurrentlyUpdating:
+        return "Update in Progress";
       default:
         return "Status type not recognized"
     }
+  }
+
+  public waterYearIsUpdating(waterYear:number) : boolean {
+    if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
+      return false;
+    } 
+
+    return this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == waterYear)[0].OpenETSyncStatusType.OpenETSyncStatusTypeID == OpenETSyncStatusTypeEnum.CurrentlyUpdating;
   }
 
   public getLastUpdatedDateForWaterYear(waterYear:number) : string {

@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
     public enum OpenETSyncStatusTypeEnum
     {
         Nightly = 1,
-        Finalized = 2
+        Finalized = 2,
+        CurrentlyUpdating = 3
     }
 }

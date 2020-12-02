@@ -38,6 +38,14 @@ namespace Rio.API
         /// </summary>
         public void RunJob(IJobCancellationToken token)
         {
+            RunJob(token, null);
+        }
+
+        /// <summary>
+        /// This wraps the call to <see cref="RunJobImplementation"/> with all of the housekeeping for being a scheduled job.
+        /// </summary>
+        public void RunJob(IJobCancellationToken token, string additionalArguments)
+        {
             lock (ScheduledBackgroundJobLock)
             {
                 // No-Op if we're not running in an allowed environment
@@ -59,7 +67,14 @@ namespace Rio.API
                 try
                 {
                     _logger.LogInformation($"Begin Job {_jobName}");
-                    RunJobImplementation();
+                    if (!string.IsNullOrEmpty(additionalArguments))
+                    {
+                        RunJobImplementation(additionalArguments);
+                    }
+                    else
+                    {
+                        RunJobImplementation();
+                    }
                     _logger.LogInformation($"End Job {_jobName}");
                 }
                 catch (Exception ex)
@@ -75,5 +90,7 @@ namespace Rio.API
         /// Jobs can fill this in with whatever they need to run. This is called by <see cref="RunJob"/> which handles other miscellaneous stuff
         /// </summary>
         protected abstract void RunJobImplementation();
+
+        protected abstract void RunJobImplementation(string additionalArguments);
     }
 }

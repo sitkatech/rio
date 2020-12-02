@@ -6,7 +6,8 @@ create table dbo.OpenETSyncStatusType (
 
 insert into dbo.OpenETSyncStatusType(OpenETSyncStatusTypeID, OpenETSyncStatusTypeName, OpenETSyncStatusTypeDisplayName)
 values (1, 'Nightly', 'Nightly'),
-(2, 'Finalized', 'Finalized')
+(2, 'Finalized', 'Finalized'),
+(3, 'CurrentlyUpdating', 'Current Updating')
 
 create table dbo.OpenETSyncWaterYearStatus (
 	OpenETSyncWaterYearStatusID int not null identity(1,1) constraint PK_OpenETSyncWaterYearStatus_OpenETSyncWaterYearStatusID primary key,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -50,15 +51,13 @@ namespace Rio.API.Controllers
             string endDate = new DateTime(waterYear, 12, 31).ToString("yyyy-MM-dd");
 
             var triggerResponse =
-                OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, startDate, endDate);
+                OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, _backgroundJobClient, startDate, endDate, _rioConfiguration.LeadOrganizationShortName + "_" + waterYear);
 
             if (!triggerResponse.IsSuccessStatusCode)
             {
                 ObjectResult ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);
                 return ores;
             }
-
-            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(15));
 
             return Ok();
         }

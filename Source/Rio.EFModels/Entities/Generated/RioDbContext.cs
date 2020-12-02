@@ -290,13 +290,10 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OfferStatusName).IsUnicode(false);
             });
 
-            modelBuilder.Entity<OpenETGoogleBucketResponseEvapotranspirationData>(entity =>
-            {
-                entity.Property(e => e.ParcelNumber).IsUnicode(false);
-            });
-
             modelBuilder.Entity<OpenETSyncHistory>(entity =>
             {
+                entity.Property(e => e.UpdatedFileSuffix).IsUnicode(false);
+
                 entity.Property(e => e.YearsInUpdateSeparatedByComma).IsUnicode(false);
 
                 entity.HasOne(d => d.OpenETSyncResultType)
