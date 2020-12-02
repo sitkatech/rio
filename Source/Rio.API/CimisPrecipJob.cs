@@ -91,6 +91,7 @@ namespace Rio.API
     public interface ICimisPrecipJob
     {
         void RunJob(IJobCancellationToken token);
+        void RunJob(IJobCancellationToken token, string additionalArguments);
     }
 
     public class CimisPrecipitationResponse

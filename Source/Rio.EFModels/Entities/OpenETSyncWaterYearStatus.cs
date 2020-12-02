@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Rio.API.Util;
 using Rio.Models.DataTransferObjects;
@@ -63,7 +61,7 @@ namespace Rio.EFModels.Entities
             return GetByOpenETSyncWaterYearStatusID(dbContext, openETSyncWaterYearStatusId);
         }
 
-        public static void UpdateSyncStatusTypeByYear(RioDbContext dbContext, List<int> yearsBeingUpdated, OpenETSyncStatusTypeEnum newStatus)
+        public static void UpdateSyncStatusTypeByWaterYear(RioDbContext dbContext, List<int> yearsBeingUpdated, OpenETSyncStatusTypeEnum newStatus)
         {
             var openETSyncWaterYearStatus = dbContext.OpenETSyncWaterYearStatus
                 .Where(x => yearsBeingUpdated.Contains(x.WaterYear)).ToList();

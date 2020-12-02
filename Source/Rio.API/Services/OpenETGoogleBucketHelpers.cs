@@ -7,14 +7,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using Hangfire;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Rio.EFModels.Entities;
 
@@ -26,10 +23,10 @@ namespace Rio.API.Services
             "https://storage.googleapis.com/openet_raster_api_storage/openet_timeseries_multi_output/testing_multi_mean_API_KEY_FILE_SUFFIX.csv";
 
         public const string TriggerTimeSeriesURL =
-            "http://3.228.142.200/timeseries_multipolygon?shapefile_fn=SHAPEFILE_PATH&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&aggregation_type=mean&api_key=API_KEY&to_cloud=openet_raster_api_storage&suffix=FILE_SUFFIX&out_columns=ParcelID,ParcelAre0";
+            "http://3.228.142.200/timeseries_multipolygon?shapefile_fn=SHAPEFILE_PATH&start_date=START_DATE&end_date=END_DATE&model=ensemble&vars=et&aggregation_type=mean&api_key=API_KEY&to_cloud=openet_raster_api_storage&suffix=FILE_SUFFIX&out_columns=ParcelID,ParcelAre0";
 
         public const string CheckRasterUpdatedDateURL =
-            "http://3.228.142.200//raster_collection_metadata?geom=-120.30921936035156,36.99542364399086,-120.30887603759766,36.98143783973302,-120.2918815612793,36.982260605282676,-120.29170989990234,36.99556074698967,-120.30921936035156,36.99542364399086&start_date=START_DATE&end_date=END_DATE&model=sims&vars=et&api_key=API_KEY&prop=date_ingested";
+            "http://3.228.142.200//raster_collection_metadata?geom=-120.30921936035156,36.99542364399086,-120.30887603759766,36.98143783973302,-120.2918815612793,36.982260605282676,-120.29170989990234,36.99556074698967,-120.30921936035156,36.99542364399086&start_date=START_DATE&end_date=END_DATE&model=ensemble&vars=et&api_key=API_KEY&prop=date_ingested";
 
         public static bool RasterUpdatedSinceMinimumLastUpdatedDate(RioConfiguration rioConfiguration,
             RioDbContext rioDbContext, DateTime startDate, DateTime endDate)
@@ -203,7 +200,9 @@ namespace Rio.API.Services
         [Name("system:index")]
         public string SystemIndex { get; set; }
         public int ParcelID { get; set; }
-        [Name("ParcelAre0")] public decimal ParcelAreaInAcres { get; set; }
+
+        [Name("ParcelAre0")] 
+        public decimal ParcelAreaInAcres { get; set; }
 
         [Name("date")]
         public DateTime Date { get; set; }

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Rio.API.Util;
 using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
@@ -24,7 +22,7 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.WaterYear).ToList();
             var yearsBeingUpdated = yearsBeingUpdatedFullRange.Where(x => !finalizedYears.Contains(x)).ToList();
 
-            OpenETSyncWaterYearStatus.UpdateSyncStatusTypeByYear(dbContext, yearsBeingUpdated, OpenETSyncStatusTypeEnum.CurrentlyUpdating);
+            OpenETSyncWaterYearStatus.UpdateSyncStatusTypeByWaterYear(dbContext, yearsBeingUpdated, OpenETSyncStatusTypeEnum.CurrentlyUpdating);
 
             var yearsBeingUpdatedAsString = String.Join(",", yearsBeingUpdated);
 
@@ -60,7 +58,7 @@ namespace Rio.EFModels.Entities
             var openETSyncHistory =
                 rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
 
-            OpenETSyncWaterYearStatus.UpdateSyncStatusTypeByYear(rioDbContext, openETSyncHistory.YearsInUpdateSeparatedByComma.Split(',').Select(Int32.Parse).ToList(), OpenETSyncStatusTypeEnum.Nightly);
+            OpenETSyncWaterYearStatus.UpdateSyncStatusTypeByWaterYear(rioDbContext, openETSyncHistory.YearsInUpdateSeparatedByComma.Split(',').Select(Int32.Parse).ToList(), OpenETSyncStatusTypeEnum.Nightly);
 
             openETSyncHistory.LastUpdatedDate = DateTime.Now;
             openETSyncHistory.OpenETSyncResultTypeID = (int) resultType;

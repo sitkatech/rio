@@ -1,19 +1,8 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Rio.EFModels.Entities;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration.Attributes;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 
@@ -52,5 +41,6 @@ namespace Rio.API
     public interface IOpenETRetrieveFromBucketJob
     {
         void RunJob(IJobCancellationToken token);
+        void RunJob(IJobCancellationToken token, string additionalArguments);
     }
 }
