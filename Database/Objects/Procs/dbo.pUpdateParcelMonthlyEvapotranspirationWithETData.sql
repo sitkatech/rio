@@ -11,7 +11,6 @@ begin
 	ON Target.ParcelID = Source.ParcelID and Target.WaterYear = Source.WaterYear and Target.WaterMonth = Source.WaterMonth
 	WHEN MATCHED THEN
 	UPDATE SET
-		--Need to convert mm into Acre-Feet
 		Target.EvapotranspirationRate = Source.EvapotranspirationRate
 	WHEN NOT MATCHED BY TARGET THEN
 		INSERT (ParcelID, WaterYear, WaterMonth, EvapotranspirationRate)

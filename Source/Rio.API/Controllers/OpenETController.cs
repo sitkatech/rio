@@ -84,10 +84,10 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("openet-sync-history/current-in-progress")]
-        public ActionResult<OpenETSyncHistoryDto> GetInProgressOpenSyncHistoryDto()
+        public ActionResult<List<OpenETSyncHistoryDto>> ListInProgressOpenSyncHistoryDtos()
         {
-            var inProgressDto = OpenETSyncHistory.GetInProgress(_dbContext);
-            return Ok(inProgressDto);
+            var inProgressDtos = OpenETSyncHistory.ListInProgress(_dbContext);
+            return Ok(inProgressDtos);
         }
     }
 }

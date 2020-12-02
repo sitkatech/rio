@@ -40,6 +40,7 @@ namespace Rio.API
         protected override void RunJobImplementation(string additionalArguments)
         {
             var startYear = DateUtilities.MinimumYear;
+            var endDate = DateTime.Now.AddDays(-1);
 
             if (_rioDbContext.OpenETSyncWaterYearStatus.Any())
             {
@@ -55,7 +56,6 @@ namespace Rio.API
                 startYear = nonFinalizedOpenETSyncWaterYearStatus.Select(x => x.WaterYear).Min();
             }
 
-            var endDate = DateTime.Now.AddDays(-1);
             var startDate = new DateTime(startYear, 1, 1);
 
             if (!OpenETGoogleBucketHelpers.RasterUpdatedSinceMinimumLastUpdatedDate(_rioConfiguration, _rioDbContext, startDate, endDate))

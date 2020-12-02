@@ -20,7 +20,7 @@ export class OpenETService {
         return this.apiService.putToApi(route, openETSyncWaterStatusID);
     }
 
-    public getInProgressOpenETSyncHistory(): Observable<OpenETSyncHistoryDto> {
+    public getInProgressOpenETSyncHistory(): Observable<Array<OpenETSyncHistoryDto>> {
         const route = "openet-sync-history/current-in-progress";
         return this.apiService.getFromApi(route);
     }

@@ -12,10 +12,14 @@
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
-    <ngb-alert *ngIf="inProgressSyncDto" [type]="'info'" [dismissible]="false">
-        <span>
-            A sync operation is currently in progress to update the following years: {{ inProgressSyncDto.YearsInUpdateSeparatedByComma }}.<br/>
+    <ngb-alert *ngIf="inProgressSyncDtos && inProgressSyncDtos.length > 0" [type]="'info'" [dismissible]="false">
+        <span *ngIf="inProgressSyncDtos.length == 1">
+            A sync operation is currently in progress to update the following years: {{ getInProgressYears() }}.<br/>
             Syncing and finalizing any of the years involved in the operation will be disabled until the operation completes.
+        </span>
+        <span *ngIf="inProgressSyncDtos.length > 1">
+            Sync operations are currently in progress to update the following years: {{ getInProgressYears() }}.<br/>
+            Syncing and finalizing any of the years involved in these operations will be disabled until the respective operation completes.
         </span>
     </ngb-alert>
     <div class="row mb-2">

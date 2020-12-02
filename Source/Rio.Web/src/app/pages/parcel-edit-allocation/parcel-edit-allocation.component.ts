@@ -79,7 +79,6 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
 
   public updateAllocationModel(parcelAllocationType: ParcelAllocationTypeDto, year: number, $event: Event): void{
     const newValue = Number((<HTMLInputElement>$event.target).value);
-debugger;
     let updatedAllocation = this.parcelAllocations.find(x=>x.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID && x.WaterYear === year );
     if (updatedAllocation !== null && updatedAllocation !== undefined) {
       updatedAllocation.AcreFeetAllocated = newValue;

@@ -48,11 +48,11 @@ namespace Rio.EFModels.Entities
             return dbContext.OpenETSyncHistory.Include(x=>x.OpenETSyncResultType).SingleOrDefault(x => x.OpenETSyncHistoryID == openETSyncHistoryID).AsDto();
         }
 
-        public static object GetInProgress(RioDbContext dbContext)
+        public static List<OpenETSyncHistoryDto> ListInProgress(RioDbContext dbContext)
         {
             return dbContext.OpenETSyncHistory
                 .Include(x => x.OpenETSyncResultType)
-                .SingleOrDefault(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress)?.AsDto();
+                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress)?.Select(x => x.AsDto()).ToList();
         }
 
         public static void UpdateSyncResultByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType)

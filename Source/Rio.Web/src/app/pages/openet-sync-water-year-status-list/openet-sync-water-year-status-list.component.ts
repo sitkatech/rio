@@ -27,7 +27,7 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
 
   public waterYears: Array<number>;
   public openETSyncWaterYearStatusDtos: Array<OpenETSyncWaterYearStatusDto>;
-  public inProgressSyncDto: OpenETSyncHistoryDto;
+  public inProgressSyncDtos: Array<OpenETSyncHistoryDto>;
   public isPerformingAction: boolean = false;
 
   public dateFormatString: string = "M/dd/yyyy";
@@ -59,7 +59,7 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
       this.isPerformingAction = false;
       this.waterYears = waterYears;
       this.openETSyncWaterYearStatusDtos = openETSyncWaterYearStatusDtos;
-      this.inProgressSyncDto = inProgressSync;
+      this.inProgressSyncDtos = inProgressSync;
     });
   }
 
@@ -154,5 +154,24 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
       this.selectedWaterYear = null;
       this.refreshWaterYearsAndOpenETSyncData();
     })
+  }
+
+  public getInProgressYears() : string {
+    if (!this.inProgressSyncDtos) {
+      return "";
+    } 
+
+    if (this.inProgressSyncDtos.length == 1) {
+      return this.inProgressSyncDtos[0].YearsInUpdateSeparatedByComma;
+    }
+
+    var allYearsInProgress = this.inProgressSyncDtos.map(x => {
+      return x.YearsInUpdateSeparatedByComma.split(",");
+    });
+
+    var allYearsInProgressUniqueInString = allYearsInProgress.filter((n, i) => allYearsInProgress.indexOf(n) === i).sort().join(", ");
+
+    return allYearsInProgressUniqueInString;
+  
   }
 }
