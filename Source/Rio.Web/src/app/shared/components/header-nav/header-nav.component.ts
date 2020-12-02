@@ -68,7 +68,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)) {
                 this.userService.getUnassignedUserReport().subscribe(report => {
                     if (report.Count > 0) {
-                        this.alertService.pushAlert(new Alert(`There are ${report.Count} users who are waiting for you to configure their account. <a href='/users'>Manage Users</a>.`, AlertContext.Info, true, AlertService.USERS_AWAITING_CONFIGURATION));
+                        var message = report.Count == 1 ?
+                            `There is 1 user who is waiting for you to configure their account.` :
+                            `There are ${report.Count} users who are waiting for you to configure their account.`;
+                        this.alertService.pushAlert(new Alert(`${message} <a href='/users'>Manage Users</a>.`, AlertContext.Info, true, AlertService.USERS_AWAITING_CONFIGURATION));
                     }
                 })
             }

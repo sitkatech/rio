@@ -63,6 +63,10 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
     });
   }
 
+  public isCurrentUserAdministrator() : boolean {
+    return this.authenticationService.isCurrentUserAnAdministrator();
+  }
+
   public getDataUpdateStatusForWaterYear(waterYear : number) : string {
     if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
       return "Data not yet available";

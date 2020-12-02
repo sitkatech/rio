@@ -55,8 +55,8 @@
                                     <td class="align-middle">{{getLastUpdatedDateForWaterYear(waterYear)}}</td>
                                     <td class="align-middle">
                                         <ng-container *ngIf="showActionButtonsForWaterYear(waterYear)">
-                                            <button class="btn btn-rio mr-2" (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear)">Sync Data</button>
-                                            <button class="btn btn-rio" (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear)">Finalize</button>
+                                            <button class="btn btn-rio mr-2" (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Sync Now</button>
+                                            <button class="btn btn-rio" (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Finalize</button>
                                         </ng-container>
                                     </td>
                                 </tr>
