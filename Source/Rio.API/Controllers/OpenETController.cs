@@ -37,6 +37,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("openet-sync-water-year-status/trigger-openet-google-bucket-refresh")]
+        [ContentManageFeature]
         public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
         {
             string startDate = new DateTime(waterYear, 1, 1).ToString("yyyy-MM-dd");
@@ -63,6 +64,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPut("openet-sync-water-year-status/finalize")]
+        [ContentManageFeature]
         public ActionResult<OpenETSyncWaterYearStatusDto> FinalizeOpenETSyncWaterYearStatus([FromBody] int openETSyncWaterYearStatusID)
         {
             var openETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.GetByOpenETSyncWaterYearStatusID(_dbContext, openETSyncWaterYearStatusID);
@@ -76,6 +78,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("openet-sync-history/current-in-progress")]
+        [ManagerDashboardFeature]
         public ActionResult<List<OpenETSyncHistoryDto>> ListInProgressOpenSyncHistoryDtos()
         {
             var inProgressDtos = OpenETSyncHistory.ListInProgress(_dbContext);
