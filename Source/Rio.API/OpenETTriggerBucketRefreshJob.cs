@@ -33,6 +33,11 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
+            if (!_rioConfiguration.OpenETSyncAllowed)
+            {
+                return;
+            }
+
             var nonFinalizedWaterYears = _rioDbContext.WaterYear.Where(x => !x.FinalizeDate.HasValue);
             if (!nonFinalizedWaterYears.Any())
             {
@@ -41,28 +46,13 @@ namespace Rio.API
 
             nonFinalizedWaterYears.ToList().ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.Year);
+                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearID);
                 });
-            //var startYear = DateUtilities.MinimumYear;
-            //var startDate = new DateTime(startYear, 1, 1);
-            //var endDate = DateTime.Now.AddDays(-1);
-
-            //if (!OpenETGoogleBucketHelpers.RasterUpdatedSinceMinimumLastUpdatedDate(_rioConfiguration, _rioDbContext, startDate, endDate))
-            //{
-            //    return;
-            //}
-
-            //var endDateString = endDate.ToString("yyyy-MM-dd");
-            //var startDateString = startDate.ToString("yyyy-MM-dd");
-
-            //var fileSuffix = _rioConfiguration.LeadOrganizationShortName + "_Nightly";
-            //OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, _backgroundJobClient, startDateString, endDateString, fileSuffix);
         }
     }
 
     public interface IOpenETTriggerBucketRefreshJob
     {
         void RunJob(IJobCancellationToken token);
-        void RunJob(IJobCancellationToken token, string additionalArguments);
     }
 }

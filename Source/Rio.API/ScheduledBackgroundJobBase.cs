@@ -38,14 +38,6 @@ namespace Rio.API
         /// </summary>
         public void RunJob(IJobCancellationToken token)
         {
-            RunJob(token, null);
-        }
-
-        /// <summary>
-        /// This wraps the call to <see cref="RunJobImplementation"/> with all of the housekeeping for being a scheduled job.
-        /// </summary>
-        public void RunJob(IJobCancellationToken token, string additionalArguments)
-        {
             lock (ScheduledBackgroundJobLock)
             {
                 // No-Op if we're not running in an allowed environment

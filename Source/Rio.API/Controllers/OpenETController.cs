@@ -18,31 +18,30 @@ namespace Rio.API.Controllers
         private readonly ILogger<OpenETController> _logger;
         private readonly KeystoneService _keystoneService;
         private readonly RioConfiguration _rioConfiguration;
-        private IBackgroundJobClient _backgroundJobClient;
 
-        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient)
+        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
             _rioConfiguration = rioConfiguration.Value;
-            _backgroundJobClient = backgroundJobClient;
         }
 
-        //For testing purposes
-        [HttpGet("triggerOpenETRefreshBackgroundJob")] public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
-        {
-            RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
-            return Ok();
-        }
+        ////For testing purposes
+        //[HttpGet("triggerOpenETRefreshBackgroundJob")] 
+        //public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
+        //{
+        //    RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
+        //    return Ok();
+        //}
 
-        //For testing purposes
-        [HttpGet("triggerOpenETRetrieveBackgroundJob")]
-        public ActionResult TriggerOpenETRetrieveBackgroundJob()
-        {
-            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(0));
-            return Ok();
-        }
+        ////For testing purposes
+        //[HttpGet("triggerOpenETRetrieveBackgroundJob")]
+        //public ActionResult TriggerOpenETRetrieveBackgroundJob()
+        //{
+        //    _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(0));
+        //    return Ok();
+        //}
 
         [HttpPost("openet-sync-water-year-status/trigger-openet-google-bucket-refresh")]
         [ContentManageFeature]
@@ -59,28 +58,6 @@ namespace Rio.API.Controllers
 
             return Ok();
         }
-
-        //[HttpGet("openet-sync-water-year-status")]
-        //[ManagerDashboardFeature]
-        //public ActionResult<OpenETSyncWaterYearStatusDto> List()
-        //{
-        //    var response = OpenETSyncWaterYearStatus.List(_dbContext);
-        //    return Ok(response);
-        //}
-
-        //[HttpPut("openet-sync-water-year-status/finalize")]
-        //[ContentManageFeature]
-        //public ActionResult<OpenETSyncWaterYearStatusDto> FinalizeOpenETSyncWaterYearStatus([FromBody] int openETSyncWaterYearStatusID)
-        //{
-        //    var openETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.GetByOpenETSyncWaterYearStatusID(_dbContext, openETSyncWaterYearStatusID);
-        //    if (openETSyncWaterYearStatusDto == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var updatedOpenETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.Finalize(_dbContext, openETSyncWaterYearStatusID);
-        //    return Ok(updatedOpenETSyncWaterYearStatusDto);
-        //}
 
         [HttpGet("openet-sync-history/current-in-progress")]
         [ManagerDashboardFeature]

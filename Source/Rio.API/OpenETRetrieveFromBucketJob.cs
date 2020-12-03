@@ -33,6 +33,10 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
+            if (!_rioConfiguration.OpenETSyncAllowed)
+            {
+                return;
+            }
             //If we access the bucket too early, it can sometimes cause issues with writing to the buckets, so make sure it's been at least 15 minutes before going for it
             var inProgressSyncs = _rioDbContext.OpenETSyncHistory
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress && EF.Functions.DateDiffMinute(x.CreateDate, DateTime.UtcNow) > 15).ToList();
@@ -44,6 +48,7 @@ namespace Rio.API
                             _rioConfiguration, x.OpenETSyncHistoryID);
                 });
             }
+
         }
     }
 

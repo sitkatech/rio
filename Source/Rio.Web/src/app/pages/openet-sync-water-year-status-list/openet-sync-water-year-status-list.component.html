@@ -22,6 +22,9 @@
             Syncing and finalizing any of the years involved in these operations will be disabled until the respective operation completes.
         </span>
     </ngb-alert>
+    <ngb-alert *ngIf="!openETSyncEnabled()" [type]="'info'" [dismissible]="false">
+        Currently, syncing with OpenET is not enabled. This feature will be enabled in the future.
+    </ngb-alert>
     <div class="row mb-2">
         <div class="col">
             <h2 class="d-inline-block">OpenET Integration</h2>
@@ -55,7 +58,7 @@
                                     <td class="align-middle">{{getLastUpdatedDateForWaterYear(waterYear)}}</td>
                                     <td class="align-middle">
                                         <ng-container *ngIf="showActionButtonsForWaterYear(waterYear)">
-                                            <button class="btn btn-rio mr-2" (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Sync Now</button>
+                                            <button class="btn btn-rio mr-2" (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear)" [disabled]="!openETSyncEnabled() || waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Sync Now</button>
                                             <button class="btn btn-rio" *ngIf="showFinalizeButton(waterYear)" (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Finalize</button>
                                         </ng-container>
                                     </td>
@@ -83,7 +86,7 @@
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to finalize the OpenET data for {{selectedWaterYear}}. The system will no longer update Evapotranspiration data for {{selectedWaterYear}} and will not accept any new override submissions.
+            Are you sure you want to finalize the OpenET data for {{selectedWaterYear.Year}}. The system will no longer update Evapotranspiration data for {{selectedWaterYear.Year}} and will not accept any new override submissions.
         </p>
         <div class="modal-footer">
             <button type="button" class="btn btn-rio btn-sm" (click)="finalizeWaterYear()">
@@ -102,7 +105,7 @@
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to sync the OpenET data for {{selectedWaterYear}}. This will refresh OpenET Data for all applicable parcels, but will not reset any user-input overrides.
+            Are you sure you want to sync the OpenET data for {{selectedWaterYear.Year}}. This will refresh OpenET Data for all applicable parcels, but will not reset any user-input overrides.
         </p>
         <div class="modal-footer">
             <button type="button" class="btn btn-rio btn-sm" (click)="syncWaterYear()">

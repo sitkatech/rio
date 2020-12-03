@@ -22,5 +22,9 @@
         public string VerificationKeyChars { get; set; }
         public string OpenETAPIKey { get; set; }
         public string OpenETShapefilePath { get; set; }
+        public string OpenETCheckRasterUpdatedDateBaseURL { get; set; }
+        public string OpenETTriggerTimeSeriesBaseURL { get; set; }
+        public string OpenETGoogleBucketBaseURL { get; set; }
+        public bool OpenETSyncAllowed { get; set; }
     }
 }

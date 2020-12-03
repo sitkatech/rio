@@ -40,5 +40,18 @@ namespace Rio.API.Controllers
             var waterYearToDisplay = WaterYear.GetDefaultYearToDisplay(_dbContext);
             return Ok(waterYearToDisplay);
         }
+
+        [HttpPut("water-year/finalize")]
+        public ActionResult<WaterYearDto> FinalizeWaterYear([FromBody] int waterYearID)
+        {
+            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
+            if (waterYearDto == null)
+            {
+                return NotFound();
+            }
+
+            var finalizedWaterYearDto = WaterYear.Finalize(_dbContext, waterYearID);
+            return Ok(finalizedWaterYearDto);
+        }
     }
 }

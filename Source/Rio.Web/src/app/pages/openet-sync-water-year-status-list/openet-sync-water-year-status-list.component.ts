@@ -13,6 +13,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 import { OpenETSyncHistoryDto, WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/openet-sync-result-type-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-openet-sync-water-year-status-list',
@@ -70,6 +71,10 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
       return "Finalized " + this.datePipe.transform(waterYear.FinalizeDate, this.dateFormatString);
     }
 
+    if (!this.openETSyncEnabled()) {
+      return "Sync disabled";
+    }
+
     if (waterYear.Year > new Date().getFullYear()) {
       return "Data Not Yet Available";
     }
@@ -101,14 +106,13 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
     if (waterYear.Year > new Date().getFullYear()) {
       return "-";
     }
-debugger;
     let successfulUpdates = this.openETSyncHistoryDtos.filter(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.Succeeded);
 
     return successfulUpdates.length > 0 ? this.datePipe.transform(successfulUpdates.reduce((mostRecentDate, syncHistoryDto) => mostRecentDate > syncHistoryDto.UpdateDate ? mostRecentDate : syncHistoryDto.UpdateDate,  new Date('0001-01-01T00:00:00Z')) , this.dateFormatString) : "Has not been updated";
   }
 
   public showActionButtonsForWaterYear(waterYear: WaterYearDto): boolean {
-    return waterYear.Year <= new Date().getFullYear();
+    return waterYear.Year <= new Date().getFullYear() && waterYear.FinalizeDate == null;
   }
 
   public showFinalizeButton(waterYear: WaterYearDto): boolean {
@@ -145,10 +149,17 @@ debugger;
 
     this.isPerformingAction = true;
     this.openETService.triggerGoogleBucketRefreshForWaterYear(this.selectedWaterYear.WaterYearID).subscribe(response => {
-      this.alertService.pushAlert(new Alert(`The request to sync data for ${this.selectedWaterYear} was successfully submitted. Please allow for at least 15 minutes for the update to complete and take effect.`, AlertContext.Success));
+      this.alertService.pushAlert(new Alert(`The request to sync data for ${this.selectedWaterYear.Year} was successfully submitted. Please allow for at least 15 minutes for the update to complete and take effect.`, AlertContext.Success));
       this.selectedWaterYear = null;
       this.refreshWaterYearsAndOpenETSyncData();
-    })
+    },
+    (error => {
+      this.isPerformingAction = false;
+    }))
+  }
+
+  public openETSyncEnabled() {
+    return environment.allowOpenETSync;
   }
 
   public finalizeWaterYear() {
@@ -159,7 +170,7 @@ debugger;
 
     this.isPerformingAction = true;
     this.waterYearService.finalizeWaterYear(this.selectedWaterYear.WaterYearID).subscribe(response => {
-      this.alertService.pushAlert(new Alert(`The Evapotranspiration Data for ${this.selectedWaterYear} was successfully finalized`, AlertContext.Success));
+      this.alertService.pushAlert(new Alert(`The Evapotranspiration Data for ${this.selectedWaterYear.Year} was successfully finalized`, AlertContext.Success));
       this.selectedWaterYear = null;
       this.refreshWaterYearsAndOpenETSyncData();
     })
