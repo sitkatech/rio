@@ -33,7 +33,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.OpenETSyncAllowed)
+            if (!_rioConfiguration.AllowOpenETSync)
             {
                 return;
             }

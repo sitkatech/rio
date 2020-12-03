@@ -27,7 +27,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("water-years")]
         [ParcelViewFeature]
-        public ActionResult<List<WaterYearDto>> GetWaterYears(bool includeCurrentYear)
+        public ActionResult<List<WaterYearDto>> GetWaterYears()
         {
             var waterYears = WaterYear.List(_dbContext);
             return Ok(waterYears);

@@ -82,7 +82,7 @@ namespace Rio.API.Services
         public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(RioConfiguration rioConfiguration,
             RioDbContext rioDbContext, int waterYearID)
         {
-            if (!rioConfiguration.OpenETSyncAllowed)
+            if (!rioConfiguration.AllowOpenETSync)
             {
                 return new HttpResponseMessage()
                 {
