@@ -33,14 +33,6 @@ namespace Rio.EFModels.Entities
                 .SingleOrDefault(x => x.OpenETSyncHistoryID == openETSyncHistoryID).AsDto();
         }
 
-        public static List<OpenETSyncHistoryDto> ListInProgress(RioDbContext dbContext)
-        {
-            return dbContext.OpenETSyncHistory
-                .Include(x => x.OpenETSyncResultType)
-                .Include(x => x.WaterYear)
-                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress)?.Select(x => x.AsDto()).ToList();
-        }
-
         public static OpenETSyncHistoryDto UpdateSyncResultByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType)
         {
             var openETSyncHistory =

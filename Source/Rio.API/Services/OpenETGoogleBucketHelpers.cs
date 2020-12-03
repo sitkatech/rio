@@ -122,7 +122,7 @@ namespace Rio.API.Services
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.UnprocessableEntity,
-                    Content = new StringContent($"The request was valid, however the following was returned for the requested operation: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
+                    Content = new StringContent($"The request successful, however the sync will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
                 };
             }
 

@@ -27,23 +27,7 @@ namespace Rio.API.Controllers
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        ////For testing purposes
-        //[HttpGet("triggerOpenETRefreshBackgroundJob")] 
-        //public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
-        //{
-        //    RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
-        //    return Ok();
-        //}
-
-        ////For testing purposes
-        //[HttpGet("triggerOpenETRetrieveBackgroundJob")]
-        //public ActionResult TriggerOpenETRetrieveBackgroundJob()
-        //{
-        //    _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(0));
-        //    return Ok();
-        //}
-
-        [HttpPost("openet-sync-water-year-status/trigger-openet-google-bucket-refresh")]
+        [HttpPost("openet-sync-history/trigger-openet-google-bucket-refresh")]
         [ContentManageFeature]
         public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
         {
@@ -57,14 +41,6 @@ namespace Rio.API.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpGet("openet-sync-history/current-in-progress")]
-        [ManagerDashboardFeature]
-        public ActionResult<List<OpenETSyncHistoryDto>> ListInProgressOpenSyncHistoryDtos()
-        {
-            var inProgressDtos = OpenETSyncHistory.ListInProgress(_dbContext);
-            return Ok(inProgressDtos);
         }
 
         [HttpGet("openet-sync-history")]
