@@ -4,10 +4,10 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[OpenETGoogleBucketResponseEvapotranspirationData](
 	[OpenETGoogleBucketResponseEvapotranspirationDataID] [int] IDENTITY(1,1) NOT NULL,
-	[ParcelID] [int] NOT NULL,
+	[ParcelNumber] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[WaterMonth] [int] NOT NULL,
 	[WaterYear] [int] NOT NULL,
-	[EvapotranspirationRate] [decimal](10, 4) NOT NULL,
+	[EvapotranspirationRateInMM] [decimal](20, 4) NOT NULL,
  CONSTRAINT [PK_OpenETGoogleBucketResponseEvapotranspirationData_OpenETGoogleBucketResponseEvapotranspirationDataID] PRIMARY KEY CLUSTERED 
 (
 	[OpenETGoogleBucketResponseEvapotranspirationDataID] ASC

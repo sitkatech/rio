@@ -9,10 +9,12 @@ namespace Rio.EFModels.Entities
     {
         [Key]
         public int OpenETGoogleBucketResponseEvapotranspirationDataID { get; set; }
-        public int ParcelID { get; set; }
+        [Required]
+        [StringLength(20)]
+        public string ParcelNumber { get; set; }
         public int WaterMonth { get; set; }
         public int WaterYear { get; set; }
-        [Column(TypeName = "decimal(10, 4)")]
-        public decimal EvapotranspirationRate { get; set; }
+        [Column(TypeName = "decimal(20, 4)")]
+        public decimal EvapotranspirationRateInMM { get; set; }
     }
 }

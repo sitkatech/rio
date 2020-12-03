@@ -31,8 +31,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<OpenETGoogleBucketResponseEvapotranspirationData> OpenETGoogleBucketResponseEvapotranspirationData { get; set; }
         public virtual DbSet<OpenETSyncHistory> OpenETSyncHistory { get; set; }
         public virtual DbSet<OpenETSyncResultType> OpenETSyncResultType { get; set; }
-        public virtual DbSet<OpenETSyncStatusType> OpenETSyncStatusType { get; set; }
-        public virtual DbSet<OpenETSyncWaterYearStatus> OpenETSyncWaterYearStatus { get; set; }
         public virtual DbSet<Parcel> Parcel { get; set; }
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
@@ -53,6 +51,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
+        public virtual DbSet<WaterYear> WaterYear { get; set; }
         public virtual DbSet<Well> Well { get; set; }
         public virtual DbSet<geometry_columns> geometry_columns { get; set; }
         public virtual DbSet<spatial_ref_sys> spatial_ref_sys { get; set; }
@@ -290,15 +289,21 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OfferStatusName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<OpenETGoogleBucketResponseEvapotranspirationData>(entity =>
+            {
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
             modelBuilder.Entity<OpenETSyncHistory>(entity =>
             {
-                entity.Property(e => e.UpdatedFileSuffix).IsUnicode(false);
-
-                entity.Property(e => e.YearsInUpdateSeparatedByComma).IsUnicode(false);
-
                 entity.HasOne(d => d.OpenETSyncResultType)
                     .WithMany(p => p.OpenETSyncHistory)
                     .HasForeignKey(d => d.OpenETSyncResultTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.WaterYear)
+                    .WithMany(p => p.OpenETSyncHistory)
+                    .HasForeignKey(d => d.WaterYearID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
@@ -317,35 +322,6 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OpenETSyncResultTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.OpenETSyncResultTypeName).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<OpenETSyncStatusType>(entity =>
-            {
-                entity.HasIndex(e => e.OpenETSyncStatusTypeDisplayName)
-                    .HasName("AK_OpenETSyncStatusType_OpenETSyncStatusTypeDisplayName")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.OpenETSyncStatusTypeName)
-                    .HasName("AK_OpenETSyncStatusType_OpenETSyncStatusTypeName")
-                    .IsUnique();
-
-                entity.Property(e => e.OpenETSyncStatusTypeID).ValueGeneratedNever();
-
-                entity.Property(e => e.OpenETSyncStatusTypeDisplayName).IsUnicode(false);
-
-                entity.Property(e => e.OpenETSyncStatusTypeName).IsUnicode(false);
-            });
-
-            modelBuilder.Entity<OpenETSyncWaterYearStatus>(entity =>
-            {
-                entity.HasIndex(e => e.WaterYear)
-                    .HasName("AK_OpenETSyncWaterYearStatus_WaterYear")
-                    .IsUnique();
-
-                entity.HasOne(d => d.OpenETSyncStatusType)
-                    .WithMany(p => p.OpenETSyncWaterYearStatus)
-                    .HasForeignKey(d => d.OpenETSyncStatusTypeID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Parcel>(entity =>
@@ -676,6 +652,13 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WaterTransferTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<WaterYear>(entity =>
+            {
+                entity.HasIndex(e => e.Year)
+                    .HasName("AK_WaterYear_Year")
+                    .IsUnique();
             });
 
             modelBuilder.Entity<Well>(entity =>

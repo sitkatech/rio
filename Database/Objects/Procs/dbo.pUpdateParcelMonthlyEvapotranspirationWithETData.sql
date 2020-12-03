@@ -7,12 +7,15 @@ as
 
 begin
 	MERGE INTO dbo.ParcelMonthlyEvapotranspiration AS Target
-	USING dbo.ParcelMonthlyEvapotranspiration AS Source
+	USING (select p.ParcelID, p.ParcelAreaInAcres, et.WaterYear, et.WaterMonth, et.EvapotranspirationRateInMM
+		   from dbo.Parcel p
+		   join dbo.OpenETGoogleBucketResponseEvapotranspirationData et
+		   on p.ParcelNumber = et.ParcelNumber) AS Source
 	ON Target.ParcelID = Source.ParcelID and Target.WaterYear = Source.WaterYear and Target.WaterMonth = Source.WaterMonth
 	WHEN MATCHED THEN
 	UPDATE SET
-		Target.EvapotranspirationRate = Source.EvapotranspirationRate
+		Target.EvapotranspirationRate = ((Source.EvapotranspirationRateInMM / 25.4) / 12) * Source.ParcelAreaInAcres
 	WHEN NOT MATCHED BY TARGET THEN
 		INSERT (ParcelID, WaterYear, WaterMonth, EvapotranspirationRate)
-		VALUES (Source.ParcelID, Source.WaterYear, Source.WaterMonth, Source.EvapotranspirationRate);
+		VALUES (Source.ParcelID, Source.WaterYear, Source.WaterMonth, ((Source.EvapotranspirationRateInMM / 25.4) / 12) * Source.ParcelAreaInAcres);
 end

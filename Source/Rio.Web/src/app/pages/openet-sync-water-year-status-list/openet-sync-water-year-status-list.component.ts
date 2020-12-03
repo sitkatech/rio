@@ -5,13 +5,13 @@ import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { OpenETService } from 'src/app/services/openet.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { WaterYearService } from 'src/app/services/water-year.service';
 import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { OpenETSyncHistoryDto } from 'src/app/shared/models/openet-sync-history-dto';
-import { OpenETSyncStatusTypeEnum } from 'src/app/shared/models/openet-sync-status-type-dto';
-import { OpenETSyncWaterYearStatusDto } from 'src/app/shared/models/openet-sync-water-year-status-dto';
+import { OpenETSyncHistoryDto, WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/openet-sync-result-type-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -25,18 +25,18 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
   richTextTypeID: number = CustomRichTextType.OpenETIntegration;
   public modalReference: NgbModalRef;
 
-  public waterYears: Array<number>;
-  public openETSyncWaterYearStatusDtos: Array<OpenETSyncWaterYearStatusDto>;
+  public waterYears: Array<WaterYearDto>;
   public inProgressSyncDtos: Array<OpenETSyncHistoryDto>;
   public isPerformingAction: boolean = false;
 
   public dateFormatString: string = "M/dd/yyyy";
-  selectedWaterYear: number;
+  selectedWaterYear: WaterYearDto;
+  openETSyncHistoryDtos: Array<OpenETSyncHistoryDto>;
 
   constructor(
     private authenticationService: AuthenticationService,
     private openETService: OpenETService,
-    private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private datePipe: DatePipe,
     private modalService: NgbModal,
     private alertService: AlertService
@@ -45,75 +45,81 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.refreshWaterYearsAndOpenETSyncData();     
+      this.refreshWaterYearsAndOpenETSyncData();
     });
   }
 
   private refreshWaterYearsAndOpenETSyncData() {
     this.isPerformingAction = true;
     forkJoin([
-      this.parcelService.getWaterYears(),
-      this.openETService.listAllOpenETSyncWaterYearStatus(),
-      this.openETService.getInProgressOpenETSyncHistory()
-    ]).subscribe(([waterYears, openETSyncWaterYearStatusDtos, inProgressSync]) => {
+      this.waterYearService.getWaterYears(),
+      this.openETService.getOpenETSyncHistory()
+    ]).subscribe(([waterYears, openETSyncHistories]) => {
       this.isPerformingAction = false;
       this.waterYears = waterYears;
-      this.openETSyncWaterYearStatusDtos = openETSyncWaterYearStatusDtos;
-      this.inProgressSyncDtos = inProgressSync;
+      this.openETSyncHistoryDtos = openETSyncHistories;
     });
   }
 
-  public isCurrentUserAdministrator() : boolean {
+  public isCurrentUserAdministrator(): boolean {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
-  public getDataUpdateStatusForWaterYear(waterYear : number) : string {
-    if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
-      return "Data not yet available";
+  public getDataUpdateStatusForWaterYear(waterYear: WaterYearDto): string {
+    if (waterYear.FinalizeDate !== null) {
+      return "Finalized " + this.datePipe.transform(waterYear.FinalizeDate, this.dateFormatString);
     }
 
-    let dtoForWaterYear = this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == waterYear)[0];
-
-    switch(dtoForWaterYear.OpenETSyncStatusType.OpenETSyncStatusTypeID)
-    {
-      case OpenETSyncStatusTypeEnum.Nightly:
-        return "Checking for Updates Nightly";
-      case OpenETSyncStatusTypeEnum.Finalized:
-        return "Finalized " + this.datePipe.transform(dtoForWaterYear.LastUpdatedDate, this.dateFormatString);
-      case OpenETSyncStatusTypeEnum.CurrentlyUpdating:
-        return "Update in Progress";
-      default:
-        return "Status type not recognized"
+    if (waterYear.Year > new Date().getFullYear()) {
+      return "Data Not Yet Available";
     }
+
+    if (this.openETSyncHistoryDtos && this.openETSyncHistoryDtos.some(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress)) {
+      return "Update In Progress";
+    }
+
+    return "Checking For Updates Nightly";
   }
 
-  public waterYearIsUpdating(waterYear:number) : boolean {
-    if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
+  public updatingWaterYears() : Array<OpenETSyncHistoryDto> {
+    if (!this.openETSyncHistoryDtos) {
+      return null;
+    }
+
+    return this.openETSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
+  }
+
+  public waterYearIsUpdating(waterYear: WaterYearDto): boolean {
+    if (!this.openETSyncHistoryDtos) {
       return false;
-    } 
+    }
 
-    return this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == waterYear)[0].OpenETSyncStatusType.OpenETSyncStatusTypeID == OpenETSyncStatusTypeEnum.CurrentlyUpdating;
+    return this.openETSyncHistoryDtos.some(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
   }
 
-  public getLastUpdatedDateForWaterYear(waterYear:number) : string {
-    if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
+  public getLastUpdatedDateForWaterYear(waterYear: WaterYearDto): string {
+    if (waterYear.Year > new Date().getFullYear()) {
       return "-";
     }
+debugger;
+    let successfulUpdates = this.openETSyncHistoryDtos.filter(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.Succeeded);
 
-    let lastUpdatedDate = this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == waterYear)[0].LastUpdatedDate;
-
-    return lastUpdatedDate ? this.datePipe.transform(lastUpdatedDate, this.dateFormatString) : "Has not been updated";
+    return successfulUpdates.length > 0 ? this.datePipe.transform(successfulUpdates.reduce((mostRecentDate, syncHistoryDto) => mostRecentDate > syncHistoryDto.UpdateDate ? mostRecentDate : syncHistoryDto.UpdateDate,  new Date('0001-01-01T00:00:00Z')) , this.dateFormatString) : "Has not been updated";
   }
 
-  public showActionButtonsForWaterYear(waterYear:number) : boolean {
-    if (!this.openETSyncWaterYearStatusDtos || !this.openETSyncWaterYearStatusDtos.some(x => x.WaterYear == waterYear)) {
+  public showActionButtonsForWaterYear(waterYear: WaterYearDto): boolean {
+    return waterYear.Year <= new Date().getFullYear();
+  }
+
+  public showFinalizeButton(waterYear: WaterYearDto): boolean {
+    if (waterYear.Year >= new Date().getFullYear()) {
       return false;
-    } 
+    }
 
-    return this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == waterYear)[0].OpenETSyncStatusType.OpenETSyncStatusTypeID != OpenETSyncStatusTypeEnum.Finalized;
+    return waterYear.FinalizeDate == null;
   }
 
-  public setSelectedWaterYearAndLaunchModal(modalContent: any, waterYear: number) {
+  public setSelectedWaterYearAndLaunchModal(modalContent: any, waterYear: WaterYearDto) {
     this.selectedWaterYear = waterYear;
     this.launchModal(modalContent);
   }
@@ -138,7 +144,7 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
     }
 
     this.isPerformingAction = true;
-    this.openETService.triggerGoogleBucketRefreshForWaterYear(this.selectedWaterYear).subscribe(response => {
+    this.openETService.triggerGoogleBucketRefreshForWaterYear(this.selectedWaterYear.WaterYearID).subscribe(response => {
       this.alertService.pushAlert(new Alert(`The request to sync data for ${this.selectedWaterYear} was successfully submitted. Please allow for at least 15 minutes for the update to complete and take effect.`, AlertContext.Success));
       this.selectedWaterYear = null;
       this.refreshWaterYearsAndOpenETSyncData();
@@ -152,30 +158,26 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
     }
 
     this.isPerformingAction = true;
-    let openETSyncWaterYearStatusIDForWaterYear = this.openETSyncWaterYearStatusDtos.filter(x => x.WaterYear == this.selectedWaterYear)[0].OpenETSyncWaterYearStatusID;
-    this.openETService.finalizeOpenETSyncWaterYearStatus(openETSyncWaterYearStatusIDForWaterYear).subscribe(response => {
+    this.waterYearService.finalizeWaterYear(this.selectedWaterYear.WaterYearID).subscribe(response => {
       this.alertService.pushAlert(new Alert(`The Evapotranspiration Data for ${this.selectedWaterYear} was successfully finalized`, AlertContext.Success));
       this.selectedWaterYear = null;
       this.refreshWaterYearsAndOpenETSyncData();
     })
   }
 
-  public getInProgressYears() : string {
-    if (!this.inProgressSyncDtos) {
+  public getInProgressYears(): string {
+    if (!this.openETSyncHistoryDtos || this.openETSyncHistoryDtos.length == 0) {
       return "";
-    } 
-
-    if (this.inProgressSyncDtos.length == 1) {
-      return this.inProgressSyncDtos[0].YearsInUpdateSeparatedByComma;
     }
 
-    var allYearsInProgress = this.inProgressSyncDtos.map(x => {
-      return x.YearsInUpdateSeparatedByComma.split(",");
-    });
+    let allInProgressOperations = this.openETSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
 
-    var allYearsInProgressUniqueInString = allYearsInProgress.filter((n, i) => allYearsInProgress.indexOf(n) === i).sort().join(", ");
+    if (allInProgressOperations.length == 0) {
+      return "";
+    }
+
+    var allYearsInProgressUniqueInString = allInProgressOperations.map(x => x.WaterYear.Year).sort().join(", ");
 
     return allYearsInProgressUniqueInString;
-  
   }
 }

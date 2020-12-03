@@ -30,9 +30,17 @@ namespace Rio.API.Controllers
         }
 
         //For testing purposes
-        [HttpGet("triggerOpenETRetrieveBackgroundJob")] public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
+        [HttpGet("triggerOpenETRefreshBackgroundJob")] public ActionResult TriggerOpenETRefreshAndRetrieveBackgroundJob()
         {
             RecurringJob.Trigger(OpenETTriggerBucketRefreshJob.JobName);
+            return Ok();
+        }
+
+        //For testing purposes
+        [HttpGet("triggerOpenETRetrieveBackgroundJob")]
+        public ActionResult TriggerOpenETRetrieveBackgroundJob()
+        {
+            _backgroundJobClient.Schedule<OpenETRetrieveFromBucketJob>(x => x.RunJob(null), TimeSpan.FromMinutes(0));
             return Ok();
         }
 
@@ -40,11 +48,8 @@ namespace Rio.API.Controllers
         [ContentManageFeature]
         public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
         {
-            string startDate = new DateTime(waterYear, 1, 1).ToString("yyyy-MM-dd");
-            string endDate = new DateTime(waterYear, 12, 31).ToString("yyyy-MM-dd");
-
             var triggerResponse =
-                OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, _backgroundJobClient, startDate, endDate, _rioConfiguration.LeadOrganizationShortName + "_" + waterYear);
+                OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYear);
 
             if (!triggerResponse.IsSuccessStatusCode)
             {
@@ -55,33 +60,41 @@ namespace Rio.API.Controllers
             return Ok();
         }
 
-        [HttpGet("openet-sync-water-year-status")]
-        [ManagerDashboardFeature]
-        public ActionResult<OpenETSyncWaterYearStatusDto> List()
-        {
-            var response = OpenETSyncWaterYearStatus.List(_dbContext);
-            return Ok(response);
-        }
+        //[HttpGet("openet-sync-water-year-status")]
+        //[ManagerDashboardFeature]
+        //public ActionResult<OpenETSyncWaterYearStatusDto> List()
+        //{
+        //    var response = OpenETSyncWaterYearStatus.List(_dbContext);
+        //    return Ok(response);
+        //}
 
-        [HttpPut("openet-sync-water-year-status/finalize")]
-        [ContentManageFeature]
-        public ActionResult<OpenETSyncWaterYearStatusDto> FinalizeOpenETSyncWaterYearStatus([FromBody] int openETSyncWaterYearStatusID)
-        {
-            var openETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.GetByOpenETSyncWaterYearStatusID(_dbContext, openETSyncWaterYearStatusID);
-            if (openETSyncWaterYearStatusDto == null)
-            {
-                return NotFound();
-            }
+        //[HttpPut("openet-sync-water-year-status/finalize")]
+        //[ContentManageFeature]
+        //public ActionResult<OpenETSyncWaterYearStatusDto> FinalizeOpenETSyncWaterYearStatus([FromBody] int openETSyncWaterYearStatusID)
+        //{
+        //    var openETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.GetByOpenETSyncWaterYearStatusID(_dbContext, openETSyncWaterYearStatusID);
+        //    if (openETSyncWaterYearStatusDto == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var updatedOpenETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.Finalize(_dbContext, openETSyncWaterYearStatusID);
-            return Ok(updatedOpenETSyncWaterYearStatusDto);
-        }
+        //    var updatedOpenETSyncWaterYearStatusDto = OpenETSyncWaterYearStatus.Finalize(_dbContext, openETSyncWaterYearStatusID);
+        //    return Ok(updatedOpenETSyncWaterYearStatusDto);
+        //}
 
         [HttpGet("openet-sync-history/current-in-progress")]
         [ManagerDashboardFeature]
         public ActionResult<List<OpenETSyncHistoryDto>> ListInProgressOpenSyncHistoryDtos()
         {
             var inProgressDtos = OpenETSyncHistory.ListInProgress(_dbContext);
+            return Ok(inProgressDtos);
+        }
+
+        [HttpGet("openet-sync-history")]
+        [ManagerDashboardFeature]
+        public ActionResult<List<OpenETSyncHistoryDto>> List()
+        {
+            var inProgressDtos = OpenETSyncHistory.List(_dbContext);
             return Ok(inProgressDtos);
         }
     }

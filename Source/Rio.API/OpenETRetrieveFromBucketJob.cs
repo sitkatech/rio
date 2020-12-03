@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Rio.EFModels.Entities;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
+using System.Threading;
+using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Rio.API
 {
@@ -29,18 +33,22 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            RunJobImplementation(null);
-        }
-
-        protected override void RunJobImplementation(string additionalArguments)
-        {
-            OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext, _rioConfiguration, additionalArguments);
+            //If we access the bucket too early, it can sometimes cause issues with writing to the buckets, so make sure it's been at least 15 minutes before going for it
+            var inProgressSyncs = _rioDbContext.OpenETSyncHistory
+                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress && EF.Functions.DateDiffMinute(x.CreateDate, DateTime.UtcNow) > 15).ToList();
+            if (inProgressSyncs.Any())
+            {
+                inProgressSyncs.ForEach(x =>
+                {
+                    OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext,
+                            _rioConfiguration, x.OpenETSyncHistoryID);
+                });
+            }
         }
     }
 
     public interface IOpenETRetrieveFromBucketJob
     {
         void RunJob(IJobCancellationToken token);
-        void RunJob(IJobCancellationToken token, string additionalArguments);
     }
 }

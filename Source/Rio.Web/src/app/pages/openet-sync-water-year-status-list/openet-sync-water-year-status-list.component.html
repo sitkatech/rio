@@ -12,12 +12,12 @@
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
-    <ngb-alert *ngIf="inProgressSyncDtos && inProgressSyncDtos.length > 0" [type]="'info'" [dismissible]="false">
-        <span *ngIf="inProgressSyncDtos.length == 1">
+    <ngb-alert *ngIf="updatingWaterYears() != null && updatingWaterYears().length > 0" [type]="'info'" [dismissible]="false">
+        <span *ngIf="updatingWaterYears().length == 1">
             A sync operation is currently in progress to update the following years: {{ getInProgressYears() }}.<br/>
             Syncing and finalizing any of the years involved in the operation will be disabled until the operation completes.
         </span>
-        <span *ngIf="inProgressSyncDtos.length > 1">
+        <span *ngIf="updatingWaterYears().length > 1">
             Sync operations are currently in progress to update the following years: {{ getInProgressYears() }}.<br/>
             Syncing and finalizing any of the years involved in these operations will be disabled until the respective operation completes.
         </span>
@@ -50,13 +50,13 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let waterYear of waterYears">
-                                    <td class="align-middle">{{waterYear}}</td>
+                                    <td class="align-middle">{{waterYear.Year}}</td>
                                     <td class="align-middle">{{getDataUpdateStatusForWaterYear(waterYear)}}</td>
                                     <td class="align-middle">{{getLastUpdatedDateForWaterYear(waterYear)}}</td>
                                     <td class="align-middle">
                                         <ng-container *ngIf="showActionButtonsForWaterYear(waterYear)">
                                             <button class="btn btn-rio mr-2" (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Sync Now</button>
-                                            <button class="btn btn-rio" (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Finalize</button>
+                                            <button class="btn btn-rio" *ngIf="showFinalizeButton(waterYear)" (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear)" [disabled]="waterYearIsUpdating(waterYear) || !isCurrentUserAdministrator()">Finalize</button>
                                         </ng-container>
                                     </td>
                                 </tr>

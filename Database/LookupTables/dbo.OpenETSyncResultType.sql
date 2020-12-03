@@ -2,7 +2,9 @@ MERGE INTO dbo.OpenETSyncResultType AS Target
 USING (VALUES
 (1, 'InProgress', 'In Progress'),
 (2, 'Succeeded', 'Succeeded'),
-(3, 'Failed', 'Failed')
+(3, 'Failed', 'Failed'),
+(4, 'NoNewData', 'No New Data'),
+(5, 'DataNotAvailable', 'Data Not Available')
 )
 AS Source (OpenETSyncResultTypeID, OpenETSyncResultTypeName, OpenETSyncResultTypeDisplayName)
 ON Target.OpenETSyncResultTypeID = Source.OpenETSyncResultTypeID

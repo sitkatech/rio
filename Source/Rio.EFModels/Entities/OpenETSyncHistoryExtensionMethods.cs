@@ -13,10 +13,17 @@ namespace Rio.EFModels.Entities
             {
                 OpenETSyncHistoryID = openETSyncHistory.OpenETSyncHistoryID,
                 OpenETSyncResultType = openETSyncHistory.OpenETSyncResultType.AsDto(),
-                YearsInUpdateSeparatedByComma = openETSyncHistory.YearsInUpdateSeparatedByComma,
-                UpdatedFileSuffix = openETSyncHistory.UpdatedFileSuffix,
-                LastUpdatedDate = openETSyncHistory.LastUpdatedDate
+                WaterYear = openETSyncHistory.WaterYear.AsDto(),
+                CreateDate = openETSyncHistory.CreateDate,
+                UpdateDate = openETSyncHistory.UpdateDate
             };
+        }
+
+        public static string GetFileSuffixForOpenETSyncHistoryDto(this OpenETSyncHistoryDto openETSyncHistoryDto,
+            string platformName)
+        {
+            return
+                $"{platformName}_{openETSyncHistoryDto.WaterYear.Year}_{openETSyncHistoryDto.CreateDate:yyyyMMddhhmmss}";
         }
     }
 }

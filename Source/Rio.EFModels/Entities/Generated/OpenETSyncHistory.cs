@@ -10,17 +10,17 @@ namespace Rio.EFModels.Entities
         [Key]
         public int OpenETSyncHistoryID { get; set; }
         public int OpenETSyncResultTypeID { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string YearsInUpdateSeparatedByComma { get; set; }
-        [Required]
-        [StringLength(20)]
-        public string UpdatedFileSuffix { get; set; }
+        public int WaterYearID { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime LastUpdatedDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime UpdateDate { get; set; }
 
         [ForeignKey(nameof(OpenETSyncResultTypeID))]
         [InverseProperty("OpenETSyncHistory")]
         public virtual OpenETSyncResultType OpenETSyncResultType { get; set; }
+        [ForeignKey(nameof(WaterYearID))]
+        [InverseProperty("OpenETSyncHistory")]
+        public virtual WaterYear WaterYear { get; set; }
     }
 }

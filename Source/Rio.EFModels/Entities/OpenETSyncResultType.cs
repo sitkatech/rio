@@ -12,6 +12,8 @@ namespace Rio.EFModels.Entities
     {
         InProgress = 1,
         Succeeded = 2,
-        Failed = 3
+        Failed = 3,
+        NoNewData = 4,
+        DataNotAvailable = 5
     }
 }

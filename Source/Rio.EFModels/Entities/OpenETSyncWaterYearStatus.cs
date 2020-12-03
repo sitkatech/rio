@@ -18,61 +18,61 @@ namespace Rio.EFModels.Entities
                 WaterYear = x
             });
 
-            var existingOpenETSyncWaterYearStatus =
-                rioDbContext.OpenETSyncWaterYearStatus.Where(x => waterYearsUpdated.Contains(x.WaterYear)).ToList();
+            //var existingOpenETSyncWaterYearStatus =
+            //    rioDbContext.OpenETSyncWaterYearStatus.Where(x => waterYearsUpdated.Contains(x.WaterYear)).ToList();
 
-            var allInDatabase = rioDbContext.OpenETSyncWaterYearStatus;
+            //var allInDatabase = rioDbContext.OpenETSyncWaterYearStatus;
 
-            existingOpenETSyncWaterYearStatus.MergeUpdate(toUpdateOrAdd, ((x, y) => x.WaterYear == y.WaterYear), ((x, y) => x.LastUpdatedDate = y.LastUpdatedDate));
+            //existingOpenETSyncWaterYearStatus.MergeUpdate(toUpdateOrAdd, ((x, y) => x.WaterYear == y.WaterYear), ((x, y) => x.LastUpdatedDate = y.LastUpdatedDate));
 
-            existingOpenETSyncWaterYearStatus.MergeNew(toUpdateOrAdd, allInDatabase, ((x, y) => x.WaterYear == y.WaterYear));
+            //existingOpenETSyncWaterYearStatus.MergeNew(toUpdateOrAdd, allInDatabase, ((x, y) => x.WaterYear == y.WaterYear));
 
             rioDbContext.SaveChanges();
         }
 
-        public static List<OpenETSyncWaterYearStatusDto> List(RioDbContext dbContext)
-        {
-            return dbContext.OpenETSyncWaterYearStatus
-                .Include(x => x.OpenETSyncStatusType)
-                .OrderByDescending(x => x.WaterYear)
-                .Select(x => x.AsDto())
-                .ToList();
-        }
+        //public static List<OpenETSyncWaterYearStatusDto> List(RioDbContext dbContext)
+        //{
+        //    return dbContext.OpenETSyncWaterYearStatus
+        //        .Include(x => x.OpenETSyncStatusType)
+        //        .OrderByDescending(x => x.WaterYear)
+        //        .Select(x => x.AsDto())
+        //        .ToList();
+        //}
 
-        public static OpenETSyncWaterYearStatusDto GetByOpenETSyncWaterYearStatusID(RioDbContext dbContext, int openETSyncWaterYearStatusId)
-        {
-            return dbContext.OpenETSyncWaterYearStatus
-                .Include(x => x.OpenETSyncStatusType)
-                .SingleOrDefault(x => x.OpenETSyncWaterYearStatusID == openETSyncWaterYearStatusId).AsDto();
-        }
+        //public static OpenETSyncWaterYearStatusDto GetByOpenETSyncWaterYearStatusID(RioDbContext dbContext, int openETSyncWaterYearStatusId)
+        //{
+        //    return dbContext.OpenETSyncWaterYearStatus
+        //        .Include(x => x.OpenETSyncStatusType)
+        //        .SingleOrDefault(x => x.OpenETSyncWaterYearStatusID == openETSyncWaterYearStatusId).AsDto();
+        //}
 
-        public static OpenETSyncWaterYearStatusDto Finalize(RioDbContext dbContext, int openETSyncWaterYearStatusId)
-        {
-            var openETSyncWaterYearStatus =
-                dbContext.OpenETSyncWaterYearStatus.Single(x =>
-                    x.OpenETSyncWaterYearStatusID == openETSyncWaterYearStatusId);
+        //public static OpenETSyncWaterYearStatusDto Finalize(RioDbContext dbContext, int openETSyncWaterYearStatusId)
+        //{
+        //    var openETSyncWaterYearStatus =
+        //        dbContext.OpenETSyncWaterYearStatus.Single(x =>
+        //            x.OpenETSyncWaterYearStatusID == openETSyncWaterYearStatusId);
 
-            openETSyncWaterYearStatus.OpenETSyncStatusTypeID = (int) OpenETSyncStatusTypeEnum.Finalized;
-            openETSyncWaterYearStatus.LastUpdatedDate = DateTime.UtcNow;
+        //    openETSyncWaterYearStatus.OpenETSyncStatusTypeID = (int) OpenETSyncStatusTypeEnum.Finalized;
+        //    openETSyncWaterYearStatus.LastUpdatedDate = DateTime.UtcNow;
 
-            dbContext.SaveChanges();
-            dbContext.Entry(openETSyncWaterYearStatus).Reload();
+        //    dbContext.SaveChanges();
+        //    dbContext.Entry(openETSyncWaterYearStatus).Reload();
 
-            return GetByOpenETSyncWaterYearStatusID(dbContext, openETSyncWaterYearStatusId);
-        }
+        //    return GetByOpenETSyncWaterYearStatusID(dbContext, openETSyncWaterYearStatusId);
+        //}
 
-        public static void UpdateSyncStatusTypeByWaterYear(RioDbContext dbContext, List<int> yearsBeingUpdated, OpenETSyncStatusTypeEnum newStatus)
-        {
-            var openETSyncWaterYearStatus = dbContext.OpenETSyncWaterYearStatus
-                .Where(x => yearsBeingUpdated.Contains(x.WaterYear)).ToList();
+        //public static void UpdateSyncStatusTypeByWaterYear(RioDbContext dbContext, List<int> yearsBeingUpdated, OpenETSyncStatusTypeEnum newStatus)
+        //{
+        //    var openETSyncWaterYearStatus = dbContext.OpenETSyncWaterYearStatus
+        //        .Where(x => yearsBeingUpdated.Contains(x.WaterYear)).ToList();
 
-            if (!openETSyncWaterYearStatus.Any())
-            {
-                return;
-            }
+        //    if (!openETSyncWaterYearStatus.Any())
+        //    {
+        //        return;
+        //    }
 
-            openETSyncWaterYearStatus.ForEach(x => x.OpenETSyncStatusTypeID = (int)newStatus);
-            dbContext.SaveChanges();
-        }
+        //    openETSyncWaterYearStatus.ForEach(x => x.OpenETSyncStatusTypeID = (int)newStatus);
+        //    dbContext.SaveChanges();
+        //}
     }
 }

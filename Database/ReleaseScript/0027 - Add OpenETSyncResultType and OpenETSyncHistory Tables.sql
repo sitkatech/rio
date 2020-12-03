@@ -7,12 +7,14 @@ create table dbo.OpenETSyncResultType (
 insert into dbo.OpenETSyncResultType (OpenETSyncResultTypeID, OpenETSyncResultTypeName, OpenETSyncResultTypeDisplayName)
 values (1, 'InProgress', 'In Progress'),
 (2, 'Succeeded', 'Succeeded'),
-(3, 'Failed', 'Failed')
+(3, 'Failed', 'Failed'),
+(4, 'NoNewData', 'No New Data'),
+(5, 'DataNotAvailable', 'Data Not Available')
 
 create table dbo.OpenETSyncHistory (
 	OpenETSyncHistoryID int not null identity(1,1) constraint PK_OpenETSyncHistory_OpenETSyncHistoryID primary key,
 	OpenETSyncResultTypeID int not null constraint FK_OpenETSyncHistory_OpenETSyncResultType_OpenETSyncResultTypeID foreign key references dbo.OpenETSyncResultType(OpenETSyncResultTypeID),
-	YearsInUpdateSeparatedByComma varchar(100) not null,
-	UpdatedFileSuffix varchar(20) not null,
-	LastUpdatedDate DateTime not null
+	WaterYearID int not null constraint FK_OpenETSyncHistory_WaterYear_WaterYearID foreign key references dbo.WaterYear(WaterYearID),
+	CreateDate DateTime not null,
+	UpdateDate DateTime not null
 ) 

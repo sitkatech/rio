@@ -5,9 +5,9 @@ GO
 CREATE TABLE [dbo].[OpenETSyncHistory](
 	[OpenETSyncHistoryID] [int] IDENTITY(1,1) NOT NULL,
 	[OpenETSyncResultTypeID] [int] NOT NULL,
-	[YearsInUpdateSeparatedByComma] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[UpdatedFileSuffix] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[LastUpdatedDate] [datetime] NOT NULL,
+	[WaterYearID] [int] NOT NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[UpdateDate] [datetime] NOT NULL,
  CONSTRAINT [PK_OpenETSyncHistory_OpenETSyncHistoryID] PRIMARY KEY CLUSTERED 
 (
 	[OpenETSyncHistoryID] ASC
@@ -19,3 +19,8 @@ ALTER TABLE [dbo].[OpenETSyncHistory]  WITH CHECK ADD  CONSTRAINT [FK_OpenETSync
 REFERENCES [dbo].[OpenETSyncResultType] ([OpenETSyncResultTypeID])
 GO
 ALTER TABLE [dbo].[OpenETSyncHistory] CHECK CONSTRAINT [FK_OpenETSyncHistory_OpenETSyncResultType_OpenETSyncResultTypeID]
+GO
+ALTER TABLE [dbo].[OpenETSyncHistory]  WITH CHECK ADD  CONSTRAINT [FK_OpenETSyncHistory_WaterYear_WaterYearID] FOREIGN KEY([WaterYearID])
+REFERENCES [dbo].[WaterYear] ([WaterYearID])
+GO
+ALTER TABLE [dbo].[OpenETSyncHistory] CHECK CONSTRAINT [FK_OpenETSyncHistory_WaterYear_WaterYearID]
