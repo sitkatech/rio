@@ -42,6 +42,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPut("water-year/finalize")]
+        [ContentManageFeature]
         public ActionResult<WaterYearDto> FinalizeWaterYear([FromBody] int waterYearID)
         {
             var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
@@ -55,6 +56,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("water-years/abbreviated-open-et-sync-history")]
+        [ManagerDashboardFeature]
         public ActionResult<List<OpenETSyncHistoryDto>> GetAbbreviatedSyncHistoryForWaterYears()
         {
             var waterYears = WaterYear.List(_dbContext);
