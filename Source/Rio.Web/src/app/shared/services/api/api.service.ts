@@ -128,11 +128,10 @@ export class ApiService {
             } else if (error && (error.status === 403)) {
                 this.alertService.pushNotFoundUnauthorizedAlert();
                 this.router.navigate(["/"]);
-            } else if (error.error && typeof error.error === 'string') {
-                this.alertService.pushNotFoundUnauthorizedAlert();
-                this.alertService.pushAlert(new Alert(error.error));
             } else if (error.error && error.status === 404) {
                 // let the caller handle not found appropriate to whatever it was doing
+            } else if (error.error && typeof error.error === 'string') {
+                this.alertService.pushAlert(new Alert(error.error));
             } else if (error.error && !(error.error instanceof ProgressEvent)) {
                 //https://docs.microsoft.com/en-us/aspnet/core/web-api/?view=aspnetcore-5.0#automatic-http-400-responses
                 if (typeof error.error === 'object' && error.error !== null && error.error.hasOwnProperty("errors")) {

@@ -12,6 +12,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { OpenETSyncHistoryDto, WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/openet-sync-result-type-dto';
+import { WaterYearQuickOpenETHistoryDto } from 'src/app/shared/models/water-year-quick-open-et-history-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 
@@ -32,7 +33,7 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
 
   public dateFormatString: string = "M/dd/yyyy";
   selectedWaterYear: WaterYearDto;
-  openETSyncHistoryDtos: Array<OpenETSyncHistoryDto>;
+  abbreviatedWaterYearSyncHistoryDtos: Array<WaterYearQuickOpenETHistoryDto>;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -52,13 +53,9 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
 
   private refreshWaterYearsAndOpenETSyncData() {
     this.isPerformingAction = true;
-    forkJoin([
-      this.waterYearService.getWaterYears(),
-      this.openETService.getOpenETSyncHistory()
-    ]).subscribe(([waterYears, openETSyncHistories]) => {
+    this.waterYearService.getAbbreviatedSyncHistoryForWaterYears().subscribe(abbreviatedWaterYearSyncHistories => {
       this.isPerformingAction = false;
-      this.waterYears = waterYears;
-      this.openETSyncHistoryDtos = openETSyncHistories;
+      this.abbreviatedWaterYearSyncHistoryDtos = abbreviatedWaterYearSyncHistories
     });
   }
 
@@ -66,49 +63,40 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
-  public getDataUpdateStatusForWaterYear(waterYear: WaterYearDto): string {
-    if (waterYear.FinalizeDate !== null) {
-      return "Finalized " + this.datePipe.transform(waterYear.FinalizeDate, this.dateFormatString);
+  public getDataUpdateStatusForWaterYear(waterYear: WaterYearQuickOpenETHistoryDto): string {
+    if (waterYear.WaterYear.FinalizeDate !== null) {
+      return "Finalized " + this.datePipe.transform(waterYear.WaterYear.FinalizeDate, this.dateFormatString);
     }
 
     if (!this.openETSyncEnabled()) {
       return "Sync disabled";
     }
 
-    if (waterYear.Year > new Date().getFullYear()) {
+    if (waterYear.WaterYear.Year > new Date().getFullYear()) {
       return "Data Not Yet Available";
     }
 
-    if (this.openETSyncHistoryDtos && this.openETSyncHistoryDtos.some(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress)) {
+    if (waterYear.CurrentlySyncing) {
       return "Update In Progress";
     }
 
     return "Checking For Updates Nightly";
   }
 
-  public updatingWaterYears() : Array<OpenETSyncHistoryDto> {
-    if (!this.openETSyncHistoryDtos) {
-      return null;
+  public numSyncsInProgress() : number {
+    if (!this.abbreviatedWaterYearSyncHistoryDtos) {
+      return 0;
     }
 
-    return this.openETSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
+    return this.abbreviatedWaterYearSyncHistoryDtos.filter(x => x.CurrentlySyncing).length;
   }
 
-  public waterYearIsUpdating(waterYear: WaterYearDto): boolean {
-    if (!this.openETSyncHistoryDtos) {
-      return false;
-    }
-
-    return this.openETSyncHistoryDtos.some(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
-  }
-
-  public getLastUpdatedDateForWaterYear(waterYear: WaterYearDto): string {
-    if (waterYear.Year > new Date().getFullYear()) {
+  public getLastUpdatedDateForWaterYear(waterYear: WaterYearQuickOpenETHistoryDto): string {
+    if (waterYear.WaterYear.Year > new Date().getFullYear()) {
       return "-";
     }
-    let successfulUpdates = this.openETSyncHistoryDtos.filter(x => x.WaterYear.WaterYearID == waterYear.WaterYearID && x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.Succeeded);
-
-    return successfulUpdates.length > 0 ? this.datePipe.transform(successfulUpdates.reduce((mostRecentDate, syncHistoryDto) => mostRecentDate > syncHistoryDto.UpdateDate ? mostRecentDate : syncHistoryDto.UpdateDate,  new Date('0001-01-01T00:00:00Z')) , this.dateFormatString) : "Has not been updated";
+    
+    return waterYear.LastSuccessfulSync ? this.datePipe.transform(waterYear.LastSuccessfulSync, this.dateFormatString) : "Has not been updated";
   }
 
   public showActionButtonsForWaterYear(waterYear: WaterYearDto): boolean {
@@ -177,11 +165,11 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
   }
 
   public getInProgressYears(): string {
-    if (!this.openETSyncHistoryDtos || this.openETSyncHistoryDtos.length == 0) {
+    if (!this.abbreviatedWaterYearSyncHistoryDtos) {
       return "";
     }
 
-    let allInProgressOperations = this.openETSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
+    let allInProgressOperations = this.abbreviatedWaterYearSyncHistoryDtos.filter(x => x.CurrentlySyncing);
 
     if (allInProgressOperations.length == 0) {
       return "";

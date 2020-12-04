@@ -39,7 +39,7 @@ namespace Rio.API
             }
             //If we access the bucket too early, it can sometimes cause issues with writing to the buckets, so make sure it's been at least 15 minutes before going for it
             var inProgressSyncs = _rioDbContext.OpenETSyncHistory
-                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress && EF.Functions.DateDiffMinute(x.CreateDate, DateTime.UtcNow) > 15).ToList();
+                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
                 inProgressSyncs.ForEach(x =>

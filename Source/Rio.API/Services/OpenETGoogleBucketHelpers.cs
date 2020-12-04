@@ -20,8 +20,6 @@ namespace Rio.API.Services
 {
     public static class OpenETGoogleBucketHelpers
     {
-        public const string OpenETBucketURL =
-            "";
 
         public static bool RasterUpdatedSinceMinimumLastUpdatedDate(RioConfiguration rioConfiguration,
             RioDbContext rioDbContext, int year, OpenETSyncHistoryDto newSyncHistory)
@@ -122,7 +120,7 @@ namespace Rio.API.Services
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.UnprocessableEntity,
-                    Content = new StringContent($"The request successful, however the sync will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
+                    Content = new StringContent($"The request was successful, however the sync will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
                 };
             }
 

@@ -53,5 +53,22 @@ namespace Rio.API.Controllers
             var finalizedWaterYearDto = WaterYear.Finalize(_dbContext, waterYearID);
             return Ok(finalizedWaterYearDto);
         }
+
+        [HttpGet("water-years/abbreviated-open-et-sync-history")]
+        public ActionResult<List<OpenETSyncHistoryDto>> GetAbbreviatedSyncHistoryForWaterYears()
+        {
+            var waterYears = WaterYear.List(_dbContext);
+
+            if (waterYears == null || waterYears.Count == 0)
+            {
+                //We just have no water years
+                return Ok(null);
+            }
+
+            var waterYearQuickOpenETHistoryDtos =
+                waterYears.Select(x => OpenETSyncHistory.GetQuickHistoryForWaterYear(_dbContext, x.WaterYearID)).ToList();
+
+            return Ok(waterYearQuickOpenETHistoryDtos);
+        }
     }
 }
