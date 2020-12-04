@@ -20,5 +20,11 @@
         public string HangfirePassword { get; set; }
         public string CimisAppKey { get; set; }
         public string VerificationKeyChars { get; set; }
+        public string OpenETAPIKey { get; set; }
+        public string OpenETShapefilePath { get; set; }
+        public string OpenETCheckRasterUpdatedDateBaseURL { get; set; }
+        public string OpenETTriggerTimeSeriesBaseURL { get; set; }
+        public string OpenETGoogleBucketBaseURL { get; set; }
+        public bool AllowOpenETSync { get; set; }
     }
 }

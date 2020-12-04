@@ -108,4 +108,8 @@ export class DynamicEnvironment {
     public get applicationInternalName() {
         return window.config.applicationInternalName;
     }
+
+    public get allowOpenETSync() {
+        return window.config.allowOpenETSync;
+    }
 }

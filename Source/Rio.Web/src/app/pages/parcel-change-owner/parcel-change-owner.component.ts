@@ -97,7 +97,6 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit(form: HTMLFormElement) {
-    debugger;
     var associativeArray = {
       ParcelID: this.parcelID,
       AccountID: this.selectedAccount ? this.selectedAccount.AccountID : undefined,

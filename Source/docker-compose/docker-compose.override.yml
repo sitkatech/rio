@@ -20,3 +20,7 @@ services:
       - LeadOrganizationHomeUrl=${LeadOrganizationHomeUrl}
       - LeadOrganizationEmail=${LeadOrganizationEmail}
       - VerificationKeyChars=${VerificationKeyChars}
+      - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
+      - OpenETCheckRasterUpdatedDateBaseURL=${OpenETCheckRasterUpdatedDateBaseURL}
+      - OpenETTriggerTimeSeriesBaseURL=${OpenETTriggerTimeSeriesBaseURL}
+      - AllowOpenETSync=${AllowOpenETSync}

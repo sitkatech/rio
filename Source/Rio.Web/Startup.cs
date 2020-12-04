@@ -104,6 +104,8 @@ namespace Rio.Web
         public string CreateAccountRedirectUrl { get; set; }
         [JsonProperty("allowTrading")]
         public bool AllowTrading { get; set; }
+        [JsonProperty("allowOpenETSync")]
+        public bool allowOpenETSync {get; set;}
         [JsonProperty("keystoneSupportBaseUrl")]
         public string KeystoneSupportBaseUrl { get; set; }
         [JsonProperty("geoserverMapServiceUrl")]
