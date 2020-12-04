@@ -20,3 +20,4 @@ services:
       - LeadOrganizationHomeUrl=${LeadOrganizationHomeUrl}
       - LeadOrganizationEmail=${LeadOrganizationEmail}
       - VerificationKeyChars=${VerificationKeyChars}
+      - SupportEmailAddress=${SupportEmailAddress}
