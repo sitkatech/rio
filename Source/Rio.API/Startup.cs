@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Mail;
 using Hangfire;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +16,8 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Rio.API
 {
@@ -78,7 +81,7 @@ namespace Rio.API
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
             services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
-            
+
             var rioDBbConnectionString = Configuration["DB_CONNECTION_STRING"];
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
@@ -102,7 +105,53 @@ namespace Rio.API
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler(
+                    options =>
+                    {
+                        //options.UseDeveloperExceptionPage();
+                        options.Run(
+                            async context =>
+                            {
+                                var ex = context.Features.Get<IExceptionHandlerFeature>();
+                                if (ex != null)
+                                {
+                                    var err = $"<strong>Error: {ex.Error.Message}</strong><br/>Source:{ex.Error.Source}<br/ >Request Path:{context.Request.Path}<hr />";
+                                    err += $"QueryString: {(context.Request.QueryString.HasValue ? context.Request.QueryString.ToString() : "No query arguments")}<hr />";
+
+                                    err += $"Stack Trace: {ex.Error.StackTrace.Replace(Environment.NewLine, "<br />")}";
+                                    if (ex.Error.InnerException != null)
+                                        err +=
+                                            $"Inner Exception:{ex.Error.InnerException?.Message.Replace(Environment.NewLine, "<br />")}";
+                                    err += "<hr/>";
+                                    // This bit here to check for a form collection!
+                                    if (context.Request.HasFormContentType && context.Request.Form.Any())
+                                    {
+                                        err += "<table border=\"1\"><tr><td colspan=\"2\">Form collection:</td></tr>";
+                                        foreach (var form in context.Request.Form)
+                                        {
+                                            err += $"<tr><td>{form.Key}</td><td>{form.Value}</td></tr>";
+                                        }
+                                        err += "</table>";
+                                    }
+
+                                    var smtpClient = context.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+                                    var supportMailAddress = new MailAddress(Configuration["SupportEmailAddress"]);
+                                    var mailMessage = new MailMessage
+                                    {
+                                        Subject = $"{Configuration["PlatformShortName"]} error",
+                                        Body = err,
+                                        IsBodyHtml = true,
+                                        From = supportMailAddress
+                                    };
+                                    mailMessage.To.Add(supportMailAddress);
+                                    smtpClient.Send(mailMessage);
+                                }
+                            });
+                        //options.UseExceptionHandler("/Home/Error");
+                        //options.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
+                    }
+                );
             }
             else
             {
