@@ -109,7 +109,7 @@ namespace Rio.API.Services
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Content = new StringContent("Operation already in progress")
+                    Content = new StringContent($"Sync already in progress for {year}")
                 };
             }
 
