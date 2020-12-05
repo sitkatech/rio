@@ -13,7 +13,7 @@
 <ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
 <div class="container mt-sm-4" *ngIf="activeAccount">
   <app-alert-display></app-alert-display>
-  <p>
+  <p *ngIf="throwMeAnError()">
     Landowner Dashboard
   </p>
   <div class="row">
