@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -73,6 +73,7 @@ import { WaterAccountsListComponent } from './pages/water-accounts-list/water-ac
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
+import { ErrorService } from './shared/services/error.service';
 
 export function init_app(appLoadService: AppInitService) {
   return () => appLoadService.init();
@@ -153,7 +154,11 @@ export function init_app(appLoadService: AppInitService) {
     AppInitService,
     { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    DecimalPipe, CurrencyPipe, DatePipe
+    DecimalPipe, CurrencyPipe, DatePipe,
+    {
+      provide: ErrorHandler,
+      useClass: ErrorService
+    }
   ],
   entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent, MultiLinkRendererComponent],
   bootstrap: [AppComponent]
