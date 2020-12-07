@@ -10,20 +10,23 @@ export class ErrorService implements ErrorHandler {
   constructor(private injector: Injector,
     private apiService: ApiService) { }
   handleError(error: any) {
-    debugger;
     const router = this.injector.get(Router);
     if (error instanceof HttpErrorResponse) {
       return;
     }
     
     let errorString = ""
+
+    if (typeof error === 'string') {
+      errorString = error;
+    }
     
-    if (error.hasOwnProperty("stack")) {
+    if (typeof error === 'object' && error.hasOwnProperty("stack")) {
       errorString = error.stack;
     }
 
     this.apiService.postToApi("error/front-end", {'Error':errorString}).subscribe(x => {
-      console.log("ay");
+      console.log("Error reported to support staff");
     })
   }
 }
