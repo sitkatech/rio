@@ -94,6 +94,7 @@ namespace Rio.Web
             NavThemeColor = configuration["NavThemeColor"];
             ApplicationType = configuration["ApplicationType"];
             ApplicationInternalName = configuration["ApplicationInternalName"];
+            AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
         }
 
         [JsonProperty("apiHostName")]
@@ -105,7 +106,7 @@ namespace Rio.Web
         [JsonProperty("allowTrading")]
         public bool AllowTrading { get; set; }
         [JsonProperty("allowOpenETSync")]
-        public bool allowOpenETSync {get; set;}
+        public bool AllowOpenETSync {get; set;}
         [JsonProperty("keystoneSupportBaseUrl")]
         public string KeystoneSupportBaseUrl { get; set; }
         [JsonProperty("geoserverMapServiceUrl")]
