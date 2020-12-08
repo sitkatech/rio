@@ -14,19 +14,22 @@ export class ErrorService implements ErrorHandler {
     if (error instanceof HttpErrorResponse) {
       return;
     }
-    
-    let errorString = ""
 
-    if (typeof error === 'string') {
-      errorString = error;
-    }
-    
-    if (typeof error === 'object' && error.hasOwnProperty("stack")) {
-      errorString = error.stack;
-    }
+    let errorObj = new ErrorMessage();
+    errorObj.Message = error.message;
+    errorObj.Stack = error.stack;
 
-    this.apiService.postToApi("error/front-end", {'Error':errorString}).subscribe(x => {
-      console.log("Error reported to support staff");
+    this.apiService.postToApi("error/front-end", errorObj).subscribe(x => {
+      console.log("Error successfully logged");
     })
   }
+}
+
+export class ErrorMessage {
+  Message : string
+  Stack : string
+
+  constructor(obj?: any){
+    Object.assign(this, obj);
+}
 }

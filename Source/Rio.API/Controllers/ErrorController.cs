@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using System;
+using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,24 +28,15 @@ namespace Rio.API.Controllers
         [HttpPost("/error/front-end")]
         public ActionResult SendFrontEndErrorEmail([FromBody] ErrorMessage error)
         {
-            if (string.IsNullOrEmpty(error.Error))
+            if (error == null)
             {
                 return Ok();
             }
 
-            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var messageBody =
-                $"A Front End error has occurred in {_rioConfiguration.PlatformShortName} <br/><br/> {error.Error.Replace("\n", "<br/>")}";
-            var supportMailAddress = new MailAddress(_rioConfiguration.SupportEmailAddress);
-            var mailMessage = new MailMessage
-            {
-                Subject = $"{_rioConfiguration.PlatformShortName} Front End Error",
-                Body = messageBody,
-                IsBodyHtml = true,
-                From = supportMailAddress
-            };
-            mailMessage.To.Add(supportMailAddress);
-            smtpClient.Send(mailMessage);
+                $"A Front End error has occurred in {_rioConfiguration.PlatformShortName}. \n Error Message:{error.Message} \n Error Stack:{error.Stack}";
+            
+            _logger.LogError(messageBody);
 
             return Ok();
         }
@@ -52,6 +44,7 @@ namespace Rio.API.Controllers
 
     public class ErrorMessage
     {
-        public string Error { get; set; }
+        public string Message { get; set; }
+        public string Stack { get; set; }
     }
 }

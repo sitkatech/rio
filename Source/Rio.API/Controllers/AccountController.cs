@@ -26,13 +26,15 @@ namespace Rio.API.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly KeystoneService _keystoneService;
         private readonly RioConfiguration _rioConfiguration;
+        private SitkaLogger _sitkaLogger;
 
-        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
+        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, SitkaLogger sitkaLogger)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
             _rioConfiguration = rioConfiguration.Value;
+            _sitkaLogger = sitkaLogger;
         }
 
         [HttpGet("accountStatus")]
@@ -78,8 +80,10 @@ namespace Rio.API.Controllers
 
         [HttpPut("/account/{accountID}")]
         [UserManageFeature]
+        [StoreRequestBodyForLogging]
         public ActionResult<AccountDto> UpdateAccount([FromRoute] int accountID, [FromBody] AccountUpdateDto accountUpdateDto)
         {
+            _sitkaLogger.LogDetailedErrorMessage("Blah");
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
             if (accountDto == null)
             {
