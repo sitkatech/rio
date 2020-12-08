@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Mail;
 using System.Threading;
 using Hangfire;
 using IdentityServer4.AccessTokenValidation;
@@ -21,8 +20,6 @@ using Hangfire.SqlServer;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services.Telemetry;
 using Serilog;
@@ -200,15 +197,15 @@ namespace Rio.API
 
         private ILogger GetSerilogLogger()
         {
-            var outputTemplate = $"[{_environment.EnvironmentName}] {{Timestamp:yyyy-MM-dd HH:mm:ss zzz}} {{Level}} | {{RequestId}}-{{SourceContext}}: {{Message}}{{NewLine}}{{Exception}}";
+            var outputTemplate = $"{{Timestamp:yyyy-MM-dd HH:mm:ss zzz}} {{Level}} | {{RequestId}}-{{SourceContext}}: {{Message}}{{NewLine}}{{Exception}}";
             var serilogLogger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .WriteTo.Console(outputTemplate: outputTemplate);
 
-            //if (!_environment.IsDevelopment())
-            //{
+            if (!_environment.IsDevelopment())
+            {
                 serilogLogger.WriteTo.ApplicationInsights(_telemetryClient, new TraceTelemetryConverter());
-            //}
+            }
 
             return serilogLogger.CreateLogger();
         }

@@ -2,17 +2,10 @@
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Protocols;
-using Rio.API.Services;
-using Serilog;
-using Serilog.Events;
-using Serilog.Formatting.Compact;
-using Serilog.Sinks.Email;
 
 namespace Rio.API
 {
@@ -30,7 +23,7 @@ namespace Rio.API
                             serverOptions.Listen(IPAddress.Any, 80);
 
                             // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
-                            if (env == Microsoft.Extensions.Hosting.Environments.Development)
+                            if (env == Environments.Development)
                             {
                                 serverOptions.Listen(IPAddress.Any, 443, configure =>
                                 {
@@ -68,43 +61,5 @@ namespace Rio.API
 
             host.Run();
         }
-
-//        private static void SetupLogger()
-//        {
-//            var emailOutputTemplate = @"Time:{Timestamp: yyyy-MM-dd HH:mm:ss.fff zzz}{NewLine}
-//Level:{Level}{NewLine}
-//Request Path:{RequestPath}{NewLine}
-//Message:{Message}{NewLine}
-//Exception:{Exception}{NewLine}
-//Additional Properties:{Properties:j}";
-
-//            //If the logger isn't able to log to file or email, it just swallows the error.
-//            //This forces it to write to console
-//            Serilog.Debugging.SelfLog.Enable(Console.WriteLine);
-//            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-//            if (environment != Environments.Development)
-//            {
-//                Log.Logger = new LoggerConfiguration()
-//                    .WriteTo.Console()
-//                    .WriteTo.File($"log.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Warning)
-//                    .WriteTo.Email(new EmailConnectionInfo
-//                    {
-//                        MailServer = Environment.GetEnvironmentVariable("SMTP_HOST"),
-//                        Port = Int32.Parse(Environment.GetEnvironmentVariable("SMTP_PORT")),
-//                        FromEmail = Environment.GetEnvironmentVariable("SupportEmailAddress"),
-//                        ToEmail = Environment.GetEnvironmentVariable("SupportEmailAddress"),
-//                        EmailSubject =
-//                                $"{Environment.GetEnvironmentVariable("PlatformShortName")} Alert: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")} error"
-//                    }, restrictedToMinimumLevel: LogEventLevel.Error, batchPostingLimit: 1,
-//                        outputTemplate: emailOutputTemplate)
-//                    .CreateLogger();
-//            }
-//            else
-//            {
-//                Log.Logger = new LoggerConfiguration()
-//                    .WriteTo.Console()
-//                    .CreateLogger();
-//            }
-//        }
     }
 }
