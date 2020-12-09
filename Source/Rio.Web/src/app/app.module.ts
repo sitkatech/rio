@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, APP_INITIALIZER, ErrorHandler, Injectable, Injector } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -74,96 +74,15 @@ import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/wate
 import { NgxPaginationModule } from 'ngx-pagination';
 import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
 import { environment } from 'src/environments/environment';
-import { ApplicationInsights, IDependencyTelemetry, ITelemetryItem } from '@microsoft/applicationinsights-web';
-import { BusyService } from './shared/services';
-import { AlertService } from './shared/services/alert.service';
-import { Alert } from './shared/models/alert';
-const { name, version } = require('../../package.json');
+import { AppInsightsService } from './shared/services/app-insights.service';
+import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
 
-export function init_app(appLoadService: AppInitService) {
+export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
     if (environment.appInsightsInstrumentationKey) {
-      initAppInsights();
+      appInsightsService.initAppInsights();
     }
   });
-}
-
-function initAppInsights() {
-  const appInsights = new ApplicationInsights({
-    config: {
-      appId: name + '@' + version,
-      enableAutoRouteTracking: true, 
-      disableFetchTracking: false,
-      enableCorsCorrelation: true,
-      enableRequestHeaderTracking: true,
-      enableResponseHeaderTracking: true,
-      correlationHeaderExcludedDomains: ['keystone.sitkatech.com', 'qa.keystone.sitkatech.com'],
-      instrumentationKey: environment.appInsightsInstrumentationKey,
-      maxAjaxCallsPerView: -1,
-    }
-  });
-
-  appInsights.loadAppInsights();
-
-  appInsights.addTelemetryInitializer((item: ITelemetryItem) => {
-    if (
-      item &&
-      item.baseData &&
-      [0, 401].indexOf((item.baseData as IDependencyTelemetry).responseCode) >= 0
-    ) {
-      return false;
-    }
-  }); 
-  appInsights.addTelemetryInitializer((envelope) => {
-    envelope.tags["ai.cloud.role"] = "TerraTrak.Web";
-  });
-
-  (window as any).appInsights = appInsights;
-}
-
-@Injectable()
-export class GlobalErrorHandler implements ErrorHandler {
-
-  private busyService: BusyService;
-  private alertService: AlertService;
-
-  constructor(
-    private injector: Injector,
-  ) {
-    this.busyService = this.injector.get(BusyService);
-    this.alertService = this.injector.get(AlertService);
-  }
-
-  handleError(error: any) {
-    if (
-      error &&
-      error.status !== 401 && // Unauthorized
-      error.status !== 403 && // Forbidden
-      error.status !== 404 && // Not Found (can easily happen when looking for a unexisting .po file)
-      (error.message || '').indexOf('ViewDestroyedError: Attempt to use a destroyed view: detectChanges') < 0 && // issue in the ngx-loading package...waiting for it to be updated.
-      (error.message || '').indexOf('ExpressionChangedAfterItHasBeenCheckedError') < 0 && // this only happens in dev angular build - I'm sure
-      (error.message || '').indexOf('Loading chunk') < 0 && // also ignore loading chunk errors as they're handled in app.component NavigationError event
-      (error.message || '').indexOf('<path> attribute d: Expected number,') < 0 // attrTween.js error related to charts
-    ) {
-      // IE Bug
-      if ((error.message || '').indexOf('available to complete this operation.') >= 0) {
-        this.alertService.pushAlert(
-          new Alert(`Internet Explorer Error: ${error.message}`)
-        );
-      }
-
-      console.error(error);
-      if ((window as any).appInsights) {
-        (window as any).appInsights.trackException({
-          exception: error.originalError || error
-        });
-      }
-    } else if (error) {
-      console.warn(error);
-      this.busyService.setBusy(false);
-    }
-  }
-
 }
 
 @NgModule({
@@ -239,12 +158,12 @@ export class GlobalErrorHandler implements ErrorHandler {
   providers: [
     CookieService,
     AppInitService,
-    { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService, AppInsightsService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DecimalPipe, CurrencyPipe, DatePipe,
     {
       provide: ErrorHandler,
-      useClass: GlobalErrorHandler
+      useClass: GlobalErrorHandlerService
     }
   ],
   entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent, MultiLinkRendererComponent],
