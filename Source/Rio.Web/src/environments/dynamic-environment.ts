@@ -112,4 +112,8 @@ export class DynamicEnvironment {
     public get allowOpenETSync() {
         return window.config.allowOpenETSync;
     }
+
+    public get appInsightsInstrumentationKey() {
+        return window.config.appInsightsInstrumentationKey;
+    }
 }
