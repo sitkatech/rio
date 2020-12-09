@@ -31,10 +31,10 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                        <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                             [selectYearLabel]="'Setting Data for Year'"></rio-water-year-select>
                     </div>
-                    <div class="mt-2">{{waterYearToDisplay}} Allocation for all Parcels</div>
+                    <div class="mt-2">{{waterYearToDisplay.Year}} Allocation for all Parcels</div>
                 </div>
                 <div class="card-body" style="position:relative" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
                     <ng-container *ngFor="let parcelAllocationType of parcelAllocationTypes">
@@ -148,7 +148,7 @@
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to update <strong>{{parcelAllocationTypeToUpdate.ParcelAllocationTypeName}}</strong> for the Water Year <strong>{{waterYearToDisplay}}</strong>?
+            Are you sure you want to update <strong>{{parcelAllocationTypeToUpdate.ParcelAllocationTypeName}}</strong> for the Water Year <strong>{{waterYearToDisplay.Year}}</strong>?
             This change will affect all Parcels.  
         </p>
         <div class="modal-footer">

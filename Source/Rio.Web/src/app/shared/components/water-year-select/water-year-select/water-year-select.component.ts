@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 
 @Component({
   selector: 'rio-water-year-select',
@@ -6,23 +7,23 @@ import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./water-year-select.component.scss']
 })
 export class WaterYearSelectComponent implements OnInit {
-  @Input() years: Array<number> = new Array<number>();
+  @Input() waterYears: Array<WaterYearDto> = new Array<WaterYearDto>();
   @Input() disabled: Boolean;
   @Input() selectYearLabel: string = "Viewing year";
 
   @Input()
-  get selectedYear(): number {
+  get selectedYear(): WaterYearDto {
     return this.selectedYearValue
   }
 
-  set selectedYear(val: number) {
+  set selectedYear(val: WaterYearDto) {
     this.selectedYearValue = val;
     this.selectedYearChange.emit(this.selectedYearValue);
   }
 
-  selectedYearValue: number;
+  selectedYearValue: WaterYearDto;
 
-  @Output() selectedYearChange: EventEmitter<number> = new EventEmitter<number>();
+  @Output() selectedYearChange: EventEmitter<WaterYearDto> = new EventEmitter<WaterYearDto>();
   
 
   constructor() { }

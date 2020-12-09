@@ -75,20 +75,6 @@ namespace Rio.API.Controllers
             return Ok(parcelAllocationDtos);
         }
 
-        [HttpGet("getWaterYears/{includeCurrentYear}")]
-        [ParcelViewFeature]
-        public ActionResult<List<int>> GetWaterYears(bool includeCurrentYear)
-        {
-            return Ok(DateUtilities.GetWaterYears(includeCurrentYear));
-        }
-
-        [HttpGet("getDefaultWaterYearToDisplay")]
-        [ParcelViewFeature]
-        public ActionResult<int> GetDefaultWaterYearToDisplay()
-        {
-            return Ok(DateUtilities.GetDefaultWaterYearToDisplay(_dbContext));
-        }
-
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
         [ParcelViewFeature]
         public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)

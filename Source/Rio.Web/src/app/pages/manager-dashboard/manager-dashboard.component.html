@@ -24,7 +24,7 @@
       <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/set-water-allocation">Set Water
         Allocation</a>
       <div class="float-right pl-2">
-        <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+        <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
     </div>
@@ -111,7 +111,7 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay}} District Allocation and Usage
+              {{waterYearToDisplay.Year}} District Allocation and Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>
@@ -177,7 +177,7 @@
         </div>
         <div class="card-body table-responsive" *ngIf="tradeActivity">
           <div *ngIf="!displayTradeGrid">
-            No trade activity to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager
+            No trade activity to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
             Dashboard to view postings for other years.
           </div>
           <ag-grid-angular #tradeActivityGrid *ngIf="displayTradeGrid" style="width: 100%; height: 300px;"
@@ -206,7 +206,7 @@
         </div>
         <div class="card-body table-responsive" *ngIf="postingActivity">
           <div *ngIf="!displayPostingsGrid">
-            No postings to display for {{waterYearToDisplay}}. Change the viewing year at the top of the Manager
+            No postings to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
             Dashboard to view postings for other years.
           </div>
           <ag-grid-angular *ngIf="displayPostingsGrid" #postingsGrid style="width: 100%; height: 300px;"
