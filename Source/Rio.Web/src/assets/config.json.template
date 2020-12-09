@@ -6,6 +6,8 @@
     "createAccountUrl": [TODO],
     "createAccountRedirectUrl": [TODO],
     "allowTrading": [TODO],
+    "allowOpenETSync": [TODO],
+    "applicationInternalName": [TODO],
   
     "keystoneSupportBaseUrl": [TODO],
 
@@ -38,4 +40,6 @@
       "postLogoutRedirectUri": [TODO],
       "waitForTokenInMsec": [TODO]
     }
+
+    "appInsightsInstrumentationKey": [TODO]
   }
