@@ -10,6 +10,8 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { WaterYearService } from 'src/app/services/water-year.service';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
@@ -19,7 +21,7 @@ import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from
 export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
 
-  public waterYears: Array<number>;
+  public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public isLoadingSubmit: boolean = false;
@@ -30,6 +32,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
@@ -44,7 +47,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
         forkJoin(
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelAllocations(id),
-          this.parcelService.getWaterYears(),
+          this.waterYearService.getWaterYears(),
           this.parcelAllocationTypeService.getParcelAllocationTypes()
         ).subscribe(
           ([parcel, parcelAllocations, waterYears, parcelAllocationTypes]) => {

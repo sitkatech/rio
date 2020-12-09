@@ -33,6 +33,14 @@ namespace Rio.API.Controllers
             return Ok(waterYears);
         }
 
+        [HttpGet("water-years/non-finalized")]
+        [ParcelViewFeature]
+        public ActionResult<List<WaterYearDto>> GetNonFinalizedWaterYears()
+        {
+            var nonFinalizedWaterYears = WaterYear.ListNonFinalized(_dbContext);
+            return Ok(nonFinalizedWaterYears);
+        }
+
         [HttpGet("water-years/default")]
         [ParcelViewFeature]
         public ActionResult<int> GetDefaultWaterYearToDisplay()

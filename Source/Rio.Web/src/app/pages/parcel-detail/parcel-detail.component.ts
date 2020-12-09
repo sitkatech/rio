@@ -13,6 +13,8 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearService } from 'src/app/services/water-year.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -24,7 +26,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   private currentUser: UserDto;
   private currentUserAccounts: AccountSimpleDto[];
 
-  public waterYears: Array<number>;
+  public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
   public parcelAllocations: Array<ParcelAllocationDto>;
   public waterUsage: Array<ParcelMonthlyEvapotranspirationDto>;
@@ -38,6 +40,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
     private accountService: AccountService,
@@ -60,7 +63,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelAllocations(id),
           this.parcelService.getWaterUsage(id),
           this.parcelService.getParcelOwnershipHistory(id),
-          this.parcelService.getWaterYears(),
+          this.waterYearService.getWaterYears(),
           this.parcelAllocationTypeService.getParcelAllocationTypes()
         ).subscribe(([parcel, parcelAllocations, waterUsage, parcelOwnershipHistory, waterYears, parcelAllocationTypes]) => {
           this.parcel = parcel instanceof Array

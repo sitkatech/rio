@@ -16,7 +16,7 @@
     <app-alert-display></app-alert-display>
     
     <h2>
-        Override ET Data for - {{account.AccountDisplayName}} - {{waterYearToDisplay}}
+        Override ET Data for - {{account.AccountDisplayName}} - {{waterYearToDisplay.Year}}
     </h2>
     <p class="lead">
         This editor is used to override water usage as reported by OpenET. When in edit mode, the top row 
@@ -26,7 +26,7 @@
     </p>   
     <div class="row">
         <div class="col-md-12 offset-md-10" >
-            <rio-water-year-select [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+            <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                 (selectedYearChange)="updateAnnualData()" [(disabled)]="isEditing"></rio-water-year-select>
         </div>
     </div>
@@ -39,7 +39,7 @@
                         <a class="btn btn-rio btm-sm mr-3" href="/landowner-dashboard" *ngIf="!isEditing">Back to Landowner Dashboard</a> 
                         <button class="btn btn-rio" [(disabled)]="isEditing" (click)="toggleEditMode()">Edit</button>
                     </div>
-                    {{waterYearToDisplay}} Water Usage by Parcel
+                    {{waterYearToDisplay.Year}} Water Usage by Parcel
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

@@ -15,7 +15,10 @@ namespace Rio.EFModels.Entities
 
         public static WaterYearDto GetDefaultYearToDisplay(RioDbContext dbContext)
         {
-            return dbContext.WaterYear.OrderByDescending(x => x.Year).First().AsDto();
+            var year = DateTime.Now.Year;
+            return dbContext.WaterYear.Any(x => x.Year == year) ? 
+                dbContext.WaterYear.Single(x => x.Year == year).AsDto() : 
+                dbContext.WaterYear.OrderByDescending(x => x.Year).First().AsDto();
         }
 
         public static WaterYearDto GetByWaterYearID(RioDbContext dbContext, int waterYearID)
@@ -32,6 +35,15 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(waterYear).Reload();
             return GetByWaterYearID(dbContext, waterYearID);
+        }
+
+        public static List<WaterYearDto> ListNonFinalized(RioDbContext dbContext)
+        {
+            return dbContext.WaterYear
+                .Where(x => x.FinalizeDate == null)
+                .OrderByDescending(x => x.Year)
+                .Select(x => x.AsDto())
+                .ToList();
         }
     }
 }

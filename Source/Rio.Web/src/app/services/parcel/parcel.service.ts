@@ -34,21 +34,6 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getWaterYears(): Observable<Array<number>> {
-    let route = `/getWaterYears/false`;
-    return this.apiService.getFromApi(route);
-  }
-
-  getWaterYearsIncludingCurrentYear(): Observable<Array<number>> {
-    let route = `/getWaterYears/true`;
-    return this.apiService.getFromApi(route);
-  }
-
-  getDefaultWaterYearToDisplay(): Observable<number> {
-    let route = `/getDefaultWaterYearToDisplay`;
-    return this.apiService.getFromApi(route);
-  }
-
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };

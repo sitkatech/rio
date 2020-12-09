@@ -24,6 +24,8 @@ import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearService } from 'src/app/services/water-year.service';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -33,7 +35,7 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 export class LandownerDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('landownerWaterUseChart') landownerWaterUseChart: LandownerWaterUseChartComponent;
   
-  public waterYearToDisplay: number;
+  public waterYearToDisplay: WaterYearDto;
   public currentUser: UserDto;
   private watchUserChangeSubscription: any;
   private watchAccountChangeSubscription: any;
@@ -51,7 +53,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public parcelNumbers: string[];
   public postings: Array<PostingDto>;
   public trades: Array<TradeWithMostRecentOfferDto>;
-  public waterYears: Array<number>;
+  public waterYears: Array<WaterYearDto>;
   public currentDate: Date;
   public waterTransfers: Array<WaterTransferDto>;
   private tradeStatusIDs: TradeStatusEnum[];
@@ -105,7 +107,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
     private cdr: ChangeDetectorRef,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private waterYearSerivce: WaterYearService
   ) {
   }
 
@@ -165,8 +168,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.postingService.getPostingsByAccountID(account.AccountID),
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
-      this.parcelService.getWaterYears(),
-      this.parcelService.getDefaultWaterYearToDisplay()
+      this.waterYearSerivce.getWaterYears(),
+      this.waterYearSerivce.getDefaultWaterYearToDisplay()
     ).subscribe(([postings, trades, waterTransfers, waterYears, defaultWaterYear]) => {
       this.waterYears = waterYears;
       this.waterYearToDisplay = defaultWaterYear;
@@ -183,18 +186,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.parcelService.getParcelsByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay).subscribe(parcels => {
+    this.parcelService.getParcelsByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year).subscribe(parcels => {
       this.parcels = parcels;
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
     });
 
-    this.accountService.getParcelsAllocationsByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay).subscribe(parcelAllocations => {
+    this.accountService.getParcelsAllocationsByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year).subscribe(parcelAllocations => {
       this.parcelAllocations = parcelAllocations;
     });
 
     forkJoin(
-      this.accountService.getWaterUsageByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay),
-      this.accountService.getWaterUsageOverviewByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay)
+      this.accountService.getWaterUsageByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year),
+      this.accountService.getWaterUsageOverviewByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year)
     ).subscribe(([waterUsagesInChartForm, waterUsageOverview]) => {
       this.waterUsages = {
           Year: waterUsagesInChartForm.Year,
@@ -331,7 +334,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationByAllocationType(parcelAllocationType: ParcelAllocationTypeDto): number{
-    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay).filter(pa => pa.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID);
+    let parcelAllocations = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID);
     return this.getTotalAcreFeetAllocated(parcelAllocations);
   }
 
@@ -388,7 +391,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private getWaterTransfersForWaterYear(year?: number) {
     if (!year) {
-      year = this.waterYearToDisplay
+      year = this.waterYearToDisplay.Year
     }
     return this.waterTransfers.filter(x => x.TransferYear == year && !x.BuyerRegistration.IsCanceled && !x.SellerRegistration.IsCanceled);
   }
@@ -427,7 +430,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalSupply(): number {
-    return this.getAnnualAllocation(this.waterYearToDisplay) + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
+    return this.getAnnualAllocation(this.waterYearToDisplay.Year) + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
   }
 
   public getCurrentAvailableWater(): number {
@@ -443,7 +446,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getEstimatedAvailableSupply(): number {
-    let annualAllocation = this.getAnnualAllocation(this.waterYearToDisplay);
+    let annualAllocation = this.getAnnualAllocation(this.waterYearToDisplay.Year);
     let estimatedAvailableSupply = this.getWaterUsageToDate();
     if (annualAllocation !== null && estimatedAvailableSupply !== null) {
       return annualAllocation - estimatedAvailableSupply;
@@ -467,14 +470,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     const allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
     
     this.annualAllocationChartData = this.waterYears.map(x => {
-      const allocation = this.getAnnualAllocation(x, true);
-      const sold = this.getSoldAcreFeet(x, true);
-      const purchased = this.getPurchasedAcreFeet(x);
+      const allocation = this.getAnnualAllocation(x.Year, true);
+      const sold = this.getSoldAcreFeet(x.Year, true);
+      const purchased = this.getPurchasedAcreFeet(x.Year);
 
       values.push(allocation + purchased - sold);      
 
       return {
-        Year: x,
+        Year: x.Year,
         ChartData: {
           name: allocationLabel,
           series: this.months.map(y => { return { name: y, value: allocation + purchased - sold } })
@@ -501,7 +504,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return this.emptyCumulativeWaterUsage
     }
 
-    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay);
+    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay.Year);
     return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
@@ -510,7 +513,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return null;
     }
 
-    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
+    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay.Year);
     return annualAllocation ? annualAllocation.ChartData : null;
   }
 

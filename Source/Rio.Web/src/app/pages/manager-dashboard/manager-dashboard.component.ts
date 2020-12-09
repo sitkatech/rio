@@ -24,6 +24,8 @@ import { PostingDetailedDto } from 'src/app/shared/models/posting/posting-detail
 import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entry';
 import { AccountService } from 'src/app/services/account/account.service';
 import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterYearService } from 'src/app/services/water-year.service';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -45,8 +47,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public postingsGridColumnDefs: ColDef[];
   public landownerUsageReportGridColumnDefs: ColDef[];
 
-  public waterYearToDisplay: number;a
-  public waterYears: Array<number>;
+  public waterYearToDisplay: WaterYearDto;
+  public waterYears: Array<WaterYearDto>;
   public unitsShown: string = "ac-ft";
   public displayTradeGrid: boolean = false;
   public displayPostingsGrid: boolean = false;
@@ -84,6 +86,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private tradeService: TradeService,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private postingService: PostingService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
     private userService: UserService,
@@ -99,8 +102,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
 
-      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
-        this.parcelService.getWaterYearsIncludingCurrentYear(),
+      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
+        this.waterYearService.getWaterYears(),
         this.parcelAllocationTypeService.getParcelAllocationTypes()
       ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
@@ -132,7 +135,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         // unlike in ParcelListComponent, the grid is not initialized until the following subscription resolves, because its container element is conditioned on parcels
         // so, we don't need to manually reset the column defs as we did in that case.
 
-        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
+        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
           this.parcels = parcels;
           this.updateAnnualData();
         });
@@ -163,7 +166,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       values.push(allocation);
 
       return {
-        Year: x,
+        Year: x.Year,
         ChartData: {
           name: this.allocationLabel,
           series: this.months.map(y => { return { name: y, value: allocation } })
@@ -182,7 +185,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return null;
     }
 
-    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
+    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay.Year);
     return annualAllocation ? annualAllocation.ChartData : null;
   }
 
@@ -191,7 +194,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return this.emptyCumulativeWaterUsage
     }
 
-    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay);
+    let currentYearData = this.waterUsageOverview.Current.find(x => x.Year == this.waterYearToDisplay.Year);
     return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
@@ -525,13 +528,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return;
     }
     
-    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay).subscribe(parcels=>{
+    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
       this.parcels = parcels;
     })
     if (this.landOwnerUsageReportGrid) {
       this.landOwnerUsageReportGrid.api.showLoadingOverlay();
     }
-    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay).subscribe(result => {
+    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(result => {
       if (!this.landOwnerUsageReportGrid) {
         return;
       }
@@ -539,20 +542,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.landOwnerUsageReportGrid.api.setRowData(result);
       this.landOwnerUsageReportGrid.api.hideOverlay();
     });
-    this.tradeService.getTradeActivityForYear(this.waterYearToDisplay).subscribe(result => {
+    this.tradeService.getTradeActivityForYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.tradeActivity = result;
       this.tradeActivityGrid ? this.tradeActivityGrid.api.setRowData(result) : null;
       this.displayTradeGrid = result.length > 0 ? true : false;
     });
-    this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay).subscribe(result => {
+    this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.postingActivity = result;
       this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
       this.displayPostingsGrid = result.length > 0 ? true : false;
     });
     this.loadingParcelAllocationsAndUsages = true;
     forkJoin([
-      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay),
-      this.accountService.getWaterUsageOverview(this.waterYearToDisplay)
+      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year)
     ])
     .subscribe(([result, waterUsageOverview]) => {
       this.parcelAllocationAndUsages = result;

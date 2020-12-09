@@ -109,8 +109,8 @@
               </thead>
               <tbody>
                 <tr *ngFor="let waterYear of waterYears">
-                  <td>{{waterYear}}</td>
-                  <td *ngFor="let parcelAllocationType of parcelAllocationTypes">{{getAllocationForYearByType(parcelAllocationType, waterYear)}}</td>
+                  <td>{{waterYear.Year}}</td>
+                  <td *ngFor="let parcelAllocationType of parcelAllocationTypes">{{getAllocationForYearByType(parcelAllocationType, waterYear.Year)}}</td>
                   <!-- <td style="text-align: right">
                     {{getNativeYieldForYear(waterYear)}}</td>
                   <td style="text-align: right">
@@ -120,10 +120,10 @@
                   <td style="text-align: right">
                     {{getReconciliationForYear(waterYear)}}</td> -->
                   <td style="text-align: right">
-                    {{getTotalAllocationForYear(waterYear)}}</td>
-                  <td style="text-align: right">{{getConsumptionForYear(waterYear)}}</td>
+                    {{getTotalAllocationForYear(waterYear.Year)}}</td>
+                  <td style="text-align: right">{{getConsumptionForYear(waterYear.Year)}}</td>
                   <td style="text-align: right" *ngFor="let month of months">
-                    {{getConsumptionForYearAndMonth(waterYear, month)}}</td>
+                    {{getConsumptionForYearAndMonth(waterYear.Year, month)}}</td>
                 </tr>
               </tbody>
             </table>

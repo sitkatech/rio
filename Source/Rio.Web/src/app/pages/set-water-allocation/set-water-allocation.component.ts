@@ -16,6 +16,8 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { WaterYearService } from 'src/app/services/water-year.service';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
 
 @Component({
   selector: 'rio-set-water-allocation',
@@ -38,8 +40,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
 
   public model: ParcelAllocationUpsertDto;
   public isLoadingSubmit: boolean = false;
-  public waterYearToDisplay: number;
-  public waterYears: Array<number>;
+  public waterYearToDisplay: WaterYearDto;
+  public waterYears: Array<WaterYearDto>;
   public allocationHistoryEntries: Array<ParcelAllocationHistoryDto>;
 
   public displayErrors: any = {};
@@ -56,6 +58,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
@@ -69,8 +72,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.initializeParcelAllocationHistoryGrid();
 
-      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
-        this.parcelService.getWaterYearsIncludingCurrentYear(),
+      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
+        this.waterYearService.getWaterYears(),
         this.parcelAllocationTypeService.getParcelAllocationTypes()
       ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
@@ -129,7 +132,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(allocationType)).nativeElement.value;
     this.model.AcreFeetAllocated = +allocationValue;
     this.model.ParcelAllocationTypeID = allocationType.ParcelAllocationTypeID;
-    this.model.WaterYear = this.waterYearToDisplay;
+    this.model.WaterYear = this.waterYearToDisplay.Year;
 
     this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
       .subscribe(response => {
@@ -162,7 +165,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     var file = this.getFile(allocationType);
 
     this.isLoadingSubmit = true;
-    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay, allocationType.ParcelAllocationTypeID).subscribe(x => {
+    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay.Year, allocationType.ParcelAllocationTypeID).subscribe(x => {
       this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
@@ -291,7 +294,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   }
 
   public getLastSetDateForParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): string {
-    return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == parcelAllocationType.ParcelAllocationTypeName && x.WaterYear == this.waterYearToDisplay).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
+    return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == parcelAllocationType.ParcelAllocationTypeName && x.WaterYear == this.waterYearToDisplay.Year).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
   }
 
   public setAllocationTypeToUpdateAndLaunchModal(modalContent: any, parcelAllocationType: ParcelAllocationTypeDto) {

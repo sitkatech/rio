@@ -8,6 +8,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { forkJoin } from 'rxjs';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { Alert } from 'src/app/shared/models/alert';
 
 @Component({
   selector: 'rio-account-detail',
@@ -25,6 +28,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   constructor(
       private route: ActivatedRoute,
       private router: Router,
+      private alertService: AlertService,
       private accountService: AccountService,
       private parcelService: ParcelService,
       private authenticationService: AuthenticationService,
@@ -39,9 +43,17 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
           this.currentUser = currentUser;
           const id = parseInt(this.route.snapshot.paramMap.get("id"));
           if (id) {
-              forkJoin(this.accountService.getAccountByID(id), this.parcelService.getParcelsByAccountID(id, new Date().getFullYear())).subscribe(([account, parcels]) =>{
+              forkJoin(this.accountService.getAccountByID(id), 
+              this.parcelService.getParcelsByAccountID(id, new Date().getFullYear())).subscribe(([account, parcels]) =>{
                   this.account = account;
                   this.parcels = parcels;
+              },
+              error => {
+                  if(error.status === 404) {
+                    this.router.navigate(["/"]).then(() => {
+                        this.alertService.pushAlert(new Alert("The requested Account could not be found.", AlertContext.Info));
+                    });
+                  }
               })
           }
       });

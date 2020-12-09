@@ -79,7 +79,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <rio-water-year-select class="d-inline-block" [years]="waterYears" [(selectedYear)]="waterYearToDisplay"
+                        <rio-water-year-select *ngIf="waterYears" class="d-inline-block" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                             (selectedYearChange)="updateGridData()"></rio-water-year-select>
                             <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
                                         ngbTooltip="Download list of Parcels"><i class="fas fa-download"></i></a>

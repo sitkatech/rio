@@ -52,6 +52,25 @@ namespace Rio.API.Controllers
         [ParcelViewFeature]
         public ActionResult<ParcelDto> GetByParcelID([FromRoute] int parcelID)
         {
+            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+
+            if (currentUser == null)
+            {
+                return Forbid();
+            }
+
+            if (currentUser != null && 
+                currentUser.Role.RoleID == (int)RoleEnum.LandOwner)
+            {
+                var currentYear = WaterYear.GetDefaultYearToDisplay(_dbContext);
+                var parcelsForUser = Parcel.ListByUserID(_dbContext, currentUser.UserID, currentYear.Year);
+
+                if (!parcelsForUser.Any() || parcelsForUser.All(x => x.ParcelID != parcelID))
+                {
+                    return Forbid();
+                }
+            }
+
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (parcelDto == null)
             {
@@ -73,20 +92,6 @@ namespace Rio.API.Controllers
 
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
             return Ok(parcelAllocationDtos);
-        }
-
-        [HttpGet("getWaterYears/{includeCurrentYear}")]
-        [ParcelViewFeature]
-        public ActionResult<List<int>> GetWaterYears(bool includeCurrentYear)
-        {
-            return Ok(DateUtilities.GetWaterYears(includeCurrentYear));
-        }
-
-        [HttpGet("getDefaultWaterYearToDisplay")]
-        [ParcelViewFeature]
-        public ActionResult<int> GetDefaultWaterYearToDisplay()
-        {
-            return Ok(DateUtilities.GetDefaultWaterYearToDisplay(_dbContext));
         }
 
         [HttpGet("parcels/{parcelID}/getWaterUsage")]

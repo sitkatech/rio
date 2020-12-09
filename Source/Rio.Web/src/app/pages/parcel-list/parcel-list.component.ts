@@ -11,6 +11,8 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearService } from 'src/app/services/water-year.service';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -25,8 +27,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
 
-  public waterYears: Array<number> = [];
-  public waterYearToDisplay: number;
+  public waterYears: Array<WaterYearDto>;
+  public waterYearToDisplay: WaterYearDto;
   public gridOptions: GridOptions;
   public rowData = [];
   public mapHeight: string = "500px"
@@ -55,6 +57,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
     private decimalPipe: DecimalPipe) { }
 
@@ -112,7 +115,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
       this.parcelsGrid.api.showLoadingOverlay();
-      forkJoin(this.parcelService.getDefaultWaterYearToDisplay(),
+      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
         this.parcelAllocationTypeService.getParcelAllocationTypes()
       ).subscribe(([defaultYear, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
@@ -140,8 +143,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin(
-          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay),
-          this.parcelService.getWaterYears(),
+          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+          this.waterYearService.getWaterYears(),
           this.parcelAllocationTypeService.getParcelAllocationTypes()
         ).subscribe(([parcelsWithWaterUsage, waterYears, parcelAllocationTypes]) => {
           this.rowData = parcelsWithWaterUsage;
@@ -166,7 +169,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     if (!this.waterYearToDisplay) {
       return;
     }
-    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay).subscribe(result => {
+    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.rowData = result;
       this.parcelsGrid.api.setRowData(this.rowData);
     });
