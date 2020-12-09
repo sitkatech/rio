@@ -73,7 +73,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       this.initializeParcelAllocationHistoryGrid();
 
       forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.waterYearService.getNonFinalizedWaterYears(),
+        this.waterYearService.getWaterYears(),
         this.parcelAllocationTypeService.getParcelAllocationTypes()
       ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;

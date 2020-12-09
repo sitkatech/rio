@@ -137,7 +137,7 @@ namespace Rio.API.Controllers
                 WelcomeText = welcomeText,
                 SiteName = applicationName,
                 SignatureBlock =
-                    $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
+                    $"{rioBravoWaterStorageDistrict}<br /><a href='mailto:{_rioConfiguration.LeadOrganizationEmail}'>{_rioConfiguration.LeadOrganizationEmail}</a><br/><a href='{_rioConfiguration.LeadOrganizationHomeUrl}'>{_rioConfiguration.LeadOrganizationHomeUrl}</a>",
                 RedirectURL = _rioConfiguration.KEYSTONE_REDIRECT_URL
             };
 
