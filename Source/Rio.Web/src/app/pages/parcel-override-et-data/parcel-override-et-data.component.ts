@@ -74,7 +74,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
         this.waterYears = waterYears;
         let waterYearAvailable = this.waterYears.some(x => x.Year == waterYear);
         if (!waterYearAvailable) {
-          this.alertService.pushAlert(new Alert(`${waterYear} not available for editing. Please select a different year from the dropdown provided`, AlertContext.Info));
+          this.alertService.pushAlert(new Alert(`Water Year:${waterYear} not available for editing. Please select a different year from the dropdown provided`, AlertContext.Info));
         }
         this.waterYearToDisplay = waterYearAvailable ? this.waterYears.filter(x => x.Year == waterYear)[0] : defaultWaterYear;
         this.updateAnnualData();
