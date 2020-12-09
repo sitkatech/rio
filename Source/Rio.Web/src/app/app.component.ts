@@ -22,7 +22,13 @@ export class AppComponent {
     userClaimsUpsertStarted = false;
     ignoreSessionTerminated = false;
 
-    constructor(private router: Router, private oauthService: OAuthService, private cookieStorageService: CookieStorageService, private busyService: BusyService, private authenticationService: AuthenticationService, private titleService: Title, @Inject(DOCUMENT) private _document: HTMLDocument) {
+    constructor(private router: Router, 
+        private oauthService: OAuthService, 
+        private cookieStorageService: CookieStorageService, 
+        private busyService: BusyService, 
+        private authenticationService: AuthenticationService, 
+        private titleService: Title, 
+        @Inject(DOCUMENT) private _document: HTMLDocument) {
     }
 
     ngOnInit() {

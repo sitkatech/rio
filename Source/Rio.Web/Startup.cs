@@ -95,6 +95,7 @@ namespace Rio.Web
             ApplicationType = configuration["ApplicationType"];
             ApplicationInternalName = configuration["ApplicationInternalName"];
             AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
+            AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
         }
 
         [JsonProperty("apiHostName")]
@@ -143,6 +144,8 @@ namespace Rio.Web
         public string ApplicationType { get; set;}
         [JsonProperty("applicationInternalName")]
         public string ApplicationInternalName { get; set;}
+        [JsonProperty("appInsightsInstrumentationKey")]
+        public string AppInsightsInstrumentationKey {get; set;}
     }
 
     public class KeystoneAuthConfigurationDto

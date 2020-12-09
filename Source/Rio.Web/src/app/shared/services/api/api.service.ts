@@ -20,7 +20,6 @@ export class ApiService {
     }
 
     postToApi(relativeRoute: string, data: any): Observable<any> {
-
         this.busyService.setBusy(true);
 
         if (relativeRoute.startsWith('/')) {

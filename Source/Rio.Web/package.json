@@ -28,6 +28,7 @@
     "@ckeditor/ckeditor5-angular": "^1.2.3",
     "@ckeditor/ckeditor5-build-classic": "^18.0.0",
     "@ckeditor/ckeditor5-upload": "^18.0.0",
+    "@microsoft/applicationinsights-web": "^2.5.10",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
     "@nguniversal/express-engine": "^9.1.0",
     "@ngx-progressbar/core": "^5.3.2",

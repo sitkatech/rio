@@ -24,3 +24,5 @@ services:
       - OpenETCheckRasterUpdatedDateBaseURL=${OpenETCheckRasterUpdatedDateBaseURL}
       - OpenETTriggerTimeSeriesBaseURL=${OpenETTriggerTimeSeriesBaseURL}
       - AllowOpenETSync=${AllowOpenETSync}
+      - SupportEmailAddress=${SupportEmailAddress}
+      - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}

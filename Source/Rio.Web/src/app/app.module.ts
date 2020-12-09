@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
@@ -73,9 +73,16 @@ import { WaterAccountsListComponent } from './pages/water-accounts-list/water-ac
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
+import { environment } from 'src/environments/environment';
+import { AppInsightsService } from './shared/services/app-insights.service';
+import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
 
-export function init_app(appLoadService: AppInitService) {
-  return () => appLoadService.init();
+export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
+  return () => appLoadService.init().then(() => {
+    if (environment.appInsightsInstrumentationKey) {
+      appInsightsService.initAppInsights();
+    }
+  });
 }
 
 @NgModule({
@@ -151,9 +158,13 @@ export function init_app(appLoadService: AppInitService) {
   providers: [
     CookieService,
     AppInitService,
-    { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService], multi: true },
+    { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService, AppInsightsService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    DecimalPipe, CurrencyPipe, DatePipe
+    DecimalPipe, CurrencyPipe, DatePipe,
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandlerService
+    }
   ],
   entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent, MultiLinkRendererComponent],
   bootstrap: [AppComponent]

@@ -23,7 +23,7 @@ namespace Rio.API
                             serverOptions.Listen(IPAddress.Any, 80);
 
                             // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
-                            if (env == Microsoft.Extensions.Hosting.Environments.Development)
+                            if (env == Environments.Development)
                             {
                                 serverOptions.Listen(IPAddress.Any, 443, configure =>
                                 {

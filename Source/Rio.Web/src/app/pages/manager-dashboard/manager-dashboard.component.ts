@@ -183,7 +183,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay);
-    debugger;
     return annualAllocation ? annualAllocation.ChartData : null;
   }
 
