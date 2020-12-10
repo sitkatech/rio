@@ -125,15 +125,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
   }
 
   public exportToCsv() {
-    // we need to grab all columns except the first one (trash icon)
-    let columnsKeys = this.accountsGrid.columnApi.getAllDisplayedColumns();
-    let columnIds: Array<any> = [];
-    columnsKeys.forEach(keys => {
-      let columnName: string = keys.getColId();
-      columnIds.push(columnName);
-    });
-    columnIds.splice(0, 1);
-    this.utilityFunctionsService.exportGridToCsv(this.accountsGrid, 'accounts.csv', columnIds);
+    this.utilityFunctionsService.exportGridToCsv(this.accountsGrid, 'accounts.csv', null);
   }
   
   public isAdministrator() : boolean
