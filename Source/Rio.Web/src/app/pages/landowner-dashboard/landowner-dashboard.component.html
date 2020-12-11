@@ -22,7 +22,7 @@
         {{getAccountDisplayName()}}
       </h2>
     </div>
-    <div class="col ml-auto col-auto float-right">
+    <div class="col ml-auto col-auto float-right" *ngIf="waterYears">
       <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
         (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
     </div>
@@ -285,7 +285,7 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay.Year}} Allocation and Usage
+              {{waterYearToDisplay?.Year}} Allocation and Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>
@@ -319,12 +319,12 @@
                 class="fas fa-table"></i>
             </label>
           </div>
-          <span class="align-middle">{{waterYearToDisplay.Year}} Water Usage by Parcel </span>
+          <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel </span>
           <a routerLink="/measuring-water-use-with-openet" target="_blank"
             style="cursor:pointer; vertical-align: middle;" placement="top"
             ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
           <a class="btn btn-rio btn-sm mr-3 float-right"
-            routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay.Year}}"
+            routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay?.Year}}"
             *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
         </div>
         <div class="card-body">
@@ -388,7 +388,7 @@
   </div>
   <div class="row mt-4" *ngIf="!userHasParcels() || !waterUsages">
     <div class="col-12">
-      <em>No data available: this Account is not associated with any parcels in {{waterYearToDisplay.Year}}</em>
+      <em>No data available: this Account is not associated with any parcels {{waterYearToDisplay ? ("in " + waterYearToDisplay.Year) : ""}}</em>
     </div>
   </div>
   <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->

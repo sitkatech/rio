@@ -23,7 +23,7 @@
     <div class="col-sm-6 text-right">
       <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mt-1" routerLink="/parcels/set-water-allocation">Set Water
         Allocation</a>
-      <div class="float-right pl-2">
+      <div class="float-right pl-2" *ngIf="waterYears">
         <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
@@ -111,7 +111,7 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay.Year}} District Allocation and Usage
+              {{waterYearToDisplay?.Year}} District Allocation and Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>

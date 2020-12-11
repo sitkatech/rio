@@ -30,11 +30,11 @@
         <div class="col-lg-10">
             <div class="card">
                 <div class="card-header">
-                    <div class="float-right">
+                    <div class="float-right" *ngIf="waterYears">
                         <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                             [selectYearLabel]="'Setting Data for Year'"></rio-water-year-select>
                     </div>
-                    <div class="mt-2">{{waterYearToDisplay.Year}} Allocation for all Parcels</div>
+                    <div class="mt-2">{{waterYearToDisplay?.Year}} Allocation for all Parcels</div>
                 </div>
                 <div class="card-body" style="position:relative" *ngIf="parcelAllocationTypes && allocationHistoryEntries">
                     <ng-container *ngFor="let parcelAllocationType of parcelAllocationTypes">
