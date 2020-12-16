@@ -140,7 +140,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
         this.clearInputs()
         this.isLoadingSubmit = false;
         this.updateParcelAllocationHistoryGrid();
-        this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay + " was successfully allocated for all parcels.", AlertContext.Success));
+        this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay?.Year + " was successfully allocated for all parcels.", AlertContext.Success));
       }
         ,
         error => {
@@ -166,7 +166,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
 
     this.isLoadingSubmit = true;
     this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay.Year, allocationType.ParcelAllocationTypeID).subscribe(x => {
-      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay}`, AlertContext.Success, true));
+      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay?.Year}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
       this.parcelAllocationTypeToUpdate = null;

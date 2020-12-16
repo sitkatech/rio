@@ -257,32 +257,32 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getNoTradesMessage(): string {
     if (this.tradeStatusIDs.length === 1) {
-      return "You have no open trades for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
+      return "You have no open trades for " + this.waterYearToDisplay?.Year + ". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
     }
     else {
-      return "You have no trade activity for " + this.waterYearToDisplay +". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
+      return "You have no trade activity for " + this.waterYearToDisplay?.Year +". Change the viewing year in the top of the Landowner Dashboard to view open trades for other years.";
     }
   }
 
   public getNoPostingsMessage(): string {
     if (this.postingStatusIDs.length === 1) {
-      return "You have no open postings for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view open postings for other years.";
+      return "You have no open postings for " + this.waterYearToDisplay?.Year + ". Change the viewing year in the top of the Landowner Dashboard to view open postings for other years.";
     }
     else {
-      return "You have no posting activity for " + this.waterYearToDisplay + ". Change the viewing year in the top of the Landowner Dashboard to view posting activity for other years.";
+      return "You have no posting activity for " + this.waterYearToDisplay?.Year + ". Change the viewing year in the top of the Landowner Dashboard to view posting activity for other years.";
     }
   }
 
   public getPostingsForWaterYear(): Array<PostingDto> {
     return this.postings
-      .filter(x => (new Date(x.PostingDate).getFullYear()).toString() === this.waterYearToDisplay.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
+      .filter(x => (new Date(x.PostingDate).getFullYear()).toString() === this.waterYearToDisplay?.Year.toString() && this.postingStatusIDs.includes(x.PostingStatus.PostingStatusID))
       .sort((a, b) => a.PostingDate > b.PostingDate ? -1 : a.PostingDate < b.PostingDate ? 1 : 0);
   }
 
   public getTradesForWaterYear(): Array<TradeWithMostRecentOfferDto> {
     return this.trades ?
       this.trades
-        .filter(x => (new Date(x.OfferDate).getFullYear()).toString() === this.waterYearToDisplay.toString()
+        .filter(x => (new Date(x.OfferDate).getFullYear()).toString() === this.waterYearToDisplay?.Year.toString()
           && (this.tradeStatusIDs.includes(x.TradeStatus.TradeStatusID)
             || (x.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted
               && !this.isTradeCanceled(x) && (x.BuyerRegistration.IsPending || x.SellerRegistration.IsPending))))
@@ -386,12 +386,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getLastETReadingDate(): string {
-    return "12/31/" + this.waterYearToDisplay; //TODO: need to use the date from the latest monthly ET data
+    return "12/31/" + this.waterYearToDisplay?.Year; //TODO: need to use the date from the latest monthly ET data
   }
 
   private getWaterTransfersForWaterYear(year?: number) {
     if (!year) {
-      year = this.waterYearToDisplay.Year
+      year = this.waterYearToDisplay?.Year
     }
     return this.waterTransfers.filter(x => x.TransferYear == year && !x.BuyerRegistration.IsCanceled && !x.SellerRegistration.IsCanceled);
   }

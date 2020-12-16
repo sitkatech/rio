@@ -97,7 +97,7 @@
                   </a>
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
-                  {{getAnnualAllocation(waterYearToDisplay) | number: '1.1-1'}} {{unitsShown}}
+                  {{getAnnualAllocation(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <ng-container *ngIf="showAllocationDetails">
@@ -536,7 +536,7 @@
                     </strong>{{highlightedParcelDto.ParcelAreaInAcres | number: "1.1-1"}}
                   </p>
                   <p class="ml-3"><strong>Allocation (ac-ft)
-                    </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay)}}
+                    </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay?.Year)}}
                   </p>
                   <p class="ml-3"><strong>Total Usage (ac-ft)
                   </strong>{{getTotalWaterUsageForParcel(highlightedParcelDto.ParcelNumber) | number: "1.1-1"}}
