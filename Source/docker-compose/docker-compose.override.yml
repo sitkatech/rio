@@ -2,6 +2,8 @@ version: '3.5'
 
 services:
   rio.api:
+    build:
+      dockerfile: Rio.API/LocalDockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - KEYSTONE_HOST=${KEYSTONE_HOST}
@@ -26,3 +28,5 @@ services:
       - AllowOpenETSync=${AllowOpenETSync}
       - SupportEmailAddress=${SupportEmailAddress}
       - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
+      - Ogr2OgrExecutable=${Ogr2OgrExecutable}
+      - OgrInfoExecutable=${OgrInfoExecutable}
