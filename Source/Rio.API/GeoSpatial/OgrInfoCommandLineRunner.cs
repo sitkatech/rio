@@ -26,10 +26,10 @@ namespace Rio.API.GeoSpatial
 
             var featureClassesFromFileGdb = processUtilityResult.StdOut.Split(new[] { "\r\nLayer name: " }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
 
-            //if (maxLayerNum.HasValue && featureClassesFromFileGdb.Count > maxLayerNum)
-            //{
-            //    throw new Exception("LayerNum", new Exception($"GDB has {featureClassesFromFileGdb.Count} layers, which exceeds the max layer count of {maxLayerNum}. Please upload a different GDB or edit the current one."));
-            //}
+            if (maxLayerNum.HasValue && featureClassesFromFileGdb.Count > maxLayerNum)
+            {
+                throw new Exception("LayerNum", new Exception($"GDB has {featureClassesFromFileGdb.Count} layers, which exceeds the max layer count of {maxLayerNum}. Please upload a different GDB or edit the current one."));
+            }
 
             var featureClassInfos = new List<FeatureClassInfo>();
             foreach (var featureClassBlob in featureClassesFromFileGdb)

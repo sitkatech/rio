@@ -33,7 +33,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public gdbInputFile: any = null;
   public featureClass: FeatureClassInfoDto;
   public uploadedGdbID: number;
-  public requiredColumnNames: Array<string> = ["APN_LABEL", "ASSE_NAME"];
+  public requiredColumnNames: Array<string> = ["parcelnumb", "ownername"];
   public requiredColumnMappings: Array<ParcelRequiredColumnAndMappingDto> = [];
 
   constructor(
@@ -112,8 +112,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
           x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
         })
       }, error => {
-        console.log(error);
         const taskResponse = error.error;
+        this.isLoadingSubmit = false;
         this.alertService.pushAlert(new Alert("Failed to upload GDB!  Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
       });
 
