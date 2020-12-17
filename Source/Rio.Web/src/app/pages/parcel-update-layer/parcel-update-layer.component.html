@@ -1,0 +1,149 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Update Parcels and Accounts</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <div class="row mb-2">
+        <div class="col">
+            <h2 class="d-inline-block">Update Parcels and Accounts</h2>
+
+            <!-- <div class="mt-2">
+                <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+            </div> -->
+
+        </div>
+    </div>
+    <form [formGroup]="newParcelLayerForm" (ngSubmit)="onSubmitGDB()" *ngIf="!featureClass">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Select Input File</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" formControlName="gdbUploadForParcelLayer"
+                                                (change)="onGDBFileChange($event)"
+                                                class="form-control custom-file-input"
+                                                aria-describedby="gdbUploadForParcelLayerHelp">
+                                            <label for="gdbUploadForParcelLayer"
+                                                class="custom-file-label">{{getInputFileForGDB()}}</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-rio" (click)="clickFileInput()"><i
+                                                    class="fas fa-folder-open"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="form-text">
+                                        After you upload your file you will be able to preview and verify the
+                                        uploaded data.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm">
+                * Required field
+                <small class="form-text text-muted">
+                    Maximum total file size should not exceed 500MB.<br />
+                </small>
+            </div>
+            <div class="col-sm text-right">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    <span *ngIf="!featureClass">Save
+                        & Continue</span>
+                </button>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </form>
+    <form (ngSubmit)="onSubmit()" *ngIf="featureClass">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Columns in Layer</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-group-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="w-50">Expected Column</th>
+                                    <th class="w-50">Column From Layer To Use</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let requiredColumn of requiredColumnMappings; let i = index;">
+                                    <tr [ngClass]="{'d-none': mappedColumnNameSetForRequiredColumn(requiredColumn)}"
+                                        class="column-not-found-no-bottom">
+                                        <td colspan="4">
+                                            <p style="color:red" class="mb-0">
+                                                The expected column was not found. Please choose a column to map to this
+                                                value.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        [ngClass]="{'column-not-found-no-top': !mappedColumnNameSetForRequiredColumn(requiredColumn)}">
+                                        <td>
+                                            {{requiredColumn.RequiredColumnName}}
+                                        </td>
+                                        <td class="form-group">
+                                            <div class="input-group">
+                                                <select class="form-control" name="sourceColumnNameFor{{i}}"
+                                                    [(ngModel)]="requiredColumn.MappedColumnName">
+                                                    <option [ngValue]="undefined" disabled>Select a Column</option>
+                                                    <option *ngFor="let column of getColumns()"
+                                                        [ngValue]="column">
+                                                        {{column}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm">
+                * Required field
+                <small class="form-text text-muted">
+                    Maximum total file size should not exceed 500MB.<br />
+                </small>
+            </div>
+            <div class="col-sm text-right">
+                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()"
+                    *ngIf="featureClass" [disabled]="isLoadingSubmit">
+                    Return & Edit</button>
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    Submit & Run
+                </button>
+                <a class="btn btn-secondary" routerLink="/"
+                    [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

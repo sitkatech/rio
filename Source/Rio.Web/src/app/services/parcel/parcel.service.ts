@@ -108,4 +108,18 @@ export class ParcelService {
     let route = `/parcels/${parcelID}/changeOwner`
     return this.apiService.postToApi(route, model);
   }
+
+  public uploadGDB(gdbInputFile: any): Observable<any> {
+    // we need to do it this way because the apiService.postToApi does a json.stringify, which won't work for input type="file"
+    let formData = new FormData();
+    formData.append("InputFile", gdbInputFile);
+    const apiHostName = environment.apiHostName;
+    const route = `https://${apiHostName}/parcels/uploadGDB`;
+    var result = this.httpClient.post<any>(
+        route,
+        formData
+      );
+  
+    return result;
+}
 }

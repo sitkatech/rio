@@ -19,12 +19,18 @@ namespace Rio.API.GeoSpatial
             return featureClassesFromFileGdb.Select(x => x.Split(' ').Skip(1).First()).ToList();
         }
 
-        public static List<FeatureClassInfo> GetFeatureClassInfoFromFileGdb(string pathToOgrInfoExecutable, string gdbFileInfo, double totalMilliseconds, ILogger logger)
+        public static List<FeatureClassInfo> GetFeatureClassInfoFromFileGdb(string pathToOgrInfoExecutable, string gdbFileInfo, double totalMilliseconds, ILogger logger, int? maxLayerNum = null)
         {
             var commandLineArguments = BuildOgrInfoCommandLineArgumentsToListFeatureClassInfos(gdbFileInfo, null);
             var processUtilityResult = ExecuteOgrInfoCommand(pathToOgrInfoExecutable, commandLineArguments, totalMilliseconds, logger);
 
             var featureClassesFromFileGdb = processUtilityResult.StdOut.Split(new[] { "\r\nLayer name: " }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
+
+            //if (maxLayerNum.HasValue && featureClassesFromFileGdb.Count > maxLayerNum)
+            //{
+            //    throw new Exception("LayerNum", new Exception($"GDB has {featureClassesFromFileGdb.Count} layers, which exceeds the max layer count of {maxLayerNum}. Please upload a different GDB or edit the current one."));
+            //}
+
             var featureClassInfos = new List<FeatureClassInfo>();
             foreach (var featureClassBlob in featureClassesFromFileGdb)
             {

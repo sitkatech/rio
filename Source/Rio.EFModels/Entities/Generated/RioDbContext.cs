@@ -44,6 +44,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
+        public virtual DbSet<UploadedGdb> UploadedGdb { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWell { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
@@ -536,6 +537,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.TradeStatusDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.TradeStatusName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UploadedGdb>(entity =>
+            {
+                entity.Property(e => e.UploadedGdbID).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<User>(entity =>

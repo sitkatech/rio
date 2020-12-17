@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using System;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Rio.API.GeoSpatial;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
@@ -26,12 +30,14 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<ParcelController> _logger;
         private readonly KeystoneService _keystoneService;
+        private readonly RioConfiguration _rioConfiguration;
 
-        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService)
+        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
@@ -365,6 +371,54 @@ namespace Rio.API.Controllers
 
             badRequest = null;
             return true;
+        }
+
+        [HttpPost("/parcels/uploadGDB")]
+        [RequestSizeLimit(524288000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
+        public async Task<IActionResult> UploadGDBAndParseFeatureClasses([FromForm] IFormFile inputFile)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            byte[] inputFileContents;
+            await using (var ms = new MemoryStream(4096))
+            {
+                await inputFile.CopyToAsync(ms);
+                inputFileContents = ms.ToArray();
+            }
+            // save the gdb file contents to UploadedGdb so user doesn't have to wait for upload of file again
+            var uploadedGdbID = UploadedGdb.CreateNew(_dbContext, inputFileContents);
+
+            using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
+            var gdbFile = disposableTempFile.FileInfo;
+            System.IO.File.WriteAllBytes(gdbFile.FullName, inputFileContents);
+
+            try
+            {
+                var featureClassInfos = OgrInfoCommandLineRunner.GetFeatureClassInfoFromFileGdb(
+                    _rioConfiguration.OgrInfoExecutable,
+                    gdbFile.FullName,
+                    250000000, _logger, 1);
+                var uploadParcelLayerInfoDto = new UploadParcelLayerInfoDto()
+                {
+                    UploadedGdbID = uploadedGdbID,
+                    FeatureClasses = featureClassInfos
+                };
+
+                return Ok(uploadParcelLayerInfoDto);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                UploadedGdb.Delete(_dbContext, uploadedGdbID);
+                var errorMessageToReturn = e.Message != null && e.Message == "LayerNum"
+                    ? e.InnerException.Message
+                    : "Error reading GDB file!";
+                return BadRequest(errorMessageToReturn);
+            }
         }
     }
 

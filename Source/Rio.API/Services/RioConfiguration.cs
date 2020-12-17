@@ -28,5 +28,7 @@
         public bool AllowOpenETSync { get; set; }
         public string SupportEmailAddress { get; set; }
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }
+        public string Ogr2OgrExecutable { get; set; }
+        public string OgrInfoExecutable { get; set; }
     }
 }
