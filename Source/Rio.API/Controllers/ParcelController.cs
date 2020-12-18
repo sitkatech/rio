@@ -373,6 +373,13 @@ namespace Rio.API.Controllers
             return true;
         }
 
+        [HttpGet("/parcels/parcelGDBCommonMappingToParcelStagingColumn")]
+        public ActionResult GetParcelGDBCommonMappingToParcelStagingColumn()
+        {
+            var result = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
+            return Ok(result);
+        }
+
         [HttpPost("/parcels/uploadGDB")]
         [RequestSizeLimit(524288000)]
         [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
@@ -420,6 +427,60 @@ namespace Rio.API.Controllers
                 return BadRequest(errorMessageToReturn);
             }
         }
+
+        [HttpPost("/parcels/previewGDBChanges")]
+        public ActionResult<ParcelUpdateExpectedResultsDto> PreviewParcelLayerGDBChangesViaGeoJsonFeatureCollectionAndUploadToStaging([FromBody] ParcelLayerUpdateDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var gdbFileContents = UploadedGdb.GetUploadedGdbFileContents(_dbContext, model.UploadedGDBID);
+            using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
+            var gdbFile = disposableTempFile.FileInfo;
+            System.IO.File.WriteAllBytes(gdbFile.FullName, gdbFileContents);
+
+            try
+            {
+                var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
+                    250000000, false);
+                var columns = model.ColumnMappings.Select(
+                        x =>
+                            $"{x.MappedColumnName} as {x.RequiredColumnName}").ToList();
+                var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
+                    model.ParcelLayerNameInGDB, columns, null, _logger, null);
+                var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 4);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection);
+                return Ok(expectedResults);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                UploadedGdb.Delete(_dbContext, model.UploadedGDBID);
+
+                _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+
+                var errorMessageToReturn = e.Message != null && e.Message == "LayerNum"
+                    ? e.InnerException.Message
+                    : "Error generating preview of changes!";
+                return BadRequest(errorMessageToReturn);
+            }
+        }
+    }
+
+    public class ParcelLayerUpdateDto
+    {
+        public string ParcelLayerNameInGDB { get; set; }
+        public int UploadedGDBID { get; set; }
+        public List<ParcelRequiredColumnAndMappingDto> ColumnMappings { get; set; }
+    }
+
+    public class ParcelRequiredColumnAndMappingDto
+    {
+        public string RequiredColumnName { get; set; }
+        public string MappedColumnName { get; set; }
     }
 
     public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>

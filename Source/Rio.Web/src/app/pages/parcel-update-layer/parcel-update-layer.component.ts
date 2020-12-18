@@ -8,6 +8,7 @@ import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
+import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
@@ -28,13 +29,13 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public allowableFileTypes = ["gdb"];
   public maximumFileSizeMB = 30;
   public newParcelLayerForm = new FormGroup({
-    gdbUploadForParcelLayer: new FormControl ('', [Validators.required])
+    gdbUploadForParcelLayer: new FormControl('', [Validators.required])
   });
   public gdbInputFile: any = null;
   public featureClass: FeatureClassInfoDto;
   public uploadedGdbID: number;
-  public requiredColumnNames: Array<string> = ["parcelnumb", "ownername"];
   public requiredColumnMappings: Array<ParcelRequiredColumnAndMappingDto> = [];
+  public resultsPreview: ParcelUpdateExpectedResultsDto;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,8 +53,12 @@ export class ParcelUpdateLayerComponent implements OnInit {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.requiredColumnNames.forEach(x => {
-        this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({RequiredColumnName:x}));
+      this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn().subscribe(model => {
+        Object.keys(model).forEach(x => {
+          if (typeof model[x] === "string") {
+            this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x] }));
+          }
+        })
       });
     });
   }
@@ -82,7 +87,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     this.gdbInputFile = this.getSelectedFile(event);
   }
 
-  public mappedColumnNameSetForRequiredColumn(requiredColumn : ParcelRequiredColumnAndMappingDto) {
+  public mappedColumnNameSetForRequiredColumn(requiredColumn: ParcelRequiredColumnAndMappingDto) {
     return requiredColumn.MappedColumnName !== null && requiredColumn.MappedColumnName !== undefined;
   }
 
@@ -98,38 +103,62 @@ export class ParcelUpdateLayerComponent implements OnInit {
     if (!this.featureClass) {
       return [];
     }
-    
+
     return this.featureClass.Columns;
   }
 
   public onSubmitGDB() {
-      this.isLoadingSubmit = true;
-      this.parcelService.uploadGDB(this.gdbInputFile).subscribe(response => {
-        this.isLoadingSubmit = false;
-        this.uploadedGdbID = response.UploadedGdbID;
-        this.featureClass = response.FeatureClasses[0];
-        this.requiredColumnMappings.forEach(x => {
-          x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
-        })
-      }, error => {
-        const taskResponse = error.error;
-        this.isLoadingSubmit = false;
-        this.alertService.pushAlert(new Alert("Failed to upload GDB!  Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
-      });
+    this.isLoadingSubmit = true;
+    this.parcelService.uploadGDB(this.gdbInputFile).subscribe(response => {
+      this.isLoadingSubmit = false;
+      this.uploadedGdbID = response.UploadedGdbID;
+      this.featureClass = response.FeatureClasses[0];
+      this.requiredColumnMappings.forEach(x => {
+        x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
+      })
+    }, error => {
+      const taskResponse = error.error;
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("Failed to upload GDB!  Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
+    });
 
   }
 
-  public onSubmit() {
-    console.log("Not implemented");
+  public onSubmitForPreview() {
+    this.isLoadingSubmit = true;
+    let parcelLayerUpdateDto = new ParcelLayerUpdateDto({
+      ParcelLayerNameInGDB : this.featureClass.LayerName,
+      UploadedGDBID : this.uploadedGdbID,
+      ColumnMappings : this.requiredColumnMappings
+    });
+    this.parcelService.getGDBPreview(parcelLayerUpdateDto).subscribe(response => {
+      this.isLoadingSubmit = false;
+      this.resultsPreview = response;
+    }, error => {
+      const taskResponse = error.error;
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("Failed to generate preview of changes! Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
+    })
   }
 
 }
 
 export class ParcelRequiredColumnAndMappingDto {
-  RequiredColumnName : string;
-  MappedColumnName : string;
+  RequiredColumnName: string;
+  MappedColumnName: string;
 
-  constructor(obj?: any){
+  constructor(obj?: any) {
     Object.assign(this, obj);
+  }
 }
+
+export class ParcelLayerUpdateDto {
+  ParcelLayerNameInGDB: string;
+  UploadedGDBID: number;
+  ColumnMappings: Array<ParcelRequiredColumnAndMappingDto>;
+
+  constructor(obj?: any) {
+    Object.assign(this, obj);
+  }
 }
+

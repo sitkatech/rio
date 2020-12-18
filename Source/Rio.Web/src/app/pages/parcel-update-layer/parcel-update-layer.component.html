@@ -75,7 +75,7 @@
             </div>
         </div>
     </form>
-    <form (ngSubmit)="onSubmit()" *ngIf="featureClass">
+    <form (ngSubmit)="onSubmitForPreview()" *ngIf="featureClass && !resultsPreview">
         <div class="row mt-4">
             <div class="col">
                 <div class="card">
@@ -111,8 +111,7 @@
                                                 <select class="form-control" name="sourceColumnNameFor{{i}}"
                                                     [(ngModel)]="requiredColumn.MappedColumnName">
                                                     <option [ngValue]="undefined" disabled>Select a Column</option>
-                                                    <option *ngFor="let column of getColumns()"
-                                                        [ngValue]="column">
+                                                    <option *ngFor="let column of getColumns()" [ngValue]="column">
                                                         {{column}}
                                                     </option>
                                                 </select>
@@ -134,16 +133,76 @@
                 </small>
             </div>
             <div class="col-sm text-right">
-                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()"
-                    *ngIf="featureClass" [disabled]="isLoadingSubmit">
+                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
+                    [disabled]="isLoadingSubmit">
                     Return & Edit</button>
                 <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
-                    Submit & Run
+                    Submit & Review
                 </button>
-                <a class="btn btn-secondary" routerLink="/"
-                    [disabled]="isLoadingSubmit">Cancel</a>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
             </div>
         </div>
     </form>
+    <ng-container *ngIf="resultsPreview">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Expected Results</span>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts Unchanged</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsUnchanged}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Created</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsToBeCreated}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Inactivated</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsToBeInactivated}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Unchanged</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsUnchanged}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Associated With New Account</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsAssociatedWithNewAccount}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels To Be Inactivated</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsToBeInactivated}}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm text-right">
+                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
+                    [disabled]="isLoadingSubmit">
+                    Return & Edit</button>
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    Submit & Review
+                </button>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </ng-container>
 </div>

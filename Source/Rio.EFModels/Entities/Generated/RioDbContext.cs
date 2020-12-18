@@ -35,7 +35,9 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
         public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
+        public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumn { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
+        public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStaging { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
@@ -388,6 +390,24 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<ParcelLayerGDBCommonMappingToParcelStagingColumn>(entity =>
+            {
+                entity.HasKey(e => e.ParcelLayerGDBCommonMappingToParcelColumnID)
+                    .HasName("PK_ParcelLayerGDBCommonMappingToParcelColumn_ParcelLayerGDBCommonMappingToParcelColumnID");
+
+                entity.HasIndex(e => e.OwnerName)
+                    .HasName("AK_ParcelLayerGDBCommonMappingToParcelColumn_OwnerName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ParcelNumber)
+                    .HasName("AK_ParcelLayerGDBCommonMappingToParcelColumn_ParcelNumber")
+                    .IsUnique();
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
             modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
             {
                 entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.WaterMonth })
@@ -398,6 +418,17 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelMonthlyEvapotranspiration)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelUpdateStaging>(entity =>
+            {
+                entity.HasIndex(e => e.ParcelNumber)
+                    .HasName("AK_ParcelUpdateStaging_ParcelNumber")
+                    .IsUnique();
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
             modelBuilder.Entity<Posting>(entity =>
