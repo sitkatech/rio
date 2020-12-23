@@ -417,14 +417,17 @@ namespace Rio.API.Controllers
 
                 return Ok(uploadParcelLayerInfoDto);
             }
+            catch (System.ComponentModel.DataAnnotations.ValidationException e)
+            {
+                _logger.LogError(e.Message);
+                UploadedGdb.Delete(_dbContext, uploadedGdbID);
+                return BadRequest(e.Message);
+            }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
                 UploadedGdb.Delete(_dbContext, uploadedGdbID);
-                var errorMessageToReturn = e.Message != null && e.Message == "LayerNum"
-                    ? e.InnerException.Message
-                    : "Error reading GDB file!";
-                return BadRequest(errorMessageToReturn);
+                return BadRequest("Error reading GDB file!");
             }
         }
 
@@ -440,7 +443,6 @@ namespace Rio.API.Controllers
             using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
             var gdbFile = disposableTempFile.FileInfo;
             System.IO.File.WriteAllBytes(gdbFile.FullName, gdbFileContents);
-
             try
             {
                 var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
@@ -455,17 +457,21 @@ namespace Rio.API.Controllers
                 var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection);
                 return Ok(expectedResults);
             }
-            catch (Exception e)
+            catch (System.ComponentModel.DataAnnotations.ValidationException e)
             {
                 _logger.LogError(e.Message);
-                UploadedGdb.Delete(_dbContext, model.UploadedGDBID);
 
                 _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
 
-                var errorMessageToReturn = e.Message != null && e.Message == "LayerNum"
-                    ? e.InnerException.Message
-                    : "Error generating preview of changes!";
-                return BadRequest(errorMessageToReturn);
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+
+                _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+
+                return BadRequest("Error generating preview of changes!");
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
@@ -31,8 +32,14 @@ namespace Rio.EFModels.Entities
 
             if (parcelUpdateStagingEntities.GroupBy(x => x.ParcelNumber).Any(g => g.Count() > 1))
             {
-                throw new Exception(
+                throw new ValidationException(
                     "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
+            }
+
+            if (parcelUpdateStagingEntities.Any(x => !Parcel.IsValidParcelNumber(x.ParcelNumber)))
+            {
+                throw new ValidationException(
+                    "Parcel number found that does not comply to format ###-###-##. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
             }
 
             var allParcels = _dbContext.Parcel.Select(x => new ParcelUpdateStaging()
@@ -65,9 +72,19 @@ namespace Rio.EFModels.Entities
                 var currentResultsForAccount = currentParcelAccountAssociations.Where(x => x.OwnerName == account).ToList();
                 var updatedResultsForAccount = parcelUpdateStagingEntities.Where(x => x.OwnerName == account).ToList();
 
+                //MP 12/23
+                //Currently there are a number of Parcels that exist in the system that aren't assigned to accounts
+                //and a number of the owners they're associated with in the Parcel table actually don't have accounts. So,
+                //we don't want to say we're inactivating accounts if they don't exist. Hopefully this will be less of a 
+                //problem with our new layer coming soon.
+                var accountEntity = Account.GetByAccountName(_dbContext, account);
+
                 if (!updatedResultsForAccount.Any())
                 {
-                    expectedChanges.NumAccountsToBeInactivated++;
+                    if (accountEntity != null)
+                    {
+                        expectedChanges.NumAccountsToBeInactivated++;
+                    }
                     foreach (var parcel in currentResultsForAccount.Where(x => !parcelNumbersAccountedFor.Contains(x.ParcelNumber)).Select(x => x.ParcelNumber))
                     {
                         if (parcelUpdateStagingEntities.Any(x => x.ParcelNumber == parcel))
@@ -125,7 +142,7 @@ namespace Rio.EFModels.Entities
                     }
                 }
 
-                if (!accountChanged)
+                if (!accountChanged && accountEntity != null)
                 {
                     expectedChanges.NumAccountsUnchanged++;
                 }

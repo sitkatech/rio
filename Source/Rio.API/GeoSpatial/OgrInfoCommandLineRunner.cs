@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace Rio.API.GeoSpatial
 
             if (maxLayerNum.HasValue && featureClassesFromFileGdb.Count > maxLayerNum)
             {
-                throw new Exception("LayerNum", new Exception($"GDB has {featureClassesFromFileGdb.Count} layers, which exceeds the max layer count of {maxLayerNum}. Please upload a different GDB or edit the current one."));
+                throw new ValidationException($"GDB has {featureClassesFromFileGdb.Count} layers, which exceeds the max layer count of {maxLayerNum}. Please upload a different GDB or edit the current one.");
             }
 
             var featureClassInfos = new List<FeatureClassInfo>();

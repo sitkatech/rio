@@ -1,12 +1,15 @@
-import { ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectorRef, Component, Inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
@@ -22,6 +25,9 @@ export class ParcelUpdateLayerComponent implements OnInit {
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
+  public modalReference: NgbModalRef;
+  public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
+
 
   public isLoadingSubmit: boolean;
   public rowData = [];
@@ -44,7 +50,9 @@ export class ParcelUpdateLayerComponent implements OnInit {
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private parcelService: ParcelService
+    private parcelService: ParcelService,
+    private modalService: NgbModal,
+    @Inject(DOCUMENT) private document: Document
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -56,11 +64,15 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn().subscribe(model => {
         Object.keys(model).forEach(x => {
           if (typeof model[x] === "string") {
-            this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x] }));
+            this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x], CommonName: x }));
           }
         })
       });
     });
+  }
+
+  get f() {
+    return this.newParcelLayerForm.controls;
   }
 
   ngOnDestroy() {
@@ -108,6 +120,14 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   public onSubmitGDB() {
+    if (!this.newParcelLayerForm.valid) {
+      Object.keys(this.newParcelLayerForm.controls).forEach(field => {
+        const control = this.newParcelLayerForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
+
     this.isLoadingSubmit = true;
     this.parcelService.uploadGDB(this.gdbInputFile).subscribe(response => {
       this.isLoadingSubmit = false;
@@ -117,9 +137,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
         x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
       })
     }, error => {
-      const taskResponse = error.error;
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("Failed to upload GDB!  Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
+      this.alertService.pushAlert(new Alert("Failed to upload GDB!", AlertContext.Danger));
     });
 
   }
@@ -135,10 +154,25 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.isLoadingSubmit = false;
       this.resultsPreview = response;
     }, error => {
-      const taskResponse = error.error;
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("Failed to generate preview of changes! Reason: " + (typeof taskResponse === 'string' ? taskResponse : taskResponse.Reason), AlertContext.Danger));
+      this.alertService.pushAlert(new Alert("Failed to generate preview of changes!", AlertContext.Danger));
     })
+  }
+
+  public onSubmitChanges() {
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
+    console.log('submitted');
+  }
+
+  public clickFileInput() {
+    this.document.getElementById("gdbUploadForParcelLayer").click();
+  }
+
+  public launchModal(modalContent: any) {
+    this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', backdrop: 'static', keyboard: false });
   }
 
 }
@@ -146,6 +180,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
 export class ParcelRequiredColumnAndMappingDto {
   RequiredColumnName: string;
   MappedColumnName: string;
+  CommonName: string;
 
   constructor(obj?: any) {
     Object.assign(this, obj);

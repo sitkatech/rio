@@ -12,13 +12,18 @@
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
+    <ngb-alert [type]="'info'" [dismissible]="false">
+        <span>
+            This feature is currently in development. It will allow for previewing changes that will occur if the operation were to be confirmed, but no actual updates will occur even if finalized.
+        </span>
+    </ngb-alert>
     <div class="row mb-2">
         <div class="col">
             <h2 class="d-inline-block">Update Parcels and Accounts</h2>
 
-            <!-- <div class="mt-2">
+            <div class="mt-2">
                 <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
-            </div> -->
+            </div>
 
         </div>
     </div>
@@ -36,6 +41,7 @@
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input type="file" formControlName="gdbUploadForParcelLayer"
+                                                id="gdbUploadForParcelLayer"
                                                 (change)="onGDBFileChange($event)"
                                                 class="form-control custom-file-input"
                                                 aria-describedby="gdbUploadForParcelLayerHelp">
@@ -46,6 +52,9 @@
                                             <button type="button" class="btn btn-rio" (click)="clickFileInput()"><i
                                                     class="fas fa-folder-open"></i></button>
                                         </div>
+                                    </div>
+                                    <div *ngIf="f.gdbUploadForParcelLayer.touched && f.gdbUploadForParcelLayer.invalid" class="alert alert-danger">
+                                        <div *ngIf="f.gdbUploadForParcelLayer.errors.required">Please select a file to upload.</div>
                                     </div>
                                     <div class="form-text">
                                         After you upload your file you will be able to preview and verify the
@@ -60,7 +69,6 @@
         </div>
         <div class="row mt-2">
             <div class="col-sm">
-                * Required field
                 <small class="form-text text-muted">
                     Maximum total file size should not exceed 500MB.<br />
                 </small>
@@ -104,7 +112,7 @@
                                     <tr
                                         [ngClass]="{'column-not-found-no-top': !mappedColumnNameSetForRequiredColumn(requiredColumn)}">
                                         <td>
-                                            {{requiredColumn.RequiredColumnName}}
+                                            {{requiredColumn.RequiredColumnName}} (Equivalent to: {{requiredColumn.CommonName}})
                                         </td>
                                         <td class="form-group">
                                             <div class="input-group">
@@ -126,12 +134,6 @@
             </div>
         </div>
         <div class="row mt-2">
-            <div class="col-sm">
-                * Required field
-                <small class="form-text text-muted">
-                    Maximum total file size should not exceed 500MB.<br />
-                </small>
-            </div>
             <div class="col-sm text-right">
                 <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
                     [disabled]="isLoadingSubmit">
@@ -197,12 +199,31 @@
                 <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" (click)="launchModal(finalizeChangesModalContent)">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
-                    Submit & Review
+                    Finalize Changes
                 </button>
                 <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
             </div>
         </div>
     </ng-container>
 </div>
+
+<ng-template #finalizeChangesModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="finalizeChangesModalTitle">Finalize Account and Parcel Changes</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to finalize these changes? This action cannot be undone.
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()">
+                Save</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>
