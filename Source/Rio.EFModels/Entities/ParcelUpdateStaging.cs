@@ -41,6 +41,9 @@ namespace Rio.EFModels.Entities
                     "Parcel number found that does not comply to format ###-###-##. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
             }
 
+            //Make sure staging table is empty before proceeding
+            DeleteAll(_dbContext);
+
             _dbContext.ParcelUpdateStaging.AddRange(parcelUpdateStagingEntities);
 
             _dbContext.SaveChanges();
