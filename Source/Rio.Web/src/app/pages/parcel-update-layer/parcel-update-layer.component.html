@@ -196,7 +196,7 @@
         </div>
         <div class="row mt-2">
             <div class="col-sm text-right">
-                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
+                <button type="button" class="btn btn-rio mr-2" (click)="removeResultPreview()"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
                 <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" (click)="launchModal(finalizeChangesModalContent)">

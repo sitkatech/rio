@@ -461,7 +461,7 @@ namespace Rio.API.Controllers
             {
                 _logger.LogError(e.Message);
 
-                _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+                ParcelUpdateStaging.DeleteAll(_dbContext);
 
                 return BadRequest(e.Message);
             }
@@ -469,7 +469,7 @@ namespace Rio.API.Controllers
             {
                 _logger.LogError(e.Message);
 
-                _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+                ParcelUpdateStaging.DeleteAll(_dbContext);
 
                 return BadRequest("Error generating preview of changes!");
             }

@@ -175,6 +175,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
     this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', backdrop: 'static', keyboard: false });
   }
 
+  public removeResultPreview() {
+    this.resultsPreview = null;
+  }
+
 }
 
 export class ParcelRequiredColumnAndMappingDto {

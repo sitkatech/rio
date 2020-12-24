@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
+using static System.String;
 
 namespace Rio.EFModels.Entities
 {
@@ -29,7 +29,6 @@ namespace Rio.EFModels.Entities
             parcelUpdateStagingEntities =
                 parcelUpdateStagingEntities.Select(x => x).Distinct(new ParcelUpdateStagingComparer()).ToList();
 
-
             if (parcelUpdateStagingEntities.GroupBy(x => x.ParcelNumber).Any(g => g.Count() > 1))
             {
                 throw new ValidationException(
@@ -42,117 +41,42 @@ namespace Rio.EFModels.Entities
                     "Parcel number found that does not comply to format ###-###-##. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
             }
 
-            var allParcels = _dbContext.Parcel.Select(x => new ParcelUpdateStaging()
-            {
-                ParcelNumber = x.ParcelNumber,
-                OwnerName = x.OwnerName
-            }).ToList();
-
-            var currentParcelOwnership = _dbContext.vParcelOwnership
-                .Include(x => x.Account)
-                .Include(x => x.Parcel)
-                .Where(x => x.RowNumber == 1)
-                .Select(x => new ParcelUpdateStaging()
-                {
-                    ParcelNumber = x.Parcel.ParcelNumber,
-                    OwnerName = x.Account.AccountName
-                }).ToList();
-
-            var currentParcelAccountAssociations = currentParcelOwnership.Union(
-                allParcels.Where(x => currentParcelOwnership.All(y => y.ParcelNumber != x.ParcelNumber))).ToList();
-
-            var expectedChanges = new ParcelUpdateExpectedResultsDto();
-            var parcelNumbersAccountedFor = new List<string>();
-
-            var distinctAccounts = parcelUpdateStagingEntities.Select(x => x.OwnerName)
-                .Union(currentParcelAccountAssociations.Select(x => x.OwnerName)).Distinct();
-
-            foreach (var account in distinctAccounts)
-            {
-                var currentResultsForAccount = currentParcelAccountAssociations.Where(x => x.OwnerName == account).ToList();
-                var updatedResultsForAccount = parcelUpdateStagingEntities.Where(x => x.OwnerName == account).ToList();
-
-                //MP 12/23
-                //Currently there are a number of Parcels that exist in the system that aren't assigned to accounts
-                //and a number of the owners they're associated with in the Parcel table actually don't have accounts. So,
-                //we don't want to say we're inactivating accounts if they don't exist. Hopefully this will be less of a 
-                //problem with our new layer coming soon.
-                var accountEntity = Account.GetByAccountName(_dbContext, account);
-
-                if (!updatedResultsForAccount.Any())
-                {
-                    if (accountEntity != null)
-                    {
-                        expectedChanges.NumAccountsToBeInactivated++;
-                    }
-                    foreach (var parcel in currentResultsForAccount.Where(x => !parcelNumbersAccountedFor.Contains(x.ParcelNumber)).Select(x => x.ParcelNumber))
-                    {
-                        if (parcelUpdateStagingEntities.Any(x => x.ParcelNumber == parcel))
-                        {
-                            expectedChanges.NumParcelsAssociatedWithNewAccount++;
-                        }
-                        else
-                        {
-                            expectedChanges.NumParcelsToBeInactivated++;
-                        }
-                        parcelNumbersAccountedFor.Add(parcel);
-                    }
-                    continue;
-                }
-
-                if (!currentResultsForAccount.Any())
-                {
-                    expectedChanges.NumAccountsToBeCreated++;
-                    var unaccountedForParcelNumbers = updatedResultsForAccount
-                        .Where(x => !parcelNumbersAccountedFor.Contains(x.ParcelNumber) &&
-                                    !currentParcelAccountAssociations.Exists(y => y.ParcelNumber == x.ParcelNumber))
-                        .Select(x => x.OwnerName).ToList();
-                    expectedChanges.NumParcelsAssociatedWithNewAccount += unaccountedForParcelNumbers.Count();
-                    parcelNumbersAccountedFor.AddRange(unaccountedForParcelNumbers);
-                    continue;
-                }
-
-                var distinctParcels = currentResultsForAccount.Select(x => x.ParcelNumber)
-                    .Union(updatedResultsForAccount.Select(x => x.ParcelNumber)).Distinct().ToList();
-
-                var accountChanged = false;
-
-                foreach (var parcel in distinctParcels)
-                {
-                    if (currentResultsForAccount.Exists(x => x.ParcelNumber == parcel) && updatedResultsForAccount.Exists(x => x.ParcelNumber == parcel))
-                    {
-                        expectedChanges.NumParcelsUnchanged++;
-                        parcelNumbersAccountedFor.Add(parcel);
-                        continue;
-                    }
-
-                    accountChanged = true;
-
-                    if (!parcelNumbersAccountedFor.Contains(parcel))
-                    {
-                        if (parcelUpdateStagingEntities.All(x => x.ParcelNumber != parcel))
-                        {
-                            expectedChanges.NumParcelsToBeInactivated++;
-                        }
-                        else
-                        {
-                            expectedChanges.NumParcelsAssociatedWithNewAccount++;
-                        }
-                        parcelNumbersAccountedFor.Add(parcel);
-                    }
-                }
-
-                if (!accountChanged && accountEntity != null)
-                {
-                    expectedChanges.NumAccountsUnchanged++;
-                }
-            }
-
             _dbContext.ParcelUpdateStaging.AddRange(parcelUpdateStagingEntities);
 
             _dbContext.SaveChanges();
 
+            var accountsUnchanged =
+                _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+                    x.ExistingParcels.Equals(x.UpdatedParcels));
+            var accountsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+                !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels));
+            var accountsToBeAdded = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+                IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
+
+            var parcelsUnchanged =
+                _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
+                    x.NewOwnerName.Equals(x.OldOwnerName));
+            var parcelsAssociatedWithNewAccount = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
+                !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName));
+            var parcelsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
+                IsNullOrEmpty(x.NewOwnerName));
+
+            var expectedChanges = new ParcelUpdateExpectedResultsDto()
+            {
+                NumAccountsUnchanged = accountsUnchanged,
+                NumAccountsToBeCreated = accountsToBeAdded,
+                NumAccountsToBeInactivated = accountsToBeInactivated,
+                NumParcelsUnchanged = parcelsUnchanged,
+                NumParcelsAssociatedWithNewAccount = parcelsAssociatedWithNewAccount,
+                NumParcelsToBeInactivated = parcelsToBeInactivated
+            };
+
             return expectedChanges;
+        }
+
+        public static void DeleteAll(RioDbContext _dbContext)
+        {
+            _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
         }
     }
 

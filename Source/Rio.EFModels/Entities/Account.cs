@@ -160,11 +160,5 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account.Count(x => accountIDs.Contains(x.AccountID)) == accountIDs.Distinct().Count();
         }
-
-        public static AccountDto GetByAccountName(RioDbContext dbContext, string accountName)
-        {
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
-                .SingleOrDefault(x => x.AccountName == accountName)?.AsDto();
-        }
     }
 }
