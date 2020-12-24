@@ -25,10 +25,6 @@ namespace Rio.EFModels.Entities
                 parcelUpdateStagingEntities.Add(newParcelStagingEntity);
             }
 
-            //We should throw errors if there are any duplicate ParcelNumbs, but eliminate that possibility if the Geometry, OwnerName and ParcelNumb are the same  
-            parcelUpdateStagingEntities =
-                parcelUpdateStagingEntities.Select(x => x).Distinct(new ParcelUpdateStagingComparer()).ToList();
-
             if (parcelUpdateStagingEntities.GroupBy(x => x.ParcelNumber).Any(g => g.Count() > 1))
             {
                 throw new ValidationException(
@@ -80,24 +76,6 @@ namespace Rio.EFModels.Entities
         public static void DeleteAll(RioDbContext _dbContext)
         {
             _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
-        }
-    }
-
-    public class ParcelUpdateStagingComparer : IEqualityComparer<ParcelUpdateStaging>
-    {
-
-        public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
-        {
-            return x.ParcelGeometry.EqualsExact(y.ParcelGeometry) &&
-                   x.ParcelNumber == y.ParcelNumber &&
-                   x.OwnerName == y.OwnerName;
-        }
-
-        public int GetHashCode(ParcelUpdateStaging obj)
-        {
-            return obj.ParcelGeometry.GetHashCode() ^
-                   obj.ParcelNumber.GetHashCode() ^
-                   obj.OwnerName.GetHashCode();
         }
     }
 
