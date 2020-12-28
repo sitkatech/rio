@@ -12,34 +12,46 @@ namespace Rio.API.Services.Telemetry
         public static async Task PostBodyTelemetryMiddleware(HttpContext context, Func<Task> next)
         {
             var request = context.Request;
+            var requestTelemetry = context.Features.Get<RequestTelemetry>();
 
-            if (request?.Body?.CanRead == true)
+            if (request?.Body?.CanRead == true && requestTelemetry != null)
             {
                 request.EnableBuffering();
 
-                var bodySize = (int) (request.ContentLength ?? request.Body.Length);
+                var bodySize = (int)(request.ContentLength ?? request.Body.Length);
+                var requestBodyString = "No body to return";
                 if (bodySize > 0)
                 {
-                    request.Body.Position = 0;
-
-                    byte[] body;
-
-                    await using (var ms = new MemoryStream(bodySize))
+                    if ((bodySize / 1024L / 1024L) < 30)
                     {
-                        await request.Body.CopyToAsync(ms);
+                        request.Body.Position = 0;
 
-                        body = ms.ToArray();
+                        byte[] body;
+
+                        await using (var ms = new MemoryStream(bodySize))
+                        {
+                            await request.Body.CopyToAsync(ms);
+
+                            body = ms.ToArray();
+                        }
+
+                        request.Body.Position = 0;
+
+                        requestBodyString = Encoding.UTF8.GetString(body);
                     }
-
-                    request.Body.Position = 0;
-
-                    var requestTelemetry = context.Features.Get<RequestTelemetry>();
-                    if (requestTelemetry != null)
+                    else
                     {
-                        var requestBodyString = Encoding.UTF8.GetString(body);
-
-                        requestTelemetry.Properties.Add("RequestBody", requestBodyString);
+                        requestBodyString = "Request body too large and therefore not logged";
                     }
+                }
+
+                if (!requestTelemetry.Properties.ContainsKey("RequestBody"))
+                {
+                    requestTelemetry.Properties.Add("RequestBody", requestBodyString);
+                }
+                else
+                {
+                    requestTelemetry.Properties["RequestBody"] = requestBodyString;
                 }
             }
 
