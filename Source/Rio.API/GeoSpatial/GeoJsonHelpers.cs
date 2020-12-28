@@ -247,26 +247,6 @@ namespace Rio.API.GeoSpatial
             return bufferedIntersectingPolygon.Intersection(lineGeometry).Length;
         }
 
-        public static IntersectionAndProximalCount CountProximalAndIntersectingGeometries(Geometry lineGeometry, ISpatialIndex<Geometry> geometriesToCheck, double bufferDistance, EndCapStyle bufferEndCapStyle)
-        {
-            var buffered = BufferOp.Buffer(lineGeometry, bufferDistance, new BufferParameters {EndCapStyle = bufferEndCapStyle});
-            var candidateGeometriesToCheck = geometriesToCheck.Query(buffered.EnvelopeInternal);
-            var proximals = candidateGeometriesToCheck.Where(x => x.Intersects(buffered)).ToList();
-            var intersectionCount = proximals.Count(x => x.Intersects(lineGeometry));
-            var proximalCount = proximals.Count - intersectionCount;
-            return new IntersectionAndProximalCount { IntersectionCount = intersectionCount, ProximalCount = proximalCount };
-        }
-
-        public static IntersectionAndProximalCount CountProximalAndIntersectingGeometries(Geometry lineGeometry, STRtree<Geometry> geometriesToCheck, STRtree<Geometry> bufferedGeometriesToCheck)
-        {
-            var candidateProximalGeometriesToCheck = bufferedGeometriesToCheck.Query(lineGeometry.EnvelopeInternal);
-            var candidateIntersectingGeometriesToCheck = geometriesToCheck.Query(lineGeometry.EnvelopeInternal);
-            var proximalsAndIntersectionsCount = candidateProximalGeometriesToCheck.Count(x => x.Intersects(lineGeometry));
-            var intersectionCount = candidateIntersectingGeometriesToCheck.Count(x => x.Intersects(lineGeometry));
-            var proximalCount = proximalsAndIntersectionsCount - intersectionCount;
-            return new IntersectionAndProximalCount { IntersectionCount = intersectionCount, ProximalCount = proximalCount };
-        }
-
         public static int CountIntersectingGeometries(Geometry lineGeometry, ISpatialIndex<Geometry> geometriesToCheck)
         {
             var candidateGeometriesToCheck = geometriesToCheck.Query(lineGeometry.EnvelopeInternal);
