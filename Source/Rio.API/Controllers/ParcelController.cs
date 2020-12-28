@@ -454,22 +454,18 @@ namespace Rio.API.Controllers
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
                     model.ParcelLayerNameInGDB, columns, null, _logger, null);
                 var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 4);
-                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay);
                 return Ok(expectedResults);
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException e)
             {
                 _logger.LogError(e.Message);
 
-                ParcelUpdateStaging.DeleteAll(_dbContext);
-
                 return BadRequest(e.Message);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-
-                ParcelUpdateStaging.DeleteAll(_dbContext);
 
                 return BadRequest("Error generating preview of changes!");
             }

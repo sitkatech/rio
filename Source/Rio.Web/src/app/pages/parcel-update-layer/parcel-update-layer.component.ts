@@ -97,6 +97,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   public onGDBFileChange(event: any) {
     this.gdbInputFile = this.getSelectedFile(event);
+    this.newParcelLayerForm.get('gdbUploadForParcelLayer').setValue(this.gdbInputFile);
   }
 
   public mappedColumnNameSetForRequiredColumn(requiredColumn: ParcelRequiredColumnAndMappingDto) {

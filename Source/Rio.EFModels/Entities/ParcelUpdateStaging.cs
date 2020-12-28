@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelUpdateStaging
     {
-        public static ParcelUpdateExpectedResultsDto AddFromFeatureCollection(RioDbContext _dbContext, FeatureCollection featureCollection)
+        public static ParcelUpdateExpectedResultsDto AddFromFeatureCollection(RioDbContext _dbContext, FeatureCollection featureCollection, string validParcelNumberRegexPattern, string validParcelNumberAsStringForDisplay)
         {
             var commonColumnMappings = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
 
@@ -31,10 +31,10 @@ namespace Rio.EFModels.Entities
                     "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
             }
 
-            if (parcelUpdateStagingEntities.Any(x => !Parcel.IsValidParcelNumber(x.ParcelNumber)))
+            if (parcelUpdateStagingEntities.Any(x => !Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, x.ParcelNumber)))
             {
                 throw new ValidationException(
-                    "Parcel number found that does not comply to format ###-###-##. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
+                    $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
             }
 
             //Make sure staging table is empty before proceeding

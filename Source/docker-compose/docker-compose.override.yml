@@ -22,6 +22,8 @@ services:
       - LeadOrganizationHomeUrl=${LeadOrganizationHomeUrl}
       - LeadOrganizationEmail=${LeadOrganizationEmail}
       - VerificationKeyChars=${VerificationKeyChars}
+      - ValidParcelNumberRegexPattern=${ValidParcelNumberRegexPattern}
+      - ValidParcelNumberPatternAsStringForDisplay=${ValidParcelNumberPatternAsStringForDisplay}
       - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
       - OpenETCheckRasterUpdatedDateBaseURL=${OpenETCheckRasterUpdatedDateBaseURL}
       - OpenETTriggerTimeSeriesBaseURL=${OpenETTriggerTimeSeriesBaseURL}

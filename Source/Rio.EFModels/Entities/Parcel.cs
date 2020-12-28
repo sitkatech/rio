@@ -124,10 +124,9 @@ namespace Rio.EFModels.Entities
             }
         }
 
-        public static bool IsValidParcelNumber(string parcelNumber)
+        public static bool IsValidParcelNumber(string regexPattern,  string parcelNumber)
         {
-            string pattern = @"^[0-9]{3}-[0-9]{3}-[0-9]{2}$";
-            return Regex.IsMatch(parcelNumber, pattern);
+            return Regex.IsMatch(parcelNumber, regexPattern);
         }
     }
 }
