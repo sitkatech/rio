@@ -12,6 +12,8 @@ import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { ParcelLayerUpdateDto } from 'src/app/pages/parcel-update-layer/parcel-update-layer.component';
+import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +42,7 @@ export class ParcelService {
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]) : Observable<any>{
+  mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]): Observable<any> {
     let route = `parcels/${parcelID}/mergeParcelAllocations`;
     return this.apiService.postToApi(route, model);
   }
@@ -50,7 +52,7 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
-  bulkSetAnnualAllocationsFileUpload(file: any, waterYear:number, allocationTypeID:number): Observable<any> {
+  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, allocationTypeID: number): Observable<any> {
     const apiHostName = environment.apiHostName
     const route = `https://${apiHostName}/parcels/${waterYear}/${allocationTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
     var result = this.httpClient.post<any>(
@@ -107,5 +109,29 @@ export class ParcelService {
   changeParcelOwner(parcelID: number, model: ParcelChangeOwnerDto): Observable<any[]> {
     let route = `/parcels/${parcelID}/changeOwner`
     return this.apiService.postToApi(route, model);
+  }
+
+  public uploadGDB(gdbInputFile: any): Observable<any> {
+    // we need to do it this way because the apiService.postToApi does a json.stringify, which won't work for input type="file"
+    let formData = new FormData();
+    formData.append("InputFile", gdbInputFile);
+    const apiHostName = environment.apiHostName;
+    const route = `https://${apiHostName}/parcels/uploadGDB`;
+    var result = this.httpClient.post<any>(
+      route,
+      formData
+    );
+
+    return result;
+  }
+
+  getGDBPreview(model: ParcelLayerUpdateDto): Observable<ParcelUpdateExpectedResultsDto> {
+    let route = `/parcels/previewGDBChanges`;
+    return this.apiService.postToApi(route, model);
+  }
+
+  getParcelGDBCommonMappingToParcelStagingColumn(): Observable<any> {
+    let route = `/parcels/parcelGDBCommonMappingToParcelStagingColumn`;
+    return this.apiService.getFromApi(route);
   }
 }

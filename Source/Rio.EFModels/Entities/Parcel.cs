@@ -4,6 +4,7 @@ using Rio.Models.DataTransferObjects.Parcel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Rio.EFModels.Entities
 {
@@ -121,6 +122,11 @@ namespace Rio.EFModels.Entities
                     Type = "Error"
                 };
             }
+        }
+
+        public static bool IsValidParcelNumber(string regexPattern,  string parcelNumber)
+        {
+            return Regex.IsMatch(parcelNumber, regexPattern);
         }
     }
 }

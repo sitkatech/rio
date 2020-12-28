@@ -1,0 +1,12 @@
+.custom-file-label::after {
+    display: none;
+}
+
+
+.table-group-striped tbody tr:nth-child(2n+1), .table-group-striped tbody tr:nth-child(2n+2) {
+    background: #f2f2f2;
+    }
+    
+    .table-group-striped tbody tr:nth-child(4n+1), .table-group-striped tbody tr:nth-child(4n+2) {
+    background: #fff;
+    }

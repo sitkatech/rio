@@ -1,0 +1,229 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Update Parcels and Accounts</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <ngb-alert [type]="'info'" [dismissible]="false">
+        <span>
+            This feature is currently in development. It will allow for previewing changes that will occur if the operation were to be confirmed, but no actual updates will occur even if finalized.
+        </span>
+    </ngb-alert>
+    <div class="row mb-2">
+        <div class="col">
+            <h2 class="d-inline-block">Update Parcels and Accounts</h2>
+
+            <div class="mt-2">
+                <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+            </div>
+
+        </div>
+    </div>
+    <form [formGroup]="newParcelLayerForm" (ngSubmit)="onSubmitGDB()" *ngIf="!featureClass">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Select Input File</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file"
+                                                id="gdbUploadForParcelLayer"
+                                                (change)="onGDBFileChange($event)"
+                                                class="form-control custom-file-input"
+                                                aria-describedby="gdbUploadForParcelLayerHelp">
+                                            <label for="gdbUploadForParcelLayer"
+                                                class="custom-file-label">{{getInputFileForGDB()}}</label>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-rio" (click)="clickFileInput()"><i
+                                                    class="fas fa-folder-open"></i></button>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="f.gdbUploadForParcelLayer.touched && f.gdbUploadForParcelLayer.invalid" class="alert alert-danger">
+                                        <div *ngIf="f.gdbUploadForParcelLayer.errors.required">Please select a file to upload.</div>
+                                    </div>
+                                    <div class="form-text">
+                                        After you upload your file you will be able to preview and verify the
+                                        uploaded data.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm">
+                <small class="form-text text-muted">
+                    Maximum total file size should not exceed 500MB.<br />
+                </small>
+            </div>
+            <div class="col-sm text-right">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    <span *ngIf="!featureClass">Save
+                        & Continue</span>
+                </button>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </form>
+    <form (ngSubmit)="onSubmitForPreview()" *ngIf="featureClass && !resultsPreview">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Columns in Layer</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-group-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="w-50">Expected Column</th>
+                                    <th class="w-50">Column From Layer To Use</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngFor="let requiredColumn of requiredColumnMappings; let i = index;">
+                                    <tr [ngClass]="{'d-none': mappedColumnNameSetForRequiredColumn(requiredColumn)}"
+                                        class="column-not-found-no-bottom">
+                                        <td colspan="4">
+                                            <p style="color:red" class="mb-0">
+                                                The expected column was not found. Please choose a column to map to this
+                                                value.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        [ngClass]="{'column-not-found-no-top': !mappedColumnNameSetForRequiredColumn(requiredColumn)}">
+                                        <td>
+                                            {{requiredColumn.RequiredColumnName}} (Equivalent to: {{requiredColumn.CommonName}})
+                                        </td>
+                                        <td class="form-group">
+                                            <div class="input-group">
+                                                <select class="form-control" name="sourceColumnNameFor{{i}}"
+                                                    [(ngModel)]="requiredColumn.MappedColumnName">
+                                                    <option [ngValue]="undefined" disabled>Select a Column</option>
+                                                    <option *ngFor="let column of getColumns()" [ngValue]="column">
+                                                        {{column}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm text-right">
+                <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
+                    [disabled]="isLoadingSubmit">
+                    Return & Edit</button>
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    Submit & Review
+                </button>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </form>
+    <ng-container *ngIf="resultsPreview">
+        <div class="row mt-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="align-middle">Expected Results</span>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts Unchanged</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsUnchanged}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Created</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsToBeCreated}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Inactivated</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumAccountsToBeInactivated}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Unchanged</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsUnchanged}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Associated With New Account</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsAssociatedWithNewAccount}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels To Be Inactivated</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsToBeInactivated}}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm text-right">
+                <button type="button" class="btn btn-rio mr-2" (click)="removeResultPreview()"
+                    [disabled]="isLoadingSubmit">
+                    Return & Edit</button>
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" (click)="launchModal(finalizeChangesModalContent)">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
+                    Finalize Changes
+                </button>
+                <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+<ng-template #finalizeChangesModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="finalizeChangesModalTitle">Finalize Account and Parcel Changes</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to finalize these changes? This action cannot be undone.
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()">
+                Save</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>
