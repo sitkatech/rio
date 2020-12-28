@@ -419,13 +419,13 @@ namespace Rio.API.Controllers
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e.Message, e);
                 UploadedGdb.Delete(_dbContext, uploadedGdbID);
                 return BadRequest(e.Message);
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e.Message, e);
                 UploadedGdb.Delete(_dbContext, uploadedGdbID);
                 return BadRequest("Error reading GDB file!");
             }
