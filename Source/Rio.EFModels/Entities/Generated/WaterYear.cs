@@ -17,6 +17,8 @@ namespace Rio.EFModels.Entities
         public int Year { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? FinalizeDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? ParcelLayerUpdateDate { get; set; }
 
         [InverseProperty("WaterYear")]
         public virtual ICollection<OpenETSyncHistory> OpenETSyncHistory { get; set; }
