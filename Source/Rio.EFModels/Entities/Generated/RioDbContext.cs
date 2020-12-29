@@ -64,7 +64,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<vGeoServerScenarioRechargeBasin> vGeoServerScenarioRechargeBasin { get; set; }
         public virtual DbSet<vGeoServerWaterTradingScenarioWell> vGeoServerWaterTradingScenarioWell { get; set; }
         public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
-        public virtual DbSet<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel> vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel { get; set; }
+        public virtual DbSet<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry> vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry { get; set; }
         public virtual DbSet<vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount> vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount { get; set; }
         public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
@@ -811,11 +811,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WellName).IsUnicode(false);
             });
 
-            modelBuilder.Entity<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel>(entity =>
+            modelBuilder.Entity<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToView("vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel");
+                entity.ToView("vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry");
 
                 entity.Property(e => e.NewOwnerName).IsUnicode(false);
 
