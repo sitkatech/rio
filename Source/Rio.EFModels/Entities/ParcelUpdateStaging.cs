@@ -70,16 +70,12 @@ namespace Rio.EFModels.Entities
             var accountsToBeAdded = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
                 IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
 
-            //Because of the geometry comparisons these need to be in memory before proceeding
             var parcelsUnchanged =
                 _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
-                    .ToList()
-                    .Count(x =>
-                    x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometry.EqualsExact(x.OldGeometry));
+                    .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText));
             var parcelsWithChangedGeometries = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
-                .ToList()
                 .Count(x =>
-                x.OldGeometry != null && !x.OldGeometry.EqualsExact(x.NewGeometry));
+                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText));
             var parcelsAssociatedWithNewAccount = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
                 !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName));
             var parcelsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
