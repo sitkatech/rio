@@ -16,7 +16,9 @@ namespace Rio.EFModels.Entities
         public string NewOwnerName { get; set; }
         [Column(TypeName = "geometry")]
         public Geometry OldGeometry { get; set; }
+        public string OldGeometryText { get; set; }
         [Column(TypeName = "geometry")]
         public Geometry NewGeometry { get; set; }
+        public string NewGeometryText { get; set; }
     }
 }
