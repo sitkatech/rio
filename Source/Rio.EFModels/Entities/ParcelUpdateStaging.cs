@@ -44,6 +44,11 @@ namespace Rio.EFModels.Entities
 
             _dbContext.SaveChanges();
 
+            return GetExpectedResultsDto(_dbContext);
+        }
+
+        public static ParcelUpdateExpectedResultsDto GetExpectedResultsDto (RioDbContext _dbContext)
+        {
             var accountsUnchanged =
                 _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
                     x.ExistingParcels.Equals(x.UpdatedParcels));

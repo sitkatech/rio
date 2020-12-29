@@ -45,5 +45,10 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.AsDto())
                 .ToList();
         }
+
+        public static WaterYearDto GetByYear(RioDbContext dbContext, int waterYear)
+        {
+            return dbContext.WaterYear.SingleOrDefault(x => x.Year == waterYear).AsDto();
+        }
     }
 }
