@@ -11,6 +11,9 @@ CREATE TABLE [dbo].[Account](
 	[UpdateDate] [datetime] NULL,
 	[AccountVerificationKey] [varchar](6) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[AccountVerificationKeyLastUseDate] [datetime] NULL,
+	[AccountVerificationKey] [varchar](6) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[CreateDate] [datetime] NOT NULL,
+	[InactivateDate] [datetime] NULL,
  CONSTRAINT [PK_Account_AccountID] PRIMARY KEY CLUSTERED 
 (
 	[AccountID] ASC
