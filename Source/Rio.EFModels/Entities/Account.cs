@@ -69,6 +69,11 @@ namespace Rio.EFModels.Entities
 
         public static AccountDto GetByAccountVerificationKey(RioDbContext dbContext, string accountVerificationKey)
         {
+            if (String.IsNullOrEmpty(accountVerificationKey))
+            {
+                return null;
+            }
+
             return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountVerificationKey == accountVerificationKey)?.AsDto();
         }
@@ -104,6 +109,7 @@ namespace Rio.EFModels.Entities
                 Notes = accountUpdateDto.Notes,
                 AccountName = accountUpdateDto.AccountName,
                 UpdateDate = DateTime.UtcNow,
+                CreateDate = DateTime.UtcNow,
                 AccountVerificationKey = GenerateAndVerifyAccountVerificationKey(dbContext, rioConfigurationVerificationKeyChars)
             };
 
