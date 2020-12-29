@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Rio.API.GeoSpatial;
+using static System.String;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
@@ -279,7 +280,7 @@ namespace Rio.API.Controllers
                     badRequest = BadRequest(new
                     {
                         validationMessage =
-                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
+                            $"The following header names appear more than once: {Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
                     });
                     records = null;
                     return false;
@@ -334,7 +335,7 @@ namespace Rio.API.Controllers
                 {
                     validationMessage =
                         $"The following Account Numbers had no {parcelAllocationTypeDisplayName} Volume entered: " +
-                        string.Join(", ", nullAllocationVolumes.Select(x => x.AccountNumber))
+                        Join(", ", nullAllocationVolumes.Select(x => x.AccountNumber))
                 });
                 return false;
             }
@@ -349,7 +350,7 @@ namespace Rio.API.Controllers
                 {
                     validationMessage =
                         "The upload contained multiples rows with these account numbers: " +
-                        string.Join(", ", duplicateAccountNumbers)
+                        Join(", ", duplicateAccountNumbers)
                 });
                 return false;
             }
@@ -364,7 +365,7 @@ namespace Rio.API.Controllers
                 {
                     validationMessage =
                         "The upload contained these account numbers which did not match any record in the system: " +
-                        string.Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
+                        Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
                 });
                 return false;
             }
@@ -470,6 +471,40 @@ namespace Rio.API.Controllers
                 return BadRequest("Error generating preview of changes!");
             }
         }
+
+        //[HttpPost("/parcels/enactGDBChanges")]
+        //public ActionResult EnactGDBChanges([FromBody] int waterYear)
+        //{
+        //    if (!_dbContext.ParcelUpdateStaging.Any())
+        //    {
+        //        return BadRequest(
+        //            "An error occurred and the changes could not be completed. Please re-upload the GDB and try again.");
+        //    }
+
+        //    var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
+
+        //    if (expectedResults.NumAccountsToBeInactivated > 0)
+        //    {
+        //        var accountNamesToInactivate =
+        //            _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x => !IsNullOrEmpty(x.ExistingParcels) && 
+        //                IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
+        //        Account.BulkInactivate(_dbContext, _dbContext.Account.Where(x => accountNamesToInactivate.Contains(x.AccountName))
+        //            .ToList());
+        //    }
+
+        //    if (expectedResults.NumAccountsToBeCreated > 0)
+        //    {
+        //        var accountNamesToCreate = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(
+        //                x =>
+        //                    IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
+        //            .Select(x => x.AccountName)
+        //            .ToList();
+
+        //        Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars, accountNamesToCreate);
+        //    }
+
+            
+        //}
     }
 
     public class ParcelLayerUpdateDto
