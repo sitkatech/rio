@@ -17,7 +17,7 @@ import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 
 @Component({
   selector: 'rio-set-water-allocation',

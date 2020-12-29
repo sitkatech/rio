@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { WaterYearDto } from '../shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "../shared/models/water-year-dto";
 import { WaterYearQuickOpenETHistoryDto } from '../shared/models/water-year-quick-open-et-history-dto';
 
 @Injectable({

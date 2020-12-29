@@ -4,8 +4,10 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
+import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { WaterYearService } from 'src/app/services/water-year.service';
 import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
@@ -13,6 +15,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
+import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -42,6 +45,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public uploadedGdbID: number;
   public requiredColumnMappings: Array<ParcelRequiredColumnAndMappingDto> = [];
   public resultsPreview: ParcelUpdateExpectedResultsDto;
+  public mostRecentWaterYear: WaterYearDto;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +55,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private modalService: NgbModal,
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -61,7 +66,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn().subscribe(model => {
+      forkJoin([
+      this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
+      this.waterYearService.getDefaultWaterYearToDisplay()]).subscribe(([model, waterYear]) => {
+        this.mostRecentWaterYear = waterYear;
         Object.keys(model).forEach(x => {
           if (typeof model[x] === "string") {
             this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x], CommonName: x }));
