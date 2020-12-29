@@ -26,11 +26,13 @@ namespace Rio.EFModels.Entities
         public string Notes { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
-        [Required]
         [StringLength(6)]
         public string AccountVerificationKey { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? AccountVerificationKeyLastUseDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? InactivateDate { get; set; }
 
         [ForeignKey(nameof(AccountStatusID))]
         [InverseProperty("Account")]
