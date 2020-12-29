@@ -447,14 +447,14 @@ namespace Rio.API.Controllers
             try
             {
                 var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
-                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
+                    null,
                     250000000, false);
                 var columns = model.ColumnMappings.Select(
                         x =>
                             $"{x.MappedColumnName} as {x.RequiredColumnName}").ToList();
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
                     model.ParcelLayerNameInGDB, columns, null, _logger, null);
-                var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 4);
+                var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 14);
                 var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay);
                 return Ok(expectedResults);
             }

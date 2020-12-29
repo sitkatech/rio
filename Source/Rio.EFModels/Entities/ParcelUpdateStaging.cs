@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
+using NetTopologySuite.Operation.Valid;
 using static System.String;
 
 namespace Rio.EFModels.Entities
@@ -16,14 +18,25 @@ namespace Rio.EFModels.Entities
             var parcelUpdateStagingEntities = new List<ParcelUpdateStaging>();
             foreach (var feature in featureCollection)
             {
+                var isValidOp = new IsValidOp(feature.Geometry);
+                if (!isValidOp.IsValid)
+                {
+                    var blah = feature.Geometry.AsText();
+                    Debug.WriteLine("feature.Geometry is not valid:" + isValidOp.ValidationError.Message);
+                    feature.Geometry = feature.Geometry.Buffer(0);
+                }
                 var newParcelStagingEntity = new ParcelUpdateStaging()
                 {
-                    ParcelGeometry = feature.Geometry,
+                    ParcelGeometry =  feature.Geometry,
                     OwnerName = feature.Attributes[commonColumnMappings.OwnerName].ToString(),
                     ParcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString(),
                 };
                 parcelUpdateStagingEntities.Add(newParcelStagingEntity);
             }
+
+            //We should throw errors if there are any duplicate ParcelNumbs, but eliminate that possibility if the Geometry, OwnerName and ParcelNumb are the same  
+            parcelUpdateStagingEntities =
+                parcelUpdateStagingEntities.Select(x => x).Distinct(new ParcelUpdateStagingComparer()).ToList();
 
             if (parcelUpdateStagingEntities.GroupBy(x => x.ParcelNumber).Any(g => g.Count() > 1))
             {
@@ -57,12 +70,19 @@ namespace Rio.EFModels.Entities
             var accountsToBeAdded = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
                 IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
 
+            //Because of the geometry comparisons these need to be in memory before proceeding
             var parcelsUnchanged =
-                _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
-                    x.NewOwnerName.Equals(x.OldOwnerName));
-            var parcelsAssociatedWithNewAccount = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
+                _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
+                    .ToList()
+                    .Count(x =>
+                    x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometry.EqualsExact(x.OldGeometry));
+            var parcelsWithChangedGeometries = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
+                .ToList()
+                .Count(x =>
+                x.OldGeometry != null && !x.OldGeometry.EqualsExact(x.NewGeometry));
+            var parcelsAssociatedWithNewAccount = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
                 !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName));
-            var parcelsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel.Count(x =>
+            var parcelsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
                 IsNullOrEmpty(x.NewOwnerName));
 
             var expectedChanges = new ParcelUpdateExpectedResultsDto()
@@ -71,6 +91,7 @@ namespace Rio.EFModels.Entities
                 NumAccountsToBeCreated = accountsToBeAdded,
                 NumAccountsToBeInactivated = accountsToBeInactivated,
                 NumParcelsUnchanged = parcelsUnchanged,
+                NumParcelsUpdatedGeometries = parcelsWithChangedGeometries,
                 NumParcelsAssociatedWithNewAccount = parcelsAssociatedWithNewAccount,
                 NumParcelsToBeInactivated = parcelsToBeInactivated
             };
@@ -84,12 +105,31 @@ namespace Rio.EFModels.Entities
         }
     }
 
+    public class ParcelUpdateStagingComparer : IEqualityComparer<ParcelUpdateStaging>
+    {
+
+        public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
+        {
+            return x.ParcelGeometry.EqualsExact(y.ParcelGeometry) &&
+                   x.ParcelNumber == y.ParcelNumber &&
+                   x.OwnerName == y.OwnerName;
+        }
+
+        public int GetHashCode(ParcelUpdateStaging obj)
+        {
+            return obj.ParcelGeometry.GetHashCode() ^
+                   obj.ParcelNumber.GetHashCode() ^
+                   obj.OwnerName.GetHashCode();
+        }
+    }
+
     public class ParcelUpdateExpectedResultsDto
     {
         public int NumAccountsUnchanged { get; set; }
         public int NumAccountsToBeCreated { get; set; }
         public int NumAccountsToBeInactivated { get; set; }
         public int NumParcelsUnchanged { get; set; }
+        public int NumParcelsUpdatedGeometries { get; set; }
         public int NumParcelsAssociatedWithNewAccount { get; set; }
         public int NumParcelsToBeInactivated { get; set; }
     }
