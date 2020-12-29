@@ -13,7 +13,7 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 
 @Component({
