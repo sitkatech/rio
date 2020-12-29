@@ -3,6 +3,7 @@ export class ParcelUpdateExpectedResultsDto {
     NumAccountsToBeCreated: number;
     NumAccountsToBeInactivated: number;
     NumParcelsUnchanged: number;
+    NumParcelsUpdatedGeometries: number;
     NumParcelsAssociatedWithNewAccount: number;
     NumParcelsToBeInactivated: number;
 }
