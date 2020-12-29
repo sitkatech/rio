@@ -106,6 +106,7 @@ namespace Rio.EFModels.Entities
             var accountsToBeAdded = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
                 !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
 
+            //Because of the geometry comparisons these need to be in memory before proceeding
             var parcelsUnchanged =
                 _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
                     .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText));
@@ -134,6 +135,24 @@ namespace Rio.EFModels.Entities
         public static void DeleteAll(RioDbContext _dbContext)
         {
             _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+        }
+    }
+
+    public class ParcelUpdateStagingComparer : IEqualityComparer<ParcelUpdateStaging>
+    {
+
+        public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
+        {
+            return x.ParcelGeometry.EqualsExact(y.ParcelGeometry) &&
+                   x.ParcelNumber == y.ParcelNumber &&
+                   x.OwnerName == y.OwnerName;
+        }
+
+        public int GetHashCode(ParcelUpdateStaging obj)
+        {
+            return obj.ParcelGeometry.GetHashCode() ^
+                   obj.ParcelNumber.GetHashCode() ^
+                   obj.OwnerName.GetHashCode();
         }
     }
 
