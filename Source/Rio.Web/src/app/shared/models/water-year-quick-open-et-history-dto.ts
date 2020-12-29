@@ -1,4 +1,4 @@
-import { WaterYearDto } from './openet-sync-history-dto';
+import { WaterYearDto } from "./water-year-dto";
 
 export class WaterYearQuickOpenETHistoryDto {
     WaterYear: WaterYearDto;
