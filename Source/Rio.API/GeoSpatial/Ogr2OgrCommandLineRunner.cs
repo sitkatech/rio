@@ -12,7 +12,7 @@ namespace Rio.API.GeoSpatial
     /// </summary>
     public class Ogr2OgrCommandLineRunner
     {
-        public const int DefaultCoordinateSystemId = 4326;
+        public const int DefaultCoordinateSystemId = 2163;
 
         private readonly FileInfo _ogr2OgrExecutable;
         private readonly int? _coordinateSystemId;
@@ -44,11 +44,11 @@ namespace Rio.API.GeoSpatial
         }
 
         public string ImportFileGdbToGeoJson(string inputGdbFilePath, string sourceLayerName,
-            List<string> columnNameList, int? significantDigits, ILogger logger, string filter)
+            List<string> columnNameList, int? significantDigits, ILogger logger, string filter, bool explodeCollections)
         {
             Check.RequirePathExists(inputGdbFilePath, "Can't find input File GDB for import with ogr2ogr");
             var gdalDataDirectoryInfo = _specifyGdalDirectory ? new DirectoryInfo(Path.Combine(_ogr2OgrExecutable.Directory.FullName, "gdal-data")) : null;
-            var commandLineArguments = BuildCommandLineArgumentsForFileGdbToGeoJson(inputGdbFilePath, gdalDataDirectoryInfo, sourceLayerName, sourceLayerName, columnNameList, filter, _coordinateSystemId, false, significantDigits, null);
+            var commandLineArguments = BuildCommandLineArgumentsForFileGdbToGeoJson(inputGdbFilePath, gdalDataDirectoryInfo, sourceLayerName, sourceLayerName, columnNameList, filter, _coordinateSystemId, explodeCollections, significantDigits, null);
             var processUtilityResult = ExecuteOgr2OgrCommand(commandLineArguments, logger);
             return processUtilityResult.StdOut;
         }
