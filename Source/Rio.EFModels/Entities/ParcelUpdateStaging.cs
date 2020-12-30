@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
+using NetTopologySuite.IO;
 using NetTopologySuite.Operation.Valid;
 using static System.String;
 
@@ -14,20 +15,13 @@ namespace Rio.EFModels.Entities
         public static ParcelUpdateExpectedResultsDto AddFromFeatureCollection(RioDbContext _dbContext, FeatureCollection featureCollection, string validParcelNumberRegexPattern, string validParcelNumberAsStringForDisplay)
         {
             var commonColumnMappings = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
-
+            var wktWriter = new WKTWriter();
             var parcelUpdateStagingEntities = new List<ParcelUpdateStaging>();
             foreach (var feature in featureCollection)
             {
-                var isValidOp = new IsValidOp(feature.Geometry);
-                if (!isValidOp.IsValid)
-                {
-                    var blah = feature.Geometry.AsText();
-                    Debug.WriteLine("feature.Geometry is not valid:" + isValidOp.ValidationError.Message);
-                    feature.Geometry = feature.Geometry.Buffer(0);
-                }
                 var newParcelStagingEntity = new ParcelUpdateStaging()
                 {
-                    ParcelGeometry =  feature.Geometry,
+                    ParcelGeometryText =  wktWriter.Write(feature.Geometry),
                     OwnerName = feature.Attributes[commonColumnMappings.OwnerName].ToString(),
                     ParcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString(),
                 };
@@ -56,7 +50,7 @@ namespace Rio.EFModels.Entities
             _dbContext.ParcelUpdateStaging.AddRange(parcelUpdateStagingEntities);
 
             _dbContext.SaveChanges();
-
+            _dbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText");
             return GetExpectedResultsDto(_dbContext);
         }
 
@@ -106,14 +100,14 @@ namespace Rio.EFModels.Entities
 
         public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
         {
-            return x.ParcelGeometry.EqualsExact(y.ParcelGeometry) &&
+            return x.ParcelGeometryText.Equals(y.ParcelGeometryText) &&
                    x.ParcelNumber == y.ParcelNumber &&
                    x.OwnerName == y.OwnerName;
         }
 
         public int GetHashCode(ParcelUpdateStaging obj)
         {
-            return obj.ParcelGeometry.GetHashCode() ^
+            return obj.ParcelGeometryText.GetHashCode() ^
                    obj.ParcelNumber.GetHashCode() ^
                    obj.OwnerName.GetHashCode();
         }
