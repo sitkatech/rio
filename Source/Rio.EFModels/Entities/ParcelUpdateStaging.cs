@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using Microsoft.Data.SqlClient;
@@ -133,14 +133,14 @@ namespace Rio.EFModels.Entities
 
         public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
         {
-            return x.ParcelGeometry.EqualsExact(y.ParcelGeometry) &&
+            return x.ParcelGeometryText.Equals(y.ParcelGeometryText) &&
                    x.ParcelNumber == y.ParcelNumber &&
                    x.OwnerName == y.OwnerName;
         }
 
         public int GetHashCode(ParcelUpdateStaging obj)
         {
-            return obj.ParcelGeometry.GetHashCode() ^
+            return obj.ParcelGeometryText.GetHashCode() ^
                    obj.ParcelNumber.GetHashCode() ^
                    obj.OwnerName.GetHashCode();
         }
