@@ -466,7 +466,7 @@ namespace Rio.API.Controllers
                         x =>
                             $"{x.MappedColumnName} as {x.RequiredColumnName}").ToList();
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
-                    model.ParcelLayerNameInGDB, columns, null, _logger, null);
+                    model.ParcelLayerNameInGDB, columns, null, _logger, null, false);
                 var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 14);
                 var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay);
                 return Ok(expectedResults);
@@ -496,27 +496,39 @@ namespace Rio.API.Controllers
 
         //    var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
 
-        //    if (expectedResults.NumAccountsToBeInactivated > 0)
+        //    if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
         //    {
-        //        var accountNamesToInactivate =
-        //            _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x => !IsNullOrEmpty(x.ExistingParcels) && 
+        //        var currentDifferencesForAccounts =
+        //            _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
+
+        //        var accountNamesToInactivate = currentDifferencesForAccounts
+        //            .Where(x => !IsNullOrEmpty(x.ExistingParcels) &&
         //                IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
         //        Account.BulkInactivate(_dbContext, _dbContext.Account.Where(x => accountNamesToInactivate.Contains(x.AccountName))
-        //            .ToList());
-        //    }
+        //            .ToList(), false);
 
-        //    if (expectedResults.NumAccountsToBeCreated > 0)
-        //    {
         //        var accountNamesToCreate = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(
         //                x =>
         //                    IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
         //            .Select(x => x.AccountName)
         //            .ToList();
 
-        //        Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars, accountNamesToCreate);
+        //        Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars, accountNamesToCreate, false);
+        //        _dbContext.SaveChanges();
         //    }
 
-            
+        //    var currentDifferencesForParcels =
+        //        _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry;
+
+        //    if (expectedResults.NumParcelsAssociatedWithNewAccount > 0 ||
+        //        expectedResults.NumAccountsToBeInactivated > 0)
+        //    {
+        //        //First we need to create any parcels that are new
+        //        var newParcels = currentDifferencesForParcels
+        //            .Where(x => x.OldOwnerName == null && x.NewOwnerName != null).Select(x => x);
+
+
+        //    }
         //}
     }
 

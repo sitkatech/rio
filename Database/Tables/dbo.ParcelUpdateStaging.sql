@@ -5,8 +5,9 @@ GO
 CREATE TABLE [dbo].[ParcelUpdateStaging](
 	[ParcelUpdateStagingID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelNumber] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[ParcelGeometry] [geometry] NOT NULL,
+	[ParcelGeometry] [geometry] NULL,
 	[OwnerName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[ParcelGeometryText] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
  CONSTRAINT [PK_ParcelUpdateStaging_ParcelUpdateStagingID] PRIMARY KEY CLUSTERED 
 (
 	[ParcelUpdateStagingID] ASC
