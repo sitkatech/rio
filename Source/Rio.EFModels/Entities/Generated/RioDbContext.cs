@@ -89,7 +89,8 @@ namespace Rio.EFModels.Entities
 
                 entity.HasIndex(e => e.AccountVerificationKey)
                     .HasName("AK_Account_AccountVerificationKey")
-                    .IsUnique();
+                    .IsUnique()
+                    .HasFilter("([AccountVerificationKey] IS NOT NULL)");
 
                 entity.Property(e => e.AccountName).IsUnicode(false);
 

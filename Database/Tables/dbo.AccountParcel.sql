@@ -26,7 +26,3 @@ ALTER TABLE [dbo].[AccountParcel]  WITH CHECK ADD  CONSTRAINT [FK_AccountParcel_
 REFERENCES [dbo].[Parcel] ([ParcelID])
 GO
 ALTER TABLE [dbo].[AccountParcel] CHECK CONSTRAINT [FK_AccountParcel_Parcel_ParcelID]
-GO
-ALTER TABLE [dbo].[AccountParcel]  WITH CHECK ADD  CONSTRAINT [CK_ParcelOwner_OwnerNameXorOwnerID] CHECK  (([AccountID] IS NULL AND [OwnerName] IS NOT NULL OR [AccountID] IS NOT NULL AND [OwnerName] IS NULL))
-GO
-ALTER TABLE [dbo].[AccountParcel] CHECK CONSTRAINT [CK_ParcelOwner_OwnerNameXorOwnerID]

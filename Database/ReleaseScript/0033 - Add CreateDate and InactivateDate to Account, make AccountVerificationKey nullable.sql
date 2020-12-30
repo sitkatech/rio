@@ -10,6 +10,16 @@ alter column CreateDate datetime not null
 
 alter table dbo.Account
 add InactivateDate datetime null
+go
+
+ALTER TABLE [dbo].[Account]  WITH CHECK ADD CONSTRAINT [CK_InactivateDate_AccountStatusInactive] CHECK  (([AccountStatusID] = 2 and [InactivateDate] is not null) or ([AccountStatusID] <> 2 and [InactivateDate] is null))
 
 alter table dbo.Account
 alter column AccountVerificationKey varchar(6) null
+
+alter table dbo.Account
+drop constraint [AK_Account_AccountVerificationKey]
+
+create unique nonclustered index [AK_Account_AccountVerificationKey] 
+on dbo.Account(AccountVerificationKey)
+where AccountVerificationKey is not null

@@ -10,8 +10,8 @@ select coalesce(currentParcelAssociations.ParcelNumber, updatedParcelAssociation
 		updatedParcelAssociations.OwnerName as NewOwnerName,
 		currentParcelAssociations.ParcelGeometry as OldGeometry,
 		currentParcelAssociations.ParcelGeometry.STAsText() as OldGeometryText,
-		updatedParcelAssociations.ParcelGeometry as NewGeometry,
-		updatedParcelAssociations.ParcelGeometry.STAsText() as NewGeometryText
+		updatedParcelAssociations.ParcelGeometry4326 as NewGeometry,
+		updatedParcelAssociations.ParcelGeometry4326.STAsText() as NewGeometryText
 from (
 		select p.ParcelNumber, a.AccountName, p.ParcelGeometry
 		from dbo.Parcel p

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO;
-using NetTopologySuite.Operation.Valid;
+using Rio.Models.DataTransferObjects;
 using static System.String;
 
 namespace Rio.EFModels.Entities
@@ -21,10 +20,12 @@ namespace Rio.EFModels.Entities
             {
                 var newParcelStagingEntity = new ParcelUpdateStaging()
                 {
-                    ParcelGeometryText =  wktWriter.Write(feature.Geometry),
+                    ParcelGeometry = feature.Geometry,
+                    ParcelGeometry4326 = feature.Geometry.ProjectTo4326(),
                     OwnerName = feature.Attributes[commonColumnMappings.OwnerName].ToString(),
                     ParcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString(),
                 };
+                newParcelStagingEntity.ParcelGeometryText = wktWriter.Write(newParcelStagingEntity.ParcelGeometry4326);
                 parcelUpdateStagingEntities.Add(newParcelStagingEntity);
             }
 
@@ -50,7 +51,6 @@ namespace Rio.EFModels.Entities
             _dbContext.ParcelUpdateStaging.AddRange(parcelUpdateStagingEntities);
 
             _dbContext.SaveChanges();
-            _dbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText");
             return GetExpectedResultsDto(_dbContext);
         }
 
