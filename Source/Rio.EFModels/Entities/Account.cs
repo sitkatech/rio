@@ -104,6 +104,9 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.AccountID == accountID);
 
             account.AccountStatusID = accountUpdateDto.AccountStatusID;
+            account.InactivateDate = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive
+                ? DateTime.UtcNow
+                : (DateTime?) null;
             account.Notes = accountUpdateDto.Notes;
             account.AccountName = accountUpdateDto.AccountName;
             account.UpdateDate = DateTime.UtcNow;

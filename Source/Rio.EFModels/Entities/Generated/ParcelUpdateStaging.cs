@@ -13,11 +13,15 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(20)]
         public string ParcelNumber { get; set; }
+        [Required]
         [Column(TypeName = "geometry")]
         public Geometry ParcelGeometry { get; set; }
         [Required]
         [StringLength(100)]
         public string OwnerName { get; set; }
+        [Required]
+        [Column(TypeName = "geometry")]
+        public Geometry ParcelGeometry4326 { get; set; }
         [Required]
         public string ParcelGeometryText { get; set; }
     }

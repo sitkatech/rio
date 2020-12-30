@@ -460,7 +460,7 @@ namespace Rio.API.Controllers
             try
             {
                 var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
-                    null,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
                     250000000, false);
                 var columns = model.ColumnMappings.Select(
                         x =>
@@ -485,51 +485,60 @@ namespace Rio.API.Controllers
             }
         }
 
-        //[HttpPost("/parcels/enactGDBChanges")]
-        //public ActionResult EnactGDBChanges([FromBody] int waterYear)
-        //{
-        //    if (!_dbContext.ParcelUpdateStaging.Any())
-        //    {
-        //        return BadRequest(
-        //            "An error occurred and the changes could not be completed. Please re-upload the GDB and try again.");
-        //    }
+        [HttpPost("/parcels/enactGDBChanges")]
+        public ActionResult EnactGDBChanges()
+        {
+            if (!_dbContext.ParcelUpdateStaging.Any())
+            {
+                return BadRequest(
+                    "An error occurred and the changes could not be completed. Please re-upload the GDB and try again.");
+            }
 
-        //    var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
+            using var dbContextTransaction = _dbContext.Database.BeginTransaction();
 
-        //    if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
-        //    {
-        //        var currentDifferencesForAccounts =
-        //            _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
+            try
+            {
+                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
 
-        //        var accountNamesToInactivate = currentDifferencesForAccounts
-        //            .Where(x => !IsNullOrEmpty(x.ExistingParcels) &&
-        //                IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
-        //        Account.BulkInactivate(_dbContext, _dbContext.Account.Where(x => accountNamesToInactivate.Contains(x.AccountName))
-        //            .ToList(), false);
+                if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
+                {
+                    var currentDifferencesForAccounts =
+                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
 
-        //        var accountNamesToCreate = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(
-        //                x =>
-        //                    IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
-        //            .Select(x => x.AccountName)
-        //            .ToList();
+                    var accountNamesToInactivate = currentDifferencesForAccounts
+                        .Where(x => !IsNullOrEmpty(x.ExistingParcels) &&
+                                    IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
+                    Account.BulkInactivate(_dbContext, _dbContext.Account
+                        .Where(x => accountNamesToInactivate.Contains(x.AccountName))
+                        .ToList(), false);
 
-        //        Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars, accountNamesToCreate, false);
-        //        _dbContext.SaveChanges();
-        //    }
+                    var accountNamesToCreate = currentDifferencesForAccounts
+                        .Where(
+                            x =>
+                                IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
+                        .Select(x => x.AccountName)
+                        .ToList();
 
-        //    var currentDifferencesForParcels =
-        //        _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry;
+                    Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars,
+                        accountNamesToCreate, false);
+                    _dbContext.SaveChanges();
+                }
 
-        //    if (expectedResults.NumParcelsAssociatedWithNewAccount > 0 ||
-        //        expectedResults.NumAccountsToBeInactivated > 0)
-        //    {
-        //        //First we need to create any parcels that are new
-        //        var newParcels = currentDifferencesForParcels
-        //            .Where(x => x.OldOwnerName == null && x.NewOwnerName != null).Select(x => x);
+                _dbContext.Database.ExecuteSqlRaw(
+                    "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry");
 
+                dbContextTransaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                dbContextTransaction.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
 
-        //    }
-        //}
+            return Ok();
+        }
+
     }
 
     public class ParcelLayerUpdateDto

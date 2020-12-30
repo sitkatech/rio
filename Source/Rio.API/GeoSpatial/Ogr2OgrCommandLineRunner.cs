@@ -12,7 +12,7 @@ namespace Rio.API.GeoSpatial
     /// </summary>
     public class Ogr2OgrCommandLineRunner
     {
-        public const int DefaultCoordinateSystemId = 2163;
+        public const int DefaultCoordinateSystemId = 32611;
 
         private readonly FileInfo _ogr2OgrExecutable;
         private readonly int? _coordinateSystemId;

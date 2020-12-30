@@ -173,7 +173,13 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.modalReference.close();
       this.modalReference = null;
     }
-    console.log('submitted');
+    this.parcelService.enactGDBChanges().subscribe(response => {
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
+    }, error => {
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
+    })
   }
 
   public clickFileInput() {

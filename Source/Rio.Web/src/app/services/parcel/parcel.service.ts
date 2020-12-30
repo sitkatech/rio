@@ -130,6 +130,11 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
+  enactGDBChanges() : Observable<any> {
+    let route = `/parcels/enactGDBChanges`;
+    return this.apiService.postToApi(route, null);
+  }
+
   getParcelGDBCommonMappingToParcelStagingColumn(): Observable<any> {
     let route = `/parcels/parcelGDBCommonMappingToParcelStagingColumn`;
     return this.apiService.getFromApi(route);
