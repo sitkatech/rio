@@ -12,7 +12,6 @@ namespace Rio.EFModels.Entities
             return new ParcelDto()
             {
                 ParcelID = parcel.ParcelID,
-                ParcelStatus = parcel.ParcelStatus.AsDto(),
                 ParcelNumber = parcel.ParcelNumber,
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                 LandOwner = parcel.AccountParcel.Where(x=> x.EffectiveYear <= currentYear).OrderByDescending(x => x.SaleDate).FirstOrDefault()?.Account?.AsSimpleDto()
