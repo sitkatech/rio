@@ -187,11 +187,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
     return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
   }
 
-  public hasCurrentYearBeenUpdated() : boolean {
-    debugger;
-    return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
-  }
-
   public onSubmitChanges() {
     if (this.modalReference) {
       this.modalReference.close();
