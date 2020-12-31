@@ -24,22 +24,22 @@ namespace Rio.EFModels.Entities
             dt.Columns.Add("OwnerName", typeof(string));
             dt.Columns.Add("ParcelNumber", typeof(string));
 
-            foreach (var feature in featureCollection)
-            {
-                var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
-                if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
-                {
-                    throw new ValidationException(
-                        $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
-                }
+            //foreach (var feature in featureCollection)
+            //{
+            //    var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
+            //    if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
+            //    {
+            //        throw new ValidationException(
+            //            $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
+            //    }
 
-                dt.Rows.Add(
-                    wktWriter.Write(feature.Geometry),
-                    wktWriter.Write(feature.Geometry.ProjectTo4326()),
-                    feature.Attributes[commonColumnMappings.OwnerName].ToString(),
-                    feature.Attributes[commonColumnMappings.ParcelNumber].ToString()
-                );
-            }
+            //    dt.Rows.Add(
+            //        wktWriter.Write(feature.Geometry),
+            //        wktWriter.Write(feature.Geometry.ProjectTo4326()),
+            //        feature.Attributes[commonColumnMappings.OwnerName].ToString(),
+            //        feature.Attributes[commonColumnMappings.ParcelNumber].ToString()
+            //    );
+            //}
 
             //if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
             //{
@@ -47,14 +47,14 @@ namespace Rio.EFModels.Entities
             //        "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
             //}
 
-            var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
-                x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
-                x.EffectiveYear.Value >= yearChangesToTakeEffect).Select(x => x.Parcel.ParcelNumber);
-            if (dt.AsEnumerable().Any(x => inactiveParcelsFromParcelOwnership.Contains(x[3].ToString())))
-            {
-                throw new ValidationException(
-                        "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
-            }
+            //var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
+            //    x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
+            //    x.EffectiveYear.Value >= yearChangesToTakeEffect).Select(x => x.Parcel.ParcelNumber);
+            //if (dt.AsEnumerable().Any(x => inactiveParcelsFromParcelOwnership.Contains(x[3].ToString())))
+            //{
+            //    throw new ValidationException(
+            //            "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
+            //}
 
             var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
                 x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
