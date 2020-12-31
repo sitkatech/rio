@@ -3,6 +3,9 @@ IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.pUpdatePar
 go
 
 create procedure dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry
+(
+    @year int
+)
 as
 
 begin
@@ -13,9 +16,8 @@ begin
 	join dbo.ParcelUpdateStaging pus on v.ParcelNumber = pus.ParcelNumber
 	where OldOwnerName is null and OldGeometryText is null
 
-
 	insert into dbo.AccountParcel (AccountID, ParcelID, EffectiveYear, SaleDate)
-	select a.AccountID, p.ParcelID, 2020, GETDATE()
+	select a.AccountID, p.ParcelID, @year, GETDATE()
 	from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
 	join dbo.Parcel p on v.ParcelNumber = p.ParcelNumber
 	left join dbo.Account a on v.NewOwnerName = a.AccountName
