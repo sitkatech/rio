@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations;
+﻿﻿﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using Microsoft.Data.SqlClient;
@@ -27,7 +27,6 @@ namespace Rio.EFModels.Entities
             foreach (var feature in featureCollection)
             {
                 var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
-
                 if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
                 {
                     throw new ValidationException(
@@ -125,24 +124,6 @@ namespace Rio.EFModels.Entities
         public static void DeleteAll(RioDbContext _dbContext)
         {
             _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
-        }
-    }
-
-    public class ParcelUpdateStagingComparer : IEqualityComparer<ParcelUpdateStaging>
-    {
-
-        public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
-        {
-            return x.ParcelGeometryText.Equals(y.ParcelGeometryText) &&
-                   x.ParcelNumber == y.ParcelNumber &&
-                   x.OwnerName == y.OwnerName;
-        }
-
-        public int GetHashCode(ParcelUpdateStaging obj)
-        {
-            return obj.ParcelGeometryText.GetHashCode() ^
-                   obj.ParcelNumber.GetHashCode() ^
-                   obj.OwnerName.GetHashCode();
         }
     }
 
