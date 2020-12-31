@@ -41,10 +41,19 @@ namespace Rio.EFModels.Entities
                 );
             }
 
-            if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
+            //if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
+            //{
+            //    throw new ValidationException(
+            //        "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
+            //}
+
+            var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
+                x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
+                x.EffectiveYear.Value >= yearChangesToTakeEffect).Select(x => x.Parcel.ParcelNumber);
+            if (dt.AsEnumerable().Any(x => inactiveParcelsFromParcelOwnership.Contains(x[3].ToString())))
             {
                 throw new ValidationException(
-                    "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
+                        "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
             }
 
             var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>

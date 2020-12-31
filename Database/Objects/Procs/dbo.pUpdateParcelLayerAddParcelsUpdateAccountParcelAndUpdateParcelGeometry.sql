@@ -33,4 +33,12 @@ begin
 	from dbo.ParcelUpdateStaging pus
 	join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
 
+	update dbo.Parcel
+	set ParcelStatusID = 2
+	from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+	join dbo.Parcel p on v.ParcelNumber = p.ParcelNumber
+	left join dbo.Account a on v.NewOwnerName = a.AccountName
+	where (OldOwnerName is not null and NewOwnerName is null) or
+	(OldOwnerName is null and NewOwnerName is null)
+
 end

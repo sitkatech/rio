@@ -343,6 +343,11 @@ namespace Rio.EFModels.Entities
                     .IsUnique();
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+
+                entity.HasOne(d => d.ParcelStatus)
+                    .WithMany(p => p.Parcel)
+                    .HasForeignKey(d => d.ParcelStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<ParcelAllocation>(entity =>
