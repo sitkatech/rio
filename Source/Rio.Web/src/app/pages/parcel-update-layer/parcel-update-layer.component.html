@@ -235,7 +235,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio"
                                             id="previousWaterYear" formControlName="waterYearSelection"
-                                            [value]="previousWaterYear.WaterYearID" [attr.disabled]="hasCurrentYearBeenUpdated()">
+                                            [value]="previousWaterYear.WaterYearID" [attr.disabled]="hasCurrentYearBeenUpdated() ? '' : null">
                                         <label class="form-check-label" for="previousWaterYear">
                                             {{previousWaterYear.Year}}
                                         </label>

@@ -9,6 +9,7 @@ namespace Rio.EFModels.Entities
     {
         [StringLength(255)]
         public string AccountName { get; set; }
+        public bool? AccountAlreadyExists { get; set; }
         public string ExistingParcels { get; set; }
         public string UpdatedParcels { get; set; }
     }
