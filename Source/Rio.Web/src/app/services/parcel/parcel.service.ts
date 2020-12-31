@@ -130,9 +130,9 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
-  enactGDBChanges() : Observable<any> {
+  enactGDBChanges(waterYearID: number) : Observable<any> {
     let route = `/parcels/enactGDBChanges`;
-    return this.apiService.postToApi(route, null);
+    return this.apiService.postToApi(route, waterYearID);
   }
 
   getParcelGDBCommonMappingToParcelStagingColumn(): Observable<any> {

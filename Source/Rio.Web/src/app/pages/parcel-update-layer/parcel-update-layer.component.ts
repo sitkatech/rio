@@ -14,8 +14,6 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
-import { RequestedStartAndEndWaterYearDto } from 'src/app/shared/models/requested-start-and-end-water-year-dto';
-import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
@@ -28,7 +26,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
   private watchUserChangeSubscription: any;
-  private currentUser: UserDto;
   public modalReference: NgbModalRef;
   public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
 
@@ -56,12 +53,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public previousYear: number = this.currentYear - 1;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
     private modalService: NgbModal,
@@ -73,7 +68,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      this.currentUser = currentUser;
       forkJoin([
       this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
       this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1)]).subscribe(([model, waterYears]) => {
@@ -107,14 +101,9 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   private getSelectedFile(event: any) {
-    const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
-      let incorrectFileType = !this.allowableFileTypes.some(function (x) {
-        return `${x}` == file.type;
-      });
       //returns bytes, but I'd rather not handle a constant that's a huge value
-      let exceedsMaximumSize = (file.size / 1024 / 1024) > this.maximumFileSizeMB;
       return event.target.files.item(0);
     }
     return null;
@@ -162,7 +151,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.requiredColumnMappings.forEach(x => {
         x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
       })
-    }, error => {
+    }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed to upload GDB!", AlertContext.Danger));
     });
@@ -179,7 +168,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     this.parcelService.getGDBPreview(parcelLayerUpdateDto).subscribe(response => {
       this.isLoadingSubmit = false;
       this.resultsPreview = response;
-    }, error => {
+    }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed to generate preview of changes!", AlertContext.Danger));
     })
@@ -197,15 +186,22 @@ export class ParcelUpdateLayerComponent implements OnInit {
     this.launchModal(modalContent)
   }
 
+  public hasCurrentYearBeenUpdated() : boolean {
+    debugger;
+    return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
+  }
+
   public onSubmitChanges() {
     if (this.modalReference) {
       this.modalReference.close();
       this.modalReference = null;
     }
-    this.parcelService.enactGDBChanges().subscribe(response => {
+
+    this.isLoadingSubmit = true;
+    this.parcelService.enactGDBChanges(this.submitChangesForm.get('waterYearSelection').value).subscribe(() => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
-    }, error => {
+    }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
     })

@@ -55,5 +55,14 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.WaterYear.Where(x => x.Year >= startYear && x.Year <= endYear).OrderByDescending(x => x.Year).Select(x => x.AsDto()).ToList();
         }
+
+        public static void UpdateParcelLayerUpdateDateForID(RioDbContext dbContext, int waterYearId)
+        {
+            var waterYear = dbContext.WaterYear.Single(x => x.WaterYearID == waterYearId);
+
+            waterYear.ParcelLayerUpdateDate = DateTime.UtcNow;
+
+            dbContext.SaveChanges();
+        }
     }
 }
