@@ -38,7 +38,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public newParcelLayerForm = new FormGroup({
     gdbUploadForParcelLayer: new FormControl('', [Validators.required])
   });
-  public submitChangesForm = new FormGroup({
+  public submitForPreviewForm = new FormGroup({
     waterYearSelection: new FormControl('', [Validators.required])
   })
   public gdbInputFile: any = null;
@@ -90,8 +90,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
     return this.newParcelLayerForm.controls;
   }
 
-  get submitChangesFormControls() {
-    return this.submitChangesForm.controls;
+  get submitForPreviewFormControls() {
+    return this.submitForPreviewForm.controls;
   }
 
   ngOnDestroy() {
@@ -159,11 +159,20 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   public onSubmitForPreview() {
+    if (!this.submitForPreviewForm.valid) {
+      Object.keys(this.submitForPreviewForm.controls).forEach(field => {
+        const control = this.submitForPreviewForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
+
     this.isLoadingSubmit = true;
     let parcelLayerUpdateDto = new ParcelLayerUpdateDto({
       ParcelLayerNameInGDB : this.featureClass.LayerName,
       UploadedGDBID : this.uploadedGdbID,
-      ColumnMappings : this.requiredColumnMappings
+      ColumnMappings : this.requiredColumnMappings,
+      YearChangesToTakeEffect : this.submitForPreviewForm.get('waterYearSelection').value
     });
     this.parcelService.getGDBPreview(parcelLayerUpdateDto).subscribe(response => {
       this.isLoadingSubmit = false;
@@ -172,18 +181,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed to generate preview of changes!", AlertContext.Danger));
     })
-  }
-
-  public openFinalizeModal(modalContent: any) {
-    if (!this.submitChangesForm.valid) {
-      Object.keys(this.submitChangesForm.controls).forEach(field => {
-        const control = this.submitChangesForm.get(field);
-        control.markAsTouched({ onlySelf: true });
-      });
-      return;
-    }
-
-    this.launchModal(modalContent)
   }
 
   public hasCurrentYearBeenUpdated() : boolean {
@@ -197,7 +194,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     }
 
     this.isLoadingSubmit = true;
-    this.parcelService.enactGDBChanges(this.submitChangesForm.get('waterYearSelection').value).subscribe(() => {
+    this.parcelService.enactGDBChanges(this.submitForPreviewForm.get('waterYearSelection').value).subscribe(() => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
       this.resetWorkflow();
@@ -210,10 +207,11 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public resetWorkflow() {
     this.removeResultPreview();
     this.removeFeatureClasses();
+    this.gdbInputFile = null;
     this.newParcelLayerForm.reset();
-    this.submitChangesForm.reset();
+    this.submitForPreviewForm.reset();
     window.scrollTo(0, 0);
-    
+
     this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1).subscribe(waterYears => {
       if (waterYears.length < 2) {
         this.waterYearsNotPresentError = true;
@@ -222,6 +220,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.currentWaterYear = waterYears[0];
       this.previousWaterYear = waterYears[1];
     });
+  }
+
+  public previewFormValid(): boolean {
+    return this.requiredColumnMappings.every(x => x.MappedColumnName !== null && x.MappedColumnName !== undefined) && this.submitForPreviewForm.valid
   }
 
   public clickFileInput() {
@@ -252,6 +254,7 @@ export class ParcelLayerUpdateDto {
   ParcelLayerNameInGDB: string;
   UploadedGDBID: number;
   ColumnMappings: Array<ParcelRequiredColumnAndMappingDto>;
+  YearChangesToTakeEffect: number;
 
   constructor(obj?: any) {
     Object.assign(this, obj);
