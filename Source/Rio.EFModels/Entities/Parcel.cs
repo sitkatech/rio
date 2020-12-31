@@ -20,13 +20,13 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<vParcelOwnership> vParcelOwnershipsByYear(RioDbContext dbContext, int year)
         {
-            return dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account).AsNoTracking().Where(
-                x =>
-                    x.RowNumber == 1 &&
-                    (x.EffectiveYear == null ||
-                     x.EffectiveYear <=
-                     year) &&
-                    (x.SaleDate == null || x.SaleDate < new DateTime(year + 1, 1, 1)));
+            var accountParcelIDs = dbContext.vParcelOwnership.AsNoTracking()
+                .Where(x => x.EffectiveYear == null || x.EffectiveYear <= year).ToList()
+                .GroupBy(x => x.ParcelID)
+                .Select(x => x.OrderBy(y => y.RowNumber).First().AccountParcelID);
+
+            return dbContext.vParcelOwnership.Include(x => x.Parcel).Include(x => x.Account).AsNoTracking()
+                .Where(x => accountParcelIDs.Contains(x.AccountParcelID));
         }
 
         public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID, int year)
@@ -40,8 +40,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
                             (x.EffectiveYear == null ||
                              x.EffectiveYear <=
-                             year) &&
-                            (x.SaleDate == null || x.SaleDate < new DateTime(year + 1, 1, 1))).ToList()
+                             year)).ToList()
                 // get the lowest row numbered of those
                 .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
                 // throw out anything where Record.UserID != userID
@@ -63,8 +62,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
                             (x.EffectiveYear == null ||
                              x.EffectiveYear <=
-                             year) &&
-                            (x.SaleDate == null || x.SaleDate < new DateTime(year + 1, 1, 1))).ToList()
+                             year)).ToList()
                 // get the lowest row numbered of those
                 .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
                 // throw out anything where Record.UserID != userID
