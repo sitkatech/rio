@@ -33,6 +33,16 @@ namespace Rio.API.Controllers
             return Ok(waterYears);
         }
 
+        [HttpGet("water-years/current-and-variable-previous/{numYearsBackToInclude}")]
+        [ParcelViewFeature]
+        public ActionResult<List<WaterYearDto>> GetWaterYearForCurrentYearAndVariableYearsBack([FromRoute] int numYearsBackToInclude)
+        {
+            var endYear = DateTime.Now.Year;
+            var startYear = endYear - numYearsBackToInclude;
+            var waterYears = WaterYear.ListBetweenYears(_dbContext, startYear, endYear);
+            return Ok(waterYears);
+        }
+
         [HttpGet("water-years/non-finalized")]
         [ParcelViewFeature]
         public ActionResult<List<WaterYearDto>> GetNonFinalizedWaterYears()
