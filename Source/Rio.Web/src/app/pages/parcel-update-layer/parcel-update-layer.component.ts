@@ -14,6 +14,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
+import { RequestedStartAndEndWaterYearDto } from 'src/app/shared/models/requested-start-and-end-water-year-dto';
 import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -40,12 +41,19 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public newParcelLayerForm = new FormGroup({
     gdbUploadForParcelLayer: new FormControl('', [Validators.required])
   });
+  public submitChangesForm = new FormGroup({
+    waterYearSelection: new FormControl('', [Validators.required])
+  })
   public gdbInputFile: any = null;
   public featureClass: FeatureClassInfoDto;
   public uploadedGdbID: number;
   public requiredColumnMappings: Array<ParcelRequiredColumnAndMappingDto> = [];
   public resultsPreview: ParcelUpdateExpectedResultsDto;
-  public mostRecentWaterYear: WaterYearDto;
+  public currentWaterYear: WaterYearDto;
+  public previousWaterYear: WaterYearDto;
+  waterYearsNotPresentError: boolean;
+  public currentYear: number = new Date().getFullYear();
+  public previousYear: number = this.currentYear - 1;
 
   constructor(
     private route: ActivatedRoute,
@@ -68,8 +76,13 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.currentUser = currentUser;
       forkJoin([
       this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
-      this.waterYearService.getDefaultWaterYearToDisplay()]).subscribe(([model, waterYear]) => {
-        this.mostRecentWaterYear = waterYear;
+      this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1)]).subscribe(([model, waterYears]) => {
+        if (waterYears.length < 2) {
+          this.waterYearsNotPresentError = true;
+          return;
+        }
+        this.currentWaterYear = waterYears[0];
+        this.previousWaterYear = waterYears[1];
         Object.keys(model).forEach(x => {
           if (typeof model[x] === "string") {
             this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x], CommonName: x }));
@@ -81,6 +94,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   get f() {
     return this.newParcelLayerForm.controls;
+  }
+
+  get submitChangesFormControls() {
+    return this.submitChangesForm.controls;
   }
 
   ngOnDestroy() {
@@ -166,6 +183,18 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed to generate preview of changes!", AlertContext.Danger));
     })
+  }
+
+  public openFinalizeModal(modalContent: any) {
+    if (!this.submitChangesForm.valid) {
+      Object.keys(this.submitChangesForm.controls).forEach(field => {
+        const control = this.submitChangesForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
+
+    this.launchModal(modalContent)
   }
 
   public onSubmitChanges() {

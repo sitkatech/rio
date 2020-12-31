@@ -50,5 +50,10 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.WaterYear.SingleOrDefault(x => x.Year == waterYear).AsDto();
         }
+
+        public static List<WaterYearDto> ListBetweenYears(RioDbContext dbContext, int startYear, int endYear)
+        {
+            return dbContext.WaterYear.Where(x => x.Year >= startYear && x.Year <= endYear).OrderByDescending(x => x.Year).Select(x => x.AsDto()).ToList();
+        }
     }
 }

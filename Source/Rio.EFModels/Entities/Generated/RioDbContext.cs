@@ -431,6 +431,8 @@ namespace Rio.EFModels.Entities
 
                 entity.Property(e => e.OwnerName).IsUnicode(false);
 
+                entity.Property(e => e.ParcelGeometry4326Text).IsUnicode(false);
+
                 entity.Property(e => e.ParcelGeometryText).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
