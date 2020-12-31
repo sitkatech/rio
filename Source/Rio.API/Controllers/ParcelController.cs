@@ -528,7 +528,7 @@ namespace Rio.API.Controllers
                         _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
 
                     var accountNamesToInactivate = currentDifferencesForAccounts
-                        .Where(x => !IsNullOrEmpty(x.ExistingParcels) &&
+                        .Where(x => x.AccountAlreadyExists.Value && !IsNullOrEmpty(x.ExistingParcels) &&
                                     IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
                     Account.BulkInactivate(_dbContext, _dbContext.Account
                         .Where(x => accountNamesToInactivate.Contains(x.AccountName))
@@ -537,7 +537,7 @@ namespace Rio.API.Controllers
                     var accountNamesToCreate = currentDifferencesForAccounts
                         .Where(
                             x =>
-                                IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
+                                !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
                         .Select(x => x.AccountName)
                         .ToList();
 

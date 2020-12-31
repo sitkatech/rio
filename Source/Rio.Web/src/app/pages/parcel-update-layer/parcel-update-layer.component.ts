@@ -187,7 +187,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   public hasCurrentYearBeenUpdated() : boolean {
-    debugger;
     return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
   }
 
@@ -201,10 +200,28 @@ export class ParcelUpdateLayerComponent implements OnInit {
     this.parcelService.enactGDBChanges(this.submitChangesForm.get('waterYearSelection').value).subscribe(() => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
+      this.resetWorkflow();
     }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
     })
+  }
+
+  public resetWorkflow() {
+    this.removeResultPreview();
+    this.removeFeatureClasses();
+    this.newParcelLayerForm.reset();
+    this.submitChangesForm.reset();
+    window.scrollTo(0, 0);
+    
+    this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1).subscribe(waterYears => {
+      if (waterYears.length < 2) {
+        this.waterYearsNotPresentError = true;
+        return;
+      }
+      this.currentWaterYear = waterYears[0];
+      this.previousWaterYear = waterYears[1];
+    });
   }
 
   public clickFileInput() {
