@@ -13,15 +13,6 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(20)]
         public string ParcelNumber { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerName { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerAddress { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerCity { get; set; }
         public int ParcelAreaInSquareFeet { get; set; }
         public double ParcelAreaInAcres { get; set; }
         [Required]
