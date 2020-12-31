@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO;
@@ -15,42 +16,55 @@ namespace Rio.EFModels.Entities
         {
             var commonColumnMappings = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
             var wktWriter = new WKTWriter();
-            var parcelUpdateStagingEntities = new List<ParcelUpdateStaging>();
+            
+            //Create a datatable to use for bulk copy
+            var dt = new DataTable();
+            dt.Columns.Add("ParcelGeometryText", typeof(string));
+            dt.Columns.Add("ParcelGeometry4326Text", typeof(string));
+            dt.Columns.Add("OwnerName", typeof(string));
+            dt.Columns.Add("ParcelNumber", typeof(string));
+
             foreach (var feature in featureCollection)
             {
-                var newParcelStagingEntity = new ParcelUpdateStaging()
+                var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
+                
+                if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
                 {
-                    ParcelGeometry = feature.Geometry,
-                    ParcelGeometry4326 = feature.Geometry.ProjectTo4326(),
-                    OwnerName = feature.Attributes[commonColumnMappings.OwnerName].ToString(),
-                    ParcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString(),
-                };
-                newParcelStagingEntity.ParcelGeometryText = wktWriter.Write(newParcelStagingEntity.ParcelGeometry4326);
-                parcelUpdateStagingEntities.Add(newParcelStagingEntity);
+                    throw new ValidationException(
+                        $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
+                }
+
+                dt.Rows.Add(
+                    wktWriter.Write(feature.Geometry),
+                    wktWriter.Write(feature.Geometry.ProjectTo4326()), 
+                    feature.Attributes[commonColumnMappings.OwnerName].ToString(), 
+                    feature.Attributes[commonColumnMappings.ParcelNumber].ToString()
+                );
             }
 
-            //We should throw errors if there are any duplicate ParcelNumbs, but eliminate that possibility if the Geometry, OwnerName and ParcelNumb are the same  
-            parcelUpdateStagingEntities =
-                parcelUpdateStagingEntities.Select(x => x).Distinct(new ParcelUpdateStagingComparer()).ToList();
-
-            if (parcelUpdateStagingEntities.GroupBy(x => x.ParcelNumber).Any(g => g.Count() > 1))
+            if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
             {
                 throw new ValidationException(
                     "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
             }
 
-            if (parcelUpdateStagingEntities.Any(x => !Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, x.ParcelNumber)))
-            {
-                throw new ValidationException(
-                    $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
-            }
-
             //Make sure staging table is empty before proceeding
             DeleteAll(_dbContext);
 
-            _dbContext.ParcelUpdateStaging.AddRange(parcelUpdateStagingEntities);
+            var rioDbConnectionString = _dbContext.Database.GetDbConnection().ConnectionString;
+            using var destinationConnection = new SqlConnection(rioDbConnectionString);
+            destinationConnection.Open();
 
-            _dbContext.SaveChanges();
+            using var bulkCopy = new SqlBulkCopy(destinationConnection) { DestinationTableName = "dbo.ParcelUpdateStaging", EnableStreaming = true };
+            //Specify columns so bulk copy knows exactly what it needs to do
+            bulkCopy.ColumnMappings.Add("ParcelGeometryText", "ParcelGeometryText");
+            bulkCopy.ColumnMappings.Add("ParcelGeometry4326Text", "ParcelGeometry4326Text");
+            bulkCopy.ColumnMappings.Add("OwnerName", "OwnerName");
+            bulkCopy.ColumnMappings.Add("ParcelNumber", "ParcelNumber");
+
+            bulkCopy.WriteToServer(dt);
+            _dbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText");
+
             return GetExpectedResultsDto(_dbContext);
         }
 
@@ -92,24 +106,6 @@ namespace Rio.EFModels.Entities
         public static void DeleteAll(RioDbContext _dbContext)
         {
             _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
-        }
-    }
-
-    public class ParcelUpdateStagingComparer : IEqualityComparer<ParcelUpdateStaging>
-    {
-
-        public bool Equals(ParcelUpdateStaging x, ParcelUpdateStaging y)
-        {
-            return x.ParcelGeometryText.Equals(y.ParcelGeometryText) &&
-                   x.ParcelNumber == y.ParcelNumber &&
-                   x.OwnerName == y.OwnerName;
-        }
-
-        public int GetHashCode(ParcelUpdateStaging obj)
-        {
-            return obj.ParcelGeometryText.GetHashCode() ^
-                   obj.ParcelNumber.GetHashCode() ^
-                   obj.OwnerName.GetHashCode();
         }
     }
 
