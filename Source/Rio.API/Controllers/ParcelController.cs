@@ -532,6 +532,28 @@ namespace Rio.API.Controllers
                     "Because changes have been applied to the current year previously, you may only select the current year to apply these changes to. Please update Water Year selection and try again.");
             }
 
+            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
+            
+            if (waterYearDto == null)
+            {
+                return BadRequest(
+                    "There was an error applying these changes to the selected Water Year. Please try again, and if the problem persists contact support.");
+            }
+
+            var currentWaterYearDto = WaterYear.GetByYear(_dbContext, DateTime.Now.Year);
+
+            if (currentWaterYearDto.Year - waterYearDto.Year > 1)
+            {
+                return BadRequest(
+                    "Changes may only be applied to the current year or the previous year. Please update Water Year selection and try again.");
+            }
+
+            if (waterYearDto.Year != currentWaterYearDto.Year && currentWaterYearDto.ParcelLayerUpdateDate != null)
+            {
+                return BadRequest(
+                    "Because changes have been applied to the current year previously, you may only select the current year to apply these changes to. Please update Water Year selection and try again.");
+            }
+
             using var dbContextTransaction = _dbContext.Database.BeginTransaction();
 
             try
