@@ -117,6 +117,11 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.AccountParcel)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.ParcelStatus)
+                    .WithMany(p => p.AccountParcel)
+                    .HasForeignKey(d => d.ParcelStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<AccountStatus>(entity =>
@@ -337,20 +342,7 @@ namespace Rio.EFModels.Entities
                     .HasName("AK_Parcel_ParcelNumber")
                     .IsUnique();
 
-                entity.Property(e => e.OwnerAddress).IsUnicode(false);
-
-                entity.Property(e => e.OwnerCity).IsUnicode(false);
-
-                entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.Property(e => e.OwnerZipCode).IsUnicode(false);
-
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
-
-                entity.HasOne(d => d.ParcelStatus)
-                    .WithMany(p => p.Parcel)
-                    .HasForeignKey(d => d.ParcelStatusID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<ParcelAllocation>(entity =>
@@ -776,12 +768,6 @@ namespace Rio.EFModels.Entities
                 entity.ToView("vGeoServerAllParcels");
 
                 entity.Property(e => e.LandOwnerFullName).IsUnicode(false);
-
-                entity.Property(e => e.OwnerAddress).IsUnicode(false);
-
-                entity.Property(e => e.OwnerCity).IsUnicode(false);
-
-                entity.Property(e => e.OwnerName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
