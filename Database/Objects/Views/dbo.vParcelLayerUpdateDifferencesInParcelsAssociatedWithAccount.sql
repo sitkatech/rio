@@ -6,6 +6,7 @@ Create View dbo.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount
 as
 
 select coalesce(currentAccountAssociations.AccountName, updatedAccountAssociations.OwnerName) as AccountName,
+		cast(case when currentAccountAssociations.AccountName is not null then 1 else 0 end as bit) as AccountAlreadyExists,
 		Left(currentAccountAssociations.Parcels, len(currentAccountAssociations.Parcels) - 1) as ExistingParcels,
 		Left(updatedAccountAssociations.Parcels, len(updatedAccountAssociations.Parcels) -1) as UpdatedParcels
 from (
