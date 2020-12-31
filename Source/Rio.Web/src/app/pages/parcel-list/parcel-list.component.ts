@@ -87,6 +87,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           sortable: true, filter: true, width: 100
         },
         { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
+        { headerName: 'Parcel Status', field: 'ParcelStatus.ParcelStatusDisplayName', sortable: true, filter: true, width: 120},
         {
           headerName: 'Account', valueGetter: function (params: any) {
             return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
