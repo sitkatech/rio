@@ -38,7 +38,11 @@ namespace Rio.EFModels.Entities
         public string OwnerZipCode { get; set; }
         public int ParcelAreaInSquareFeet { get; set; }
         public double ParcelAreaInAcres { get; set; }
+        public int ParcelStatusID { get; set; }
 
+        [ForeignKey(nameof(ParcelStatusID))]
+        [InverseProperty("Parcel")]
+        public virtual ParcelStatus ParcelStatus { get; set; }
         [InverseProperty("Parcel")]
         public virtual ICollection<AccountParcel> AccountParcel { get; set; }
         [InverseProperty("Parcel")]
