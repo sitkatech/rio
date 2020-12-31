@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[AccountParcel](
 	[EffectiveYear] [int] NULL,
 	[SaleDate] [datetime] NULL,
 	[Note] [varchar](500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[ParcelStatusID] [int] NOT NULL,
  CONSTRAINT [PK_AccountParcel_AccountParcelID] PRIMARY KEY CLUSTERED 
 (
 	[AccountParcelID] ASC
@@ -26,3 +27,8 @@ ALTER TABLE [dbo].[AccountParcel]  WITH CHECK ADD  CONSTRAINT [FK_AccountParcel_
 REFERENCES [dbo].[Parcel] ([ParcelID])
 GO
 ALTER TABLE [dbo].[AccountParcel] CHECK CONSTRAINT [FK_AccountParcel_Parcel_ParcelID]
+GO
+ALTER TABLE [dbo].[AccountParcel]  WITH CHECK ADD  CONSTRAINT [FK_AccountParcel_ParcelStatus_ParcelStatusID] FOREIGN KEY([ParcelStatusID])
+REFERENCES [dbo].[ParcelStatus] ([ParcelStatusID])
+GO
+ALTER TABLE [dbo].[AccountParcel] CHECK CONSTRAINT [FK_AccountParcel_ParcelStatus_ParcelStatusID]

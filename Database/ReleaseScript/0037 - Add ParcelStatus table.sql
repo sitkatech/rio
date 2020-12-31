@@ -8,15 +8,15 @@ insert into dbo.ParcelStatus (ParcelStatusID, ParcelStatusName, ParcelStatusDisp
 values (1, 'Active', 'Active'),
 (2, 'Inactive', 'Inactive')
 
-alter table dbo.Parcel
+alter table dbo.AccountParcel
 add ParcelStatusID int null
 go
 
-update dbo.Parcel
+update dbo.AccountParcel
 set ParcelStatusID = 1
 
-alter table dbo.Parcel
+alter table dbo.AccountParcel
 alter column ParcelStatusID int not null 
 
-alter table dbo.Parcel
-add constraint FK_Parcel_ParcelStatus_ParcelStatusID foreign key (ParcelStatusID) references dbo.ParcelStatus (ParcelStatusID)
+alter table dbo.AccountParcel
+add constraint FK_AccountParcel_ParcelStatus_ParcelStatusID foreign key (ParcelStatusID) references dbo.ParcelStatus (ParcelStatusID)
