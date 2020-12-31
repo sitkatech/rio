@@ -455,7 +455,7 @@ namespace Rio.API.Controllers
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
                     model.ParcelLayerNameInGDB, columns, null, _logger, null, false);
                 var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 14);
-                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay, model.YearChangesToTakeEffect);
                 return Ok(expectedResults);
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException e)
@@ -475,12 +475,6 @@ namespace Rio.API.Controllers
         [HttpPost("/parcels/enactGDBChanges")]
         public ActionResult EnactGDBChanges([FromBody] int waterYearID)
         {
-            if (!_dbContext.ParcelUpdateStaging.Any())
-            {
-                return BadRequest(
-                    "An error occurred and the changes could not be completed. Please re-upload the GDB and try again.");
-            }
-
             var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
             
             if (waterYearDto == null)
@@ -557,6 +551,7 @@ namespace Rio.API.Controllers
         public string ParcelLayerNameInGDB { get; set; }
         public int UploadedGDBID { get; set; }
         public List<ParcelRequiredColumnAndMappingDto> ColumnMappings { get; set; }
+        public int YearChangesToTakeEffect { get; set; }
     }
 
     public class ParcelRequiredColumnAndMappingDto

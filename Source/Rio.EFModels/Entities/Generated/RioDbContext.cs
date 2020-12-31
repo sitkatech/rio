@@ -37,6 +37,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumn { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
+        public virtual DbSet<ParcelStatus> ParcelStatus { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStaging { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
@@ -345,6 +346,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.OwnerZipCode).IsUnicode(false);
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+
+                entity.HasOne(d => d.ParcelStatus)
+                    .WithMany(p => p.Parcel)
+                    .HasForeignKey(d => d.ParcelStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<ParcelAllocation>(entity =>
@@ -421,6 +427,23 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelMonthlyEvapotranspiration)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelStatus>(entity =>
+            {
+                entity.HasIndex(e => e.ParcelStatusDisplayName)
+                    .HasName("AK_ParcelStatus_ParcelStatusDisplayName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ParcelStatusName)
+                    .HasName("AK_ParcelStatus_ParcelStatusName")
+                    .IsUnique();
+
+                entity.Property(e => e.ParcelStatusID).ValueGeneratedNever();
+
+                entity.Property(e => e.ParcelStatusDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelStatusName).IsUnicode(false);
             });
 
             modelBuilder.Entity<ParcelUpdateStaging>(entity =>
