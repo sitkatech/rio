@@ -1,2 +1,0 @@
-alter table dbo.AccountParcel
-drop constraint [CK_ParcelOwner_ownerNameXorOwnerID]
