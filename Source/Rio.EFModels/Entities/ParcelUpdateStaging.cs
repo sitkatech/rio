@@ -28,7 +28,6 @@ namespace Rio.EFModels.Entities
             {
                 var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
 
-                if (parcelNumber == "101-010-07") continue;
                 if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
                 {
                     throw new ValidationException(
