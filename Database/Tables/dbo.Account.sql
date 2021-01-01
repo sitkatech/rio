@@ -43,3 +43,7 @@ GO
 ALTER TABLE [dbo].[Account]  WITH CHECK ADD  CONSTRAINT [CK_InactivateDate_AccountStatusInactive] CHECK  (([AccountStatusID]=(2) AND [InactivateDate] IS NOT NULL OR [AccountStatusID]<>(2) AND [InactivateDate] IS NULL))
 GO
 ALTER TABLE [dbo].[Account] CHECK CONSTRAINT [CK_InactivateDate_AccountStatusInactive]
+GO
+ALTER TABLE [dbo].[Account]  WITH CHECK ADD  CONSTRAINT [CK_InactiveDate_ParcelStatusIDXorInactivateDate] CHECK  (([AccountStatusID]=(2) AND [InactivateDate] IS NOT NULL OR [AccountStatusID]<>(2) AND [InactivateDate] IS NULL))
+GO
+ALTER TABLE [dbo].[Account] CHECK CONSTRAINT [CK_InactiveDate_ParcelStatusIDXorInactivateDate]
