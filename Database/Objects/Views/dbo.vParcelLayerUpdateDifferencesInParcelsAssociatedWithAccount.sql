@@ -7,33 +7,21 @@ as
 
 select coalesce(currentAccountAssociations.AccountName, updatedAccountAssociations.OwnerName) as AccountName,
 		cast(case when currentAccountAssociations.AccountName is not null then 1 else 0 end as bit) as AccountAlreadyExists,
-		Left(currentAccountAssociations.Parcels, len(currentAccountAssociations.Parcels) - 1) as ExistingParcels,
-		Left(updatedAccountAssociations.Parcels, len(updatedAccountAssociations.Parcels) -1) as UpdatedParcels
+		currentAccountAssociations.ExistingParcels,
+		updatedAccountAssociations.UpdatedParcels
 from (
-		SELECT  a.AccountName,
-            (
-                SELECT  p.ParcelNumber + ', ' AS [text()]
-                FROM    dbo.vParcelOwnership ap
-				join dbo.Parcel p on ap.ParcelID = p.ParcelID
-                WHERE   ap.AccountID = a.AccountID and ap.RowNumber = 1
-                order by p.ParcelNumber
-                FOR XML PATH(''), TYPE
-                ).value('/', 'NVARCHAR(MAX)'
-			) as Parcels
+		SELECT  a.AccountName, STRING_AGG(po.ParcelNumber, ',') WITHIN GROUP (ORDER BY po.ParcelNumber) as ExistingParcels
 		from dbo.Account a
+		left join (select AccountID, ParcelNumber
+				   from dbo.vParcelOwnership po
+				   join dbo.Parcel p on po.ParcelID = p.ParcelID
+				   where RowNumber = 1) po on po.AccountID = a.AccountID
+		group by a.AccountName
 	  ) currentAccountAssociations
 full outer join (
-		SELECT  a.OwnerName,
-            (
-                SELECT  pus.ParcelNumber + ', ' AS [text()]
-                FROM    dbo.ParcelUpdateStaging pus
-                WHERE   pus.OwnerName = a.OwnerName
-                order by pus.ParcelNumber
-                FOR XML PATH(''), TYPE
-                ).value('/', 'NVARCHAR(MAX)'
-			) as Parcels
-		from dbo.ParcelUpdateStaging a
-		group by a.OwnerName) updatedAccountAssociations on currentAccountAssociations.AccountName = updatedAccountAssociations.OwnerName
+		SELECT  OwnerName, STRING_AGG(ParcelNumber, ',') WITHIN GROUP (ORDER BY ParcelNumber) as UpdatedParcels
+		from dbo.ParcelUpdateStaging
+		group by OwnerName) updatedAccountAssociations on currentAccountAssociations.AccountName = updatedAccountAssociations.OwnerName
 
 GO
 
