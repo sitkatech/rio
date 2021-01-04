@@ -845,6 +845,10 @@ namespace Rio.EFModels.Entities
                 entity.ToView("vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount");
 
                 entity.Property(e => e.AccountName).IsUnicode(false);
+
+                entity.Property(e => e.ExistingParcels).IsUnicode(false);
+
+                entity.Property(e => e.UpdatedParcels).IsUnicode(false);
             });
 
             modelBuilder.Entity<vParcelOwnership>(entity =>
