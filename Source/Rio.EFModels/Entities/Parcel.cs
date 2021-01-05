@@ -25,8 +25,7 @@ namespace Rio.EFModels.Entities
                     x.RowNumber == 1 &&
                     (x.EffectiveYear == null ||
                      x.EffectiveYear <=
-                     year) &&
-                    (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31)));
+                     year));
         }
 
         public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID, int year)
@@ -40,8 +39,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
                             (x.EffectiveYear == null ||
                              x.EffectiveYear <=
-                             year) &&
-                            (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
+                             year)).ToList()
                 // get the lowest row numbered of those
                 .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
                 // throw out anything where Record.UserID != userID
@@ -63,8 +61,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDsEverOwned.Contains(x.ParcelID) &&
                             (x.EffectiveYear == null ||
                              x.EffectiveYear <=
-                             year) &&
-                            (x.SaleDate == null || x.SaleDate <= new DateTime(year, 12, 31))).ToList()
+                             year)).ToList()
                 // get the lowest row numbered of those
                 .GroupBy(x => x.ParcelID).Select(x => x.OrderBy(y => y.RowNumber).First())
                 // throw out anything where Record.UserID != userID

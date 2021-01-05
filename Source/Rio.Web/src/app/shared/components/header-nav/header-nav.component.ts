@@ -206,9 +206,4 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public getNavThemeColor(): string {
         return environment.navThemeColor;
     }
-
-    public setCurrentAccountAndRedirectToLandownerDashboard(account: AccountDto) {
-        this.authenticationService.setActiveAccount(account);
-        this.router.navigate(["/landowner-dashboard"]);
-    }
 }
