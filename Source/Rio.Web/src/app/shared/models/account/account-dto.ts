@@ -6,6 +6,7 @@ export class AccountDto {
     AccountNumber: number;
     Notes: string;
     AccountVerificationKey: string;
+    AccountVerificationKeyLastUseDate: Date;
     AccountStatus: AccountStatusDto;
     Users: Array<UserSimpleDto>;
     AccountDisplayName: string;

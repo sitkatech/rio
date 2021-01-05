@@ -29,6 +29,8 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(6)]
         public string AccountVerificationKey { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? AccountVerificationKeyLastUseDate { get; set; }
 
         [ForeignKey(nameof(AccountStatusID))]
         [InverseProperty("Account")]
