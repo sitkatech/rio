@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'rio-login-callback',
@@ -10,7 +11,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 export class LoginCallbackComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) { }
+  constructor(private router: Router, 
+    private authenticationService: AuthenticationService,
+    private userService: UserService) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -19,7 +22,13 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
           this.authenticationService.setActiveAccount(undefined);
           this.router.navigate(['/manager-dashboard']);
         } else if (this.authenticationService.isUserALandOwnerOrDemoUser(currentUser)){
-          this.router.navigate(['/landowner-dashboard']);
+          this.userService.listAccountsByUserID(currentUser.UserID).subscribe(result => {
+            if (result == null) {
+              this.router.navigate(['/']);
+              return;
+            }
+            this.router.navigate([`/landowner-dashboard/${result[0].AccountNumber}`]);
+          });
         } else{
           this.router.navigate(['/']);
         }

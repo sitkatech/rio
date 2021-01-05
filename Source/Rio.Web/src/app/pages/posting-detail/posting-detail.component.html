@@ -83,7 +83,7 @@
               <p>This is your posting. View any offers on your dashboard.</p>
               <div class="text-center">
                 <button class="btn btn-rio btn-sm mr-1" (click)="resetCurrentAccount()">Back</button>
-                <button class="btn btn-rio btn-sm mr-1" (click)="setActiveAccountAndNavigateToDashboard()">Go to Dashboard</button>
+                <a class="btn btn-rio btn-sm mr-1" routerLink="/landowner-dashboard/{{currentAccount.AccountNumber}}">Go to Dashboard</a>
                 <button class="btn btn-rio btn-sm" (click)="closePosting()">Close Posting</button>
               </div>
             </div>

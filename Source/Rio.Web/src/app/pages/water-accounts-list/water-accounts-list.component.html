@@ -86,15 +86,15 @@
                                 </p>
                             </div>
                             <div class="col-sm-12 d-lg-none">
-                                <btn class="btn btn-rio float-right"
-                            (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
-                            Dashboard</btn>
+                                <a class="btn btn-rio float-right"
+                            routerLink="/landowner-dashboard/{{currentAccount.Account.AccountNumber}}">Go to
+                            Dashboard</a>
                             </div>
                         </div>
                     <br class="d-none d-lg-block">
-                        <btn class="btn btn-rio d-none d-lg-block" style="position:absolute; bottom:3%; right:3%"
-                            (click)="setCurrentAccountAndRedirectToLandownerDashboard(currentAccount.Account)">Go to
-                            Dashboard</btn>
+                        <a class="btn btn-rio d-none d-lg-block" style="position:absolute; bottom:3%; right:3%"
+                        routerLink="/landowner-dashboard/{{currentAccount.Account.AccountNumber}}">Go to
+                            Dashboard</a>
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/mu
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountStatusEnum } from 'src/app/shared/models/enums/account-status-enum';
+import { DatePipe } from '@angular/common';
 @Component({
   selector: 'rio-account-list',
   templateUrl: './account-list.component.html',
@@ -29,7 +30,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
   constructor(
     private accountService: AccountService,
     private authenticationService: AuthenticationService,
-    private cdr: ChangeDetectorRef, private utilityFunctionsService: UtilityFunctionsService) { }
+    private cdr: ChangeDetectorRef, 
+    private datePipe: DatePipe,
+    private utilityFunctionsService: UtilityFunctionsService) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -42,6 +45,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
 
+      let _datePipe = this.datePipe;
       this.columnDefs = [
         {
           headerName: 'Account Name', valueGetter: function (params: any) {
@@ -67,7 +71,40 @@ export class AccountListComponent implements OnInit, OnDestroy {
         { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
         { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
         { headerName: 'Verification Key', field: 'AccountVerificationKey', sortable: true, filter: true, width: 145},
-        { headerName: 'Verification Key Last Used', field: 'AccountVerificationKeyLastUseDate', sortable: true, filter: true},
+        { headerName: 'Verification Key Last Used', field: 'AccountVerificationKeyLastUseDate', valueFormatter: function (params) {
+          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
+        },
+        filterValueGetter: function (params: any) {
+          return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
+        },
+        filterParams: {
+          // provide comparator function
+          comparator: function (filterLocalDate, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return -1;
+            var cellDate = Date.parse(dateAsString);
+            const filterLocalDateAtMidnight = filterLocalDate.getTime();
+            if (filterLocalDateAtMidnight == cellDate) {
+              return 0;
+            }
+            if (cellDate < filterLocalDateAtMidnight) {
+              return -1;
+            }
+            if (cellDate > filterLocalDateAtMidnight) {
+              return 1;
+            }
+          }
+        },
+        comparator: function (id1: any, id2: any) {
+          if (id1.value < id2.value) {
+            return -1;
+          }
+          if (id1.value > id2.value) {
+            return 1;
+          }
+          return 0;
+        },
+        sortable: true, filter: 'agDateColumnFilter', width: 150},
         { headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
         { headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
         {

@@ -67,7 +67,7 @@
           <p *ngIf="!canConfirmTransfer()">This trade has been {{isCanceled() ? "Canceled" : trade.TradeStatus.TradeStatusDisplayName}}. There are no further actions.</p>
           <p *ngIf="canConfirmTransfer()">This trade has been {{trade.TradeStatus.TradeStatusDisplayName}}, and is awaiting registration.</p>
           <div class="text-center">
-            <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/landowner-dashboard">View Dashboard</a>
+            <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/landowner-dashboard/{{activeAccount.AccountNumber}}">View Dashboard</a>
             <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/trades">View Postings List</a>
             <a *ngIf="canConfirmTransfer()" class="btn btn-rio btn-sm mb-1" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}">Register Transfer</a>       
           </div>

@@ -20,7 +20,7 @@
     <ng-container *ngIf="account; else loadingAccount">
 
     <div style="margin: 1rem 0 1rem 0;" *ngIf="currentUserIsADemoUserOrAdministrator() || currentUserHasAccount()">
-        <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{account.AccountID}}">View
+        <a class="float-right btn btn-rio btn-sm mr-3" routerLink="/landowner-dashboard/{{account.AccountNumber}}">View
             Landowner Dashboard</a>
     </div>
     <h2 class="d-inline-block">

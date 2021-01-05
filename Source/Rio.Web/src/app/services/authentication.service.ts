@@ -149,9 +149,6 @@ export class AuthenticationService {
   public setActiveAccount(account: AccountSimpleDto, navigate: boolean = true) {
     window.localStorage.setItem('activeAccount', JSON.stringify(account));
     this._currentAccountSubject.next(account);
-    if (this.router.url !== "/landowner-dashboard" && navigate) {
-      this.router.navigateByUrl("/landowner-dashboard");
-    }
   }
 
   public refreshUserInfo(user: UserDto) {
