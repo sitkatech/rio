@@ -23,7 +23,7 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
           this.router.navigate(['/manager-dashboard']);
         } else if (this.authenticationService.isUserALandOwnerOrDemoUser(currentUser)){
           this.userService.listAccountsByUserID(currentUser.UserID).subscribe(result => {
-            if (result == null) {
+            if (result == null || result.length == 0) {
               this.router.navigate(['/']);
               return;
             }

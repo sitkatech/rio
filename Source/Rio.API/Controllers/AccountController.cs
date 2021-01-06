@@ -360,7 +360,7 @@ namespace Rio.API.Controllers
             var mailMessages = new List<MailMessage>();
             var messageBody = $@"The following account has been added to your profile in the {_rioConfiguration.PlatformLongName}. You can now manage this accounts in the Water Accounting Platform:<br/><br/>
 {addedAccount.AccountDisplayName}<br/><br/>
-You can view parcels associated with this account and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
+You can view parcels associated with this account and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard/{addedAccount.AccountNumber}'>Landowner Dashboard</a>";
 
             var mailTos = addedUsers;
             foreach(var mailTo in mailTos)

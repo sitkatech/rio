@@ -63,7 +63,7 @@
 
                         <dt class="text-sm-right col-sm-6 col-xs-12">Verification Key Last Used</dt>
                         <dd class="col-sm-6 col-xs-12">
-                            {{account.AccountVerificationKeyLastUseDate}}
+                            {{account.AccountVerificationKeyLastUseDate | date:'short'}}
                             <em *ngIf="!account.AccountVerificationKeyLastUseDate" class="text-muted">Not Available</em>
                         </dd>
 

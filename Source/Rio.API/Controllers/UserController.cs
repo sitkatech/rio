@@ -455,7 +455,7 @@ namespace Rio.API.Controllers
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
+            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
 
             var mailTo = updatedUser;
             var mailMessage = new MailMessage

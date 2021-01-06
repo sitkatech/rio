@@ -104,7 +104,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
           }
           return 0;
         },
-        sortable: true, filter: 'agDateColumnFilter', width: 150},
+        sortable: true, filter: 'agDateColumnFilter', width: 190},
         { headerName: '# of Users', field: 'NumberOfUsers', sortable: true, filter: true, width: 100 },
         { headerName: '# of Parcels', field: 'NumberOfParcels', sortable: true, filter: true, width: 100 },
         {

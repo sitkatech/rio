@@ -188,22 +188,27 @@ namespace Rio.API.Controllers
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
+            var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
             var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water allocation has been updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x=>x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
+                var specificMessageBody = messageBody.Replace(stringToReplace,
+                    (receivingAccount.Users.Contains(mailTo)
+                        ? receivingAccount.AccountNumber
+                        : transferringAccount.AccountNumber).ToString());
                 var mailMessage = new MailMessage
                 {
                     Subject = "Water Transfer Registered",
-                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                    Body = $"Hello {mailTo.FullName},<br /><br />{specificMessageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
                 mailMessages.Add(mailMessage);
@@ -216,22 +221,27 @@ namespace Rio.API.Controllers
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
+            var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
             var messageBody = $@"This transaction has been canceled, and your annual water allocation will not be updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
             foreach (var mailTo in mailTos)
             {
+                var specificMessageBody = messageBody.Replace(stringToReplace,
+                    (receivingAccount.Users.Contains(mailTo)
+                        ? receivingAccount.AccountNumber
+                        : transferringAccount.AccountNumber).ToString());
                 var mailMessage = new MailMessage
                 {
                     Subject = "Water Transfer Canceled",
-                    Body = $"Hello {mailTo.FullName},<br /><br />{messageBody}"
+                    Body = $"Hello {mailTo.FullName},<br /><br />{specificMessageBody}"
                 };
                 mailMessage.To.Add(new MailAddress(mailTo.Email, mailTo.FullName));
                 mailMessages.Add(mailMessage);
