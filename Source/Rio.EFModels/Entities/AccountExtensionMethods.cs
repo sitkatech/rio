@@ -30,6 +30,7 @@ namespace Rio.EFModels.Entities
                 AccountName = account.AccountName,
                 Notes = account.Notes,
                 AccountVerificationKey = account.AccountVerificationKey,
+                AccountVerificationKeyLastUseDate = account.AccountVerificationKeyLastUseDate,
                 Users = userSimpleDtos,
                 NumberOfUsers = userSimpleDtos.Count,
                 AccountStatus = account.AccountStatus.AsDto(),

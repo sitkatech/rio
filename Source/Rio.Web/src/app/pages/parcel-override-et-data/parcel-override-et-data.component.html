@@ -3,7 +3,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item" aria-current="page">
-                    <a routerLink="/landowner-dashboard">Landowner Dashboard</a>
+                    <a routerLink="/landowner-dashboard/{{account.AccountNumber}}">Landowner Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
                     Override OpenET Data
@@ -36,7 +36,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="float-right">
-                        <a class="btn btn-rio btm-sm mr-3" href="/landowner-dashboard" *ngIf="!isEditing">Back to Landowner Dashboard</a> 
+                        <a class="btn btn-rio btm-sm mr-3" href="/landowner-dashboard/{{account.AccountNumber}}" *ngIf="!isEditing">Back to Landowner Dashboard</a> 
                         <button class="btn btn-rio" [(disabled)]="isEditing" (click)="toggleEditMode()">Edit</button>
                     </div>
                     {{waterYearToDisplay.Year}} Water Usage by Parcel

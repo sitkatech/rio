@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[Account](
 	[Notes] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[UpdateDate] [datetime] NULL,
 	[AccountVerificationKey] [varchar](6) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[AccountVerificationKeyLastUseDate] [datetime] NULL,
  CONSTRAINT [PK_Account_AccountID] PRIMARY KEY CLUSTERED 
 (
 	[AccountID] ASC

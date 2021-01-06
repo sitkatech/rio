@@ -313,9 +313,9 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
-        [HttpPut("/user/add-accounts")]
+        [HttpPut("/user/add-accounts-via-verification-key")]
         [UserViewFeature]
-        public ActionResult<UserDto> AddAccountsForCurrentUser([FromBody] UserEditAcountsDto userEditAccountsDto)
+        public ActionResult<UserDto> AddAccountsForCurrentUserUsingAccountVerificationKeys([FromBody] UserEditAcountsDto userEditAccountsDto)
         {
             var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
@@ -347,6 +347,8 @@ namespace Rio.API.Controllers
 
                 userFromContextDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, userFromContextDto.UserID, userUpsertDto);
             }
+
+            Account.UpdateAccountVerificationKeyLastUsedDateForAccountIDs(_dbContext, userEditAccountsDto.AccountIDs);
 
             return Ok(userFromContextDto);
         }

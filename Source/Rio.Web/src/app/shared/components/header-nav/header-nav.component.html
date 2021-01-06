@@ -57,7 +57,7 @@
                                         Manager Dashboard
                                     </a>
                                     <ng-container *ngIf="currentUserAccounts && currentUserAccounts.length < 6">
-                                        <button *ngFor="let account of currentUserAccounts" class="dropdown-item" (click)="setCurrentAccountAndRedirectToLandownerDashboard(account)">#{{account.AccountNumber}} ({{account.AccountName}})</button>
+                                        <a *ngFor="let account of currentUserAccounts" routerLink="/landowner-dashboard/{{account.AccountNumber}}" class="dropdown-item">#{{account.AccountNumber}} ({{account.AccountName}})</a>
                                     </ng-container>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" routerLink="/water-accounts">View My Water Accounts</a>
