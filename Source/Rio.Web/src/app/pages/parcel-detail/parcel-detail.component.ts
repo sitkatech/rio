@@ -136,13 +136,13 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public getCurrentOwnerAccountNumber(): number {
     let currentOwner = this.getCurrentOwner();
     if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
-      return;
+      return null;
     }
     
     let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
 
     if (!account) {
-      return;
+      return null;
     }
     
     return account.AccountNumber
