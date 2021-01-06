@@ -50,6 +50,11 @@ export class WaterAccountsListComponent implements OnInit {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
+  public setCurrentAccountAndRedirectToLandownerDashboard(account: AccountDto) {
+    this.authenticationService.setActiveAccount(account);
+    this.router.navigate(["/landowner-dashboard"]);
+  }
+
   public launchModal(modalContent: any, accountToRemove: AccountDto) {
     this.accountToRemove = accountToRemove;
     this.modalReference = this.modalService.open(modalContent, { ariaLabelledBy: 'removeAccountModalContent', backdrop: 'static', keyboard: false });

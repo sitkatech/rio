@@ -644,7 +644,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     var result = 0;
     if (parcelAllocations.length > 0){
       result = parcelAllocations.reduce(function(a,b) {
-        return (a + (b.Allocations ? b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0 : 0))
+        return (a + (b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0))
       }, 0);
     }
     return this.getResultInUnitsShown(result);

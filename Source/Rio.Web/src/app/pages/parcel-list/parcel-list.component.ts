@@ -108,8 +108,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { debugger; return !params.value ? 0.0 : _decimalPipe.transform(params.value, "1.1-1") }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { debugger; return !params.value ? 0.0 : _decimalPipe.transform(params.value, "1.1-1") }, sortable: true, filter: true, width: 150 },
+        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+        { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       ];
 
       this.gridOptions = <GridOptions>{};
@@ -125,12 +125,12 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelAllocationTypes.forEach(parcelAllocationType => {
           this.columnDefs.push({
             headerName: parcelAllocationType.ParcelAllocationTypeName,
-            valueFormatter: function (params) { return  _decimalPipe.transform(params.value, "1.1-1"); },
+            valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
             sortable: true,
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
+              return params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0;
             }
           })
         });
@@ -144,8 +144,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
         forkJoin(
           this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
-          this.waterYearService.getWaterYears()
-        ).subscribe(([parcelsWithWaterUsage, waterYears]) => {
+          this.waterYearService.getWaterYears(),
+          this.parcelAllocationTypeService.getParcelAllocationTypes()
+        ).subscribe(([parcelsWithWaterUsage, waterYears, parcelAllocationTypes]) => {
           this.rowData = parcelsWithWaterUsage;
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;

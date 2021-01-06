@@ -14,7 +14,19 @@ begin
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
 			pmev.UsageToDate, up.OwnerName, a.AccountID, a.AccountName, a.AccountNumber
 	from dbo.Parcel p
-	left join dbo.vParcelOwnership up on p.ParcelID = up.ParcelID
+	left join (
+        select
+            *, 
+            Row_Number() OVER (
+		        Partition by ParcelID Order by isnull(SaleDate,0) desc
+	        ) as RowNumber
+        from
+            dbo.AccountParcel
+        where
+            (SaleDate is null or Year(SaleDate) <= @year) and
+            (EffectiveYear is null or EffectiveYear <= @year)
+    ) up on p.ParcelID = up.ParcelID
+
 	left join dbo.[Account] a on up.AccountID = a.AccountID
 	left join 
 	(
