@@ -259,12 +259,15 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
                 wfsService.getParcelByCoordinate(event.latlng.lng, event.latlng.lat)
                     .subscribe((parcelFeatureCollection: FeatureCollection) => {
                         this.map.fireEvent("dataload");
-                        if (parcelFeatureCollection.features) {
-                            let parcelID = parcelFeatureCollection.features[0].properties.ParcelID;
-                            if (this.highlightedParcelID != parcelID && this.selectedParcelIDs.some(x => x == parcelID)) {
-                                this.highlightedParcelID = parcelID;
-                                this.highlightedParcelIDChange.emit(this.highlightedParcelID);
-                            }
+                        
+                        if (!parcelFeatureCollection.features || parcelFeatureCollection.features.length == 0) {
+                            return;
+                        }
+
+                        let parcelID = parcelFeatureCollection.features[0].properties.ParcelID;
+                        if (this.highlightedParcelID != parcelID && this.selectedParcelIDs.some(x => x == parcelID)) {
+                            this.highlightedParcelID = parcelID;
+                            this.highlightedParcelIDChange.emit(this.highlightedParcelID);
                         }
                     });
             });
