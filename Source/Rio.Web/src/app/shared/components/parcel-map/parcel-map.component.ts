@@ -42,8 +42,20 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     @Input()
     public selectedParcelStyle: string = 'parcel_blue';
 
-    @Input()
-    public selectedParcelIDs: Array<number> = [];
+    private _selectedParcelIDs: Array<number> = [];
+
+    @Input() set selectedParcelIDs(value: Array<number>) {
+        if (this.selectedParcelIDs.length != value.length || this.selectedParcelIDs.some(x => !value.includes(x))) {
+            this._selectedParcelIDs = value;
+            if (this.map) {
+                this.updateSelectedParcelsOverlayLayer(this.selectedParcelIDs);
+            }
+        }
+     }
+     
+    get selectedParcelIDs(): Array<number> {     
+        return this._selectedParcelIDs;    
+    }
 
     @Input()
     public highlightedParcelStyle: string = 'parcel_yellow';

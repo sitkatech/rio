@@ -37,7 +37,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   public gridApi: any;
   public highlightedParcel: any;
-
+  public selectedParcelIDs: Array<number> = [];
 
   private _highlightedParcelID: number;
   public loadingParcels: boolean = true;
@@ -115,9 +115,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
       this.parcelsGrid.api.showLoadingOverlay();
-      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
+      forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
         this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ).subscribe(([defaultYear, parcelAllocationTypes]) => {
+      ]).subscribe(([defaultYear, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
         this.parcelAllocationTypes = parcelAllocationTypes;
 
@@ -130,7 +130,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0;
+              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
             }
           })
         });
@@ -142,16 +142,15 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         // this is necessary because by the time we enter this subscribe, ngOnInit has concluded and the ag-grid has read its column defs
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
-        forkJoin(
+        forkJoin([
           this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
-          this.waterYearService.getWaterYears(),
-          this.parcelAllocationTypeService.getParcelAllocationTypes()
-        ).subscribe(([parcelsWithWaterUsage, waterYears, parcelAllocationTypes]) => {
+          this.waterYearService.getWaterYears()
+        ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
           this.rowData = parcelsWithWaterUsage;
+          this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;
           this.waterYears = waterYears;
-          console.log(parcelsWithWaterUsage);
           this.cdr.detectChanges();
         });
 
@@ -171,16 +170,13 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.rowData = result;
+      this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);
     });
   }
 
   public exportToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.parcelsGrid, 'parcels.csv', null);
-  }
-
-  public getSelectedParcelIDs(): number[] {
-    return this.rowData.map(x => x.ParcelID);
   }
 
   public onGridReady(params) {
