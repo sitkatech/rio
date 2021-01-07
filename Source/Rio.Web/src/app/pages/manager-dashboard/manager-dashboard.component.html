@@ -147,6 +147,7 @@
               <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
                 (click)="exportLandOwnerUsageReportToCsv()" placement="top"
                 ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+                <a class="float-right btn-rio btn btn-sm mr-2" routerLink="/accounts">View All Accounts</a>
             </div>
           </div>
         </div>
@@ -225,6 +226,7 @@
       <div class="card">
         <div class="card-header">
           Parcels
+          <a class="float-right btn-rio btn btn-sm" routerLink="/parcels">View All Parcels</a>
         </div>
         <div class="card-body table-responsive" *ngIf="parcels">
           <parcel-map mapID="parcelsMap" [selectedParcelIDs]="getSelectedParcelIDs()"
