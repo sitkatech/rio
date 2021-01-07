@@ -43,6 +43,9 @@ export class PostingNewComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
         this.currentUserAccounts = currentAccounts;
+        if (this.currentUserAccounts?.length == 1) {
+          this.model.CreateAccountID = this.currentUserAccounts[0].AccountID;
+        }
       })
       this.postingTypeService.getPostingTypes().subscribe(result => {
         this.postingTypes = result;
