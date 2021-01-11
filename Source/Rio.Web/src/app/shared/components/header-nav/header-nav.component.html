@@ -187,7 +187,7 @@
                 <span class="fas fa-exclamation-circle" style="color: orangered"></span>
                 <ng-container *ngIf="isTradePendingRegistrationForAccount(trade) && !isTradePending(trade)">
                     Trade {{trade.TradeNumber}} needs to be registered
-                    <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
+                    <a routerLink="/register-transfer/{{trade.WaterTransferID}}/{{getRelevantAccountIDForTrade(trade)}}"
                         *ngIf="trade.WaterTransferID && isTradePendingRegistrationForAccount(trade)">
                         [Register transfer]
                     </a>
@@ -195,11 +195,11 @@
                 <ng-container *ngIf="isTradePending(trade)">
                     <span *ngIf="doesMostRecentOfferBelongToCurrentAccount(trade)">
                         {{getOfferThatBelongsToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[View offer details]</a>
+                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}/{{getRelevantAccountIDForTrade(trade)}}">[View offer details]</a>
                     </span>
                     <span *ngIf="!doesMostRecentOfferBelongToCurrentAccount(trade)">
                         {{getOfferThatDoesNotBelongToYouNotificationText(trade)}}
-                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}">[Respond to this offer]</a>
+                        <a class="small" routerLink="/trades/{{trade.TradeNumber}}/{{getRelevantAccountIDForTrade(trade)}}">[Respond to this offer]</a>
                     </span>
                 </ng-container>
             </li>

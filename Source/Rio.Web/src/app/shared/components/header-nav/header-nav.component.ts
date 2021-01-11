@@ -24,11 +24,11 @@ import { Router } from '@angular/router';
 export class HeaderNavComponent implements OnInit, OnDestroy {
     private watchUserChangeSubscription: any;
     private currentUser: UserDto;
-    public activeAccount: AccountSimpleDto;
     public trades: Array<TradeWithMostRecentOfferDto>;
 
     windowWidth: number;
     public currentUserAccounts: AccountSimpleDto[];
+    currentUserAccountsSubscription: any;
 
     @HostListener('window:resize', ['$event'])
     resize(ev?: Event) {
@@ -49,20 +49,13 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
 
-            // do not attempt any API hits if the user is known to be unassigned.
-            if (currentUser && !this.isUnassignedOrDisabled()) {
-
-                // display the correct active account in the dropdown below the username.
-                // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-                    this.activeAccount = account;
-                    this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
-                    if (environment.allowTrading) {
-                        this.tradeService.getTradeActivityByAccountID(account?.AccountID ?? 0).subscribe((trades) => {
-                            this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
-                        });
-                    }
-                });
+            if (currentUser && this.authenticationService.isCurrentUserALandOwner() && environment.allowTrading) {
+                this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
+                if (this.currentUserAccounts?.length > 0) {
+                    this.tradeService.getTradeActivityByUserID(currentUser.UserID).subscribe((trades) => {
+                        this.trades = trades ? trades.sort((a, b) => a.OfferDate > b.OfferDate ? -1 : a.OfferDate < b.OfferDate ? 1 : 0) : [];
+                    });
+                }
             }
 
             if (currentUser && this.authenticationService.isUserAnAdministrator(currentUser)) {
@@ -80,6 +73,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.watchUserChangeSubscription.unsubscribe();
+        this.currentUserAccountsSubscription?.unsubscribe();
         this.authenticationService.dispose();
         this.cdr.detach();
     }
@@ -141,7 +135,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public doesMostRecentOfferBelongToCurrentAccount(trade: TradeWithMostRecentOfferDto): boolean {
-        return trade.OfferCreateAccount.AccountID === this.activeAccount?.AccountID;
+        return this.currentUserAccounts?.map(x => x.AccountID).includes(trade.OfferCreateAccount.AccountID);
     }
 
     public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
@@ -162,21 +156,32 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             return false;
         }
         let isCanceled = trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
-        return !isCanceled && ((trade.BuyerRegistration.IsPending && trade.Buyer.AccountID === this.activeAccount.AccountID)
-            || (trade.SellerRegistration.IsPending && trade.Seller.AccountID === this.activeAccount.AccountID));
+        let currentUsersMappedAccountIDs = this.currentUserAccounts?.map(x => x.AccountID);
+        return !isCanceled && ((trade.BuyerRegistration.IsPending && currentUsersMappedAccountIDs?.includes(trade.Buyer.AccountID))
+            || (trade.SellerRegistration.IsPending && currentUsersMappedAccountIDs?.includes(trade.Seller.AccountID)));
     }
 
     public isTradePending(trade: TradeWithMostRecentOfferDto) {
         return trade.OfferStatus.OfferStatusID === OfferStatusEnum.Pending;
     }
 
+    public getRelevantAccountIDForTrade(trade: TradeWithMostRecentOfferDto): number {
+        if (!this.currentUserAccounts) {
+            return null;
+        }
+
+        let currentUserAccountIDs = this.currentUserAccounts.map(x => x.AccountID);
+
+        if (!currentUserAccountIDs.includes(trade.Buyer.AccountID) && !currentUserAccountIDs.includes(trade.Seller.AccountID)) {
+            return null;
+        }
+
+        return currentUserAccountIDs.includes(trade.Buyer.AccountID) ? trade.Buyer.AccountID : trade.Seller.AccountID;
+    }
+
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {
         //TODO: get logic to calculated days left to respond; hardcoded to 5 for now
         return 5;
-    }
-
-    public setCurrentAccount(): void {
-        this.authenticationService.setActiveAccount(this.activeAccount);
     }
 
     public compareAccountsFn(c1: AccountSimpleDto, c2: AccountSimpleDto): boolean {

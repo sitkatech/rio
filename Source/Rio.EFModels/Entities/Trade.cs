@@ -126,5 +126,17 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(trade).Reload();
             return GetByTradeID(dbContext, tradeID);
         }
+
+        public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForAccountsUserIDHasAccessTo(RioDbContext dbContext, int userID)
+        {
+            var accountsForUser = dbContext.AccountUser.Where(x => x.UserID == userID).Select(x => x.AccountID).ToList();
+            var offers = GetTradeWithOfferDetailsImpl(dbContext)
+                .Where(x => accountsForUser.Contains(x.CreateAccountID) || accountsForUser.Contains(x.Posting.CreateAccountID))
+                .OrderByDescending(x => x.TradeDate)
+                .Select(x => x.AsTradeWithMostRecentOfferDto())
+                .AsEnumerable();
+
+            return offers;
+        }
     }
 }

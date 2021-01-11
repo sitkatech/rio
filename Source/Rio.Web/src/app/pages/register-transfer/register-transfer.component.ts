@@ -25,7 +25,6 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
 })
 export class RegisterTransferComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
-  private watchAccountChangeSubscription: any;
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDto;
   public isRegisteringTransfer: boolean = false;
@@ -40,7 +39,9 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   @ViewChild("parcelPicker")
   public parcelPicker: ParcelPickerComponent;
-  activeAccount: AccountSimpleDto;
+  public accountID: number;
+  currentUserAccountsSubscription: any;
+  currentUserAccounts: AccountSimpleDto[];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -59,38 +60,48 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
+      this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
-      this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe(account =>{
-        this.activeAccount = account;
-        if (waterTransferID && account) {
-          this.getData(waterTransferID);``
-        }
-      })
+      this.accountID = parseInt(this.route.snapshot.paramMap.get("accountID"));
+
+      if (!waterTransferID || !this.accountID || this.currentUserAccounts?.filter(x => x.AccountID === this.accountID).length == 0) {
+        this.router.navigate(["/"]).then(() => {
+          this.alertService.pushNotFoundUnauthorizedAlert();
+        });
+      }
+
+      this.getData(waterTransferID);
     });
   }
 
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
-    this.watchAccountChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
   }
 
   private getData(waterTransferID: number): void {
-    forkJoin(
+    forkJoin([
       this.waterTransferService.getWaterTransferFromWaterTransferID(waterTransferID),
-      this.parcelService.getParcelsByAccountID(this.activeAccount.AccountID, new Date().getFullYear() ),
+      this.parcelService.getParcelsByAccountID(this.accountID, new Date().getFullYear() ),
       this.waterTransferService.getParcelsForWaterTransferIDAndUserID(waterTransferID, this.currentUser.UserID),
-    )
+    ])
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
           : waterTransfer as WaterTransferDto;
-        this.waterTransferType = this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
+
+        if (this.waterTransfer.BuyerRegistration.Account.AccountID != this.accountID && this.waterTransfer.SellerRegistration.Account.AccountID != this.accountID) {
+          this.router.navigate(["/"]).then(() => {
+            this.alertService.pushNotFoundUnauthorizedAlert();
+          });
+        }
+
+        this.waterTransferType = this.waterTransfer.BuyerRegistration.Account.AccountID === this.accountID ? WaterTransferTypeEnum.Buying : WaterTransferTypeEnum.Selling;
         this.isRegisteringTransfer = false;
-        this.registerAction = this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID ? "to" : "from";
+        this.registerAction = this.waterTransfer.BuyerRegistration.Account.AccountID === this.accountID ? "to" : "from";
         if (!this.canRegister()) {
-          this.router.navigateByUrl("/trades/" + waterTransfer.TradeNumber)
+          this.router.navigateByUrl(`/trades/${waterTransfer.TradeNumber}/${this.accountID}`)
         }
         this.visibleParcels = visibleParcels !== undefined ? visibleParcels : [];
         this.selectedParcels = selectedParcels;
@@ -104,8 +115,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public canRegister(): boolean {
     return !this.isCanceled() &&    
-    (this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID && !this.waterTransfer.BuyerRegistration.IsRegistered) ||
-      (this.waterTransfer.SellerRegistration.Account.AccountID === this.activeAccount.AccountID && !this.waterTransfer.SellerRegistration.IsRegistered);
+    (this.waterTransfer.BuyerRegistration.Account.AccountID === this.accountID && !this.waterTransfer.BuyerRegistration.IsRegistered) ||
+      (this.waterTransfer.SellerRegistration.Account.AccountID === this.accountID && !this.waterTransfer.SellerRegistration.IsRegistered);
   }
 
   private isCanceled() {
@@ -113,7 +124,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   public isBuyerOrSeller(): boolean {
-    return this.waterTransfer.BuyerRegistration.Account.AccountID === this.activeAccount.AccountID || this.waterTransfer.SellerRegistration.Account.AccountID === this.activeAccount.AccountID;
+    return this.waterTransfer.BuyerRegistration.Account.AccountID === this.accountID || this.waterTransfer.SellerRegistration.Account.AccountID === this.accountID;
   }
 
   public isFullNameConfirmedForCancelation(): boolean {
@@ -146,7 +157,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        this.router.navigateByUrl("/trades/" + this.waterTransfer.TradeNumber)
+        this.router.navigateByUrl(`/trades/${this.waterTransfer.TradeNumber}/${this.accountID}`)
           .then(() => {
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });
@@ -196,7 +207,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     this.waterTransferService.cancelTrade(this.waterTransfer.WaterTransferID, model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
-        this.router.navigateByUrl("/trades/" + this.waterTransfer.TradeNumber)
+        this.router.navigateByUrl(`/trades/${this.waterTransfer.TradeNumber}/${this.accountID}`)
           .then(() => {
             this.alertService.pushAlert(new Alert("Your request was successfully submitted.", AlertContext.Success));
           });

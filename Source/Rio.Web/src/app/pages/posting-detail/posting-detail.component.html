@@ -140,10 +140,10 @@
               <p>Offer successfully submitted, no further actions needed.</p>
               <p *ngIf="offerAccepted()">To complete this transaction, click 'Register Transfer'.</p>
               <div class="text-center">
-                <button class="btn btn-rio btn-sm mr-1 mb-1" *ngIf="successfulOfferDto"
-                  (click)="setActiveAccountAndNavigateToUrl('trades/' + successfulOfferDto.Trade.TradeNumber)">View Trade Details</button>
-                <button *ngIf="offerAccepted()" class="btn btn-rio btn-sm mb-1 mr-1"
-                  (click)="setActiveAccountAndNavigateToUrl('register-transfer/' + successfulOfferDto.WaterTransferID)">Register Transfer</button>
+                <a class="btn btn-rio btn-sm mr-1 mb-1" *ngIf="successfulOfferDto"
+                  routerLink="/trades/{{successfulOfferDto.Trade.TradeNumber}}/{{currentAccount.AccountID}}">View Trade Details</a>
+                <a *ngIf="offerAccepted()" class="btn btn-rio btn-sm mb-1 mr-1"
+                  routerLink="/register-transfer/{{successfulOfferDto.WaterTransferID}}/{{currentAccount.AccountID}}">Register Transfer</a>
                 <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/trades">View Postings List</a>
               </div>
             </div>

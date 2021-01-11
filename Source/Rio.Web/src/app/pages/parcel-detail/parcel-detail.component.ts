@@ -53,9 +53,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
-        this.currentUserAccounts = currentAccounts;
-      })
+      this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       if (id) {
         forkJoin(
@@ -166,20 +164,5 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public showGoToDashboardButton(): boolean {
     let currentOwner = this.getCurrentOwner();
     return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID);
-  }
-
-  public setActiveAccount() {
-    let currentOwner = this.getCurrentOwner();
-    if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
-      return;
-    }
-    
-    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
-
-    if (!account) {
-      return;
-    }
-    
-    this.authenticationService.setActiveAccount(account);
   }
 }

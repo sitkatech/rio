@@ -21,6 +21,7 @@ import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfe
 import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -52,6 +53,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   public seller: AccountDto;
   activeAccount: AccountSimpleDto;
   public tradeActionConfirmed: boolean = false;
+  currentUserAccounts: AccountSimpleDto[];
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -61,6 +63,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     private tradeService: TradeService,
     private waterTransferService: WaterTransferService,
     private authenticationService: AuthenticationService,
+    private accountService: AccountService,
     private alertService: AlertService
   ) {
     // force route reload whenever params change;
@@ -70,22 +73,28 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.authenticationService.getActiveAccount().subscribe(account =>{
-        this.activeAccount = account;
-      
-        const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
+      this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
+      const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
+      const accountID = parseInt(this.route.snapshot.paramMap.get("accountID"));
 
-        if (tradeNumber) {
-          this.getData(tradeNumber);
-        }
-      })
+      if (!tradeNumber || (!accountID && !this.authenticationService.isCurrentUserAnAdministrator()) || (accountID && this.currentUserAccounts?.filter(x => x.AccountID == accountID).length == 0)) {
+        this.router.navigate(["/"]).then(() => {
+          this.alertService.pushNotFoundUnauthorizedAlert();
+        });
+      }
+
+      if (accountID) {
+        this.activeAccount = this.currentUserAccounts.filter(x => x.AccountID == accountID)[0];
+      }
+
+      this.getData(tradeNumber);
     });
   }
 
   isPostingOwner(): boolean {
     return this.activeAccount && this.trade.Posting.CreateAccount.AccountID === this.activeAccount.AccountID;
   }
-  isTradeOwner(): boolean{
+  isTradeOwner(): boolean {
     return this.activeAccount && this.trade.CreateAccount.AccountID === this.activeAccount.AccountID;
   }
 
@@ -113,9 +122,15 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
         (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Purchasing" : "Selling")
         : (this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? "Selling" : "Purchasing");
       this.counterOfferRecipientType = this.offerType === "Purchasing" ? "seller" : "buyer";
-      
+
       this.buyer = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToBuy ? this.trade.Posting.CreateAccount : this.trade.CreateAccount;
       this.seller = this.originalPostingType.PostingTypeID === PostingTypeEnum.OfferToSell ? this.trade.Posting.CreateAccount : this.trade.CreateAccount;
+
+      if (this.activeAccount.AccountID != this.buyer.AccountID && this.activeAccount.AccountID != this.seller.AccountID) {
+        this.router.navigate(["/"]).then(() => {
+          this.alertService.pushNotFoundUnauthorizedAlert();
+        });
+      }
 
       // reset the action states to initial (false) state
       this.isCounterOffering = false;
@@ -126,9 +141,9 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       this.waterTransferRegistrations = [];
       if (this.mostRecentOffer.WaterTransferID) {
         this.waterTransferService.getWaterTransferRegistrationsFromWaterTransferID(this.mostRecentOffer.WaterTransferID)
-        .subscribe(result => {
-          this.waterTransferRegistrations = result.filter(x => x.WaterTransferRegistrationStatusID !== WaterTransferRegistrationStatusEnum.Pending).sort((a, b) => a.StatusDate > b.StatusDate ? -1 : a.StatusDate < b.StatusDate ? 1 : 0);
-        });
+          .subscribe(result => {
+            this.waterTransferRegistrations = result.filter(x => x.WaterTransferRegistrationStatusID !== WaterTransferRegistrationStatusEnum.Pending).sort((a, b) => a.StatusDate > b.StatusDate ? -1 : a.StatusDate < b.StatusDate ? 1 : 0);
+          });
       }
     });
   }
@@ -147,8 +162,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   public getWaterTransferRegistrationStatus(waterTransferRegistrationStatusID: number): string {
-    switch(waterTransferRegistrationStatusID)
-    {
+    switch (waterTransferRegistrationStatusID) {
       case WaterTransferRegistrationStatusEnum.Registered:
         return "Registered";
       case WaterTransferRegistrationStatusEnum.Canceled:
@@ -159,30 +173,27 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   public getTradeStatus(trade: TradeDto): string {
-    if(this.isCanceled())
-    {
+    if (this.isCanceled()) {
       return "Transaction Canceled";
     }
     return "Offer " + trade.TradeStatus.TradeStatusDisplayName;
   }
 
   public canConfirmTransfer(): boolean {
-    return !this.isCanceled() && this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted 
-    && ((this.activeAccount.AccountID === this.buyer.AccountID && !this.isRegistered(WaterTransferTypeEnum.Buying)) ||
-      (this.activeAccount.AccountID === this.seller.AccountID && !this.isRegistered(WaterTransferTypeEnum.Selling)));
+    return !this.isCanceled() && this.mostRecentOffer.OfferStatus.OfferStatusID === OfferStatusEnum.Accepted
+      && ((this.activeAccount.AccountID === this.buyer.AccountID && !this.isRegistered(WaterTransferTypeEnum.Buying)) ||
+        (this.activeAccount.AccountID === this.seller.AccountID && !this.isRegistered(WaterTransferTypeEnum.Selling)));
   }
 
   private isCanceled() {
-    if(this.waterTransferRegistrations && this.waterTransferRegistrations.length > 0)
-    {
+    if (this.waterTransferRegistrations && this.waterTransferRegistrations.length > 0) {
       return this.waterTransferRegistrations.filter(x => x.IsCanceled).length > 0;
     }
     return false;
   }
 
   private isRegistered(waterTransferType: WaterTransferTypeEnum) {
-    if(this.waterTransferRegistrations.length > 0)
-    {
+    if (this.waterTransferRegistrations.length > 0) {
       return this.waterTransferRegistrations.filter(x => x.WaterTransferTypeID === waterTransferType && x.IsRegistered).length > 0;
     }
     return false;
@@ -260,9 +271,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
       );
   }
 
-  public getAlertMessage():string {
-    switch(this.model.OfferStatusID)
-    {
+  public getAlertMessage(): string {
+    switch (this.model.OfferStatusID) {
       case OfferStatusEnum.Accepted:
         return "Offer successfully accepted.";
       case OfferStatusEnum.Rejected:

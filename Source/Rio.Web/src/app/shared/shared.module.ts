@@ -16,7 +16,6 @@ import { ParcelMapComponent } from './components/parcel-map/parcel-map.component
 import { MultiLinkRendererComponent } from './components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { WaterYearSelectComponent } from './components/water-year-select/water-year-select/water-year-select.component';
-import { AccountSelectComponent } from './components/account-select/account-select.component';
 import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
@@ -35,7 +34,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         ParcelPickerComponent,
         MultiLinkRendererComponent,
         WaterYearSelectComponent,
-        AccountSelectComponent,
         ScenarioMapComponent,
         CustomRichTextComponent
     ],
@@ -57,7 +55,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         ParcelPickerComponent,
         HeaderNavComponent,
         WaterYearSelectComponent,
-        AccountSelectComponent, 
         ScenarioMapComponent,
         CustomRichTextComponent
     ],
