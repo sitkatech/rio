@@ -57,15 +57,6 @@ namespace Rio.EFModels.Entities
                         "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
             }
 
-            var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
-                x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
-                x.EffectiveYear.Value >= yearChangesToTakeEffect).Select(x => x.Parcel.ParcelNumber);
-            if (dt.AsEnumerable().Any(x => inactiveParcelsFromParcelOwnership.Contains(x[3].ToString())))
-            {
-                throw new ValidationException(
-                        "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
-            }
-
             //Make sure staging table is empty before proceeding
             DeleteAll(_dbContext);
 
