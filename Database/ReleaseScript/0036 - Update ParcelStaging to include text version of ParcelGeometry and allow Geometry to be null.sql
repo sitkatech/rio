@@ -1,3 +1,6 @@
+--Make sure table is empty so we can add not null requirements
+delete from dbo.ParcelUpdateStaging
+
 alter table dbo.ParcelUpdateStaging
 add ParcelGeometry4326 geometry null
 
