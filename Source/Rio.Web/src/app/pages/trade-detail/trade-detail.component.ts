@@ -21,7 +21,6 @@ import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfe
 import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountService } from 'src/app/services/account/account.service';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -63,7 +62,6 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
     private tradeService: TradeService,
     private waterTransferService: WaterTransferService,
     private authenticationService: AuthenticationService,
-    private accountService: AccountService,
     private alertService: AlertService
   ) {
     // force route reload whenever params change;

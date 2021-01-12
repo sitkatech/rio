@@ -28,7 +28,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     windowWidth: number;
     public currentUserAccounts: AccountSimpleDto[];
-    currentUserAccountsSubscription: any;
 
     @HostListener('window:resize', ['$event'])
     resize(ev?: Event) {
@@ -73,7 +72,6 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.watchUserChangeSubscription.unsubscribe();
-        this.currentUserAccountsSubscription?.unsubscribe();
         this.authenticationService.dispose();
         this.cdr.detach();
     }
@@ -135,7 +133,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public doesMostRecentOfferBelongToCurrentAccount(trade: TradeWithMostRecentOfferDto): boolean {
-        return this.currentUserAccounts?.map(x => x.AccountID).includes(trade.OfferCreateAccount.AccountID);
+        return this.currentUserAccounts?.filter(x => x.AccountID == trade.OfferCreateAccount.AccountID).length > 0;
     }
 
     public getOfferThatBelongsToYouNotificationText(trade: TradeWithMostRecentOfferDto): string {
@@ -156,9 +154,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             return false;
         }
         let isCanceled = trade.BuyerRegistration.IsCanceled || trade.SellerRegistration.IsCanceled;
-        let currentUsersMappedAccountIDs = this.currentUserAccounts?.map(x => x.AccountID);
-        return !isCanceled && ((trade.BuyerRegistration.IsPending && currentUsersMappedAccountIDs?.includes(trade.Buyer.AccountID))
-            || (trade.SellerRegistration.IsPending && currentUsersMappedAccountIDs?.includes(trade.Seller.AccountID)));
+        return !isCanceled && ((trade.BuyerRegistration.IsPending && this.currentUserAccounts?.filter(x => x.AccountID == trade.Buyer.AccountID).length > 0)
+            || (trade.SellerRegistration.IsPending && this.currentUserAccounts?.filter(x => x.AccountID == trade.Seller.AccountID).length > 0));
     }
 
     public isTradePending(trade: TradeWithMostRecentOfferDto) {
@@ -170,13 +167,11 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
             return null;
         }
 
-        let currentUserAccountIDs = this.currentUserAccounts.map(x => x.AccountID);
-
-        if (!currentUserAccountIDs.includes(trade.Buyer.AccountID) && !currentUserAccountIDs.includes(trade.Seller.AccountID)) {
+        if ((this.currentUserAccounts?.filter(x => x.AccountID == trade.Buyer.AccountID || x.AccountID == trade.Seller.AccountID).length == 0)) {
             return null;
         }
 
-        return currentUserAccountIDs.includes(trade.Buyer.AccountID) ? trade.Buyer.AccountID : trade.Seller.AccountID;
+        return this.currentUserAccounts?.filter(x => x.AccountID == trade.Buyer.AccountID).length > 0 ? trade.Buyer.AccountID : trade.Seller.AccountID;
     }
 
     public getDaysLeftToRespond(trade: TradeWithMostRecentOfferDto): number {

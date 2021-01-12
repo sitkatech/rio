@@ -40,7 +40,6 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   @ViewChild("parcelPicker")
   public parcelPicker: ParcelPickerComponent;
   public accountID: number;
-  currentUserAccountsSubscription: any;
   currentUserAccounts: AccountSimpleDto[];
 
   constructor(
