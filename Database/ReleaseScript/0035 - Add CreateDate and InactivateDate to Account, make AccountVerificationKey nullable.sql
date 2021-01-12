@@ -12,6 +12,11 @@ alter table dbo.Account
 add InactivateDate datetime null
 go
 
+update dbo.Account
+set InactivateDate = UpdateDate
+from dbo.Account
+where AccountStatusID = 2
+
 ALTER TABLE [dbo].[Account]  WITH CHECK ADD CONSTRAINT [CK_InactivateDate_AccountStatusInactive] CHECK  (([AccountStatusID] = 2 and [InactivateDate] is not null) or ([AccountStatusID] <> 2 and [InactivateDate] is null))
 
 alter table dbo.Account
