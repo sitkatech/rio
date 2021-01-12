@@ -15,18 +15,15 @@ begin
 			pmev.UsageToDate, up.OwnerName, a.AccountID, a.AccountName, a.AccountNumber
 	from dbo.Parcel p
 	left join (
-        select
+		select
             *, 
             Row_Number() OVER (
 		        Partition by ParcelID Order by isnull(SaleDate,0) desc
 	        ) as RowNumber
         from
             dbo.AccountParcel
-        where
-            (SaleDate is null or Year(SaleDate) <= @year) and
-            (EffectiveYear is null or EffectiveYear <= @year)
-    ) up on p.ParcelID = up.ParcelID
-
+        where EffectiveYear is null or EffectiveYear <= @year
+	) up on p.ParcelID = up.ParcelID
 	left join dbo.[Account] a on up.AccountID = a.AccountID
 	left join 
 	(
@@ -46,8 +43,6 @@ begin
 		group by pme.ParcelID
 	) pmev on p.ParcelID = pmev.ParcelID
 
-    where RowNumber = 1
+	where RowNumber = 1
 
 end
-
-select * from AccountParcel

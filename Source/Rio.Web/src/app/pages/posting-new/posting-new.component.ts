@@ -41,9 +41,10 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
-        this.currentUserAccounts = currentAccounts;
-      })
+      this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
+      if (this.currentUserAccounts?.length == 1) {
+        this.model.CreateAccountID = this.currentUserAccounts[0].AccountID;
+      };
       this.postingTypeService.getPostingTypes().subscribe(result => {
         this.postingTypes = result;
         this.cdr.detectChanges();
@@ -84,6 +85,6 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   }
 
   public isOfferFormValid(): boolean {
-      return this.model.Price > 0 && this.model.Quantity > 0 && this.model.PostingTypeID > 0;
+    return this.model.Price > 0 && this.model.Quantity > 0 && this.model.PostingTypeID > 0;
   }
 }

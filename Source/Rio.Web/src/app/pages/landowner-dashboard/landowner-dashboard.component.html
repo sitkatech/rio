@@ -152,7 +152,7 @@
                   </tr>
                   <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
                     <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                        routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}
+                        routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
                         ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                     </th>
                     <td class="text-sm-right">
@@ -193,7 +193,7 @@
                   </tr>
                   <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
                     <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                        routerLink="/trades/{{waterTransfer.TradeNumber}}">{{waterTransfer.TradeNumber}}
+                        routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
                         ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
                     </th>
                     <td class="text-sm-right">
@@ -425,10 +425,10 @@
             <tbody>
               <tr *ngFor="let trade of getTradesForWaterYear()">
                 <td style="border: 0 none; white-space: nowrap"><a
-                    routerLink="/trades/{{trade.TradeNumber}}">{{ trade.TradeNumber }}</a></td>
+                    routerLink="/trades/{{trade.TradeNumber}}/{{activeAccount.AccountID}}">{{ trade.TradeNumber }}</a></td>
                 <td style="border: 0 none">{{ trade.OfferDate | date: "MM/dd" }}</td>
                 <td style="border: 0 none; white-space: nowrap">
-                  <a routerLink="/register-transfer/{{trade.WaterTransferID}}"
+                  <a routerLink="/register-transfer/{{trade.WaterTransferID}}/{{activeAccount.AccountID}}"
                     *ngIf="trade.WaterTransferID && !isTradeRegisteredByUser(trade) && !isTradeCanceled(trade)">
                     Awaiting Registration
                   </a>

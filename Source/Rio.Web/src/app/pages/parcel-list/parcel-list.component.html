@@ -65,7 +65,7 @@
                     Parcel Map
                 </div>
                 <div class="card-body">
-                    <parcel-map *ngIf="!loadingParcels" mapID="parcelsMapForUser" [selectedParcelIDs]="getSelectedParcelIDs()" [selectedParcelLayerName]="selectedParcelsLayerName" [(highlightedParcelID)]="highlightedParcelID" [disableDefaultClick]="true" [highlightParcelOnClick]="true" mapHeight="500px">
+                    <parcel-map *ngIf="!loadingParcels" mapID="parcelsMapForUser" [selectedParcelIDs]="selectedParcelIDs" [selectedParcelLayerName]="selectedParcelsLayerName" [(highlightedParcelID)]="highlightedParcelID" [disableDefaultClick]="true" [highlightParcelOnClick]="true" mapHeight="500px">
                     </parcel-map>
                     <div class="text-center" *ngIf="loadingParcels" [style.height]="mapHeight" [style.line-height]="mapHeight" style="background-color:#f3f3f3">
                         <span class="fa fa-spinner loading-spinner"></span> Loading Parcels for Map

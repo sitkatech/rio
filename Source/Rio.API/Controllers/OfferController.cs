@@ -336,11 +336,19 @@ An offer to {offerAction} water {properPreposition} Account #{fromAccount.Accoun
             return Ok(tradeWithMostRecentOfferDtos);
         }
 
-        [HttpGet("trade-activity/{accountID}")]
+        [HttpGet("trade-activity/account/{accountID}")]
         [UserViewFeature]
-        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForUser([FromRoute] int accountID)
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForAccount([FromRoute] int accountID)
         {
             var tradeWithMostRecentOfferDtos = Trade.GetTradesForAccountID(_dbContext, accountID);
+            return Ok(tradeWithMostRecentOfferDtos);
+        }
+
+        [HttpGet("trade-activity/user/{userID}")]
+        [UserViewFeature]
+        public ActionResult<IEnumerable<TradeWithMostRecentOfferDto>> GetTradeActivityForUser([FromRoute] int userID)
+        {
+            var tradeWithMostRecentOfferDtos = Trade.GetTradesForAccountsUserIDHasAccessTo(_dbContext, userID);
             return Ok(tradeWithMostRecentOfferDtos);
         }
 

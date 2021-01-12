@@ -18,8 +18,6 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
         if (this.authenticationService.isUserAnAdministrator(currentUser)){
-          window.localStorage.removeItem("activeAccount");
-          this.authenticationService.setActiveAccount(undefined);
           this.router.navigate(['/manager-dashboard']);
         } else if (this.authenticationService.isUserALandOwnerOrDemoUser(currentUser)){
           this.userService.listAccountsByUserID(currentUser.UserID).subscribe(result => {

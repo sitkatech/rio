@@ -132,31 +132,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             this.activeAccount = account instanceof Array
               ? null
               : account as AccountSimpleDto;
-            this.setActiveAccount(this.activeAccount);
-            this.subscribeToActiveAccount();
+              this.loadingActiveAccount = false;
+            this.updateAccountData(account);
           });
-        } else {
-          this.subscribeToActiveAccount();
         }
       })
 
       this.cdr.detectChanges();      
     });   
-  }
-
-  public setActiveAccount(account: AccountSimpleDto) {
-    this.authenticationService.setActiveAccount(account);
-  }
-
-  private subscribeToActiveAccount() {
-    this.loadingActiveAccount = true;
-    this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-      if (account) {
-        this.activeAccount = account;
-        this.updateAccountData(account);
-      }
-      this.loadingActiveAccount = false;
-    });
   }
 
   public getAccountDisplayName(): string {

@@ -62,6 +62,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
+            this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
             if (postingID) {
                 this.postingService.getPostingFromPostingID(postingID).subscribe(posting => {
@@ -69,13 +70,10 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
                         ? null
                         : posting as PostingDto;
                     this.originalPostingType = this.posting.PostingType;
-                    this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
-                        this.currentUserAccounts = currentAccounts;
-                        if (this.currentUserAccounts?.length == 1) {
-                            this.currentAccount = currentAccounts[0];
-                            this.getOffersForCurrentAccount();
-                        }
-                    })
+                    if (this.currentUserAccounts?.length == 1) {
+                        this.currentAccount = this.currentUserAccounts[0];
+                        this.getOffersForCurrentAccount();
+                    }
                 });
             }
         });
@@ -244,14 +242,5 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
 
     public userHasMoreThanOneAccount(): boolean {
         return this.currentUserAccounts?.length > 1;
-    }
-
-    public setActiveAccountAndNavigateToUrl(url: string){
-        if (!this.currentAccount) {
-            return;
-        }
-
-        this.authenticationService.setActiveAccount(this.currentAccount);
-        this.router.navigateByUrl(url)
     }
 }

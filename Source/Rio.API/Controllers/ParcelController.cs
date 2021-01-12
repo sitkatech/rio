@@ -46,11 +46,24 @@ namespace Rio.API.Controllers
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
             var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
-            var parcelDtosWithAllocation = parcelDtos.Join(parcelAllocationBreakdownForYear, x => x.ParcelID, y => y.ParcelID, (x, y) =>
-            {
-                x.Allocations = y.Allocations;
-                return x;
-            });
+            var parcelDtosWithAllocation = parcelDtos
+                .GroupJoin(
+                    parcelAllocationBreakdownForYear,
+                    x => x.ParcelID,
+                    y => y.ParcelID,
+                    (x, y) => new
+                    {
+                        ParcelAllocationAndUsage = x,
+                        ParcelAllocationBreakdown = y
+                    })
+                .SelectMany(
+                    parcelAllocationUsageAndBreakdown =>
+                        parcelAllocationUsageAndBreakdown.ParcelAllocationBreakdown.DefaultIfEmpty(),
+                    (x, y) =>
+                    {
+                        x.ParcelAllocationAndUsage.Allocations = y?.Allocations;
+                        return x.ParcelAllocationAndUsage;
+                    });
             return Ok(parcelDtosWithAllocation);
         }
 
