@@ -96,10 +96,13 @@ export class AccountListComponent implements OnInit, OnDestroy {
           }
         },
         comparator: function (id1: any, id2: any) {
-          if (id1.value < id2.value) {
+          let time1 = id1 ? Date.parse(id1) : 0;
+          let time2 = id2 ? Date.parse(id2) : 0;
+
+          if (time1 < time2) {
             return -1;
           }
-          if (id1.value > id2.value) {
+          if (time1 > time2) {
             return 1;
           }
           return 0;
