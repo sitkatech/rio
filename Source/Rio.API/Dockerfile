@@ -12,4 +12,8 @@ WORKDIR /app
 COPY --from=build /app /app
 RUN ls -la
 EXPOSE 80
+
+# install GDAL
+RUN apt-get update && apt-get install -y gdal-bin && apt-get install -y gnupg2
+
 ENTRYPOINT ["dotnet", "Rio.API.dll"]

@@ -30,6 +30,11 @@ export class AccountService {
     return this.apiService.getFromApi(route);
   }
 
+  public getAccountByAccountNumber(accountNumber): Observable<AccountDto> {
+    const route= `/account/account-number/${accountNumber}`
+    return this.apiService.getFromApi(route);
+  }
+
   public getAccountByAccountVerificationKey(accountVerificationKey: string): Observable<any>{
     const route = `/account/account-verification-key/${accountVerificationKey}`
     return this.apiService.getFromApi(route);

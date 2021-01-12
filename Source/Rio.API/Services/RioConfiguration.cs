@@ -20,6 +20,8 @@
         public string HangfirePassword { get; set; }
         public string CimisAppKey { get; set; }
         public string VerificationKeyChars { get; set; }
+        public string ValidParcelNumberRegexPattern { get; set; }
+        public string ValidParcelNumberPatternAsStringForDisplay { get; set; }
         public string OpenETAPIKey { get; set; }
         public string OpenETShapefilePath { get; set; }
         public string OpenETCheckRasterUpdatedDateBaseURL { get; set; }
@@ -28,5 +30,7 @@
         public bool AllowOpenETSync { get; set; }
         public string SupportEmailAddress { get; set; }
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }
+        public string Ogr2OgrExecutable { get; set; }
+        public string OgrInfoExecutable { get; set; }
     }
 }

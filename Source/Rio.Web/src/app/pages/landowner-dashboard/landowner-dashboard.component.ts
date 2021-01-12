@@ -126,9 +126,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.parcelAllocationTypeService.getParcelAllocationTypes().subscribe(parcelAllocationTypes => {
         this.parcelAllocationTypes = parcelAllocationTypes;
-        let accountID = parseInt(this.route.snapshot.paramMap.get("id"));
-        if (accountID) {
-          this.accountService.getAccountByID(accountID).subscribe(account => {
+        let accountNumber = parseInt(this.route.snapshot.paramMap.get("accountNumber"));
+        if (accountNumber) {
+          this.accountService.getAccountByAccountNumber(accountNumber).subscribe(account => {
             this.activeAccount = account instanceof Array
               ? null
               : account as AccountSimpleDto;
@@ -224,7 +224,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
-    this.watchAccountChangeSubscription.unsubscribe();
+    this.watchAccountChangeSubscription?.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
   }

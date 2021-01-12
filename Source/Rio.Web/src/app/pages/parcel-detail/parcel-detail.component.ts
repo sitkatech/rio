@@ -132,6 +132,21 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       return x.EffectiveYear <= this.today.getFullYear();      
     })[0]
   }
+
+  public getCurrentOwnerAccountNumber(): number {
+    let currentOwner = this.getCurrentOwner();
+    if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
+      return null;
+    }
+    
+    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
+
+    if (!account) {
+      return null;
+    }
+    
+    return account.AccountNumber
+  }
   
   public isAdministrator() : boolean
   {

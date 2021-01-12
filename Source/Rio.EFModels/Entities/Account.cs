@@ -17,6 +17,12 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.Account.AsSimpleDto()).ToList();
         }
 
+        public static bool UserIDHasAccessToAccountID(RioDbContext dbContext, int userID, int accountID)
+        {
+            return dbContext.User.Include(x => x.AccountUser).ThenInclude(x => x.Account)
+                .Single(x => x.UserID == userID).AccountUser.Any(x => x.AccountID == accountID);
+        }
+
         public static List<AccountIncludeParcelsDto> ListByUserIDIncludeParcels(RioDbContext dbContext, int userID)
         {
             return dbContext.User
@@ -65,6 +71,12 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountID == accountID)?.AsDto();
+        }
+
+        public static AccountDto GetByAccountNumber(RioDbContext dbContext, int accountNumber)
+        {
+            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+                .SingleOrDefault(x => x.AccountNumber == accountNumber)?.AsDto();
         }
 
         public static AccountDto GetByAccountVerificationKey(RioDbContext dbContext, string accountVerificationKey)
@@ -159,6 +171,15 @@ namespace Rio.EFModels.Entities
         public static bool ValidateAllExist(RioDbContext dbContext, List<int> accountIDs)
         {
             return dbContext.Account.Count(x => accountIDs.Contains(x.AccountID)) == accountIDs.Distinct().Count();
+        }
+
+        public static void UpdateAccountVerificationKeyLastUsedDateForAccountIDs(RioDbContext dbContext, List<int> accountIDs)
+        {
+            var accounts = dbContext.Account.Where(x => accountIDs.Contains(x.AccountID)).ToList();
+            
+            accounts.ForEach(x => x.AccountVerificationKeyLastUseDate = DateTime.UtcNow);
+
+            dbContext.SaveChanges();
         }
     }
 }

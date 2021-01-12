@@ -246,11 +246,12 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
         return this.currentUserAccounts?.length > 1;
     }
 
-    public setActiveAccountAndNavigateToDashboard() {
+    public setActiveAccountAndNavigateToUrl(url: string){
         if (!this.currentAccount) {
             return;
         }
 
         this.authenticationService.setActiveAccount(this.currentAccount);
+        this.router.navigateByUrl(url)
     }
 }

@@ -32,7 +32,7 @@ import { DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer/link-renderer.component';
 
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
 import { AllocationChartImplComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
@@ -76,6 +76,7 @@ import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-wate
 import { environment } from 'src/environments/environment';
 import { AppInsightsService } from './shared/services/app-insights.service';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
+import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -137,7 +138,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     WaterAccountsAddComponent,
     WaterAccountsListComponent,
     WaterAccountsInviteComponent,
-    OpenetSyncWaterYearStatusListComponent
+    OpenetSyncWaterYearStatusListComponent,
+    ParcelUpdateLayerComponent
   ],
   imports: [
     AppRoutingModule,
@@ -148,6 +150,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     OAuthModule.forRoot(),
     SharedModule.forRoot(),
     FormsModule,
+    ReactiveFormsModule,
     NgxChartsModule,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),

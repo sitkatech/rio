@@ -313,9 +313,9 @@ namespace Rio.API.Controllers
             return Ok(updatedUserDto);
         }
 
-        [HttpPut("/user/add-accounts")]
+        [HttpPut("/user/add-accounts-via-verification-key")]
         [UserViewFeature]
-        public ActionResult<UserDto> AddAccountsForCurrentUser([FromBody] UserEditAcountsDto userEditAccountsDto)
+        public ActionResult<UserDto> AddAccountsForCurrentUserUsingAccountVerificationKeys([FromBody] UserEditAcountsDto userEditAccountsDto)
         {
             var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
@@ -347,6 +347,8 @@ namespace Rio.API.Controllers
 
                 userFromContextDto = EFModels.Entities.User.UpdateUserEntity(_dbContext, userFromContextDto.UserID, userUpsertDto);
             }
+
+            Account.UpdateAccountVerificationKeyLastUsedDateForAccountIDs(_dbContext, userEditAccountsDto.AccountIDs);
 
             return Ok(userFromContextDto);
         }
@@ -453,7 +455,7 @@ namespace Rio.API.Controllers
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels on your <a href='{rioUrl}/landowner-dashboard'>Landowner Dashboard</a>";
+            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
 
             var mailTo = updatedUser;
             var mailMessage = new MailMessage

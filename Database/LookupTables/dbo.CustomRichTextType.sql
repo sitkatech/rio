@@ -18,7 +18,8 @@ USING (VALUES
 (16, 'WaterAccountsAddLegalText', 'Water Accounts Add Legal Text'),
 (17, 'WaterAccountsInvite', 'Water Accounts Invite'),
 (18, 'ParcelList', 'Parcel List'),
-(19, 'OpenETIntegration', 'OpenET Integration')
+(19, 'OpenETIntegration', 'OpenET Integration'),
+(20, 'ParcelUpdateLayer', 'Parcel Update Layer')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

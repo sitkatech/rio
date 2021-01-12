@@ -149,22 +149,37 @@ namespace Rio.EFModels.Entities
 
             var parcelAllocations = dbContext.ParcelAllocation.AsNoTracking().Where(x => x.WaterYear == year);
 
-            return vParcelOwnershipsByYear.Join(parcelAllocations, x => x.ParcelID, y => y.ParcelID, (x, y) => new
-                {
-                    x.AccountID,
-                    y.ParcelAllocationTypeID,
-                    y.AcreFeetAllocated
-                }).ToList().GroupBy(x => x.AccountID)
+            return vParcelOwnershipsByYear
+                .GroupJoin(
+                    parcelAllocations,
+                    x => x.ParcelID,
+                    y => y.ParcelID,
+                    (x, y) => new
+                    {
+                        ParcelOwnership = x,
+                        ParcelAllocation = y
+                    })
+                .SelectMany(
+                    parcelOwnershipAndAllocations => parcelOwnershipAndAllocations.ParcelAllocation.DefaultIfEmpty(),
+                    (x, y) => new
+                    {
+                        x.ParcelOwnership.AccountID,
+                        y.ParcelAllocationTypeID,
+                        y.AcreFeetAllocated
+                    })
+                .ToList()
+                .GroupBy(x => x.AccountID)
                 .Select(x => new LandownerAllocationBreakdownDto()
                 {
                     AccountID = x.Key.Value,
                     Allocations = new Dictionary<int, decimal>(
                         //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
                         x.GroupBy(z => z.ParcelAllocationTypeID)
-                        .Select(y =>
-                        new KeyValuePair<int, decimal>(y.Key,
-                            y.Sum(x=>x.AcreFeetAllocated))))
-                }).ToList();
+                            .Select(y =>
+                                new KeyValuePair<int, decimal>(y.Key,
+                                    y.Sum(x => x.AcreFeetAllocated))))
+                })
+                .ToList();
         }
 
     }

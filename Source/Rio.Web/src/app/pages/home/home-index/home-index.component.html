@@ -77,7 +77,7 @@
                         <div class="col">
                             <a *ngIf="isUserAnAdministrator()" class="btn btn-rio mb-1 w-100" routerLink="/manager-dashboard">Manager
                                 Dashboard</a>
-                            <a *ngIf="isUserALandowner() && currentUserAccounts && currentUserAccounts.length == 1" class="btn btn-rio mb-1 w-100" routerLink="/landowner-dashboard">Landowner
+                            <a *ngIf="isUserALandowner() && currentUserAccounts && currentUserAccounts.length == 1" class="btn btn-rio mb-1 w-100" routerLink="/landowner-dashboard/{{currentUserAccounts[0].AccountNumber}}">Landowner
                                 Dashboard</a>
                             <a *ngIf="isUserALandowner()" class="btn btn-rio mb-1 w-100" routerLink="/water-accounts">View My Water Accounts</a>
                             <a *ngIf="userIsUnassigned()" class="btn btn-rio mb-1 w-100" routerLink="/water-accounts/add">Enter Account Verification Key</a>

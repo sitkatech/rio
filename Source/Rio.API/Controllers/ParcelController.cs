@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using System;
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Rio.API.GeoSpatial;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
@@ -26,12 +30,14 @@ namespace Rio.API.Controllers
         private readonly RioDbContext _dbContext;
         private readonly ILogger<ParcelController> _logger;
         private readonly KeystoneService _keystoneService;
+        private readonly RioConfiguration _rioConfiguration;
 
-        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService)
+        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
         {
             _dbContext = dbContext;
             _logger = logger;
             _keystoneService = keystoneService;
+            _rioConfiguration = rioConfiguration.Value;
         }
 
         [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
@@ -366,6 +372,117 @@ namespace Rio.API.Controllers
             badRequest = null;
             return true;
         }
+
+        [HttpGet("/parcels/parcelGDBCommonMappingToParcelStagingColumn")]
+        public ActionResult GetParcelGDBCommonMappingToParcelStagingColumn()
+        {
+            var result = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
+            return Ok(result);
+        }
+
+        [HttpPost("/parcels/uploadGDB")]
+        [RequestSizeLimit(524288000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
+        public async Task<IActionResult> UploadGDBAndParseFeatureClasses([FromForm] IFormFile inputFile)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            byte[] inputFileContents;
+            await using (var ms = new MemoryStream(4096))
+            {
+                await inputFile.CopyToAsync(ms);
+                inputFileContents = ms.ToArray();
+            }
+            // save the gdb file contents to UploadedGdb so user doesn't have to wait for upload of file again
+            var uploadedGdbID = UploadedGdb.CreateNew(_dbContext, inputFileContents);
+
+            using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
+            var gdbFile = disposableTempFile.FileInfo;
+            System.IO.File.WriteAllBytes(gdbFile.FullName, inputFileContents);
+
+            try
+            {
+                var featureClassInfos = OgrInfoCommandLineRunner.GetFeatureClassInfoFromFileGdb(
+                    _rioConfiguration.OgrInfoExecutable,
+                    gdbFile.FullName,
+                    250000000, _logger, 1);
+                var uploadParcelLayerInfoDto = new UploadParcelLayerInfoDto()
+                {
+                    UploadedGdbID = uploadedGdbID,
+                    FeatureClasses = featureClassInfos
+                };
+
+                return Ok(uploadParcelLayerInfoDto);
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException e)
+            {
+                _logger.LogError(e, e.Message);
+                UploadedGdb.Delete(_dbContext, uploadedGdbID);
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
+                UploadedGdb.Delete(_dbContext, uploadedGdbID);
+                return BadRequest("Error reading GDB file!");
+            }
+        }
+
+        [HttpPost("/parcels/previewGDBChanges")]
+        public ActionResult<ParcelUpdateExpectedResultsDto> PreviewParcelLayerGDBChangesViaGeoJsonFeatureCollectionAndUploadToStaging([FromBody] ParcelLayerUpdateDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var gdbFileContents = UploadedGdb.GetUploadedGdbFileContents(_dbContext, model.UploadedGDBID);
+            using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
+            var gdbFile = disposableTempFile.FileInfo;
+            System.IO.File.WriteAllBytes(gdbFile.FullName, gdbFileContents);
+            try
+            {
+                var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
+                    250000000, false);
+                var columns = model.ColumnMappings.Select(
+                        x =>
+                            $"{x.MappedColumnName} as {x.RequiredColumnName}").ToList();
+                var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
+                    model.ParcelLayerNameInGDB, columns, null, _logger, null);
+                var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 4);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay);
+                return Ok(expectedResults);
+            }
+            catch (System.ComponentModel.DataAnnotations.ValidationException e)
+            {
+                _logger.LogError(e.Message);
+
+                return BadRequest(e.Message);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+
+                return BadRequest("Error generating preview of changes!");
+            }
+        }
+    }
+
+    public class ParcelLayerUpdateDto
+    {
+        public string ParcelLayerNameInGDB { get; set; }
+        public int UploadedGDBID { get; set; }
+        public List<ParcelRequiredColumnAndMappingDto> ColumnMappings { get; set; }
+    }
+
+    public class ParcelRequiredColumnAndMappingDto
+    {
+        public string RequiredColumnName { get; set; }
+        public string MappedColumnName { get; set; }
     }
 
     public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>

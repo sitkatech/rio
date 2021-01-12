@@ -231,7 +231,7 @@ Hello,
 <br /><br />
 Your offer to {offerAction} water {properPreposition} Account #{fromAccount.AccountNumber} ({fromAccount.AccountName}) was rejected by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
-<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
+<a href=""{rioUrl}/landowner-dashboard/{toAccount.AccountNumber}"">View Landowner Dashboard</a>
 {smtpClient.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {
@@ -265,7 +265,7 @@ Hello,
 <br /><br />
 An offer to {offerAction} water {properPreposition} Account #{fromAccount.AccountNumber} ({fromAccount.AccountName}) was rescinded by the other party. You can see details of your transactions in the Water Accounting Platform Landowner Dashboard. 
 <br /><br />
-<a href=""{rioUrl}/landowner-dashboard"">View Landowner Dashboard</a>
+<a href=""{rioUrl}/landowner-dashboard/{toAccount.AccountNumber}"">View Landowner Dashboard</a>
 {smtpClient.GetDefaultEmailSignature()}";
             var mailMessage = new MailMessage
             {

@@ -35,7 +35,9 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocation> ParcelAllocation { get; set; }
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
         public virtual DbSet<ParcelAllocationType> ParcelAllocationType { get; set; }
+        public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumn { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspiration { get; set; }
+        public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStaging { get; set; }
         public virtual DbSet<Posting> Posting { get; set; }
         public virtual DbSet<PostingStatus> PostingStatus { get; set; }
         public virtual DbSet<PostingType> PostingType { get; set; }
@@ -44,6 +46,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasin { get; set; }
         public virtual DbSet<Trade> Trade { get; set; }
         public virtual DbSet<TradeStatus> TradeStatus { get; set; }
+        public virtual DbSet<UploadedGdb> UploadedGdb { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWell { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfer { get; set; }
@@ -61,6 +64,8 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<vGeoServerScenarioRechargeBasin> vGeoServerScenarioRechargeBasin { get; set; }
         public virtual DbSet<vGeoServerWaterTradingScenarioWell> vGeoServerWaterTradingScenarioWell { get; set; }
         public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
+        public virtual DbSet<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel> vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel { get; set; }
+        public virtual DbSet<vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount> vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount { get; set; }
         public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
         public virtual DbSet<vPostingDetailed> vPostingDetailed { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetailed { get; set; }
@@ -387,6 +392,24 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<ParcelLayerGDBCommonMappingToParcelStagingColumn>(entity =>
+            {
+                entity.HasKey(e => e.ParcelLayerGDBCommonMappingToParcelColumnID)
+                    .HasName("PK_ParcelLayerGDBCommonMappingToParcelColumn_ParcelLayerGDBCommonMappingToParcelColumnID");
+
+                entity.HasIndex(e => e.OwnerName)
+                    .HasName("AK_ParcelLayerGDBCommonMappingToParcelColumn_OwnerName")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.ParcelNumber)
+                    .HasName("AK_ParcelLayerGDBCommonMappingToParcelColumn_ParcelNumber")
+                    .IsUnique();
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
             modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
             {
                 entity.HasIndex(e => new { e.ParcelID, e.WaterYear, e.WaterMonth })
@@ -397,6 +420,17 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelMonthlyEvapotranspiration)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelUpdateStaging>(entity =>
+            {
+                entity.HasIndex(e => e.ParcelNumber)
+                    .HasName("AK_ParcelUpdateStaging_ParcelNumber")
+                    .IsUnique();
+
+                entity.Property(e => e.OwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
             modelBuilder.Entity<Posting>(entity =>
@@ -536,6 +570,11 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.TradeStatusDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.TradeStatusName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UploadedGdb>(entity =>
+            {
+                entity.Property(e => e.UploadedGdbID).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -770,6 +809,28 @@ namespace Rio.EFModels.Entities
                 entity.ToView("vGeoServerWells");
 
                 entity.Property(e => e.WellName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vParcelLayerUpdateDifferencesInAccountAssociatedWithParcel");
+
+                entity.Property(e => e.NewOwnerName).IsUnicode(false);
+
+                entity.Property(e => e.OldOwnerName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount");
+
+                entity.Property(e => e.AccountName).IsUnicode(false);
             });
 
             modelBuilder.Entity<vParcelOwnership>(entity =>

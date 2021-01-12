@@ -72,7 +72,7 @@ export class UserService {
     }
 
     addAccountsToCurrentUser(userEditAccountsDto: UserEditAccountsDto) {
-        let route = `/user/add-accounts`;
+        let route = `/user/add-accounts-via-verification-key`;
         return this.apiService.putToApi(route, userEditAccountsDto);
     }
     
