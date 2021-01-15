@@ -205,6 +205,10 @@ export class AuthenticationService {
     return this.isUserADemoUser(this.currentUser);
   }
 
+  public isCurrentUserALandOwnerOrDemoUser(): boolean {
+    return this.isUserALandOwnerOrDemoUser(this.currentUser);
+  }
+
   public isCurrentUserADemoUserOrAdministrator(): boolean {
     return this.isUserADemoUserOrAdministrator(this.currentUser);
   }

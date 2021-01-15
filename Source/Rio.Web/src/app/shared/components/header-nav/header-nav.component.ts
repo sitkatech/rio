@@ -48,7 +48,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
             this.currentUser = currentUser;
 
-            if (currentUser && this.authenticationService.isCurrentUserALandOwner() && environment.allowTrading) {
+            if (currentUser && this.authenticationService.isCurrentUserALandOwnerOrDemoUser() && environment.allowTrading) {
                 this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
                 if (this.currentUserAccounts?.length > 0) {
                     this.tradeService.getTradeActivityByUserID(currentUser.UserID).subscribe((trades) => {
