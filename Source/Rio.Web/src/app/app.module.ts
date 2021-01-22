@@ -77,6 +77,7 @@ import { environment } from 'src/environments/environment';
 import { AppInsightsService } from './shared/services/app-insights.service';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
+import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -139,7 +140,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     WaterAccountsListComponent,
     WaterAccountsInviteComponent,
     OpenetSyncWaterYearStatusListComponent,
-    ParcelUpdateLayerComponent
+    ParcelUpdateLayerComponent,
+    ParcelListInactiveComponent
   ],
   imports: [
     AppRoutingModule,

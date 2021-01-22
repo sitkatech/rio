@@ -4,7 +4,6 @@ import { ParcelStatusDto } from './parcel-status-dto';
 export class ParcelAllocationAndUsageDto {
     ParcelID: number;
     ParcelNumber: string;
-    ParcelStatus: ParcelStatusDto;
     ParcelAreaInAcres: number;
     LandOwner: AccountSimpleDto;
     Allocation: number;
@@ -19,4 +18,5 @@ export class ParcelAllocationAndUsageDto {
         Object.assign(this, obj);
     }
 }
+
 

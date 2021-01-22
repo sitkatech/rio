@@ -6,7 +6,7 @@
         public int? OwnerAccountID { get; set; }
         public int? EffectiveYear { get; set; }
         public string SaleDate { get; set; }
-
+        public int ParcelStatusID { get; set; }
         public string Note { get; set; }
     }
 }

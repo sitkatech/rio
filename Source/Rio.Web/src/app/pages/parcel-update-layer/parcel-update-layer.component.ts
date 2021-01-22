@@ -15,6 +15,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
 import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
+import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -60,6 +61,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
     private modalService: NgbModal,
+    private apiService: ApiService,
     @Inject(DOCUMENT) private document: Document
   ) {
     // force route reload whenever params change;
@@ -151,9 +153,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.requiredColumnMappings.forEach(x => {
         x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
       })
-    }, () => {
+    }, (error) => {
+      this.alertService.pushAlert(new Alert("Failed to upload GDB! If available, error details are below.", AlertContext.Danger));
+      this.apiService.sendErrorToHandleError(error);
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("Failed to upload GDB!", AlertContext.Danger));
     });
 
   }

@@ -16,6 +16,7 @@ namespace Rio.EFModels.Entities
         public int? EffectiveYear { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? SaleDate { get; set; }
+        public int ParcelStatusID { get; set; }
         [StringLength(500)]
         public string Note { get; set; }
         public long? RowNumber { get; set; }

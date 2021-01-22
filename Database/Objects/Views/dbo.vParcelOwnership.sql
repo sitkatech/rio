@@ -13,6 +13,7 @@ IsNull([AccountParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views
 	[OwnerName],
 	[EffectiveYear],
 	[SaleDate],
+	[ParcelStatusID],
 	[Note],
 	Row_Number() OVER (
 		Partition by ParcelID Order by isnull(SaleDate,0) desc

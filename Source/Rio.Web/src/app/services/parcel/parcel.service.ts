@@ -14,6 +14,8 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ParcelLayerUpdateDto } from 'src/app/pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
+import { ParcelWithStatusDto } from 'src/app/shared/models/parcel/parcel-with-status-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -91,8 +93,13 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
-    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
+  getActiveParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
+    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}/${ParcelStatusEnum.Active}`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getInactiveParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
+    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}/${ParcelStatusEnum.Inactive}`;
     return this.apiService.getFromApi(route);
   }
 
@@ -137,6 +144,11 @@ export class ParcelService {
 
   getParcelGDBCommonMappingToParcelStagingColumn(): Observable<any> {
     let route = `/parcels/parcelGDBCommonMappingToParcelStagingColumn`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getInactiveParcels(): Observable<Array<ParcelWithStatusDto>> {
+    let route = `/parcels/inactive`;
     return this.apiService.getFromApi(route);
   }
 }

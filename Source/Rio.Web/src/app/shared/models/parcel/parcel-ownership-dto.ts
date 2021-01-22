@@ -3,6 +3,7 @@ export class ParcelOwnershipDto {
     OwnerAccountID: number;
     EffectiveYear: number;
     SaleDate: string;
+    ParcelStatusID: number;
     Note: string;
 
     constructor(obj?: any) {

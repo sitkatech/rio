@@ -43,11 +43,24 @@ namespace Rio.EFModels.Entities
                 OwnerAccountID = account?.AccountID,
                 EffectiveYear = vParcelOwnership.EffectiveYear,
                 Note = vParcelOwnership.Note,
-                SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? ""
-
+                SaleDate = vParcelOwnership.SaleDate?.ToShortDateString() ?? "",
+                ParcelStatusID = vParcelOwnership.ParcelStatusID
             };
 
             return parcelOwnershipDto;
+        }
+
+        public static ParcelWithStatusDto AsParcelWithStatusDto(this vParcelOwnership vParcelOwnership)
+        {
+            var parcelWithStatusDto = new ParcelWithStatusDto()
+            {
+                ParcelID = vParcelOwnership.ParcelID,
+                ParcelNumber = vParcelOwnership.Parcel.ParcelNumber,
+                ParcelStatusID = vParcelOwnership.ParcelStatusID,
+                InactivateDate = vParcelOwnership.ParcelStatusID == (int)ParcelStatusEnum.Inactive ? vParcelOwnership.SaleDate : null
+            };
+
+            return parcelWithStatusDto;
         }
     }
 }

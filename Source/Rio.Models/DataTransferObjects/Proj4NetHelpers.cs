@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NetTopologySuite.Geometries;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -9,31 +10,38 @@ namespace Rio.Models.DataTransferObjects
     {
         private static readonly Dictionary<int, string> CoordinateSystemsWkTs = new Dictionary<int, string>
         {
-            [32611] = @"
-PROJCS[""WGS 84 / UTM zone 11N"",
-    GEOGCS[""WGS 84"",
-        DATUM[""WGS_1984"",
-            SPHEROID[""WGS 84"",6378137,298.257223563,
-                AUTHORITY[""EPSG"",""7030""]],
-            AUTHORITY[""EPSG"",""6326""]],
+            [2229] = @"
+PROJCS[""NAD83 / California zone 5 (ftUS)"",
+    GEOGCS[""NAD83"",
+        DATUM[""North_American_Datum_1983"",
+            SPHEROID[""GRS 1980"",6378137,298.257222101,
+                AUTHORITY[""EPSG"",""7019""]],
+            TOWGS84[0,0,0,0,0,0,0],
+            AUTHORITY[""EPSG"",""6269""]],
         PRIMEM[""Greenwich"",0,
             AUTHORITY[""EPSG"",""8901""]],
         UNIT[""degree"",0.0174532925199433,
             AUTHORITY[""EPSG"",""9122""]],
-        AUTHORITY[""EPSG"",""4326""]],
-    PROJECTION[""Transverse_Mercator""],
-    PARAMETER[""latitude_of_origin"",0],
-    PARAMETER[""central_meridian"",-117],
-    PARAMETER[""scale_factor"",0.9996],
-    PARAMETER[""false_easting"",500000],
-    PARAMETER[""false_northing"",0],
-    UNIT[""metre"",1,
-        AUTHORITY[""EPSG"",""9001""]],
-    AXIS[""Easting"",EAST],
-    AXIS[""Northing"",NORTH],
-    AUTHORITY[""EPSG"",""32611""]]
+        AUTHORITY[""EPSG"",""4269""]],
+    PROJECTION[""Lambert_Conformal_Conic_2SP""],
+    PARAMETER[""standard_parallel_1"",35.46666666666667],
+    PARAMETER[""standard_parallel_2"",34.03333333333333],
+    PARAMETER[""latitude_of_origin"",33.5],
+    PARAMETER[""central_meridian"",-118],
+    PARAMETER[""false_easting"",6561666.667],
+    PARAMETER[""false_northing"",1640416.667],
+    UNIT[""US survey foot"",0.3048006096012192,
+        AUTHORITY[""EPSG"",""9003""]],
+    AXIS[""X"",EAST],
+    AXIS[""Y"",NORTH],
+    AUTHORITY[""EPSG"",""2229""]]
 "
         };
+
+        public static bool WkTHasAppropriateSRS(string wkt, int targetSrid)
+        {
+            return wkt.Trim().Contains(CoordinateSystemsWkTs[targetSrid].Trim());
+        }
 
         private static Geometry Transform(Geometry geom, MathTransform transform, int targetSrid)
         {

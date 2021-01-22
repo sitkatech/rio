@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@ang
 import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { forkJoin } from 'rxjs';
@@ -17,10 +17,10 @@ import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum
 
 @Component({
   selector: 'rio-parcel-list',
-  templateUrl: './parcel-list.component.html',
-  styleUrls: ['./parcel-list.component.scss']
+  templateUrl: './parcel-list-inactive.component.html',
+  styleUrls: ['./parcel-list-inactive.component.scss']
 })
-export class ParcelListComponent implements OnInit, OnDestroy {
+export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
 
   public richTextTypeID: number = CustomRichTextType.ParcelList;
@@ -43,7 +43,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   private _highlightedParcelID: number;
   public loadingParcels: boolean = true;
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
-  public set highlightedParcelID(value : number) {
+  public set highlightedParcelID(value: number) {
     if (value != this._highlightedParcelID) {
       this._highlightedParcelID = value;
       this.highlightedParcel = this.rowData.filter(x => x.ParcelID == value)[0];
@@ -60,12 +60,13 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
     private parcelAllocationTypeService: ParcelAllocationTypeService,
-    private decimalPipe: DecimalPipe) { }
+    private decimalPipe: DecimalPipe,
+    private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
 
-
+      let _datePipe = this.datePipe;
       let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
         {
@@ -87,76 +88,59 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 100
         },
-        { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
-        //{ headerName: 'Parcel Status', field: 'ParcelStatus.ParcelStatusDisplayName', sortable: true, filter: true, width: 120},
         {
-          headerName: 'Account', valueGetter: function (params: any) {
-            return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
-          }, cellRendererFramework: LinkRendererComponent,
-          cellRendererParams: { inRouterLink: "/accounts/" },
+          headerName: 'Inactivate Date', field: 'InactivateDate', valueFormatter: function (params) {
+            return _datePipe.transform(params.value, "short")
+          },
           filterValueGetter: function (params: any) {
-            return (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null;
+            return _datePipe.transform(params.data.PostingDate, "M/d/yyyy");
+          },
+          filterParams: {
+            // provide comparator function
+            comparator: function (filterLocalDate, cellValue) {
+              var dateAsString = cellValue;
+              if (dateAsString == null) return -1;
+              var cellDate = Date.parse(dateAsString);
+              const filterLocalDateAtMidnight = filterLocalDate.getTime();
+              if (filterLocalDateAtMidnight == cellDate) {
+                return 0;
+              }
+              if (cellDate < filterLocalDateAtMidnight) {
+                return -1;
+              }
+              if (cellDate > filterLocalDateAtMidnight) {
+                return 1;
+              }
+            }
           },
           comparator: function (id1: any, id2: any) {
-            let link1 = id1.LinkDisplay;
-            let link2 = id2.LinkDisplay;
-            if (link1 < link2) {
+            let time1 = id1 ? Date.parse(id1) : 0;
+            let time2 = id2 ? Date.parse(id2) : 0;
+
+            if (time1 < time2) {
               return -1;
             }
-            if (link1 > link2) {
+            if (time1 > time2) {
               return 1;
             }
             return 0;
           },
-          sortable: true, filter: true, width: 170
-        },
-        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
+          sortable: true, filter: 'agDateColumnFilter'
+        }
       ];
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
       this.parcelsGrid.api.showLoadingOverlay();
-      forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ]).subscribe(([defaultYear, parcelAllocationTypes]) => {
-        this.waterYearToDisplay = defaultYear;
-        this.parcelAllocationTypes = parcelAllocationTypes;
 
-        // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
-        this.parcelAllocationTypes.forEach(parcelAllocationType => {
-          this.columnDefs.push({
-            headerName: parcelAllocationType.ParcelAllocationTypeName,
-            valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
-            sortable: true,
-            filter: true,
-            width: 130,
-            valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
-            }
-          })
-        });
-
-        this.columnDefs.forEach(x => {
-          x.resizable = true;
-        });
-
-        // this is necessary because by the time we enter this subscribe, ngOnInit has concluded and the ag-grid has read its column defs
-        this.parcelsGrid.api.setColumnDefs(this.columnDefs);
-
-        forkJoin([
-          this.parcelService.getActiveParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
-          this.waterYearService.getWaterYears()
-        ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
-          this.rowData = parcelsWithWaterUsage;
-          this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
-          this.parcelsGrid.api.hideOverlay();
-          this.loadingParcels = false;
-          this.waterYears = waterYears;
-          this.cdr.detectChanges();
-        });
-
+      this.parcelService.getInactiveParcels().subscribe((parcels) => {
+        this.rowData = parcels;
+        this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
+        this.parcelsGrid.api.hideOverlay();
+        this.loadingParcels = false;
+        this.cdr.detectChanges();
       });
+
     });
   }
 
@@ -166,19 +150,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public updateGridData() {
-    if (!this.waterYearToDisplay) {
-      return;
-    }
-    this.parcelService.getActiveParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.rowData = result;
-      this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
-      this.parcelsGrid.api.setRowData(this.rowData);
-    });
-  }
-
   public exportToCsv() {
-    this.utilityFunctionsService.exportGridToCsv(this.parcelsGrid, 'parcels.csv', null);
+    this.utilityFunctionsService.exportGridToCsv(this.parcelsGrid, 'inactive-parcels.csv', null);
   }
 
   public onGridReady(params) {

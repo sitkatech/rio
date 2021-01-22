@@ -41,11 +41,11 @@ namespace Rio.API.Controllers
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
+        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}/{parcelStatusID}")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsage([FromRoute] int year)
+        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYearAndParcelStatus([FromRoute] int year, [FromRoute] int parcelStatusID)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
+            var parcelDtos = ParcelAllocationAndUsage.GetByYearAndStatus(_dbContext, year, parcelStatusID);
             var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
             var parcelDtosWithAllocation = parcelDtos
                 .GroupJoin(
@@ -66,6 +66,14 @@ namespace Rio.API.Controllers
                         return x.ParcelAllocationAndUsage;
                     });
             return Ok(parcelDtosWithAllocation);
+        }
+
+        [HttpGet("parcels/inactive")]
+        [ManagerDashboardFeature]
+        public ActionResult<IEnumerable<ParcelWithStatusDto>> GetInactiveParcels()
+        {
+            var parcelDtos = Parcel.GetParcelByParcelStatus(_dbContext, (int)ParcelStatusEnum.Inactive);
+            return Ok(parcelDtos);
         }
 
         [HttpGet("parcels/{parcelID}")]

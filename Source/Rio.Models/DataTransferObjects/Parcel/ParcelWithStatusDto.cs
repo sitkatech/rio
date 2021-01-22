@@ -1,7 +1,10 @@
-﻿namespace Rio.Models.DataTransferObjects.Parcel
+﻿using System;
+
+namespace Rio.Models.DataTransferObjects.Parcel
 {
     public class ParcelWithStatusDto : ParcelDto
     {
-        public ParcelStatusDto ParcelStatus { get; set; }
+        public int ParcelStatusID { get; set; }
+        public DateTime? InactivateDate { get; set; }
     }
 }

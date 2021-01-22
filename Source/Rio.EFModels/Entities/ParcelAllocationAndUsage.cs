@@ -32,10 +32,11 @@ namespace Rio.EFModels.Entities
         public int? AccountID { get; set; }
         public int? AccountNumber { get; set; }
 
-        public static IEnumerable<ParcelAllocationAndUsageDto> GetByYear(RioDbContext dbContext, int year)
+        public static IEnumerable<ParcelAllocationAndUsageDto> GetByYearAndStatus(RioDbContext dbContext, int year, int parcelStatusID)
         {
-            var sqlParameter = new SqlParameter("year", year);
-            var parcelAllocationAndUsages = dbContext.ParcelAllocationAndUsages.FromSqlRaw($"EXECUTE dbo.pParcelAllocationAndUsage @year", sqlParameter).ToList();
+            var sqlYearParameter = new SqlParameter("year", year);
+            var sqlParcelStatusParameter = new SqlParameter("parcelStatusID", parcelStatusID);
+            var parcelAllocationAndUsages = dbContext.ParcelAllocationAndUsages.FromSqlRaw($"EXECUTE dbo.pParcelAllocationAndUsage @year, @parcelStatusID", sqlYearParameter, sqlParcelStatusParameter).ToList();
 
             var parcelAllocationAndUsageDtos = parcelAllocationAndUsages.OrderBy(x => x.ParcelNumber).Select(parcel =>
             {
@@ -43,7 +44,6 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     ParcelNumber = parcel.ParcelNumber,
-                    ParcelStatus = ParcelStatus.GetByID(dbContext, parcel.ParcelStatusID),
                     ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                     ProjectWater = parcel.ProjectWater,
                     Reconciliation = parcel.Reconciliation,
