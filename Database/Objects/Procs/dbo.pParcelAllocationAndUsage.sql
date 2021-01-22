@@ -4,8 +4,7 @@ go
 
 create procedure dbo.pParcelAllocationAndUsage
 (
-    @year int,
-	@parcelStatusID int
+    @year int
 )
 as
 
@@ -44,6 +43,6 @@ begin
 		group by pme.ParcelID
 	) pmev on p.ParcelID = pmev.ParcelID
 
-	where RowNumber = 1 and up.ParcelStatusID = @parcelStatusID
+	where RowNumber = 1
 
 end

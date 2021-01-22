@@ -41,11 +41,11 @@ namespace Rio.API.Controllers
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}/{parcelStatusID}")]
+        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYearAndParcelStatus([FromRoute] int year, [FromRoute] int parcelStatusID)
+        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYear([FromRoute] int year)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYearAndStatus(_dbContext, year, parcelStatusID);
+            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
             var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
             var parcelDtosWithAllocation = parcelDtos
                 .GroupJoin(

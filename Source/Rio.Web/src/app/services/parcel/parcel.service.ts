@@ -93,13 +93,8 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getActiveParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
-    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}/${ParcelStatusEnum.Active}`;
-    return this.apiService.getFromApi(route);
-  }
-
-  getInactiveParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
-    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}/${ParcelStatusEnum.Inactive}`;
+  getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
+    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
 

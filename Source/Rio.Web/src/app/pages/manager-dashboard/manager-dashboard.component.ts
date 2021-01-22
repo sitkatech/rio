@@ -555,7 +555,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
     this.loadingParcelAllocationsAndUsages = true;
     forkJoin([
-      this.parcelService.getActiveParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
       this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year)
     ])
     .subscribe(([result, waterUsageOverview]) => {

@@ -145,10 +145,11 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin([
-          this.parcelService.getActiveParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
-          this.rowData = parcelsWithWaterUsage;
+          debugger;
+          this.rowData = parcelsWithWaterUsage.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
           this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;
@@ -170,8 +171,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     if (!this.waterYearToDisplay) {
       return;
     }
-    this.parcelService.getActiveParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.rowData = result;
+    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
+      this.rowData = result.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);
     });
