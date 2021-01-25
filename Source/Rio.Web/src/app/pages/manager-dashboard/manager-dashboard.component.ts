@@ -25,7 +25,8 @@ import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entr
 import { AccountService } from 'src/app/services/account/account.service';
 import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
 
 @Component({
   selector: 'rio-manager-dashboard',

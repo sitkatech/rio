@@ -4,6 +4,7 @@ using Rio.Models.DataTransferObjects.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Rio.EFModels.Entities
 {
@@ -81,6 +82,11 @@ namespace Rio.EFModels.Entities
 
         public static AccountDto GetByAccountVerificationKey(RioDbContext dbContext, string accountVerificationKey)
         {
+            if (String.IsNullOrEmpty(accountVerificationKey))
+            {
+                return null;
+            }
+
             return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountVerificationKey == accountVerificationKey)?.AsDto();
         }
@@ -98,6 +104,9 @@ namespace Rio.EFModels.Entities
                 .Single(x => x.AccountID == accountID);
 
             account.AccountStatusID = accountUpdateDto.AccountStatusID;
+            account.InactivateDate = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive
+                ? DateTime.UtcNow
+                : (DateTime?) null;
             account.Notes = accountUpdateDto.Notes;
             account.AccountName = accountUpdateDto.AccountName;
             account.UpdateDate = DateTime.UtcNow;
@@ -116,7 +125,8 @@ namespace Rio.EFModels.Entities
                 Notes = accountUpdateDto.Notes,
                 AccountName = accountUpdateDto.AccountName,
                 UpdateDate = DateTime.UtcNow,
-                AccountVerificationKey = GenerateAndVerifyAccountVerificationKey(dbContext, rioConfigurationVerificationKeyChars)
+                CreateDate = DateTime.UtcNow,
+                AccountVerificationKey = GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars, GetCurrentAccountVerificationKeys(dbContext))
             };
 
             dbContext.Account.Add(account);
@@ -126,10 +136,14 @@ namespace Rio.EFModels.Entities
             return GetByAccountID(dbContext, account.AccountID);
         }
 
-        private static string GenerateAndVerifyAccountVerificationKey(RioDbContext dbContext,
-            string rioConfigurationVerificationKeyChars)
+        public static List<string> GetCurrentAccountVerificationKeys(RioDbContext dbContext)
         {
-            var currentAccountVerificationKeys = dbContext.Account.Select(x => x.AccountVerificationKey).ToList();
+            return dbContext.Account.Select(x => x.AccountVerificationKey).ToList();
+        }
+
+        private static string GenerateAndVerifyAccountVerificationKey(string rioConfigurationVerificationKeyChars,
+            List<string> currentAccountVerificationKeys)
+        {
             var accountVerificationKey = GenerateAccountVerificationKey(rioConfigurationVerificationKeyChars);
             while (currentAccountVerificationKeys.Contains(accountVerificationKey))
             {
@@ -180,6 +194,52 @@ namespace Rio.EFModels.Entities
             accounts.ForEach(x => x.AccountVerificationKeyLastUseDate = DateTime.UtcNow);
 
             dbContext.SaveChanges();
+        }
+        
+        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate, bool saveChanges)
+        {
+            accountsToInactivate.ForEach(x =>
+            {
+                x.UpdateDate = DateTime.UtcNow;
+                x.InactivateDate = DateTime.UtcNow;
+                x.AccountStatusID = (int) AccountStatusEnum.Inactive;
+                x.AccountVerificationKey = null;
+            });
+
+            if (saveChanges)
+            {
+                dbContext.SaveChanges();
+            }
+        }
+
+        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate, bool saveChanges)
+        {
+            var listOfAccountsToCreate = new List<Account>();
+            var currentAccountVerificationKeys = GetCurrentAccountVerificationKeys(dbContext);
+
+            accountNamesToCreate.ForEach(x =>
+            {
+                var accountVerificationKey =
+                    GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars,
+                        currentAccountVerificationKeys);
+                currentAccountVerificationKeys.Add(accountVerificationKey);
+
+                listOfAccountsToCreate.Add(new Account()
+                {
+                    AccountStatusID = (int)AccountStatusEnum.Active,
+                    AccountName = x,
+                    UpdateDate = DateTime.UtcNow,
+                    CreateDate = DateTime.UtcNow,
+                    AccountVerificationKey = accountVerificationKey
+                });
+            });
+
+            dbContext.Account.AddRange(listOfAccountsToCreate);
+
+            if (saveChanges)
+            {
+                dbContext.SaveChanges();
+            }
         }
     }
 }

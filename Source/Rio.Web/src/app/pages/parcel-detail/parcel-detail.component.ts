@@ -13,8 +13,9 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -144,6 +145,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     }
     
     return account.AccountNumber
+  }
+
+  public isActive() : boolean {
+    if (!this.parcel) {
+      return false;
+    }
+
+    let currentOwner = this.getCurrentOwner();
+
+    return currentOwner.ParcelStatusID == ParcelStatusEnum.Active
   }
   
   public isAdministrator() : boolean

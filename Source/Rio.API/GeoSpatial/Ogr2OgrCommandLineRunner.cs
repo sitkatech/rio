@@ -12,14 +12,14 @@ namespace Rio.API.GeoSpatial
     /// </summary>
     public class Ogr2OgrCommandLineRunner
     {
-        public const int DefaultCoordinateSystemId = 2913;
+        public const int DefaultCoordinateSystemId = 2229;
 
         private readonly FileInfo _ogr2OgrExecutable;
-        private readonly int _coordinateSystemId;
+        private readonly int? _coordinateSystemId;
         private readonly double _totalMilliseconds;
         private readonly bool _specifyGdalDirectory;
 
-        public Ogr2OgrCommandLineRunner(string pathToOgr2OgrExecutable, int coordinateSystemId, double totalMilliseconds, bool specifyGdalDirectory)
+        public Ogr2OgrCommandLineRunner(string pathToOgr2OgrExecutable, int? coordinateSystemId, double totalMilliseconds, bool specifyGdalDirectory)
         {
             _totalMilliseconds = totalMilliseconds;
             _specifyGdalDirectory = specifyGdalDirectory;
@@ -44,11 +44,11 @@ namespace Rio.API.GeoSpatial
         }
 
         public string ImportFileGdbToGeoJson(string inputGdbFilePath, string sourceLayerName,
-            List<string> columnNameList, int? significantDigits, ILogger logger, string filter)
+            List<string> columnNameList, int? significantDigits, ILogger logger, string filter, bool explodeCollections)
         {
             Check.RequirePathExists(inputGdbFilePath, "Can't find input File GDB for import with ogr2ogr");
             var gdalDataDirectoryInfo = _specifyGdalDirectory ? new DirectoryInfo(Path.Combine(_ogr2OgrExecutable.Directory.FullName, "gdal-data")) : null;
-            var commandLineArguments = BuildCommandLineArgumentsForFileGdbToGeoJson(inputGdbFilePath, gdalDataDirectoryInfo, sourceLayerName, sourceLayerName, columnNameList, filter, _coordinateSystemId, false, significantDigits, null);
+            var commandLineArguments = BuildCommandLineArgumentsForFileGdbToGeoJson(inputGdbFilePath, gdalDataDirectoryInfo, sourceLayerName, sourceLayerName, columnNameList, filter, _coordinateSystemId, explodeCollections, significantDigits, null);
             var processUtilityResult = ExecuteOgr2OgrCommand(commandLineArguments, logger);
             return processUtilityResult.StdOut;
         }
@@ -62,19 +62,19 @@ namespace Rio.API.GeoSpatial
             ExecuteOgr2OgrCommandForFileGdbWrite(commandLineArguments, logger);
         }
 
-        public void ImportGeoJsonToGeopackage(string outputFilePath, string outputLayerName, bool update,
-            string pathToGeoJsonFile, string geometryType, ILogger logger)
-        {
-            var commandLineArguments = BuildCommandLineArgumentsForGeoJsonToGeopackage(pathToGeoJsonFile, _coordinateSystemId, outputFilePath, outputLayerName, update, geometryType);
-            ExecuteOgr2OgrCommandForGeopackageWrite(commandLineArguments, logger);
-        }
+        //public void ImportGeoJsonToGeopackage(string outputFilePath, string outputLayerName, bool update,
+        //    string pathToGeoJsonFile, string geometryType, ILogger logger)
+        //{
+        //    var commandLineArguments = BuildCommandLineArgumentsForGeoJsonToGeopackage(pathToGeoJsonFile, _coordinateSystemId, outputFilePath, outputLayerName, update, geometryType);
+        //    ExecuteOgr2OgrCommandForGeopackageWrite(commandLineArguments, logger);
+        //}
 
-        public void ImportFileGdbToMsSql(string inputGdbFilePath, string sourceLayerName, string destinationTableName, List<string> columnNameList, string filter, string connectionString, ILogger logger)
-        {
-            var databaseConnectionString = $"MSSQL:{connectionString.Replace("Data Source=", "server=").Replace("Initial Catalog=", "database=").Replace("User ID=", "uid=").Replace("Password=", "pwd=").Replace(";Persist Security Info=True", ";Driver={ODBC Driver 17 for SQL Server}")}";
-            var commandLineArguments = BuildCommandLineArgumentsForFileGdbToMsSql(inputGdbFilePath, databaseConnectionString, sourceLayerName, destinationTableName, columnNameList, filter, _coordinateSystemId);
-            ExecuteOgr2OgrCommand(commandLineArguments, logger);
-        }
+        //public void ImportFileGdbToMsSql(string inputGdbFilePath, string sourceLayerName, string destinationTableName, List<string> columnNameList, string filter, string connectionString, ILogger logger)
+        //{
+        //    var databaseConnectionString = $"MSSQL:{connectionString.Replace("Data Source=", "server=").Replace("Initial Catalog=", "database=").Replace("User ID=", "uid=").Replace("Password=", "pwd=").Replace(";Persist Security Info=True", ";Driver={ODBC Driver 17 for SQL Server}")}";
+        //    var commandLineArguments = BuildCommandLineArgumentsForFileGdbToMsSql(inputGdbFilePath, databaseConnectionString, sourceLayerName, destinationTableName, columnNameList, filter, _coordinateSystemId);
+        //    ExecuteOgr2OgrCommand(commandLineArguments, logger);
+        //}
 
         protected ProcessUtilityResult ExecuteOgr2OgrCommand(List<string> commandLineArguments,
             ILogger logger)
@@ -128,7 +128,7 @@ namespace Rio.API.GeoSpatial
         /// </summary>
         internal static List<string> BuildCommandLineArgumentsForFileGdbToGeoJson(string inputGdbFilePath,
             DirectoryInfo gdalDataDirectoryInfo, string sourceLayerName, string targetTableName,
-            List<string> columnNameList, string filter, int coordinateSystemId, bool explodeCollections,
+            List<string> columnNameList, string filter, int? coordinateSystemId, bool explodeCollections,
             int? significantDigits, Envelope extent)
         {
             var reservedFields = new[] { "Ogr_Fid", "Ogr_Geometry" };
@@ -144,8 +144,6 @@ namespace Rio.API.GeoSpatial
             {
                 "-sql",
                 selectStatement,
-                "-t_srs",
-                GetMapProjection(coordinateSystemId),
                 explodeCollections ? "-explodecollections" : null,
                 "-f",
                 "GeoJSON",
@@ -154,6 +152,16 @@ namespace Rio.API.GeoSpatial
                 "-nln",
                 targetTableName
             };
+
+            if (coordinateSystemId.HasValue)
+            {
+                commandLineArguments.AddRange(new List<string>
+                {
+                    "-t_srs",
+                    GetMapProjection(coordinateSystemId.Value)
+                });
+            }
+            
 
             if (gdalDataDirectoryInfo != null)
             {
@@ -175,11 +183,11 @@ namespace Rio.API.GeoSpatial
             var layerCreationOptions = new List<string>()
             {
                 "-lco",
-                "COORDINATE_PRECISION=3",
+                "COORDINATE_PRECISION=14",
                 significantDigits.HasValue ? "SIGNIFICANT_FIGURES=" + significantDigits : null
             };
 
-            return commandLineArguments.Where(x => x != null).Union(layerCreationOptions.Where(x => !string.IsNullOrWhiteSpace(x))).ToList();
+            return commandLineArguments.Where(x => x != null).Concat(layerCreationOptions.Where(x => !string.IsNullOrWhiteSpace(x))).ToList();
         }
 
         /// <summary>
@@ -189,18 +197,15 @@ namespace Rio.API.GeoSpatial
         /// </example>
         /// </summary>
         private List<string> BuildCommandLineArgumentsForGeoJsonToFileGdb(string pathToSourceGeoJsonFile,
-            DirectoryInfo gdalDataDirectoryInfo, int coordinateSystemId, string outputPath, string outputLayerName, bool update, string geometryType)
+            DirectoryInfo gdalDataDirectoryInfo, int? coordinateSystemId, string outputPath, string outputLayerName, bool update, string geometryType)
         {
+
             var commandLineArguments = new List<string>
             {
                 update ? "-update" : null,
                 "--config",
                 //"GDAL_DATA",
                 //gdalDataDirectoryInfo.FullName,
-                "-s_srs",
-                GetMapProjection(coordinateSystemId),
-                "-t_srs",
-                GetMapProjection(coordinateSystemId),
                 "-f",
                 "FileGDB",
                 outputPath,
@@ -211,6 +216,16 @@ namespace Rio.API.GeoSpatial
                 geometryType,
                 "-append"
             };
+
+            if (coordinateSystemId.HasValue)
+            {
+                commandLineArguments.AddRange(new List<string>
+                { 
+                    "-t_srs",
+                    GetMapProjection(coordinateSystemId.Value)
+                });
+            }
+            
 
             return commandLineArguments.Where(x => x != null).ToList();
         }

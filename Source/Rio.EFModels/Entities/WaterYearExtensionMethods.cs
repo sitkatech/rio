@@ -10,7 +10,8 @@ namespace Rio.EFModels.Entities
             {
                 WaterYearID = waterYear.WaterYearID,
                 Year = waterYear.Year,
-                FinalizeDate = waterYear.FinalizeDate
+                FinalizeDate = waterYear.FinalizeDate,
+                ParcelLayerUpdateDate = waterYear.ParcelLayerUpdateDate
             };
         }
     }

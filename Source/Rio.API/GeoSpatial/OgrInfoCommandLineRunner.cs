@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.GeoSpatial
 {
@@ -36,6 +37,13 @@ namespace Rio.API.GeoSpatial
             foreach (var featureClassBlob in featureClassesFromFileGdb)
             {
                 var featureClassInfo = new FeatureClassInfo();
+
+                if (!Proj4NetHelpers.WkTHasAppropriateSRS(featureClassBlob,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId))
+                {
+                    throw new ValidationException($"GDB contains a layer that is not projected to {Ogr2OgrCommandLineRunner.GetMapProjection(Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId)}. Please upload a different GDB or edit the current one.");
+                }
+
                 var features = featureClassBlob.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
                 featureClassInfo.LayerName = features.First();
                 featureClassInfo.FeatureType = features.First(x => x.StartsWith("Geometry: ")).Substring("Geometry: ".Length);

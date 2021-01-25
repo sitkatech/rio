@@ -115,13 +115,16 @@ export class ApiService {
         return response;
     }
 
+    sendErrorToHandleError(error) {
+        return this.handleError(error);
+    }
+
     private handleError(error: any, supressErrorMessage = false, clearBusyGlobally = true): Observable<any> {
         if (clearBusyGlobally) {
             this.busyService.setBusy(false);
         }
 
         if (!supressErrorMessage) {
-            debugger;
             if (error && (error.status === 401)) {
                 this.alertService.pushAlert(new Alert("Access token expired..."));
                 this.oauthService.initImplicitFlow();

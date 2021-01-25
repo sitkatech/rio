@@ -125,5 +125,13 @@ namespace Rio.EFModels.Entities
         {
             return Regex.IsMatch(parcelNumber, regexPattern);
         }
+
+        public static IEnumerable<ParcelWithStatusDto> GetParcelByParcelStatus(RioDbContext dbContext, int parcelStatusID)
+        {
+            return dbContext.vParcelOwnership.Include(x => x.Parcel).AsNoTracking().Where(
+                x =>
+                    x.RowNumber == 1 && x.ParcelStatusID == parcelStatusID
+                    ).Select(x => x.AsParcelWithStatusDto()).AsEnumerable();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -18,6 +19,7 @@ namespace Rio.EFModels.Entities
 
         public int ParcelID { get; set; }
         public string ParcelNumber { get; set; }
+        public int ParcelStatusID { get; set; }
         public double ParcelAreaInAcres { get; set; }
         public decimal? ProjectWater { get; set; }
         public decimal? Reconciliation { get; set; }
@@ -41,6 +43,7 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     ParcelNumber = parcel.ParcelNumber,
+                    ParcelStatusID = parcel.ParcelStatusID,
                     ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                     ProjectWater = parcel.ProjectWater,
                     Reconciliation = parcel.Reconciliation,

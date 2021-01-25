@@ -24,18 +24,6 @@ namespace Rio.EFModels.Entities
         [Required]
         [Column(TypeName = "geometry")]
         public Geometry ParcelGeometry { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerName { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerAddress { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string OwnerCity { get; set; }
-        [Required]
-        [StringLength(20)]
-        public string OwnerZipCode { get; set; }
         public int ParcelAreaInSquareFeet { get; set; }
         public double ParcelAreaInAcres { get; set; }
 

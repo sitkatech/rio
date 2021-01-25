@@ -11,8 +11,9 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -87,6 +88,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           sortable: true, filter: true, width: 100
         },
         { headerName: 'Area (acres)', field: 'ParcelAreaInAcres', valueFormatter: function (params) { return _decimalPipe.transform(params.value, '1.1-1'); }, sortable: true, filter: true, width: 120 },
+        //{ headerName: 'Parcel Status', field: 'ParcelStatus.ParcelStatusDisplayName', sortable: true, filter: true, width: 120},
         {
           headerName: 'Account', valueGetter: function (params: any) {
             return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
@@ -146,7 +148,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
-          this.rowData = parcelsWithWaterUsage;
+          debugger;
+          this.rowData = parcelsWithWaterUsage.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
           this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;
@@ -169,7 +172,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       return;
     }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.rowData = result;
+      this.rowData = result.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);
     });

@@ -6,10 +6,6 @@ CREATE TABLE [dbo].[Parcel](
 	[ParcelID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelNumber] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[ParcelGeometry] [geometry] NOT NULL,
-	[OwnerName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[OwnerAddress] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[OwnerCity] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[OwnerZipCode] [varchar](20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[ParcelAreaInSquareFeet] [int] NOT NULL,
 	[ParcelAreaInAcres] [float] NOT NULL,
  CONSTRAINT [PK_Parcel_ParcelID] PRIMARY KEY CLUSTERED 
