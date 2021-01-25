@@ -23,7 +23,7 @@ import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum
 export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
 
-  public richTextTypeID: number = CustomRichTextType.ParcelList;
+  public richTextTypeID: number = CustomRichTextType.InactiveParcelList;
 
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;

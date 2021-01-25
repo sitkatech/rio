@@ -187,7 +187,7 @@ namespace Rio.API.GeoSpatial
                 significantDigits.HasValue ? "SIGNIFICANT_FIGURES=" + significantDigits : null
             };
 
-            return commandLineArguments.Where(x => x != null).Union(layerCreationOptions.Where(x => !string.IsNullOrWhiteSpace(x))).ToList();
+            return commandLineArguments.Where(x => x != null).Concat(layerCreationOptions.Where(x => !string.IsNullOrWhiteSpace(x))).ToList();
         }
 
         /// <summary>
@@ -220,9 +220,7 @@ namespace Rio.API.GeoSpatial
             if (coordinateSystemId.HasValue)
             {
                 commandLineArguments.AddRange(new List<string>
-                {
-                    "-s_srs",
-                    GetMapProjection(coordinateSystemId.Value),
+                { 
                     "-t_srs",
                     GetMapProjection(coordinateSystemId.Value)
                 });
