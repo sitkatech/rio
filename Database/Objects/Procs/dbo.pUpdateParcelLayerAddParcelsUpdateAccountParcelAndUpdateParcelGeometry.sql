@@ -10,8 +10,16 @@ as
 
 begin
 
+	declare @squareMetersToSquareFeetMultiplier float = 10.764
+	declare @squareMetersToAcresDivisor int = 4047
+
+	--Function relies on ParcelGeometry being in EPSG:2229, whose GeoGCS Authority is EPSG:4269
+	--Thus, we convert from metres (or in this case square meters) to square feet and acres
 	insert into dbo.Parcel (ParcelNumber, ParcelGeometry, ParcelAreaInSquareFeet, ParcelAreaInAcres)
-	select pus.ParcelNumber, pus.ParcelGeometry4326, round(pus.ParcelGeometry.STArea() * 10.764, 0), round(pus.ParcelGeometry.STArea() / 4047, 14) 
+	select pus.ParcelNumber, 
+		   pus.ParcelGeometry4326, 
+		   round(pus.ParcelGeometry.STArea() * @squareMetersToSquareFeetMultiplier, 0), 
+		   round(pus.ParcelGeometry.STArea() / @squareMetersToAcresDivisor, 14) 
 	from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
 	join dbo.ParcelUpdateStaging pus on v.ParcelNumber = pus.ParcelNumber
 	where OldOwnerName is null and OldGeometryText is null
@@ -27,8 +35,8 @@ begin
 	
 	update dbo.Parcel
 	set ParcelGeometry = pus.ParcelGeometry4326,
-	ParcelAreaInSquareFeet = round(pus.ParcelGeometry.STArea() * 10.764, 0),
-	ParcelAreaInAcres = round(pus.ParcelGeometry.STArea() / 4047, 14)
+	ParcelAreaInSquareFeet = round(pus.ParcelGeometry.STArea() * @squareMetersToSquareFeetMultiplier, 0),
+	ParcelAreaInAcres = round(pus.ParcelGeometry.STArea() / @squareMetersToAcresDivisor, 14)
 	from dbo.ParcelUpdateStaging pus
 	join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
 
