@@ -60,7 +60,7 @@
                 <hr class="p-0 m-0" />
               </td>
             </tr>
-            <ng-container *ngFor="let batch of getParcelAllocationTypesBatched()">
+            <ng-container *ngFor="let batch of parcelAllocationTypesBatched">
               <tr *ngFor="let allocationType of batch">
                 <th class="text-sm-right">
                   {{allocationType.ParcelAllocationTypeName}}

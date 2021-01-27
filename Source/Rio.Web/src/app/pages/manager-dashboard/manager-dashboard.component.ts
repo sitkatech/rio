@@ -54,6 +54,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public displayTradeGrid: boolean = false;
   public displayPostingsGrid: boolean = false;
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public parcelAllocationTypesBatched: ParcelAllocationTypeDto[][];
   private allocationColumnDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   public allocationLabel: string = "Annual Supply";
@@ -110,6 +111,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
         this.parcelAllocationTypes = parcelAllocationTypes;
+        this.parcelAllocationTypesBatched = this.getParcelAllocationTypesBatched();
 
         let decimalPipe = this.decimalPipe;
         const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
