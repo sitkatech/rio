@@ -202,6 +202,11 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
         this.chooseErrorToDisplay(parcelAllocationType);
         return true;
       }
+
+      if (file.name.split(".").pop().toUpperCase() != "CSV") {
+        this.displayFileErrors[parcelAllocationType.ParcelAllocationTypeName] = true;
+        return true;
+      }
     }
     return false;
   }

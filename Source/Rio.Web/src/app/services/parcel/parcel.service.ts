@@ -66,11 +66,11 @@ export class ParcelService {
         // header. If we don't, the server will try to parse the body as
         // plain text.
         headers: {
-          "Content-Type": file.type
+          "Content-Type": file.type ?? "application/vnd.ms-excel"
         },
         params: {
           clientFilename: file.name,
-          mimeType: file.type
+          mimeType: file.type ?? "application/vnd.ms-excel"
         }
       }
     );

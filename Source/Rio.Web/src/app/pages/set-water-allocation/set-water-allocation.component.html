@@ -111,6 +111,11 @@
                                     Please choose a file before submitting
                                 </div>
                             </div>
+                            <div *ngIf="displayFileErrors[parcelAllocationType.ParcelAllocationTypeName]" class="row mb-1">
+                                <div class="col danger">
+                                    File is not the correct type, please select a CSV file to upload
+                                </div>
+                            </div>
                         </ng-container>
                     </ng-container>
                     <div class="updating-allocation" *ngIf="isLoadingSubmit">
