@@ -173,7 +173,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       this.clearInputs();
       this.cdr.detectChanges();
     }, error => {
-      if (error.error.validationMessage) {
+      if (error.error && error.error.validationMessage) {
         this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
       }
       else {
