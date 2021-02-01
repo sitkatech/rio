@@ -12,17 +12,12 @@ li.list-group-item.parcel-map.selected {
     background-color: #FFFF85;
 }
 
-.header-bottom-border {
-    border-bottom: solid 2px $button-border-and-background !important
-}
-
 li.list-group-item.header {
     cursor:pointer;
-    color: #000;
     background-color: #dfdfdf;
-    border-left: solid 1px #000;
-    border-right: solid 1px #000;
-    border-top: solid 1px #000;
+    border-bottom: solid 2px $button-border-and-background !important;
+    color: #000;
+    border-top:0;
 }
 
 li.list-group-item.header:hover {

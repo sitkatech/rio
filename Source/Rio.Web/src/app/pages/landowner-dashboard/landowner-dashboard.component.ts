@@ -50,6 +50,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
   public hoverItem: string;
   public selectYearLabel: string = "View Year:"
+  public waterYearDropdownTextColor: string;
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -571,5 +572,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public landownerHasAnyAccounts(){
     var result = this.authenticationService.getAvailableAccounts();
     return result != null && result.length > 0;
+  }
+
+  public triggerDropdownToggle(event: Event, rioWaterYearSelector: any) {
+    event.stopPropagation();
+    rioWaterYearSelector.triggerDropdownToggle();
   }
 }

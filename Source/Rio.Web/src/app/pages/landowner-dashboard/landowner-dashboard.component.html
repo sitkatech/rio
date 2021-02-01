@@ -26,10 +26,10 @@
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
     </div>
-    <div class="row d-sm-block d-none">
+    <div class="row">
       <div class="col">
         <ul class="list-group list-group-flush text-center text-lg-left flex-row" style="width:100%">
-          <li class="list-group-item header header-bottom-border p-0" style="width:100%"
+          <li class="list-group-item header p-0" style="width:100%"
             *ngFor="let item of getViewEnum()" [class.selected]="checkSelectedView(item)" (click)="updateView(item)" (mouseenter)="hoverItem = item" (mouseleave)="hoverItem = null"
             placement="top" ngbTooltip="{{item}}" tooltipClass="selector-tooltip">
             <div class="container" style="height:100%">
@@ -43,29 +43,11 @@
               </div>
             </div>
           </li>
-          <li class="list-group-item header-bottom-border text-center p-0 d-none d-lg-block" style="width:100%; border-top:0">
-            <rio-water-year-select style="height:100%;float:right" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
-              [selectYearLabel]="selectYearLabel" (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+          <li class="list-group-item header text-center p-0 d-none d-lg-block" *ngIf="waterYears" style="width:100%;" (click)="triggerDropdownToggle($event, rioWaterYearSelect)" (mouseenter)="waterYearDropdownTextColor='#FFF'" (mouseleave)="waterYearDropdownTextColor=''">
+            <rio-water-year-select #rioWaterYearSelect style="height:100%;float:right" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay" [defaultHover]="false"
+              [selectYearLabel]="selectYearLabel" (selectedYearChange)="updateAnnualData()" [textColor]="waterYearDropdownTextColor"></rio-water-year-select>
           </li>
         </ul>
-      </div>
-    </div>
-    <div class="row d-sm-none">
-      <div class="col col-auto float-right ml-auto">
-        <div class="form-group form-inline mt-0 mb-0">
-          View Section:
-          <a href="#" class="nav-link water-year-dropdown dropdown-toggle font-weight-bold" role="button"
-            data-toggle="dropdown">
-            {{sectionCurrentlyViewing}}
-          </a>
-          <div class="dropdown-menu">
-            <ng-template ngFor let-section [ngForOf]="getViewEnum()">
-              <a class="dropdown-item" (click)="updateView(section)">
-                {{section}}
-              </a>
-            </ng-template>
-          </div>
-        </div>
       </div>
     </div>
   </div>
