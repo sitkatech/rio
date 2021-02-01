@@ -26,6 +26,7 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -45,6 +46,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public showSoldDetails: boolean;
   public unitsShown: string = "ac-ft";
   public waterUsageByParcelViewType: string = "chart";
+  public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
+  public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -144,6 +147,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getAccountDisplayName(): string {
     return this.activeAccount.AccountDisplayName;
+  }
+
+  public getViewEnum(): string[] {
+    return Object.values(this.LandownerDashboardViewEnum);
+  }
+
+  public checkSelectedView(value: string): boolean {
+    return this.sectionCurrentlyViewing == value;
+  }
+
+  public updateView(value: string) {
+    var key = Object.keys(LandownerDashboardViewEnum).filter(x => LandownerDashboardViewEnum[x] == value)[0];
+    this.sectionCurrentlyViewing = LandownerDashboardViewEnum[key];
   }
 
   public updateAccountData(account: AccountSimpleDto): void {

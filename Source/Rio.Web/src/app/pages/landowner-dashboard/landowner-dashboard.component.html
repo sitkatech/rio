@@ -10,25 +10,33 @@
     </nav>
   </div>
 </div>
-<ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
-<div class="container mt-sm-4" *ngIf="activeAccount">
-  <app-alert-display></app-alert-display>
-  <p>
-    Landowner Dashboard
-  </p>
+<div class="container" *ngIf="!loadingActiveAccount;" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
   <div class="row">
     <div class="col col-auto mr-auto">
       <h2>
         {{getAccountDisplayName()}}
       </h2>
     </div>
-    <div class="col ml-auto col-auto float-right" *ngIf="waterYears">
-      <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
-        (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+  </div>
+  <div class="row">
+    <div class="col">
+      <ul class="list-group list-group-flush flex-sm-row" style="width:100%">
+        <li class="list-group-item" style="width:100%" *ngFor="let item of getViewEnum()" [class.selected]="checkSelectedView(item)" (click)="updateView(item)">
+          {{item}}
+        </li>
+        <li class="list-group-item" style="width:100%">
+          <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
+          (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+        </li>
+      </ul>
     </div>
   </div>
+</div>
+<ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
+<div class="container mt-sm-4" *ngIf="activeAccount">
+  <app-alert-display></app-alert-display>
   <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
-  <div class="row mt-4" *ngIf="userHasParcels() && waterUsages">
+  <div class="row mt-4" *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
     <div class="col-sm-12 col-md-5">
       <div class="card">
         <div class="card-header">
@@ -302,8 +310,7 @@
       </div>
     </div>
   </div>
-  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
-  <div *ngIf="userHasParcels() && waterUsages && waterUsageChartData" class="row mt-4">
+  <div *ngIf="userHasParcels() && waterUsageChartData && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel" class="row mt-4">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
@@ -386,13 +393,12 @@
       </div>
     </div>
   </div>
-  <div class="row mt-4" *ngIf="!userHasParcels() || !waterUsages">
+  <div class="row mt-4" *ngIf="(!userHasParcels() || !waterUsages) && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel">
     <div class="col-12">
       <em>No data available: this Account is not associated with any parcels {{waterYearToDisplay ? ("in " + waterYearToDisplay.Year) : ""}}</em>
     </div>
   </div>
-  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
-  <div class="row mt-4" *ngIf="userHasParcels() && allowTrading() && waterUsages && waterUsageChartData && trades">
+  <div class="row mt-4" *ngIf="userHasParcels() && allowTrading() && trades &&sectionCurrentlyViewing == LandownerDashboardViewEnum.Trading">
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
@@ -498,8 +504,7 @@
       </div>
     </div>
   </div>
-  <!-- Loading these rows should be sequential, so check the requirements from the previous row and include them on yours if possible -->
-  <div class="row mt-4 mb-4" *ngIf="userHasParcels() && waterUsages && waterUsageChartData && trades">
+  <div class="row mt-4 mb-4" *ngIf="userHasParcels() && sectionCurrentlyViewing == LandownerDashboardViewEnum.AccountMap">
     <div class="col-sm-12 col-md-12">
       <div class="card">
         <div class="card-header">
