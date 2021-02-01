@@ -48,6 +48,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterUsageByParcelViewType: string = "chart";
   public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
   public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
+  public hoverItem: string;
+  public selectYearLabel: string = "View Year:"
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -150,11 +152,22 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getViewEnum(): string[] {
-    return Object.values(this.LandownerDashboardViewEnum);
+    var values = Object.values(this.LandownerDashboardViewEnum);
+
+    if (!this.allowTrading()) {
+      values = values.filter(x => x != LandownerDashboardViewEnum.Trading);
+    }
+
+    return values;
   }
 
   public checkSelectedView(value: string): boolean {
     return this.sectionCurrentlyViewing == value;
+  }
+
+  public getImgSrcForSelector(value: string): string {
+    var color = this.checkSelectedView(value) || this.hoverItem == value ? "white" : "black";
+    return `assets/main/images/landowner-dashboard-view/${value}-${color}.png`;
   }
 
   public updateView(value: string) {
