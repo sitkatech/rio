@@ -138,5 +138,11 @@ namespace Rio.EFModels.Entities
 
             return offers;
         }
+
+        public static void DeleteAll(RioDbContext dbContext)
+        {
+            dbContext.Trade.RemoveRange(dbContext.Trade);
+            dbContext.SaveChanges();
+        }
     }
 }

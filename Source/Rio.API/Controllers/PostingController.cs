@@ -119,21 +119,12 @@ namespace Rio.API.Controllers
         [TradeDeleteAllFeature]
         public ActionResult DeleteAllTradeActivity()
         {
-            using var dbContextTransaction = _dbContext.Database.BeginTransaction();
-
-            try
-            {
-                _dbContext.Database.ExecuteSqlRaw(
-                    "EXECUTE dbo.pDeleteAllTradeActivity");
-
-                dbContextTransaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                dbContextTransaction.Rollback();
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+            WaterTransferRegistrationParcel.DeleteAll(_dbContext);
+            WaterTransferRegistration.DeleteAll(_dbContext);
+            WaterTransfer.DeleteAll(_dbContext);
+            Offer.DeleteAll(_dbContext);
+            Trade.DeleteAll(_dbContext);
+            Posting.DeleteAll(_dbContext);
             return Ok();
         }
 
