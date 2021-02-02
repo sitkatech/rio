@@ -85,5 +85,11 @@ namespace Rio.EFModels.Entities
 
             return result;
         }
+
+        public static void DeleteAll(RioDbContext dbContext)
+        {
+            dbContext.WaterTransferRegistrationParcel.RemoveRange(dbContext.WaterTransferRegistrationParcel);
+            dbContext.SaveChanges();
+        }
     }
 }

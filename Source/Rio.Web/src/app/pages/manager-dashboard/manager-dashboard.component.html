@@ -177,6 +177,8 @@
           </div>
         </div>
         <div class="card-body table-responsive" *ngIf="tradeActivity">
+          <button *ngIf="isAdministrator() && displayTradeGrid" class="btn btn-sm btn-rio mb-1" (click)="launchModal(deleteAllTradeActivityModalContent)" [disabled]="isPerformingAction">
+            <span *ngIf="isPerformingAction" class="fa fa-spinner loading-spinner"></span>Delete All Trade Activity</button>
           <div *ngIf="!displayTradeGrid">
             No trade activity to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
             Dashboard to view postings for other years.
@@ -240,3 +242,24 @@
     </div>
   </div>
 </div>
+
+<ng-template #deleteAllTradeActivityModalContent let-modal>
+  <div class="modal-header">
+      <h5 class="modal-title" id="deleteAllTradeActivityModalTitle">Delete All Trade Activity</h5>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <p>
+          Are you sure you want to delete all Trade Activity in the system? This will remove all Postings, Offers made on those postings, along with any records of successful Trade Registrations and Water Transfers <strong>for all water years.</strong>
+          <br/><br/>
+          This action cannot be undone.
+      </p>
+      <div class="modal-footer">
+          <button type="button" ngbAutoFocus class="btn btn-danger btn-sm" (click)="deleteAllTradeActivity()">
+              Delete</button>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cancel Action')">Cancel</button>
+      </div>
+  </div>
+</ng-template>

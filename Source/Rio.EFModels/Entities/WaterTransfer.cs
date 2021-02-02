@@ -158,5 +158,11 @@ namespace Rio.EFModels.Entities
             var waterTransfer = GetWaterTransfersImpl(dbContext).Where(x => x.WaterTransferRegistration.All(y => y.WaterTransferRegistrationStatusID == (int)WaterTransferRegistrationStatusEnum.Registered)).OrderByDescending(x => x.WaterTransferRegistration.Max(y => y.StatusDate)).FirstOrDefault();
             return waterTransfer?.AsDto();
         }
+
+        public static void DeleteAll(RioDbContext dbContext)
+        {
+            dbContext.WaterTransfer.RemoveRange(dbContext.WaterTransfer);
+            dbContext.SaveChanges();
+        }
     }
 }
