@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
@@ -6,6 +7,8 @@ using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Rio.API.Controllers
@@ -109,6 +112,28 @@ namespace Rio.API.Controllers
             }
 
             Posting.Delete(_dbContext, postingID);
+            return Ok();
+        }
+
+        [HttpDelete("trades/delete")]
+        [TradeDeleteAllFeature]
+        public ActionResult DeleteAllTradeActivity()
+        {
+            using var dbContextTransaction = _dbContext.Database.BeginTransaction();
+
+            try
+            {
+                _dbContext.Database.ExecuteSqlRaw(
+                    "EXECUTE dbo.pDeleteAllTradeActivity");
+
+                dbContextTransaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                dbContextTransaction.Rollback();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
             return Ok();
         }
 

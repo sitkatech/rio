@@ -30,4 +30,9 @@ export class TradeService {
         let route = `/trades/${tradeNumber}`;
         return this.apiService.getFromApi(route);
     }
+
+    deleteAllTrades(): Observable<any> {
+        let route = 'trades/delete';
+        return this.apiService.deleteToApi(route);
+    }
 }
