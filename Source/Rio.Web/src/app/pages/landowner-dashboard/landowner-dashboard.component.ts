@@ -26,6 +26,7 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -45,6 +46,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public showSoldDetails: boolean;
   public unitsShown: string = "ac-ft";
   public waterUsageByParcelViewType: string = "chart";
+  public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
+  public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
+  public hoverItem: string;
+  public selectYearLabel: string = "View Year:"
+  public waterYearDropdownTextColor: string;
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -144,6 +150,30 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getAccountDisplayName(): string {
     return this.activeAccount.AccountDisplayName;
+  }
+
+  public getViewEnum(): string[] {
+    var values = Object.values(this.LandownerDashboardViewEnum);
+
+    if (!this.allowTrading()) {
+      values = values.filter(x => x != LandownerDashboardViewEnum.Trading);
+    }
+
+    return values;
+  }
+
+  public checkSelectedView(value: string): boolean {
+    return this.sectionCurrentlyViewing == value;
+  }
+
+  public getImgSrcForSelector(value: string): string {
+    var color = this.checkSelectedView(value) || this.hoverItem == value ? "white" : "black";
+    return `assets/main/images/landowner-dashboard-view/${value}-${color}.png`;
+  }
+
+  public updateView(value: string) {
+    var key = Object.keys(LandownerDashboardViewEnum).filter(x => LandownerDashboardViewEnum[x] == value)[0];
+    this.sectionCurrentlyViewing = LandownerDashboardViewEnum[key];
   }
 
   public updateAccountData(account: AccountSimpleDto): void {
@@ -542,5 +572,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public landownerHasAnyAccounts(){
     var result = this.authenticationService.getAvailableAccounts();
     return result != null && result.length > 0;
+  }
+
+  public triggerDropdownToggle(event: Event, rioWaterYearSelector: any) {
+    event.stopPropagation();
+    rioWaterYearSelector.triggerDropdownToggle();
   }
 }

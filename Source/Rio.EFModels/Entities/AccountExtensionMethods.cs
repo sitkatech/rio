@@ -16,8 +16,8 @@ namespace Rio.EFModels.Entities
                 AccountName = account.AccountName,
                 AccountVerificationKey = account.AccountVerificationKey,
                 Notes = account.Notes,
-                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
-                ShortAccountDisplayName = $"#{account.AccountNumber} ({account.AccountName})"
+                AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
+                ShortAccountDisplayName = $"#{account.AccountName} ({account.AccountNumber})"
             };
         }
         public static AccountDto AsDto(this Account account)
@@ -34,8 +34,8 @@ namespace Rio.EFModels.Entities
                 Users = userSimpleDtos,
                 NumberOfUsers = userSimpleDtos.Count,
                 AccountStatus = account.AccountStatus.AsDto(),
-                AccountDisplayName = $"Account #{account.AccountNumber} ({account.AccountName})",
-                ShortAccountDisplayName = $"#{account.AccountNumber} ({account.AccountName})",
+                AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
+                ShortAccountDisplayName = $"{account.AccountName} (#{account.AccountNumber})",
                 NumberOfParcels = account.AccountParcel.Count
             };
         }
