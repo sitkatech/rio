@@ -40,6 +40,7 @@ export class WaterYearSelectComponent implements OnInit {
   //If the component lives inside a parent component and needs to be triggered from clicking 
   //anywhere inside the parent component
   triggerDropdownToggle(event: Event) {
+    event.stopPropagation();
     $(this.waterYearDropdown.nativeElement).dropdown('toggle');
     this.waterYearDropdown.nativeElement.blur();
   }

@@ -49,7 +49,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
   public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
   public hoverItem: string;
-  public selectYearLabel: string = "View Year:"
   public waterYearDropdownTextColor: string;
 
   public user: UserDto;
@@ -122,8 +121,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.loadingActiveAccount = true;
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.tradeStatusIDs = [TradeStatusEnum.Countered];
-      this.postingStatusIDs = [PostingStatusEnum.Open];
+      this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Countered, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
+      this.postingStatusIDs = [PostingStatusEnum.Open, PostingStatusEnum.Closed];
       this.showAllocationDetails = false;
       this.showPurchasedDetails = false;
       this.showSoldDetails = false;
@@ -512,6 +511,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.waterUsageChartData.ChartData;
   }
 
+  public isWaterUsageForWaterYearNullOrEmpty(): boolean {
+    if (!this.waterUsageChartData) {
+      return true;
+    }
+
+    return this.waterUsageChartData.ChartData.every(x => x.series.every(y => y["IsEmpty"]));
+  }
+
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
     if (!this.waterUsageOverview) {
       return this.emptyCumulativeWaterUsage
@@ -572,10 +579,5 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public landownerHasAnyAccounts(){
     var result = this.authenticationService.getAvailableAccounts();
     return result != null && result.length > 0;
-  }
-
-  public triggerDropdownToggle(event: Event, rioWaterYearSelector: any) {
-    event.stopPropagation();
-    rioWaterYearSelector.triggerDropdownToggle();
   }
 }

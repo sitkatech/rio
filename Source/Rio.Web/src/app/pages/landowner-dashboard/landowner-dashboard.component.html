@@ -19,30 +19,43 @@
         </h2>
       </div>
       <div class="col ml-auto col-auto float-right d-lg-none" *ngIf="waterYears">
-        <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay" [selectYearLabel]="selectYearLabel"
+        <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
     </div>
     <div class="row">
       <div class="col">
         <ul class="list-group list-group-flush text-center text-lg-left flex-row" style="width:100%">
-          <li class="list-group-item header p-0" style="width:100%"
-            *ngFor="let item of getViewEnum()" [class.selected]="checkSelectedView(item)" (click)="updateView(item)" (mouseenter)="hoverItem = item" (mouseleave)="hoverItem = null"
-            placement="top" ngbTooltip="{{item}}" tooltipClass="selector-tooltip">
+          <li class="list-group-item header p-0" style="width:100%" *ngFor="let item of getViewEnum()"
+            [class.selected]="checkSelectedView(item)" (click)="updateView(item)" (mouseenter)="hoverItem = item"
+            (mouseleave)="hoverItem = null" placement="top" ngbTooltip="{{item}}" tooltipClass="selector-tooltip">
             <div class="container" style="height:100%">
-              <div class="row" style="height:100%">
+              <div class="row d-flex flex-wrap align-items-center" style="height:100%">
                 <div class="col-lg-3 col-sm-12 p-0">
                   <img src="{{getImgSrcForSelector(item)}}" style="max-width:75px;width:100%" alt="{{item}}">
                 </div>
-                <div class="col-lg-9 pl-0 d-lg-block d-none mt-auto mb-auto">
+                <div class="col-lg-9 pl-0 d-lg-block d-none">
                   {{item}}
                 </div>
               </div>
             </div>
           </li>
-          <li class="list-group-item header text-center p-0 d-none d-lg-block" *ngIf="waterYears" style="width:100%;" (click)="triggerDropdownToggle($event, rioWaterYearSelect)" (mouseenter)="waterYearDropdownTextColor='#FFF'" (mouseleave)="waterYearDropdownTextColor=''">
-            <rio-water-year-select #rioWaterYearSelect style="height:100%;float:right" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay" [defaultHover]="false"
-              [selectYearLabel]="selectYearLabel" (selectedYearChange)="updateAnnualData()" [textColor]="waterYearDropdownTextColor"></rio-water-year-select>
+          <li class="list-group-item header text-center p-0 d-none d-lg-block" *ngIf="waterYears" style="width:100%;min-width:220px;"
+            (click)="rioWaterYearSelect.triggerDropdownToggle($event)" (mouseenter)="waterYearDropdownTextColor='#FFF'; hoverItem = 'Water Year Dropdown'"
+            (mouseleave)="waterYearDropdownTextColor=''; hoverItem = null">
+            <div class="container" style="height:100%">
+              <div class="row" style="height:100%">
+                <div class="col-lg-3 col-sm-12 p-0">
+                  <img src="{{getImgSrcForSelector('Water Year Dropdown')}}" style="max-width:75px;width:100%" alt="{{item}}">
+                </div>
+                <div class="col-lg-9 pl-0 pr-0 d-lg-block d-none mt-auto mb-auto">
+                  <rio-water-year-select #rioWaterYearSelect [waterYears]="waterYears"
+                    [(selectedYear)]="waterYearToDisplay" [defaultHover]="false" (selectedYearChange)="updateAnnualData()"
+                    [textColor]="waterYearDropdownTextColor"></rio-water-year-select>
+                </div>
+              </div>
+            </div>
+            
           </li>
         </ul>
       </div>
@@ -51,7 +64,7 @@
   <div class="container" *ngIf="activeAccount">
     <div class="row"
       *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
-      <div class="col-sm-12 col-md-5">
+      <div class="col-sm-12 col-lg-5">
         <div class="card">
           <div class="card-header">
             <div class="btn-group btn-group-toggle float-right">
@@ -304,7 +317,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 col-md-7">
+      <div class="col-sm-12 col-lg-7 mt-4 mt-lg-0">
         <div class="row">
           <div class="col-sm-12">
             <div class="card">
@@ -326,46 +339,46 @@
         </div>
       </div>
     </div>
-    <div
-      *ngIf="userHasParcels() && waterUsageChartData && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel"
-      class="row">
-      <div class="col-sm-12">
-        <div class="card">
-          <div class="card-header">
-            <div class="btn-group btn-group-toggle float-right">
-              <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'chart' ? 'active' : ''"
-                placement="top" ngbTooltip="Chart">
-                <input type="radio" name="units" id="chart-icon" (click)="toggleWaterUsageByParcelView()"><i
-                  class="fas fa-chart-bar"></i>
-              </label>
-              <label class="btn btn-toggle btn-sm" [ngClass]="waterUsageByParcelViewType === 'table' ? 'active' : ''"
-                placement="top" ngbTooltip="Table">
-                <input type="radio" name="units" id="table-icon" (click)="toggleWaterUsageByParcelView()"><i
-                  class="fas fa-table"></i>
-              </label>
+    <ng-container
+      *ngIf="userHasParcels() && waterUsageChartData && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Visualization </span>
+              <a routerLink="/measuring-water-use-with-openet" target="_blank"
+                style="cursor:pointer; vertical-align: middle;" placement="top"
+                ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
             </div>
-            <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel </span>
-            <a routerLink="/measuring-water-use-with-openet" target="_blank"
-              style="cursor:pointer; vertical-align: middle;" placement="top"
-              ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
-            <a class="btn btn-rio btn-sm mr-3 float-right"
-              routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay?.Year}}"
-              *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
-          </div>
-          <div class="card-body">
-            <div *ngIf="waterUsageByParcelViewType === 'chart'; then chartBlock else tableBlock"></div>
-            <ng-template #chartBlock>
-              <rio-landowner-water-use-chart [waterUsageData]="getWaterUsageForWaterYear()"
-                [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
+            <div class="card-body">
+              <rio-landowner-water-use-chart *ngIf="!isWaterUsageForWaterYearNullOrEmpty()"
+                [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
               </rio-landowner-water-use-chart>
+              <p *ngIf="isWaterUsageForWaterYearNullOrEmpty()">OpenET water usage data not yet available for
+                {{waterYearToDisplay?.Year}}</p>
               <p class="small">
                 Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
                 <br>
                 Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
                   routerLinkActive="true">OpenET FAQ</a>.
               </p>
-            </ng-template>
-            <ng-template #tableBlock>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header">
+              <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Tabular </span>
+              <a routerLink="/measuring-water-use-with-openet" target="_blank"
+                style="cursor:pointer; vertical-align: middle;" placement="top"
+                ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
+              <a class="btn btn-rio btn-sm mr-3 float-right"
+                routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay?.Year}}"
+                *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
+            </div>
+            <div class="card-body">
               <table class="table table-responsive">
                 <thead>
                   <th></th>
@@ -409,13 +422,13 @@
                 Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
                   routerLinkActive="true">OpenET FAQ</a>.
               </p>
-            </ng-template>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ng-container>
     <div class="row"
-      *ngIf="(!userHasParcels() || !waterUsages) && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel">
+      *ngIf="(!userHasParcels() || !waterUsages) && (sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel || sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget)">
       <div class="col-12">
         <em>No data available: this Account is not associated with any parcels {{waterYearToDisplay ? ("in " +
           waterYearToDisplay.Year) : ""}}</em>
@@ -428,7 +441,7 @@
           <div class="card-header">
             <div class="float-right">
               <label class="switch">
-                <input type="checkbox" (change)="toggleTradeStatusShown()" />
+                <input type="checkbox" (change)="toggleTradeStatusShown()" checked />
                 <div class="slider round">
                   <span class="off">Active</span>
                   <span class="on">All</span>
@@ -481,11 +494,11 @@
             </table>
           </div>
         </div>
-        <div class="card mt-2">
+        <div class="card mt-4">
           <div class="card-header">
             <div class="float-right">
               <label class="switch">
-                <input type="checkbox" (change)="togglePostingStatusShown()" />
+                <input type="checkbox" (change)="togglePostingStatusShown()" checked />
                 <div class="slider round">
                   <span class="off">Active</span>
                   <span class="on">All</span>
@@ -554,9 +567,9 @@
                 </parcel-map>
               </div>
             </div>
-            <div class="row mt-4" *ngIf="highlightedParcelDto">
-              <div class="col-12" style="background-color:#eee; background-clip:content-box">
-                <div class="row">
+            <div class="row mt-4">
+              <div class="col-12" style="background-color:#eee; background-clip:content-box; min-height:168px">
+                <div class="row" *ngIf="highlightedParcelDto">
                   <div class="col-xs-12 col-sm-6 col-lg-4 mt-4">
                     <h2 class="ml-3">Parcel {{highlightedParcelDto.ParcelNumber}}</h2>
                   </div>
@@ -575,6 +588,13 @@
                   <div class="col-xs-12 col-sm-12 col-lg-4 mt-4 text-sm-center">
                     <a class="btn btn-rio ml-3 mb-4" routerLink="/parcels/{{highlightedParcelDto.ParcelID}}">View Parcel
                       {{highlightedParcelDto.ParcelNumber}} Details</a>
+                  </div>
+                </div>
+                <div class="row h-100" *ngIf="!highlightedParcelDto">
+                  <div class="col mt-4">
+                    <h2 class="text-center">
+                      Select a Parcel from the map or list to see Parcel Details
+                    </h2>
                   </div>
                 </div>
               </div>
