@@ -41,7 +41,8 @@
             <dd class="col-sm-7 col-xs-12">
               <a *ngIf="(isAdministrator() || isDemoUser()) && getCurrentOwner() && getCurrentOwner().OwnerAccountID"
                 routerLink="/accounts/{{getCurrentOwner().OwnerAccountID}}">{{getCurrentOwner().OwnerName}}</a>
-              <span *ngIf="getCurrentOwner() && (isLandowner() || !getCurrentOwner().OwnerAccountID)">{{getCurrentOwner().OwnerName}}</span>
+              <span *ngIf="getCurrentOwner() && !getCurrentOwner().OwnerAccountID && getCurrentOwner().OwnerName">{{getCurrentOwner().OwnerName}}</span>
+              <em *ngIf="getCurrentOwner() && !getCurrentOwner().OwnerAccountID && !getCurrentOwner().OwnerName">Inactive</em>
               <em *ngIf="!getCurrentOwner()" class="text-muted">Not Set</em>
             </dd>
           </dl>
@@ -136,7 +137,7 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right" routerLink="/parcels/{{parcel.ParcelID}}/change-owner">
+          <a *ngIf="isAdministrator() && isActive()" class="btn btn-rio btn-sm float-right" routerLink="/parcels/{{parcel.ParcelID}}/change-owner">
             <span class="fas fa-edit"></span> Change Parcel Owner
           </a>
 
@@ -161,8 +162,12 @@
                     <a routerLink="/accounts/{{parcelOwnershipRecord.OwnerAccountID}}">{{parcelOwnershipRecord.OwnerName}}</a>
                   </td>
                 
-                  <td *ngIf="!parcelOwnershipRecord.OwnerAccountID">
+                  <td *ngIf="!parcelOwnershipRecord.OwnerAccountID && parcelOwnershipRecord.OwnerName">
                     {{parcelOwnershipRecord.OwnerName}}
+                  </td>
+
+                  <td *ngIf="!parcelOwnershipRecord.OwnerAccountID && !parcelOwnershipRecord.OwnerName">
+                    <em>Inactivated</em>
                   </td>
                   <td style="text-align: right">
                    {{parcelOwnershipRecord.SaleDate}}</td>

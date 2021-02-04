@@ -115,6 +115,10 @@ export class ApiService {
         return response;
     }
 
+    sendErrorToHandleError(error) {
+        return this.handleError(error);
+    }
+
     private handleError(error: any, supressErrorMessage = false, clearBusyGlobally = true): Observable<any> {
         if (clearBusyGlobally) {
             this.busyService.setBusy(false);
@@ -144,7 +148,7 @@ export class ApiService {
                     }
                 }
                 else {
-                    let errorString = this.errorStringFromObject(error.error)
+                    let errorString = this.errorStringFromObject(error.error, true)
                     this.alertService.pushAlert(new Alert(errorString, AlertContext.Info));
                 }
             } else {
@@ -155,17 +159,17 @@ export class ApiService {
         return _throw(error);
     }
 
-    private errorStringFromObject(errorObject: any) : string {
-        let errorString =  "Oops! Something went wrong and we couldn't complete the action. If present, details are below: <br/><div class='ml-2'>";
+    private errorStringFromObject(errorObject: any, includeIntro: boolean, nestedKey? : string) : string {
+        let errorString = includeIntro ? "Oops! Something went wrong and we couldn't complete the action. If present, details are below: <br/><div class='ml-2'>" : "";
         for (const key of Object.keys(errorObject)) {
             if (typeof errorObject[key] !== 'object') {
-                errorString += `${key} : ${errorObject[key]} <br/>`
+                errorString += `${nestedKey ? nestedKey : key} : ${errorObject[key]} <br/>`
             }
             else {
-                errorString += this.errorStringFromObject(errorObject);
+                errorString += this.errorStringFromObject(errorObject[key], false, key);
             }
         }
-        errorString += "</div>";
+        errorString += includeIntro ? "</div>" : "";
         return errorString;
     }
 

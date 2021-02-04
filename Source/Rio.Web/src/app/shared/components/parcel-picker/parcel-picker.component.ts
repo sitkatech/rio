@@ -35,6 +35,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     public selectedParcelLayerName: string = 'Selected Parcels';
     public visibleParcelIDs: Array<number> = [];
     public isLoadingSubmit: boolean = false;
+    public parcelIDsAlreadyAccountedForWithClick = [];
 
     @Output() onSubmit = new EventEmitter();
 
@@ -53,9 +54,17 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
         this.parcelMap.map.on("click", (event: LeafletMouseEvent): void => {
             self.wfsService.getParcelByCoordinate(event.latlng.lng, event.latlng.lat)
                 .subscribe((parcelFeatureCollection: FeatureCollection) => {
+                    this.parcelIDsAlreadyAccountedForWithClick = [];
                     parcelFeatureCollection.features
                         .forEach((feature: Feature) => {
+                            //In some cases there are duplicate parcels being returned
+                            //This is a temporary fix, but it might be something bigger with geoserver
+                            if (this.parcelIDsAlreadyAccountedForWithClick.includes(feature.properties.ParcelID)) {
+                                return;
+                            }
+
                             self.toggleParcel.bind(self)(feature);
+                            this.parcelIDsAlreadyAccountedForWithClick.push(feature.properties.ParcelID);
                         });
                 });
         });

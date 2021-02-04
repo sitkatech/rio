@@ -12,11 +12,6 @@
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
-    <ngb-alert [type]="'info'" [dismissible]="false">
-        <span>
-            This feature is currently in development. It will allow for previewing changes that will occur if the operation were to be confirmed, but no actual updates will occur even if finalized.
-        </span>
-    </ngb-alert>
     <div class="row mb-2">
         <div class="col">
             <h2 class="d-inline-block">Update Parcels and Accounts</h2>
@@ -27,6 +22,12 @@
 
         </div>
     </div>
+    <ngb-alert *ngIf="waterYearsNotPresentError" [type]="'danger'" [dismissible]="false">
+        <span>
+            Before the operation may be completed, please ensure Water Years have been added for the following years:
+            {{currentYear}}, {{previousYear}}
+        </span>
+    </ngb-alert>
     <form [formGroup]="newParcelLayerForm" (ngSubmit)="onSubmitGDB()" *ngIf="!featureClass">
         <div class="row mt-4">
             <div class="col">
@@ -40,8 +41,7 @@
                                 <div class="form-group">
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file"
-                                                id="gdbUploadForParcelLayer"
+                                            <input type="file" id="gdbUploadForParcelLayer"
                                                 (change)="onGDBFileChange($event)"
                                                 class="form-control custom-file-input"
                                                 aria-describedby="gdbUploadForParcelLayerHelp">
@@ -53,8 +53,10 @@
                                                     class="fas fa-folder-open"></i></button>
                                         </div>
                                     </div>
-                                    <div *ngIf="f.gdbUploadForParcelLayer.touched && f.gdbUploadForParcelLayer.invalid" class="alert alert-danger">
-                                        <div *ngIf="f.gdbUploadForParcelLayer.errors.required">Please select a file to upload.</div>
+                                    <div *ngIf="f.gdbUploadForParcelLayer.touched && f.gdbUploadForParcelLayer.invalid"
+                                        class="alert alert-danger">
+                                        <div *ngIf="f.gdbUploadForParcelLayer.errors.required">Please select a file to
+                                            upload.</div>
                                     </div>
                                     <div class="form-text">
                                         After you upload your file you will be able to preview and verify the
@@ -74,7 +76,8 @@
                 </small>
             </div>
             <div class="col-sm text-right">
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                <button type="submit" class="btn btn-rio mr-2"
+                    [disabled]="isLoadingSubmit || waterYearsNotPresentError">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
                     <span *ngIf="!featureClass">Save
                         & Continue</span>
@@ -83,7 +86,7 @@
             </div>
         </div>
     </form>
-    <form (ngSubmit)="onSubmitForPreview()" *ngIf="featureClass && !resultsPreview">
+    <form [formGroup]="submitForPreviewForm" (ngSubmit)="onSubmitForPreview()" *ngIf="featureClass && !resultsPreview">
         <div class="row mt-4">
             <div class="col">
                 <div class="card">
@@ -112,12 +115,13 @@
                                     <tr
                                         [ngClass]="{'column-not-found-no-top': !mappedColumnNameSetForRequiredColumn(requiredColumn)}">
                                         <td>
-                                            {{requiredColumn.RequiredColumnName}} (Equivalent to: {{requiredColumn.CommonName}})
+                                            {{requiredColumn.RequiredColumnName}} (Equivalent to:
+                                            {{requiredColumn.CommonName}})
                                         </td>
                                         <td class="form-group">
                                             <div class="input-group">
                                                 <select class="form-control" name="sourceColumnNameFor{{i}}"
-                                                    [(ngModel)]="requiredColumn.MappedColumnName">
+                                                    [(ngModel)]="requiredColumn.MappedColumnName" [ngModelOptions]="{standalone: true}">
                                                     <option [ngValue]="undefined" disabled>Select a Column</option>
                                                     <option *ngFor="let column of getColumns()" [ngValue]="column">
                                                         {{column}}
@@ -131,6 +135,50 @@
                         </table>
                     </div>
                 </div>
+                <div class="card mt-2">
+                    <div class="card-header">
+                        <span class="align-middle">Water Year To Take Effect</span>
+                    </div>
+                    <div class="card-body">
+                        <ngb-alert [type]="'info'" [dismissible]="false" *ngIf="hasCurrentYearBeenUpdated()">
+                            <span>
+                                Because changes have already been applied to {{currentWaterYear.Year}}, only {{currentWaterYear.Year}} may be selected.
+                            </span>
+                        </ngb-alert>
+                        <fieldset class="form-group">
+                            <div class="row">
+                                <legend class="col-form-label col-sm-6 pt-0 text-sm-right font-weight-bold">Which Water Year should these changes be
+                                    assigned to?</legend>
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"
+                                            id="currentWaterYear" formControlName="waterYearSelection"
+                                            [value]="currentWaterYear.WaterYearID">
+                                        <label class="form-check-label" for="currentWaterYear">
+                                            {{currentWaterYear.Year}}
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"
+                                            id="previousWaterYear" formControlName="waterYearSelection"
+                                            [value]="previousWaterYear.WaterYearID" [attr.disabled]="hasCurrentYearBeenUpdated() ? '' : null">
+                                        <label class="form-check-label" for="previousWaterYear">
+                                            {{previousWaterYear.Year}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf="submitForPreviewFormControls.waterYearSelection.touched && submitForPreviewFormControls.waterYearSelection.invalid">
+                                <div class="col-sm-12">
+                                    <div
+                                        class="alert alert-danger">
+                                        <div *ngIf="submitForPreviewFormControls.waterYearSelection.errors.required">Please choose a Water Year to assign changes to</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row mt-2">
@@ -138,7 +186,7 @@
                 <button type="button" class="btn btn-rio mr-2" (click)="removeFeatureClasses()" *ngIf="featureClass"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit || !previewFormValid()">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
                     Submit & Review
                 </button>
@@ -146,7 +194,7 @@
             </div>
         </div>
     </form>
-    <ng-container *ngIf="resultsPreview">
+    <form (ngSubmit)="launchModal(finalizeChangesModalContent)" *ngIf="resultsPreview">
         <div class="row mt-4">
             <div class="col">
                 <div class="card">
@@ -179,7 +227,14 @@
                             </dd>
                         </dl>
                         <dl class="row">
-                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Associated With New Account</dt>
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels With Updated Geometries</dt>
+                            <dd class="col-sm-6 col-xs-12">
+                                {{resultsPreview.NumParcelsUpdatedGeometries}}
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Associated With New Account
+                            </dt>
                             <dd class="col-sm-6 col-xs-12">
                                 {{resultsPreview.NumParcelsAssociatedWithNewAccount}}
                             </dd>
@@ -199,14 +254,14 @@
                 <button type="button" class="btn btn-rio mr-2" (click)="removeResultPreview()"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" (click)="launchModal(finalizeChangesModalContent)">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
                     Finalize Changes
                 </button>
                 <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
             </div>
         </div>
-    </ng-container>
+    </form>
 </div>
 
 <ng-template #finalizeChangesModalContent let-modal>

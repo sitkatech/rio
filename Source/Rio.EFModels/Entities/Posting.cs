@@ -155,5 +155,11 @@ namespace Rio.EFModels.Entities
                 (x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
                 x.TradeStatusID == (int) TradeStatusEnum.Countered));
         }
+
+        public static void DeleteAll(RioDbContext dbContext)
+        {
+            dbContext.Posting.RemoveRange(dbContext.Posting);
+            dbContext.SaveChanges();
+        }
     }
 }

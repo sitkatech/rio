@@ -19,7 +19,7 @@ export class AppInsightsService {
         enableCorsCorrelation: true,
         enableRequestHeaderTracking: true,
         enableResponseHeaderTracking: true,
-        correlationHeaderExcludedDomains: ['keystone.sitkatech.com', 'qa.keystone.sitkatech.com'],
+        correlationHeaderExcludedDomains: ['keystone.sitkatech.com', 'qa.keystone.sitkatech.com', new URL(environment.geoserverMapServiceUrl).hostname],
         instrumentationKey: environment.appInsightsInstrumentationKey,
         maxAjaxCallsPerView: -1,
       }

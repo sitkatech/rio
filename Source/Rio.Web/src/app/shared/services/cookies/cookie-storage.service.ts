@@ -24,6 +24,6 @@ export class CookieStorageService extends OAuthStorage {
   }
 
   setItem(key: string, data: string): void {
-    return this.cookieService.set(key, data)
+    return this.cookieService.set(key, data);
   }
 }

@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[WaterYear](
 	[WaterYearID] [int] IDENTITY(1,1) NOT NULL,
 	[Year] [int] NOT NULL,
 	[FinalizeDate] [datetime] NULL,
+	[ParcelLayerUpdateDate] [datetime] NULL,
  CONSTRAINT [PK_WaterYear_WaterYearID] PRIMARY KEY CLUSTERED 
 (
 	[WaterYearID] ASC

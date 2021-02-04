@@ -28,5 +28,11 @@ namespace Rio.EFModels.Entities
 
         public bool IsCanceled =>
             WaterTransferRegistrationStatusID == (int) WaterTransferRegistrationStatusEnum.Canceled;
+
+        public static void DeleteAll(RioDbContext dbContext)
+        {
+            dbContext.WaterTransferRegistration.RemoveRange(dbContext.WaterTransferRegistration);
+            dbContext.SaveChanges();
+        }
     }
 }

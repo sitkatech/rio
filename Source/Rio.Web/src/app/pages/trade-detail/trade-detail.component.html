@@ -69,7 +69,7 @@
           <div class="text-center">
             <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/landowner-dashboard/{{activeAccount.AccountNumber}}">View Dashboard</a>
             <a class="btn btn-rio btn-sm mr-1 mb-1" routerLink="/trades">View Postings List</a>
-            <a *ngIf="canConfirmTransfer()" class="btn btn-rio btn-sm mb-1" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}">Register Transfer</a>       
+            <a *ngIf="canConfirmTransfer()" class="btn btn-rio btn-sm mb-1" routerLink="/register-transfer/{{mostRecentOffer.WaterTransferID}}/{{activeAccount.AccountID}}">Register Transfer</a>       
           </div>
         </div>
 

@@ -15,16 +15,16 @@
 //ckeditor css
 
 .image {
-  display:table;
+  display: table;
   clear: both;
-  text-align:center;
-  margin:1em auto;
+  text-align: center;
+  margin: 1em auto;
 }
 
-.image>img {
-  display:block;
-  margin:0 auto;
-  max-width:100%;
+.image > img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
   min-width: 50px;
 }
 
@@ -66,15 +66,15 @@ blockquote {
 }
 
 figure.media {
-  clear:both;
+  clear: both;
   margin: 1em 0;
   display: block;
-  min-width:15em;
+  min-width: 15em;
 }
 
 .ck.ck-balloon-panel.ck-balloon-panel_visible {
   //to account for in popover case
-  z-index:1061;
+  z-index: 1061;
 }
 //end ckeditor css
 
@@ -165,7 +165,7 @@ input:checked + .slider .off {
 
 /*-----ngx-pagination styles------*/
 .ngx-pagination {
-  padding-left:0;
+  padding-left: 0;
 }
 
 .ngx-pagination .current {
@@ -178,3 +178,9 @@ input:checked + .slider .off {
   background: none !important;
 }
 /*------end--------*/
+
+.selector-tooltip {
+  @media only screen and (min-width: 992px) {
+    display: none;
+  }
+}

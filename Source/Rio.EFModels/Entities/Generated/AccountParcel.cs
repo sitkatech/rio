@@ -18,6 +18,7 @@ namespace Rio.EFModels.Entities
         public DateTime? SaleDate { get; set; }
         [StringLength(500)]
         public string Note { get; set; }
+        public int ParcelStatusID { get; set; }
 
         [ForeignKey(nameof(AccountID))]
         [InverseProperty("AccountParcel")]
@@ -25,5 +26,8 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(ParcelID))]
         [InverseProperty("AccountParcel")]
         public virtual Parcel Parcel { get; set; }
+        [ForeignKey(nameof(ParcelStatusID))]
+        [InverseProperty("AccountParcel")]
+        public virtual ParcelStatus ParcelStatus { get; set; }
     }
 }

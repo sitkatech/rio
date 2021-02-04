@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountSelectComponent } from './account-select.component';
+import { ParcelListInactiveComponent } from './parcel-list-inactive.component';
 
-describe('AccountSelectComponent', () => {
-  let component: AccountSelectComponent;
-  let fixture: ComponentFixture<AccountSelectComponent>;
+describe('ParcelListInactiveComponent', () => {
+  let component: ParcelListInactiveComponent;
+  let fixture: ComponentFixture<ParcelListInactiveComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AccountSelectComponent ]
+      declarations: [ ParcelListInactiveComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountSelectComponent);
+    fixture = TestBed.createComponent(ParcelListInactiveComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

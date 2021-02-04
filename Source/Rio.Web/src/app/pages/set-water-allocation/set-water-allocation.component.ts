@@ -17,7 +17,7 @@ import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 
 @Component({
   selector: 'rio-set-water-allocation',
@@ -173,7 +173,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       this.clearInputs();
       this.cdr.detectChanges();
     }, error => {
-      if (error.error.validationMessage) {
+      if (error.error && error.error.validationMessage) {
         this.alertService.pushAlert(new Alert(error.error.validationMessage, AlertContext.Danger, true));
       }
       else {
@@ -200,6 +200,11 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       var file = this.getFile(parcelAllocationType);
       if (!file) {
         this.chooseErrorToDisplay(parcelAllocationType);
+        return true;
+      }
+
+      if (file.name.split(".").pop().toUpperCase() != "CSV") {
+        this.displayFileErrors[parcelAllocationType.ParcelAllocationTypeName] = true;
         return true;
       }
     }

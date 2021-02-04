@@ -33,12 +33,7 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
             this.currentUser = currentUser;
 
             if (currentUser && !this.userIsUnassigned() && !this.userRoleIsDisabled()) {
-
-                // display the correct active account in the dropdown below the username.
-                // on pages which need to react to the active account, include this call in ngInit and put reactice logic in the subscribe statement.
-                this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-                    this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
-                });
+                this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
             }
         });
 

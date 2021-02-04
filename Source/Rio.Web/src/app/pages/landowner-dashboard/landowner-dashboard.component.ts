@@ -24,8 +24,9 @@ import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -45,6 +46,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public showSoldDetails: boolean;
   public unitsShown: string = "ac-ft";
   public waterUsageByParcelViewType: string = "chart";
+  public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
+  public sectionCurrentlyViewing: LandownerDashboardViewEnum = LandownerDashboardViewEnum.WaterBudget;
+  public hoverItem: string;
+  public waterYearDropdownTextColor: string;
 
   public user: UserDto;
   public account: AccountSimpleDto;
@@ -116,8 +121,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.loadingActiveAccount = true;
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.tradeStatusIDs = [TradeStatusEnum.Countered];
-      this.postingStatusIDs = [PostingStatusEnum.Open];
+      this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Countered, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
+      this.postingStatusIDs = [PostingStatusEnum.Open, PostingStatusEnum.Closed];
       this.showAllocationDetails = false;
       this.showPurchasedDetails = false;
       this.showSoldDetails = false;
@@ -132,11 +137,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             this.activeAccount = account instanceof Array
               ? null
               : account as AccountSimpleDto;
-            this.setActiveAccount(this.activeAccount);
-            this.subscribeToActiveAccount();
+              this.loadingActiveAccount = false;
+            this.updateAccountData(account);
           });
-        } else {
-          this.subscribeToActiveAccount();
         }
       })
 
@@ -144,23 +147,32 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     });   
   }
 
-  public setActiveAccount(account: AccountSimpleDto) {
-    this.authenticationService.setActiveAccount(account);
-  }
-
-  private subscribeToActiveAccount() {
-    this.loadingActiveAccount = true;
-    this.watchAccountChangeSubscription = this.authenticationService.getActiveAccount().subscribe((account: AccountSimpleDto) => {
-      if (account) {
-        this.activeAccount = account;
-        this.updateAccountData(account);
-      }
-      this.loadingActiveAccount = false;
-    });
-  }
-
   public getAccountDisplayName(): string {
     return this.activeAccount.AccountDisplayName;
+  }
+
+  public getViewEnum(): string[] {
+    var values = Object.values(this.LandownerDashboardViewEnum);
+
+    if (!this.allowTrading()) {
+      values = values.filter(x => x != LandownerDashboardViewEnum.Trading);
+    }
+
+    return values;
+  }
+
+  public checkSelectedView(value: string): boolean {
+    return this.sectionCurrentlyViewing == value;
+  }
+
+  public getImgSrcForSelector(value: string): string {
+    var color = this.checkSelectedView(value) || this.hoverItem == value ? "white" : "black";
+    return `assets/main/images/landowner-dashboard-view/${value}-${color}.png`;
+  }
+
+  public updateView(value: string) {
+    var key = Object.keys(LandownerDashboardViewEnum).filter(x => LandownerDashboardViewEnum[x] == value)[0];
+    this.sectionCurrentlyViewing = LandownerDashboardViewEnum[key];
   }
 
   public updateAccountData(account: AccountSimpleDto): void {
@@ -497,6 +509,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     return this.waterUsageChartData.ChartData;
+  }
+
+  public isWaterUsageForWaterYearNullOrEmpty(): boolean {
+    if (!this.waterUsageChartData) {
+      return true;
+    }
+
+    return this.waterUsageChartData.ChartData.every(x => x.series.every(y => y["IsEmpty"]));
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {

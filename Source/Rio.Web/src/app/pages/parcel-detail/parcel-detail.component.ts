@@ -13,8 +13,9 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -53,9 +54,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.authenticationService.getAvailableAccountsObservable().subscribe(currentAccounts => {
-        this.currentUserAccounts = currentAccounts;
-      })
+      this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       if (id) {
         forkJoin(
@@ -147,6 +146,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     
     return account.AccountNumber
   }
+
+  public isActive() : boolean {
+    if (!this.parcel) {
+      return false;
+    }
+
+    let currentOwner = this.getCurrentOwner();
+
+    return currentOwner.ParcelStatusID == ParcelStatusEnum.Active
+  }
   
   public isAdministrator() : boolean
   {
@@ -166,20 +175,5 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public showGoToDashboardButton(): boolean {
     let currentOwner = this.getCurrentOwner();
     return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID);
-  }
-
-  public setActiveAccount() {
-    let currentOwner = this.getCurrentOwner();
-    if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
-      return;
-    }
-    
-    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
-
-    if (!account) {
-      return;
-    }
-    
-    this.authenticationService.setActiveAccount(account);
   }
 }

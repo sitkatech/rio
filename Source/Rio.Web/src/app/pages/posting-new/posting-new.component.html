@@ -26,7 +26,8 @@
                         <label class="required">Water Account</label>
                     </div>
                     <div class="col-sm-8">
-                        <select name="CreateAccountID" class="form-control" [(ngModel)]="model.CreateAccountID" required>
+                        <span *ngIf="currentUserAccounts.length == 1">{{currentUserAccounts[0].AccountName}}</span>
+                        <select *ngIf="currentUserAccounts.length > 1" name="CreateAccountID" class="form-control" [(ngModel)]="model.CreateAccountID" required>
                             <option [ngValue]="undefined" disabled>Select an Account</option>
                             <option *ngFor="let account of currentUserAccounts" [ngValue]="account.AccountID">
                                 {{account.AccountName}}

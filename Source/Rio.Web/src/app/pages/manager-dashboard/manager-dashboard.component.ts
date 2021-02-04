@@ -25,7 +25,12 @@ import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entr
 import { AccountService } from 'src/app/services/account/account.service';
 import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { Alert } from 'src/app/shared/models/alert';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -36,6 +41,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('landOwnerUsageReportGrid') landOwnerUsageReportGrid: AgGridAngular;
   @ViewChild('tradeActivityGrid') tradeActivityGrid: AgGridAngular;
   @ViewChild('postingsGrid') postingsGrid: AgGridAngular;
+  public modalReference: NgbModalRef;
+
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
@@ -53,6 +60,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public displayTradeGrid: boolean = false;
   public displayPostingsGrid: boolean = false;
   public parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public parcelAllocationTypesBatched: ParcelAllocationTypeDto[][];
   private allocationColumnDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   public allocationLabel: string = "Annual Supply";
@@ -81,6 +89,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public historicAverageAnnualUsage: number;
   public loadingParcelAllocationsAndUsages: boolean = false;
 
+  public isPerformingAction: boolean = false;
+
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private utilityFunctionsService: UtilityFunctionsService,
@@ -93,7 +103,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
     private accountService: AccountService,
-    private datePipe: DatePipe) { }
+    private datePipe: DatePipe,
+    private modalService: NgbModal,
+    private alertService: AlertService,
+    ) { }
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
@@ -109,6 +122,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
         this.parcelAllocationTypes = parcelAllocationTypes;
+        this.parcelAllocationTypesBatched = this.getParcelAllocationTypesBatched();
 
         let decimalPipe = this.decimalPipe;
         const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
@@ -542,16 +556,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.landOwnerUsageReportGrid.api.setRowData(result);
       this.landOwnerUsageReportGrid.api.hideOverlay();
     });
-    this.tradeService.getTradeActivityForYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.tradeActivity = result;
-      this.tradeActivityGrid ? this.tradeActivityGrid.api.setRowData(result) : null;
-      this.displayTradeGrid = result.length > 0 ? true : false;
-    });
-    this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.postingActivity = result;
-      this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
-      this.displayPostingsGrid = result.length > 0 ? true : false;
-    });
+    this.getTradesAndPostingsForYear();
     this.loadingParcelAllocationsAndUsages = true;
     forkJoin([
       this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
@@ -562,6 +567,19 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.waterUsageOverview = waterUsageOverview;
       this.loadingParcelAllocationsAndUsages = false;
       this.initializeCharts(this.waterUsageOverview);
+    });
+  }
+
+  private getTradesAndPostingsForYear() {
+    this.tradeService.getTradeActivityForYear(this.waterYearToDisplay.Year).subscribe(result => {
+      this.tradeActivity = result;
+      this.tradeActivityGrid ? this.tradeActivityGrid.api.setRowData(result) : null;
+      this.displayTradeGrid = result.length > 0 ? true : false;
+    });
+    this.postingService.getPostingsDetailedByYear(this.waterYearToDisplay.Year).subscribe(result => {
+      this.postingActivity = result;
+      this.postingsGrid ? this.postingsGrid.api.setRowData(result) : null;
+      this.displayPostingsGrid = result.length > 0 ? true : false;
     });
   }
 
@@ -644,7 +662,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     var result = 0;
     if (parcelAllocations.length > 0){
       result = parcelAllocations.reduce(function(a,b) {
-        return (a + (b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0))
+        return (a + (b.Allocations ? b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0 : 0))
       }, 0);
     }
     return this.getResultInUnitsShown(result);
@@ -692,5 +710,27 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
+  public launchModal(modalContent: any) {
+    this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', backdrop: 'static', keyboard: false });
+  }
+
+  public deleteAllTradeActivity() {
+    if (this.modalReference) {
+      this.modalReference.close();
+      this.modalReference = null;
+    }
+
+    this.isPerformingAction = true;
+    this.tradeService.deleteAllTrades().subscribe(response => {
+      this.isPerformingAction = false;
+      this.alertService.pushAlert(new Alert(`Successfully deleted all Trade activity`, AlertContext.Success));
+      this.getTradesAndPostingsForYear();
+    },
+    error => {
+      this.isPerformingAction = false;
+      this.alertService.pushAlert(new Alert(`An error occurred while attempting to delete all Trade activity.`, AlertContext.Danger));
+      window.scrollTo(0, 0);
+    })
+  }
   
 }

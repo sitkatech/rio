@@ -1,11 +1,32 @@
-li.list-group-item {
+@import "~src/scss/_variables.scss";
+
+li.list-group-item.parcel-map {
     cursor:pointer;
 }
 
-li.list-group-item:hover {
+li.list-group-item.parcel-map:hover {
     background-color:#EEE;
 }
 
-li.list-group-item.selected {
+li.list-group-item.parcel-map.selected {
     background-color: #FFFF85;
+}
+
+li.list-group-item.header {
+    cursor:pointer;
+    background-color: #dfdfdf;
+    border-bottom: solid 2px $button-border-and-background !important;
+    color: #000;
+    border-top:0;
+}
+
+li.list-group-item.header:hover {
+    background-color:#EEE;
+    color: #fff;
+    background-color: $button-toggle-hover;
+}
+
+li.list-group-item.header.selected {
+    background-color:  $button-border-and-background;
+    color: #EEE;
 }

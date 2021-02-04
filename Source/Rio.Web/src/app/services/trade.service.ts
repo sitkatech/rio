@@ -17,12 +17,22 @@ export class TradeService {
     }
 
     getTradeActivityByAccountID(accountID: number): Observable<TradeWithMostRecentOfferDto[]> {
-        let route = `/trade-activity/${accountID}`;
+        let route = `/trade-activity/account/${accountID}`;
+        return this.apiService.getFromApi(route);
+    }
+
+    getTradeActivityByUserID(userID: number): Observable<TradeWithMostRecentOfferDto[]> {
+        let route = `/trade-activity/user/${userID}`;
         return this.apiService.getFromApi(route);
     }
 
     getTradeFromTradeNumber(tradeNumber: string): Observable<TradeDto> {
         let route = `/trades/${tradeNumber}`;
         return this.apiService.getFromApi(route);
+    }
+
+    deleteAllTrades(): Observable<any> {
+        let route = 'trades/delete';
+        return this.apiService.deleteToApi(route);
     }
 }

@@ -4,15 +4,18 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
+import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { WaterYearService } from 'src/app/services/water-year.service';
 import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
-import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
+import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
+import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -24,7 +27,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
   private watchUserChangeSubscription: any;
-  private currentUser: UserDto;
   public modalReference: NgbModalRef;
   public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
 
@@ -37,21 +39,29 @@ export class ParcelUpdateLayerComponent implements OnInit {
   public newParcelLayerForm = new FormGroup({
     gdbUploadForParcelLayer: new FormControl('', [Validators.required])
   });
+  public submitForPreviewForm = new FormGroup({
+    waterYearSelection: new FormControl('', [Validators.required])
+  })
   public gdbInputFile: any = null;
   public featureClass: FeatureClassInfoDto;
   public uploadedGdbID: number;
   public requiredColumnMappings: Array<ParcelRequiredColumnAndMappingDto> = [];
   public resultsPreview: ParcelUpdateExpectedResultsDto;
+  public currentWaterYear: WaterYearDto;
+  public previousWaterYear: WaterYearDto;
+  waterYearsNotPresentError: boolean;
+  public currentYear: number = new Date().getFullYear();
+  public previousYear: number = this.currentYear - 1;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
     private parcelService: ParcelService,
+    private waterYearService: WaterYearService,
     private modalService: NgbModal,
+    private apiService: ApiService,
     @Inject(DOCUMENT) private document: Document
   ) {
     // force route reload whenever params change;
@@ -60,8 +70,15 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-      this.currentUser = currentUser;
-      this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn().subscribe(model => {
+      forkJoin([
+      this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
+      this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1)]).subscribe(([model, waterYears]) => {
+        if (waterYears.length < 2) {
+          this.waterYearsNotPresentError = true;
+          return;
+        }
+        this.currentWaterYear = waterYears[0];
+        this.previousWaterYear = waterYears[1];
         Object.keys(model).forEach(x => {
           if (typeof model[x] === "string") {
             this.requiredColumnMappings.push(new ParcelRequiredColumnAndMappingDto({ RequiredColumnName: model[x], CommonName: x }));
@@ -75,6 +92,10 @@ export class ParcelUpdateLayerComponent implements OnInit {
     return this.newParcelLayerForm.controls;
   }
 
+  get submitForPreviewFormControls() {
+    return this.submitForPreviewForm.controls;
+  }
+
   ngOnDestroy() {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
@@ -82,14 +103,9 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   private getSelectedFile(event: any) {
-    const reader = new FileReader();
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
-      let incorrectFileType = !this.allowableFileTypes.some(function (x) {
-        return `${x}` == file.type;
-      });
       //returns bytes, but I'd rather not handle a constant that's a huge value
-      let exceedsMaximumSize = (file.size / 1024 / 1024) > this.maximumFileSizeMB;
       return event.target.files.item(0);
     }
     return null;
@@ -137,27 +153,41 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.requiredColumnMappings.forEach(x => {
         x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
       })
-    }, error => {
+    }, (error) => {
+      this.alertService.pushAlert(new Alert("Failed to upload GDB! If available, error details are below.", AlertContext.Danger));
+      this.apiService.sendErrorToHandleError(error);
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("Failed to upload GDB!", AlertContext.Danger));
     });
 
   }
 
   public onSubmitForPreview() {
+    if (!this.submitForPreviewForm.valid) {
+      Object.keys(this.submitForPreviewForm.controls).forEach(field => {
+        const control = this.submitForPreviewForm.get(field);
+        control.markAsTouched({ onlySelf: true });
+      });
+      return;
+    }
+
     this.isLoadingSubmit = true;
     let parcelLayerUpdateDto = new ParcelLayerUpdateDto({
       ParcelLayerNameInGDB : this.featureClass.LayerName,
       UploadedGDBID : this.uploadedGdbID,
-      ColumnMappings : this.requiredColumnMappings
+      ColumnMappings : this.requiredColumnMappings,
+      YearChangesToTakeEffect : this.submitForPreviewForm.get('waterYearSelection').value
     });
     this.parcelService.getGDBPreview(parcelLayerUpdateDto).subscribe(response => {
       this.isLoadingSubmit = false;
       this.resultsPreview = response;
-    }, error => {
+    }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed to generate preview of changes!", AlertContext.Danger));
     })
+  }
+
+  public hasCurrentYearBeenUpdated() : boolean {
+    return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
   }
 
   public onSubmitChanges() {
@@ -165,7 +195,38 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.modalReference.close();
       this.modalReference = null;
     }
-    console.log('submitted');
+
+    this.isLoadingSubmit = true;
+    this.parcelService.enactGDBChanges(this.submitForPreviewForm.get('waterYearSelection').value).subscribe(() => {
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
+      this.resetWorkflow();
+    }, () => {
+      this.isLoadingSubmit = false;
+      this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
+    })
+  }
+
+  public resetWorkflow() {
+    this.removeResultPreview();
+    this.removeFeatureClasses();
+    this.gdbInputFile = null;
+    this.newParcelLayerForm.reset();
+    this.submitForPreviewForm.reset();
+    window.scrollTo(0, 0);
+
+    this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1).subscribe(waterYears => {
+      if (waterYears.length < 2) {
+        this.waterYearsNotPresentError = true;
+        return;
+      }
+      this.currentWaterYear = waterYears[0];
+      this.previousWaterYear = waterYears[1];
+    });
+  }
+
+  public previewFormValid(): boolean {
+    return this.requiredColumnMappings.every(x => x.MappedColumnName !== null && x.MappedColumnName !== undefined) && this.submitForPreviewForm.valid
   }
 
   public clickFileInput() {
@@ -196,6 +257,7 @@ export class ParcelLayerUpdateDto {
   ParcelLayerNameInGDB: string;
   UploadedGDBID: number;
   ColumnMappings: Array<ParcelRequiredColumnAndMappingDto>;
+  YearChangesToTakeEffect: number;
 
   constructor(obj?: any) {
     Object.assign(this, obj);

@@ -11,7 +11,7 @@ import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocat
 import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from 'src/app/shared/models/openet-sync-history-dto';
+import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 
 @Component({
   selector: 'rio-parcel-edit-allocation',

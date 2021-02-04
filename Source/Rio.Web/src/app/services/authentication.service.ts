@@ -26,8 +26,6 @@ export class AuthenticationService {
   private _currentUserSetSubject = new Subject<UserDto>();
   public currentUserSetObservable = this._currentUserSetSubject.asObservable();
 
-  private _currentAccountSubject: BehaviorSubject<AccountSimpleDto>;
-
 
   constructor(private router: Router,
     private oauthService: OAuthService,
@@ -80,75 +78,30 @@ export class AuthenticationService {
           var globalID = claims["sub"];
           console.log("Authenticated but no user found...")
           this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(user => {
-            this.currentUser = user;
-            this._currentUserSetSubject.next(this.currentUser);
+            this.getUserCallback(user);
           });
         }
       })
-
-
-    this._currentAccountSubject = new BehaviorSubject<AccountSimpleDto>(undefined);
-    this._availableAccountsSubject = new BehaviorSubject<AccountSimpleDto[]>(undefined);
-  }
-
-  private updateCurrentAccountSubject() {
-    const activeAccountAsJson = window.localStorage.getItem('activeAccount');
-
-    if (!isNullOrUndefined(activeAccountAsJson) && activeAccountAsJson !== "undefined") {
-      // if the saved account is valid for this user, make it the current active account. Otherwise clear it from local storage.
-      let initialActiveAccount = JSON.parse(activeAccountAsJson);
-      if (initialActiveAccount && this.getAvailableAccounts().map(x => x.AccountID).includes(initialActiveAccount.AccountID)) {
-        this._currentAccountSubject.next(initialActiveAccount);
-      } else {
-        window.localStorage.removeItem("activeAccount");
-      }
-    }
-
-    let currentAccounts = this.getAvailableAccounts();
-    if (!this._currentAccountSubject.value || !currentAccounts.some(x => x.AccountID == this._currentAccountSubject.value.AccountID)) {
-      // no current account or no longer have access to current account: leave active account undefined if manager or if you don't have any accounts, default to first on list otherwise.
-      if (this.getAvailableAccounts() && this.currentUser.Role.RoleID != RoleEnum.Admin) {
-        this._currentAccountSubject.next(this.getAvailableAccounts()[0]);
-      } else {
-        this._currentAccountSubject.next(undefined);
-      }
-    }
   }
 
   private getUserCallback(user: UserDto) {
     this.currentUser = user;
-    this._currentUserSetSubject.next(this.currentUser);
-    if (!this.isUserRoleDisabled(this.currentUser)) {
-      this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
-        this._availableAccounts = result;
-        this._availableAccountsSubject.next(result);
-        this.updateCurrentAccountSubject();
-      })
+
+    if (this.isUserRoleDisabled(this.currentUser)) {
+      this._currentUserSetSubject.next(this.currentUser);
+      return;
     }
+
+    this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(result => {
+      this._availableAccounts = result;
+      this._currentUserSetSubject.next(this.currentUser);
+    })
   }
 
   private _availableAccounts: Array<AccountSimpleDto>;
-  //There are many places where we don't use the subject version defined here.
-  //It may be better to use the observable in some of those places, but that's beyond the current scope of work
-  private _availableAccountsSubject: BehaviorSubject<AccountSimpleDto[]>;
 
   public getAvailableAccounts(): Array<AccountSimpleDto> {
     return this._availableAccounts;
-  }
-
-  public getAvailableAccountsObservable(): Observable<AccountSimpleDto[]> {
-    return this._availableAccountsSubject.asObservable();
-  }
-
-  // Returns the observable (read-only) part of this subject
-  public getActiveAccount(): Observable<AccountSimpleDto> {
-    return this._currentAccountSubject.asObservable();
-  }
-
-  // Stores the new company value in local storage and pushes it to the subject
-  public setActiveAccount(account: AccountSimpleDto, navigate: boolean = true) {
-    window.localStorage.setItem('activeAccount', JSON.stringify(account));
-    this._currentAccountSubject.next(account);
   }
 
   public refreshUserInfo(user: UserDto) {
@@ -250,6 +203,10 @@ export class AuthenticationService {
 
   public isCurrentUserADemoUser(): boolean {
     return this.isUserADemoUser(this.currentUser);
+  }
+
+  public isCurrentUserALandOwnerOrDemoUser(): boolean {
+    return this.isUserALandOwnerOrDemoUser(this.currentUser);
   }
 
   public isCurrentUserADemoUserOrAdministrator(): boolean {

@@ -1,6 +1,6 @@
-<div class="form-group form-inline mt-0 mb-0">
+<div class="form-group form-inline mt-0 mb-0" style="height:100%">
   {{selectYearLabel}}  
-  <a href="#" class="nav-link water-year-dropdown dropdown-toggle font-weight-bold" role="button" data-toggle="dropdown">
+  <a href="#" #waterYearDropdown (click)="$event.preventDefault()"  class="nav-link water-year-dropdown dropdown-toggle font-weight-bold pr-0" [ngClass]="defaultHover ? 'water-year-dropdown-hover' : ''" role="button" data-toggle="dropdown" [ngStyle]="{'color':textColor}">
     {{selectedYear.Year}}
   </a>
   <div class="dropdown-menu">
