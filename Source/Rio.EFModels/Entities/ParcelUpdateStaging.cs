@@ -12,7 +12,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelUpdateStaging
     {
-        public static ParcelUpdateExpectedResultsDto AddFromFeatureCollection(RioDbContext _dbContext, FeatureCollection featureCollection, string validParcelNumberRegexPattern, string validParcelNumberAsStringForDisplay, int yearChangesToTakeEffect)
+        public static ParcelUpdateExpectedResultsDto AddFromFeatureCollection(RioDbContext _dbContext, FeatureCollection featureCollection, string validParcelNumberRegexPattern, string validParcelNumberAsStringForDisplay, WaterYearDto yearChangesToTakeEffect)
         {
             var commonColumnMappings = ParcelLayerGDBCommonMappingToParcelStagingColumn.GetCommonMappings(_dbContext);
             var wktWriter = new WKTWriter();
@@ -28,6 +28,11 @@ namespace Rio.EFModels.Entities
             {
                 var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
 
+                if (dt.AsEnumerable().Any(x => x[3].ToString() == parcelNumber))
+                {
+                    continue;
+                }
+
                 if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
                 {
                     throw new ValidationException(
@@ -42,20 +47,11 @@ namespace Rio.EFModels.Entities
                 );
             }
 
-            if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
-            {
-                throw new ValidationException(
-                    "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
-            }
-
-            var inactiveParcelsFromParcelOwnership = _dbContext.vParcelOwnership.Include(x => x.Parcel).Where(x =>
-                x.RowNumber == 1 && !x.AccountID.HasValue && IsNullOrEmpty(x.OwnerName) &&
-                x.EffectiveYear.Value >= yearChangesToTakeEffect).Select(x => x.Parcel.ParcelNumber);
-            if (dt.AsEnumerable().Any(x => inactiveParcelsFromParcelOwnership.Contains(x[3].ToString())))
-            {
-                throw new ValidationException(
-                        "There were Parcel Numbers found that have been inactivated in a prior upload and cannot be associated with any new accounts. Please review the GDB and try again.");
-            }
+            //if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
+            //{
+            //    throw new ValidationException(
+            //        "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
+            //}
 
             //Make sure staging table is empty before proceeding
             DeleteAll(_dbContext);
@@ -74,29 +70,35 @@ namespace Rio.EFModels.Entities
             bulkCopy.WriteToServer(dt);
             _dbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText");
 
-            return GetExpectedResultsDto(_dbContext);
+            return GetExpectedResultsDto(_dbContext, yearChangesToTakeEffect);
         }
 
-        public static ParcelUpdateExpectedResultsDto GetExpectedResultsDto (RioDbContext _dbContext)
+        public static ParcelUpdateExpectedResultsDto GetExpectedResultsDto (RioDbContext _dbContext, WaterYearDto yearChangesToTakeEffect)
         {
+            var accountsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
+                !x.WaterYearID.HasValue || x.WaterYearID == yearChangesToTakeEffect.WaterYearID);
+
             var accountsUnchanged =
-                _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+                accountsUpdatedView.Count(x =>
                     x.ExistingParcels.Equals(x.UpdatedParcels));
-            var accountsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+            var accountsToBeInactivated = accountsUpdatedView.Count(x =>
                 x.AccountAlreadyExists.Value &&
                 !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels));
-            var accountsToBeAdded = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Count(x =>
+            var accountsToBeAdded = accountsUpdatedView.Count(x =>
                 !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
 
+            var parcelsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Where(x =>
+                !x.WaterYearID.HasValue || x.WaterYearID == yearChangesToTakeEffect.WaterYearID);
+
             var parcelsUnchanged =
-                _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
+                parcelsUpdatedView
                     .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText));
-            var parcelsWithChangedGeometries = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry
+            var parcelsWithChangedGeometries = parcelsUpdatedView
                 .Count(x =>
                 x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText));
-            var parcelsAssociatedWithNewAccount = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
+            var parcelsAssociatedWithNewAccount = parcelsUpdatedView.Count(x =>
                 !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName));
-            var parcelsToBeInactivated = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Count(x =>
+            var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>
                 IsNullOrEmpty(x.NewOwnerName));
 
             var expectedChanges = new ParcelUpdateExpectedResultsDto()

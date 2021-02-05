@@ -149,7 +149,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
           debugger;
-          this.rowData = parcelsWithWaterUsage.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
+          this.rowData = parcelsWithWaterUsage
           this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;
@@ -172,7 +172,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       return;
     }
     this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
-      this.rowData = result.filter(x => x.ParcelStatusID === ParcelStatusEnum.Active);
+      this.rowData = result;
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);
     });

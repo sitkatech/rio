@@ -40,7 +40,12 @@ from
 				sum(case when pa.ParcelAllocationTypeID = 3 then pa.AcreFeetAllocated else 0 end) as NativeYield,
 				sum(case when pa.ParcelAllocationTypeID = 4 then pa.AcreFeetAllocated else 0 end) as StoredWater
 		from dbo.Account acc
-		join dbo.AccountParcel up on acc.AccountID = up.AccountID
+		join (
+			select apwy.AccountID, apwy.ParcelID
+			from dbo.AccountParcelWaterYear apwy
+			join dbo.WaterYear wy on wy.WaterYearID = apwy.WaterYearID
+			where wy.[year] = @year
+		) up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelAllocation pa on p.ParcelID = pa.ParcelID and pa.WaterYear = @year
 		group by acc.AccountID
@@ -49,7 +54,12 @@ from
 	(
 		select acc.AccountID , sum(coalesce(pme.OverriddenEvapotranspirationRate, pme.EvapotranspirationRate)) as UsageToDate
 		from dbo.Account acc
-		join dbo.AccountParcel up on acc.AccountID = up.AccountID
+		join (
+			select apwy.AccountID, apwy.ParcelID
+			from dbo.AccountParcelWaterYear apwy
+			join dbo.WaterYear wy on wy.WaterYearID = apwy.WaterYearID
+			where wy.[year] = @year
+		) up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelMonthlyEvapotranspiration pme on p.ParcelID = pme.ParcelID and pme.WaterYear = @year
 		group by acc.AccountID

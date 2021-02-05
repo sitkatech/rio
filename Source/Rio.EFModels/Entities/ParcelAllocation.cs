@@ -79,7 +79,7 @@ namespace Rio.EFModels.Entities
             }
 
             // select parcels owned by accounts from upload and group by accounts to associate allocation volumes with list of parcels
-            var accountAllocationVolumes = Parcel.vParcelOwnershipsByYear(dbContext, waterYear).ToList().GroupBy(x => x.Account.AccountNumber)
+            var accountAllocationVolumes = Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, waterYear).ToList().GroupBy(x => x.Account.AccountNumber)
                 .Where(x => records.Select(y => y.AccountNumber).Contains(x.Key)).Join(records,
                     account => account.Key, record => record.AccountNumber,
                     (x, y) => new { Parcels = x.Select(z => z.Parcel).ToList(), y.AllocationVolume });
@@ -145,11 +145,11 @@ namespace Rio.EFModels.Entities
 
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
-            var vParcelOwnershipsByYear = Entities.Parcel.vParcelOwnershipsByYear(dbContext, year).Where(x=>x.AccountID != null);
+            var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
             var parcelAllocations = dbContext.ParcelAllocation.AsNoTracking().Where(x => x.WaterYear == year);
 
-            return vParcelOwnershipsByYear
+            return accountParcelWaterYearOwnershipsByYear
                 .GroupJoin(
                     parcelAllocations, 
                     x => x.ParcelID, 
@@ -171,7 +171,7 @@ namespace Rio.EFModels.Entities
                 .GroupBy(x => x.AccountID)
                 .Select(x => new LandownerAllocationBreakdownDto()
                 {
-                    AccountID = x.Key.Value,
+                    AccountID = x.Key,
                     Allocations = new Dictionary<int, decimal>(
                         //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
                         x.GroupBy(z => z.ParcelAllocationTypeID)

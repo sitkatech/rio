@@ -4,7 +4,7 @@ go
 
 create procedure dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry
 (
-    @year int
+    @waterYearID int
 )
 as
 
@@ -18,18 +18,31 @@ begin
 		   pus.ParcelGeometry4326, 
 		   round(pus.ParcelGeometry.STArea(), 0), 
 		   round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14) 
-	from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+	from (select ParcelNumber, OldOwnerName, OldGeometryText
+		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+		  where WaterYearID = @waterYearID or WaterYearID is null) v
 	join dbo.ParcelUpdateStaging pus on v.ParcelNumber = pus.ParcelNumber
 	where OldOwnerName is null and OldGeometryText is null
 
-	insert into dbo.AccountParcel (AccountID, ParcelID, EffectiveYear, SaleDate, ParcelStatusID)
-	select a.AccountID, p.ParcelID, @year, GETDATE(), case when NewOwnerName is null then 2 else 1 end
-	from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+	delete from dbo.AccountParcelWaterYear
+	where WaterYearID in (select WaterYearID
+						  from dbo.WaterYear
+						  where [Year] >= (select [Year]
+										  from dbo.WaterYear
+										  where WaterYearID = @waterYearID))
+
+	insert into dbo.AccountParcelWaterYear (AccountID, ParcelID, WaterYearID)
+	select a.AccountID, p.ParcelID, wy.WaterYearID
+	from (select ParcelNumber, NewOwnerName
+		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+		  where WaterYearID = @waterYearID or WaterYearID is null) v
 	join dbo.Parcel p on v.ParcelNumber = p.ParcelNumber
-	left join dbo.Account a on v.NewOwnerName = a.AccountName
-	where (OldOwnerName is not null and NewOwnerName is null) or --deactivate case
-	(OldOwnerName is null and NewOwnerName is not null) or --brand new case or existed without an owner
-	OldOwnerName <> NewOwnerName
+	join dbo.Account a on v.NewOwnerName = a.AccountName
+	cross join (select WaterYearID
+						  from dbo.WaterYear
+						  where [Year] >= (select [Year]
+										  from dbo.WaterYear
+										  where WaterYearID = @waterYearID)) wy
 	
 	update dbo.Parcel
 	set ParcelGeometry = pus.ParcelGeometry4326,

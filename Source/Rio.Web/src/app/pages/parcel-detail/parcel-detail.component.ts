@@ -126,19 +126,22 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getCurrentOwner(): ParcelOwnershipDto{    
-    return this.parcelOwnershipHistory.filter(x=>{
-      return x.EffectiveYear <= this.today.getFullYear();      
-    })[0]
+  public getCurrentOwner(): ParcelOwnershipDto{  
+    
+    var currentOwner = this.parcelOwnershipHistory.filter(x=>{
+      return x.WaterYear.Year == this.today.getFullYear();      
+    });
+
+    return currentOwner.length == 1 ? currentOwner[0] : null;
   }
 
   public getCurrentOwnerAccountNumber(): number {
     let currentOwner = this.getCurrentOwner();
-    if (!currentOwner || !currentOwner.OwnerAccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
+    if (!currentOwner || !currentOwner.Account.AccountID || !this.currentUserAccounts || this.currentUserAccounts.length == 0) {
       return null;
     }
     
-    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.OwnerAccountID)[0];
+    let account = this.currentUserAccounts.filter(x => x.AccountID == currentOwner.Account.AccountID)[0];
 
     if (!account) {
       return null;
@@ -154,7 +157,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
     let currentOwner = this.getCurrentOwner();
 
-    return currentOwner.ParcelStatusID == ParcelStatusEnum.Active
+    return currentOwner != null && currentOwner != undefined;
   }
   
   public isAdministrator() : boolean
@@ -174,6 +177,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public showGoToDashboardButton(): boolean {
     let currentOwner = this.getCurrentOwner();
-    return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.OwnerAccountID && this.currentUserAccounts.some(x => x.AccountID == currentOwner.OwnerAccountID);
+    return this.currentUser && this.currentUserAccounts && this.currentUserAccounts.length > 0 && currentOwner && currentOwner.Account && this.currentUserAccounts.some(x => x.AccountID == currentOwner.Account.AccountID);
   }
 }

@@ -7,11 +7,6 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelStatus
     {
-        public ParcelStatus()
-        {
-            AccountParcel = new HashSet<AccountParcel>();
-        }
-
         [Key]
         public int ParcelStatusID { get; set; }
         [Required]
@@ -20,8 +15,5 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(20)]
         public string ParcelStatusDisplayName { get; set; }
-
-        [InverseProperty("ParcelStatus")]
-        public virtual ICollection<AccountParcel> AccountParcel { get; set; }
     }
 }

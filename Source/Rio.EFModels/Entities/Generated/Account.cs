@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public Account()
         {
-            AccountParcel = new HashSet<AccountParcel>();
+            AccountParcelWaterYear = new HashSet<AccountParcelWaterYear>();
             AccountUser = new HashSet<AccountUser>();
             Offer = new HashSet<Offer>();
             Posting = new HashSet<Posting>();
@@ -39,7 +39,7 @@ namespace Rio.EFModels.Entities
         [InverseProperty("Account")]
         public virtual AccountStatus AccountStatus { get; set; }
         [InverseProperty("Account")]
-        public virtual ICollection<AccountParcel> AccountParcel { get; set; }
+        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
         [InverseProperty("Account")]
         public virtual ICollection<AccountUser> AccountUser { get; set; }
         [InverseProperty("CreateAccount")]

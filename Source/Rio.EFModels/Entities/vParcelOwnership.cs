@@ -9,5 +9,8 @@ namespace Rio.EFModels.Entities
 
         [ForeignKey(nameof(AccountID))]
         public virtual Account Account { get; set; }
+        
+        [ForeignKey(nameof(WaterYearID))]
+        public virtual WaterYear WaterYear { get; set; }
     }
 }

@@ -12,19 +12,15 @@ begin
 
 	select p.ParcelID, p.ParcelNumber, p.ParcelAreaInAcres,
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
-			pmev.UsageToDate, up.OwnerName, up.ParcelStatusID, a.AccountID, a.AccountName, a.AccountNumber
+			pmev.UsageToDate, a.AccountID, a.AccountName, a.AccountNumber
 	from dbo.Parcel p
-	left join (
-		select
-            *, 
-            Row_Number() OVER (
-		        Partition by ParcelID Order by isnull(SaleDate,0) desc
-	        ) as RowNumber
-        from
-            dbo.AccountParcel
-        where EffectiveYear is null or EffectiveYear <= @year
-	) up on p.ParcelID = up.ParcelID
-	left join dbo.[Account] a on up.AccountID = a.AccountID
+	join (
+		select apwy.ParcelID, apwy.AccountID
+		from dbo.AccountParcelWaterYear apwy
+		join dbo.WaterYear wy on apwy.WaterYearID = wy.WaterYearID
+		where wy.[Year] = @year
+	) apwy on p.ParcelID = apwy.ParcelID
+	left join dbo.[Account] a on apwy.AccountID = a.AccountID
 	left join 
 	(
 		select pa.ParcelID, 
@@ -42,7 +38,5 @@ begin
 		from dbo.ParcelMonthlyEvapotranspiration pme where pme.WaterYear = @year
 		group by pme.ParcelID
 	) pmev on p.ParcelID = pmev.ParcelID
-
-	where RowNumber = 1
 
 end

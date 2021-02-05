@@ -89,9 +89,9 @@
                                     <a *ngIf="isAdministratorOrDemoUser()" routerLink="/openet-integration" class="dropdown-item">
                                         OpenET Integration Status
                                     </a>
-                                    <!-- <a *ngIf="isAdministrator()" routerLink="/update-parcels-and-accounts" class="dropdown-item">
+                                    <a *ngIf="isAdministrator()" routerLink="/update-parcels-and-accounts" class="dropdown-item">
                                         Update Parcels and Accounts
-                                    </a> -->
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">

@@ -7,16 +7,17 @@ as
 
 select coalesce(currentAccountAssociations.AccountName, updatedAccountAssociations.OwnerName) as AccountName,
 		cast(case when currentAccountAssociations.AccountName is not null then 1 else 0 end as bit) as AccountAlreadyExists,
+		currentAccountAssociations.WaterYearID,
 		currentAccountAssociations.ExistingParcels,
 		updatedAccountAssociations.UpdatedParcels
 from (
-		SELECT  a.AccountName, STRING_AGG(po.ParcelNumber, ',') WITHIN GROUP (ORDER BY po.ParcelNumber) as ExistingParcels
+		SELECT  a.AccountName, wy.WaterYearID, STRING_AGG(po.ParcelNumber, ',') WITHIN GROUP (ORDER BY po.ParcelNumber) as ExistingParcels
 		from dbo.Account a
-		left join (select AccountID, ParcelNumber
-				   from dbo.vParcelOwnership po
-				   join dbo.Parcel p on po.ParcelID = p.ParcelID
-				   where RowNumber = 1) po on po.AccountID = a.AccountID
-		group by a.AccountName
+		cross join dbo.WaterYear wy
+		left join (select AccountID, ParcelNumber, apwy.WaterYearID
+				   from dbo.AccountParcelWaterYear apwy
+				   join dbo.Parcel p on apwy.ParcelID = p.ParcelID) po on po.AccountID = a.AccountID and po.WaterYearID = wy.WaterYearID
+		group by a.AccountName, wy.WaterYearID
 	  ) currentAccountAssociations
 full outer join (
 		SELECT  OwnerName, STRING_AGG(ParcelNumber, ',') WITHIN GROUP (ORDER BY ParcelNumber) as UpdatedParcels

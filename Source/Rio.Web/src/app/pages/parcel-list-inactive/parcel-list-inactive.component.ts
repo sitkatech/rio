@@ -86,46 +86,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
             }
             return 0;
           },
-          sortable: true, filter: true, width: 100
-        },
-        {
-          headerName: 'Inactivate Date', field: 'InactivateDate', valueFormatter: function (params) {
-            return _datePipe.transform(params.value, "short")
-          },
-          filterValueGetter: function (params: any) {
-            return _datePipe.transform(params.data.PostingDate, "M/d/yyyy");
-          },
-          filterParams: {
-            // provide comparator function
-            comparator: function (filterLocalDate, cellValue) {
-              var dateAsString = cellValue;
-              if (dateAsString == null) return -1;
-              var cellDate = Date.parse(dateAsString);
-              const filterLocalDateAtMidnight = filterLocalDate.getTime();
-              if (filterLocalDateAtMidnight == cellDate) {
-                return 0;
-              }
-              if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-              }
-              if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-              }
-            }
-          },
-          comparator: function (id1: any, id2: any) {
-            let time1 = id1 ? Date.parse(id1) : 0;
-            let time2 = id2 ? Date.parse(id2) : 0;
-
-            if (time1 < time2) {
-              return -1;
-            }
-            if (time1 > time2) {
-              return 1;
-            }
-            return 0;
-          },
-          sortable: true, filter: 'agDateColumnFilter'
+          sortable: true, filter: true
         }
       ];
 

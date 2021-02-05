@@ -70,9 +70,9 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/inactive")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelWithStatusDto>> GetInactiveParcels()
+        public ActionResult<IEnumerable<ParcelDto>> GetInactiveParcels()
         {
-            var parcelDtos = Parcel.GetParcelByParcelStatus(_dbContext, (int)ParcelStatusEnum.Inactive);
+            var parcelDtos = Parcel.GetInactiveParcels(_dbContext);
             return Ok(parcelDtos);
         }
 
@@ -255,33 +255,33 @@ namespace Rio.API.Controllers
         [ParcelViewFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
-            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.SaleDate);
+            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.WaterYear.Year);
 
             return Ok(parcelOwnershipDtos);
         }
 
-        [HttpPost("parcels/{parcelID}/changeOwner")]
-        [ParcelManageFeature]
-        public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
-            {
-                return NotFound();
-            }
+        //[HttpPost("parcels/{parcelID}/changeOwner")]
+        //[ParcelManageFeature]
+        //public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
+        //{
+        //    var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+        //    if (parcelDto == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var errorMessages = Parcel.ValidateChangeOwner(_dbContext, parcelChangeOwnerDto, parcelDto).ToList();
-            errorMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
+        //    var errorMessages = Parcel.ValidateChangeOwner(_dbContext, parcelChangeOwnerDto, parcelDto).ToList();
+        //    errorMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
+        //    UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         private bool ParseBulkSetAllocationUpload(FileResource fileResource, string parcelTypeDisplayName, out List<BulkSetAllocationCSV> records, out ActionResult badRequest)
         {
@@ -461,6 +461,13 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, model.YearChangesToTakeEffect);
+
+            if (waterYearDto == null)
+            {
+                return BadRequest("Invalid water year selected");
+            }
+
             var gdbFileContents = UploadedGdb.GetUploadedGdbFileContents(_dbContext, model.UploadedGDBID);
             using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
             var gdbFile = disposableTempFile.FileInfo;
@@ -476,7 +483,7 @@ namespace Rio.API.Controllers
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
                     model.ParcelLayerNameInGDB, columns, null, _logger, null, false);
                 var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 14);
-                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay, model.YearChangesToTakeEffect);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay, waterYearDto);
                 return Ok(expectedResults);
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException e)
@@ -522,12 +529,13 @@ namespace Rio.API.Controllers
 
             try
             {
-                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
+                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext, waterYearDto);
 
                 if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
                 {
                     var currentDifferencesForAccounts =
-                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
+                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
+                            !x.WaterYearID.HasValue || x.WaterYearID == waterYearDto.WaterYearID);
 
                     var accountNamesToInactivate = currentDifferencesForAccounts
                         .Where(x => x.AccountAlreadyExists.Value && !IsNullOrEmpty(x.ExistingParcels) &&
@@ -549,7 +557,7 @@ namespace Rio.API.Controllers
                 }
 
                 _dbContext.Database.ExecuteSqlRaw(
-                    "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.Year);
+                    "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.WaterYearID);
 
                 WaterYear.UpdateParcelLayerUpdateDateForID(_dbContext, waterYearID);
 

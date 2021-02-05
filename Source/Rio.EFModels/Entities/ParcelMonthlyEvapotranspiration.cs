@@ -80,7 +80,7 @@ namespace Rio.EFModels.Entities
                 OverriddenEvapotranspirationRate = x.OverriddenEvapotranspirationRate
             }).ToList();
 
-            var parcelDtos = Parcel.ListByAccountID(dbContext, accountID, waterYear).ToList();
+            var parcelDtos = Parcel.ListByAccountIDAndYear(dbContext, accountID, waterYear).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var existingParcelMonthlyEvapotranspirationDtos =
