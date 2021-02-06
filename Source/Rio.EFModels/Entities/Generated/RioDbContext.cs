@@ -18,7 +18,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Account> Account { get; set; }
         public virtual DbSet<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
         public virtual DbSet<AccountReconciliation> AccountReconciliation { get; set; }
-        public virtual DbSet<AccountReconciliationStaging> AccountReconciliationStaging { get; set; }
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<CustomRichText> CustomRichText { get; set; }
@@ -145,13 +144,6 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.AccountReconciliation)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<AccountReconciliationStaging>(entity =>
-            {
-                entity.Property(e => e.OwnerName).IsUnicode(false);
-
-                entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
             modelBuilder.Entity<AccountStatus>(entity =>

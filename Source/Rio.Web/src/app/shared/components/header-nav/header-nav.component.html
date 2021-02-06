@@ -89,8 +89,12 @@
                                     <a *ngIf="isAdministratorOrDemoUser()" routerLink="/openet-integration" class="dropdown-item">
                                         OpenET Integration Status
                                     </a>
+                                    <div class="dropdown-divider"></div>
                                     <a *ngIf="isAdministrator()" routerLink="/update-parcels-and-accounts" class="dropdown-item">
                                         Update Parcels and Accounts
+                                    </a>
+                                    <a *ngIf="isAdministrator()" routerLink="/account-reconciliation" class="dropdown-item">
+                                        Account Reconciliation Report
                                     </a>
                                 </div>
                             </li>

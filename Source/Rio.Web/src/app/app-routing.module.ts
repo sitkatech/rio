@@ -56,6 +56,7 @@ import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/wate
 import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
+import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -77,6 +78,7 @@ const routes: Routes = [
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit-accounts", component: UserEditAccountsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
+  { path: "account-reconciliation", component: AccountReconciliationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "accounts", component: AccountListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "accounts/:id", component: AccountDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "accounts/:id/edit", component: AccountEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
