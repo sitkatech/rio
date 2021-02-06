@@ -16,5 +16,6 @@ namespace Rio.EFModels.Entities
         public string NewOwnerName { get; set; }
         public string OldGeometryText { get; set; }
         public string NewGeometryText { get; set; }
+        public bool? HasConflict { get; set; }
     }
 }

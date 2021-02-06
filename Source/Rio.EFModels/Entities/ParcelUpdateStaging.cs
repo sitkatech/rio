@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Mime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
@@ -23,15 +25,11 @@ namespace Rio.EFModels.Entities
             dt.Columns.Add("ParcelGeometry4326Text", typeof(string));
             dt.Columns.Add("OwnerName", typeof(string));
             dt.Columns.Add("ParcelNumber", typeof(string));
+            dt.Columns.Add("HasConflict", typeof(bool));
 
             foreach (var feature in featureCollection)
             {
                 var parcelNumber = feature.Attributes[commonColumnMappings.ParcelNumber].ToString();
-
-                if (dt.AsEnumerable().Any(x => x[3].ToString() == parcelNumber))
-                {
-                    continue;
-                }
 
                 if (!Parcel.IsValidParcelNumber(validParcelNumberRegexPattern, parcelNumber))
                 {
@@ -39,19 +37,46 @@ namespace Rio.EFModels.Entities
                         $"Parcel number found that does not comply to format {validParcelNumberAsStringForDisplay}. Please ensure that that correct column is selected and all Parcel Numbers follow the specified format and try again.");
                 }
 
+                //if it's an exact duplicate, there was some other info that wasn't relevant for our purposes and we can move along
+                var geomAs4326Text = wktWriter.Write(feature.Geometry.ProjectTo4326());
+                var ownerName = feature.Attributes[commonColumnMappings.OwnerName].ToString();
+                if (dt.AsEnumerable().Any(x =>
+                    x["ParcelGeometry4326Text"].ToString() == geomAs4326Text && x["OwnerName"].ToString() == ownerName &&
+                    x["ParcelNumber"].ToString() == parcelNumber))
+                {
+                    continue;
+                }
+
                 dt.Rows.Add(
                     wktWriter.Write(feature.Geometry),
-                    wktWriter.Write(feature.Geometry.ProjectTo4326()),
-                    feature.Attributes[commonColumnMappings.OwnerName].ToString(),
-                    feature.Attributes[commonColumnMappings.ParcelNumber].ToString()
+                    geomAs4326Text,
+                    ownerName,
+                    parcelNumber,
+                    false
                 );
             }
 
-            //if (dt.AsEnumerable().GroupBy(x => x[3]).Any(g => g.Count() > 1))
-            //{
-            //    throw new ValidationException(
-            //        "There were duplicate Parcel Numbers found in the layer. Please ensure that all Parcel Numbers are unique and try uploading again.");
-            //}
+            var duplicates = dt.AsEnumerable().GroupBy(x => x[3]).Where(y => y.Count() > 1).ToList();
+
+            if (duplicates.Any())
+            {
+                duplicates.ForEach(x =>
+                {
+                    var effectedRows = dt.Select("ParcelNumber='" + x.Key + "'");
+                    var firstEffected = effectedRows.First();
+
+                    if (effectedRows.Any(y => y["ParcelGeometry4326Text"].ToString() != firstEffected["ParcelGeometry4326Text"].ToString()))
+                    {
+                        throw new ValidationException(
+                            $"Parcel number that has more than one geometry associated with it. Please ensure all Parcels have unique geometries and try uploading again.");
+                    }
+
+                    foreach (var row in effectedRows)
+                    {
+                        row["HasConflict"] = true;
+                    }
+                });
+            }
 
             //Make sure staging table is empty before proceeding
             DeleteAll(_dbContext);
@@ -66,8 +91,10 @@ namespace Rio.EFModels.Entities
             bulkCopy.ColumnMappings.Add("ParcelGeometry4326Text", "ParcelGeometry4326Text");
             bulkCopy.ColumnMappings.Add("OwnerName", "OwnerName");
             bulkCopy.ColumnMappings.Add("ParcelNumber", "ParcelNumber");
+            bulkCopy.ColumnMappings.Add("HasConflict", "HasConflict");
 
             bulkCopy.WriteToServer(dt);
+
             _dbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText");
 
             return GetExpectedResultsDto(_dbContext, yearChangesToTakeEffect);
@@ -92,14 +119,16 @@ namespace Rio.EFModels.Entities
 
             var parcelsUnchanged =
                 parcelsUpdatedView
-                    .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText));
+                    .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText) && !x.HasConflict.Value);
             var parcelsWithChangedGeometries = parcelsUpdatedView
                 .Count(x =>
-                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText));
+                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText) && !x.HasConflict.Value);
             var parcelsAssociatedWithNewAccount = parcelsUpdatedView.Count(x =>
-                !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName));
+                !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName) && !x.HasConflict.Value);
             var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>
-                IsNullOrEmpty(x.NewOwnerName));
+                IsNullOrEmpty(x.NewOwnerName) && !x.HasConflict.Value);
+
+            var numParcelsWithConflicts = _dbContext.ParcelUpdateStaging.Where(x => x.HasConflict).Select(x => x.ParcelNumber).Distinct().Count();
 
             var expectedChanges = new ParcelUpdateExpectedResultsDto()
             {
@@ -109,7 +138,8 @@ namespace Rio.EFModels.Entities
                 NumParcelsUnchanged = parcelsUnchanged,
                 NumParcelsUpdatedGeometries = parcelsWithChangedGeometries,
                 NumParcelsAssociatedWithNewAccount = parcelsAssociatedWithNewAccount,
-                NumParcelsToBeInactivated = parcelsToBeInactivated
+                NumParcelsToBeInactivated = parcelsToBeInactivated,
+                NumParcelsWithConflicts = numParcelsWithConflicts
             };
 
             return expectedChanges;
@@ -118,6 +148,7 @@ namespace Rio.EFModels.Entities
         public static void DeleteAll(RioDbContext _dbContext)
         {
             _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.ParcelUpdateStaging");
+            _dbContext.Database.ExecuteSqlRaw("TRUNCATE TABLE dbo.AccountReconciliation");
         }
     }
 
@@ -130,5 +161,6 @@ namespace Rio.EFModels.Entities
         public int NumParcelsUpdatedGeometries { get; set; }
         public int NumParcelsAssociatedWithNewAccount { get; set; }
         public int NumParcelsToBeInactivated { get; set; }
+        public int NumParcelsWithConflicts { get; set; }
     }
 }

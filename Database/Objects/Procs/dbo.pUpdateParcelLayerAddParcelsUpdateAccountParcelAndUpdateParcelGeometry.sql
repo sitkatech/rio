@@ -16,13 +16,14 @@ begin
 	insert into dbo.Parcel (ParcelNumber, ParcelGeometry, ParcelAreaInSquareFeet, ParcelAreaInAcres)
 	select pus.ParcelNumber, 
 		   pus.ParcelGeometry4326, 
-		   round(pus.ParcelGeometry.STArea(), 0), 
+		   round(pus.ParcelGeometry.STArea(), 0),
 		   round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14) 
-	from (select ParcelNumber, OldOwnerName, OldGeometryText
-		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
-		  where WaterYearID = @waterYearID or WaterYearID is null) v
-	join dbo.ParcelUpdateStaging pus on v.ParcelNumber = pus.ParcelNumber
-	where OldOwnerName is null and OldGeometryText is null
+	from dbo.ParcelUpdateStaging pus
+	join (select max(ParcelUpdateStagingID) ParcelUpdateStagingID
+		  from dbo.ParcelUpdateStaging
+		  group by ParcelNumber) pusu on pusu.ParcelUpdateStagingID = pus.ParcelUpdateStagingID
+	left join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
+	where p.ParcelID is null
 
 	delete from dbo.AccountParcelWaterYear
 	where WaterYearID in (select WaterYearID
@@ -35,7 +36,7 @@ begin
 	select a.AccountID, p.ParcelID, wy.WaterYearID
 	from (select ParcelNumber, NewOwnerName
 		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
-		  where WaterYearID = @waterYearID or WaterYearID is null) v
+		  where (WaterYearID = @waterYearID or WaterYearID is null) and HasConflict = 0) v
 	join dbo.Parcel p on v.ParcelNumber = p.ParcelNumber
 	join dbo.Account a on v.NewOwnerName = a.AccountName
 	cross join (select WaterYearID
@@ -49,6 +50,18 @@ begin
 	ParcelAreaInSquareFeet = round(pus.ParcelGeometry.STArea(), 0),
 	ParcelAreaInAcres = round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14)
 	from dbo.ParcelUpdateStaging pus
+	join (select max(ParcelUpdateStagingID) ParcelUpdateStagingID
+		  from dbo.ParcelUpdateStaging
+		  group by ParcelNumber) pusu on pusu.ParcelUpdateStagingID = pus.ParcelUpdateStagingID
 	join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
+
+	insert into dbo.AccountReconciliation (ParcelID, AccountID)
+	select ParcelID, AccountID
+	from (select ParcelNumber, NewOwnerName
+		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
+		  where HasConflict = 1
+		  group by ParcelNumber, NewOwnerName) v
+	join dbo.Parcel p on p.ParcelNumber = v.ParcelNumber
+	join dbo.Account a on a.AccountName = v.NewOwnerName
 
 end

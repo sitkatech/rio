@@ -245,6 +245,13 @@
                                 {{resultsPreview.NumParcelsToBeInactivated}}
                             </dd>
                         </dl>
+                        <ngb-alert *ngIf="resultsPreview.NumParcelsWithConflicts > 0" [type]="'danger'" [dismissible]="false">
+                            <span>
+                                There were {{resultsPreview.NumParcelsWithConflicts}} Parcel Numbers found that had multiple owners claiming ownership. 
+                                These parcels will be inactivated for the selected and future water years, and a full report will be able to viewed at (insert url here) following the upload.
+                                It is advised to get these errors reconciled as soon as possible and upload a new Parcel Layer, but the upload will be allowed to continue.
+                            </span>
+                        </ngb-alert>
                     </div>
                 </div>
             </div>

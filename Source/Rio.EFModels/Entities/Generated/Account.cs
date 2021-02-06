@@ -10,6 +10,7 @@ namespace Rio.EFModels.Entities
         public Account()
         {
             AccountParcelWaterYear = new HashSet<AccountParcelWaterYear>();
+            AccountReconciliation = new HashSet<AccountReconciliation>();
             AccountUser = new HashSet<AccountUser>();
             Offer = new HashSet<Offer>();
             Posting = new HashSet<Posting>();
@@ -40,6 +41,8 @@ namespace Rio.EFModels.Entities
         public virtual AccountStatus AccountStatus { get; set; }
         [InverseProperty("Account")]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
+        [InverseProperty("Account")]
+        public virtual ICollection<AccountReconciliation> AccountReconciliation { get; set; }
         [InverseProperty("Account")]
         public virtual ICollection<AccountUser> AccountUser { get; set; }
         [InverseProperty("CreateAccount")]
