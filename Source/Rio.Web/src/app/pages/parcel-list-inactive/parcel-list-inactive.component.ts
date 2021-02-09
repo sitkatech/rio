@@ -34,7 +34,6 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   public rowData = [];
   public mapHeight: string = "500px"
   public columnDefs: any;
-  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -67,7 +66,6 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
 
       let _datePipe = this.datePipe;
-      let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
         {
           headerName: 'APN', valueGetter: function (params: any) {
@@ -87,7 +85,44 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
             return 0;
           },
           sortable: true, filter: true
-        }
+        },
+        { headerName: 'Inactivate Date', field: 'InactivateDate', valueFormatter: function (params) {
+          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
+        },
+        filterValueGetter: function (params: any) {
+          return _datePipe.transform(params.data.InactivateDate, "M/d/yyyy");
+        },
+        filterParams: {
+          // provide comparator function
+          comparator: function (filterLocalDate, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return -1;
+            var cellDate = Date.parse(dateAsString);
+            const filterLocalDateAtMidnight = filterLocalDate.getTime();
+            if (filterLocalDateAtMidnight == cellDate) {
+              return 0;
+            }
+            if (cellDate < filterLocalDateAtMidnight) {
+              return -1;
+            }
+            if (cellDate > filterLocalDateAtMidnight) {
+              return 1;
+            }
+          }
+        },
+        comparator: function (id1: any, id2: any) {
+          let time1 = id1 ? Date.parse(id1) : 0;
+          let time2 = id2 ? Date.parse(id2) : 0;
+
+          if (time1 < time2) {
+            return -1;
+          }
+          if (time1 > time2) {
+            return 1;
+          }
+          return 0;
+        },
+        sortable: true, filter: 'agDateColumnFilter'}
       ];
 
       this.gridOptions = <GridOptions>{};
@@ -98,6 +133,9 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
         this.rowData = parcels;
         this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
         this.parcelsGrid.api.hideOverlay();
+        setTimeout(() => {
+          this.parcelsGrid.columnApi.autoSizeAllColumns();
+        }, 50);
         this.loadingParcels = false;
         this.cdr.detectChanges();
       });

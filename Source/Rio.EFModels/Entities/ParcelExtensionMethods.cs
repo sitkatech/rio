@@ -15,7 +15,9 @@ namespace Rio.EFModels.Entities
                 ParcelID = parcel.ParcelID,
                 ParcelNumber = parcel.ParcelNumber,
                 ParcelAreaInAcres = parcel.ParcelAreaInAcres,
-                LandOwner = parcel.AccountParcelWaterYear.SingleOrDefault(x => x.WaterYear.Year == currentYear)?.Account?.AsSimpleDto()
+                LandOwner = parcel.AccountParcelWaterYear.SingleOrDefault(x => x.WaterYear.Year == currentYear)?.Account?.AsSimpleDto(),
+                ParcelStatusID = parcel.ParcelStatusID,
+                InactivateDate = parcel.InactivateDate
             };
         }
 

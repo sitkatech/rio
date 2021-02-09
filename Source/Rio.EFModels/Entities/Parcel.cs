@@ -120,12 +120,9 @@ namespace Rio.EFModels.Entities
         }
         public static IEnumerable<ParcelDto> GetInactiveParcels(RioDbContext dbContext)
         {
-            var currentWaterYear = WaterYear.GetDefaultYearToDisplay(dbContext);
-
-            return dbContext.vParcelOwnership
-                .Include(x => x.Parcel)
-                .Where(x => !x.AccountID.HasValue && x.WaterYearID == currentWaterYear.WaterYearID)
-                .Select(x => x.Parcel.AsDto()).AsEnumerable();
+            return dbContext.Parcel
+                .Where(x => x.ParcelStatusID == (int) ParcelStatusEnum.Inactive)
+                .Select(x => x.AsDto());
         }
     }
 }
