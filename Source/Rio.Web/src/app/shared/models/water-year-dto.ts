@@ -9,5 +9,3 @@ export class WaterYearDto {
         Object.assign(this, obj);
     }
 }
-
-

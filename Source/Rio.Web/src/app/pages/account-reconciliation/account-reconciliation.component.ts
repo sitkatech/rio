@@ -130,7 +130,6 @@ export class AccountReconciliationComponent implements OnInit {
       this.accountReconciliationGrid.api.showLoadingOverlay();
 
       this.accountReconciliationService.getAccountsToBeReconciled().subscribe((parcels) => {
-        debugger;
         this.rowData = parcels;
         this.selectedParcelIDs = this.rowData.map(x => x.Parcel.ParcelID);
         this.accountReconciliationGrid.api.hideOverlay();
