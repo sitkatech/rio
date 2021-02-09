@@ -109,10 +109,10 @@ namespace Rio.EFModels.Entities
                 accountsUpdatedView.Count(x =>
                     x.ExistingParcels.Equals(x.UpdatedParcels));
             var accountsToBeInactivated = accountsUpdatedView.Count(x =>
-                x.AccountAlreadyExists.Value &&
-                !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels));
+                (x.AccountAlreadyExists.Value &&
+                !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels)));
             var accountsToBeAdded = accountsUpdatedView.Count(x =>
-                !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels));
+                !x.AccountAlreadyExists.Value);
 
             var parcelsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Where(x =>
                 !x.WaterYearID.HasValue || x.WaterYearID == yearChangesToTakeEffect.WaterYearID);
@@ -121,8 +121,8 @@ namespace Rio.EFModels.Entities
                 parcelsUpdatedView
                     .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText) && !x.HasConflict.Value);
             var parcelsWithChangedGeometries = parcelsUpdatedView
-                .Count(x =>
-                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText) && !x.HasConflict.Value);
+                .Where(x =>
+                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText)).Select(x => x.ParcelNumber).Distinct().Count();
             var parcelsAssociatedWithNewAccount = parcelsUpdatedView.Count(x =>
                 !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName) && !x.HasConflict.Value);
             var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>

@@ -511,7 +511,7 @@ namespace Rio.API.Controllers
                     "There was an error applying these changes to the selected Water Year. Please try again, and if the problem persists contact support.");
             }
 
-            var currentWaterYearDto = WaterYear.GetByYear(_dbContext, DateTime.Now.Year);
+            var currentWaterYearDto = WaterYear.GetDefaultYearToDisplay(_dbContext);
 
             if (currentWaterYearDto.Year - waterYearDto.Year > 1)
             {
@@ -537,23 +537,22 @@ namespace Rio.API.Controllers
                         _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
                             !x.WaterYearID.HasValue || x.WaterYearID == waterYearDto.WaterYearID);
 
-                    var accountNamesToInactivate = currentDifferencesForAccounts
-                        .Where(x => x.AccountAlreadyExists.Value && !IsNullOrEmpty(x.ExistingParcels) &&
-                                    IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
-                    Account.BulkInactivate(_dbContext, _dbContext.Account
-                        .Where(x => accountNamesToInactivate.Contains(x.AccountName))
-                        .ToList(), false);
-
                     var accountNamesToCreate = currentDifferencesForAccounts
                         .Where(
                             x =>
-                                !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
+                                !x.AccountAlreadyExists.Value)
                         .Select(x => x.AccountName)
                         .ToList();
 
                     Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars,
-                        accountNamesToCreate, false);
-                    _dbContext.SaveChanges();
+                        accountNamesToCreate);
+
+                    var accountNamesToInactivate = currentDifferencesForAccounts
+                        .Where(x => (x.AccountAlreadyExists.Value &&
+                                     !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
+                    Account.BulkInactivate(_dbContext, _dbContext.Account
+                        .Where(x => accountNamesToInactivate.Contains(x.AccountName))
+                        .ToList());
                 }
 
                 _dbContext.Database.ExecuteSqlRaw(

@@ -20,9 +20,13 @@ from (
 		group by a.AccountName, wy.WaterYearID
 	  ) currentAccountAssociations
 full outer join (
-		SELECT  OwnerName, STRING_AGG(ParcelNumber, ',') WITHIN GROUP (ORDER BY ParcelNumber) as UpdatedParcels
-		from dbo.ParcelUpdateStaging
-		group by OwnerName) updatedAccountAssociations on currentAccountAssociations.AccountName = updatedAccountAssociations.OwnerName
+		select owners.OwnerName, UpdatedParcels
+		from (select distinct OwnerName
+			  from dbo.ParcelUpdateStaging) owners
+		left join (SELECT  OwnerName, STRING_AGG(ParcelNumber, ',') WITHIN GROUP (ORDER BY ParcelNumber) as UpdatedParcels
+				   from dbo.ParcelUpdateStaging
+				   where HasConflict = 0
+				   group by OwnerName) parcels on owners.OwnerName = parcels.OwnerName) updatedAccountAssociations on currentAccountAssociations.AccountName = updatedAccountAssociations.OwnerName
 
 GO
 

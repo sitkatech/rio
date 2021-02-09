@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -285,6 +286,14 @@ namespace Rio.API.Controllers
             var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);
             
             return Ok(waterUsageOverviewDto);
+        }
+
+        [HttpGet("accounts/{accountID}/account-reconciliation-parcels")]
+        [UserViewFeature]
+        public ActionResult<ParcelSimpleDto> GetAccountReconciliationParcelsByAccountID([FromRoute] int accountID)
+        {
+            var parcelSimpleDtos = AccountReconciliation.ListParcelsByAccountID(_dbContext, accountID);
+            return Ok(parcelSimpleDtos);
         }
 
         [HttpGet("accounts/water-usage-overview/{year}")]

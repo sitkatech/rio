@@ -199,7 +199,7 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
         }
         
-        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate, bool saveChanges)
+        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate)
         {
             accountsToInactivate.ForEach(x =>
             {
@@ -208,14 +208,11 @@ namespace Rio.EFModels.Entities
                 x.AccountStatusID = (int) AccountStatusEnum.Inactive;
                 x.AccountVerificationKey = null;
             });
-
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+                
+            dbContext.SaveChanges();
         }
 
-        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate, bool saveChanges)
+        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate)
         {
             var listOfAccountsToCreate = new List<Account>();
             var currentAccountVerificationKeys = GetCurrentAccountVerificationKeys(dbContext);
@@ -239,10 +236,7 @@ namespace Rio.EFModels.Entities
 
             dbContext.Account.AddRange(listOfAccountsToCreate);
 
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+            dbContext.SaveChanges();
         }
     }
 }

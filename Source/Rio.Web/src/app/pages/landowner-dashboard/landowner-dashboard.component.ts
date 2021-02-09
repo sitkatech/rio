@@ -77,6 +77,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
   public loadingActiveAccount: boolean = false;
+  parcelsToBeReconciled: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/parcel/parcel-simple-dto").ParcelSimpleDto[];
   set highlightedParcelID(value: number) {
     this._highlightedParcelID = value;
     this.highlightedParcelDto = this.parcels.filter(x => x.ParcelID == value)[0];
@@ -181,14 +182,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
       this.waterYearSerivce.getWaterYears(),
-      this.waterYearSerivce.getDefaultWaterYearToDisplay()
-    ).subscribe(([postings, trades, waterTransfers, waterYears, defaultWaterYear]) => {
+      this.waterYearSerivce.getDefaultWaterYearToDisplay(),
+      this.accountService.getParcelsInAccountReconciliationByAccountID(account.AccountID)
+    ).subscribe(([postings, trades, waterTransfers, waterYears, defaultWaterYear, parcelsToBeReconciled]) => {
       this.waterYears = waterYears;
       this.waterYearToDisplay = defaultWaterYear;
       this.postings = postings;
       this.trades = trades;
       this.waterTransfers = waterTransfers;
-
+      this.parcelsToBeReconciled = parcelsToBeReconciled
       this.updateAnnualData();
     });
   }
@@ -579,5 +581,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public landownerHasAnyAccounts(){
     var result = this.authenticationService.getAvailableAccounts();
     return result != null && result.length > 0;
+  }
+
+  public getParcelNumbersForParcelsToBeReconciled() {
+    if (!this.parcelsToBeReconciled) {
+      return null;
+    }
+
+    return this.parcelsToBeReconciled.map(x => x.ParcelNumber).join(", ");
   }
 }

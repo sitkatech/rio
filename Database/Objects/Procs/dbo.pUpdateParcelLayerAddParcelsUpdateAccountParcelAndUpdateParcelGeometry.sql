@@ -34,11 +34,11 @@ begin
 
 	insert into dbo.AccountParcelWaterYear (AccountID, ParcelID, WaterYearID)
 	select a.AccountID, p.ParcelID, wy.WaterYearID
-	from (select ParcelNumber, NewOwnerName
-		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
-		  where (WaterYearID = @waterYearID or WaterYearID is null) and HasConflict = 0) v
-	join dbo.Parcel p on v.ParcelNumber = p.ParcelNumber
-	join dbo.Account a on v.NewOwnerName = a.AccountName
+	from (select ParcelNumber, OwnerName
+		  from dbo.ParcelUpdateStaging
+		  where HasConflict = 0) pus
+	join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
+	join dbo.Account a on pus.OwnerName = a.AccountName
 	cross join (select WaterYearID
 						  from dbo.WaterYear
 						  where [Year] >= (select [Year]
@@ -57,11 +57,10 @@ begin
 
 	insert into dbo.AccountReconciliation (ParcelID, AccountID)
 	select ParcelID, AccountID
-	from (select ParcelNumber, NewOwnerName
-		  from dbo.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry v
-		  where HasConflict = 1
-		  group by ParcelNumber, NewOwnerName) v
-	join dbo.Parcel p on p.ParcelNumber = v.ParcelNumber
-	join dbo.Account a on a.AccountName = v.NewOwnerName
+	from (select ParcelNumber, OwnerName
+		  from dbo.ParcelUpdateStaging
+		  where HasConflict = 1) pus
+	join dbo.Parcel p on p.ParcelNumber = pus.ParcelNumber
+	join dbo.Account a on a.AccountName = pus.OwnerName
 
 end
