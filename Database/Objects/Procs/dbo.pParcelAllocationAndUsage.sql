@@ -14,13 +14,9 @@ begin
 			pal.Allocation, pal.ProjectWater, pal.Reconciliation, pal.NativeYield, pal.StoredWater,
 			pmev.UsageToDate, a.AccountID, a.AccountName, a.AccountNumber
 	from dbo.Parcel p
-	join (
-		select apwy.ParcelID, apwy.AccountID
-		from dbo.AccountParcelWaterYear apwy
-		join dbo.WaterYear wy on apwy.WaterYearID = wy.WaterYearID
-		where wy.[Year] = @year
-	) apwy on p.ParcelID = apwy.ParcelID
-	left join dbo.[Account] a on apwy.AccountID = a.AccountID
+	join dbo.AccountParcelWaterYear apwy on p.ParcelID = apwy.ParcelID
+	join dbo.WaterYear wy on apwy.WaterYearID = wy.WaterYearID and wy.[Year] = @year
+	join dbo.[Account] a on apwy.AccountID = a.AccountID
 	left join 
 	(
 		select pa.ParcelID, 
