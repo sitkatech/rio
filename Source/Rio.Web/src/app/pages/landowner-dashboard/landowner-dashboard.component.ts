@@ -27,6 +27,7 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
+import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -77,7 +78,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
   public loadingActiveAccount: boolean = false;
-  parcelsToBeReconciled: import("c:/git/sitkatech/rio/Source/Rio.Web/src/app/shared/models/parcel/parcel-simple-dto").ParcelSimpleDto[];
+  parcelsToBeReconciled: ParcelSimpleDto[];
   set highlightedParcelID(value: number) {
     this._highlightedParcelID = value;
     this.highlightedParcelDto = this.parcels.filter(x => x.ParcelID == value)[0];
