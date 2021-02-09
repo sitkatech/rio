@@ -75,7 +75,7 @@ export class AccountListComponent implements OnInit, OnDestroy {
           return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
         },
         filterValueGetter: function (params: any) {
-          return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
+          return _datePipe.transform(params.data.AccountVerificationKeyLastUseDate, "M/d/yyyy");
         },
         filterParams: {
           // provide comparator function

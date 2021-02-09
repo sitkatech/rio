@@ -18,8 +18,5 @@ namespace Rio.EFModels.Entities
         [Required]
         [Column(TypeName = "geometry")]
         public Geometry ParcelGeometry { get; set; }
-        public int? UserID { get; set; }
-        [StringLength(201)]
-        public string LandOwnerFullName { get; set; }
     }
 }

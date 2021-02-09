@@ -11,6 +11,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Environment } from 'ag-grid-community';
 import { environment } from 'src/environments/environment';
+import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -88,5 +89,10 @@ export class AccountService {
   saveParcelMonthlyEvapotranspirationOverrideValues(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
       let route = `/accounts/${accountID}/${year}/saveParcelMonthlyEvapotranspirationOverrideValues`;
       return this.apiService.putToApi(route, model);
+  }
+
+  getParcelsInAccountReconciliationByAccountID(accountID:number): Observable<Array<ParcelSimpleDto>> {
+    let route = `/accounts/${accountID}/account-reconciliation-parcels`;
+    return this.apiService.getFromApi(route);
   }
 }

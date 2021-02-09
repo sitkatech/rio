@@ -86,6 +86,14 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.CreateAccount)
                 .Include(x => x.Trade)
                 .ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Trade)
+                .ThenInclude(x => x.TradeStatus)
+                .Include(x => x.Trade)
+                .ThenInclude(x => x.Posting)
+                .ThenInclude(x => x.PostingType)
+                .Include(x => x.Trade)
+                .ThenInclude(x => x.Posting)
+                .ThenInclude(x => x.PostingStatus)
                 .AsNoTracking()
                 .Where(x => !x.WaterTransfer.Any() && x.OfferStatusID != (int) OfferStatusEnum.Rejected && x.OfferStatusID != (int) OfferStatusEnum.Rescinded &&
                             (x.Trade.Posting.PostingStatusID == (int) postingTypeEnum &&

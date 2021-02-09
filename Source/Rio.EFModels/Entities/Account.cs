@@ -36,7 +36,7 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.User)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountParcel)
+                .ThenInclude(x => x.AccountParcelWaterYear)
                 .ThenInclude(x => x.Parcel)
                 .Single(x => x.UserID == userID).AccountUser
                 .OrderBy(x => x.Account.AccountName)
@@ -47,8 +47,10 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account
                 .Include(x => x.AccountStatus)
-                .Include(x => x.AccountParcel)
+                .Include(x => x.AccountParcelWaterYear)
                 .ThenInclude(x => x.Parcel)
+                .Include(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
@@ -60,7 +62,8 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account
                 .Include(x => x.AccountStatus)
-                .Include(x=>x.AccountParcel)
+                .Include(x=> x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
@@ -196,7 +199,7 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
         }
         
-        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate, bool saveChanges)
+        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate)
         {
             accountsToInactivate.ForEach(x =>
             {
@@ -205,14 +208,11 @@ namespace Rio.EFModels.Entities
                 x.AccountStatusID = (int) AccountStatusEnum.Inactive;
                 x.AccountVerificationKey = null;
             });
-
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+                
+            dbContext.SaveChanges();
         }
 
-        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate, bool saveChanges)
+        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate)
         {
             var listOfAccountsToCreate = new List<Account>();
             var currentAccountVerificationKeys = GetCurrentAccountVerificationKeys(dbContext);
@@ -236,10 +236,7 @@ namespace Rio.EFModels.Entities
 
             dbContext.Account.AddRange(listOfAccountsToCreate);
 
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+            dbContext.SaveChanges();
         }
     }
 }

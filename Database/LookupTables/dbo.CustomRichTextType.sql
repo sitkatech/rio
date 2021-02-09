@@ -20,7 +20,8 @@ USING (VALUES
 (18, 'ParcelList', 'Parcel List'),
 (19, 'OpenETIntegration', 'OpenET Integration'),
 (20, 'ParcelUpdateLayer', 'Parcel Update Layer'),
-(21, 'InactiveParcelList', 'Inactive Parcel List')
+(21, 'InactiveParcelList', 'Inactive Parcel List'),
+(22, 'AccountReconciliationReport', 'Account Reconciliation Report')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID
