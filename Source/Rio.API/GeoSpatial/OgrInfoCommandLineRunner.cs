@@ -49,11 +49,16 @@ namespace Rio.API.GeoSpatial
             {
                 var featureClassInfo = new FeatureClassInfo();
 
-                if (!Proj4NetHelpers.WkTHasAppropriateSRS(featureClassBlob,
-                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId))
+                if (!featureClassBlob.ToLower().Contains(@$"AUTHORITY[""EPSG"",""{Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId}""]".ToLower()))
                 {
                     throw new ValidationException($"GDB contains a layer that is not projected to {Ogr2OgrCommandLineRunner.GetMapProjection(Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId)}. Please upload a different GDB or edit the current one.");
                 }
+
+                //if (!Proj4NetHelpers.WkTHasAppropriateSRS(featureClassBlob,
+                //    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId))
+                //{
+                //    throw new ValidationException($"GDB contains a layer that is not projected to {Ogr2OgrCommandLineRunner.GetMapProjection(Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId)}. Please upload a different GDB or edit the current one.");
+                //}
 
                 var features = featureClassBlob.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries).ToList();
                 featureClassInfo.LayerName = features.First();
