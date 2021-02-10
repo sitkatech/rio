@@ -26,7 +26,18 @@ namespace Rio.API.GeoSpatial
             var commandLineArguments = BuildOgrInfoCommandLineArgumentsToListFeatureClassInfos(gdbFileInfo, null);
             var processUtilityResult = ExecuteOgrInfoCommand(pathToOgrInfoExecutable, commandLineArguments, totalMilliseconds, logger);
 
+            if (logger != null)
+            {
+                logger.LogInformation(processUtilityResult.StdOut);
+            }
+            else
+            {
+                Console.WriteLine(processUtilityResult.StdOut);
+            }
+
             var featureClassesFromFileGdb = processUtilityResult.StdOut.Split(new[] { "\r\nLayer name: " }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToList();
+
+            
 
             if (maxLayerNum.HasValue && featureClassesFromFileGdb.Count > maxLayerNum)
             {
