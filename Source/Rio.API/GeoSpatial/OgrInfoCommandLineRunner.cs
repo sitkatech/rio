@@ -50,7 +50,7 @@ namespace Rio.API.GeoSpatial
                 var featureClassInfo = new FeatureClassInfo();
 
                 if (!Proj4NetHelpers.WkTHasAppropriateSRS(featureClassBlob,
-                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId, logger))
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId))
                 {
                     throw new ValidationException($"GDB contains a layer that is not projected to {Ogr2OgrCommandLineRunner.GetMapProjection(Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId)}. Please upload a different GDB or edit the current one.");
                 }
