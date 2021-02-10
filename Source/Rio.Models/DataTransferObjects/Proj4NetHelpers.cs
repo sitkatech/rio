@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -38,8 +39,24 @@ PROJCS[""NAD83 / California zone 5 (ftUS)"",
 "
         };
 
-        public static bool WkTHasAppropriateSRS(string wkt, int targetSrid)
+        public static bool WkTHasAppropriateSRS(string wkt, int targetSrid, ILogger logger)
         {
+            if (logger != null)
+            {
+                logger.LogInformation("WKT (trimmed): " + wkt.Trim());
+                logger.LogInformation("Target SRID: " + targetSrid);
+                logger.LogInformation("CoordinateSystemsWkT (trimmed): " + CoordinateSystemsWkTs[targetSrid].Trim());
+                logger.LogInformation("WKT (trimmed) contains CoordinateSystemsWkt (trimmed): " + (wkt.Trim().Contains(CoordinateSystemsWkTs[targetSrid].Trim()) ? "true" : "false"));
+            }
+            else
+            {
+                Console.WriteLine("WKT (trimmed): " + wkt.Trim());
+                Console.WriteLine("Target SRID: " + targetSrid);
+                Console.WriteLine("CoordinateSystemsWkT (trimmed): " + CoordinateSystemsWkTs[targetSrid].Trim());
+                Console.WriteLine("WKT (trimmed) contains CoordinateSystemsWkt (trimmed): " + (wkt.Trim().Contains(CoordinateSystemsWkTs[targetSrid].Trim()) ? "true" : "false"));
+
+            }
+
             return wkt.Trim().Contains(CoordinateSystemsWkTs[targetSrid].Trim());
         }
 
