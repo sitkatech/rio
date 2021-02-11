@@ -475,7 +475,7 @@ namespace Rio.API.Controllers
             try
             {
                 var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
-                    null,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
                     250000000, false);
                 var columns = model.ColumnMappings.Select(
                         x =>

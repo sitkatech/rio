@@ -119,14 +119,14 @@ namespace Rio.EFModels.Entities
 
             var parcelsUnchanged =
                 parcelsUpdatedView
-                    .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText) && !x.HasConflict.Value);
+                    .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText) && x.HasConflict.HasValue && !x.HasConflict.Value);
             var parcelsWithChangedGeometries = parcelsUpdatedView
                 .Where(x =>
-                x.OldGeometryText != null && !x.OldGeometryText.Equals(x.NewGeometryText)).Select(x => x.ParcelNumber).Distinct().Count();
+                !IsNullOrEmpty(x.OldGeometryText) && !IsNullOrEmpty(x.NewGeometryText) && !x.NewGeometryText.Equals(x.OldGeometryText)).Select(x => x.ParcelNumber).Distinct().Count();
             var parcelsAssociatedWithNewAccount = parcelsUpdatedView.Count(x =>
-                !IsNullOrEmpty(x.NewOwnerName) && !x.NewOwnerName.Equals(x.OldOwnerName) && !x.HasConflict.Value);
+                x.HasConflict.HasValue && !x.HasConflict.Value && !x.NewOwnerName.Equals(x.OldOwnerName));
             var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>
-                IsNullOrEmpty(x.NewOwnerName) && !x.HasConflict.Value);
+                x.WaterYearID.HasValue && !IsNullOrEmpty(x.OldOwnerName) && IsNullOrEmpty(x.NewOwnerName));
 
             var numParcelsWithConflicts = _dbContext.ParcelUpdateStaging.Where(x => x.HasConflict).Select(x => x.ParcelNumber).Distinct().Count();
 

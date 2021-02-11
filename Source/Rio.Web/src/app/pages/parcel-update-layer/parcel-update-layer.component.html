@@ -248,7 +248,7 @@
                         <ngb-alert *ngIf="resultsPreview.NumParcelsWithConflicts > 0" [type]="'danger'" [dismissible]="false">
                             <span>
                                 There were {{resultsPreview.NumParcelsWithConflicts}} Parcel Numbers found that had multiple owners claiming ownership. 
-                                These parcels will be inactivated for the selected and future water years, and a full report will be able to viewed at (insert url here) following the upload.
+                                These parcels will be inactivated for the selected and future water years, and a full report will be able to viewed on the <a routerLink="/account-reconciliation">Account Reconciliation</a> page following the upload.
                                 It is advised to get these errors reconciled as soon as possible and upload a new Parcel Layer, but the upload will be allowed to continue.
                             </span>
                         </ngb-alert>
@@ -261,7 +261,7 @@
                 <button type="button" class="btn btn-rio mr-2" (click)="removeResultPreview()"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" >
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
                     Finalize Changes
                 </button>
@@ -283,7 +283,7 @@
             Are you sure you want to finalize these changes? This action cannot be undone.
         </p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()">
+            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()" ngbAutoFocus>
                 Save</button>
             <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
         </div>

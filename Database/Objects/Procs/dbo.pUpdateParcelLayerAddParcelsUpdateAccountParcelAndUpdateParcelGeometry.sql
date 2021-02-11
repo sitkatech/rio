@@ -13,12 +13,13 @@ begin
 	declare @squareFeetToAcresDivisor int = 43560
 
 	--Function relies on ParcelGeometry being in EPSG:2229, or just a base geometry where the Projection's units are in feet
-	insert into dbo.Parcel (ParcelNumber, ParcelGeometry, ParcelAreaInSquareFeet, ParcelAreaInAcres, ParcelStatusID)
+	insert into dbo.Parcel (ParcelNumber, ParcelGeometry, ParcelAreaInSquareFeet, ParcelAreaInAcres, ParcelStatusID, InactivateDate)
 	select pus.ParcelNumber, 
 		   pus.ParcelGeometry4326, 
 		   round(pus.ParcelGeometry.STArea(), 0),
 		   round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14),
-		   1
+		   case when pus.HasConflict = 1 then 2 else 1 end,
+		   case when pus.HasConflict = 1 then GETUTCDATE() else null end
 	from dbo.ParcelUpdateStaging pus
 	join (select max(ParcelUpdateStagingID) ParcelUpdateStagingID
 		  from dbo.ParcelUpdateStaging
@@ -47,14 +48,19 @@ begin
 										  where WaterYearID = @waterYearID)) wy
 	
 	update dbo.Parcel
-	set ParcelGeometry = pus.ParcelGeometry4326,
-	ParcelAreaInSquareFeet = round(pus.ParcelGeometry.STArea(), 0),
-	ParcelAreaInAcres = round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14)
+	set ParcelGeometry = case when pus.ParcelGeometry4326 is not null then pus.ParcelGeometry4326 else p.ParcelGeometry end,
+	ParcelAreaInSquareFeet = case when pus.ParcelGeometry is not null then round(pus.ParcelGeometry.STArea(), 0) else ParcelAreaInSquareFeet end,
+	ParcelAreaInAcres = case when pus.ParcelGeometry is not null then round(pus.ParcelGeometry.STArea() / @squareFeetToAcresDivisor, 14) else ParcelAreaInAcres end,
+	--if we had a conflict or no new owner, inactivate
+	ParcelStatusID = case when pus.HasConflict = 1 or pus.OwnerName is null then 2 else 1 end,
+	InactivateDate = case when (pus.HasConflict = 1 or pus.OwnerName is null) and InactivateDate is not null then InactivateDate
+						  when (pus.HasConflict = 1 or pus.OwnerName is null) and InactivateDate is null then GETUTCDATE()
+						  else null end
 	from dbo.ParcelUpdateStaging pus
 	join (select max(ParcelUpdateStagingID) ParcelUpdateStagingID
 		  from dbo.ParcelUpdateStaging
 		  group by ParcelNumber) pusu on pusu.ParcelUpdateStagingID = pus.ParcelUpdateStagingID
-	join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
+	right join dbo.Parcel p on pus.ParcelNumber = p.ParcelNumber
 
 	insert into dbo.AccountReconciliation (ParcelID, AccountID)
 	select ParcelID, AccountID
@@ -64,25 +70,5 @@ begin
 	join dbo.Parcel p on p.ParcelNumber = pus.ParcelNumber
 	join dbo.Account a on a.AccountName = pus.OwnerName
 
-	--Inactivate any parcels that had issues but weren't already inactivated
-	update dbo.Parcel
-	set ParcelStatusID = 2,
-	InactivateDate = GETUTCDATE()
-	from dbo.Parcel p
-	join (select ParcelNumber
-		  from dbo.ParcelUpdateStaging
-		  where HasConflict = 1
-		  group by ParcelNumber) pus on pus.ParcelNumber = p.ParcelNumber
-	where p.ParcelStatusID = 1
-
-	--Activate any parcels that didn't have issues and were already inactive
-	update dbo.Parcel
-	set ParcelStatusID = 1,
-	InactivateDate = null
-	from dbo.Parcel p
-	join (select ParcelNumber
-		  from dbo.ParcelUpdateStaging
-		  where HasConflict = 0) pus on p.ParcelNumber = pus.ParcelNumber
-	where p.ParcelStatusID = 2
 
 end
