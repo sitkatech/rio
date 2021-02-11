@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Features;
 using NetTopologySuite.IO;
 using Rio.Models.DataTransferObjects;
-using static System.String;
+//using static System.String;
 
 namespace Rio.EFModels.Entities
 {
@@ -108,9 +108,9 @@ namespace Rio.EFModels.Entities
             var accountsUnchanged =
                 accountsUpdatedView.Count(x =>
                     x.ExistingParcels.Equals(x.UpdatedParcels));
-            var accountsToBeInactivated = accountsUpdatedView.Count(x =>
+            var accountsToBeInactivated = accountsUpdatedView.Count(x => x.AccountAlreadyExists.HasValue &&
                 (x.AccountAlreadyExists.Value &&
-                !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels)));
+                !string.IsNullOrWhiteSpace(x.ExistingParcels) && string.IsNullOrWhiteSpace(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && string.IsNullOrWhiteSpace(x.UpdatedParcels)));
             var accountsToBeAdded = accountsUpdatedView.Count(x =>
                 !x.AccountAlreadyExists.Value);
 
@@ -122,11 +122,11 @@ namespace Rio.EFModels.Entities
                     .Count(x => x.NewOwnerName.Equals(x.OldOwnerName) && x.NewGeometryText.Equals(x.OldGeometryText) && x.HasConflict.HasValue && !x.HasConflict.Value);
             var parcelsWithChangedGeometries = parcelsUpdatedView
                 .Where(x =>
-                !IsNullOrEmpty(x.OldGeometryText) && !IsNullOrEmpty(x.NewGeometryText) && !x.NewGeometryText.Equals(x.OldGeometryText)).Select(x => x.ParcelNumber).Distinct().Count();
+                !string.IsNullOrWhiteSpace(x.OldGeometryText) && !string.IsNullOrWhiteSpace(x.NewGeometryText) && !x.NewGeometryText.Equals(x.OldGeometryText)).Select(x => x.ParcelNumber).Distinct().Count();
             var parcelsAssociatedWithNewAccount = parcelsUpdatedView.Count(x =>
                 x.HasConflict.HasValue && !x.HasConflict.Value && !x.NewOwnerName.Equals(x.OldOwnerName));
             var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>
-                x.WaterYearID.HasValue && !IsNullOrEmpty(x.OldOwnerName) && IsNullOrEmpty(x.NewOwnerName));
+                x.WaterYearID.HasValue && !string.IsNullOrWhiteSpace(x.OldOwnerName) && string.IsNullOrWhiteSpace(x.NewOwnerName));
 
             var numParcelsWithConflicts = _dbContext.ParcelUpdateStaging.Where(x => x.HasConflict).Select(x => x.ParcelNumber).Distinct().Count();
 
