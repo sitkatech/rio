@@ -13,6 +13,8 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { MdpDate } from '../../shared/models/mdp-date';
+import { WaterYearService } from 'src/app/services/water-year.service';
+import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
 
 @Component({
   selector: 'rio-parcel-change-owner',
@@ -23,20 +25,13 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   public accounts: AccountDto[];
   public selectedAccount: AccountDto;
   public parcelID: number;
-  public ownerHasAccount: boolean;
-  public effectiveYear: number;
-  public saleDate: MdpDate;
+  public parcelToBeInactivated: boolean;
+  public applyToSubsequentYears: boolean = false;
+  public effectiveWaterYear: WaterYearDto;
   public parcel: ParcelDto;
-  public ownerNameUntracked: string;
-  public note: string = "";
 
   public isLoadingSubmit: boolean = false;
   public watchAccountChangeSubscription: any;
-
-  public myDatePickerOptions: IMyDpOptions = {
-    // other options...
-    dateFormat: 'mm-dd-yyyy',
-  };
 
   public accountDropdownConfig = {
     search: true,
@@ -46,6 +41,18 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
     searchOnKey: "AccountName",
   }
 
+  public waterYearDropdownConfig = {
+    search: true,
+    height: '320px',
+    placeholder: "Select a Water Year from the list of Water Years",
+    displayKey: "Year",
+    searchOnKey: "Year",
+  }
+
+  currentWaterYear: WaterYearDto;
+  waterYears: WaterYearDto[];
+  loadingFormData: boolean;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -53,21 +60,26 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
+    private waterYearService: WaterYearService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    const today = new Date();
-    this.saleDate = {date: {year: today.getFullYear(), month: today.getMonth() + 1, day: today.getDate()}, jsdate: today};
+    this.loadingFormData = true;
     this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
-      this.ownerHasAccount = true;
+      this.parcelToBeInactivated = false;
       forkJoin(
         this.accountService.listAllAccounts(),
-        this.parcelService.getParcelByParcelID(this.parcelID)
-      ).subscribe(([accounts, parcel]) => {
+        this.parcelService.getParcelByParcelID(this.parcelID),
+        this.waterYearService.getDefaultWaterYearToDisplay(),
+        this.waterYearService.getWaterYears()
+      ).subscribe(([accounts, parcel, currentWaterYear, waterYears]) => {
         this.accounts = accounts;
         this.parcel = parcel;
+        this.currentWaterYear = currentWaterYear;
+        this.waterYears = waterYears;
+        this.loadingFormData = false;
       });
     });
   }
@@ -83,34 +95,27 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   }
 
   public formValid(): boolean {
-    const lengthValid  = this.note.length <= 500 ;
-    let accountValid;
-    if (this.ownerHasAccount){
-      accountValid = (Boolean) ((this.selectedAccount && this.selectedAccount.AccountID));
+    if (!this.parcelToBeInactivated && (this.selectedAccount === null || this.selectedAccount === undefined)) {
+      return false;
     }
-    else{
-      accountValid = this.ownerNameUntracked;
+
+    if (!this.effectiveWaterYear) {
+      return false;
     }
-     
-    const valid = lengthValid && accountValid;
-    return valid;
+
+    return true;
   }
 
   public onSubmit(form: HTMLFormElement) {
-    var associativeArray = {
+    this.isLoadingSubmit = true;
+    var parcelChangeOwnerDto = new ParcelChangeOwnerDto({
       ParcelID: this.parcelID,
       AccountID: this.selectedAccount ? this.selectedAccount.AccountID : undefined,
-      OwnerName: this.ownerNameUntracked,
-      SaleDate: this.saleDate.jsdate,
-      EffectiveYear: this.effectiveYear,
-      Note: this.note
-
-    }
-    this.isLoadingSubmit = true;
-    var parcelChangeOwnerDto = new ParcelChangeOwnerDto(associativeArray);
+      EffectiveWaterYearID: this.effectiveWaterYear.WaterYearID,
+      ApplyToSubsequentYears: this.applyToSubsequentYears
+    });
     this.parcelService.changeParcelOwner(this.parcelID, parcelChangeOwnerDto).subscribe(anything => {
       this.isLoadingSubmit = false;
-      form.reset();
       this.router.navigateByUrl(`/parcels/${this.parcelID}`).then(x => {
         this.alertService.pushAlert(new Alert(`The ownership record for ${this.parcel.ParcelNumber} was successfully updated.`, AlertContext.Success));
       })

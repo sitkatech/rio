@@ -98,22 +98,6 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.AsParcelOwnershipDto());
         }
 
-        //public static IEnumerable<ErrorMessage> ValidateChangeOwner(RioDbContext dbContext,
-        //    ParcelChangeOwnerDto parcelChangeOwnerDto, ParcelDto parcelDto)
-        //{
-        //    var mostRecentSaleDate = dbContext.vParcelOwnership.AsNoTracking().Where(x=>x.ParcelID == parcelDto.ParcelID).Max(x=>x.SaleDate);
-
-        //    if (mostRecentSaleDate.HasValue && parcelChangeOwnerDto.SaleDate < mostRecentSaleDate.Value)
-        //    {
-        //        yield return new ErrorMessage
-        //        {
-        //            Message =
-        //                $"Please enter a sale date after the previous sale date for this parcel ({mostRecentSaleDate.Value.ToShortDateString()})",
-        //            Type = "Error"
-        //        };
-        //    }
-        //}
-
         public static bool IsValidParcelNumber(string regexPattern,  string parcelNumber)
         {
             return Regex.IsMatch(parcelNumber, regexPattern);
@@ -123,6 +107,16 @@ namespace Rio.EFModels.Entities
             return dbContext.Parcel
                 .Where(x => x.ParcelStatusID == (int) ParcelStatusEnum.Inactive)
                 .Select(x => x.AsDto());
+        }
+
+        public static void UpdateParcelStatus(RioDbContext dbContext, int parcelID, int parcelStatusID)
+        {
+            var currentParcel = dbContext.Parcel.Single(x => x.ParcelID == parcelID);
+
+            currentParcel.ParcelStatusID = parcelStatusID;
+            currentParcel.InactivateDate = parcelStatusID == (int)ParcelStatusEnum.Active ? (DateTime?)null : DateTime.UtcNow;
+
+            dbContext.SaveChanges();
         }
     }
 }

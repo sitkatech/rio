@@ -3,12 +3,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[AccountReconciliation](
-	[AccountReconciliation] [int] IDENTITY(1,1) NOT NULL,
+	[AccountReconciliationID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelID] [int] NOT NULL,
 	[AccountID] [int] NOT NULL,
  CONSTRAINT [PK_AccountReconciliation_AccountReconciliationID] PRIMARY KEY CLUSTERED 
 (
-	[AccountReconciliation] ASC
+	[AccountReconciliationID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 

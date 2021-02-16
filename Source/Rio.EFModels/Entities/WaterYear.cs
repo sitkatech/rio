@@ -64,5 +64,21 @@ namespace Rio.EFModels.Entities
 
             dbContext.SaveChanges();
         }
+
+        public static List<WaterYearDto> GetSubsequentWaterYearsInclusive(RioDbContext dbContext, int effectiveWaterYearId)
+        {
+            var waterYear = GetByWaterYearID(dbContext, effectiveWaterYearId);
+
+            if (waterYear == null)
+            {
+                return null;
+            }
+
+            return dbContext.WaterYear
+                .Where(x => x.Year >= waterYear.Year)
+                .OrderByDescending(x => x.Year)
+                .Select(x => x.AsDto())
+                .ToList();
+        }
     }
 }

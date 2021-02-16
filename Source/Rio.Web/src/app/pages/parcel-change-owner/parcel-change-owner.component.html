@@ -17,6 +17,7 @@
         Change Parcel Owner
     </h2>
     <app-alert-display></app-alert-display>
+    <ng-container *ngIf="!loadingFormData; else loadingBlock">
     <form (ngSubmit)="onSubmit(changeOwnerForm)" #changeOwnerForm="ngForm">
         <div class="row mt-4">
             <div class="col-sm-8">
@@ -24,26 +25,19 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <p><strong class="required">Does the Owner have an account in the platform?</strong></p>
-                                <label class="ml-2"><input type="radio" name="ownerHasAccount"
-                                        [(ngModel)]="ownerHasAccount" [value]="true" /> Yes</label>
-                                <label class="ml-2"><input type="radio" name="ownerHasAccount"
-                                        [(ngModel)]="ownerHasAccount" [value]="false" /> No</label>
+                                <p><strong class="required">Is the parcel being inactivated?</strong></p>
+                                <label class="ml-2"><input type="radio" name="parcelToBeInactivated"
+                                        [(ngModel)]="parcelToBeInactivated" [value]="true" /> Yes</label>
+                                <label class="ml-2"><input type="radio" name="parcelToBeInactivated"
+                                        [(ngModel)]="parcelToBeInactivated" [value]="false" /> No</label>
                             </div>
                         </div>
 
-                        <div class="row" *ngIf="ownerHasAccount">
+                        <div class="row" *ngIf="!parcelToBeInactivated">
                             <div class="col-sm-12">
                                 <ngx-select-dropdown [multiple]="false" [config]="accountDropdownConfig"
                                     name="selectedAccount" [(ngModel)]="selectedAccount" [options]="accounts">
                                 </ngx-select-dropdown>
-                            </div>
-                        </div>
-
-                        <div class="row" *ngIf="!ownerHasAccount">
-                            <div class="col-sm-12">
-                                <input type="text" name="ownerNameUntracked" [(ngModel)]="ownerNameUntracked"
-                                    placeholder="Enter the name of the new owner" class="form-control">
                             </div>
                         </div>
 
@@ -53,7 +47,7 @@
                             <div class="col-sm-12">
                                 <p>
                                     <strong class="required">
-                                        Enter the date of the sale.
+                                        Select the Water Year for changes to take effect.
                                     </strong>
                                 </p>
                             </div>
@@ -61,44 +55,23 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                <my-date-picker name="saleDate" [options]="myDatePickerOptions" [(ngModel)]="saleDate"
-                                    required>
-                                </my-date-picker>
+                                <ngx-select-dropdown [multiple]="false" [config]="waterYearDropdownConfig"
+                                    name="effectiveWaterYear" [(ngModel)]="effectiveWaterYear" [options]="waterYears">
+                                </ngx-select-dropdown>
                             </div>
                         </div>
 
                         <hr />
 
-                        <div class="row">
+                        <div class="row" *ngIf="effectiveWaterYear && effectiveWaterYear.WaterYearID !== currentWaterYear.WaterYearID">
                             <div class="col-sm-12">
-                                <p>
-                                    <strong>
-                                        Enter the year that the change in ownership should take effect, if different
-                                        from the sale year.
-                                    </strong>
-                                </p>
+                                <p><strong class="required">Should this change be applied to subsequent Water Years?</strong></p>
+                                <label class="ml-2"><input type="radio" name="applyToSubsequentYears"
+                                        [(ngModel)]="applyToSubsequentYears" [value]="true" /> Yes</label>
+                                <label class="ml-2"><input type="radio" name="applyToSubsequentYears"
+                                        [(ngModel)]="applyToSubsequentYears" [value]="false" /> No</label>
                             </div>
                         </div>
-
-                        <div>
-                            <div class="col-sm-12 px-0">
-                                <input type="number" step="1" name="effectiveYear" [(ngModel)]="effectiveYear"
-                                    class="form-control" placeholder="Effective Year">
-                            </div>
-                        </div>
-
-                        <hr />
-
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <textarea type="textarea" name="note" [(ngModel)]="note" class="form-control"
-                                    placeholder="Notes (Optional)" maxlength="500">
-
-                               </textarea>
-                                <em>{{500 - note.length}} characters remaining</em>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -110,7 +83,7 @@
             </div>
             <div class="col-sm-6 text-right">
                 <button type="submit" class="btn btn-rio"
-                    [disabled]="!(changeOwnerForm.form.valid && formValid()) || isLoadingSubmit">
+                    [disabled]="!changeOwnerForm.form.valid || !this.formValid() || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Submit
                 </button>
@@ -118,4 +91,10 @@
             </div>
         </div>
     </form>
+    </ng-container>
+    <ng-template #loadingBlock>
+        <div class="container">
+          <i class="fa fa-spinner loading-spinner"></i> Loading
+        </div>
+      </ng-template>
 </div>

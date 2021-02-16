@@ -132,9 +132,6 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<AccountReconciliation>(entity =>
             {
-                entity.HasKey(e => e.AccountReconciliation1)
-                    .HasName("PK_AccountReconciliation_AccountReconciliationID");
-
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.AccountReconciliation)
                     .HasForeignKey(d => d.AccountID)
