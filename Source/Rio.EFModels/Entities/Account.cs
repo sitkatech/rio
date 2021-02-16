@@ -38,6 +38,10 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.Account)
                 .ThenInclude(x => x.AccountParcelWaterYear)
                 .ThenInclude(x => x.Parcel)
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Single(x => x.UserID == userID).AccountUser
                 .OrderBy(x => x.Account.AccountName)
                 .Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
