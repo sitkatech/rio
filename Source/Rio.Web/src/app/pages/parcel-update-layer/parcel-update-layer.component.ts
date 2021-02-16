@@ -151,7 +151,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.uploadedGdbID = response.UploadedGdbID;
       this.featureClass = response.FeatureClasses[0];
       this.requiredColumnMappings.forEach(x => {
-        x.MappedColumnName = this.featureClass.Columns.includes(x.RequiredColumnName) ? x.RequiredColumnName : undefined;
+        let matches = this.featureClass.Columns.filter(y => y.toLowerCase() === x.RequiredColumnName.toLowerCase());
+        x.MappedColumnName = matches.length == 1 ? matches[0] : undefined;
       })
     }, (error) => {
       this.alertService.pushAlert(new Alert("Failed to upload GDB! If available, error details are below.", AlertContext.Danger));
@@ -196,11 +197,14 @@ export class ParcelUpdateLayerComponent implements OnInit {
       this.modalReference = null;
     }
 
+    let waterYear = this.submitForPreviewForm.get('waterYearSelection').value;
+
     this.isLoadingSubmit = true;
     this.parcelService.enactGDBChanges(this.submitForPreviewForm.get('waterYearSelection').value).subscribe(() => {
       this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("The update was successful", AlertContext.Success));
-      this.resetWorkflow();
+      this.router.navigate(['/manager-dashboard']).then(() => {
+        this.alertService.pushAlert(new Alert(`Successfully updated Account and Parcel associations`, AlertContext.Success));
+      });
     }, () => {
       this.isLoadingSubmit = false;
       this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
