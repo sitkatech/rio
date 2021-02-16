@@ -74,7 +74,7 @@ export class AccountReconciliationComponent implements OnInit {
           sortable: true, filter: true, width:100
         },
         {
-          headerName: 'Most Recent Previous Owner', valueGetter: function (params: any) {
+          headerName: 'Previously Associated Account', valueGetter: function (params: any) {
             return { LinkDisplay: params.data.LastKnownOwner?.AccountName, LinkValue: params.data.LastKnownOwner?.AccountID };
           }, cellRendererFramework: LinkRendererComponent,
           cellRendererParams: { inRouterLink: "/accounts/" },
@@ -93,7 +93,7 @@ export class AccountReconciliationComponent implements OnInit {
           sortable: true, filter: true, width:300
         },
         {
-          headerName: 'Accounts Claiming Ownership',
+          headerName: 'Associated Ownership Records',
           valueGetter: function (params) {
             let names = params.data.AccountsClaimingOwnership?.map(x => {
               return { LinkValue: x.AccountID, LinkDisplay: x.AccountName }
