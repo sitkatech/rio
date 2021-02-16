@@ -260,28 +260,31 @@ namespace Rio.API.Controllers
             return Ok(parcelOwnershipDtos);
         }
 
-        //[HttpPost("parcels/{parcelID}/changeOwner")]
-        //[ParcelManageFeature]
-        //public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
-        //{
-        //    var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-        //    if (parcelDto == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost("parcels/{parcelID}/changeOwner")]
+        [ParcelManageFeature]
+        public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
+        {
+            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            if (parcelDto == null)
+            {
+                return NotFound();
+            }
 
-        //    var errorMessages = Parcel.ValidateChangeOwner(_dbContext, parcelChangeOwnerDto, parcelDto).ToList();
-        //    errorMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+            var waterYearsToUpdate = parcelChangeOwnerDto.ApplyToSubsequentYears
+                ? WaterYear.GetSubsequentWaterYearsInclusive(_dbContext, parcelChangeOwnerDto.EffectiveWaterYearID).Select(x => x.WaterYearID)
+                : new List<int> {parcelChangeOwnerDto.EffectiveWaterYearID};
 
-        //    UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
+            AccountParcelWaterYear.ChangeParcelOwnerForWaterYears(_dbContext, parcelChangeOwnerDto.ParcelID, waterYearsToUpdate, parcelChangeOwnerDto.AccountID);
 
-        //    return Ok();
-        //}
+            Parcel.UpdateParcelStatus(_dbContext, parcelChangeOwnerDto.ParcelID, parcelChangeOwnerDto.AccountID.HasValue ? (int)ParcelStatusEnum.Active : (int)ParcelStatusEnum.Inactive);
+
+            return Ok();
+        }
 
         private bool ParseBulkSetAllocationUpload(FileResource fileResource, string parcelTypeDisplayName, out List<BulkSetAllocationCSV> records, out ActionResult badRequest)
         {
