@@ -33,5 +33,14 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.Parcel.AsSimpleDto())
                 .ToList();
         }
+
+        public static void DeleteByParcelID(RioDbContext dbContext, int parcelId)
+        {
+            var toRemove = dbContext.AccountReconciliation.Where(x => x.ParcelID == parcelId);
+
+            dbContext.AccountReconciliation.RemoveRange(toRemove);
+
+            dbContext.SaveChanges();
+        }
     }
 }

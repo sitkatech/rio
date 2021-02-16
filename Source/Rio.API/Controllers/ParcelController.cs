@@ -283,6 +283,9 @@ namespace Rio.API.Controllers
 
             Parcel.UpdateParcelStatus(_dbContext, parcelChangeOwnerDto.ParcelID, parcelChangeOwnerDto.AccountID.HasValue ? (int)ParcelStatusEnum.Active : (int)ParcelStatusEnum.Inactive);
 
+            //If the Parcel was in the AccountReconciliation table, we can remove it
+            AccountReconciliation.DeleteByParcelID(_dbContext, parcelID);
+
             return Ok();
         }
 

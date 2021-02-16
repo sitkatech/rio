@@ -8,8 +8,7 @@ namespace Rio.EFModels.Entities
     public partial class AccountReconciliation
     {
         [Key]
-        [Column("AccountReconciliation")]
-        public int AccountReconciliation1 { get; set; }
+        public int AccountReconciliationID { get; set; }
         public int ParcelID { get; set; }
         public int AccountID { get; set; }
 

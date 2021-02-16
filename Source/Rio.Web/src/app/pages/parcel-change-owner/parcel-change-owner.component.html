@@ -17,6 +17,7 @@
         Change Parcel Owner
     </h2>
     <app-alert-display></app-alert-display>
+    <ng-container *ngIf="!loadingFormData; else loadingBlock">
     <form (ngSubmit)="onSubmit(changeOwnerForm)" #changeOwnerForm="ngForm">
         <div class="row mt-4">
             <div class="col-sm-8">
@@ -90,4 +91,10 @@
             </div>
         </div>
     </form>
+    </ng-container>
+    <ng-template #loadingBlock>
+        <div class="container">
+          <i class="fa fa-spinner loading-spinner"></i> Loading
+        </div>
+      </ng-template>
 </div>

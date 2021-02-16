@@ -51,6 +51,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
 
   currentWaterYear: WaterYearDto;
   waterYears: WaterYearDto[];
+  loadingFormData: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,6 +65,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.loadingFormData = true;
     this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
       this.parcelToBeInactivated = false;
@@ -77,6 +79,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
         this.parcel = parcel;
         this.currentWaterYear = currentWaterYear;
         this.waterYears = waterYears;
+        this.loadingFormData = false;
       });
     });
   }
