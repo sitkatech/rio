@@ -16,10 +16,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rio.API.GeoSpatial;
+using Rio.Models.DataTransferObjects.User;
 using static System.String;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
@@ -533,10 +536,10 @@ namespace Rio.API.Controllers
 
             using var dbContextTransaction = _dbContext.Database.BeginTransaction();
 
+            var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext, waterYearDto);
+
             try
             {
-                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext, waterYearDto);
-
                 if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
                 {
                     var currentDifferencesForAccounts =
@@ -574,8 +577,52 @@ namespace Rio.API.Controllers
                 dbContextTransaction.Rollback();
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+            
+            var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
+            var mailMessage = GenerateParcelUpdateCompletedEmail(_rioConfiguration.WEB_URL, waterYearDto, expectedResults, smtpClient);
+            SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
+                EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
+            SendEmailMessage(smtpClient, mailMessage);
 
             return Ok();
+        }
+
+        private MailMessage GenerateParcelUpdateCompletedEmail(string rioUrl, WaterYearDto waterYear, ParcelUpdateExpectedResultsDto expectedResultsDto,
+            SitkaSmtpClientService smtpClient)
+        {
+            var messageBody = $@"The parcel data in the {_rioConfiguration.PlatformLongName} was updated. 
+The following changes to the parcel layer were made for year {waterYear.Year}: <br/><br/>
+
+Number of Accounts Unchanged: {expectedResultsDto.NumAccountsUnchanged}<br/>
+Number of Accounts To Be Created: {expectedResultsDto.NumAccountsToBeCreated}<br/>
+Number of Accounts To Be Inactivated: {expectedResultsDto.NumParcelsToBeInactivated}<br/><br/>
+
+Number of Parcels Unchanged: {expectedResultsDto.NumParcelsUnchanged} <br/>
+Number of Parcels With Updated Geometries: {expectedResultsDto.NumParcelsUpdatedGeometries}<br/>
+Number of Parcels Associated With New Account: {expectedResultsDto.NumParcelsAssociatedWithNewAccount}<br/>
+Number of Parcels To Be Inactivated: {expectedResultsDto.NumParcelsToBeInactivated}<br/><br/>
+
+Number of Duplicate Parcel Numbers Found: {expectedResultsDto.NumParcelsWithConflicts}<br/><br/>
+
+The updated Parcel data should be sent to the OpenET team, so that any new or modified parcels will be included in the automated OpenET data synchronization.
+{smtpClient.GetSupportNotificationEmailSignature()}";
+
+            var mailMessage = new MailMessage
+            {
+                Subject = $"Parcel Layer Update Completed In {_rioConfiguration.PlatformLongName}",
+                Body = $"Hello,<br /><br />{messageBody}",
+            };
+
+            mailMessage.To.Add(smtpClient.GetDefaultEmailFrom());
+            return mailMessage;
+        }
+
+        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        {
+            mailMessage.IsBodyHtml = true;
+            mailMessage.From = smtpClient.GetDefaultEmailFrom();
+            mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
+            smtpClient.Send(mailMessage);
         }
 
     }
