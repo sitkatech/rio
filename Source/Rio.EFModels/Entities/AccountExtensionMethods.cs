@@ -29,6 +29,8 @@ namespace Rio.EFModels.Entities
                 AccountID = account.AccountID,
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
+                CreateDate = account.CreateDate,
+                InactivateDate = account.InactivateDate,
                 Notes = account.Notes,
                 AccountVerificationKey = account.AccountVerificationKey,
                 AccountVerificationKeyLastUseDate = account.AccountVerificationKeyLastUseDate,

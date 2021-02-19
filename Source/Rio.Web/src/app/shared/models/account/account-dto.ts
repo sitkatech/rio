@@ -4,6 +4,8 @@ export class AccountDto {
     AccountID: number;
     AccountName: string;
     AccountNumber: number;
+    CreateDate: Date;
+    InactivateDate: Date;
     Notes: string;
     AccountVerificationKey: string;
     AccountVerificationKeyLastUseDate: Date;
