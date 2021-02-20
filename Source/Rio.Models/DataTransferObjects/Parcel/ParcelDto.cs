@@ -1,4 +1,5 @@
-﻿using Rio.Models.DataTransferObjects.Account;
+﻿using System;
+using Rio.Models.DataTransferObjects.Account;
 
 namespace Rio.Models.DataTransferObjects.Parcel
 {
@@ -9,5 +10,7 @@ namespace Rio.Models.DataTransferObjects.Parcel
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
         public AccountSimpleDto LandOwner { get; set; }
+        public int ParcelStatusID { get; set; }
+        public DateTime? InactivateDate { get; set; }
     }
 }

@@ -142,7 +142,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getInactiveParcels(): Observable<Array<ParcelWithStatusDto>> {
+  getInactiveParcels(): Observable<Array<ParcelDto>> {
     let route = `/parcels/inactive`;
     return this.apiService.getFromApi(route);
   }

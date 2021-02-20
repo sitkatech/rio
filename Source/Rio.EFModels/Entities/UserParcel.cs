@@ -7,33 +7,34 @@ namespace Rio.EFModels.Entities
     {
 
 
-        public static void ChangeParcelOwner(RioDbContext dbContext, int parcelID, ParcelChangeOwnerDto parcelChangeOwnerDto)
-        {
-            var parcelIDToChange = parcelID;
+        //public static void ChangeParcelOwner(RioDbContext dbContext, int parcelID, ParcelChangeOwnerDto parcelChangeOwnerDto)
+        //{
+        //    var parcelIDToChange = parcelID;
 
-            var effectiveYear = parcelChangeOwnerDto.EffectiveYear ?? parcelChangeOwnerDto.SaleDate.Year;
+        //    var effectiveYear = parcelChangeOwnerDto.EffectiveYear ?? parcelChangeOwnerDto.SaleDate.Year;
 
-            var previousParcelOwnershipRecord = dbContext.AccountParcel.SingleOrDefault(x =>
-                x.ParcelID == parcelIDToChange && x.EffectiveYear == effectiveYear);
+        //    var previousParcelOwnershipRecord = dbContext.AccountParcel.SingleOrDefault(x =>
+        //        x.ParcelID == parcelIDToChange && x.EffectiveYear == effectiveYear);
 
-            if (previousParcelOwnershipRecord != null)
-            {
-                previousParcelOwnershipRecord.EffectiveYear = null;
-            }
+        //    if (previousParcelOwnershipRecord != null)
+        //    {
+        //        previousParcelOwnershipRecord.EffectiveYear = null;
+        //    }
 
-            var newParcelOwnershipRecord = new AccountParcel()
-            {
-                ParcelID = parcelIDToChange,
-                AccountID = parcelChangeOwnerDto.AccountID,
-                OwnerName = parcelChangeOwnerDto.OwnerName,
-                EffectiveYear = effectiveYear,
-                SaleDate = parcelChangeOwnerDto.SaleDate,
-                Note = parcelChangeOwnerDto.Note
-            };
+        //    var newParcelOwnershipRecord = new AccountParcel()
+        //    {
+        //        ParcelID = parcelIDToChange,
+        //        AccountID = parcelChangeOwnerDto.AccountID,
+        //        OwnerName = parcelChangeOwnerDto.OwnerName,
+        //        EffectiveYear = effectiveYear,
+        //        SaleDate = parcelChangeOwnerDto.SaleDate,
+        //        Note = parcelChangeOwnerDto.Note,
+        //        ParcelStatusID = (int)ParcelStatusEnum.Active
+        //    };
 
-            dbContext.AccountParcel.Add(newParcelOwnershipRecord);
+        //    dbContext.AccountParcel.Add(newParcelOwnershipRecord);
 
-            dbContext.SaveChanges();
-        }
+        //    dbContext.SaveChanges();
+        //}
     }
 }

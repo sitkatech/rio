@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Rio.Models.DataTransferObjects.Account;
 using System.Linq;
 using Rio.Models.DataTransferObjects.User;
@@ -28,6 +29,8 @@ namespace Rio.EFModels.Entities
                 AccountID = account.AccountID,
                 AccountNumber = account.AccountNumber,
                 AccountName = account.AccountName,
+                CreateDate = account.CreateDate,
+                InactivateDate = account.InactivateDate,
                 Notes = account.Notes,
                 AccountVerificationKey = account.AccountVerificationKey,
                 AccountVerificationKeyLastUseDate = account.AccountVerificationKeyLastUseDate,
@@ -36,7 +39,7 @@ namespace Rio.EFModels.Entities
                 AccountStatus = account.AccountStatus.AsDto(),
                 AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
                 ShortAccountDisplayName = $"{account.AccountName} (#{account.AccountNumber})",
-                NumberOfParcels = account.AccountParcel.Count
+                NumberOfParcels = account.AccountParcelWaterYear.Count(x => x.WaterYear.Year == DateTime.Now.Year)
             };
         }
 
@@ -45,7 +48,7 @@ namespace Rio.EFModels.Entities
             return new AccountIncludeParcelsDto()
             {
                 Account = account.AsDto(),
-                Parcels = account.AccountParcel.Select(x => x.Parcel.AsSimpleDto()).ToList()
+                Parcels = account.AccountParcelWaterYear.Where(x => x.WaterYear.Year == DateTime.Now.Year).Select(x => x.Parcel.AsSimpleDto()).ToList()
             };
         }
     }

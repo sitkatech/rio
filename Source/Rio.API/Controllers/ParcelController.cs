@@ -70,9 +70,9 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/inactive")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelWithStatusDto>> GetInactiveParcels()
+        public ActionResult<IEnumerable<ParcelDto>> GetInactiveParcels()
         {
-            var parcelDtos = Parcel.GetParcelByParcelStatus(_dbContext, (int)ParcelStatusEnum.Inactive);
+            var parcelDtos = Parcel.GetInactiveParcels(_dbContext);
             return Ok(parcelDtos);
         }
 
@@ -255,7 +255,7 @@ namespace Rio.API.Controllers
         [ParcelViewFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> GetOwnershipHistory([FromRoute] int parcelID)
         {
-            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.SaleDate);
+            var parcelOwnershipDtos = Parcel.GetOwnershipHistory(_dbContext, parcelID).ToList().OrderByDescending(x => x.WaterYear.Year);
 
             return Ok(parcelOwnershipDtos);
         }
@@ -270,15 +270,21 @@ namespace Rio.API.Controllers
                 return NotFound();
             }
 
-            var errorMessages = Parcel.ValidateChangeOwner(_dbContext, parcelChangeOwnerDto, parcelDto).ToList();
-            errorMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            UserParcel.ChangeParcelOwner(_dbContext, parcelID, parcelChangeOwnerDto);
+            var waterYearsToUpdate = parcelChangeOwnerDto.ApplyToSubsequentYears
+                ? WaterYear.GetSubsequentWaterYearsInclusive(_dbContext, parcelChangeOwnerDto.EffectiveWaterYearID).Select(x => x.WaterYearID)
+                : new List<int> {parcelChangeOwnerDto.EffectiveWaterYearID};
+
+            AccountParcelWaterYear.ChangeParcelOwnerForWaterYears(_dbContext, parcelChangeOwnerDto.ParcelID, waterYearsToUpdate, parcelChangeOwnerDto.AccountID);
+
+            Parcel.UpdateParcelStatus(_dbContext, parcelChangeOwnerDto.ParcelID, parcelChangeOwnerDto.AccountID.HasValue ? (int)ParcelStatusEnum.Active : (int)ParcelStatusEnum.Inactive);
+
+            //If the Parcel was in the AccountReconciliation table, we can remove it
+            AccountReconciliation.DeleteByParcelID(_dbContext, parcelID);
 
             return Ok();
         }
@@ -461,6 +467,13 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, model.YearChangesToTakeEffect);
+
+            if (waterYearDto == null)
+            {
+                return BadRequest("Invalid water year selected");
+            }
+
             var gdbFileContents = UploadedGdb.GetUploadedGdbFileContents(_dbContext, model.UploadedGDBID);
             using var disposableTempFile = DisposableTempFile.MakeDisposableTempFileEndingIn(".gdb.zip");
             var gdbFile = disposableTempFile.FileInfo;
@@ -468,7 +481,7 @@ namespace Rio.API.Controllers
             try
             {
                 var ogr2OgrCommandLineRunner = new Ogr2OgrCommandLineRunner(_rioConfiguration.Ogr2OgrExecutable,
-                    null,
+                    Ogr2OgrCommandLineRunner.DefaultCoordinateSystemId,
                     250000000, false);
                 var columns = model.ColumnMappings.Select(
                         x =>
@@ -476,7 +489,7 @@ namespace Rio.API.Controllers
                 var geoJson = ogr2OgrCommandLineRunner.ImportFileGdbToGeoJson(gdbFile.FullName,
                     model.ParcelLayerNameInGDB, columns, null, _logger, null, false);
                 var featureCollection = GeoJsonHelpers.GetFeatureCollectionFromGeoJsonString(geoJson, 14);
-                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay, model.YearChangesToTakeEffect);
+                var expectedResults = ParcelUpdateStaging.AddFromFeatureCollection(_dbContext, featureCollection, _rioConfiguration.ValidParcelNumberRegexPattern, _rioConfiguration.ValidParcelNumberPatternAsStringForDisplay, waterYearDto);
                 return Ok(expectedResults);
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException e)
@@ -504,7 +517,7 @@ namespace Rio.API.Controllers
                     "There was an error applying these changes to the selected Water Year. Please try again, and if the problem persists contact support.");
             }
 
-            var currentWaterYearDto = WaterYear.GetByYear(_dbContext, DateTime.Now.Year);
+            var currentWaterYearDto = WaterYear.GetDefaultYearToDisplay(_dbContext);
 
             if (currentWaterYearDto.Year - waterYearDto.Year > 1)
             {
@@ -522,34 +535,34 @@ namespace Rio.API.Controllers
 
             try
             {
-                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext);
+                var expectedResults = ParcelUpdateStaging.GetExpectedResultsDto(_dbContext, waterYearDto);
 
                 if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
                 {
                     var currentDifferencesForAccounts =
-                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount;
-
-                    var accountNamesToInactivate = currentDifferencesForAccounts
-                        .Where(x => x.AccountAlreadyExists.Value && !IsNullOrEmpty(x.ExistingParcels) &&
-                                    IsNullOrEmpty(x.UpdatedParcels)).Select(x => x.AccountName).ToList();
-                    Account.BulkInactivate(_dbContext, _dbContext.Account
-                        .Where(x => accountNamesToInactivate.Contains(x.AccountName))
-                        .ToList(), false);
+                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
+                            !x.WaterYearID.HasValue || x.WaterYearID == waterYearDto.WaterYearID);
 
                     var accountNamesToCreate = currentDifferencesForAccounts
                         .Where(
                             x =>
-                                !x.AccountAlreadyExists.Value && IsNullOrEmpty(x.ExistingParcels) && !IsNullOrEmpty(x.UpdatedParcels))
+                                !x.AccountAlreadyExists.Value)
                         .Select(x => x.AccountName)
                         .ToList();
 
                     Account.BulkCreateWithListOfNames(_dbContext, _rioConfiguration.VerificationKeyChars,
-                        accountNamesToCreate, false);
-                    _dbContext.SaveChanges();
+                        accountNamesToCreate);
+
+                    var accountNamesToInactivate = currentDifferencesForAccounts
+                        .Where(x => (x.AccountAlreadyExists.Value &&
+                                     !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
+                    Account.BulkInactivate(_dbContext, _dbContext.Account
+                        .Where(x => accountNamesToInactivate.Contains(x.AccountName))
+                        .ToList());
                 }
 
                 _dbContext.Database.ExecuteSqlRaw(
-                    "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.Year);
+                    "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.WaterYearID);
 
                 WaterYear.UpdateParcelLayerUpdateDateForID(_dbContext, waterYearID);
 

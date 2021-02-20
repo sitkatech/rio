@@ -1,26 +1,18 @@
-﻿if exists (select * from dbo.sysobjects where id = object_id('dbo.vParcelOwnership'))
+if exists (select * from dbo.sysobjects where id = object_id('dbo.vParcelOwnership'))
 	drop view dbo.vParcelOwnership
 go
 
-Create View dbo.vParcelOwnership
+create view dbo.vParcelOwnership
 as
 
-SELECT 
-IsNull([AccountParcelID], -999) as ID, -- for when Microsoft fixes EF Core Views so they can be involved in navigational properties.
-    [AccountParcelID],
-	[AccountID],
-	[ParcelID],
-	[OwnerName],
-	[EffectiveYear],
-	[SaleDate],
-	[ParcelStatusID],
-	[Note],
-	Row_Number() OVER (
-		Partition by ParcelID Order by isnull(SaleDate,0) desc
-	) as RowNumber
-  FROM [dbo].[AccountParcel]
+select          allParcelsForAllWaterYears.ParcelID,
+				allParcelsForAllWaterYears.WaterYearID,
+				apwy.AccountID
+                
+FROM        (select wy.WaterYearID, p.ParcelID
+			 from dbo.WaterYear wy
+			 cross join dbo.Parcel p) allParcelsForAllWaterYears
+LEFT JOIN dbo.AccountParcelWaterYear apwy on apwy.ParcelID = allParcelsForAllWaterYears.ParcelID and apwy.WaterYearID = allParcelsForAllWaterYears.WaterYearID
+
+
 GO
-/*
-select *
-from dbo.vPostingDetailed
-*/

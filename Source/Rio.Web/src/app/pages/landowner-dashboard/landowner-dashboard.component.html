@@ -9,6 +9,14 @@
 </div>
 <div class="container">
   <app-alert-display></app-alert-display>
+  <ngb-alert *ngIf="!loadingActiveAccount && parcelsToBeReconciled?.length > 0" [type]="'info'" [dismissible]="false">
+    <span>
+      Parcel(s) associated with this account are not receiving water allocation and usage data 
+      because the Parcel Number had duplicate ownership information in the most recent parcel update. 
+      Please contact the platform administrator to determine how usage and allocation for these APN(s) 
+      should be assigned: {{getParcelNumbersForParcelsToBeReconciled()}}
+    </span>
+</ngb-alert>
 </div>
 <ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
   <div class="container mb-4" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
@@ -422,6 +430,24 @@
                 Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
                   routerLinkActive="true">OpenET FAQ</a>.
               </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4" *ngIf="parcelsToBeReconciled">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              Parcels Not Included in Your Water Budget
+            </div>
+            <div class="card-body">
+              The following parcels have an association this Water Account but could not be imported because the APN was associated with multiple Water Accounts:
+              <br>
+              <br>
+              <ng-container *ngFor="let parcel of parcelsToBeReconciled">
+                <span>{{parcel.ParcelNumber}}</span>
+                <br/>
+              </ng-container>
             </div>
           </div>
         </div>

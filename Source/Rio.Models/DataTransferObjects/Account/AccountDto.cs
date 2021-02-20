@@ -9,6 +9,8 @@ namespace Rio.Models.DataTransferObjects.Account
         public int AccountID { get; set; }
         public int? AccountNumber { get; set; }
         public string AccountName { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime? InactivateDate { get; set; }
         public string Notes { get; set; }
         public string AccountVerificationKey { get; set; }
         public DateTime? AccountVerificationKeyLastUseDate { get; set; }

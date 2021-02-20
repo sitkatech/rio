@@ -27,6 +27,7 @@ import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
+import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -77,6 +78,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
   public loadingActiveAccount: boolean = false;
+  parcelsToBeReconciled: ParcelSimpleDto[];
   set highlightedParcelID(value: number) {
     this._highlightedParcelID = value;
     this.highlightedParcelDto = this.parcels.filter(x => x.ParcelID == value)[0];
@@ -181,14 +183,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
       this.accountService.getWaterTransfersByAccountID(account.AccountID),
       this.waterYearSerivce.getWaterYears(),
-      this.waterYearSerivce.getDefaultWaterYearToDisplay()
-    ).subscribe(([postings, trades, waterTransfers, waterYears, defaultWaterYear]) => {
+      this.waterYearSerivce.getDefaultWaterYearToDisplay(),
+      this.accountService.getParcelsInAccountReconciliationByAccountID(account.AccountID)
+    ).subscribe(([postings, trades, waterTransfers, waterYears, defaultWaterYear, parcelsToBeReconciled]) => {
       this.waterYears = waterYears;
       this.waterYearToDisplay = defaultWaterYear;
       this.postings = postings;
       this.trades = trades;
       this.waterTransfers = waterTransfers;
-
+      this.parcelsToBeReconciled = parcelsToBeReconciled
       this.updateAnnualData();
     });
   }
@@ -579,5 +582,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public landownerHasAnyAccounts(){
     var result = this.authenticationService.getAvailableAccounts();
     return result != null && result.length > 0;
+  }
+
+  public getParcelNumbersForParcelsToBeReconciled() {
+    if (!this.parcelsToBeReconciled) {
+      return null;
+    }
+
+    return this.parcelsToBeReconciled.map(x => x.ParcelNumber).join(", ");
   }
 }

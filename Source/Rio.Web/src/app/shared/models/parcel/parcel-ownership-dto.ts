@@ -1,10 +1,9 @@
+import { AccountSimpleDto } from "../account/account-simple-dto";
+import { WaterYearDto } from "../water-year-dto";
+
 export class ParcelOwnershipDto {
-    OwnerName: string;
-    OwnerAccountID: number;
-    EffectiveYear: number;
-    SaleDate: string;
-    ParcelStatusID: number;
-    Note: string;
+    Account : AccountSimpleDto;
+    WaterYear : WaterYearDto;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

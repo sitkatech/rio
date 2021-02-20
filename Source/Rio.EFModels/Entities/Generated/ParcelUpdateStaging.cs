@@ -24,5 +24,6 @@ namespace Rio.EFModels.Entities
         public string ParcelGeometryText { get; set; }
         [Required]
         public string ParcelGeometry4326Text { get; set; }
+        public bool HasConflict { get; set; }
     }
 }

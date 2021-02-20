@@ -77,10 +77,9 @@
             </div>
             <div class="col-sm text-right">
                 <button type="submit" class="btn btn-rio mr-2"
-                    [disabled]="isLoadingSubmit || waterYearsNotPresentError">
+                    [disabled]="isLoadingSubmit || waterYearsNotPresentError || f.gdbUploadForParcelLayer.invalid">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
-                    <span *ngIf="!featureClass">Save
-                        & Continue</span>
+                    <span *ngIf="!featureClass">Review & Confirm</span>
                 </button>
                 <a class="btn btn-secondary" routerLink="/" [disabled]="isLoadingSubmit">Cancel</a>
             </div>
@@ -147,8 +146,7 @@
                         </ngb-alert>
                         <fieldset class="form-group">
                             <div class="row">
-                                <legend class="col-form-label col-sm-6 pt-0 text-sm-right font-weight-bold">Which Water Year should these changes be
-                                    assigned to?</legend>
+                                <legend class="col-form-label col-sm-6 pt-0 text-sm-right font-weight-bold">Select the year the updated parcel layer will be in effect</legend>
                                 <div class="col-sm-6">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio"
@@ -199,52 +197,62 @@
             <div class="col">
                 <div class="card">
                     <div class="card-header">
-                        <span class="align-middle">Expected Results</span>
+                        <span class="align-middle">Parcel Upload Summary</span>
                     </div>
                     <div class="card-body">
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts Unchanged</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumAccountsUnchanged}}
+                                {{resultsPreview.NumAccountsUnchanged | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Created</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumAccountsToBeCreated}}
+                                {{resultsPreview.NumAccountsToBeCreated | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Accounts To Be Inactivated</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumAccountsToBeInactivated}}
+                                {{resultsPreview.NumAccountsToBeInactivated | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Unchanged</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumParcelsUnchanged}}
+                                {{resultsPreview.NumParcelsUnchanged | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels With Updated Geometries</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumParcelsUpdatedGeometries}}
+                                {{resultsPreview.NumParcelsUpdatedGeometries | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels Associated With New Account
                             </dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumParcelsAssociatedWithNewAccount}}
+                                {{resultsPreview.NumParcelsAssociatedWithNewAccount | number}}
                             </dd>
                         </dl>
                         <dl class="row">
                             <dt class="text-sm-right col-sm-6 col-xs-12">Number of Parcels To Be Inactivated</dt>
                             <dd class="col-sm-6 col-xs-12">
-                                {{resultsPreview.NumParcelsToBeInactivated}}
+                                {{resultsPreview.NumParcelsToBeInactivated | number}}
                             </dd>
                         </dl>
+                        <ngb-alert *ngIf="resultsPreview.NumParcelsWithConflicts > 0" [type]="'danger'" [dismissible]="false">
+                            <span>
+                                There were {{resultsPreview.NumParcelsWithConflicts | number}} duplicate Parcel Numbers found in this layer. 
+                                This may be due to parcels with multiple owners or a data error. Parcels with duplicate parcel numbers 
+                                will be inactivated for the selected and future years.  No water allocation or usage can be assigned to 
+                                duplicate parcels. You can view these parcels on the <a routerLink="/account-reconciliation">Account Reconciliation</a> 
+                                page after the upload is complete. Parcels with duplicate parcel numbers can be fixed by uploading a new parcel layer or 
+                                going to the Parcel Detail page and manually assigning the parcel to a water account.
+                            </span>
+                        </ngb-alert>
                     </div>
                 </div>
             </div>
@@ -254,7 +262,7 @@
                 <button type="button" class="btn btn-rio mr-2" (click)="removeResultPreview()"
                     [disabled]="isLoadingSubmit">
                     Return & Edit</button>
-                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit">
+                <button type="submit" class="btn btn-rio mr-2" [disabled]="isLoadingSubmit" >
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner mr-1"></span>
                     Finalize Changes
                 </button>
@@ -276,7 +284,7 @@
             Are you sure you want to finalize these changes? This action cannot be undone.
         </p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()">
+            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()" ngbAutoFocus>
                 Save</button>
             <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
         </div>

@@ -3,7 +3,7 @@ using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.Models.DataTransferObjects.Parcel
 {
-    public class ParcelAllocationAndUsageDto : ParcelWithStatusDto
+    public class ParcelAllocationAndUsageDto : ParcelDto
     {
         public decimal? Allocation { get; set; }
         public decimal? ProjectWater { get; set; }

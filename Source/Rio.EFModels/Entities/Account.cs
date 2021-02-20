@@ -36,8 +36,12 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.User)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountParcel)
+                .ThenInclude(x => x.AccountParcelWaterYear)
                 .ThenInclude(x => x.Parcel)
+                .Include(x => x.AccountUser)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Single(x => x.UserID == userID).AccountUser
                 .OrderBy(x => x.Account.AccountName)
                 .Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
@@ -47,8 +51,10 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account
                 .Include(x => x.AccountStatus)
-                .Include(x => x.AccountParcel)
+                .Include(x => x.AccountParcelWaterYear)
                 .ThenInclude(x => x.Parcel)
+                .Include(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
@@ -60,7 +66,8 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Account
                 .Include(x => x.AccountStatus)
-                .Include(x=>x.AccountParcel)
+                .Include(x=> x.AccountParcelWaterYear)
+                .ThenInclude(x => x.WaterYear)
                 .Include(x => x.AccountUser)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
@@ -97,7 +104,8 @@ namespace Rio.EFModels.Entities
                 .Where(x => accountIDs.Contains(x.AccountID)).Select(x=>x.AsDto()).ToList();
         }
 
-        public static AccountDto UpdateAccountEntity(RioDbContext dbContext, int accountID, AccountUpdateDto accountUpdateDto)
+        public static AccountDto UpdateAccountEntity(RioDbContext dbContext, int accountID,
+            AccountUpdateDto accountUpdateDto, string rioConfigurationVerificationKeyChars)
         {
             var account = dbContext.Account
                 .Include(x => x.AccountStatus)
@@ -107,7 +115,11 @@ namespace Rio.EFModels.Entities
             account.InactivateDate = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive
                 ? DateTime.UtcNow
                 : (DateTime?) null;
-            account.Notes = accountUpdateDto.Notes;
+            account.AccountVerificationKey = accountUpdateDto.AccountStatusID == (int) AccountStatusEnum.Inactive
+                ? null
+                : account.AccountVerificationKey ??
+                  (GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars,
+                      GetCurrentAccountVerificationKeys(dbContext)));
             account.AccountName = accountUpdateDto.AccountName;
             account.UpdateDate = DateTime.UtcNow;
 
@@ -126,7 +138,10 @@ namespace Rio.EFModels.Entities
                 AccountName = accountUpdateDto.AccountName,
                 UpdateDate = DateTime.UtcNow,
                 CreateDate = DateTime.UtcNow,
-                AccountVerificationKey = GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars, GetCurrentAccountVerificationKeys(dbContext))
+                InactivateDate = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive
+                    ? DateTime.UtcNow
+                    : (DateTime?)null,
+            AccountVerificationKey = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive ? null : GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars, GetCurrentAccountVerificationKeys(dbContext))
             };
 
             dbContext.Account.Add(account);
@@ -196,7 +211,7 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
         }
         
-        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate, bool saveChanges)
+        public static void BulkInactivate(RioDbContext dbContext, List<Account> accountsToInactivate)
         {
             accountsToInactivate.ForEach(x =>
             {
@@ -205,14 +220,11 @@ namespace Rio.EFModels.Entities
                 x.AccountStatusID = (int) AccountStatusEnum.Inactive;
                 x.AccountVerificationKey = null;
             });
-
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+                
+            dbContext.SaveChanges();
         }
 
-        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate, bool saveChanges)
+        public static void BulkCreateWithListOfNames(RioDbContext dbContext, string rioConfigurationVerificationKeyChars, List<string> accountNamesToCreate)
         {
             var listOfAccountsToCreate = new List<Account>();
             var currentAccountVerificationKeys = GetCurrentAccountVerificationKeys(dbContext);
@@ -236,10 +248,7 @@ namespace Rio.EFModels.Entities
 
             dbContext.Account.AddRange(listOfAccountsToCreate);
 
-            if (saveChanges)
-            {
-                dbContext.SaveChanges();
-            }
+            dbContext.SaveChanges();
         }
     }
 }

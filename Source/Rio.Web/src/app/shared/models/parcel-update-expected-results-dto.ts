@@ -6,4 +6,5 @@ export class ParcelUpdateExpectedResultsDto {
     NumParcelsUpdatedGeometries: number;
     NumParcelsAssociatedWithNewAccount: number;
     NumParcelsToBeInactivated: number;
+    NumParcelsWithConflicts: number;
 }

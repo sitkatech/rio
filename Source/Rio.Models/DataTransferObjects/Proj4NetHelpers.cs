@@ -40,7 +40,18 @@ PROJCS[""NAD83 / California zone 5 (ftUS)"",
 
         public static bool WkTHasAppropriateSRS(string wkt, int targetSrid)
         {
-            return wkt.Trim().Contains(CoordinateSystemsWkTs[targetSrid].Trim());
+            return wkt
+                .Replace("\r\n", string.Empty)
+                .Replace("\t", string.Empty)
+                .Replace(" ", string.Empty)
+                .ToLower()
+                .Trim()
+                .Contains(CoordinateSystemsWkTs[targetSrid]
+                    .Replace("\r\n", string.Empty)
+                    .Replace("\t", string.Empty)
+                    .Replace(" ", string.Empty)
+                    .ToLower()
+                    .Trim());
         }
 
         private static Geometry Transform(Geometry geom, MathTransform transform, int targetSrid)

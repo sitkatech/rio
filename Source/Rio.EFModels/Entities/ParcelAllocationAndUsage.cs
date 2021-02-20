@@ -19,7 +19,6 @@ namespace Rio.EFModels.Entities
 
         public int ParcelID { get; set; }
         public string ParcelNumber { get; set; }
-        public int ParcelStatusID { get; set; }
         public double ParcelAreaInAcres { get; set; }
         public decimal? ProjectWater { get; set; }
         public decimal? Reconciliation { get; set; }
@@ -27,7 +26,6 @@ namespace Rio.EFModels.Entities
         public decimal? StoredWater { get; set; }
         public decimal? Allocation { get; set; }
         public decimal? UsageToDate { get; set; }
-        public string OwnerName { get; set; }
         public string AccountName { get; set; }
         public int? AccountID { get; set; }
         public int? AccountNumber { get; set; }
@@ -43,7 +41,6 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     ParcelNumber = parcel.ParcelNumber,
-                    ParcelStatusID = parcel.ParcelStatusID,
                     ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                     ProjectWater = parcel.ProjectWater,
                     Reconciliation = parcel.Reconciliation,

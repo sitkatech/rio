@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -113,7 +114,7 @@ namespace Rio.API.Controllers
                 return NotFound($"Could not find a System AccountStatus with the ID {accountUpdateDto.AccountStatusID}");
             }
 
-            var updatedUserDto = Account.UpdateAccountEntity(_dbContext, accountID, accountUpdateDto);
+            var updatedUserDto = Account.UpdateAccountEntity(_dbContext, accountID, accountUpdateDto, _rioConfiguration.VerificationKeyChars);
             return Ok(updatedUserDto);
         }
 
@@ -174,7 +175,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByAccountID([FromRoute] int accountID, [FromRoute] int year)
         {
-            var parcelDtosEnumerable = Parcel.ListByAccountID(_dbContext, accountID, year);
+            var parcelDtosEnumerable = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
             if (parcelDtosEnumerable == null)
             {
                 return NotFound();
@@ -190,7 +191,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int accountID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year);
+            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
             if (parcelDtos == null)
             {
                 return NotFound();
@@ -229,7 +230,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> ListWaterUsagesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
+            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
             var parcelMonthlyEvapotranspirationDtos =
                 ParcelMonthlyEvapotranspiration.ListByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
@@ -250,7 +251,7 @@ namespace Rio.API.Controllers
         public ActionResult<WaterUsageByParcelDto> GetWaterUsageByAccountIDAndYear([FromRoute] int accountID,
             [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year).ToList();
+            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos =
@@ -279,7 +280,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverviewByAccountID([FromRoute] int accountID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountID(_dbContext, accountID, year);
+            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);
@@ -287,11 +288,19 @@ namespace Rio.API.Controllers
             return Ok(waterUsageOverviewDto);
         }
 
+        [HttpGet("accounts/{accountID}/account-reconciliation-parcels")]
+        [UserViewFeature]
+        public ActionResult<ParcelSimpleDto> GetAccountReconciliationParcelsByAccountID([FromRoute] int accountID)
+        {
+            var parcelSimpleDtos = AccountReconciliation.ListParcelsByAccountID(_dbContext, accountID);
+            return Ok(parcelSimpleDtos);
+        }
+
         [HttpGet("accounts/water-usage-overview/{year}")]
         [ManagerDashboardFeature]
         public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverview([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountIDs(_dbContext, _dbContext.Account.Select(x => (int?)x.AccountID).ToList(), year);
+            var parcelDtos = Parcel.ListByAccountIDsAndYear(_dbContext, _dbContext.Account.Select(x => x.AccountID).ToList(), year);
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);

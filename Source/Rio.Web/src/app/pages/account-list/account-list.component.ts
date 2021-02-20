@@ -69,13 +69,87 @@ export class AccountListComponent implements OnInit, OnDestroy {
           sortable: true, filter: true, width: 170
         },
         { headerName: 'Account Number', field: 'AccountNumber', sortable: true, filter: true, width: 145 },
+        { headerName: 'Create Date', field: 'CreateDate', valueFormatter: function (params) {
+          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
+        },
+        filterValueGetter: function (params: any) {
+          return _datePipe.transform(params.data.CreateDate, "M/d/yyyy");
+        },
+        filterParams: {
+          // provide comparator function
+          comparator: function (filterLocalDate, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return -1;
+            var cellDate = Date.parse(dateAsString);
+            const filterLocalDateAtMidnight = filterLocalDate.getTime();
+            if (filterLocalDateAtMidnight == cellDate) {
+              return 0;
+            }
+            if (cellDate < filterLocalDateAtMidnight) {
+              return -1;
+            }
+            if (cellDate > filterLocalDateAtMidnight) {
+              return 1;
+            }
+          }
+        },
+        comparator: function (id1: any, id2: any) {
+          let time1 = id1 ? Date.parse(id1) : 0;
+          let time2 = id2 ? Date.parse(id2) : 0;
+
+          if (time1 < time2) {
+            return -1;
+          }
+          if (time1 > time2) {
+            return 1;
+          }
+          return 0;
+        },
+        sortable: true, filter: 'agDateColumnFilter', width: 190},
         { headerName: 'Status', field: 'AccountStatus.AccountStatusDisplayName', sortable: true, filter: true, width: 100 },
+        { headerName: 'Inactivated Date', field: 'InactivateDate', valueFormatter: function (params) {
+          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
+        },
+        filterValueGetter: function (params: any) {
+          return _datePipe.transform(params.data.AccountVerificationKeyLastUseDate, "M/d/yyyy");
+        },
+        filterParams: {
+          // provide comparator function
+          comparator: function (filterLocalDate, cellValue) {
+            var dateAsString = cellValue;
+            if (dateAsString == null) return -1;
+            var cellDate = Date.parse(dateAsString);
+            const filterLocalDateAtMidnight = filterLocalDate.getTime();
+            if (filterLocalDateAtMidnight == cellDate) {
+              return 0;
+            }
+            if (cellDate < filterLocalDateAtMidnight) {
+              return -1;
+            }
+            if (cellDate > filterLocalDateAtMidnight) {
+              return 1;
+            }
+          }
+        },
+        comparator: function (id1: any, id2: any) {
+          let time1 = id1 ? Date.parse(id1) : 0;
+          let time2 = id2 ? Date.parse(id2) : 0;
+
+          if (time1 < time2) {
+            return -1;
+          }
+          if (time1 > time2) {
+            return 1;
+          }
+          return 0;
+        },
+        sortable: true, filter: 'agDateColumnFilter', width: 190},
         { headerName: 'Verification Key', field: 'AccountVerificationKey', sortable: true, filter: true, width: 145},
         { headerName: 'Verification Key Last Used', field: 'AccountVerificationKeyLastUseDate', valueFormatter: function (params) {
           return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
         },
         filterValueGetter: function (params: any) {
-          return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
+          return _datePipe.transform(params.data.AccountVerificationKeyLastUseDate, "M/d/yyyy");
         },
         filterParams: {
           // provide comparator function

@@ -16,7 +16,8 @@ namespace Rio.EFModels.Entities
         }
 
         public virtual DbSet<Account> Account { get; set; }
-        public virtual DbSet<AccountParcel> AccountParcel { get; set; }
+        public virtual DbSet<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
+        public virtual DbSet<AccountReconciliation> AccountReconciliation { get; set; }
         public virtual DbSet<AccountStatus> AccountStatus { get; set; }
         public virtual DbSet<AccountUser> AccountUser { get; set; }
         public virtual DbSet<CustomRichText> CustomRichText { get; set; }
@@ -107,20 +108,38 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<AccountParcel>(entity =>
+            modelBuilder.Entity<AccountParcelWaterYear>(entity =>
             {
-                entity.Property(e => e.Note).IsUnicode(false);
+                entity.HasIndex(e => new { e.ParcelID, e.WaterYearID })
+                    .HasName("AK_AccountParcelWaterYear_ParcelID_WaterYearID")
+                    .IsUnique();
 
-                entity.Property(e => e.OwnerName).IsUnicode(false);
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.AccountParcelWaterYear)
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
 
                 entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.AccountParcel)
+                    .WithMany(p => p.AccountParcelWaterYear)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
-                entity.HasOne(d => d.ParcelStatus)
-                    .WithMany(p => p.AccountParcel)
-                    .HasForeignKey(d => d.ParcelStatusID)
+                entity.HasOne(d => d.WaterYear)
+                    .WithMany(p => p.AccountParcelWaterYear)
+                    .HasForeignKey(d => d.WaterYearID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<AccountReconciliation>(entity =>
+            {
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.AccountReconciliation)
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.AccountReconciliation)
+                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
@@ -343,6 +362,11 @@ namespace Rio.EFModels.Entities
                     .IsUnique();
 
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
+
+                entity.HasOne(d => d.ParcelStatus)
+                    .WithMany(p => p.Parcel)
+                    .HasForeignKey(d => d.ParcelStatusID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<ParcelAllocation>(entity =>
@@ -440,10 +464,6 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ParcelUpdateStaging>(entity =>
             {
-                entity.HasIndex(e => e.ParcelNumber)
-                    .HasName("AK_ParcelUpdateStaging_ParcelNumber")
-                    .IsUnique();
-
                 entity.Property(e => e.OwnerName).IsUnicode(false);
 
                 entity.Property(e => e.ParcelGeometry4326Text).IsUnicode(false);
@@ -767,8 +787,6 @@ namespace Rio.EFModels.Entities
 
                 entity.ToView("vGeoServerAllParcels");
 
-                entity.Property(e => e.LandOwnerFullName).IsUnicode(false);
-
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
@@ -856,12 +874,6 @@ namespace Rio.EFModels.Entities
                 entity.HasNoKey();
 
                 entity.ToView("vParcelOwnership");
-
-                entity.Property(e => e.AccountParcelID).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Note).IsUnicode(false);
-
-                entity.Property(e => e.OwnerName).IsUnicode(false);
             });
 
             modelBuilder.Entity<vPostingDetailed>(entity =>

@@ -10,7 +10,8 @@ namespace Rio.EFModels.Entities
     {
         public Parcel()
         {
-            AccountParcel = new HashSet<AccountParcel>();
+            AccountParcelWaterYear = new HashSet<AccountParcelWaterYear>();
+            AccountReconciliation = new HashSet<AccountReconciliation>();
             ParcelAllocation = new HashSet<ParcelAllocation>();
             ParcelMonthlyEvapotranspiration = new HashSet<ParcelMonthlyEvapotranspiration>();
             WaterTransferRegistrationParcel = new HashSet<WaterTransferRegistrationParcel>();
@@ -26,9 +27,17 @@ namespace Rio.EFModels.Entities
         public Geometry ParcelGeometry { get; set; }
         public int ParcelAreaInSquareFeet { get; set; }
         public double ParcelAreaInAcres { get; set; }
+        public int ParcelStatusID { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? InactivateDate { get; set; }
 
+        [ForeignKey(nameof(ParcelStatusID))]
         [InverseProperty("Parcel")]
-        public virtual ICollection<AccountParcel> AccountParcel { get; set; }
+        public virtual ParcelStatus ParcelStatus { get; set; }
+        [InverseProperty("Parcel")]
+        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
+        [InverseProperty("Parcel")]
+        public virtual ICollection<AccountReconciliation> AccountReconciliation { get; set; }
         [InverseProperty("Parcel")]
         public virtual ICollection<ParcelAllocation> ParcelAllocation { get; set; }
         [InverseProperty("Parcel")]

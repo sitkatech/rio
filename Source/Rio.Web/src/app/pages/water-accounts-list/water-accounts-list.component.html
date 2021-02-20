@@ -138,7 +138,7 @@
             <p>Are you sure you want to remove Account #{{accountToRemove.AccountNumber}} ({{accountToRemove.AccountName}}) from the list of accounts you manage? This action cannot be undone.</p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-danger btn-sm" (click)="removeAccountToRemove()" [disabled]="!accountToRemove || currentUserIsAdmin()">
+            <button type="button" class="btn btn-danger btn-sm" ngbAutoFocus (click)="removeAccountToRemove()" [disabled]="!accountToRemove || currentUserIsAdmin()">
               Remove</button>
             <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
           </div>
