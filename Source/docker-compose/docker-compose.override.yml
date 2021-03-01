@@ -23,7 +23,15 @@ services:
       - VerificationKeyChars=${VerificationKeyChars}
       - ValidParcelNumberRegexPattern=${ValidParcelNumberRegexPattern}
       - ValidParcelNumberPatternAsStringForDisplay=${ValidParcelNumberPatternAsStringForDisplay}
+      - OpenETAPIBaseUrl=${OpenETAPIBaseUrl}
+      - OpenETRasterTimeSeriesMultipolygonRoute=${OpenETRasterTimeSeriesMultipolygonRoute}
+      - OpenETRasterMetadataRoute=${OpenETRasterMetadataRoute}
       - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
+      - OpenETRasterMetadataBoundingBoxLeft=${OpenETRasterMetadataBoundingBoxLeft}
+      - OpenETRasterMetadataBoundingBoxRight=${OpenETRasterMetadataBoundingBoxRight}
+      - OpenETRasterMetadataBoundingBoxTop=${OpenETRasterMetadataBoundingBoxTop}
+      - OpenETRasterMetadataBoundingBoxBottom=${OpenETRasterMetadataBoundingBoxBottom}
+      - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
       - OpenETCheckRasterUpdatedDateBaseURL=${OpenETCheckRasterUpdatedDateBaseURL}
       - OpenETTriggerTimeSeriesBaseURL=${OpenETTriggerTimeSeriesBaseURL}
       - AllowOpenETSync=${AllowOpenETSync}
