@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using CsvHelper;
+using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using Hangfire;
 using Microsoft.ApplicationInsights.AspNetCore.TelemetryInitializers;
@@ -191,6 +192,8 @@ namespace Rio.API.Services
                     .Where(x => x.FinalizeDate.HasValue)
                     .Select(x => x.Year)
                     .ToList();
+                csvr.Configuration.RegisterClassMap(
+                    new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
                 distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYears.Contains(x.Date.Year))
                     .Distinct(new DistinctOpenETCSVFormatComparer())
                     .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
@@ -212,12 +215,12 @@ namespace Rio.API.Services
                 table.Columns.Add("ParcelNumber", typeof(string));
                 table.Columns.Add("WaterMonth", typeof(int));
                 table.Columns.Add("WaterYear", typeof(int));
-                table.Columns.Add("EvapotranspirationRateInMM", typeof(decimal));
+                table.Columns.Add("EvapotranspirationRateInches", typeof(decimal));
 
                 int i = 0;
                 distinctRecords.ForEach(x =>
                 {
-                    table.Rows.Add(++i, x.ParcelNumber, x.WaterMonth, x.WaterYear, x.EvapotranspirationRateInMM);
+                    table.Rows.Add(++i, x.ParcelNumber, x.WaterMonth, x.WaterYear, x.EvapotranspirationRateInches);
                 });
 
                 using (SqlConnection con = new SqlConnection(rioConfiguration.DB_CONNECTION_STRING))
@@ -248,7 +251,6 @@ namespace Rio.API.Services
     {
         [Name("system:index")]
         public string SystemIndex { get; set; }
-        [Name("ParcelNumb")]
         public string ParcelNumber { get; set; }
         [Name("date")]
         public DateTime Date { get; set; }
@@ -258,6 +260,14 @@ namespace Rio.API.Services
 
         [Name(".geo")]
         public string Geo { get; set; }
+    }
+
+    public class OpenETCSVFormatMap : ClassMap<OpenETCSVFormat>
+    {
+        public OpenETCSVFormatMap(string parcelNumberColumnName)
+        {
+            Map(m => m.ParcelNumber).Name(parcelNumberColumnName);
+        }
     }
 
     class DistinctOpenETCSVFormatComparer : IEqualityComparer<OpenETCSVFormat>
@@ -287,7 +297,7 @@ namespace Rio.API.Services
                 ParcelNumber = openETCSVFormat.ParcelNumber,
                 WaterYear = openETCSVFormat.Date.Year,
                 WaterMonth = openETCSVFormat.Date.Month,
-                EvapotranspirationRateInMM = openETCSVFormat.EvapotranspirationRate
+                EvapotranspirationRateInches = openETCSVFormat.EvapotranspirationRate
             };
         }
     }
