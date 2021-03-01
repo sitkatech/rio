@@ -26,6 +26,7 @@ services:
       - OpenETAPIBaseUrl=${OpenETAPIBaseUrl}
       - OpenETRasterTimeSeriesMultipolygonRoute=${OpenETRasterTimeSeriesMultipolygonRoute}
       - OpenETRasterMetadataRoute=${OpenETRasterMetadataRoute}
+      - OpenETRasterExportStatusRoute=${OpenETRasterExportStatusRoute}
       - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
       - OpenETRasterMetadataBoundingBoxLeft=${OpenETRasterMetadataBoundingBoxLeft}
       - OpenETRasterMetadataBoundingBoxRight=${OpenETRasterMetadataBoundingBoxRight}
