@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -61,6 +62,12 @@ namespace Rio.API.Controllers
                         return x.ParcelAllocationAndUsage;
                     });
             return Ok(parcelDtosWithAllocation);
+        }
+
+        [HttpGet("test")]
+        public void Test()
+        {
+            
         }
 
         [HttpGet("parcels/inactive")]

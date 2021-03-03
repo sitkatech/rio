@@ -15,6 +15,10 @@ namespace Rio.EFModels.Entities
         public DateTime CreateDate { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime UpdateDate { get; set; }
+        [StringLength(50)]
+        public string GoogleBucketFileSuffixForRetrieval { get; set; }
+        [StringLength(100)]
+        public string TrackingNumber { get; set; }
 
         [ForeignKey(nameof(OpenETSyncResultTypeID))]
         [InverseProperty("OpenETSyncHistory")]
