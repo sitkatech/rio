@@ -1,0 +1,13 @@
+alter table dbo.OpenETSyncHistory
+add GoogleBucketFileSuffixForRetrieval varchar(50) null
+
+alter table dbo.OpenETSyncHistory
+add TrackingNumber varchar(100) null
+go
+CREATE UNIQUE NONCLUSTERED INDEX OpenETSyncHistory_GoogleBucketFileSuffixForRetrieval_NotNull
+ON dbo.OpenETSyncHistory(GoogleBucketFileSuffixForRetrieval)
+where GoogleBucketFileSuffixForRetrieval is not null
+
+CREATE UNIQUE NONCLUSTERED INDEX OpenETSyncHistory_TrackingNumber_NotNull
+ON dbo.OpenETSyncHistory(TrackingNumber)
+where TrackingNumber is not null

@@ -327,6 +327,20 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<OpenETSyncHistory>(entity =>
             {
+                entity.HasIndex(e => e.GoogleBucketFileSuffixForRetrieval)
+                    .HasName("OpenETSyncHistory_GoogleBucketFileSuffixForRetrieval_NotNull")
+                    .IsUnique()
+                    .HasFilter("([GoogleBucketFileSuffixForRetrieval] IS NOT NULL)");
+
+                entity.HasIndex(e => e.TrackingNumber)
+                    .HasName("OpenETSyncHistory_TrackingNumber_NotNull")
+                    .IsUnique()
+                    .HasFilter("([TrackingNumber] IS NOT NULL)");
+
+                entity.Property(e => e.GoogleBucketFileSuffixForRetrieval).IsUnicode(false);
+
+                entity.Property(e => e.TrackingNumber).IsUnicode(false);
+
                 entity.HasOne(d => d.OpenETSyncResultType)
                     .WithMany(p => p.OpenETSyncHistory)
                     .HasForeignKey(d => d.OpenETSyncResultTypeID)

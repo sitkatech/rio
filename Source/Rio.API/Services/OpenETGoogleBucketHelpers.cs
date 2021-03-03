@@ -107,8 +107,7 @@ namespace Rio.API.Services
             var year = waterYearDto.Year;
 
             if (rioDbContext.OpenETSyncHistory
-                .Include(x => x.WaterYear)
-                .Any(x => x.WaterYear.Year == year && x.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.InProgress))
+                .Any(x => x.WaterYearID == waterYearID && x.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.InProgress))
             {
                 return new HttpResponseMessage()
                 {
@@ -117,7 +116,7 @@ namespace Rio.API.Services
                 };
             }
 
-            var newSyncHistory = OpenETSyncHistory.New(rioDbContext, year);
+            var newSyncHistory = OpenETSyncHistory.New(rioDbContext, waterYearID);
 
             if (!RasterUpdatedSinceMinimumLastUpdatedDate(rioConfiguration, rioDbContext, year, newSyncHistory))
             {
@@ -129,19 +128,26 @@ namespace Rio.API.Services
             }
 
             var openETRequestURL =
-                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, 1, 1):yyyy-MM-dd}&end_date={new DateTime(year, 12, 31):yyyy-MM-dd}&model=ensemble&variable=et&units=in&ref_et_source=cimis&cloud_output_location=openet_raster_api_storage&filename_suffix={newSyncHistory.GetFileSuffixForOpenETSyncHistoryDto(rioConfiguration.LeadOrganizationShortName)}&include_columns=${rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
+                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, 1, 1):yyyy-MM-dd}&end_date={new DateTime(year, 12, 31):yyyy-MM-dd}&model=ensemble&variable=et&units=in&ref_et_source=cimis&cloud_output_location=openet_raster_api_storage&filename_suffix={rioConfiguration.LeadOrganizationShortName + "_" + year}&include_columns=${rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
 
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
-            var responseResult = httpClient.GetAsync(openETRequestURL).Result;
+            var response = httpClient.GetAsync(openETRequestURL).Result;
 
-            if (!responseResult.IsSuccessStatusCode)
-            {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                    OpenETSyncResultTypeEnum.Failed);
-            }
+            var responseObject = JsonConvert.DeserializeObject<TimeseriesMultipolygonSuccessfulResponse>(response.Content.ReadAsStringAsync().Result);
 
-            return responseResult;
+            OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileName, responseObject.TrackingNumber);
+
+            return response;
+        }
+
+        public class TimeseriesMultipolygonSuccessfulResponse
+        {
+            [JsonProperty("filename")]
+            public string FileName { get; set; }
+            [JsonProperty("tracking_number")]
+            public string TrackingNumber { get; set; }
         }
 
         public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext, RioConfiguration rioConfiguration, int syncHistoryID)
@@ -156,9 +162,12 @@ namespace Rio.API.Services
             }
 
             var openETRequestURL =
-                $"{rioConfiguration.OpenETGoogleBucketBaseURL}/testing_multi_mean_{rioConfiguration.OpenETAPIKey}_{syncHistoryObject.GetFileSuffixForOpenETSyncHistoryDto(rioConfiguration.LeadOrganizationShortName)}.csv";
+                $"{rioConfiguration.OpenETGoogleBucketBaseURL}/{syncHistoryObject.GoogleBucketFileSuffixForRetrieval}.tar.gz";
 
-            var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
+            var httpClient = new HttpClient
+            {
+                Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
+            };
 
             var response = httpClient.GetAsync(openETRequestURL).Result;
 
@@ -240,7 +249,7 @@ namespace Rio.API.Services
                 Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
             };
 
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authorization", apiKey);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(apiKey);
 
             return httpClient;
         }
