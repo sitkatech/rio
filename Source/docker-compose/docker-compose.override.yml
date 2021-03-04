@@ -34,8 +34,6 @@ services:
       - OpenETRasterMetadataBoundingBoxTop=${OpenETRasterMetadataBoundingBoxTop}
       - OpenETRasterMetadataBoundingBoxBottom=${OpenETRasterMetadataBoundingBoxBottom}
       - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
-      - OpenETCheckRasterUpdatedDateBaseURL=${OpenETCheckRasterUpdatedDateBaseURL}
-      - OpenETTriggerTimeSeriesBaseURL=${OpenETTriggerTimeSeriesBaseURL}
       - AllowOpenETSync=${AllowOpenETSync}
       - SupportEmailAddress=${SupportEmailAddress}
       - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}

@@ -35,6 +35,8 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
   public dateFormatString: string = "M/dd/yyyy";
   selectedWaterYear: WaterYearDto;
   abbreviatedWaterYearSyncHistoryDtos: Array<WaterYearQuickOpenETHistoryDto>;
+  isOpenETAPIKeyValid: boolean;
+  loadingPage: boolean = true;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -47,8 +49,13 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.loadingPage = true;
       this.currentUser = currentUser;
-      this.refreshWaterYearsAndOpenETSyncData();
+      this.openETService.isApiKeyValid().subscribe(isValid => {
+        this.isOpenETAPIKeyValid = isValid;
+        this.refreshWaterYearsAndOpenETSyncData();
+        this.loadingPage = false;
+      })
     });
   }
 
@@ -69,7 +76,7 @@ export class OpenetSyncWaterYearStatusListComponent implements OnInit {
       return "Finalized " + this.datePipe.transform(waterYear.WaterYear.FinalizeDate, this.dateFormatString);
     }
 
-    if (!this.openETSyncEnabled()) {
+    if (!this.openETSyncEnabled() || !this.isOpenETAPIKeyValid) {
       return "Sync disabled";
     }
 

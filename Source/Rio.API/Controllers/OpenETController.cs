@@ -4,6 +4,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -26,6 +27,38 @@ namespace Rio.API.Controllers
             _keystoneService = keystoneService;
             _rioConfiguration = rioConfiguration.Value;
         }
+
+        [HttpGet("openet/is-api-key-valid")]
+        [ManagerDashboardFeature]
+        public ActionResult<bool> IsAPIKeyValid()
+        {
+            var httpClient = OpenETGoogleBucketHelpers.GetOpenETClientWithAuthorization(_rioConfiguration.OpenETAPIKey);
+            var openETRequestURL = $"{_rioConfiguration.OpenETAPIBaseUrl}/home/key_expiration";
+            var response = httpClient.GetAsync(openETRequestURL).Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogCritical("OpenET API Key is invalid");
+                return false;
+            }
+
+            var responseObject = JsonConvert.DeserializeObject<OpenETTokenExpirationDate>(response.Content.ReadAsStringAsync().Result);
+
+            if (responseObject == null || responseObject.ExpirationDate < DateTime.UtcNow)
+            {
+                _logger.LogCritical("OpenET API Key is invalid or expired");
+                return false;
+            }
+
+            return true;
+        }
+
+        public class OpenETTokenExpirationDate
+        {
+            [JsonProperty("Expiration date")]
+            public DateTime ExpirationDate { get; set; }
+        }
+
 
         [HttpPost("openet-sync-history/trigger-openet-google-bucket-refresh")]
         [ContentManageFeature]
