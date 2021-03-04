@@ -33,8 +33,6 @@
         public string OpenETRasterMetadataBoundingBoxTop { get; set; }
         public string OpenETRasterMetadataBoundingBoxBottom { get; set; }
         public string OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier { get; set; }
-        public string OpenETCheckRasterUpdatedDateBaseURL { get; set; }
-        public string OpenETTriggerTimeSeriesBaseURL { get; set; }
         public string OpenETGoogleBucketBaseURL { get; set; }
         public bool AllowOpenETSync { get; set; }
         public string SupportEmailAddress { get; set; }
