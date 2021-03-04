@@ -205,7 +205,6 @@ namespace Rio.API.Services
                 TarEntry entry;
                 while ((entry = tarInputStream.GetNextEntry()) != null)
                 {
-                    var fileName = entry.File;
                     tarInputStream.CopyEntryContents(fileContents);
                 }
             }
