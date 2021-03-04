@@ -7,11 +7,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
 using Hangfire;
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Tar;
 using Microsoft.ApplicationInsights.AspNetCore.TelemetryInitializers;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -180,20 +183,34 @@ namespace Rio.API.Services
                 return;
             }
 
+            var fileContents = new MemoryStream();
+            var gzipStream = new GZipInputStream(response.Content.ReadAsStreamAsync().Result);
+            using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
+            {
+                TarEntry entry;
+                while ((entry = tarInputStream.GetNextEntry()) != null)
+                {
+                    tarInputStream.CopyEntryContents(fileContents);
+                }
+            }
+
+            fileContents.Position = 0;
+
             List<OpenETGoogleBucketResponseEvapotranspirationData> distinctRecords;
-            using (var reader = new StreamReader(response.Content.ReadAsStreamAsync().Result))
+            using (var reader = new StreamReader(fileContents))
             {
                 var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
                 var finalizedWaterYears = rioDbContext.WaterYear
                     .Where(x => x.FinalizeDate.HasValue)
                     .Select(x => x.Year)
                     .ToList();
-                csvr.Configuration.RegisterClassMap(
-                    new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
+                //csvr.Configuration.RegisterClassMap(
+                //    new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
+                var blah = csvr.GetRecords<OpenETCSVFormat>().ToList();
                 distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYears.Contains(x.Date.Year))
                     .Distinct(new DistinctOpenETCSVFormatComparer())
                     .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
-                    .ToList(); ;
+                    .ToList();
             }
 
             if (!distinctRecords.Any())
@@ -257,17 +274,13 @@ namespace Rio.API.Services
 
     public class OpenETCSVFormat
     {
-        [Name("system:index")]
-        public string SystemIndex { get; set; }
+        [Index(0)]
         public string ParcelNumber { get; set; }
-        [Name("date")]
+        [Index(1)]
         public DateTime Date { get; set; }
 
-        [Name("mean")]
+        [Index(2)]
         public decimal EvapotranspirationRate { get; set; }
-
-        [Name(".geo")]
-        public string Geo { get; set; }
     }
 
     public class OpenETCSVFormatMap : ClassMap<OpenETCSVFormat>
