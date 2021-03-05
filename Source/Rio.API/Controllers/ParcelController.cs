@@ -64,12 +64,6 @@ namespace Rio.API.Controllers
             return Ok(parcelDtosWithAllocation);
         }
 
-        [HttpGet("test")]
-        public void Test()
-        {
-            
-        }
-
         [HttpGet("parcels/inactive")]
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetInactiveParcels()
