@@ -205,7 +205,10 @@ namespace Rio.API.Services
                 TarEntry entry;
                 while ((entry = tarInputStream.GetNextEntry()) != null)
                 {
-                    tarInputStream.CopyEntryContents(fileContents);
+                    if (entry.Name == syncHistoryObject.GoogleBucketFileSuffixForRetrieval + ".csv")
+                    {
+                        tarInputStream.CopyEntryContents(fileContents);
+                    }
                 }
             }
 
