@@ -18,7 +18,7 @@ namespace Rio.API
         private readonly RioConfiguration _rioConfiguration;
 
         public const string CimisBaseUrl =
-            "http://et.water.ca.gov/api/data?dataItems=day-precip&targets=5";
+            "http://et.water.ca.gov/api/data?dataItems=day-precip&targets=5&unitsOfMeasure=E";
 
 
         public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext, IOptions<RioConfiguration> rioConfiguration) : base("Precipitation Update Job", logger, webHostEnvironment, rioDbContext)
@@ -48,7 +48,7 @@ namespace Rio.API
 
             var appKey = _rioConfiguration.CimisAppKey;
 
-            var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}&unitsOfMeasure=E";
+            var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}";
             
             var httpClient = new HttpClient();
 
