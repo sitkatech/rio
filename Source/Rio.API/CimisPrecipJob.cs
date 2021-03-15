@@ -48,7 +48,7 @@ namespace Rio.API
 
             var appKey = _rioConfiguration.CimisAppKey;
 
-            var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}";
+            var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}&unitsOfMeasure=E";
             
             var httpClient = new HttpClient();
 
