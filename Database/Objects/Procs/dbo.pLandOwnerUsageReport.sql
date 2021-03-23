@@ -22,7 +22,7 @@ from
 			isnull(pa.Reconciliation, 0) as Reconciliation,
 			isnull(pa.NativeYield, 0) as NativeYield,
 			isnull(pa.StoredWater, 0) as StoredWater,
-			isnull(pa.AcresManaged, 0) as AcresManaged,
+			isnull(am.AcresManaged, 0) as AcresManaged,
 			isnull(pa.Allocation, 0) as Allocation,
 			isnull(wts.Purchased, 0) as Purchased,
 			isnull(wts.Sold, 0) as Sold,
@@ -30,10 +30,22 @@ from
 			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
 	from dbo.Account acc
+	left join (
+	select acc.AccountID, 
+				sum(p.ParcelAreaInAcres) as AcresManaged
+		from dbo.Account acc
+		join (
+			select apwy.AccountID, apwy.ParcelID
+			from dbo.AccountParcelWaterYear apwy
+			join dbo.WaterYear wy on wy.WaterYearID = apwy.WaterYearID
+			where wy.[year] = @year
+		) up on acc.AccountID = up.AccountID
+		join dbo.Parcel p on up.ParcelID = p.ParcelID
+		group by acc.AccountID
+	) am on acc.AccountID = am.AccountID
 	left join
 	(
-		select acc.AccountID, 
-				sum(p.ParcelAreaInAcres) as AcresManaged, 
+		select acc.AccountID,
 				sum(pa.AcreFeetAllocated) as Allocation, 
 				sum(case when pa.ParcelAllocationTypeID = 1 then pa.AcreFeetAllocated else 0 end) as ProjectWater,
 				sum(case when pa.ParcelAllocationTypeID = 2 then pa.AcreFeetAllocated else 0 end) as Reconciliation,
