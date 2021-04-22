@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.IO;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -13,53 +9,22 @@ namespace Rio.API
     {
         public static void Main(string[] args)
         {
-            var host = new HostBuilder()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel(serverOptions =>
-                        {
-                            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                            serverOptions.Listen(IPAddress.Any, 80);
+            CreateHostBuilder(args).Build().Run();
+        }
 
-                            // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
-                            if (env == Environments.Development)
-                            {
-                                serverOptions.Listen(IPAddress.Any, 443, configure =>
-                                {
-                                    var devSSLCertLocation = Environment.GetEnvironmentVariable("DevSSLCertLocation");
-                                    var httpsConnectionAdapterOptions = new HttpsConnectionAdapterOptions()
-                                    {
-                                        ClientCertificateMode = ClientCertificateMode.AllowCertificate,
-                                        ServerCertificate = new X509Certificate2(devSSLCertLocation, "password#1"),
-                                        ClientCertificateValidation = (certificate2, chain, arg3) => true
-                                    };
-
-                                    configure.UseHttps(httpsConnectionAdapterOptions);
-                                });
-                            }
-                        })
-                        .UseIISIntegration()
-                        .UseStartup<Startup>();
-                })
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var hostBuilder = Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
-                    // delete all default configuration providers
-                    config.Sources.Clear();
-                    config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddEnvironmentVariables();
-
                     var configurationRoot = config.Build();
-
                     var secretPath = configurationRoot["SECRET_PATH"];
                     if (File.Exists(secretPath))
                     {
                         config.AddJsonFile(secretPath);
                     }
-                })
-                .Build();
-
-            host.Run();
+                }).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+            return hostBuilder;
         }
     }
 }

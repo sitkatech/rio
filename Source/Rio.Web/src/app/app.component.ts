@@ -53,11 +53,13 @@ export class AppComponent {
     private configureAuthService(): Observable<void> {
         const subject = new Subject<void>();
         this.oauthService.configure(environment.keystoneAuthConfiguration);
+        this.oauthService.setupAutomaticSilentRefresh();
         this.oauthService.setStorage(this.cookieStorageService);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         this.oauthService.loadDiscoveryDocument();
         this.oauthService.events
             .subscribe((e) => {
+                console.log(e.type);
                 switch (e.type) {
                     case 'discovery_document_loaded':
                         console.log("discovery_document_loaded");
@@ -70,22 +72,33 @@ export class AppComponent {
                         console.log("token_received");
                         subject.next();
                         subject.complete();
+                        this.authenticationService.checkAuthentication();
                         break;
-                    case 'session_changed':
-                        console.log("session_changed");
-                        // when the user logins from no-tenant URL and then jumps to the tenant URL,
-                        // the oAuthService triggers a session-changed followed by a session_terminated...
-                        // however the token still works as expected.
-                        // ATTENTION: Need to verify that on session expiration (and hence session_terminated) this session_changed doesn't get called...
-                        this.ignoreSessionTerminated = true;
+                    case 'token_refreshed':
+                        subject.next();
+                        subject.complete();
+                        //this.authenticationService.checkAuthentication();
                         break;
-                    case 'session_terminated':
-                        if (!this.ignoreSessionTerminated) {
-                            console.warn('Your session has been terminated!');
-                            this.cookieStorageService.removeAll();
-                        }
-                        this.ignoreSessionTerminated = false;
+                    case 'token_refresh_error':
+                        console.log("token_refresh_error");
+                        this.authenticationService.logout();
                         break;
+                    // case 'session_changed':
+                    //     console.log("session_changed");
+                    //     // when the user logins from no-tenant URL and then jumps to the tenant URL,
+                    //     // the oAuthService triggers a session-changed followed by a session_terminated...
+                    //     // however the token still works as expected.
+                    //     // ATTENTION: Need to verify that on session expiration (and hence session_terminated) this session_changed doesn't get called...
+                    //     this.ignoreSessionTerminated = true;
+                    //     break;
+                    // case 'session_terminated':
+                    //     if (!this.ignoreSessionTerminated) {
+                    //         console.warn('Your session has been terminated!');
+                    //         this.cookieStorageService.removeAll();
+                    //     }
+                    //     debugger;
+                    //     this.ignoreSessionTerminated = false;
+                    //     break;
                 }
 
             });

@@ -26,20 +26,12 @@ using MissingFieldException = CsvHelper.MissingFieldException;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class ParcelController : ControllerBase
+    public class ParcelController : SitkaController<ParcelController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<ParcelController> _logger;
-        private readonly KeystoneService _keystoneService;
-        private readonly RioConfiguration _rioConfiguration;
-
-        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
+        public ParcelController(RioDbContext dbContext, ILogger<ParcelController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
-            _rioConfiguration = rioConfiguration.Value;
         }
+
 
         [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
         [ManagerDashboardFeature]
@@ -100,12 +92,7 @@ namespace Rio.API.Controllers
             }
 
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(parcelDto);
+            return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
         [HttpGet("parcels/{parcelID}/getAllocations")]
@@ -113,9 +100,9 @@ namespace Rio.API.Controllers
         public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
+            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
@@ -127,9 +114,9 @@ namespace Rio.API.Controllers
         public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
+            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
@@ -144,9 +131,9 @@ namespace Rio.API.Controllers
             var parcel = _dbContext.Parcel.Include(x => x.ParcelAllocation)
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
-            if (parcel == null)
+            if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
             {
-                return NotFound($"Did not find Parcel with ID {parcelID}");
+                return actionResult;
             }
 
             var updatedParcelAllocations = parcelAllocationDtos.Select(x => new ParcelAllocation()
@@ -265,9 +252,9 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (parcelDto == null)
+            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             if (!ModelState.IsValid)

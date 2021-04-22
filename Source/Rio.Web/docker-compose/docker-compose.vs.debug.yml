@@ -7,5 +7,5 @@ services:
         source: ${DOCKER_BUILD_SOURCE}
     image: sitkacontainers.azurecr.io/rio/web
     ports:
-      - "8887:80"
-      - "8886:443"
+      - "8787:80"
+      - "8786:443"

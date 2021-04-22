@@ -59,7 +59,6 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userDto = GetCurrentUser();
             var offer = Offer.CreateNew(_dbContext, postingID, offerUpsertDto);
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var currentTrade = Trade.GetByTradeID(_dbContext, offer.Trade.TradeID);
@@ -315,7 +314,7 @@ An offer to {offerAction} water {properPreposition} Account #{fromAccount.Accoun
         [OfferManageFeature]
         public ActionResult<IEnumerable<OfferDto>> GetActiveOffersForCurrentUserByPosting([FromRoute] int postingID)
         {
-            var userDto = GetCurrentUser();
+            var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
             var offerDtos = Offer.GetActiveOffersFromPostingIDAndUserID(_dbContext, postingID, userDto.UserID);
             return Ok(offerDtos);
         }
@@ -379,13 +378,6 @@ An offer to {offerAction} water {properPreposition} Account #{fromAccount.Accoun
             }
 
             return Ok(offerDto);
-        }
-
-        private UserDto GetCurrentUser()
-        {
-            var userGuid = _keystoneService.GetProfile().Payload.UserGuid;
-            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, userGuid);
-            return userDto;
         }
     }
 }

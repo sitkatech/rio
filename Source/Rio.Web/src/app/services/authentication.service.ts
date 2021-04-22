@@ -73,15 +73,20 @@ export class AuthenticationService {
     this.router.events
       .pipe(filter(e => e instanceof NavigationStart))
       .subscribe((e: NavigationStart) => {
-        if (this.isAuthenticated() && !this.currentUser) {
-          var claims = this.oauthService.getIdentityClaims();
-          var globalID = claims["sub"];
-          console.log("Authenticated but no user found...")
-          this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(user => {
-            this.getUserCallback(user);
-          });
-        }
+        this.checkAuthentication();
       })
+  }
+
+  public checkAuthentication() {
+    if (this.isAuthenticated() && !this.currentUser) {
+      var claims = this.oauthService.getIdentityClaims();
+      var globalID = claims["sub"];
+      console.log("Authenticated but no user found...");
+      this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(user => {
+        this.currentUser = user;
+        this._currentUserSetSubject.next(this.currentUser);
+      });
+    }
   }
 
   private getUserCallback(user: UserDto) {
@@ -121,15 +126,17 @@ export class AuthenticationService {
   }
 
   public login() {
-    this.oauthService.initImplicitFlow();
+    this.oauthService.initCodeFlow();
   }
-
+  
   public createAccount() {
     localStorage.setItem("loginOnReturn", "true");
-    const redirectUrl = encodeURIComponent(environment.createAccountRedirectUrl);
-    window.location.href = `${environment.createAccountUrl}${redirectUrl}`;
+    window.location.href = `${environment.keystoneAuthConfiguration.issuer}/Account/Register?${this.getClientIDAndRedirectUrlForKeystone()}`;
   }
 
+  public getClientIDAndRedirectUrlForKeystone() {
+    return `ClientID=${environment.keystoneAuthConfiguration.clientId}&RedirectUrl=${encodeURIComponent(environment.createAccountRedirectUrl)}`;
+  }
 
   public logout() {
     this.oauthService.logOut();

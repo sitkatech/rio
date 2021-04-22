@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -12,18 +12,12 @@ using Rio.Models.DataTransferObjects;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class WaterYearController : ControllerBase
+    public class WaterYearController : SitkaController<WaterYearController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<WaterYearController> _logger;
-        private readonly KeystoneService _keystoneService;
-
-        public WaterYearController(RioDbContext dbContext, ILogger<WaterYearController> logger, KeystoneService keystoneService)
+        public WaterYearController(RioDbContext dbContext, ILogger<WaterYearController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
         }
+
 
         [HttpGet("water-years")]
         [ParcelViewFeature]
@@ -64,9 +58,9 @@ namespace Rio.API.Controllers
         public ActionResult<WaterYearDto> FinalizeWaterYear([FromBody] int waterYearID)
         {
             var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
-            if (waterYearDto == null)
+            if (ThrowNotFound(waterYearDto, "Water Year", waterYearID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             var finalizedWaterYearDto = WaterYear.Finalize(_dbContext, waterYearID);

@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
@@ -32,7 +31,7 @@ namespace Rio.API
     {
         private readonly TelemetryClient _telemetryClient;
         private readonly IWebHostEnvironment _environment;
-        private string _instrumentationKey;
+        private readonly string _instrumentationKey;
         public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Configuration = configuration;
@@ -77,10 +76,7 @@ namespace Rio.API
                 });
 
             services.Configure<RioConfiguration>(Configuration);
-
-            // todo: Calling 'BuildServiceProvider' from application code results in an additional copy of singleton services being created.
-            // Consider alternatives such as dependency injecting services as parameters to 'Configure'.
-            var rioConfiguration = services.BuildServiceProvider().GetService<IOptions<RioConfiguration>>().Value;
+            var rioConfiguration = Configuration.Get<RioConfiguration>();
 
             var keystoneHost = rioConfiguration.KEYSTONE_HOST;
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme).AddIdentityServerAuthentication(options =>
@@ -102,7 +98,7 @@ namespace Rio.API
             var logger = GetSerilogLogger();
             services.AddSingleton(logger);
 
-            services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost.Replace("core", "")));
+            services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost));
 
             services.AddSingleton(x => new SitkaSmtpClientService(rioConfiguration));
 
@@ -110,13 +106,12 @@ namespace Rio.API
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
             services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
 
-            var rioDBbConnectionString = Configuration["DB_CONNECTION_STRING"];
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(rioDBbConnectionString, new SqlServerStorageOptions
+                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
