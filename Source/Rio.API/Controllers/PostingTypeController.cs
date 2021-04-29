@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Posting;
@@ -8,18 +9,12 @@ using Rio.Models.DataTransferObjects.Posting;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class PostingTypeController : ControllerBase
+    public class PostingTypeController : SitkaController<PostingTypeController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<PostingTypeController> _logger;
-        private readonly KeystoneService _keystoneService;
-
-        public PostingTypeController(RioDbContext dbContext, ILogger<PostingTypeController> logger, KeystoneService keystoneService)
+        public PostingTypeController(RioDbContext dbContext, ILogger<PostingTypeController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
         }
+
 
         [HttpGet("postingTypes")]
         public ActionResult<IEnumerable<PostingTypeDto>> Get()

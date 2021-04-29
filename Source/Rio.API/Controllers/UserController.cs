@@ -13,30 +13,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : SitkaController<UserController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<UserController> _logger;
-        private readonly KeystoneService _keystoneService;
-        private readonly RioConfiguration _rioConfiguration;
-
-        public UserController(RioDbContext dbContext, ILogger<UserController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfigurationOptions)
+        public UserController(RioDbContext dbContext, ILogger<UserController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
-            _rioConfiguration = rioConfigurationOptions.Value;
         }
+
 
         [HttpPost("/users/invite")]
         [UserManageFeature]
-        public IActionResult InviteUser([FromBody] UserInviteDto inviteDto)
+        public async Task<IActionResult> InviteUser([FromBody] UserInviteDto inviteDto)
         {
             if (inviteDto.RoleID.HasValue)
             {
@@ -51,9 +43,9 @@ namespace Rio.API.Controllers
                 return BadRequest("Role ID is required.");
             }
 
-            string welcomeText =
+            var welcomeText =
                 $"You are receiving this notification because an administrator of the {_rioConfiguration.PlatformLongName}, an online service of the {_rioConfiguration.LeadOrganizationLongName}, has invited you to create an account.";
-            var response = KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
+            var response = await KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
 
             if (!ModelState.IsValid)
             {
@@ -66,7 +58,7 @@ namespace Rio.API.Controllers
 
         [HttpPost("/users/invite-partner")]
         [UserViewFeature]
-        public IActionResult InvitePartner([FromBody] UserPartnerInviteDto inviteDto)
+        public async Task<IActionResult> InvitePartner([FromBody] UserPartnerInviteDto inviteDto)
         {
             var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
@@ -82,7 +74,7 @@ namespace Rio.API.Controllers
 
             var welcomeText =
                 $"You are receiving this notification because {userFromContextDto.FullName} has invited you to create a user profile for the {_rioConfiguration.PlatformLongName}, an online service of the {_rioConfiguration.LeadOrganizationLongName}, and granted you access to view their Water Account Dashboard.";
-            var response = KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
+            var response = await KeystoneInviteUserApiResponse(inviteDto.FirstName, inviteDto.LastName, inviteDto.Email, welcomeText);
 
             if (!ModelState.IsValid)
             {
@@ -124,10 +116,10 @@ namespace Rio.API.Controllers
             return user;
         }
 
-        private KeystoneService.KeystoneApiResponse<KeystoneService.KeystoneNewUserModel> KeystoneInviteUserApiResponse(string firstName, string lastName, string email, string welcomeText)
+        private async Task<KeystoneService.KeystoneApiResponse<KeystoneService.KeystoneNewUserModel>> KeystoneInviteUserApiResponse(string firstName, string lastName, string email, string welcomeText)
         {
-            string applicationName = $"{_rioConfiguration.PlatformLongName}";
-            string rioBravoWaterStorageDistrict = $"{_rioConfiguration.LeadOrganizationLongName}";
+            var applicationName = $"{_rioConfiguration.PlatformLongName}";
+            var rioBravoWaterStorageDistrict = $"{_rioConfiguration.LeadOrganizationLongName}";
             var inviteModel = new KeystoneService.KeystoneInviteModel
             {
                 FirstName = firstName,
@@ -141,7 +133,7 @@ namespace Rio.API.Controllers
                 RedirectURL = _rioConfiguration.KEYSTONE_REDIRECT_URL
             };
 
-            var response = _keystoneService.Invite(inviteModel);
+            var response = await _keystoneService.Invite(inviteModel);
             if (response.StatusCode != HttpStatusCode.OK || response.Error != null)
             {
                 ModelState.AddModelError("Email",

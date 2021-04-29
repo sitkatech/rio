@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
@@ -7,26 +6,18 @@ using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class PostingController : ControllerBase
+    public class PostingController : SitkaController<PostingController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<PostingController> _logger;
-        private readonly KeystoneService _keystoneService;
         private readonly bool _allowTrading;
 
-        public PostingController(RioDbContext dbContext, ILogger<PostingController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> _rioConfigurationOptions)
+        public PostingController(RioDbContext dbContext, ILogger<PostingController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
-            _allowTrading = _rioConfigurationOptions.Value.ALLOW_TRADING;
+            _allowTrading = _rioConfiguration.ALLOW_TRADING;
         }
 
         [HttpPost("/postings/new")]
@@ -60,12 +51,7 @@ namespace Rio.API.Controllers
         public ActionResult<PostingDto> GetByPostingID([FromRoute] int postingID)
         {
             var postingDto = Posting.GetByPostingID(_dbContext, postingID);
-            if (postingDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(postingDto);
+            return RequireNotNullThrowNotFound(postingDto, "Posting", postingID);
         }
 
         [HttpPut("postings/{postingID}/close")]
@@ -78,9 +64,9 @@ namespace Rio.API.Controllers
             }
 
             var postingDto = Posting.GetByPostingID(_dbContext, postingID);
-            if (postingDto == null)
+            if (ThrowNotFound(postingDto, "Posting", postingID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             if (!ModelState.IsValid)
@@ -100,10 +86,11 @@ namespace Rio.API.Controllers
             {
                 return BadRequest();
             }
-            var postingDto = Rio.EFModels.Entities.Posting.GetByPostingID(_dbContext, postingID);
-            if (postingDto == null)
+
+            var postingDto = Posting.GetByPostingID(_dbContext, postingID);
+            if (ThrowNotFound(postingDto, "Posting", postingID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             if (!ModelState.IsValid)

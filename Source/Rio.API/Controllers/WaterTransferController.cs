@@ -10,37 +10,23 @@ using Rio.Models.DataTransferObjects.WaterTransfer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class WaterTransferController : ControllerBase
+    public class WaterTransferController : SitkaController<WaterTransferController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<OfferController> _logger;
-        private readonly KeystoneService _keystoneService;
-        private readonly RioConfiguration _rioConfiguration;
-
-        public WaterTransferController(RioDbContext dbContext, ILogger<OfferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
+        public WaterTransferController(RioDbContext dbContext, ILogger<WaterTransferController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
-            _rioConfiguration = rioConfiguration.Value;
         }
+
 
         [HttpGet("water-transfers/{waterTransferID}")]
         [OfferManageFeature]
         public ActionResult<WaterTransferDto> GetByWaterTransferID([FromRoute] int waterTransferID)
         {
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
-            if (waterTransferDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(waterTransferDto);
+            return RequireNotNullThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID);
         }
 
         [HttpGet("water-transfers/{waterTransferID}/registrations")]
@@ -66,12 +52,12 @@ namespace Rio.API.Controllers
             }
 
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
-            if (waterTransferDto == null)
+            if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
             var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationDto, waterTransferDto, currentUser);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
@@ -105,12 +91,12 @@ namespace Rio.API.Controllers
             }
 
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
-            if (waterTransferDto == null)
+            if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
             var validationMessages = WaterTransfer.ValidateCancelTransfer(waterTransferRegistrationDto, waterTransferDto, currentUser);
             validationMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
@@ -157,9 +143,9 @@ namespace Rio.API.Controllers
             }
 
             var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
-            if (waterTransferDto == null)
+            if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
             var validationMessages = WaterTransferRegistrationParcel.ValidateParcels(waterTransferRegistrationDto.WaterTransferRegistrationParcels, waterTransferDto);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
@@ -247,13 +233,6 @@ namespace Rio.API.Controllers
                 mailMessages.Add(mailMessage);
             }
             return mailMessages;
-        }
-
-        private UserDto GetCurrentUser()
-        {
-            var userGuid = _keystoneService.GetProfile().Payload.UserGuid;
-            var userDto = Rio.EFModels.Entities.User.GetByUserGuid(_dbContext, userGuid);
-            return userDto;
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -15,18 +16,12 @@ using Rio.Models.DataTransferObjects.Posting;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class MarketMetricsController : ControllerBase
+    public class MarketMetricsController : SitkaController<MarketMetricsController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<RoleController> _logger;
-        private readonly KeystoneService _keystoneService;
-
-        public MarketMetricsController(RioDbContext dbContext, ILogger<RoleController> logger, KeystoneService keystoneService)
+        public MarketMetricsController(RioDbContext dbContext, ILogger<MarketMetricsController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
         }
+
 
         [HttpGet("market-metrics")]
         [ManagerDashboardFeature]

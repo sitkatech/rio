@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 
@@ -18,7 +19,7 @@ namespace Rio.API
         private readonly RioConfiguration _rioConfiguration;
 
         public const string CimisBaseUrl =
-            "http://et.water.ca.gov/api/data?dataItems=day-precip&targets=5";
+            "http://et.water.ca.gov/api/data?dataItems=day-precip&targets=5&unitsOfMeasure=E";
 
 
         public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext, IOptions<RioConfiguration> rioConfiguration) : base("Precipitation Update Job", logger, webHostEnvironment, rioDbContext)
@@ -49,12 +50,26 @@ namespace Rio.API
             var appKey = _rioConfiguration.CimisAppKey;
 
             var cimisRequestUrl = CimisBaseUrl + $"&appKey={appKey}&startDate={startDateString}&endDate={endDateString}";
+
+            var responseContent = (string) null;
+
+            for (int i = 0; i < 2; i++)
+            {
+                var httpClient = new HttpClient();
+
+                httpClient.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
+                responseContent = httpClient.GetAsync(cimisRequestUrl).Result.Content.ReadAsStringAsync().Result;
+
+                //MP 3/23 From what I can tell, the CIMIS API essentially falls asleep when it isn't used
+                //this causes an issue on first call because we're paying the cost for waking it up and then
+                //our results don't come back. For now, we can just wait 15 minutes to give it some time
+                //and then hopefully when we try again it'll be awake and ready to serve up some data
+                if (i == 0)
+                {
+                    Thread.Sleep(15 * 60 * 1000);
+                }
+            }
             
-            var httpClient = new HttpClient();
-
-            httpClient.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
-            var responseContent = httpClient.GetAsync(cimisRequestUrl).Result.Content.ReadAsStringAsync().Result;
-
             var cimisPrecipitationResponse = JsonConvert.DeserializeObject<CimisPrecipitationResponse>(responseContent);
 
             var precipitationGroupedByYear = cimisPrecipitationResponse.Data.Providers.Single().Records

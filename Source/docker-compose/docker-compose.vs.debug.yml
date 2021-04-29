@@ -9,7 +9,11 @@ services:
       args:
         source: ${DOCKER_BUILD_SOURCE}
     ports:
-      - "8888:80"
-      - "8889:443"
+      - "8788:80"
+      - "8789:443"
     environment:
-      - DevSSLCertLocation=${DevSSLCertLocation}
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - Kestrel__Certificates__Default__Path=/https/host.docker.internal.pfx
+      - Kestrel__Certificates__Default__Password=password#1
+    volumes:
+      - ~/.aspnet/https:/https:ro 

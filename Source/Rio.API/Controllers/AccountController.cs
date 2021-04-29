@@ -13,7 +13,6 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.User;
 using Rio.Models.DataTransferObjects.WaterTransfer;
@@ -21,20 +20,12 @@ using Rio.Models.DataTransferObjects.WaterTransfer;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : SitkaController<AccountController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<AccountController> _logger;
-        private readonly KeystoneService _keystoneService;
-        private readonly RioConfiguration _rioConfiguration;
-
-        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration)
+        public AccountController(RioDbContext dbContext, ILogger<AccountController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
-            _rioConfiguration = rioConfiguration.Value;
         }
+
 
         [HttpGet("accountStatus")]
         [UserManageFeature]
@@ -57,12 +48,7 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> GetAccountByID([FromRoute] int accountID)
         {
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
-            if (accountDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(accountDto);
+            return RequireNotNullThrowNotFound(accountDto, "Account", accountID);
         }
 
         [HttpGet("/account/account-number/{accountNumber}")]
@@ -70,9 +56,9 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> GetAccountByAccountNumber([FromRoute] int accountNumber)
         {
             var accountDto = Account.GetByAccountNumber(_dbContext, accountNumber);
-            if (accountDto == null)
+            if (ThrowNotFound(accountDto, "Account", accountNumber, out var actionResult))
             {
-                return NotFound();
+                return actionResult;
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
@@ -90,12 +76,7 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> GetAccountByAccountVerificationKey([FromRoute] string accountVerificationKey)
         {
             var accountDto = Account.GetByAccountVerificationKey(_dbContext, accountVerificationKey);
-            if (accountDto == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(accountDto);
+            return RequireNotNullThrowNotFound(accountDto, "Account", accountVerificationKey);
         }
 
         [HttpPut("/account/{accountID}")]
@@ -103,15 +84,15 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> UpdateAccount([FromRoute] int accountID, [FromBody] AccountUpdateDto accountUpdateDto)
         {
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
-            if (accountDto == null)
+            if (ThrowNotFound(accountDto, "Account", accountID, out var actionResult))
             {
-                return NotFound(); 
+                return actionResult;
             }
 
             var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
-            if (accountStatus == null)
+            if (ThrowNotFound(accountStatus, "Account Status", accountUpdateDto.AccountStatusID, out var actionResult2))
             {
-                return NotFound($"Could not find a System AccountStatus with the ID {accountUpdateDto.AccountStatusID}");
+                return actionResult2;
             }
 
             var updatedUserDto = Account.UpdateAccountEntity(_dbContext, accountID, accountUpdateDto, _rioConfiguration.VerificationKeyChars);
@@ -124,9 +105,9 @@ namespace Rio.API.Controllers
         {
 
             var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
-            if (accountStatus == null)
+            if (ThrowNotFound(accountStatus, "Account Status", accountUpdateDto.AccountStatusID, out var actionResult))
             {
-                return NotFound($"Could not find an Account Status with the ID {accountUpdateDto.AccountStatusID}");
+                return actionResult;
             }
 
             var updatedUserDto = Account.CreateAccountEntity(_dbContext, accountUpdateDto, _rioConfiguration.VerificationKeyChars);
@@ -138,10 +119,9 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> EditUsers([FromRoute] int accountID, [FromBody] AccountEditUsersDto accountEditUsersDto)
         {
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
-
-            if (accountDto == null)
+            if (ThrowNotFound(accountDto, "Account", accountID, out var actionResult))
             {
-                return NotFound($"Could not find an Account with the ID {accountID}.");
+                return actionResult;
             }
 
             if (!EFModels.Entities.User.ValidateAllExist(_dbContext, accountEditUsersDto.UserIDs))

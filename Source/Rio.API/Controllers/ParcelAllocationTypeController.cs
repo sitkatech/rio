@@ -1,9 +1,8 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -13,19 +12,12 @@ using Rio.Models.DataTransferObjects;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class ParcelAllocationController : ControllerBase
+    public class ParcelAllocationController : SitkaController<ParcelAllocationController>
     {
-        private readonly RioDbContext _dbContext;
-        private readonly ILogger<ParcelAllocationController> _logger;
-        private readonly KeystoneService _keystoneService;
-
-        public ParcelAllocationController(RioDbContext dbContext, ILogger<ParcelAllocationController> logger,
-            KeystoneService keystoneService)
+        public ParcelAllocationController(RioDbContext dbContext, ILogger<ParcelAllocationController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _dbContext = dbContext;
-            _logger = logger;
-            _keystoneService = keystoneService;
         }
+
 
         [HttpGet("/parcel-allocation-types/")]
         [LoggedInUnclassifiedFeature]

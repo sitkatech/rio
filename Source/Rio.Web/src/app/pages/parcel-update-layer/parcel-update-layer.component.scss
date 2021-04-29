@@ -2,6 +2,10 @@
     display: none;
 }
 
+small {
+    color:grey
+}
+
 
 .table-group-striped tbody tr:nth-child(2n+1), .table-group-striped tbody tr:nth-child(2n+2) {
     background: #f2f2f2;

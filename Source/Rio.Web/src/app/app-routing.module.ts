@@ -51,7 +51,6 @@ import { CreateUserProfileComponent } from './pages/create-user-profile/create-u
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
 import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { AssignedNotDisabledGuard } from './shared/guards/unauthenticated-access/assigned-not-disabled-guard';
-import { UserPartnerInviteDto } from './shared/models/user/user-partner-invite-dto';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
@@ -108,7 +107,7 @@ const routes: Routes = [
   { path: "measuring-water-use-with-openet", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "roles-and-permissions", component: RolesAndPermissionsComponent },
-  { path: "login-callback", component: LoginCallbackComponent },
+  { path: "signin-oidc", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },

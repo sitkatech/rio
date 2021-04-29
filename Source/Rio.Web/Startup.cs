@@ -73,10 +73,8 @@ namespace Rio.Web
         public ConfigDto(IConfiguration configuration)
         {
             ApiHostName = configuration["ApiHostName"];
-            CreateAccountUrl = configuration["CreateAccountUrl"];
             CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
             AllowTrading = bool.Parse(configuration["AllowTrading"]);
-            KeystoneSupportBaseUrl = configuration["KeystoneSupportBaseUrl"];
             GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
             KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
             PlatformLongName = configuration["PlatformLongName"];
@@ -100,16 +98,12 @@ namespace Rio.Web
 
         [JsonProperty("apiHostName")]
         public string ApiHostName { get; set; }
-        [JsonProperty("createAccountUrl")]
-        public string CreateAccountUrl { get; set; }
         [JsonProperty("createAccountRedirectUrl")]
         public string CreateAccountRedirectUrl { get; set; }
         [JsonProperty("allowTrading")]
         public bool AllowTrading { get; set; }
         [JsonProperty("allowOpenETSync")]
         public bool AllowOpenETSync {get; set;}
-        [JsonProperty("keystoneSupportBaseUrl")]
-        public string KeystoneSupportBaseUrl { get; set; }
         [JsonProperty("geoserverMapServiceUrl")]
         public string GeoserverMapServiceUrl { get; set; }
         [JsonProperty("keystoneAuthConfiguration")]
@@ -159,7 +153,9 @@ namespace Rio.Web
             SessionChecksEnabled = bool.Parse(configuration["Keystone_SessionCheckEnabled"]);
             LogoutUrl = configuration["Keystone_LogoutUrl"];
             PostLogoutRedirectUri = configuration["Keystone_PostLogoutRedirectUri"];
-            WaitForTokenInMsec = int.Parse(configuration["WaitForTokenInMsec"]);
+            WaitForTokenInMsec = int.Parse(configuration["Keystone_WaitForTokenInMsec"]);
+            ResponseType = configuration["Keystone_ResponseType"];
+            DisablePKCE = bool.Parse(configuration["Keystone_DisablePKCE"]);
         }
 
         [JsonProperty("clientId")]
@@ -178,5 +174,9 @@ namespace Rio.Web
         public string PostLogoutRedirectUri { get; set; }
         [JsonProperty("waitForTokenInMsec")]
         public int WaitForTokenInMsec { get; set; }
+        [JsonProperty("responseType")]
+        public string ResponseType {get; set;}
+        [JsonProperty("disablePKCE")]
+        public bool DisablePKCE {get; set;}
     }
 }
