@@ -341,19 +341,6 @@ namespace Rio.API.Controllers
 
         private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string parcelAllocationTypeDisplayName, out ActionResult badRequest)
         {
-            // no null allocation amounts
-            var nullAllocationQuantities = records.Where(x => x.AllocationQuantity == null).ToList();
-            if (nullAllocationQuantities.Any())
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The following APNs had no {parcelAllocationTypeDisplayName} Quantity entered: " +
-                        Join(", ", nullAllocationQuantities.Select(x => x.APN))
-                });
-                return false;
-            }
-
             // no duplicate apns permitted
             var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
                 .Select(x => x.Key).ToList();
@@ -380,6 +367,19 @@ namespace Rio.API.Controllers
                     validationMessage =
                         "The upload contained these APNs which did not match any record in the system: " +
                         Join(", ", unmatchedRecords.Select(x => x.APN))
+                });
+                return false;
+            }
+
+            // no null allocation amounts
+            var nullAllocationQuantities = records.Where(x => x.AllocationQuantity == null).ToList();
+            if (nullAllocationQuantities.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The following APNs had no {parcelAllocationTypeDisplayName} Quantity entered: " +
+                        Join(", ", nullAllocationQuantities.Select(x => x.APN))
                 });
                 return false;
             }
