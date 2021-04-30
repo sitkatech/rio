@@ -288,7 +288,7 @@ namespace Rio.API.Controllers
                 csvReader.Read();
                 csvReader.ReadHeader();
                 var headerNamesDuplicated =
-                    csvReader.Context.HeaderRecord.GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                    csvReader.Context.HeaderRecord.Where(x => !String.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
                     badRequest = BadRequest(new
@@ -341,45 +341,45 @@ namespace Rio.API.Controllers
 
         private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string parcelAllocationTypeDisplayName, out ActionResult badRequest)
         {
-            // no null allocation volumes
-            var nullAllocationVolumes = records.Where(x => x.AllocationVolume == null).ToList();
-            if (nullAllocationVolumes.Any())
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The following Account Numbers had no {parcelAllocationTypeDisplayName} Volume entered: " +
-                        Join(", ", nullAllocationVolumes.Select(x => x.AccountNumber))
-                });
-                return false;
-            }
-
-            // no duplicate account numbers permitted
-            var duplicateAccountNumbers = records.GroupBy(x => x.AccountNumber).Where(x => x.Count() > 1)
+            // no duplicate apns permitted
+            var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
                 .Select(x => x.Key).ToList();
 
-            if (duplicateAccountNumbers.Any())
+            if (duplicateAPNs.Any())
             {
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        "The upload contained multiples rows with these account numbers: " +
-                        Join(", ", duplicateAccountNumbers)
+                        "The upload contained multiples rows with these APNs: " +
+                        Join(", ", duplicateAPNs)
                 });
                 return false;
             }
 
-            // all account numbers must match
-            var allAccountNumbers = _dbContext.Account.Select(y => y.AccountNumber);
-            var unmatchedRecords = records.Where(x => !allAccountNumbers.Contains(x.AccountNumber)).ToList();
+            // all parcel numbers must match
+            var allParcelNumbers = _dbContext.Parcel.Select(y => y.ParcelNumber);
+            var unmatchedRecords = records.Where(x => !allParcelNumbers.Contains(x.APN)).ToList();
 
             if (unmatchedRecords.Any())
             {
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        "The upload contained these account numbers which did not match any record in the system: " +
-                        Join(", ", unmatchedRecords.Select(x => x.AccountNumber))
+                        "The upload contained these APNs which did not match any record in the system: " +
+                        Join(", ", unmatchedRecords.Select(x => x.APN))
+                });
+                return false;
+            }
+
+            // no null allocation amounts
+            var nullAllocationQuantities = records.Where(x => x.AllocationQuantity == null).ToList();
+            if (nullAllocationQuantities.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The following APNs had no {parcelAllocationTypeDisplayName} Quantity entered: " +
+                        Join(", ", nullAllocationQuantities.Select(x => x.APN))
                 });
                 return false;
             }
@@ -585,14 +585,14 @@ namespace Rio.API.Controllers
     {
         public BulkSetAllocationCSVMap()
         {
-            Map(m => m.AccountNumber).Name("Account Number");
-            Map(m => m.AllocationVolume).Name("Allocation Volume");
+            Map(m => m.APN).Name("APN");
+            Map(m => m.AllocationQuantity).Name("Allocation Quantity");
         }
 
         public BulkSetAllocationCSVMap(RioDbContext dbContext, string parcelAllocationTypeDisplayName)
         {
-            Map(m => m.AccountNumber).Name("Account Number");
-            Map(m => m.AllocationVolume).Name(parcelAllocationTypeDisplayName + " Volume");
+            Map(m => m.APN).Name("APN");
+            Map(m => m.AllocationQuantity).Name(parcelAllocationTypeDisplayName + " Quantity");
         }
     }
 }
