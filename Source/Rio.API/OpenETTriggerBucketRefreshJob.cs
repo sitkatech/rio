@@ -38,15 +38,15 @@ namespace Rio.API
                 return;
             }
 
-            var nonFinalizedWaterYears = _rioDbContext.WaterYear.Where(x => !x.FinalizeDate.HasValue);
-            if (!nonFinalizedWaterYears.Any())
+            var nonFinalizedWaterYearMonths = _rioDbContext.WaterYearMonth.Where(x => !x.FinalizeDate.HasValue);
+            if (!nonFinalizedWaterYearMonths.Any())
             {
                 return;
             }
 
-            nonFinalizedWaterYears.ToList().ForEach(x =>
+            nonFinalizedWaterYearMonths.ToList().ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearID);
+                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearMonthID);
                 });
         }
     }

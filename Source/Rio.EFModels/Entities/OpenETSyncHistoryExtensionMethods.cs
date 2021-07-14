@@ -13,11 +13,10 @@ namespace Rio.EFModels.Entities
             {
                 OpenETSyncHistoryID = openETSyncHistory.OpenETSyncHistoryID,
                 OpenETSyncResultType = openETSyncHistory.OpenETSyncResultType.AsDto(),
-                WaterYear = openETSyncHistory.WaterYear.AsDto(),
+                WaterYearMonth = openETSyncHistory.WaterYearMonth.AsDto(),
                 CreateDate = openETSyncHistory.CreateDate,
                 UpdateDate = openETSyncHistory.UpdateDate,
-                GoogleBucketFileSuffixForRetrieval = openETSyncHistory.GoogleBucketFileSuffixForRetrieval,
-                TrackingNumber = openETSyncHistory.TrackingNumber
+                GoogleBucketFileRetrievalURL = openETSyncHistory.GoogleBucketFileRetrievalURL
             };
         }
     }

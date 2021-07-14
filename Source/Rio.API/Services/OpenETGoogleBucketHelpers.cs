@@ -28,14 +28,14 @@ namespace Rio.API.Services
     {
 
         public static bool RasterUpdatedSinceMinimumLastUpdatedDate(RioConfiguration rioConfiguration,
-            RioDbContext rioDbContext, int year, OpenETSyncHistoryDto newSyncHistory)
+            RioDbContext rioDbContext, int month, int year, OpenETSyncHistoryDto newSyncHistory)
         {
             var top = rioConfiguration.OpenETRasterMetadataBoundingBoxTop;
             var bottom = rioConfiguration.OpenETRasterMetadataBoundingBoxBottom;
             var left = rioConfiguration.OpenETRasterMetadataBoundingBoxLeft;
             var right = rioConfiguration.OpenETRasterMetadataBoundingBoxRight;
             var openETRequestURL =
-                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterMetadataRoute}?geometry={top},{left},{top},{right},{bottom},{right},{bottom},{left}&start_date={new DateTime(year, 1, 1):yyyy-MM-dd}&end_date={new DateTime(year, 12, 31):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
+                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterMetadataRoute}?geometry={top},{left},{top},{right},{bottom},{right},{bottom},{left}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
 
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
@@ -65,8 +65,9 @@ namespace Rio.API.Services
             }
 
             var openETSyncHistoriesThatHaventFailed = rioDbContext.OpenETSyncHistory
-                .Include(x => x.WaterYear)
-                .Where(x => x.WaterYear.Year == year &&
+                .Include(x => x.WaterYearMonth)
+                .ThenInclude(x => x.WaterYear)
+                .Where(x => x.WaterYearMonth.WaterYear.Year == year && x.WaterYearMonth.Month == month &&
                             (x.OpenETSyncResultTypeID != (int)OpenETSyncResultTypeEnum.Failed) && x.OpenETSyncHistoryID != newSyncHistory.OpenETSyncHistoryID);
 
             if (!openETSyncHistoriesThatHaventFailed.Any())
@@ -93,7 +94,7 @@ namespace Rio.API.Services
 
 
         public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(RioConfiguration rioConfiguration,
-            RioDbContext rioDbContext, int waterYearID)
+            RioDbContext rioDbContext, int waterYearMonthID)
         {
             if (!rioConfiguration.AllowOpenETSync)
             {
@@ -104,42 +105,44 @@ namespace Rio.API.Services
                 };
             }
 
-            var waterYearDto = WaterYear.GetByWaterYearID(rioDbContext, waterYearID);
+            var waterYearMonthDto = WaterYearMonth.GetByWaterYearMonthID(rioDbContext, waterYearMonthID);
 
-            if (waterYearDto == null)
+            if (waterYearMonthDto == null)
             {
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Content = new StringContent("Requested Water Year not found")
+                    Content = new StringContent("Requested Water Year and Month not found")
                 };
             }
 
-            var year = waterYearDto.Year;
+            var year = waterYearMonthDto.WaterYear.Year;
+            var month = waterYearMonthDto.Month;
+            var monthNameToDisplay = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
             if (rioDbContext.OpenETSyncHistory
-                .Any(x => x.WaterYearID == waterYearID && x.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.InProgress))
+                .Any(x => x.WaterYearMonthID == waterYearMonthID && x.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.InProgress))
             {
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.BadRequest,
-                    Content = new StringContent($"Sync already in progress for {year}")
+                    Content = new StringContent($"Sync already in progress for {monthNameToDisplay} {year}")
                 };
             }
 
-            var newSyncHistory = OpenETSyncHistory.New(rioDbContext, waterYearID);
+            var newSyncHistory = OpenETSyncHistory.New(rioDbContext, waterYearMonthID);
 
-            if (!RasterUpdatedSinceMinimumLastUpdatedDate(rioConfiguration, rioDbContext, year, newSyncHistory))
+            if (!RasterUpdatedSinceMinimumLastUpdatedDate(rioConfiguration, rioDbContext, month, year, newSyncHistory))
             {
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.UnprocessableEntity,
-                    Content = new StringContent($"The request was successful, however the sync for {year} will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
+                    Content = new StringContent($"The request was successful, however the sync for {monthNameToDisplay} {year} will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
                 };
             }
 
             var openETRequestURL =
-                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, 1, 1):yyyy-MM-dd}&end_date={new DateTime(year, 12, 31):yyyy-MM-dd}&model=ensemble&variable=et&units=in&ref_et_source=cimis&cloud_output_location=openet_raster_api_storage&filename_suffix={rioConfiguration.LeadOrganizationShortName + "_" + year}&include_columns={rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
+                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=in&ref_et_source=cimis&cloud_output_location=openet_raster_api_storage&filename_suffix={rioConfiguration.LeadOrganizationShortName + "_" + month + "_" + year + "_public"}&include_columns={rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
 
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
@@ -148,7 +151,7 @@ namespace Rio.API.Services
             var responseObject = JsonConvert.DeserializeObject<TimeseriesMultipolygonSuccessfulResponse>(response.Content.ReadAsStringAsync().Result);
 
             OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileName, responseObject.TrackingNumber);
+                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileName);
 
             return response;
         }
@@ -218,15 +221,15 @@ namespace Rio.API.Services
             using (var reader = new StreamReader(fileContents))
             {
                 var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
-                var finalizedWaterYears = rioDbContext.WaterYear
+                var finalizedWaterYearMonths = rioDbContext.WaterYearMonth
                     .Where(x => x.FinalizeDate.HasValue)
-                    .Select(x => x.Year)
+                    .Select(x => new DateTime(x.WaterYear.Year, x.Month, 1))
                     .ToList();
                 csvr.Configuration.RegisterClassMap(
                     new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
                 //Sometimes the results will produce exact duplicates, so we need to filter those out
                 //Also one final check to make sure we don't get any finalized dates
-                distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYears.Contains(x.Date.Year))
+                distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYearMonths.Contains(x.Date))
                     .Distinct(new DistinctOpenETCSVFormatComparer())
                     .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
                     .ToList();

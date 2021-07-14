@@ -8,14 +8,14 @@ namespace Rio.EFModels.Entities
 {
     public partial class OpenETSyncHistory
     {
-        public static OpenETSyncHistoryDto New(RioDbContext dbContext, int waterYearID)
+        public static OpenETSyncHistoryDto New(RioDbContext dbContext, int waterYearMonthID)
         {
-            var waterYear = dbContext.WaterYear.Single(x => x.WaterYearID == waterYearID);
+            var waterYearMonth = dbContext.WaterYearMonth.Single(x => x.WaterYearID == waterYearMonthID);
             
             var openETSyncHistoryToAdd = new OpenETSyncHistory()
             {
                 OpenETSyncResultTypeID = (int)OpenETSyncResultTypeEnum.InProgress,
-                WaterYearID = waterYear.WaterYearID,
+                WaterYearMonthID = waterYearMonthID,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = DateTime.UtcNow
             };
@@ -31,7 +31,8 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.OpenETSyncHistory
                 .Include(x=>x.OpenETSyncResultType)
-                .Include(x => x.WaterYear)
+                .Include(x => x.WaterYearMonth)
+                .ThenInclude(x => x.WaterYear)
                 .SingleOrDefault(x => x.OpenETSyncHistoryID == openETSyncHistoryID).AsDto();
         }
 
@@ -49,15 +50,14 @@ namespace Rio.EFModels.Entities
             return GetByOpenETSyncHistoryID(rioDbContext, openETSyncHistory.OpenETSyncHistoryID);
         }
 
-        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string googleBucketFileSuffixForRetrieval, string trackingNumber)
+        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string googleBucketFileRetrievalURL)
         {
             var openETSyncHistory =
                 rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
 
             openETSyncHistory.UpdateDate = DateTime.UtcNow;
             openETSyncHistory.OpenETSyncResultTypeID = (int)resultType;
-            openETSyncHistory.GoogleBucketFileSuffixForRetrieval = googleBucketFileSuffixForRetrieval;
-            openETSyncHistory.TrackingNumber = trackingNumber;
+            openETSyncHistory.GoogleBucketFileRetrievalURL = googleBucketFileRetrievalURL;
 
             rioDbContext.SaveChanges();
             rioDbContext.Entry(openETSyncHistory).Reload();
@@ -69,31 +69,32 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.OpenETSyncHistory
                 .Include(x => x.OpenETSyncResultType)
-                .Include(x => x.WaterYear)
+                .Include(x => x.WaterYearMonth)
+                .ThenInclude(x => x.WaterYear)
                 .OrderByDescending(x => x.CreateDate).Select(x => x.AsDto()).ToList();
         }
 
-        public static WaterYearQuickOpenETHistoryDto GetQuickHistoryForWaterYear(RioDbContext dbContext, int waterYearID)
-        {
-            var waterYear = Entities.WaterYear.GetByWaterYearID(dbContext, waterYearID);
-            var currentlySyncing = dbContext.OpenETSyncHistory.Any(x =>
-                x.WaterYearID == waterYearID &&
-                x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress);
-            var lastSuccessfulSyncDate = dbContext.OpenETSyncHistory
-                .Any(x => x.WaterYearID == waterYearID &&
-                          x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
-                ? dbContext.OpenETSyncHistory
-                    .Where(x => x.WaterYearID == waterYearID &&
-                                x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
-                    .OrderByDescending(x => x.UpdateDate).First().UpdateDate
-                : (DateTime?) null;
+        //public static WaterYearQuickOpenETHistoryDto GetQuickHistoryForWaterYear(RioDbContext dbContext, int waterYearID)
+        //{
+        //    var waterYear = Entities.WaterYear.GetByWaterYearID(dbContext, waterYearID);
+        //    var currentlySyncing = dbContext.OpenETSyncHistory.Any(x =>
+        //        x.WaterYearID == waterYearID &&
+        //        x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress);
+        //    var lastSuccessfulSyncDate = dbContext.OpenETSyncHistory
+        //        .Any(x => x.WaterYearID == waterYearID &&
+        //                  x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
+        //        ? dbContext.OpenETSyncHistory
+        //            .Where(x => x.WaterYearID == waterYearID &&
+        //                        x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
+        //            .OrderByDescending(x => x.UpdateDate).First().UpdateDate
+        //        : (DateTime?) null;
 
-            return new WaterYearQuickOpenETHistoryDto()
-            {
-                WaterYear = waterYear,
-                CurrentlySyncing = currentlySyncing,
-                LastSuccessfulSync = lastSuccessfulSyncDate
-            };
-        }
+        //    return new WaterYearQuickOpenETHistoryDto()
+        //    {
+        //        WaterYear = waterYear,
+        //        CurrentlySyncing = currentlySyncing,
+        //        LastSuccessfulSync = lastSuccessfulSyncDate
+        //    };
+        //}
     }
 }

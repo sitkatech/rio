@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Rio.EFModels.Entities
 {
-    public partial class OpenETSyncHistory
+    public partial class vOpenETMostRecentSyncHistoryForYearAndMonth
     {
-        [Key]
         public int OpenETSyncHistoryID { get; set; }
         public int WaterYearMonthID { get; set; }
         public int OpenETSyncResultTypeID { get; set; }
@@ -17,12 +16,5 @@ namespace Rio.EFModels.Entities
         public DateTime UpdateDate { get; set; }
         [StringLength(200)]
         public string GoogleBucketFileRetrievalURL { get; set; }
-
-        [ForeignKey(nameof(OpenETSyncResultTypeID))]
-        [InverseProperty("OpenETSyncHistory")]
-        public virtual OpenETSyncResultType OpenETSyncResultType { get; set; }
-        [ForeignKey(nameof(WaterYearMonthID))]
-        [InverseProperty("OpenETSyncHistory")]
-        public virtual WaterYearMonth WaterYearMonth { get; set; }
     }
 }

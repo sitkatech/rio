@@ -57,6 +57,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatus { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferType { get; set; }
         public virtual DbSet<WaterYear> WaterYear { get; set; }
+        public virtual DbSet<WaterYearMonth> WaterYearMonth { get; set; }
         public virtual DbSet<Well> Well { get; set; }
         public virtual DbSet<geometry_columns> geometry_columns { get; set; }
         public virtual DbSet<spatial_ref_sys> spatial_ref_sys { get; set; }
@@ -66,6 +67,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<vGeoServerScenarioRechargeBasin> vGeoServerScenarioRechargeBasin { get; set; }
         public virtual DbSet<vGeoServerWaterTradingScenarioWell> vGeoServerWaterTradingScenarioWell { get; set; }
         public virtual DbSet<vGeoServerWells> vGeoServerWells { get; set; }
+        public virtual DbSet<vOpenETMostRecentSyncHistoryForYearAndMonth> vOpenETMostRecentSyncHistoryForYearAndMonth { get; set; }
         public virtual DbSet<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry> vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry { get; set; }
         public virtual DbSet<vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount> vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount { get; set; }
         public virtual DbSet<vParcelOwnership> vParcelOwnership { get; set; }
@@ -327,28 +329,16 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<OpenETSyncHistory>(entity =>
             {
-                entity.HasIndex(e => e.GoogleBucketFileSuffixForRetrieval)
-                    .HasName("OpenETSyncHistory_GoogleBucketFileSuffixForRetrieval_NotNull")
-                    .IsUnique()
-                    .HasFilter("([GoogleBucketFileSuffixForRetrieval] IS NOT NULL)");
-
-                entity.HasIndex(e => e.TrackingNumber)
-                    .HasName("OpenETSyncHistory_TrackingNumber_NotNull")
-                    .IsUnique()
-                    .HasFilter("([TrackingNumber] IS NOT NULL)");
-
-                entity.Property(e => e.GoogleBucketFileSuffixForRetrieval).IsUnicode(false);
-
-                entity.Property(e => e.TrackingNumber).IsUnicode(false);
+                entity.Property(e => e.GoogleBucketFileRetrievalURL).IsUnicode(false);
 
                 entity.HasOne(d => d.OpenETSyncResultType)
                     .WithMany(p => p.OpenETSyncHistory)
                     .HasForeignKey(d => d.OpenETSyncResultTypeID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
-                entity.HasOne(d => d.WaterYear)
+                entity.HasOne(d => d.WaterYearMonth)
                     .WithMany(p => p.OpenETSyncHistory)
-                    .HasForeignKey(d => d.WaterYearID)
+                    .HasForeignKey(d => d.WaterYearMonthID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
@@ -754,6 +744,18 @@ namespace Rio.EFModels.Entities
                     .IsUnique();
             });
 
+            modelBuilder.Entity<WaterYearMonth>(entity =>
+            {
+                entity.HasIndex(e => new { e.WaterYearID, e.Month })
+                    .HasName("AK_WaterYearMonth_WaterYearID_Month")
+                    .IsUnique();
+
+                entity.HasOne(d => d.WaterYear)
+                    .WithMany(p => p.WaterYearMonth)
+                    .HasForeignKey(d => d.WaterYearID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<Well>(entity =>
             {
                 entity.Property(e => e.WellID).ValueGeneratedNever();
@@ -855,6 +857,15 @@ namespace Rio.EFModels.Entities
                 entity.ToView("vGeoServerWells");
 
                 entity.Property(e => e.WellName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<vOpenETMostRecentSyncHistoryForYearAndMonth>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vOpenETMostRecentSyncHistoryForYearAndMonth");
+
+                entity.Property(e => e.GoogleBucketFileRetrievalURL).IsUnicode(false);
             });
 
             modelBuilder.Entity<vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry>(entity =>
