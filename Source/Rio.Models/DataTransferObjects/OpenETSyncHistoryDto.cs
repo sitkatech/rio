@@ -11,6 +11,8 @@ namespace Rio.Models.DataTransferObjects
         public WaterYearDto WaterYear { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
+        public string GoogleBucketFileSuffixForRetrieval { get; set; }
+        public string TrackingNumber { get; set; }
     }
 
     public class OpenETSyncResultTypeDto

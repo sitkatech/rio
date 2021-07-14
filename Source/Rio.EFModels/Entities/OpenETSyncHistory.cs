@@ -8,12 +8,14 @@ namespace Rio.EFModels.Entities
 {
     public partial class OpenETSyncHistory
     {
-        public static OpenETSyncHistoryDto New(RioDbContext dbContext, int year)
+        public static OpenETSyncHistoryDto New(RioDbContext dbContext, int waterYearID)
         {
+            var waterYear = dbContext.WaterYear.Single(x => x.WaterYearID == waterYearID);
+            
             var openETSyncHistoryToAdd = new OpenETSyncHistory()
             {
                 OpenETSyncResultTypeID = (int)OpenETSyncResultTypeEnum.InProgress,
-                WaterYearID = dbContext.WaterYear.Single(x => x.Year == year).WaterYearID,
+                WaterYearID = waterYear.WaterYearID,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = DateTime.UtcNow
             };
@@ -40,6 +42,22 @@ namespace Rio.EFModels.Entities
 
             openETSyncHistory.UpdateDate = DateTime.UtcNow;
             openETSyncHistory.OpenETSyncResultTypeID = (int) resultType;
+
+            rioDbContext.SaveChanges();
+            rioDbContext.Entry(openETSyncHistory).Reload();
+
+            return GetByOpenETSyncHistoryID(rioDbContext, openETSyncHistory.OpenETSyncHistoryID);
+        }
+
+        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string googleBucketFileSuffixForRetrieval, string trackingNumber)
+        {
+            var openETSyncHistory =
+                rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
+
+            openETSyncHistory.UpdateDate = DateTime.UtcNow;
+            openETSyncHistory.OpenETSyncResultTypeID = (int)resultType;
+            openETSyncHistory.GoogleBucketFileSuffixForRetrieval = googleBucketFileSuffixForRetrieval;
+            openETSyncHistory.TrackingNumber = trackingNumber;
 
             rioDbContext.SaveChanges();
             rioDbContext.Entry(openETSyncHistory).Reload();
