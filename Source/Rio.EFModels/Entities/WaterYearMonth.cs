@@ -26,7 +26,7 @@ namespace Rio.EFModels.Entities
 
         public static WaterYearMonthDto Finalize(RioDbContext dbContext, int waterYearMonthID)
         {
-            var waterYear = GetWaterYearMonthImpl(dbContext).Single(x => x.WaterYearMonthID == waterYearMonthID);
+            var waterYear = dbContext.WaterYearMonth.Single(x => x.WaterYearMonthID == waterYearMonthID);
 
             waterYear.FinalizeDate = DateTime.UtcNow;
 

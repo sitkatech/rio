@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
     {
         public static OpenETSyncHistoryDto New(RioDbContext dbContext, int waterYearMonthID)
         {
-            var waterYearMonth = dbContext.WaterYearMonth.Single(x => x.WaterYearID == waterYearMonthID);
+            var waterYearMonth = dbContext.WaterYearMonth.Single(x => x.WaterYearMonthID == waterYearMonthID);
             
             var openETSyncHistoryToAdd = new OpenETSyncHistory()
             {

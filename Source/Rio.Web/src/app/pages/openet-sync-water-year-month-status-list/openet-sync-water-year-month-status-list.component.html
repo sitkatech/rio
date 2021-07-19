@@ -62,7 +62,7 @@
                                         <td class="align-middle">
                                             <ng-container *ngIf="showActionButtonsForWaterYearMonth(waterYearMonth)">
                                                 <button class="btn btn-rio mr-2"
-                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearModalContent, waterYearMonth)"
+                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearMonthModalContent, waterYearMonth)"
                                                     [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator()">Sync
                                                     Now</button>
                                                 <button class="btn btn-rio"
@@ -100,7 +100,7 @@
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to finalize the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}. The system will no longer
+            Are you sure you want to finalize the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? The system will no longer
             update Evapotranspiration data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}} and will not accept any new override
             submissions.
         </p>
@@ -122,7 +122,7 @@
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to sync the OpenET data for {{selectedWaterYear.Year}}. This will refresh OpenET Data
+            Are you sure you want to sync the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? This will refresh OpenET Data
             for all applicable parcels, but will not reset any user-input overrides.
         </p>
         <div class="modal-footer">

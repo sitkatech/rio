@@ -14,6 +14,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 import { WaterYearMonthService } from 'src/app/services/water-year-month.service';
 import { WaterYearMonthDto } from 'src/app/shared/models/water-year-month-dto';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'rio-openet-sync-water-year-month-status-list',
@@ -31,7 +32,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   public isPerformingAction: boolean = false;
 
   public dateFormatString: string = "M/dd/yyyy hh:mm";
-  public monthNameFormatter: any = new Intl.DateTimeFormat('en-us', {month: 'long'});
+  public monthNameFormatter: any = new Intl.DateTimeFormat('en-us', { month: 'long' });
   public selectedWaterYearMonth: WaterYearMonthDto;
   public selectedWaterYearMonthName: string;
   public mostRecentSyncHistoryDtos: Array<OpenETSyncHistoryDto>;
@@ -64,10 +65,10 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
     forkJoin([
       this.waterYearMonthService.getWaterYearMonths(),
       this.waterYearMonthService.getMostRecentSyncHistoryForWaterYearMonthsThatHaveBeenUpdated()]).subscribe(([waterYearMonths, abbreviatedWaterYearSyncHistories]) => {
-      this.isPerformingAction = false;
-      this.waterYearMonthDtos = waterYearMonths;
-      this.mostRecentSyncHistoryDtos = abbreviatedWaterYearSyncHistories;
-    });
+        this.isPerformingAction = false;
+        this.waterYearMonthDtos = waterYearMonths;
+        this.mostRecentSyncHistoryDtos = abbreviatedWaterYearSyncHistories;
+      });
   }
 
   public isCurrentUserAdministrator(): boolean {
@@ -76,7 +77,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
 
   public getDataUpdateStatusForWaterYearMonth(waterYearMonth: WaterYearMonthDto): string {
     let currentDate = new Date();
-    if (new Date(waterYearMonth.WaterYear.Year, waterYearMonth.Month - 1) >= new Date(currentDate.getFullYear(), currentDate.getMonth())) {
+    if (new Date(waterYearMonth.WaterYear.Year, waterYearMonth.Month - 1) > new Date(currentDate.getFullYear(), currentDate.getMonth())) {
       return "Data Not Yet Available";
     }
 
@@ -104,7 +105,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
     }
   }
 
-  public numSyncsInProgress() : number {
+  public numSyncsInProgress(): number {
     if (!this.mostRecentSyncHistoryDtos) {
       return 0;
     }
@@ -153,15 +154,16 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
     }
 
     this.isPerformingAction = true;
-    this.openETService.triggerGoogleBucketRefreshForWaterYearMonth(this.selectedWaterYearMonth.WaterYearMonthID).subscribe(response => {
+    this.openETService.triggerGoogleBucketRefreshForWaterYearMonth(this.selectedWaterYearMonth.WaterYearMonthID).pipe(
+      finalize(() => {
+        this.isPerformingAction = false;
+        this.selectedWaterYearMonth = null;
+        this.selectedWaterYearMonthName = null;
+        this.refreshWaterYearMonthsAndOpenETSyncData();
+      }),
+    ).subscribe(response => {
       this.alertService.pushAlert(new Alert(`The request to sync data for ${this.selectedWaterYearMonthName} ${this.selectedWaterYearMonth.WaterYear.Year} was successfully submitted. The update may take a while, but will continue in the background.`, AlertContext.Success));
-      this.selectedWaterYearMonth = null;
-      this.selectedWaterYearMonthName = null;
-      this.refreshWaterYearMonthsAndOpenETSyncData();
-    },
-    (error => {
-      this.isPerformingAction = false;
-    }))
+    });
   }
 
   public openETSyncEnabled() {
@@ -173,12 +175,16 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
       this.modalReference.close();
       this.modalReference = null;
     }
-    debugger;
     this.isPerformingAction = true;
-    this.waterYearMonthService.finalizeWaterYearMonth(this.selectedWaterYearMonth.WaterYearMonthID).subscribe(response => {
+    this.waterYearMonthService.finalizeWaterYearMonth(this.selectedWaterYearMonth.WaterYearMonthID).pipe(
+      finalize(() => {
+        this.isPerformingAction = false;
+        this.selectedWaterYearMonth = null;
+        this.selectedWaterYearMonthName = null;
+        this.refreshWaterYearMonthsAndOpenETSyncData();
+      }),
+    ).subscribe(response => {
       this.alertService.pushAlert(new Alert(`The Evapotranspiration Data for ${this.selectedWaterYearMonthName} ${this.selectedWaterYearMonth.WaterYear.Year} was successfully finalized`, AlertContext.Success));
-      this.selectedWaterYearMonth = null;
-      this.refreshWaterYearMonthsAndOpenETSyncData();
     })
   }
 
@@ -199,12 +205,12 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
         return 0;
       }
 
-      if (x.WaterYearMonth.WaterYear.Year > y.WaterYearMonth.WaterYear.Year || 
-          (x.WaterYearMonth.WaterYear.Year == y.WaterYearMonth.WaterYear.Year && x.WaterYearMonth.Month > y.WaterYearMonth.Month)) {
+      if (x.WaterYearMonth.WaterYear.Year > y.WaterYearMonth.WaterYear.Year ||
+        (x.WaterYearMonth.WaterYear.Year == y.WaterYearMonth.WaterYear.Year && x.WaterYearMonth.Month > y.WaterYearMonth.Month)) {
         return 1;
       }
 
-      return -1; 
+      return -1;
     }).map(x => {
       let monthName = this.monthNameFormatter.format(new Date(x.WaterYearMonth.WaterYear.Year, x.WaterYearMonth.Month - 1));
       return `${monthName} ${x.WaterYearMonth.WaterYear.Year}`
