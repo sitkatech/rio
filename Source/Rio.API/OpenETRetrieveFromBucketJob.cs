@@ -42,10 +42,11 @@ namespace Rio.API
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
+                var filesReadyForExport = OpenETGoogleBucketHelpers.GetAllFilesReadyForExport(_rioConfiguration);
                 inProgressSyncs.ForEach(x =>
                 {
                     OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext,
-                            _rioConfiguration, x.OpenETSyncHistoryID);
+                            _rioConfiguration, x.OpenETSyncHistoryID, filesReadyForExport);
                 });
             }
 

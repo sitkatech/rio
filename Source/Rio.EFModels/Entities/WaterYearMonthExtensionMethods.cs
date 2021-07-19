@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
         {
             return new WaterYearMonthDto()
             {
-                WaterYearMonthID = waterYearMonth.WaterYearID,
+                WaterYearMonthID = waterYearMonth.WaterYearMonthID,
                 WaterYear = waterYearMonth.WaterYear.AsDto(),
                 Month = waterYearMonth.Month,
                 FinalizeDate = waterYearMonth.FinalizeDate

@@ -52,9 +52,9 @@ namespace Rio.API.Controllers
 
         [HttpPost("openet-sync-history/trigger-openet-google-bucket-refresh")]
         [ContentManageFeature]
-        public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
+        public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYearMonthID)
         {
-            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYear);
+            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYearMonthID);
             if (!triggerResponse.IsSuccessStatusCode)
             {
                 var ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);

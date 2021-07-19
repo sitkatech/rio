@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.Configuration.Attributes;
@@ -40,14 +41,6 @@ namespace Rio.API.Services
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
             var response = httpClient.GetAsync(openETRequestURL).Result;
-
-            if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
-            {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                    OpenETSyncResultTypeEnum.Failed);
-                //Our API Key is bad
-                throw new Exception("OpenET API Key has expired");
-            }
 
             //If we don't get a good response, let's just say that there needs to be an update to cover our bases
             if (!response.IsSuccessStatusCode)
@@ -90,6 +83,32 @@ namespace Rio.API.Services
         {
             [JsonProperty("date_ingested")]
             public string DateIngested { get; set; }
+        }
+
+        public static string[] GetAllFilesReadyForExport(RioConfiguration rioConfiguration)
+        {
+            var openETRequestURL =
+                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETAllFilesReadyForExportRoute}";
+
+            var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
+
+            var response = httpClient.GetAsync(openETRequestURL).Result;
+
+            var body = response.Content.ReadAsStringAsync().Result;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Call to {rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETAllFilesReadyForExportRoute} was unsuccessful. Status code: ${response.StatusCode} Message: {body}");
+            }
+
+            var responseObject = JsonConvert.DeserializeObject<ExportAllFilesResponse>(response.Content.ReadAsStringAsync().Result);
+            return responseObject.TimeseriesFilesReadyForExport;
+        }
+
+        public class ExportAllFilesResponse
+        {
+            [JsonProperty("timeseries")]
+            public string[] TimeseriesFilesReadyForExport { get; set; }
         }
 
 
@@ -151,20 +170,28 @@ namespace Rio.API.Services
             var responseObject = JsonConvert.DeserializeObject<TimeseriesMultipolygonSuccessfulResponse>(response.Content.ReadAsStringAsync().Result);
 
             OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileName);
+                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileRetrievalURL);
 
             return response;
         }
 
         public class TimeseriesMultipolygonSuccessfulResponse
         {
-            [JsonProperty("filename")]
-            public string FileName { get; set; }
-            [JsonProperty("tracking_number")]
-            public string TrackingNumber { get; set; }
+            [JsonProperty("bucket_url")]
+            public string FileRetrievalURL { get; set; }
         }
 
-        public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext, RioConfiguration rioConfiguration, int syncHistoryID)
+        private static void UpdateStatusAndFailIfOperationHasExceeded24Hours(RioDbContext rioDbContext, OpenETSyncHistoryDto syncHistory)
+        {
+            var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistory.CreateDate).Hours;
+
+            //One very unfortunate thing about OpenET's design is that their forced to create a queue of requests and can't process multiple requests at once.
+            //That, combined with no (at this moment 7/14/21) means of knowing whether or not
+            OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistory.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 24 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
+        }
+
+        public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext,
+            RioConfiguration rioConfiguration, int syncHistoryID, string[] filesReadyForExport)
         {
             var syncHistoryObject = OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, syncHistoryID);
 
@@ -175,29 +202,30 @@ namespace Rio.API.Services
                 return;
             }
 
-            var openETRequestURL =
-                $"{rioConfiguration.OpenETGoogleBucketBaseURL}/{syncHistoryObject.GoogleBucketFileSuffixForRetrieval}.tar.gz";
+            if (String.IsNullOrWhiteSpace(syncHistoryObject.GoogleBucketFileRetrievalURL))
+            {
+                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed);
+                //We are somehow storing sync histories without file retrieval urls, this is not good
+                throw new Exception(
+                    $"OpenETSyncHistory record:{syncHistoryObject.OpenETSyncHistoryID} was saved without a file retrieval URL but we attempted to update with it. Check integration!");
+            }
+
+            if (!filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
+            {
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(rioDbContext, syncHistoryObject);
+                return;
+            }
 
             var httpClient = new HttpClient
             {
                 Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
             };
 
-            var response = httpClient.GetAsync(openETRequestURL).Result;
+            var response = httpClient.GetAsync(syncHistoryObject.GoogleBucketFileRetrievalURL).Result;
 
             if (!response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
-                {
-                    OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
-                        OpenETSyncResultTypeEnum.Failed);
-                    //Our API Key is bad
-                    throw new Exception("OpenET API Key has expired");
-                }
-                var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistoryObject.CreateDate).Hours;
-
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 2 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
-
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(rioDbContext, syncHistoryObject);
                 return;
             }
 
@@ -208,7 +236,7 @@ namespace Rio.API.Services
                 TarEntry entry;
                 while ((entry = tarInputStream.GetNextEntry()) != null)
                 {
-                    if (entry.Name == syncHistoryObject.GoogleBucketFileSuffixForRetrieval + ".csv")
+                    if (entry.Name == syncHistoryObject.GoogleBucketFileRetrievalURL.Split('/').Last().Replace(".tar.gz", ".csv"))
                     {
                         tarInputStream.CopyEntryContents(fileContents);
                     }
@@ -308,7 +336,7 @@ namespace Rio.API.Services
         {
             Map(m => m.ParcelNumber).Name(parcelNumberColumnName);
             Map(m => m.Date).Name("time");
-            Map(m => m.EvapotranspirationRate).Name("mean");
+            Map(m => m.EvapotranspirationRate).Name("et_mean");
         }
     }
 
