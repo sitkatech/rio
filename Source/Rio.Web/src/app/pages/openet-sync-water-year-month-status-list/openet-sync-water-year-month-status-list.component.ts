@@ -38,6 +38,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   public mostRecentSyncHistoryDtos: Array<OpenETSyncHistoryDto>;
   public isOpenETAPIKeyValid: boolean;
   public loadingPage: boolean = true;
+  public syncsInProgress: OpenETSyncHistoryDto[];
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -68,6 +69,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
         this.isPerformingAction = false;
         this.waterYearMonthDtos = waterYearMonths;
         this.mostRecentSyncHistoryDtos = abbreviatedWaterYearSyncHistories;
+        this.syncsInProgress = this.mostRecentSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
       });
   }
 
@@ -116,15 +118,6 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   public showActionButtonsForWaterYearMonth(waterYearMonth: WaterYearMonthDto): boolean {
     var currentDate = new Date();
     return (new Date(waterYearMonth.WaterYear.Year, waterYearMonth.Month - 1) <= new Date(currentDate.getFullYear(), currentDate.getMonth())) && waterYearMonth.FinalizeDate == null;
-  }
-
-  public showFinalizeButton(waterYearMonth: WaterYearMonthDto): boolean {
-    var currentDate = new Date();
-    if (new Date(waterYearMonth.WaterYear.Year, waterYearMonth.Month - 1) >= new Date(currentDate.getFullYear(), currentDate.getMonth())) {
-      return false;
-    }
-
-    return waterYearMonth.FinalizeDate == null;
   }
 
   public setSelectedWaterYearMonthAndLaunchModal(modalContent: any, waterYearMonth: WaterYearMonthDto) {
@@ -188,18 +181,16 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
     })
   }
 
+  public syncInProgressForWaterYearMonth(waterYearMonthID : number): boolean {
+    return this.syncsInProgress.length > 0 && this.syncsInProgress.some(x => x.WaterYearMonth.WaterYearMonthID == waterYearMonthID);
+  }
+
   public getInProgressDates(): string {
-    if (!this.mostRecentSyncHistoryDtos) {
+    if (this.syncsInProgress.length == 0) {
       return "";
     }
 
-    let allInProgressOperations = this.mostRecentSyncHistoryDtos.filter(x => x.OpenETSyncResultType.OpenETSyncResultTypeID == OpenETSyncResultTypeEnum.InProgress);
-
-    if (allInProgressOperations.length == 0) {
-      return "";
-    }
-
-    var allYearsInProgressUniqueInString = allInProgressOperations.sort((x, y) => {
+    var allYearsInProgressUniqueInString = this.syncsInProgress.sort((x, y) => {
       //this should technically be an error case, we should never have two updates for the same month running at the same time
       if (x.WaterYearMonth.WaterYear.Year == y.WaterYearMonth.WaterYear.Year && x.WaterYearMonth.Month == y.WaterYearMonth.Month) {
         return 0;

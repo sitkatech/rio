@@ -33,7 +33,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync)
+            if (!_rioConfiguration.AllowOpenETSync || !OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger))
             {
                 return;
             }
@@ -42,11 +42,11 @@ namespace Rio.API
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
-                var filesReadyForExport = OpenETGoogleBucketHelpers.GetAllFilesReadyForExport(_rioConfiguration);
+                var filesReadyForExport = OpenETGoogleBucketHelpers.GetAllFilesReadyForExport(_rioConfiguration, _logger);
                 inProgressSyncs.ForEach(x =>
                 {
                     OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext,
-                            _rioConfiguration, x.OpenETSyncHistoryID, filesReadyForExport);
+                            _rioConfiguration, x.OpenETSyncHistoryID, filesReadyForExport, _logger);
                 });
             }
 

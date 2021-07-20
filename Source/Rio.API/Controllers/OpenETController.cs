@@ -22,25 +22,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<bool> IsAPIKeyValid()
         {
-            var httpClient = OpenETGoogleBucketHelpers.GetOpenETClientWithAuthorization(_rioConfiguration.OpenETAPIKey);
-            var openETRequestURL = $"{_rioConfiguration.OpenETAPIBaseUrl}/home/key_expiration";
-            var response = httpClient.GetAsync(openETRequestURL).Result;
-
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogCritical("OpenET API Key is invalid");
-                return false;
-            }
-
-            var responseObject = JsonConvert.DeserializeObject<OpenETTokenExpirationDate>(response.Content.ReadAsStringAsync().Result);
-
-            if (responseObject == null || responseObject.ExpirationDate < DateTime.UtcNow)
-            {
-                _logger.LogCritical("OpenET API Key is invalid or expired");
-                return false;
-            }
-
-            return true;
+            return Ok(OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger));
         }
 
         public class OpenETTokenExpirationDate
@@ -54,7 +36,7 @@ namespace Rio.API.Controllers
         [ContentManageFeature]
         public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYearMonthID)
         {
-            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYearMonthID);
+            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYearMonthID, _logger);
             if (!triggerResponse.IsSuccessStatusCode)
             {
                 var ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);

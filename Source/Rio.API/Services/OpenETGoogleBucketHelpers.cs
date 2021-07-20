@@ -19,17 +19,21 @@ using ICSharpCode.SharpZipLib.Tar;
 using Microsoft.ApplicationInsights.AspNetCore.TelemetryInitializers;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Rio.API.Controllers;
+using Rio.API.Services.Telemetry;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
+using Serilog.Core;
 
 namespace Rio.API.Services
 {
     public static class OpenETGoogleBucketHelpers
     {
 
-        public static bool RasterUpdatedSinceMinimumLastUpdatedDate(RioConfiguration rioConfiguration,
-            RioDbContext rioDbContext, int month, int year, OpenETSyncHistoryDto newSyncHistory)
+        public static bool RasterUpdatedSinceMinimumLastUpdatedDate<T>(RioConfiguration rioConfiguration,
+            RioDbContext rioDbContext, int month, int year, OpenETSyncHistoryDto newSyncHistory, ILogger<T> logger)
         {
             var top = rioConfiguration.OpenETRasterMetadataBoundingBoxTop;
             var bottom = rioConfiguration.OpenETRasterMetadataBoundingBoxBottom;
@@ -39,44 +43,62 @@ namespace Rio.API.Services
                 $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterMetadataRoute}?geometry={top},{left},{top},{right},{bottom},{right},{bottom},{left}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
 
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
-
-            var response = httpClient.GetAsync(openETRequestURL).Result;
-
-            //If we don't get a good response, let's just say that there needs to be an update to cover our bases
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return true;
-            }
 
-            var responseObject = JsonConvert.DeserializeObject<RasterMetadataDateIngested>(response.Content.ReadAsStringAsync().Result);
+                var response = httpClient.GetAsync(openETRequestURL).Result;
 
-            if (string.IsNullOrEmpty(responseObject.DateIngested) ||
-                !DateTime.TryParse(responseObject.DateIngested, out DateTime responseDate))
-            {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.DataNotAvailable);
+                var body = response.Content.ReadAsStringAsync().Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                        OpenETSyncResultTypeEnum.Failed, body);
+                   throw new Exception($"Call to {openETRequestURL} was unsuccessful. Status Code: {response.StatusCode} Message: {body}");
+                }
+
+                var responseObject =
+                    JsonConvert.DeserializeObject<RasterMetadataDateIngested>(body);
+
+                if (string.IsNullOrEmpty(responseObject.DateIngested) ||
+                    !DateTime.TryParse(responseObject.DateIngested, out DateTime responseDate))
+                {
+                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                        OpenETSyncResultTypeEnum.DataNotAvailable);
+                    return false;
+                }
+
+                var openETSyncHistoriesThatHaventFailed = rioDbContext.OpenETSyncHistory
+                    .Include(x => x.WaterYearMonth)
+                    .ThenInclude(x => x.WaterYear)
+                    .Where(x => x.WaterYearMonth.WaterYear.Year == year && x.WaterYearMonth.Month == month &&
+                                (x.OpenETSyncResultTypeID != (int) OpenETSyncResultTypeEnum.Failed) &&
+                                x.OpenETSyncHistoryID != newSyncHistory.OpenETSyncHistoryID);
+
+                if (!openETSyncHistoriesThatHaventFailed.Any())
+                {
+                    return true;
+                }
+
+                var mostRecentSyncHistory =
+                    openETSyncHistoriesThatHaventFailed?.OrderByDescending(x => x.UpdateDate).First();
+
+                if (responseDate > mostRecentSyncHistory.UpdateDate)
+                {
+                    return true;
+                }
+
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.NoNewData);
                 return false;
             }
-
-            var openETSyncHistoriesThatHaventFailed = rioDbContext.OpenETSyncHistory
-                .Include(x => x.WaterYearMonth)
-                .ThenInclude(x => x.WaterYear)
-                .Where(x => x.WaterYearMonth.WaterYear.Year == year && x.WaterYearMonth.Month == month &&
-                            (x.OpenETSyncResultTypeID != (int)OpenETSyncResultTypeEnum.Failed) && x.OpenETSyncHistoryID != newSyncHistory.OpenETSyncHistoryID);
-
-            if (!openETSyncHistoriesThatHaventFailed.Any())
+            catch (Exception ex)
             {
-                return true;
+                TelemetryHelper.LogCaughtException(logger, LogLevel.Critical, ex, "Error when attempting to check raster metadata date ingested.");
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.Failed, ex.Message);
+                return false;
             }
-
-            var mostRecentSyncHistory = openETSyncHistoriesThatHaventFailed?.OrderByDescending(x => x.UpdateDate).First();
-
-            if (responseDate > mostRecentSyncHistory.UpdateDate)
-            {
-                return true;
-            }
-
-            OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.NoNewData);
-            return false;
         }
 
         public class RasterMetadataDateIngested
@@ -85,24 +107,34 @@ namespace Rio.API.Services
             public string DateIngested { get; set; }
         }
 
-        public static string[] GetAllFilesReadyForExport(RioConfiguration rioConfiguration)
+        public static string[] GetAllFilesReadyForExport<T>(RioConfiguration rioConfiguration, ILogger<T> logger)
         {
             var openETRequestURL =
                 $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETAllFilesReadyForExportRoute}";
 
             var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
-            var response = httpClient.GetAsync(openETRequestURL).Result;
-
-            var body = response.Content.ReadAsStringAsync().Result;
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                throw new Exception($"Call to {rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETAllFilesReadyForExportRoute} was unsuccessful. Status code: ${response.StatusCode} Message: {body}");
-            }
+                var response = httpClient.GetAsync(openETRequestURL).Result;
 
-            var responseObject = JsonConvert.DeserializeObject<ExportAllFilesResponse>(response.Content.ReadAsStringAsync().Result);
-            return responseObject.TimeseriesFilesReadyForExport;
+                var body = response.Content.ReadAsStringAsync().Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(
+                        $"Call to {openETRequestURL} was unsuccessful. Status code: ${response.StatusCode} Message: {body}");
+                }
+
+                var responseObject =
+                    JsonConvert.DeserializeObject<ExportAllFilesResponse>(body);
+                return responseObject.TimeseriesFilesReadyForExport;
+            }
+            catch (Exception ex)
+            {
+                TelemetryHelper.LogCaughtException(logger, LogLevel.Critical, ex, "Error when attempting to get all files that are ready for export.");
+                return null;
+            }
         }
 
         public class ExportAllFilesResponse
@@ -112,8 +144,8 @@ namespace Rio.API.Services
         }
 
 
-        public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh(RioConfiguration rioConfiguration,
-            RioDbContext rioDbContext, int waterYearMonthID)
+        public static HttpResponseMessage TriggerOpenETGoogleBucketRefresh<T>(RioConfiguration rioConfiguration,
+            RioDbContext rioDbContext, int waterYearMonthID, ILogger<T> _logger)
         {
             if (!rioConfiguration.AllowOpenETSync)
             {
@@ -121,6 +153,16 @@ namespace Rio.API.Services
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Content = new StringContent("Syncing with OpenET is not enabled at this time")
+                };
+            }
+
+            if (!IsOpenETAPIKeyValid(rioConfiguration, _logger))
+            {
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.PreconditionFailed,
+                    Content = new StringContent(
+                        "OpenET API Key is invalid or expired. Support has been notified and will work to remedy the situation shortly")
                 };
             }
 
@@ -151,28 +193,53 @@ namespace Rio.API.Services
 
             var newSyncHistory = OpenETSyncHistory.New(rioDbContext, waterYearMonthID);
 
-            if (!RasterUpdatedSinceMinimumLastUpdatedDate(rioConfiguration, rioDbContext, month, year, newSyncHistory))
+            if (!RasterUpdatedSinceMinimumLastUpdatedDate(rioConfiguration, rioDbContext, month, year,
+                newSyncHistory, _logger))
             {
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.UnprocessableEntity,
-                    Content = new StringContent($"The request was successful, however the sync for {monthNameToDisplay} {year} will not be completed for the following reason: {OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, newSyncHistory.OpenETSyncHistoryID).OpenETSyncResultType.OpenETSyncResultTypeDisplayName}")
+                    Content = new StringContent(
+                        $"The sync for {monthNameToDisplay} {year} will not be completed for the following reason: {newSyncHistory.OpenETSyncResultType.OpenETSyncResultTypeDisplayName}.{(newSyncHistory.OpenETSyncResultType.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.Failed ? " Error Message:" + newSyncHistory.ErrorMessage : "")}")
                 };
             }
 
             var openETRequestURL =
-                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=in&ref_et_source=cimis&cloud_output_location=openet_raster_api_storage&filename_suffix={rioConfiguration.LeadOrganizationShortName + "_" + month + "_" + year + "_public"}&include_columns={rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
+                $"{rioConfiguration.OpenETAPIBaseUrl}/{rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=english&output_date_format=standard&ref_et_source=cimis&filename_suffix={rioConfiguration.LeadOrganizationShortName + "_" + month + "_" + year + "_public"}&include_columns={rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
 
-            var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
+            try
+            {
+                var httpClient = GetOpenETClientWithAuthorization(rioConfiguration.OpenETAPIKey);
 
-            var response = httpClient.GetAsync(openETRequestURL).Result;
+                var response = httpClient.GetAsync(openETRequestURL).Result;
 
-            var responseObject = JsonConvert.DeserializeObject<TimeseriesMultipolygonSuccessfulResponse>(response.Content.ReadAsStringAsync().Result);
+                var body = response.Content.ReadAsStringAsync().Result;
 
-            OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                    response.IsSuccessStatusCode ? OpenETSyncResultTypeEnum.InProgress : OpenETSyncResultTypeEnum.Failed, responseObject.FileRetrievalURL);
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Call to {openETRequestURL} failed. Status Code: {response.StatusCode} Message: {body}");
+                }
 
-            return response;
+                var responseObject =
+                    JsonConvert.DeserializeObject<TimeseriesMultipolygonSuccessfulResponse>(body);
+
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.InProgress, null, responseObject.FileRetrievalURL);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.Failed, ex.Message);
+                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent(
+                        $"There was an error when attempting to create the request. Message: {ex.Message}")
+                };
+            }
         }
 
         public class TimeseriesMultipolygonSuccessfulResponse
@@ -187,11 +254,11 @@ namespace Rio.API.Services
 
             //One very unfortunate thing about OpenET's design is that their forced to create a queue of requests and can't process multiple requests at once.
             //That, combined with no (at this moment 7/14/21) means of knowing whether or not
-            OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistory.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 24 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
+            OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistory.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 24 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
         }
 
-        public static void UpdateParcelMonthlyEvapotranspirationWithETData(RioDbContext rioDbContext,
-            RioConfiguration rioConfiguration, int syncHistoryID, string[] filesReadyForExport)
+        public static void UpdateParcelMonthlyEvapotranspirationWithETData<T>(RioDbContext rioDbContext,
+            RioConfiguration rioConfiguration, int syncHistoryID, string[] filesReadyForExport, ILogger<T> logger)
         {
             var syncHistoryObject = OpenETSyncHistory.GetByOpenETSyncHistoryID(rioDbContext, syncHistoryID);
 
@@ -204,10 +271,11 @@ namespace Rio.API.Services
 
             if (String.IsNullOrWhiteSpace(syncHistoryObject.GoogleBucketFileRetrievalURL))
             {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed);
                 //We are somehow storing sync histories without file retrieval urls, this is not good
-                throw new Exception(
-                    $"OpenETSyncHistory record:{syncHistoryObject.OpenETSyncHistoryID} was saved without a file retrieval URL but we attempted to update with it. Check integration!");
+                TelemetryHelper.LogCaughtException(logger, LogLevel.Critical, new Exception(
+                    $"OpenETSyncHistory record:{syncHistoryObject.OpenETSyncHistoryID} was saved without a file retrieval URL but we attempted to update with it. Check integration!"), "Error communicating with OpenET API.");
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed, "Record was saved with a Google Bucket File Retrieval URL. Support has been notified.");
+                return;
             }
 
             if (!filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
@@ -229,49 +297,49 @@ namespace Rio.API.Services
                 return;
             }
 
-            var fileContents = new MemoryStream();
-            var gzipStream = new GZipInputStream(response.Content.ReadAsStreamAsync().Result);
-            using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
-            {
-                TarEntry entry;
-                while ((entry = tarInputStream.GetNextEntry()) != null)
-                {
-                    if (entry.Name == syncHistoryObject.GoogleBucketFileRetrievalURL.Split('/').Last().Replace(".tar.gz", ".csv"))
-                    {
-                        tarInputStream.CopyEntryContents(fileContents);
-                    }
-                }
-            }
-
-            fileContents.Position = 0;
-
-            List<OpenETGoogleBucketResponseEvapotranspirationData> distinctRecords;
-            using (var reader = new StreamReader(fileContents))
-            {
-                var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
-                var finalizedWaterYearMonths = rioDbContext.WaterYearMonth
-                    .Where(x => x.FinalizeDate.HasValue)
-                    .Select(x => new DateTime(x.WaterYear.Year, x.Month, 1))
-                    .ToList();
-                csvr.Configuration.RegisterClassMap(
-                    new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
-                //Sometimes the results will produce exact duplicates, so we need to filter those out
-                //Also one final check to make sure we don't get any finalized dates
-                distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYearMonths.Contains(x.Date))
-                    .Distinct(new DistinctOpenETCSVFormatComparer())
-                    .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
-                    .ToList();
-            }
-
-            //This shouldn't happen, but if we enter here we've attempted to grab data for a water year that was finalized
-            if (!distinctRecords.Any())
-            {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.NoNewData);
-                return;
-            }
-
             try
             {
+                var fileContents = new MemoryStream();
+                var gzipStream = new GZipInputStream(response.Content.ReadAsStreamAsync().Result);
+                using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
+                {
+                    TarEntry entry;
+                    while ((entry = tarInputStream.GetNextEntry()) != null)
+                    {
+                        if (entry.Name == syncHistoryObject.GoogleBucketFileRetrievalURL.Split('/').Last().Replace(".tar.gz", ".csv"))
+                        {
+                            tarInputStream.CopyEntryContents(fileContents);
+                        }
+                    }
+                }
+
+                fileContents.Position = 0;
+
+                List<OpenETGoogleBucketResponseEvapotranspirationData> distinctRecords;
+                using (var reader = new StreamReader(fileContents))
+                {
+                    var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
+                    var finalizedWaterYearMonths = rioDbContext.WaterYearMonth
+                        .Where(x => x.FinalizeDate.HasValue)
+                        .Select(x => new DateTime(x.WaterYear.Year, x.Month, 1))
+                        .ToList();
+                    csvr.Configuration.RegisterClassMap(
+                        new OpenETCSVFormatMap(rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
+                    //Sometimes the results will produce exact duplicates, so we need to filter those out
+                    //Also one final check to make sure we don't get any finalized dates
+                    distinctRecords = csvr.GetRecords<OpenETCSVFormat>().Where(x => !finalizedWaterYearMonths.Contains(x.Date))
+                        .Distinct(new DistinctOpenETCSVFormatComparer())
+                        .Select(x => x.AsOpenETGoogleBucketResponseEvapotranspirationData())
+                        .ToList();
+                }
+
+                //This shouldn't happen, but if we enter here we've attempted to grab data for a water year that was finalized
+                if (!distinctRecords.Any())
+                {
+                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.NoNewData);
+                    return;
+                }
+
                 rioDbContext.Database.ExecuteSqlRaw(
                     "TRUNCATE TABLE dbo.OpenETGoogleBucketResponseEvapotranspirationData");
                 DataTable table = new DataTable();
@@ -300,13 +368,14 @@ namespace Rio.API.Services
 
                 rioDbContext.Database.ExecuteSqlRaw("EXECUTE dbo.pUpdateParcelMonthlyEvapotranspirationWithETData");
 
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Succeeded);
             }
             catch (Exception ex)
             {
-                OpenETSyncHistory.UpdateSyncResultByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
-                    OpenETSyncResultTypeEnum.Failed);
+                TelemetryHelper.LogCaughtException(logger, LogLevel.Critical, ex, "Error parsing file from OpenET or getting records into database.");
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.Failed, ex.Message);
             }
         }
 
@@ -320,6 +389,39 @@ namespace Rio.API.Services
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(apiKey);
 
             return httpClient;
+        }
+
+        public static bool IsOpenETAPIKeyValid<T>(RioConfiguration _rioConfiguration, ILogger<T> logger)
+        {
+            var httpClient = OpenETGoogleBucketHelpers.GetOpenETClientWithAuthorization(_rioConfiguration.OpenETAPIKey);
+            var openETRequestURL = $"{_rioConfiguration.OpenETAPIBaseUrl}/home/key_expiration";
+            try
+            {
+                var response = httpClient.GetAsync(openETRequestURL).Result;
+
+                var body = response.Content.ReadAsStringAsync().Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(
+                        $"Call to {openETRequestURL} was unsuccessful. Status Code: {response.StatusCode} Message: {body}.");
+                }
+
+                var responseObject =
+                    JsonConvert.DeserializeObject<OpenETController.OpenETTokenExpirationDate>(body);
+
+                if (responseObject == null || responseObject.ExpirationDate < DateTime.UtcNow)
+                {
+                    throw new Exception($"Deserializing OpenET API Key validation response failed, or the key is expired. Expiration Date: {(responseObject?.ExpirationDate != null ? responseObject.ExpirationDate.ToString(CultureInfo.InvariantCulture) : "Not provided")}");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                TelemetryHelper.LogCaughtException(logger, LogLevel.Critical, ex, "Error validating OpenET API Key.");
+                return false;
+            }
         }
     }
 

@@ -16,7 +16,8 @@ namespace Rio.EFModels.Entities
                 WaterYearMonth = openETSyncHistory.WaterYearMonth.AsDto(),
                 CreateDate = openETSyncHistory.CreateDate,
                 UpdateDate = openETSyncHistory.UpdateDate,
-                GoogleBucketFileRetrievalURL = openETSyncHistory.GoogleBucketFileRetrievalURL
+                GoogleBucketFileRetrievalURL = openETSyncHistory.GoogleBucketFileRetrievalURL,
+                ErrorMessage = openETSyncHistory.ErrorMessage
             };
         }
     }

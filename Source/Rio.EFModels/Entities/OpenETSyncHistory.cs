@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
             
             var openETSyncHistoryToAdd = new OpenETSyncHistory()
             {
-                OpenETSyncResultTypeID = (int)OpenETSyncResultTypeEnum.InProgress,
+                OpenETSyncResultTypeID = (int)OpenETSyncResultTypeEnum.Created,
                 WaterYearMonthID = waterYearMonthID,
                 CreateDate = DateTime.UtcNow,
                 UpdateDate = DateTime.UtcNow
@@ -35,30 +35,34 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.WaterYear)
                 .SingleOrDefault(x => x.OpenETSyncHistoryID == openETSyncHistoryID).AsDto();
         }
-
-        public static OpenETSyncHistoryDto UpdateSyncResultByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType)
+        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType)
         {
-            var openETSyncHistory =
-                rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
-
-            openETSyncHistory.UpdateDate = DateTime.UtcNow;
-            openETSyncHistory.OpenETSyncResultTypeID = (int) resultType;
-
-            rioDbContext.SaveChanges();
-            rioDbContext.Entry(openETSyncHistory).Reload();
-
-            return GetByOpenETSyncHistoryID(rioDbContext, openETSyncHistory.OpenETSyncHistoryID);
+            return UpdateOpenETSyncEntityByID(rioDbContext, openETSyncHistoryID, resultType, null);
         }
 
-        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string googleBucketFileRetrievalURL)
+        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string errorMessage)
+        {
+            return UpdateOpenETSyncEntityByID(rioDbContext, openETSyncHistoryID, resultType, errorMessage, null);
+        }
+
+        public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string errorMessage, string googleBucketFileRetrievalURL)
         {
             var openETSyncHistory =
                 rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
 
             openETSyncHistory.UpdateDate = DateTime.UtcNow;
             openETSyncHistory.OpenETSyncResultTypeID = (int)resultType;
-            openETSyncHistory.GoogleBucketFileRetrievalURL = googleBucketFileRetrievalURL;
+            if (resultType == OpenETSyncResultTypeEnum.Failed)
+            {
+                openETSyncHistory.ErrorMessage = errorMessage;
+            }
 
+            //Once this is set it should never change
+            if (String.IsNullOrWhiteSpace(openETSyncHistory.GoogleBucketFileRetrievalURL))
+            {
+                openETSyncHistory.GoogleBucketFileRetrievalURL = googleBucketFileRetrievalURL;
+            }
+            
             rioDbContext.SaveChanges();
             rioDbContext.Entry(openETSyncHistory).Reload();
 

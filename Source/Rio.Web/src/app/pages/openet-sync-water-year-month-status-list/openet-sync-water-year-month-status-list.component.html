@@ -60,16 +60,13 @@
                                         <td class="align-middle">{{getDataUpdateStatusForWaterYearMonth(waterYearMonth)}}</td>
                                         <td class="align-middle">{{waterYearMonth.FinalizeDate | date:'MM/dd/yyyy hh:mm'}}</td>
                                         <td class="align-middle">
-                                            <ng-container *ngIf="showActionButtonsForWaterYearMonth(waterYearMonth)">
                                                 <button class="btn btn-rio mr-2"
                                                     (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearMonthModalContent, waterYearMonth)"
-                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator()">Sync
+                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator() || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Sync
                                                     Now</button>
                                                 <button class="btn btn-rio"
-                                                    *ngIf="showFinalizeButton(waterYearMonth)"
                                                     (click)="setSelectedWaterYearMonthAndLaunchModal(finalizeWaterYearMonthModalContent, waterYearMonth)"
-                                                    [disabled]="!isCurrentUserAdministrator()">Finalize</button>
-                                            </ng-container>
+                                                    [disabled]="!isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Finalize</button>
                                         </td>
                                     </tr>
                                 </tbody>

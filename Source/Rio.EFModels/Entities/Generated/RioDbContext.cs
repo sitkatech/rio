@@ -329,6 +329,8 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<OpenETSyncHistory>(entity =>
             {
+                entity.Property(e => e.ErrorMessage).IsUnicode(false);
+
                 entity.Property(e => e.GoogleBucketFileRetrievalURL).IsUnicode(false);
 
                 entity.HasOne(d => d.OpenETSyncResultType)

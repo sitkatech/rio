@@ -33,7 +33,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync)
+            if (!_rioConfiguration.AllowOpenETSync || !OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger))
             {
                 return;
             }
@@ -46,7 +46,7 @@ namespace Rio.API
 
             nonFinalizedWaterYearMonths.ToList().ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearMonthID);
+                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearMonthID, _logger);
                 });
         }
     }

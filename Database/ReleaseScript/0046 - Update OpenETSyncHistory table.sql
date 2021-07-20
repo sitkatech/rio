@@ -17,5 +17,6 @@ CREATE TABLE dbo.OpenETSyncHistory(
 	OpenETSyncResultTypeID int NOT NULL constraint FK_OpenETSyncHistory_OpenETSyncResultType_OpenETSyncResultTypeID foreign key references dbo.OpenETSyncResultType (OpenETSyncResultTypeID),
 	CreateDate datetime NOT NULL,
 	UpdateDate datetime NOT NULL,
-	GoogleBucketFileRetrievalURL varchar(200) NULL
+	GoogleBucketFileRetrievalURL varchar(200) NULL,
+	ErrorMessage varchar(max) NULL
 )
