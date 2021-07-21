@@ -23,11 +23,6 @@ export class WaterYearMonthService {
     return this.apiService.getFromApi(route);
   }
 
-  // getNonFinalizedWaterYears(): Observable<Array<WaterYearDto>> {
-  //   let route = `/water-years/non-finalized`;
-  //   return this.apiService.getFromApi(route);
-  // }
-
   public getMostRecentSyncHistoryForWaterYearMonthsThatHaveBeenUpdated(): Observable<Array<OpenETSyncHistoryDto>> {
     let route = `/water-year-months/most-recent-sync-history`;
     return this.apiService.getFromApi(route);

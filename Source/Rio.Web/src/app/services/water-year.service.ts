@@ -14,11 +14,6 @@ export class WaterYearService {
     return this.apiService.getFromApi(route);
   }
 
-  getNonFinalizedWaterYears(): Observable<Array<WaterYearDto>> {
-    let route = `/water-years/non-finalized`;
-    return this.apiService.getFromApi(route);
-  }
-
   getDefaultWaterYearToDisplay(): Observable<WaterYearDto> {
     let route = `/water-years/default`;
     return this.apiService.getFromApi(route);

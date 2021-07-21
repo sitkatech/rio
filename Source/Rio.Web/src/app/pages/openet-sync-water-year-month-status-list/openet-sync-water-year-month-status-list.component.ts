@@ -9,12 +9,12 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { OpenETSyncHistoryDto } from 'src/app/shared/models/openet-sync-history-dto';
-import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/openet-sync-result-type-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 import { WaterYearMonthService } from 'src/app/services/water-year-month.service';
 import { WaterYearMonthDto } from 'src/app/shared/models/water-year-month-dto';
 import { finalize } from 'rxjs/operators';
+import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/enums/open-et-sync-result-type-enum';
 
 @Component({
   selector: 'rio-openet-sync-water-year-month-status-list',

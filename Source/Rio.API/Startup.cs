@@ -198,10 +198,10 @@ namespace Rio.API
                 .ReadFrom.Configuration(Configuration)
                 .WriteTo.Console(outputTemplate: outputTemplate);
 
-            //if (!_environment.IsDevelopment())
-            //{
+            if (!_environment.IsDevelopment())
+            {
                 serilogLogger.WriteTo.ApplicationInsights(_telemetryClient, new TraceTelemetryConverter());
-            //}
+            }
 
             return serilogLogger.CreateLogger();
         }
