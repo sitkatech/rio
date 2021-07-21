@@ -105,7 +105,8 @@ namespace Rio.API
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
             services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
-
+            services.AddScoped(s => new OpenETService(s.GetService<ILogger<OpenETService>>(), rioConfiguration,
+                s.GetService<RioDbContext>()));
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

@@ -46,11 +46,11 @@
                             <table class="table table-striped table-condensed">
                                 <thead>
                                     <tr>
-                                        <th>Year</th>
-                                        <th>Month</th>
-                                        <th>Last Updated</th>
-                                        <th>Finalized Date</th>
-                                        <th>Actions</th>
+                                        <th class="col-sm-1">Year</th>
+                                        <th class="col-sm-1">Month</th>
+                                        <th class="col-sm-5">Last Updated</th>
+                                        <th class="col-sm-2">Finalized Date</th>
+                                        <th class="col-sm-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,11 +58,11 @@
                                         <td class="align-middle">{{waterYearMonth.WaterYear.Year}}</td>
                                         <td class="align-middle">{{waterYearMonth.Month}}</td>
                                         <td class="align-middle">{{getDataUpdateStatusForWaterYearMonth(waterYearMonth)}}</td>
-                                        <td class="align-middle">{{waterYearMonth.FinalizeDate | date:'MM/dd/yyyy hh:mm'}}</td>
+                                        <td class="align-middle">{{waterYearMonth.FinalizeDate | date:dateFormatString}}</td>
                                         <td class="align-middle">
                                                 <button class="btn btn-rio mr-2"
                                                     (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearMonthModalContent, waterYearMonth)"
-                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator() || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Sync
+                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Sync
                                                     Now</button>
                                                 <button class="btn btn-rio"
                                                     (click)="setSelectedWaterYearMonthAndLaunchModal(finalizeWaterYearMonthModalContent, waterYearMonth)"

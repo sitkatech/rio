@@ -14,15 +14,18 @@ namespace Rio.API.Controllers
     [ApiController]
     public class OpenETController : SitkaController<OpenETController>
     {
-        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
+        private OpenETService _openETService;
+
+        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, OpenETService openETService) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
+            _openETService = openETService;
         }
 
         [HttpGet("openet/is-api-key-valid")]
         [ManagerDashboardFeature]
         public ActionResult<bool> IsAPIKeyValid()
         {
-            return Ok(OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger));
+            return Ok(_openETService.IsOpenETAPIKeyValid());
         }
 
         public class OpenETTokenExpirationDate
@@ -36,7 +39,7 @@ namespace Rio.API.Controllers
         [ContentManageFeature]
         public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYearMonthID)
         {
-            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYearMonthID, _logger);
+            var triggerResponse = _openETService.TriggerOpenETGoogleBucketRefresh(waterYearMonthID);
             if (!triggerResponse.IsSuccessStatusCode)
             {
                 var ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);

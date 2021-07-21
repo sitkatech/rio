@@ -31,7 +31,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   public inProgressSyncDtos: Array<OpenETSyncHistoryDto>;
   public isPerformingAction: boolean = false;
 
-  public dateFormatString: string = "M/dd/yyyy hh:mm";
+  public dateFormatString: string = "M/dd/yyyy hh:mm a";
   public monthNameFormatter: any = new Intl.DateTimeFormat('en-us', { month: 'long' });
   public selectedWaterYearMonth: WaterYearMonthDto;
   public selectedWaterYearMonthName: string;

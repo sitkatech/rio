@@ -16,14 +16,16 @@ namespace Rio.API
     {
         private readonly RioConfiguration _rioConfiguration;
         private IBackgroundJobClient _backgroundJobClient;
+        private OpenETService _openETService;
 
         public OpenETTriggerBucketRefreshJob(ILogger<OpenETTriggerBucketRefreshJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, OpenETService openETService) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
             _backgroundJobClient = backgroundJobClient;
+            _openETService = openETService;
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
@@ -33,7 +35,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync || !OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger))
+            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
             {
                 return;
             }
@@ -46,7 +48,7 @@ namespace Rio.API
 
             nonFinalizedWaterYearMonths.ToList().ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearMonthID, _logger);
+                    _openETService.TriggerOpenETGoogleBucketRefresh(x.WaterYearMonthID);
                 });
         }
     }

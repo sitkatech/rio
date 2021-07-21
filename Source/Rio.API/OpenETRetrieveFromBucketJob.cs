@@ -17,13 +17,15 @@ namespace Rio.API
         IOpenETRetrieveFromBucketJob
     {
         private readonly RioConfiguration _rioConfiguration;
+        private OpenETService _openETService;
 
         public OpenETRetrieveFromBucketJob(ILogger<OpenETRetrieveFromBucketJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, OpenETService openETService) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
+            _openETService = openETService;
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
@@ -33,7 +35,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync || !OpenETGoogleBucketHelpers.IsOpenETAPIKeyValid(_rioConfiguration, _logger))
+            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
             {
                 return;
             }
@@ -42,11 +44,10 @@ namespace Rio.API
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
-                var filesReadyForExport = OpenETGoogleBucketHelpers.GetAllFilesReadyForExport(_rioConfiguration, _logger);
+                var filesReadyForExport = _openETService.GetAllFilesReadyForExport();
                 inProgressSyncs.ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext,
-                            _rioConfiguration, x.OpenETSyncHistoryID, filesReadyForExport, _logger);
+                    _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport);
                 });
             }
 
