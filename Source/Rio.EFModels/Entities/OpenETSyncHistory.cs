@@ -77,28 +77,5 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.WaterYear)
                 .OrderByDescending(x => x.CreateDate).Select(x => x.AsDto()).ToList();
         }
-
-        //public static WaterYearQuickOpenETHistoryDto GetQuickHistoryForWaterYear(RioDbContext dbContext, int waterYearID)
-        //{
-        //    var waterYear = Entities.WaterYear.GetByWaterYearID(dbContext, waterYearID);
-        //    var currentlySyncing = dbContext.OpenETSyncHistory.Any(x =>
-        //        x.WaterYearID == waterYearID &&
-        //        x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress);
-        //    var lastSuccessfulSyncDate = dbContext.OpenETSyncHistory
-        //        .Any(x => x.WaterYearID == waterYearID &&
-        //                  x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
-        //        ? dbContext.OpenETSyncHistory
-        //            .Where(x => x.WaterYearID == waterYearID &&
-        //                        x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Succeeded)
-        //            .OrderByDescending(x => x.UpdateDate).First().UpdateDate
-        //        : (DateTime?) null;
-
-        //    return new WaterYearQuickOpenETHistoryDto()
-        //    {
-        //        WaterYear = waterYear,
-        //        CurrentlySyncing = currentlySyncing,
-        //        LastSuccessfulSync = lastSuccessfulSyncDate
-        //    };
-        //}
     }
 }

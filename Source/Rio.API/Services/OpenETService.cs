@@ -30,6 +30,9 @@ namespace Rio.API.Services
         protected readonly RioConfiguration _rioConfiguration;
         protected readonly RioDbContext _rioDbContext;
 
+        private readonly string[] _rebuildingModelResultsErrorMessages =
+            {"Expecting value: line 1 column 1 (char 0)"};
+
         public OpenETService(ILogger<OpenETService> logger, RioConfiguration rioConfiguration, RioDbContext rioDbContext)
         {
             _logger = logger;
@@ -55,7 +58,25 @@ namespace Rio.API.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                   throw new OpenETException($"Call to {openETRequestURL} was unsuccessful. Status Code: {response.StatusCode} Message: {body}");
+                    //We want to deserialize this separately and not throw an error if it doesn't work.
+                    //We're more concerned about if there is a helpful message in the potentially returned object, and if there isn't just return the body and throw a full-fledged exception.
+                    var unsuccessfulObject =
+                        JsonConvert.DeserializeObject<RasterMetadataDateIngested>(body, new JsonSerializerSettings
+                        {
+                            Error = delegate(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+                            {
+                                args.ErrorContext.Handled = true;
+                            }
+                        });
+
+                    if (unsuccessfulObject != null && !String.IsNullOrWhiteSpace(unsuccessfulObject.Description) &&
+                        _rebuildingModelResultsErrorMessages.Contains(unsuccessfulObject.Description))
+                    {
+                        OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                            OpenETSyncResultTypeEnum.Failed, "OpenET is currently rebuilding collections that include this date. Please try again later.");
+                        return false;
+                    }
+                    throw new OpenETException($"Call to {openETRequestURL} was unsuccessful. Status Code: {response.StatusCode} Message: {body}");
                 }
 
                 var responseObject =
@@ -109,10 +130,22 @@ namespace Rio.API.Services
             }
         }
 
-        public class RasterMetadataDateIngested
+        public class RasterMetadataDateIngested : OpenETGeneralJsonResponse
         {
             [JsonProperty("date_ingested")]
             public string DateIngested { get; set; }
+        }
+
+        public class OpenETGeneralJsonResponse
+        {
+            [JsonProperty("ERROR")]
+            public string ErrorMessage { get; set; }
+            [JsonProperty("SOLUTION")]
+            public string SuggestedSolution { get; set; }
+            [JsonProperty("description")]
+            public string Description { get; set; }
+            [JsonProperty("type")]
+            public string ResponseType { get; set; }
         }
 
         public string[] GetAllFilesReadyForExport()

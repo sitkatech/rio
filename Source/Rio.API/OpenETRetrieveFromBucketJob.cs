@@ -50,6 +50,22 @@ namespace Rio.API
                     _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport);
                 });
             }
+            
+            //Fail any created syncs that have been in a created state for longer than 15 minutes
+            var createdSyncs = _rioDbContext.OpenETSyncHistory
+                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Created).ToList();
+            if (createdSyncs.Any())
+            {
+                createdSyncs.ForEach(x =>
+                {
+                    if (DateTime.UtcNow.Subtract(x.CreateDate).Minutes > 15)
+                    {
+                        OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, x.OpenETSyncHistoryID,
+                            OpenETSyncResultTypeEnum.Failed,
+                            "Request never exited the Created state. Please try again.");
+                    }
+                });
+            }
 
         }
     }
