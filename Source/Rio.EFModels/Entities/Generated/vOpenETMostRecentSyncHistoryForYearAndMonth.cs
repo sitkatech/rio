@@ -16,5 +16,6 @@ namespace Rio.EFModels.Entities
         public DateTime UpdateDate { get; set; }
         [StringLength(200)]
         public string GoogleBucketFileRetrievalURL { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

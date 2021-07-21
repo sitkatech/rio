@@ -54,8 +54,6 @@ namespace Rio.API.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
-                        OpenETSyncResultTypeEnum.Failed, body);
                    throw new OpenETException($"Call to {openETRequestURL} was unsuccessful. Status Code: {response.StatusCode} Message: {body}");
                 }
 
@@ -65,7 +63,7 @@ namespace Rio.API.Services
                 if (string.IsNullOrEmpty(responseObject.DateIngested) ||
                     !DateTime.TryParse(responseObject.DateIngested, out DateTime responseDate))
                 {
-                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                         OpenETSyncResultTypeEnum.DataNotAvailable);
                     return false;
                 }
@@ -90,14 +88,14 @@ namespace Rio.API.Services
                     return true;
                 }
 
-                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.NoNewData);
                 return false;
             }
             catch (Exception ex)
             {
                 TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error when attempting to check raster metadata date ingested.");
-                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, ex.Message);
                 return false;
             }
@@ -252,8 +250,8 @@ namespace Rio.API.Services
         {
             var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistory.CreateDate).Hours;
 
-            //One very unfortunate thing about OpenET's design is that their forced to create a queue of requests and can't process multiple requests at once.
-            //That, combined with no (at this moment 7/14/21) means of knowing whether or not
+            //One very unfortunate thing about OpenET's design is that they're forced to create a queue of requests and can't process multiple requests at once.
+            //That, combined with no (at this moment 7/14/21) means of knowing whether or not a run has completed or failed other than checking to see if the file is ready for export means we have to implement some kind of terminal state.
             OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistory.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 24 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
         }
 
@@ -287,7 +285,7 @@ namespace Rio.API.Services
             {
                 Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond)
             };
-
+            
             var response = httpClient.GetAsync(syncHistoryObject.GoogleBucketFileRetrievalURL).Result;
 
             if (!response.IsSuccessStatusCode)

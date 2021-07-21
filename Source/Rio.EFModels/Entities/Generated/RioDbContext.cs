@@ -867,6 +867,8 @@ namespace Rio.EFModels.Entities
 
                 entity.ToView("vOpenETMostRecentSyncHistoryForYearAndMonth");
 
+                entity.Property(e => e.ErrorMessage).IsUnicode(false);
+
                 entity.Property(e => e.GoogleBucketFileRetrievalURL).IsUnicode(false);
             });
 

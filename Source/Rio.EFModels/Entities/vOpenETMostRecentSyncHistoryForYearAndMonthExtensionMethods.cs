@@ -14,7 +14,8 @@ namespace Rio.EFModels.Entities
                 WaterYearMonth = vOpenETMostRecentSyncHistoryForYearAndMonth.WaterYearMonth.AsDto(),
                 CreateDate = vOpenETMostRecentSyncHistoryForYearAndMonth.CreateDate,
                 UpdateDate = vOpenETMostRecentSyncHistoryForYearAndMonth.UpdateDate,
-                GoogleBucketFileRetrievalURL = vOpenETMostRecentSyncHistoryForYearAndMonth.GoogleBucketFileRetrievalURL
+                GoogleBucketFileRetrievalURL = vOpenETMostRecentSyncHistoryForYearAndMonth.GoogleBucketFileRetrievalURL,
+                ErrorMessage = vOpenETMostRecentSyncHistoryForYearAndMonth.ErrorMessage
             };
         }
     }

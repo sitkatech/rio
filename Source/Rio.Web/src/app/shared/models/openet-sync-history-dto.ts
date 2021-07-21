@@ -8,6 +8,7 @@ export class OpenETSyncHistoryDto {
     WaterYearMonth: WaterYearMonthDto;
     CreateDate: Date;
     UpdateDate: Date;
+    ErrorMessage: string;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

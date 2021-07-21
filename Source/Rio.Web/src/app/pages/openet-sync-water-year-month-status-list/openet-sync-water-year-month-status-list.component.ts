@@ -95,13 +95,15 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
       case OpenETSyncResultTypeEnum.InProgress:
         return `OpenET query in progress, started on ${this.datePipe.transform(mostRecentSyncResult.CreateDate, this.dateFormatString)}`;
       case OpenETSyncResultTypeEnum.Failed:
-        return `Last OpenET query  failed on ${this.datePipe.transform(mostRecentSyncResult.CreateDate, this.dateFormatString)}. Error message: Put error message here`;
+        return `Last OpenET query failed on ${this.datePipe.transform(mostRecentSyncResult.CreateDate, this.dateFormatString)}. Error message: ${mostRecentSyncResult.ErrorMessage}`;
       case OpenETSyncResultTypeEnum.DataNotAvailable:
         return `${defaultOpeningStatement} No data available for this month`;
       case OpenETSyncResultTypeEnum.NoNewData:
         return `${defaultOpeningStatement} No updates found`;
       case OpenETSyncResultTypeEnum.Succeeded:
         return `${defaultOpeningStatement} Updated data was successfully imported`;
+      case OpenETSyncResultTypeEnum.Created:
+        return `${defaultOpeningStatement} Attempting to create OpenET query request`;
       default:
         return `Unrecognized result`;
     }

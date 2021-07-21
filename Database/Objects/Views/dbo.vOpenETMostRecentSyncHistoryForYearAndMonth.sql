@@ -5,7 +5,7 @@ go
 Create View dbo.vOpenETMostRecentSyncHistoryForYearAndMonth
 as
 
-select openetsh.OpenETSyncHistoryID, openetsh.WaterYearMonthID, openetsh.OpenETSyncResultTypeID, openetsh.CreateDate, openetsh.UpdateDate, openetsh.GoogleBucketFileRetrievalURL
+select openetsh.OpenETSyncHistoryID, openetsh.WaterYearMonthID, openetsh.OpenETSyncResultTypeID, openetsh.CreateDate, openetsh.UpdateDate, openetsh.GoogleBucketFileRetrievalURL, openetsh.ErrorMessage
 from dbo.OpenETSyncHistory openetsh
 join 
 (
