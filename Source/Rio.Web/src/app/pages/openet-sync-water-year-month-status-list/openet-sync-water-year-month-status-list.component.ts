@@ -64,7 +64,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   private refreshWaterYearMonthsAndOpenETSyncData() {
     this.isPerformingAction = true;
     forkJoin([
-      this.waterYearMonthService.getWaterYearMonths(),
+      this.waterYearMonthService.getWaterYearMonthsForCurrentDateOrEarlier(),
       this.waterYearMonthService.getMostRecentSyncHistoryForWaterYearMonthsThatHaveBeenUpdated()]).subscribe(([waterYearMonths, abbreviatedWaterYearSyncHistories]) => {
         this.isPerformingAction = false;
         this.waterYearMonthDtos = waterYearMonths;

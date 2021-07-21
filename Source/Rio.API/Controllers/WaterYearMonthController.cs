@@ -26,6 +26,14 @@ namespace Rio.API.Controllers
             return Ok(waterYearMonths);
         }
 
+        [HttpGet("water-year-months/current-date-or-earlier")]
+        [ParcelViewFeature]
+        public ActionResult<List<WaterYearMonthDto>> GetWaterYearMonthsForCurrentDateOrEarlier()
+        {
+            var waterYearMonths = WaterYearMonth.ListForCurrentDateOrEarlier(_dbContext);
+            return Ok(waterYearMonths);
+        }
+
         [HttpGet("water-year-months/most-recent-sync-history")]
         [ManagerDashboardFeature]
         public ActionResult<List<OpenETSyncHistoryDto>> GetMostRecentSyncHistoryForWaterYearMonthsThatHaveBeenUpdated()

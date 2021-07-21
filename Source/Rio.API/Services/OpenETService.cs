@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using ICSharpCode.SharpZipLib.GZip;
@@ -43,7 +44,7 @@ namespace Rio.API.Services
             var left = _rioConfiguration.OpenETRasterMetadataBoundingBoxLeft;
             var right = _rioConfiguration.OpenETRasterMetadataBoundingBoxRight;
             var openETRequestURL =
-                $"{_rioConfiguration.OpenETAPIBaseUrl}/{_rioConfiguration.OpenETRasterMetadataRoute}?geometry={top},{left},{top},{right},{bottom},{right},{bottom},{left}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
+                $"{_rioConfiguration.OpenETAPIBaseUrl}/{_rioConfiguration.OpenETRasterMetadataRoute}?geometry={left},{top},{right},{top},{right},{bottom},{left},{bottom}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
 
             var httpClient = GetOpenETClientWithAuthorization();
             try
@@ -63,7 +64,7 @@ namespace Rio.API.Services
                 if (string.IsNullOrEmpty(responseObject.DateIngested) ||
                     !DateTime.TryParse(responseObject.DateIngested, out DateTime responseDate))
                 {
-                    newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                         OpenETSyncResultTypeEnum.DataNotAvailable);
                     return false;
                 }
@@ -88,14 +89,21 @@ namespace Rio.API.Services
                     return true;
                 }
 
-                newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.NoNewData);
+                return false;
+            }
+            catch (TaskCanceledException ex)
+            {
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.Failed, "OpenET API did not respond");
+                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
                 return false;
             }
             catch (Exception ex)
             {
                 TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error when attempting to check raster metadata date ingested.");
-                newSyncHistory = OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, ex.Message);
                 return false;
             }
@@ -194,6 +202,8 @@ namespace Rio.API.Services
 
             if (!RasterUpdatedSinceMinimumLastUpdatedDate(month, year, newSyncHistory))
             {
+                newSyncHistory =
+                    OpenETSyncHistory.GetByOpenETSyncHistoryID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID);
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.UnprocessableEntity,
@@ -215,7 +225,8 @@ namespace Rio.API.Services
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new OpenETException($"Call to {openETRequestURL} failed. Status Code: {response.StatusCode} Message: {body}");
+                    throw new OpenETException(
+                        $"Call to {openETRequestURL} failed. Status Code: {response.StatusCode} Message: {body}");
                 }
 
                 var responseObject =
@@ -225,6 +236,18 @@ namespace Rio.API.Services
                     OpenETSyncResultTypeEnum.InProgress, null, responseObject.FileRetrievalURL);
 
                 return response;
+            }
+            catch (TaskCanceledException ex)
+            {
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
+                    OpenETSyncResultTypeEnum.Failed, "OpenET API did not respond");
+                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
+                return new HttpResponseMessage()
+                {
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    Content = new StringContent(
+                        $"The OpenET API did not respond. The error has been logged and support has been notified.")
+                };
             }
             catch (Exception ex)
             {
@@ -246,13 +269,16 @@ namespace Rio.API.Services
             public string FileRetrievalURL { get; set; }
         }
 
-        private static void UpdateStatusAndFailIfOperationHasExceeded24Hours(RioDbContext rioDbContext, OpenETSyncHistoryDto syncHistory)
+        private static void UpdateStatusAndFailIfOperationHasExceeded24Hours(RioDbContext rioDbContext, OpenETSyncHistoryDto syncHistory, string errorMessage)
         {
             var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistory.CreateDate).Hours;
+            var resultType = timeBetweenSyncCreationAndNow > 24
+                ? OpenETSyncResultTypeEnum.Failed
+                : OpenETSyncResultTypeEnum.InProgress;
 
             //One very unfortunate thing about OpenET's design is that they're forced to create a queue of requests and can't process multiple requests at once.
             //That, combined with no (at this moment 7/14/21) means of knowing whether or not a run has completed or failed other than checking to see if the file is ready for export means we have to implement some kind of terminal state.
-            OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistory.OpenETSyncHistoryID, timeBetweenSyncCreationAndNow > 24 ? OpenETSyncResultTypeEnum.Failed : OpenETSyncResultTypeEnum.InProgress);
+            OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistory.OpenETSyncHistoryID, resultType, resultType == OpenETSyncResultTypeEnum.Failed ? errorMessage : null);
         }
 
         public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport)
@@ -277,7 +303,7 @@ namespace Rio.API.Services
 
             if (!filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
             {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject);
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, "OpenET API never reported the results as available.");
                 return;
             }
 
@@ -290,7 +316,7 @@ namespace Rio.API.Services
 
             if (!response.IsSuccessStatusCode)
             {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject);
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, response.Content.ReadAsStringAsync().Result);
                 return;
             }
 

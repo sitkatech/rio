@@ -18,6 +18,11 @@ export class WaterYearMonthService {
     return this.apiService.getFromApi(route);
   }
 
+  getWaterYearMonthsForCurrentDateOrEarlier(): Observable<Array<WaterYearMonthDto>> {
+    let route = `/water-year-months/current-date-or-earlier`
+    return this.apiService.getFromApi(route);
+  }
+
   // getNonFinalizedWaterYears(): Observable<Array<WaterYearDto>> {
   //   let route = `/water-years/non-finalized`;
   //   return this.apiService.getFromApi(route);

@@ -16,7 +16,11 @@ namespace Rio.EFModels.Entities
         }
         public static List<WaterYearMonthDto> List(RioDbContext dbContext)
         {
-            return GetWaterYearMonthImpl(dbContext).OrderByDescending(x => x.WaterYear.Year).ThenByDescending(x => x.Month).Select(x => x.AsDto()).ToList();
+            return GetWaterYearMonthImpl(dbContext)
+                .OrderByDescending(x => x.WaterYear.Year)
+                .ThenByDescending(x => x.Month)
+                .Select(x => x.AsDto())
+                .ToList();
         }
 
         public static WaterYearMonthDto GetByWaterYearMonthID(RioDbContext dbContext, int waterYearMonthID)
@@ -47,6 +51,18 @@ namespace Rio.EFModels.Entities
         public static WaterYearMonthDto GetByYearAndMonth(RioDbContext dbContext, int waterYear, int waterMonth)
         {
             return GetWaterYearMonthImpl(dbContext).SingleOrDefault(x => x.WaterYear.Year == waterYear && x.Month == waterMonth).AsDto();
+        }
+
+        public static object ListForCurrentDateOrEarlier(RioDbContext dbContext)
+        {
+            var currentDate = DateTime.UtcNow;
+            return GetWaterYearMonthImpl(dbContext)
+                .Where(x => x.WaterYear.Year < currentDate.Year || (x.WaterYear.Year == currentDate.Year && x.Month <= currentDate.Month ))
+                .OrderByDescending(x => x.WaterYear.Year)
+                .ThenByDescending(x => x.Month)
+                .Select(x => x.AsDto())
+                .ToList();
+
         }
     }
 }
