@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,33 +14,18 @@ namespace Rio.API.Controllers
     [ApiController]
     public class OpenETController : SitkaController<OpenETController>
     {
-        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
+        private readonly IOpenETService _openETService;
+
+        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
+            _openETService = openETService;
         }
 
         [HttpGet("openet/is-api-key-valid")]
         [ManagerDashboardFeature]
         public ActionResult<bool> IsAPIKeyValid()
         {
-            var httpClient = OpenETGoogleBucketHelpers.GetOpenETClientWithAuthorization(_rioConfiguration.OpenETAPIKey);
-            var openETRequestURL = $"{_rioConfiguration.OpenETAPIBaseUrl}/home/key_expiration";
-            var response = httpClient.GetAsync(openETRequestURL).Result;
-
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogCritical("OpenET API Key is invalid");
-                return false;
-            }
-
-            var responseObject = JsonConvert.DeserializeObject<OpenETTokenExpirationDate>(response.Content.ReadAsStringAsync().Result);
-
-            if (responseObject == null || responseObject.ExpirationDate < DateTime.UtcNow)
-            {
-                _logger.LogCritical("OpenET API Key is invalid or expired");
-                return false;
-            }
-
-            return true;
+            return Ok(_openETService.IsOpenETAPIKeyValid());
         }
 
         public class OpenETTokenExpirationDate
@@ -51,9 +37,9 @@ namespace Rio.API.Controllers
 
         [HttpPost("openet-sync-history/trigger-openet-google-bucket-refresh")]
         [ContentManageFeature]
-        public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYear)
+        public ActionResult TriggerOpenETRefreshAndRetrieveJob([FromBody] int waterYearMonthID)
         {
-            var triggerResponse = OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _dbContext, waterYear);
+            var triggerResponse = _openETService.TriggerOpenETGoogleBucketRefresh(waterYearMonthID);
             if (!triggerResponse.IsSuccessStatusCode)
             {
                 var ores = StatusCode((int)triggerResponse.StatusCode, triggerResponse.Content.ReadAsStringAsync().Result);

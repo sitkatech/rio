@@ -27,13 +27,12 @@
         public string OpenETAPIBaseUrl { get; set; }
         public string OpenETRasterTimeSeriesMultipolygonRoute { get; set; }
         public string OpenETRasterMetadataRoute { get; set; }
-        public string OpenETRasterExportStatusRoute { get; set; }
+        public string OpenETAllFilesReadyForExportRoute { get; set; }
         public string OpenETRasterMetadataBoundingBoxLeft {get; set;}
         public string OpenETRasterMetadataBoundingBoxRight { get; set; }
         public string OpenETRasterMetadataBoundingBoxTop { get; set; }
         public string OpenETRasterMetadataBoundingBoxBottom { get; set; }
         public string OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier { get; set; }
-        public string OpenETGoogleBucketBaseURL { get; set; }
         public bool AllowOpenETSync { get; set; }
         public string SupportEmailAddress { get; set; }
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }

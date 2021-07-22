@@ -14,18 +14,10 @@
     <ng-container *ngIf="!loadingPage; else loadingBlock">
         <app-alert-display></app-alert-display>
         <ngb-alert *ngIf="numSyncsInProgress() > 0" [type]="'info'" [dismissible]="false">
-            <span *ngIf="numSyncsInProgress() == 1">
-                A sync operation is currently in progress to update the following years: {{ getInProgressYears()
+                Sync operations are currently in progress to update the following {{ numSyncsInProgress == 1 ? "date" : "dates" }}: {{ getInProgressDates()
                 }}.<br />
-                Syncing and finalizing any of the years involved in the operation will be disabled until the operation
-                completes.
-            </span>
-            <span *ngIf="numSyncsInProgress() > 1">
-                Sync operations are currently in progress to update the following years: {{ getInProgressYears()
-                }}.<br />
-                Syncing and finalizing any of the years involved in these operations will be disabled until the
+                Syncing and finalizing any of the dates involved in these operations will be disabled until the
                 respective operation completes.
-            </span>
         </ngb-alert>
         <ngb-alert *ngIf="!openETSyncEnabled()" [type]="'info'" [dismissible]="false">
             Currently, syncing with OpenET is not enabled. This feature will be enabled in the future.
@@ -47,35 +39,34 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        OpenET Sync Status By Water Year
+                        OpenET Sync Status By Month
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-condensed">
+                            <table class="table table-striped table-condensed" style="table-layout:fixed">
                                 <thead>
                                     <tr>
-                                        <th>Year</th>
-                                        <th>Data Update Status</th>
-                                        <th>Last Updated</th>
-                                        <th>Actions</th>
+                                        <th style="width: 10%">Year</th>
+                                        <th style="width: 10%">Month</th>
+                                        <th style="width: 50%">Last Updated</th>
+                                        <th style="width: 10%">Finalized Date</th>
+                                        <th style="width: 20%">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let waterYear of abbreviatedWaterYearSyncHistoryDtos">
-                                        <td class="align-middle">{{waterYear.WaterYear.Year}}</td>
-                                        <td class="align-middle">{{getDataUpdateStatusForWaterYear(waterYear)}}</td>
-                                        <td class="align-middle">{{getLastUpdatedDateForWaterYear(waterYear)}}</td>
+                                    <tr *ngFor="let waterYearMonth of waterYearMonthDtos">
+                                        <td class="align-middle">{{waterYearMonth.WaterYear.Year}}</td>
+                                        <td class="align-middle">{{waterYearMonth.Month}}</td>
+                                        <td class="align-middle">{{getDataUpdateStatusForWaterYearMonth(waterYearMonth)}}</td>
+                                        <td class="align-middle">{{waterYearMonth.FinalizeDate | date:dateFormatString}}</td>
                                         <td class="align-middle">
-                                            <ng-container *ngIf="showActionButtonsForWaterYear(waterYear.WaterYear)">
                                                 <button class="btn btn-rio mr-2"
-                                                    (click)="setSelectedWaterYearAndLaunchModal(syncWaterYearModalContent, waterYear.WaterYear)"
-                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || waterYear.CurrentlySyncing || !isCurrentUserAdministrator()">Sync
+                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearMonthModalContent, waterYearMonth)"
+                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Sync
                                                     Now</button>
                                                 <button class="btn btn-rio"
-                                                    *ngIf="showFinalizeButton(waterYear.WaterYear)"
-                                                    (click)="setSelectedWaterYearAndLaunchModal(finalizeWaterYearModalContent, waterYear.WaterYear)"
-                                                    [disabled]="waterYear.CurrentlySyncing || !isCurrentUserAdministrator()">Finalize</button>
-                                            </ng-container>
+                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(finalizeWaterYearMonthModalContent, waterYearMonth)"
+                                                    [disabled]="!isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Finalize</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -97,45 +88,45 @@
     <i class="fa fa-spinner loading-spinner"></i> Loading
 </ng-template>
 
-<ng-template #finalizeWaterYearModalContent let-modal>
+<ng-template #finalizeWaterYearMonthModalContent let-modal>
     <div class="modal-header">
-        <h5 class="modal-title" id="finalizeWaterYearModalTitle">Finalize Water Year Data</h5>
+        <h5 class="modal-title" id="finalizeWaterYearMonthModalTitle">Finalize Water Year and Month Data</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to finalize the OpenET data for {{selectedWaterYear.Year}}. The system will no longer
-            update Evapotranspiration data for {{selectedWaterYear.Year}} and will not accept any new override
+            Are you sure you want to finalize the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? The system will no longer
+            update Evapotranspiration data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}} and will not accept any new override
             submissions.
         </p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-rio btn-sm" (click)="finalizeWaterYear()">
-                Save</button>
+            <button type="button" class="btn btn-rio btn-sm" ngbAutoFocus (click)="finalizeWaterYearMonth()">
+                Finalize</button>
             <button type="button" class="btn btn-secondary btn-sm"
-                (click)="resetWaterYearToFinalizeAndCloseModal(modal)">Cancel</button>
+                (click)="resetWaterYearMonthToFinalizeAndCloseModal(modal)">Cancel</button>
         </div>
     </div>
 </ng-template>
 
-<ng-template #syncWaterYearModalContent let-modal>
+<ng-template #syncWaterYearMonthModalContent let-modal>
     <div class="modal-header">
-        <h5 class="modal-title" id="syncWaterYearModalTitle">Sync Water Year Data</h5>
+        <h5 class="modal-title" id="syncWaterYearMonthModalTitle">Sync Water Year and Month Data</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
         <p>
-            Are you sure you want to sync the OpenET data for {{selectedWaterYear.Year}}. This will refresh OpenET Data
+            Are you sure you want to sync the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? This will refresh OpenET Data
             for all applicable parcels, but will not reset any user-input overrides.
         </p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-rio btn-sm" ngbAutoFocus (click)="syncWaterYear()">
+            <button type="button" class="btn btn-rio btn-sm" ngbAutoFocus (click)="syncWaterYearMonth()">
                 Sync</button>
             <button type="button" class="btn btn-secondary btn-sm"
-                (click)="resetWaterYearToFinalizeAndCloseModal(modal)">Cancel</button>
+                (click)="resetWaterYearMonthToFinalizeAndCloseModal(modal)">Cancel</button>
         </div>
     </div>
 </ng-template>

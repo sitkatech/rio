@@ -72,7 +72,7 @@ import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-acco
 import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
+import { OpenetSyncWaterYearMonthStatusListComponent } from './pages/openet-sync-water-year-month-status-list/openet-sync-water-year-month-status-list.component';
 import { environment } from 'src/environments/environment';
 import { AppInsightsService } from './shared/services/app-insights.service';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
@@ -140,7 +140,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     WaterAccountsAddComponent,
     WaterAccountsListComponent,
     WaterAccountsInviteComponent,
-    OpenetSyncWaterYearStatusListComponent,
+    OpenetSyncWaterYearMonthStatusListComponent,
     ParcelUpdateLayerComponent,
     ParcelListInactiveComponent,
     AccountReconciliationComponent

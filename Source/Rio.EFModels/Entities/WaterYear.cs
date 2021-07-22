@@ -26,31 +26,6 @@ namespace Rio.EFModels.Entities
             return dbContext.WaterYear.SingleOrDefault(x => x.WaterYearID == waterYearID).AsDto();
         }
 
-        public static WaterYearDto Finalize(RioDbContext dbContext, int waterYearID)
-        {
-            var waterYear = dbContext.WaterYear.Single(x => x.WaterYearID == waterYearID);
-
-            waterYear.FinalizeDate = DateTime.UtcNow;
-
-            dbContext.SaveChanges();
-            dbContext.Entry(waterYear).Reload();
-            return GetByWaterYearID(dbContext, waterYearID);
-        }
-
-        public static List<WaterYearDto> ListNonFinalized(RioDbContext dbContext)
-        {
-            return dbContext.WaterYear
-                .Where(x => x.FinalizeDate == null)
-                .OrderByDescending(x => x.Year)
-                .Select(x => x.AsDto())
-                .ToList();
-        }
-
-        public static WaterYearDto GetByYear(RioDbContext dbContext, int waterYear)
-        {
-            return dbContext.WaterYear.SingleOrDefault(x => x.Year == waterYear).AsDto();
-        }
-
         public static List<WaterYearDto> ListBetweenYears(RioDbContext dbContext, int startYear, int endYear)
         {
             return dbContext.WaterYear.Where(x => x.Year >= startYear && x.Year <= endYear).OrderByDescending(x => x.Year).Select(x => x.AsDto()).ToList();

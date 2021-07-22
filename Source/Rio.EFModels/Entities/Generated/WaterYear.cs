@@ -10,20 +10,18 @@ namespace Rio.EFModels.Entities
         public WaterYear()
         {
             AccountParcelWaterYear = new HashSet<AccountParcelWaterYear>();
-            OpenETSyncHistory = new HashSet<OpenETSyncHistory>();
+            WaterYearMonth = new HashSet<WaterYearMonth>();
         }
 
         [Key]
         public int WaterYearID { get; set; }
         public int Year { get; set; }
         [Column(TypeName = "datetime")]
-        public DateTime? FinalizeDate { get; set; }
-        [Column(TypeName = "datetime")]
         public DateTime? ParcelLayerUpdateDate { get; set; }
 
         [InverseProperty("WaterYear")]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
         [InverseProperty("WaterYear")]
-        public virtual ICollection<OpenETSyncHistory> OpenETSyncHistory { get; set; }
+        public virtual ICollection<WaterYearMonth> WaterYearMonth { get; set; }
     }
 }

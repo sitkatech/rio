@@ -14,7 +14,7 @@ export class OpenETService {
         return this.apiService.getFromApi(route);
       }
 
-    public triggerGoogleBucketRefreshForWaterYear(selectedWaterYear: number): Observable<any> {
+    public triggerGoogleBucketRefreshForWaterYearMonth(selectedWaterYear: number): Observable<any> {
         const route = "openet-sync-history/trigger-openet-google-bucket-refresh";
         return this.apiService.postToApi(route, selectedWaterYear)
     }

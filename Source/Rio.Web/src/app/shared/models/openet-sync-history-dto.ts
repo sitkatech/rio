@@ -1,13 +1,14 @@
 import { OpenETSyncResultTypeDto } from "./openet-sync-result-type-dto";
-import { WaterYearDto } from './water-year-dto';
+import { WaterYearMonthDto } from './water-year-month-dto';
 
 
 export class OpenETSyncHistoryDto {
     OpenETSyncHistoryID: number;
     OpenETSyncResultType: OpenETSyncResultTypeDto;
-    WaterYear: WaterYearDto;
+    WaterYearMonth: WaterYearMonthDto;
     CreateDate: Date;
     UpdateDate: Date;
+    ErrorMessage: string;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

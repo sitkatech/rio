@@ -9,7 +9,6 @@ namespace Rio.Models.DataTransferObjects
     {
         public int WaterYearID { get; set; }
         public int Year { get; set; }
-        public DateTime? FinalizeDate { get; set; }
         public DateTime? ParcelLayerUpdateDate { get; set; }
     }
 

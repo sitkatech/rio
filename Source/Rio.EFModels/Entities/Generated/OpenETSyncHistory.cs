@@ -9,22 +9,21 @@ namespace Rio.EFModels.Entities
     {
         [Key]
         public int OpenETSyncHistoryID { get; set; }
+        public int WaterYearMonthID { get; set; }
         public int OpenETSyncResultTypeID { get; set; }
-        public int WaterYearID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime CreateDate { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime UpdateDate { get; set; }
-        [StringLength(50)]
-        public string GoogleBucketFileSuffixForRetrieval { get; set; }
-        [StringLength(100)]
-        public string TrackingNumber { get; set; }
+        [StringLength(200)]
+        public string GoogleBucketFileRetrievalURL { get; set; }
+        public string ErrorMessage { get; set; }
 
         [ForeignKey(nameof(OpenETSyncResultTypeID))]
         [InverseProperty("OpenETSyncHistory")]
         public virtual OpenETSyncResultType OpenETSyncResultType { get; set; }
-        [ForeignKey(nameof(WaterYearID))]
+        [ForeignKey(nameof(WaterYearMonthID))]
         [InverseProperty("OpenETSyncHistory")]
-        public virtual WaterYear WaterYear { get; set; }
+        public virtual WaterYearMonth WaterYearMonth { get; set; }
     }
 }
