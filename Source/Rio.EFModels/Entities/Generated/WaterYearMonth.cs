@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterYearMonth")]
+    [Index(nameof(WaterYearID), nameof(Month), Name = "AK_WaterYearMonth_WaterYearID_Month", IsUnique = true)]
     public partial class WaterYearMonth
     {
         public WaterYearMonth()
         {
-            OpenETSyncHistory = new HashSet<OpenETSyncHistory>();
+            OpenETSyncHistories = new HashSet<OpenETSyncHistory>();
         }
 
         [Key]
@@ -20,9 +25,9 @@ namespace Rio.EFModels.Entities
         public DateTime? FinalizeDate { get; set; }
 
         [ForeignKey(nameof(WaterYearID))]
-        [InverseProperty("WaterYearMonth")]
+        [InverseProperty("WaterYearMonths")]
         public virtual WaterYear WaterYear { get; set; }
-        [InverseProperty("WaterYearMonth")]
-        public virtual ICollection<OpenETSyncHistory> OpenETSyncHistory { get; set; }
+        [InverseProperty(nameof(OpenETSyncHistory.WaterYearMonth))]
+        public virtual ICollection<OpenETSyncHistory> OpenETSyncHistories { get; set; }
     }
 }

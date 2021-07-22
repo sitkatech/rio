@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("FileResource")]
+    [Index(nameof(FileResourceGUID), Name = "AK_FileResource_FileResourceGUID", IsUnique = true)]
     public partial class FileResource
     {
         public FileResource()
         {
-            ParcelAllocationHistory = new HashSet<ParcelAllocationHistory>();
+            ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
         }
 
         [Key]
@@ -29,12 +34,12 @@ namespace Rio.EFModels.Entities
         public DateTime CreateDate { get; set; }
 
         [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.FileResource))]
+        [InverseProperty(nameof(User.FileResources))]
         public virtual User CreateUser { get; set; }
         [ForeignKey(nameof(FileResourceMimeTypeID))]
-        [InverseProperty("FileResource")]
+        [InverseProperty("FileResources")]
         public virtual FileResourceMimeType FileResourceMimeType { get; set; }
-        [InverseProperty("FileResource")]
-        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
+        [InverseProperty(nameof(ParcelAllocationHistory.FileResource))]
+        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
     }
 }

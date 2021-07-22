@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterTransfer")]
     public partial class WaterTransfer
     {
         public WaterTransfer()
         {
-            WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
+            WaterTransferRegistrations = new HashSet<WaterTransferRegistration>();
         }
 
         [Key]
@@ -22,9 +26,9 @@ namespace Rio.EFModels.Entities
         public string Notes { get; set; }
 
         [ForeignKey(nameof(OfferID))]
-        [InverseProperty("WaterTransfer")]
+        [InverseProperty("WaterTransfers")]
         public virtual Offer Offer { get; set; }
-        [InverseProperty("WaterTransfer")]
-        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistration { get; set; }
+        [InverseProperty(nameof(WaterTransferRegistration.WaterTransfer))]
+        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistrations { get; set; }
     }
 }

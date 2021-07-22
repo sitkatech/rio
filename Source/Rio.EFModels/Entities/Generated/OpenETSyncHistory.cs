@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("OpenETSyncHistory")]
     public partial class OpenETSyncHistory
     {
         [Key]
@@ -20,10 +24,10 @@ namespace Rio.EFModels.Entities
         public string ErrorMessage { get; set; }
 
         [ForeignKey(nameof(OpenETSyncResultTypeID))]
-        [InverseProperty("OpenETSyncHistory")]
+        [InverseProperty("OpenETSyncHistories")]
         public virtual OpenETSyncResultType OpenETSyncResultType { get; set; }
         [ForeignKey(nameof(WaterYearMonthID))]
-        [InverseProperty("OpenETSyncHistory")]
+        [InverseProperty("OpenETSyncHistories")]
         public virtual WaterYearMonth WaterYearMonth { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Rio.EFModels.Entities
     {
         public static List<AccountReconciliationDto> List(RioDbContext dbContext)
         {
-            return dbContext.AccountReconciliation
+            return dbContext.AccountReconciliations
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .ToList()
@@ -27,7 +27,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelSimpleDto> ListParcelsByAccountID(RioDbContext dbContext, int accountId)
         {
-            return dbContext.AccountReconciliation
+            return dbContext.AccountReconciliations
                 .Include(x => x.Parcel)
                 .Where(x => x.AccountID == accountId)
                 .Select(x => x.Parcel.AsSimpleDto())
@@ -36,9 +36,9 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteByParcelID(RioDbContext dbContext, int parcelId)
         {
-            var toRemove = dbContext.AccountReconciliation.Where(x => x.ParcelID == parcelId);
+            var toRemove = dbContext.AccountReconciliations.Where(x => x.ParcelID == parcelId);
 
-            dbContext.AccountReconciliation.RemoveRange(toRemove);
+            dbContext.AccountReconciliations.RemoveRange(toRemove);
 
             dbContext.SaveChanges();
         }

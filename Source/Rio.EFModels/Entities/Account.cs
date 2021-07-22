@@ -12,50 +12,50 @@ namespace Rio.EFModels.Entities
     {
         public static List<AccountSimpleDto> ListByUserID(RioDbContext dbContext, int userID)
         {
-            return dbContext.User.Include(x => x.AccountUser).ThenInclude(x => x.Account)
-                .Single(x => x.UserID == userID).AccountUser
+            return dbContext.Users.Include(x => x.AccountUsers).ThenInclude(x => x.Account)
+                .Single(x => x.UserID == userID).AccountUsers
                 .OrderBy(x => x.Account.AccountName)
                 .Select(x => x.Account.AsSimpleDto()).ToList();
         }
 
         public static bool UserIDHasAccessToAccountID(RioDbContext dbContext, int userID, int accountID)
         {
-            return dbContext.User.Include(x => x.AccountUser).ThenInclude(x => x.Account)
-                .Single(x => x.UserID == userID).AccountUser.Any(x => x.AccountID == accountID);
+            return dbContext.Users.Include(x => x.AccountUsers).ThenInclude(x => x.Account)
+                .Single(x => x.UserID == userID).AccountUsers.Any(x => x.AccountID == accountID);
         }
 
         public static List<AccountIncludeParcelsDto> ListByUserIDIncludeParcels(RioDbContext dbContext, int userID)
         {
-            return dbContext.User
-                .Include(x => x.AccountUser)
+            return dbContext.Users
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.Account)
                 .ThenInclude(x => x.AccountStatus)
-                .Include(x => x.AccountUser)
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountUser)
+                .ThenInclude(x => x.AccountUsers)
                 .ThenInclude(x => x.User)
-                .Include(x => x.AccountUser)
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.Parcel)
-                .Include(x => x.AccountUser)
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountParcelWaterYear)
+                .ThenInclude(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.WaterYear)
-                .Single(x => x.UserID == userID).AccountUser
+                .Single(x => x.UserID == userID).AccountUsers
                 .OrderBy(x => x.Account.AccountName)
                 .Select(x => x.Account.AsAccountWithParcelsDto()).ToList();
         }
 
         public static List<AccountIncludeParcelsDto> ListIncludeParcels(RioDbContext dbContext)
         {
-            return dbContext.Account
+            return dbContext.Accounts
                 .Include(x => x.AccountStatus)
-                .Include(x => x.AccountParcelWaterYear)
+                .Include(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.Parcel)
-                .Include(x => x.AccountParcelWaterYear)
+                .Include(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.WaterYear)
-                .Include(x => x.AccountUser)
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
                 .Select(x => x.AsAccountWithParcelsDto())
@@ -64,11 +64,11 @@ namespace Rio.EFModels.Entities
 
         public static List<AccountDto> List(RioDbContext dbContext)
         {
-            return dbContext.Account
+            return dbContext.Accounts
                 .Include(x => x.AccountStatus)
-                .Include(x=> x.AccountParcelWaterYear)
+                .Include(x=> x.AccountParcelWaterYears)
                 .ThenInclude(x => x.WaterYear)
-                .Include(x => x.AccountUser)
+                .Include(x => x.AccountUsers)
                 .ThenInclude(x => x.User)
                 .OrderBy(x => x.AccountName)
                 .Select(x => x.AsDto())
@@ -77,13 +77,13 @@ namespace Rio.EFModels.Entities
 
         public static AccountDto GetByAccountID(RioDbContext dbContext, int accountID)
         {
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.Accounts.Include(x => x.AccountStatus).Include(x => x.AccountUsers).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountID == accountID)?.AsDto();
         }
 
         public static AccountDto GetByAccountNumber(RioDbContext dbContext, int accountNumber)
         {
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.Accounts.Include(x => x.AccountStatus).Include(x => x.AccountUsers).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountNumber == accountNumber)?.AsDto();
         }
 
@@ -94,20 +94,20 @@ namespace Rio.EFModels.Entities
                 return null;
             }
 
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.Accounts.Include(x => x.AccountStatus).Include(x => x.AccountUsers).ThenInclude(x => x.User)
                 .SingleOrDefault(x => x.AccountVerificationKey == accountVerificationKey)?.AsDto();
         }
 
         public static List<AccountDto> GetByAccountID(RioDbContext dbContext, List<int> accountIDs)
         {
-            return dbContext.Account.Include(x => x.AccountStatus).Include(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.Accounts.Include(x => x.AccountStatus).Include(x => x.AccountUsers).ThenInclude(x => x.User)
                 .Where(x => accountIDs.Contains(x.AccountID)).Select(x=>x.AsDto()).ToList();
         }
 
         public static AccountDto UpdateAccountEntity(RioDbContext dbContext, int accountID,
             AccountUpdateDto accountUpdateDto, string rioConfigurationVerificationKeyChars)
         {
-            var account = dbContext.Account
+            var account = dbContext.Accounts
                 .Include(x => x.AccountStatus)
                 .Single(x => x.AccountID == accountID);
 
@@ -144,7 +144,7 @@ namespace Rio.EFModels.Entities
             AccountVerificationKey = accountUpdateDto.AccountStatusID == (int)AccountStatusEnum.Inactive ? null : GenerateAndVerifyAccountVerificationKey(rioConfigurationVerificationKeyChars, GetCurrentAccountVerificationKeys(dbContext))
             };
 
-            dbContext.Account.Add(account);
+            dbContext.Accounts.Add(account);
             dbContext.SaveChanges();
             dbContext.Entry(account).Reload();
 
@@ -153,7 +153,7 @@ namespace Rio.EFModels.Entities
 
         public static List<string> GetCurrentAccountVerificationKeys(RioDbContext dbContext)
         {
-            return dbContext.Account.Select(x => x.AccountVerificationKey).ToList();
+            return dbContext.Accounts.Select(x => x.AccountVerificationKey).ToList();
         }
 
         private static string GenerateAndVerifyAccountVerificationKey(string rioConfigurationVerificationKeyChars,
@@ -183,12 +183,12 @@ namespace Rio.EFModels.Entities
         {
             var newAccountUsers = userIDs.Select(userID => new AccountUser(){AccountID = accountDto.AccountID, UserID = userID}).ToList();
 
-            var existingAccountUsers = dbContext.Account.Include(x => x.AccountUser)
-                .Single(x => x.AccountID == accountDto.AccountID).AccountUser;
+            var existingAccountUsers = dbContext.Accounts.Include(x => x.AccountUsers)
+                .Single(x => x.AccountID == accountDto.AccountID).AccountUsers;
 
             addedUserIDs = userIDs.Where(x => !existingAccountUsers.Select(y => y.UserID).Contains(x)).ToList();
 
-            var allInDatabase = dbContext.AccountUser;
+            var allInDatabase = dbContext.AccountUsers;
 
             existingAccountUsers.Merge(newAccountUsers, allInDatabase, (x,y)=>x.AccountID == y.AccountID && x.UserID == y.UserID);
 
@@ -199,12 +199,12 @@ namespace Rio.EFModels.Entities
 
         public static bool ValidateAllExist(RioDbContext dbContext, List<int> accountIDs)
         {
-            return dbContext.Account.Count(x => accountIDs.Contains(x.AccountID)) == accountIDs.Distinct().Count();
+            return dbContext.Accounts.Count(x => accountIDs.Contains(x.AccountID)) == accountIDs.Distinct().Count();
         }
 
         public static void UpdateAccountVerificationKeyLastUsedDateForAccountIDs(RioDbContext dbContext, List<int> accountIDs)
         {
-            var accounts = dbContext.Account.Where(x => accountIDs.Contains(x.AccountID)).ToList();
+            var accounts = dbContext.Accounts.Where(x => accountIDs.Contains(x.AccountID)).ToList();
             
             accounts.ForEach(x => x.AccountVerificationKeyLastUseDate = DateTime.UtcNow);
 
@@ -246,7 +246,7 @@ namespace Rio.EFModels.Entities
                 });
             });
 
-            dbContext.Account.AddRange(listOfAccountsToCreate);
+            dbContext.Accounts.AddRange(listOfAccountsToCreate);
 
             dbContext.SaveChanges();
         }

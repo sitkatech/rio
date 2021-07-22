@@ -43,7 +43,7 @@ namespace Rio.API
                 return;
             }
             
-            var inProgressSyncs = _rioDbContext.OpenETSyncHistory
+            var inProgressSyncs = _rioDbContext.OpenETSyncHistories
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
@@ -55,7 +55,7 @@ namespace Rio.API
             }
             
             //Fail any created syncs that have been in a created state for longer than 15 minutes
-            var createdSyncs = _rioDbContext.OpenETSyncHistory
+            var createdSyncs = _rioDbContext.OpenETSyncHistories
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Created).ToList();
             if (createdSyncs.Any())
             {

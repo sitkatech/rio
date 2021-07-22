@@ -32,7 +32,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            var parcelAllocationType = _rioDbContext.ParcelAllocationType.SingleOrDefault(x => x.IsSourcedFromApi);
+            var parcelAllocationType = _rioDbContext.ParcelAllocationTypes.SingleOrDefault(x => x.IsSourcedFromApi);
             if (parcelAllocationType == null)
             {
                 return;
@@ -82,7 +82,7 @@ namespace Rio.API
                 var year = precipitationDataForYear.Key;
                 var totalPrecipitation = precipitationDataForYear.Sum(y => y.DayPrecip.Value.GetValueOrDefault());
 
-                parcelAllocations.AddRange(_rioDbContext.Parcel.Select(x => new ParcelAllocation()
+                parcelAllocations.AddRange(_rioDbContext.Parcels.Select(x => new ParcelAllocation()
                 {
                     AcreFeetAllocated = totalPrecipitation * (decimal)x.ParcelAreaInAcres / (decimal)12.0,
                     ParcelAllocationTypeID = parcelAllocationTypeID,
@@ -92,8 +92,8 @@ namespace Rio.API
 
             }
 
-            _rioDbContext.ParcelAllocation.RemoveRange(_rioDbContext.ParcelAllocation.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
-                _rioDbContext.ParcelAllocation.AddRange(parcelAllocations);
+            _rioDbContext.ParcelAllocations.RemoveRange(_rioDbContext.ParcelAllocations.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
+                _rioDbContext.ParcelAllocations.AddRange(parcelAllocations);
                 _rioDbContext.SaveChanges();
         }
     }

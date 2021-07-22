@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterTransferType")]
+    [Index(nameof(WaterTransferTypeDisplayName), Name = "AK_WaterTransferType_WaterTransferTypeDisplayName", IsUnique = true)]
+    [Index(nameof(WaterTransferTypeName), Name = "AK_WaterTransferType_WaterTransferTypeName", IsUnique = true)]
     public partial class WaterTransferType
     {
         public WaterTransferType()
         {
-            WaterTransferRegistration = new HashSet<WaterTransferRegistration>();
+            WaterTransferRegistrations = new HashSet<WaterTransferRegistration>();
         }
 
         [Key]
@@ -21,7 +27,7 @@ namespace Rio.EFModels.Entities
         [StringLength(50)]
         public string WaterTransferTypeDisplayName { get; set; }
 
-        [InverseProperty("WaterTransferType")]
-        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistration { get; set; }
+        [InverseProperty(nameof(WaterTransferRegistration.WaterTransferType))]
+        public virtual ICollection<WaterTransferRegistration> WaterTransferRegistrations { get; set; }
     }
 }

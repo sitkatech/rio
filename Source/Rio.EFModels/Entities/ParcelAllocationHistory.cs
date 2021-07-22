@@ -27,7 +27,7 @@ namespace Rio.EFModels.Entities
                     fileResourceID != null ? (decimal?)null : parcelAllocation.AcreFeetAllocated
             };
 
-            dbContext.ParcelAllocationHistory.Add(parcelAllocationHistoryEntry);
+            dbContext.ParcelAllocationHistories.Add(parcelAllocationHistoryEntry);
             dbContext.SaveChanges();
         }
 
@@ -44,13 +44,13 @@ namespace Rio.EFModels.Entities
                     fileResourceID != null ? (decimal?)null : allocated
             };
 
-            dbContext.ParcelAllocationHistory.Add(parcelAllocationHistoryEntry);
+            dbContext.ParcelAllocationHistories.Add(parcelAllocationHistoryEntry);
             dbContext.SaveChanges();
         }
 
         public static IEnumerable<ParcelAllocationHistoryDto> GetParcelAllocationHistoryDtos(RioDbContext dbContext)
         {
-            return dbContext.ParcelAllocationHistory
+            return dbContext.ParcelAllocationHistories
                 .Include(x => x.User)
                 .Include(x => x.ParcelAllocationType)
                 .Include(x => x.FileResource)

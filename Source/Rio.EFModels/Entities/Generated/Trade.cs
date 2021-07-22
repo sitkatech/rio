@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("Trade")]
     public partial class Trade
     {
         public Trade()
         {
-            Offer = new HashSet<Offer>();
+            Offers = new HashSet<Offer>();
         }
 
         [Key]
@@ -23,15 +27,15 @@ namespace Rio.EFModels.Entities
         public string TradeNumber { get; set; }
 
         [ForeignKey(nameof(CreateAccountID))]
-        [InverseProperty(nameof(Account.Trade))]
+        [InverseProperty(nameof(Account.Trades))]
         public virtual Account CreateAccount { get; set; }
         [ForeignKey(nameof(PostingID))]
-        [InverseProperty("Trade")]
+        [InverseProperty("Trades")]
         public virtual Posting Posting { get; set; }
         [ForeignKey(nameof(TradeStatusID))]
-        [InverseProperty("Trade")]
+        [InverseProperty("Trades")]
         public virtual TradeStatus TradeStatus { get; set; }
-        [InverseProperty("Trade")]
-        public virtual ICollection<Offer> Offer { get; set; }
+        [InverseProperty(nameof(Offer.Trade))]
+        public virtual ICollection<Offer> Offers { get; set; }
     }
 }

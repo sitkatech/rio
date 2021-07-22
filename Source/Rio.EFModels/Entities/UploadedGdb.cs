@@ -10,12 +10,12 @@ namespace Rio.EFModels.Entities
     {
         public static byte[] GetUploadedGdbFileContents(RioDbContext dbContext, int uploadedGdbID)
         {
-            return dbContext.UploadedGdb.AsNoTracking().SingleOrDefault(x => x.UploadedGdbID == uploadedGdbID)?.GdbFileContents;
+            return dbContext.UploadedGdbs.AsNoTracking().SingleOrDefault(x => x.UploadedGdbID == uploadedGdbID)?.GdbFileContents;
         }
 
         public static int CreateNew(RioDbContext dbContext, byte[] gdbFileContents)
         {
-            var nextUploadedGdbID = (dbContext.UploadedGdb.Any() ? dbContext.UploadedGdb.Max(x => x.UploadedGdbID) : 0) + 1;
+            var nextUploadedGdbID = (dbContext.UploadedGdbs.Any() ? dbContext.UploadedGdbs.Max(x => x.UploadedGdbID) : 0) + 1;
 
             var dataTable = new DataTable();
             dataTable.Columns.Add("UploadedGdbID", typeof(int));

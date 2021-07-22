@@ -7,7 +7,7 @@ namespace Rio.EFModels.Entities
     {
         public static ParcelLayerGDBCommonMappingToParcelStagingColumnDto GetCommonMappings(RioDbContext _dbContext)
         {
-            return _dbContext.ParcelLayerGDBCommonMappingToParcelStagingColumn.First().AsDto();
+            return _dbContext.ParcelLayerGDBCommonMappingToParcelStagingColumns.First().AsDto();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         private static IQueryable<WaterTransferRegistration> GetWaterTransferRegistrationsImpl(RioDbContext dbContext)
         {
-            return dbContext.WaterTransferRegistration
+            return dbContext.WaterTransferRegistrations
                 .Include(x => x.Account)
                 .AsNoTracking();
         }
@@ -31,7 +31,7 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.WaterTransferRegistration.RemoveRange(dbContext.WaterTransferRegistration);
+            dbContext.WaterTransferRegistrations.RemoveRange(dbContext.WaterTransferRegistrations);
             dbContext.SaveChanges();
         }
     }

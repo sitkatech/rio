@@ -27,7 +27,7 @@ namespace Rio.EFModels.Entities
                 OfferStatusID = offerUpsertDto.OfferStatusID
             };
 
-            dbContext.Offer.Add(offer);
+            dbContext.Offers.Add(offer);
             dbContext.SaveChanges();
             dbContext.Entry(offer).Reload();
 
@@ -58,7 +58,7 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<Offer> GetOffersImpl(RioDbContext dbContext)
         {
-            return dbContext.Offer
+            return dbContext.Offers
                 .Include(x => x.OfferStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.CreateAccount)
@@ -66,7 +66,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
                 .Include(x => x.CreateAccount)
-                .Include(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
+                .Include(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
                 .AsNoTracking();
         }
 
@@ -78,10 +78,10 @@ namespace Rio.EFModels.Entities
 
         public static OfferDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
         {
-            var offer = dbContext.Offer
+            var offer = dbContext.Offers
                 .Include(x => x.CreateAccount)
                 .Include(x => x.OfferStatus)
-                .Include(x => x.WaterTransfer)
+                .Include(x => x.WaterTransfers)
                 .Include(x => x.Trade)
                 .ThenInclude(x => x.CreateAccount)
                 .Include(x => x.Trade)
@@ -95,7 +95,7 @@ namespace Rio.EFModels.Entities
                 .ThenInclude(x => x.Posting)
                 .ThenInclude(x => x.PostingStatus)
                 .AsNoTracking()
-                .Where(x => !x.WaterTransfer.Any() && x.OfferStatusID != (int) OfferStatusEnum.Rejected && x.OfferStatusID != (int) OfferStatusEnum.Rescinded &&
+                .Where(x => !x.WaterTransfers.Any() && x.OfferStatusID != (int) OfferStatusEnum.Rejected && x.OfferStatusID != (int) OfferStatusEnum.Rescinded &&
                             (x.Trade.Posting.PostingStatusID == (int) postingTypeEnum &&
                              x.Trade.Posting.CreateAccountID == x.CreateAccountID)
                             || (x.Trade.Posting.PostingStatusID != (int) postingTypeEnum &&
@@ -116,7 +116,7 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.Offer.RemoveRange(dbContext.Offer);
+            dbContext.Offers.RemoveRange(dbContext.Offers);
             dbContext.SaveChanges();
         }
     }

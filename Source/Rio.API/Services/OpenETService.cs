@@ -91,7 +91,7 @@ namespace Rio.API.Services
                     return false;
                 }
 
-                var openETSyncHistoriesThatHaventFailed = _rioDbContext.OpenETSyncHistory
+                var openETSyncHistoriesThatHaventFailed = _rioDbContext.OpenETSyncHistories
                     .Include(x => x.WaterYearMonth)
                     .ThenInclude(x => x.WaterYear)
                     .Where(x => x.WaterYearMonth.WaterYear.Year == year && x.WaterYearMonth.Month == month &&
@@ -219,7 +219,7 @@ namespace Rio.API.Services
             var month = waterYearMonthDto.Month;
             var monthNameToDisplay = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
 
-            if (_rioDbContext.OpenETSyncHistory
+            if (_rioDbContext.OpenETSyncHistories
                 .Any(x => x.WaterYearMonthID == waterYearMonthID && x.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.InProgress))
             {
                 return new HttpResponseMessage()
@@ -366,7 +366,7 @@ namespace Rio.API.Services
                 using (var reader = new StreamReader(fileContents))
                 {
                     var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
-                    var finalizedWaterYearMonths = _rioDbContext.WaterYearMonth
+                    var finalizedWaterYearMonths = _rioDbContext.WaterYearMonths
                         .Where(x => x.FinalizeDate.HasValue)
                         .Select(x => new DateTime(x.WaterYear.Year, x.Month, 1))
                         .ToList();

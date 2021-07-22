@@ -29,7 +29,7 @@ namespace Rio.EFModels.Entities
                 CreateDate = DateTime.UtcNow,
             };
 
-            dbContext.User.Add(user);
+            dbContext.Users.Add(user);
             dbContext.SaveChanges();
             dbContext.Entry(user).Reload();
 
@@ -38,14 +38,14 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<UserDetailedDto> List(RioDbContext dbContext)
         {
-            var accountUsers = dbContext.AccountUser
+            var accountUsers = dbContext.AccountUsers
                 .Include(x => x.Account)
                 .ToList()
                 .GroupBy(x => x.UserID)
                 .Select(x => new {UserID = x.Key, Accounts = x.Select(y => y.Account.AsSimpleDto()).ToList()});
 
             // right now we are assuming a parcel can only be associated to one user
-            var users = dbContext.vUserDetailed
+            var users = dbContext.vUserDetaileds
                 .ToList()
                 .GroupJoin(accountUsers,
                     x => x.UserID,
@@ -129,7 +129,7 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<User> GetUserImpl(RioDbContext dbContext)
         {
-            return dbContext.User
+            return dbContext.Users
                 .Include(x => x.Role)
                 .AsNoTracking();
         }
@@ -147,13 +147,13 @@ namespace Rio.EFModels.Entities
                 return null;
             }
 
-            var user = dbContext.User
+            var user = dbContext.Users
                 .Include(x => x.Role)
                 .Single(x => x.UserID == userID);
 
             if (user.RoleID != (int)RoleEnum.Admin && userEditDto.RoleID == (int)RoleEnum.Admin)
             {
-                dbContext.AccountUser.RemoveRange(dbContext.AccountUser.Where(x => x.UserID == user.UserID));
+                dbContext.AccountUsers.RemoveRange(dbContext.AccountUsers.Where(x => x.UserID == user.UserID));
             }
 
             user.RoleID = userEditDto.RoleID.Value;
@@ -168,7 +168,7 @@ namespace Rio.EFModels.Entities
 
         public static UserDto SetDisclaimerAcknowledgedDate(RioDbContext dbContext, int userID)
         {
-            var user = dbContext.User.Single(x => x.UserID == userID);
+            var user = dbContext.Users.Single(x => x.UserID == userID);
 
             user.UpdateDate = DateTime.UtcNow;
             user.DisclaimerAcknowledgedDate = DateTime.UtcNow;
@@ -181,7 +181,7 @@ namespace Rio.EFModels.Entities
 
         public static UserDto UpdateUserGuid(RioDbContext dbContext, int userID, Guid userGuid)
         {
-            var user = dbContext.User
+            var user = dbContext.Users
                 .Single(x => x.UserID == userID);
 
             user.UserGuid = userGuid;
@@ -205,19 +205,19 @@ namespace Rio.EFModels.Entities
 
         public static bool ValidateAllExist(RioDbContext dbContext, List<int> userIDs)
         {
-            return dbContext.User.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
+            return dbContext.Users.Count(x => userIDs.Contains(x.UserID)) == userIDs.Distinct().Count();
         }
 
         public static List<int> SetAssociatedAccounts(RioDbContext dbContext, int userID, List<int> accountIDs)
         {
             var newAccountUsers = accountIDs.Select(accountID => new AccountUser() { UserID = userID, AccountID = accountID }).ToList();
 
-            var existingAccountUsers = dbContext.User.Include(x => x.AccountUser)
-                .Single(x => x.UserID == userID).AccountUser;
+            var existingAccountUsers = dbContext.Users.Include(x => x.AccountUsers)
+                .Single(x => x.UserID == userID).AccountUsers;
 
             var addedAccountIDs = accountIDs.Where(x => !existingAccountUsers.Select(y => y.AccountID).Contains(x)).ToList();
 
-            var allInDatabase = dbContext.AccountUser;
+            var allInDatabase = dbContext.AccountUsers;
 
             existingAccountUsers.Merge(newAccountUsers, allInDatabase, (x, y) => x.UserID == y.UserID && x.AccountID == y.AccountID);
 
@@ -228,14 +228,14 @@ namespace Rio.EFModels.Entities
 
         public static void RemoveAssociatedAccount(RioDbContext dbContext, int userID, int accountID)
         {
-            var currentAccountUser = dbContext.AccountUser.Single(x => x.UserID == userID && x.AccountID == accountID);
-            dbContext.AccountUser.Remove(currentAccountUser);
+            var currentAccountUser = dbContext.AccountUsers.Single(x => x.UserID == userID && x.AccountID == accountID);
+            dbContext.AccountUsers.Remove(currentAccountUser);
             dbContext.SaveChanges();
         }
 
         public static bool CheckIfUsersAreAdministrators(RioDbContext dbContext, List<int> userIDs)
         {
-            return dbContext.User.Any(x => userIDs.Contains(x.UserID) && x.RoleID == (int) RoleEnum.Admin);
+            return dbContext.Users.Any(x => userIDs.Contains(x.UserID) && x.RoleID == (int) RoleEnum.Admin);
         }
     }
 }

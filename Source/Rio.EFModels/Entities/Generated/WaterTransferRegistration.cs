@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterTransferRegistration")]
     public partial class WaterTransferRegistration
     {
         public WaterTransferRegistration()
         {
-            WaterTransferRegistrationParcel = new HashSet<WaterTransferRegistrationParcel>();
+            WaterTransferRegistrationParcels = new HashSet<WaterTransferRegistrationParcel>();
         }
 
         [Key]
@@ -22,18 +26,18 @@ namespace Rio.EFModels.Entities
         public DateTime StatusDate { get; set; }
 
         [ForeignKey(nameof(AccountID))]
-        [InverseProperty("WaterTransferRegistration")]
+        [InverseProperty("WaterTransferRegistrations")]
         public virtual Account Account { get; set; }
         [ForeignKey(nameof(WaterTransferID))]
-        [InverseProperty("WaterTransferRegistration")]
+        [InverseProperty("WaterTransferRegistrations")]
         public virtual WaterTransfer WaterTransfer { get; set; }
         [ForeignKey(nameof(WaterTransferRegistrationStatusID))]
-        [InverseProperty("WaterTransferRegistration")]
+        [InverseProperty("WaterTransferRegistrations")]
         public virtual WaterTransferRegistrationStatus WaterTransferRegistrationStatus { get; set; }
         [ForeignKey(nameof(WaterTransferTypeID))]
-        [InverseProperty("WaterTransferRegistration")]
+        [InverseProperty("WaterTransferRegistrations")]
         public virtual WaterTransferType WaterTransferType { get; set; }
-        [InverseProperty("WaterTransferRegistration")]
-        public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcel { get; set; }
+        [InverseProperty(nameof(WaterTransferRegistrationParcel.WaterTransferRegistration))]
+        public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
 
         public static CustomRichTextDto GetByCustomRichTextTypeID(RioDbContext dbContext, int customRichTextTypeID)
         {
-            var customRichText = dbContext.CustomRichText
+            var customRichText = dbContext.CustomRichTexts
                 .SingleOrDefault(x => x.CustomRichTextTypeID == customRichTextTypeID);
 
             return customRichText?.AsDto();
@@ -19,7 +19,7 @@ namespace Rio.EFModels.Entities
         public static CustomRichTextDto UpdateCustomRichText(RioDbContext dbContext, int customRichTextTypeID,
             CustomRichTextDto customRichTextUpdateDto)
         {
-            var customRichText = dbContext.CustomRichText
+            var customRichText = dbContext.CustomRichTexts
                 .SingleOrDefault(x => x.CustomRichTextTypeID == customRichTextTypeID);
 
             // null check occurs in calling endpoint method.

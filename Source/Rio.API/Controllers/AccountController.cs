@@ -280,7 +280,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverview([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountIDsAndYear(_dbContext, _dbContext.Account.Select(x => x.AccountID).ToList(), year);
+            var parcelDtos = Parcel.ListByAccountIDsAndYear(_dbContext, _dbContext.Accounts.Select(x => x.AccountID).ToList(), year);
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);

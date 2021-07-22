@@ -132,7 +132,7 @@ namespace Rio.API.Controllers
         public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
             [FromBody] List<ParcelAllocationDto> parcelAllocationDtos)
         {
-            var parcel = _dbContext.Parcel.Include(x => x.ParcelAllocation)
+            var parcel = _dbContext.Parcels.Include(x => x.ParcelAllocations)
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
             if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
@@ -151,11 +151,11 @@ namespace Rio.API.Controllers
 
             // add new PAs before the merge.
             var newParcelAllocations = updatedParcelAllocations.Where(x => x.ParcelAllocationID == 0);
-            _dbContext.ParcelAllocation.AddRange(newParcelAllocations);
+            _dbContext.ParcelAllocations.AddRange(newParcelAllocations);
             _dbContext.SaveChanges();
 
-            var existingParcelAllocations = parcel.ParcelAllocation;
-            var allInDatabase = _dbContext.ParcelAllocation;
+            var existingParcelAllocations = parcel.ParcelAllocations;
+            var allInDatabase = _dbContext.ParcelAllocations;
 
             existingParcelAllocations.Merge(updatedParcelAllocations, allInDatabase,
                 (x, y) => x.ParcelAllocationTypeID == y.ParcelAllocationTypeID && x.ParcelID == y.ParcelID && x.WaterYear == y.WaterYear,
@@ -189,7 +189,7 @@ namespace Rio.API.Controllers
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
             var parcelAllocationTypeDisplayName =
-                _dbContext.ParcelAllocationType.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeName;
+                _dbContext.ParcelAllocationTypes.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeName;
 
             if (!ParseBulkSetAllocationUpload(fileResource, parcelAllocationTypeDisplayName, out var records, out var badRequestFromUpload))
             {
@@ -201,7 +201,7 @@ namespace Rio.API.Controllers
                 return badRequestFromValidation;
             }
 
-            _dbContext.FileResource.Add(fileResource);
+            _dbContext.FileResources.Add(fileResource);
             _dbContext.SaveChanges();
 
             ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, parcelAllocationTypeID);
@@ -361,7 +361,7 @@ namespace Rio.API.Controllers
             }
 
             // all parcel numbers must match
-            var allParcelNumbers = _dbContext.Parcel.Select(y => y.ParcelNumber);
+            var allParcelNumbers = _dbContext.Parcels.Select(y => y.ParcelNumber);
             var unmatchedRecords = records.Where(x => !allParcelNumbers.Contains(x.APN)).ToList();
 
             if (unmatchedRecords.Any())
@@ -531,7 +531,7 @@ namespace Rio.API.Controllers
                 if (expectedResults.NumAccountsToBeInactivated > 0 || expectedResults.NumAccountsToBeCreated > 0)
                 {
                     var currentDifferencesForAccounts =
-                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
+                        _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccounts.Where(x =>
                             !x.WaterYearID.HasValue || x.WaterYearID == waterYearDto.WaterYearID);
 
                     var accountNamesToCreate = currentDifferencesForAccounts
@@ -547,7 +547,7 @@ namespace Rio.API.Controllers
                     var accountNamesToInactivate = currentDifferencesForAccounts
                         .Where(x => (x.AccountAlreadyExists.Value &&
                                      !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
-                    Account.BulkInactivate(_dbContext, _dbContext.Account
+                    Account.BulkInactivate(_dbContext, _dbContext.Accounts
                         .Where(x => accountNamesToInactivate.Contains(x.AccountName))
                         .ToList());
                 }

@@ -38,7 +38,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<List<OpenETSyncHistoryDto>> GetMostRecentSyncHistoryForWaterYearMonthsThatHaveBeenUpdated()
         {
-            return _dbContext.vOpenETMostRecentSyncHistoryForYearAndMonth
+            return _dbContext.vOpenETMostRecentSyncHistoryForYearAndMonths
                 .Include(x => x.OpenETSyncResultType)
                 .Include(x => x.WaterYearMonth)
                 .ThenInclude(x => x.WaterYear)

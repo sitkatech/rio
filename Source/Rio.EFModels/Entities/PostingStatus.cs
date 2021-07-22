@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<PostingStatusDto> List(RioDbContext dbContext)
         {
-            var postingStatusDtos = dbContext.PostingStatus
+            var postingStatusDtos = dbContext.PostingStatuses
                 .AsNoTracking()
                 .Select(x => x.AsDto());
 
@@ -18,7 +18,7 @@ namespace Rio.EFModels.Entities
 
         public static PostingStatusDto GetByPostingStatusID(RioDbContext dbContext, int postingStatusID)
         {
-            var postingStatus = dbContext.PostingStatus
+            var postingStatus = dbContext.PostingStatuses
                 .AsNoTracking()
                 .SingleOrDefault(x => x.PostingStatusID == postingStatusID);
 

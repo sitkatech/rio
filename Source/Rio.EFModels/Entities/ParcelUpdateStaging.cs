@@ -102,7 +102,7 @@ namespace Rio.EFModels.Entities
 
         public static ParcelUpdateExpectedResultsDto GetExpectedResultsDto (RioDbContext _dbContext, WaterYearDto yearChangesToTakeEffect)
         {
-            var accountsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccount.Where(x =>
+            var accountsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInParcelsAssociatedWithAccounts.Where(x =>
                 !x.WaterYearID.HasValue || x.WaterYearID == yearChangesToTakeEffect.WaterYearID);
 
             var accountsUnchanged =
@@ -114,7 +114,7 @@ namespace Rio.EFModels.Entities
             var accountsToBeAdded = accountsUpdatedView.Count(x =>
                 !x.AccountAlreadyExists.Value);
 
-            var parcelsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometry.Where(x =>
+            var parcelsUpdatedView = _dbContext.vParcelLayerUpdateDifferencesInAccountAssociatedWithParcelAndParcelGeometries.Where(x =>
                 !x.WaterYearID.HasValue || x.WaterYearID == yearChangesToTakeEffect.WaterYearID);
 
             var parcelsUnchanged =
@@ -128,7 +128,7 @@ namespace Rio.EFModels.Entities
             var parcelsToBeInactivated = parcelsUpdatedView.Count(x =>
                 x.WaterYearID.HasValue && !string.IsNullOrWhiteSpace(x.OldOwnerName) && string.IsNullOrWhiteSpace(x.NewOwnerName));
 
-            var numParcelsWithConflicts = _dbContext.ParcelUpdateStaging.Where(x => x.HasConflict).Select(x => x.ParcelNumber).Distinct().Count();
+            var numParcelsWithConflicts = _dbContext.ParcelUpdateStagings.Where(x => x.HasConflict).Select(x => x.ParcelNumber).Distinct().Count();
 
             var expectedChanges = new ParcelUpdateExpectedResultsDto()
             {

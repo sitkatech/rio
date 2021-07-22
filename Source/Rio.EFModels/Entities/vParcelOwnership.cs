@@ -18,7 +18,7 @@ namespace Rio.EFModels.Entities
 
         public static AccountSimpleDto GetLastOwnerOfParcelByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var allOwners = dbContext.vParcelOwnership
+            var allOwners = dbContext.vParcelOwnerships
                 .Include(x => x.WaterYear)
                 .Include(x => x.Account)
                 .Where(x => x.ParcelID == parcelID && x.AccountID != null);

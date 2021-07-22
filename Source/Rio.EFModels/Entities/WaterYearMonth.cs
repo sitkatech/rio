@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
     {
         public static IQueryable<WaterYearMonth> GetWaterYearMonthImpl(RioDbContext dbContext)
         {
-            return dbContext.WaterYearMonth
+            return dbContext.WaterYearMonths
                 .Include(x => x.WaterYear)
                 .AsNoTracking();
         }
@@ -30,7 +30,7 @@ namespace Rio.EFModels.Entities
 
         public static WaterYearMonthDto Finalize(RioDbContext dbContext, int waterYearMonthID)
         {
-            var waterYear = dbContext.WaterYearMonth.Single(x => x.WaterYearMonthID == waterYearMonthID);
+            var waterYear = dbContext.WaterYearMonths.Single(x => x.WaterYearMonthID == waterYearMonthID);
 
             waterYear.FinalizeDate = DateTime.UtcNow;
 

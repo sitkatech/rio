@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Keyless]
     public partial class vGeoServerScenarioArsenicContaminationLocation
     {
         public int PrimaryKey { get; set; }

@@ -12,16 +12,16 @@ namespace Rio.EFModels.Entities
         public static List<ParcelAllocationDto> Upsert(RioDbContext dbContext, int parcelID, List<ParcelAllocationUpsertDto> parcelAllocationUpsertDtos)
         {
             // delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x => x.ParcelID == parcelID);
+            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x => x.ParcelID == parcelID);
             if (existingParcelAllocations.Any())
             {
-                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
                 dbContext.SaveChanges();
             }
 
             foreach (var parcelAllocationUpsertDto in parcelAllocationUpsertDtos)
             {
-                var parcelAllocation = dbContext.ParcelAllocation
+                var parcelAllocation = dbContext.ParcelAllocations
                     .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
 
                 if (parcelAllocation == null)
@@ -32,7 +32,7 @@ namespace Rio.EFModels.Entities
                         WaterYear = parcelAllocationUpsertDto.WaterYear,
                         ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID
                     };
-                    dbContext.ParcelAllocation.Add(parcelAllocation);
+                    dbContext.ParcelAllocations.Add(parcelAllocation);
                 }
 
                 parcelAllocation.AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated;
@@ -44,14 +44,14 @@ namespace Rio.EFModels.Entities
         public static int BulkSetAllocation(RioDbContext dbContext, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
         {
             // delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x => x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
+            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x => x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
             if (existingParcelAllocations.Any())
             {
-                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
                 dbContext.SaveChanges();
             }
 
-            var parcels = dbContext.Parcel.AsNoTracking().OrderBy(x => x.ParcelID).ToList();
+            var parcels = dbContext.Parcels.AsNoTracking().OrderBy(x => x.ParcelID).ToList();
             foreach (var parcel in parcels)
             {
                 var parcelAllocation = new ParcelAllocation
@@ -61,7 +61,7 @@ namespace Rio.EFModels.Entities
                     ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID,
                     AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated * (decimal)parcel.ParcelAreaInAcres
                 };
-                dbContext.ParcelAllocation.Add(parcelAllocation);
+                dbContext.ParcelAllocations.Add(parcelAllocation);
             }
             dbContext.SaveChanges();
             return parcels.Count;
@@ -110,18 +110,18 @@ namespace Rio.EFModels.Entities
             int parcelAllocationType)
         {
             //delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocation.Where(x =>
+            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x =>
                 x.WaterYear == waterYear && x.ParcelAllocationTypeID == parcelAllocationType);
             if (existingParcelAllocations.Any())
             {
-                dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
+                dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
                 dbContext.SaveChanges();
             }
 
             var parcelAllocations = new List<ParcelAllocation>();
             foreach (var record in records)
             {
-                var parcel = dbContext.Parcel.First(x => x.ParcelNumber == record.APN);
+                var parcel = dbContext.Parcels.First(x => x.ParcelNumber == record.APN);
                 parcelAllocations.Add(new ParcelAllocation()
                 {
                     ParcelID = parcel.ParcelID,
@@ -132,13 +132,13 @@ namespace Rio.EFModels.Entities
                 });
             }
 
-            dbContext.ParcelAllocation.AddRange(parcelAllocations);
+            dbContext.ParcelAllocations.AddRange(parcelAllocations);
             dbContext.SaveChanges();
         }
 
         public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelAllocations = dbContext.ParcelAllocation
+            var parcelAllocations = dbContext.ParcelAllocations
                 .AsNoTracking()
                 .Where(x => x.ParcelID == parcelID);
 
@@ -149,7 +149,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelAllocations = dbContext.ParcelAllocation
+            var parcelAllocations = dbContext.ParcelAllocations
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
@@ -160,7 +160,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
-            return dbContext.ParcelAllocation.AsNoTracking()
+            return dbContext.ParcelAllocations.AsNoTracking()
                 .Where(x => x.WaterYear == year)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
@@ -178,7 +178,7 @@ namespace Rio.EFModels.Entities
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = dbContext.ParcelAllocation.AsNoTracking().Where(x => x.WaterYear == year);
+            var parcelAllocations = dbContext.ParcelAllocations.AsNoTracking().Where(x => x.WaterYear == year);
 
             return accountParcelWaterYearOwnershipsByYear
                 .GroupJoin(

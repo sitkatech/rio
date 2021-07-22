@@ -11,7 +11,7 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration.Include(x => x.Parcel)
+            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
                 .AsNoTracking()
                 .Where(x => x.ParcelID == parcelID);
 
@@ -22,7 +22,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspiration.Include(x => x.Parcel)
+            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
@@ -44,7 +44,7 @@ namespace Rio.EFModels.Entities
                 }
             }
 
-            var parcelMonthlyEvapotranspirationsFromDB = dbContext.ParcelMonthlyEvapotranspiration.Include(x => x.Parcel)
+            var parcelMonthlyEvapotranspirationsFromDB = dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID) && x.WaterYear == year).Select(x => x.AsDto()).ToList();
 
@@ -84,10 +84,10 @@ namespace Rio.EFModels.Entities
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var existingParcelMonthlyEvapotranspirationDtos =
-                dbContext.ParcelMonthlyEvapotranspiration.Where(x =>
+                dbContext.ParcelMonthlyEvapotranspirations.Where(x =>
                     parcelIDs.Contains(x.ParcelID) && x.WaterYear == waterYear).ToList();
 
-            var allInDatabase = dbContext.ParcelMonthlyEvapotranspiration;
+            var allInDatabase = dbContext.ParcelMonthlyEvapotranspirations;
 
             var countChanging = postedDtos.Count(x =>
                                     existingParcelMonthlyEvapotranspirationDtos.Any(y =>

@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
     {
         public static ParcelStatusDto GetByID(RioDbContext dbContext, int parcelStatusId)
         {
-            return dbContext.ParcelStatus.Single(x => x.ParcelStatusID == parcelStatusId).AsDto();
+            return dbContext.ParcelStatuses.Single(x => x.ParcelStatusID == parcelStatusId).AsDto();
         }
     }
 }

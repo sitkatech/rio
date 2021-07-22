@@ -40,7 +40,7 @@ namespace Rio.API
                 return;
             }
 
-            var nonFinalizedWaterYearMonths = _rioDbContext.WaterYearMonth.Where(x => !x.FinalizeDate.HasValue);
+            var nonFinalizedWaterYearMonths = _rioDbContext.WaterYearMonths.Where(x => !x.FinalizeDate.HasValue);
             if (!nonFinalizedWaterYearMonths.Any())
             {
                 return;

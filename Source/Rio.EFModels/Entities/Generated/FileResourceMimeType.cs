@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("FileResourceMimeType")]
+    [Index(nameof(FileResourceMimeTypeDisplayName), Name = "AK_FileResourceMimeType_FileResourceMimeTypeDisplayName", IsUnique = true)]
+    [Index(nameof(FileResourceMimeTypeName), Name = "AK_FileResourceMimeType_FileResourceMimeTypeName", IsUnique = true)]
     public partial class FileResourceMimeType
     {
         public FileResourceMimeType()
         {
-            FileResource = new HashSet<FileResource>();
+            FileResources = new HashSet<FileResource>();
         }
 
         [Key]
@@ -28,7 +34,7 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string FileResourceMimeTypeIconNormalFilename { get; set; }
 
-        [InverseProperty("FileResourceMimeType")]
-        public virtual ICollection<FileResource> FileResource { get; set; }
+        [InverseProperty(nameof(FileResource.FileResourceMimeType))]
+        public virtual ICollection<FileResource> FileResources { get; set; }
     }
 }

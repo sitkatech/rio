@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterYear")]
+    [Index(nameof(Year), Name = "AK_WaterYear_Year", IsUnique = true)]
     public partial class WaterYear
     {
         public WaterYear()
         {
-            AccountParcelWaterYear = new HashSet<AccountParcelWaterYear>();
-            WaterYearMonth = new HashSet<WaterYearMonth>();
+            AccountParcelWaterYears = new HashSet<AccountParcelWaterYear>();
+            WaterYearMonths = new HashSet<WaterYearMonth>();
         }
 
         [Key]
@@ -19,9 +24,9 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? ParcelLayerUpdateDate { get; set; }
 
-        [InverseProperty("WaterYear")]
-        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYear { get; set; }
-        [InverseProperty("WaterYear")]
-        public virtual ICollection<WaterYearMonth> WaterYearMonth { get; set; }
+        [InverseProperty(nameof(AccountParcelWaterYear.WaterYear))]
+        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
+        [InverseProperty(nameof(WaterYearMonth.WaterYear))]
+        public virtual ICollection<WaterYearMonth> WaterYearMonths { get; set; }
     }
 }

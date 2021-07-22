@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<PostingTypeDto> List(RioDbContext dbContext)
         {
-            var roles = dbContext.PostingType
+            var roles = dbContext.PostingTypes
                 .AsNoTracking()
                 .Select(x => x.AsDto());
 
@@ -18,7 +18,7 @@ namespace Rio.EFModels.Entities
 
         public static PostingTypeDto GetByPostingTypeID(RioDbContext dbContext, int postingTypeID)
         {
-            var postingType = dbContext.PostingType
+            var postingType = dbContext.PostingTypes
                 .AsNoTracking()
                 .SingleOrDefault(x => x.PostingTypeID == postingTypeID);
 

@@ -10,7 +10,7 @@ namespace Rio.EFModels.Entities
     {
         public static OpenETSyncHistoryDto New(RioDbContext dbContext, int waterYearMonthID)
         {
-            var waterYearMonth = dbContext.WaterYearMonth.Single(x => x.WaterYearMonthID == waterYearMonthID);
+            var waterYearMonth = dbContext.WaterYearMonths.Single(x => x.WaterYearMonthID == waterYearMonthID);
             
             var openETSyncHistoryToAdd = new OpenETSyncHistory()
             {
@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
                 UpdateDate = DateTime.UtcNow
             };
 
-            dbContext.OpenETSyncHistory.Add(openETSyncHistoryToAdd);
+            dbContext.OpenETSyncHistories.Add(openETSyncHistoryToAdd);
             dbContext.SaveChanges();
             dbContext.Entry(openETSyncHistoryToAdd).Reload();
 
@@ -29,7 +29,7 @@ namespace Rio.EFModels.Entities
 
         public static OpenETSyncHistoryDto GetByOpenETSyncHistoryID(RioDbContext dbContext, int openETSyncHistoryID)
         {
-            return dbContext.OpenETSyncHistory
+            return dbContext.OpenETSyncHistories
                 .Include(x=>x.OpenETSyncResultType)
                 .Include(x => x.WaterYearMonth)
                 .ThenInclude(x => x.WaterYear)
@@ -48,7 +48,7 @@ namespace Rio.EFModels.Entities
         public static OpenETSyncHistoryDto UpdateOpenETSyncEntityByID(RioDbContext rioDbContext, int openETSyncHistoryID, OpenETSyncResultTypeEnum resultType, string errorMessage, string googleBucketFileRetrievalURL)
         {
             var openETSyncHistory =
-                rioDbContext.OpenETSyncHistory.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
+                rioDbContext.OpenETSyncHistories.Single(x => x.OpenETSyncHistoryID == openETSyncHistoryID);
 
             openETSyncHistory.UpdateDate = DateTime.UtcNow;
             openETSyncHistory.OpenETSyncResultTypeID = (int)resultType;
@@ -71,7 +71,7 @@ namespace Rio.EFModels.Entities
 
         public static List<OpenETSyncHistoryDto> List(RioDbContext dbContext)
         {
-            return dbContext.OpenETSyncHistory
+            return dbContext.OpenETSyncHistories
                 .Include(x => x.OpenETSyncResultType)
                 .Include(x => x.WaterYearMonth)
                 .ThenInclude(x => x.WaterYear)

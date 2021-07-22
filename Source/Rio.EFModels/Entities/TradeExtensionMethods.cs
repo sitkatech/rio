@@ -19,14 +19,14 @@ namespace Rio.EFModels.Entities
 
         public static TradeWithMostRecentOfferDto AsTradeWithMostRecentOfferDto(this Trade trade)
         {
-            var mostRecentOffer = trade.Offer.OrderByDescending(x => x.OfferDate).First();
+            var mostRecentOffer = trade.Offers.OrderByDescending(x => x.OfferDate).First();
             var tradeWithMostRecentOfferDto = new TradeWithMostRecentOfferDto()
             {
                 TradeID = trade.TradeID,
                 TradeNumber = trade.TradeNumber,
                 TradeStatus = trade.TradeStatus.AsDto(),
                 CreateAccount = trade.CreateAccount.AsSimpleDto(),
-                OfferCreateAccountUser = mostRecentOffer.CreateAccount.AccountUser.Any() ? mostRecentOffer.CreateAccount.AccountUser.First().User?.AsSimpleDto() : null,
+                OfferCreateAccountUser = mostRecentOffer.CreateAccount.AccountUsers.Any() ? mostRecentOffer.CreateAccount.AccountUsers.First().User?.AsSimpleDto() : null,
                 OfferStatus = mostRecentOffer.OfferStatus.AsDto(),
                 Price = mostRecentOffer.Price,
                 Quantity = mostRecentOffer.Quantity,
@@ -35,7 +35,7 @@ namespace Rio.EFModels.Entities
                 WaterTransferID = null
             };
 
-            var waterTransfer = mostRecentOffer.WaterTransfer.SingleOrDefault();
+            var waterTransfer = mostRecentOffer.WaterTransfers.SingleOrDefault();
             if (waterTransfer != null)
             {
                 tradeWithMostRecentOfferDto.WaterTransferID = waterTransfer.WaterTransferID;

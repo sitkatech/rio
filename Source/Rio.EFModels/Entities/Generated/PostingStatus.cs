@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("PostingStatus")]
+    [Index(nameof(PostingStatusDisplayName), Name = "AK_PostingStatus_PostingStatusDisplayName", IsUnique = true)]
+    [Index(nameof(PostingStatusName), Name = "AK_PostingStatus_PostingStatusName", IsUnique = true)]
     public partial class PostingStatus
     {
         public PostingStatus()
         {
-            Posting = new HashSet<Posting>();
+            Postings = new HashSet<Posting>();
         }
 
         [Key]
@@ -21,7 +27,7 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string PostingStatusDisplayName { get; set; }
 
-        [InverseProperty("PostingStatus")]
-        public virtual ICollection<Posting> Posting { get; set; }
+        [InverseProperty(nameof(Posting.PostingStatus))]
+        public virtual ICollection<Posting> Postings { get; set; }
     }
 }

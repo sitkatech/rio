@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("WaterTransferRegistrationParcel")]
     public partial class WaterTransferRegistrationParcel
     {
         [Key]
@@ -14,10 +18,10 @@ namespace Rio.EFModels.Entities
         public int AcreFeetTransferred { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
-        [InverseProperty("WaterTransferRegistrationParcel")]
+        [InverseProperty("WaterTransferRegistrationParcels")]
         public virtual Parcel Parcel { get; set; }
         [ForeignKey(nameof(WaterTransferRegistrationID))]
-        [InverseProperty("WaterTransferRegistrationParcel")]
+        [InverseProperty("WaterTransferRegistrationParcels")]
         public virtual WaterTransferRegistration WaterTransferRegistration { get; set; }
     }
 }

@@ -10,14 +10,17 @@ using NetTopologySuite.Geometries;
 namespace Rio.EFModels.Entities
 {
     [Keyless]
-    public partial class vGeoServerWaterTradingScenarioWell
+    public partial class vGeoServerAllParcel
     {
         public int PrimaryKey { get; set; }
+        public int ParcelID { get; set; }
         [Required]
-        [StringLength(100)]
-        public string WaterTradingScenarioWellCountyName { get; set; }
+        [StringLength(20)]
+        public string ParcelNumber { get; set; }
+        public int ParcelAreaInSquareFeet { get; set; }
+        public double ParcelAreaInAcres { get; set; }
         [Required]
         [Column(TypeName = "geometry")]
-        public Geometry WaterTradingScenarioWellGeometry { get; set; }
+        public Geometry ParcelGeometry { get; set; }
     }
 }

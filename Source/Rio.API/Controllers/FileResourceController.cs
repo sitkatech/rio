@@ -25,7 +25,7 @@ namespace Rio.API.Controllers
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
 
-            _dbContext.FileResource.Add(fileResource);
+            _dbContext.FileResources.Add(fileResource);
             _dbContext.SaveChanges();
 
             return Ok(new {imageUrl = $"/FileResource/{fileResource.FileResourceGUID}"});
@@ -38,7 +38,7 @@ namespace Rio.API.Controllers
             var isStringAGuid = Guid.TryParse(fileResourceGuidAsString, out var fileResourceGuid);
             if (isStringAGuid)
             {
-                var fileResource = _dbContext.FileResource.Include(x=>x.FileResourceMimeType).SingleOrDefault(x => x.FileResourceGUID == fileResourceGuid);
+                var fileResource = _dbContext.FileResources.Include(x=>x.FileResourceMimeType).SingleOrDefault(x => x.FileResourceGUID == fileResourceGuid);
 
                 return DisplayResourceImpl(fileResourceGuidAsString, fileResource);
             }
