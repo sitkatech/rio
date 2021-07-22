@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using System.Threading;
 using System;
+using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Rio.API
@@ -17,15 +18,17 @@ namespace Rio.API
         IOpenETRetrieveFromBucketJob
     {
         private readonly RioConfiguration _rioConfiguration;
-        private OpenETService _openETService;
+        private readonly IOpenETService _openETService;
+        private readonly HttpClient _httpClient;
 
         public OpenETRetrieveFromBucketJob(ILogger<OpenETRetrieveFromBucketJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, OpenETService openETService) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService, IHttpClientFactory httpClientFactory) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
             _openETService = openETService;
+            _httpClient = httpClientFactory.CreateClient("GenericClient");
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
@@ -47,7 +50,7 @@ namespace Rio.API
                 var filesReadyForExport = _openETService.GetAllFilesReadyForExport();
                 inProgressSyncs.ForEach(x =>
                 {
-                    _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport);
+                    _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport, _httpClient);
                 });
             }
             
@@ -66,7 +69,6 @@ namespace Rio.API
                     }
                 });
             }
-
         }
     }
 

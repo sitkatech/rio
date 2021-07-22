@@ -14,9 +14,9 @@ namespace Rio.API.Controllers
     [ApiController]
     public class OpenETController : SitkaController<OpenETController>
     {
-        private OpenETService _openETService;
+        private readonly IOpenETService _openETService;
 
-        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, OpenETService openETService) : base(dbContext, logger, keystoneService, rioConfiguration)
+        public OpenETController(RioDbContext dbContext, ILogger<OpenETController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
             _openETService = openETService;
         }

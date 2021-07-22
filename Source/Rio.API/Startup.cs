@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using Hangfire;
 using IdentityServer4.AccessTokenValidation;
@@ -102,11 +104,25 @@ namespace Rio.API
 
             services.AddSingleton(x => new SitkaSmtpClientService(rioConfiguration));
 
+            services.AddHttpClient("OpenETClient", c =>
+            {
+                c.BaseAddress = new Uri(rioConfiguration.OpenETAPIBaseUrl);
+                c.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
+                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(rioConfiguration.OpenETAPIKey);
+            });
+
+            services.AddHttpClient("GenericClient", c =>
+            {
+                c.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
+            });
+
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
+            services.AddScoped<IOpenETService, OpenETService>();
             services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
-            services.AddScoped(s => new OpenETService(s.GetService<ILogger<OpenETService>>(), rioConfiguration,
-                s.GetService<RioDbContext>()));
+            services.AddScoped<IOpenETRetrieveFromBucketJob, OpenETRetrieveFromBucketJob>();
+            services.AddScoped<IOpenETTriggerBucketRefreshJob, OpenETTriggerBucketRefreshJob>();
+
             // Add Hangfire services.
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

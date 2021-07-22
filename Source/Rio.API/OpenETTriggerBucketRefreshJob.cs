@@ -16,11 +16,11 @@ namespace Rio.API
     {
         private readonly RioConfiguration _rioConfiguration;
         private IBackgroundJobClient _backgroundJobClient;
-        private OpenETService _openETService;
+        private readonly IOpenETService _openETService;
 
         public OpenETTriggerBucketRefreshJob(ILogger<OpenETTriggerBucketRefreshJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, OpenETService openETService) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, IOpenETService openETService) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
