@@ -23,7 +23,7 @@ namespace Rio.EFModels.Entities
         }
         public static AccountDto AsDto(this Account account)
         {
-            var userSimpleDtos = account.AccountUser.Select(x=>x.User.AsSimpleDto()).ToList();
+            var userSimpleDtos = account.AccountUsers.Select(x=>x.User.AsSimpleDto()).ToList();
             return new AccountDto()
             {
                 AccountID = account.AccountID,
@@ -39,7 +39,7 @@ namespace Rio.EFModels.Entities
                 AccountStatus = account.AccountStatus.AsDto(),
                 AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
                 ShortAccountDisplayName = $"{account.AccountName} (#{account.AccountNumber})",
-                NumberOfParcels = account.AccountParcelWaterYear.Count(x => x.WaterYear.Year == DateTime.Now.Year)
+                NumberOfParcels = account.AccountParcelWaterYears.Count(x => x.WaterYear.Year == DateTime.Now.Year)
             };
         }
 
@@ -48,7 +48,7 @@ namespace Rio.EFModels.Entities
             return new AccountIncludeParcelsDto()
             {
                 Account = account.AsDto(),
-                Parcels = account.AccountParcelWaterYear.Where(x => x.WaterYear.Year == DateTime.Now.Year).Select(x => x.Parcel.AsSimpleDto()).ToList()
+                Parcels = account.AccountParcelWaterYears.Where(x => x.WaterYear.Year == DateTime.Now.Year).Select(x => x.Parcel.AsSimpleDto()).ToList()
             };
         }
     }

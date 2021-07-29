@@ -1,0 +1,132 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a routerLink="/">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">OpenET Integration</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <ng-container *ngIf="!loadingPage; else loadingBlock">
+        <app-alert-display></app-alert-display>
+        <ngb-alert *ngIf="numSyncsInProgress() > 0" [type]="'info'" [dismissible]="false">
+                Sync operations are currently in progress to update the following {{ numSyncsInProgress == 1 ? "date" : "dates" }}: {{ getInProgressDates()
+                }}.<br />
+                Syncing and finalizing any of the dates involved in these operations will be disabled until the
+                respective operation completes.
+        </ngb-alert>
+        <ngb-alert *ngIf="!openETSyncEnabled()" [type]="'info'" [dismissible]="false">
+            Currently, syncing with OpenET is not enabled. This feature will be enabled in the future.
+        </ngb-alert>
+        <ngb-alert *ngIf="!isOpenETAPIKeyValid && openETSyncEnabled()" [type]="'info'" [dismissible]="false">
+            There was an error communicating with the OpenET platform, and syncing cannot be performed. Support has been
+            informed and will address the issue as soon as possible.
+        </ngb-alert>
+        <div class="row mb-2">
+            <div class="col">
+                <h2 class="d-inline-block">OpenET Integration</h2>
+
+                <div class="mt-2">
+                    <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        OpenET Sync Status By Month
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-condensed" style="table-layout:fixed">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%">Year</th>
+                                        <th style="width: 10%">Month</th>
+                                        <th style="width: 50%">Last Updated</th>
+                                        <th style="width: 10%">Finalized Date</th>
+                                        <th style="width: 20%">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let waterYearMonth of waterYearMonthDtos">
+                                        <td class="align-middle">{{waterYearMonth.WaterYear.Year}}</td>
+                                        <td class="align-middle">{{waterYearMonth.Month}}</td>
+                                        <td class="align-middle">{{getDataUpdateStatusForWaterYearMonth(waterYearMonth)}}</td>
+                                        <td class="align-middle">{{waterYearMonth.FinalizeDate | date:dateFormatString}}</td>
+                                        <td class="align-middle">
+                                                <button class="btn btn-rio mr-2"
+                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(syncWaterYearMonthModalContent, waterYearMonth)"
+                                                    [disabled]="!openETSyncEnabled() || !isOpenETAPIKeyValid || !isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Sync
+                                                    Now</button>
+                                                <button class="btn btn-rio"
+                                                    (click)="setSelectedWaterYearMonthAndLaunchModal(finalizeWaterYearMonthModalContent, waterYearMonth)"
+                                                    [disabled]="!isCurrentUserAdministrator() || (waterYearMonth.FinalizeDate !== null && waterYearMonth.FinalizeDate !== undefined) || syncInProgressForWaterYearMonth(waterYearMonth.WaterYearMonthID)">Finalize</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="updating" *ngIf="isPerformingAction">
+                            <div class="updating-text">
+                                <span class="fa fa-spinner loading-spinner"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+<ng-template #loadingBlock>
+    <i class="fa fa-spinner loading-spinner"></i> Loading
+</ng-template>
+
+<ng-template #finalizeWaterYearMonthModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="finalizeWaterYearMonthModalTitle">Finalize Water Year and Month Data</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to finalize the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? The system will no longer
+            update Evapotranspiration data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}} and will not accept any new override
+            submissions.
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" ngbAutoFocus (click)="finalizeWaterYearMonth()">
+                Finalize</button>
+            <button type="button" class="btn btn-secondary btn-sm"
+                (click)="resetWaterYearMonthToFinalizeAndCloseModal(modal)">Cancel</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #syncWaterYearMonthModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="syncWaterYearMonthModalTitle">Sync Water Year and Month Data</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            Are you sure you want to sync the OpenET data for {{selectedWaterYearMonthName}} {{selectedWaterYearMonth.WaterYear.Year}}? This will refresh OpenET Data
+            for all applicable parcels, but will not reset any user-input overrides.
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" ngbAutoFocus (click)="syncWaterYearMonth()">
+                Sync</button>
+            <button type="button" class="btn btn-secondary btn-sm"
+                (click)="resetWaterYearMonthToFinalizeAndCloseModal(modal)">Cancel</button>
+        </div>
+    </div>
+</ng-template>

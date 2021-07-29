@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("AccountParcelWaterYear")]
+    [Index(nameof(ParcelID), nameof(WaterYearID), Name = "AK_AccountParcelWaterYear_ParcelID_WaterYearID", IsUnique = true)]
     public partial class AccountParcelWaterYear
     {
         [Key]
@@ -14,13 +19,13 @@ namespace Rio.EFModels.Entities
         public int WaterYearID { get; set; }
 
         [ForeignKey(nameof(AccountID))]
-        [InverseProperty("AccountParcelWaterYear")]
+        [InverseProperty("AccountParcelWaterYears")]
         public virtual Account Account { get; set; }
         [ForeignKey(nameof(ParcelID))]
-        [InverseProperty("AccountParcelWaterYear")]
+        [InverseProperty("AccountParcelWaterYears")]
         public virtual Parcel Parcel { get; set; }
         [ForeignKey(nameof(WaterYearID))]
-        [InverseProperty("AccountParcelWaterYear")]
+        [InverseProperty("AccountParcelWaterYears")]
         public virtual WaterYear WaterYear { get; set; }
     }
 }

@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("Posting")]
     public partial class Posting
     {
         public Posting()
         {
-            Trade = new HashSet<Trade>();
+            Trades = new HashSet<Trade>();
         }
 
         [Key]
@@ -28,18 +32,18 @@ namespace Rio.EFModels.Entities
         public int? CreateUserID { get; set; }
 
         [ForeignKey(nameof(CreateAccountID))]
-        [InverseProperty(nameof(Account.Posting))]
+        [InverseProperty(nameof(Account.Postings))]
         public virtual Account CreateAccount { get; set; }
         [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.Posting))]
+        [InverseProperty(nameof(User.Postings))]
         public virtual User CreateUser { get; set; }
         [ForeignKey(nameof(PostingStatusID))]
-        [InverseProperty("Posting")]
+        [InverseProperty("Postings")]
         public virtual PostingStatus PostingStatus { get; set; }
         [ForeignKey(nameof(PostingTypeID))]
-        [InverseProperty("Posting")]
+        [InverseProperty("Postings")]
         public virtual PostingType PostingType { get; set; }
-        [InverseProperty("Posting")]
-        public virtual ICollection<Trade> Trade { get; set; }
+        [InverseProperty(nameof(Trade.Posting))]
+        public virtual ICollection<Trade> Trades { get; set; }
     }
 }

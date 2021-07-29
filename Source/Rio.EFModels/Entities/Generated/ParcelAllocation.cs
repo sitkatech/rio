@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("ParcelAllocation")]
+    [Index(nameof(ParcelID), nameof(WaterYear), nameof(ParcelAllocationTypeID), Name = "AK_ParcelAllocation_ParcelID_WaterYear", IsUnique = true)]
     public partial class ParcelAllocation
     {
         [Key]
@@ -16,10 +21,10 @@ namespace Rio.EFModels.Entities
         public decimal AcreFeetAllocated { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
-        [InverseProperty("ParcelAllocation")]
+        [InverseProperty("ParcelAllocations")]
         public virtual Parcel Parcel { get; set; }
         [ForeignKey(nameof(ParcelAllocationTypeID))]
-        [InverseProperty("ParcelAllocation")]
+        [InverseProperty("ParcelAllocations")]
         public virtual ParcelAllocationType ParcelAllocationType { get; set; }
     }
 }

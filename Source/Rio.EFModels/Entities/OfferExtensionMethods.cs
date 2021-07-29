@@ -18,7 +18,7 @@ namespace Rio.EFModels.Entities
                 OfferStatus = offer.OfferStatus.AsDto(),
                 Trade = offer.Trade.AsDto(),
             };
-            var waterTransfer = offer.WaterTransfer.SingleOrDefault();
+            var waterTransfer = offer.WaterTransfers.SingleOrDefault();
             if (waterTransfer != null)
             {
                 offerDto.WaterTransferID = waterTransfer.WaterTransferID;

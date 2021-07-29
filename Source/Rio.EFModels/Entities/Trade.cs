@@ -19,10 +19,10 @@ namespace Rio.EFModels.Entities
             };
 
             // we need to calculate the trade number
-            var existingTradesForTheYearCount = dbContext.Trade.AsNoTracking().Count(x => x.TradeDate.Year == trade.TradeDate.Year);
+            var existingTradesForTheYearCount = dbContext.Trades.AsNoTracking().Count(x => x.TradeDate.Year == trade.TradeDate.Year);
             trade.TradeNumber = $"{trade.TradeDate.Year}-{existingTradesForTheYearCount + 1:D4}";
 
-            dbContext.Trade.Add(trade);
+            dbContext.Trades.Add(trade);
             dbContext.SaveChanges();
             dbContext.Entry(trade).Reload();
 
@@ -62,10 +62,10 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<Trade> GetTradeWithOfferDetailsImpl(RioDbContext dbContext)
         {
-            return dbContext.Trade
-                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Offer).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
-                .Include(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.Trades
+                .Include(x => x.Offers).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.Offers).ThenInclude(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
+                .Include(x => x.Offers).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
                 .Include(x => x.TradeStatus)
                 .Include(x => x.CreateAccount)
                 .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
@@ -91,9 +91,9 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<Trade> GetTradeImpl(RioDbContext dbContext)
         {
-            return dbContext.Trade
+            return dbContext.Trades
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUser).ThenInclude(x=>x.User)
+                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUsers).ThenInclude(x=>x.User)
                 .Include(x=>x.CreateAccount.AccountStatus)
                 .Include(x => x.Posting).ThenInclude(x => x.CreateAccount.AccountStatus)
                 .Include(x => x.Posting).ThenInclude(x => x.PostingType)
@@ -117,7 +117,7 @@ namespace Rio.EFModels.Entities
 
         public static TradeDto Update(RioDbContext dbContext, int tradeID, TradeStatusEnum tradeStatusEnum)
         {
-            var trade = dbContext.Trade
+            var trade = dbContext.Trades
                 .Single(x => x.TradeID == tradeID);
 
             trade.TradeStatusID = (int) tradeStatusEnum;
@@ -129,7 +129,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<TradeWithMostRecentOfferDto> GetTradesForAccountsUserIDHasAccessTo(RioDbContext dbContext, int userID)
         {
-            var accountsForUser = dbContext.AccountUser.Where(x => x.UserID == userID).Select(x => x.AccountID).ToList();
+            var accountsForUser = dbContext.AccountUsers.Where(x => x.UserID == userID).Select(x => x.AccountID).ToList();
             var offers = GetTradeWithOfferDetailsImpl(dbContext)
                 .Where(x => accountsForUser.Contains(x.CreateAccountID) || accountsForUser.Contains(x.Posting.CreateAccountID))
                 .OrderByDescending(x => x.TradeDate)
@@ -141,7 +141,7 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.Trade.RemoveRange(dbContext.Trade);
+            dbContext.Trades.RemoveRange(dbContext.Trades);
             dbContext.SaveChanges();
         }
     }

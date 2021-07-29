@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("ScenarioArsenicContaminationLocation")]
+    [Index(nameof(ScenarioArsenicContaminationLocationWellName), Name = "AK_ScenarioArsenicContaminationLocation_ScenarioArsenicContaminationLocationWellName", IsUnique = true)]
     public partial class ScenarioArsenicContaminationLocation
     {
         [Key]

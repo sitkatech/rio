@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("ScenarioRechargeBasin")]
+    [Index(nameof(ScenarioRechargeBasinName), nameof(ScenarioRechargeBasinDisplayName), Name = "AK_ScenarioRechargeBasin_ScenarioRechargeBasinName_ScenarioRechargeBasinDisplayName", IsUnique = true)]
     public partial class ScenarioRechargeBasin
     {
         [Key]

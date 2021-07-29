@@ -43,18 +43,18 @@ namespace Rio.API.Controllers
 
             // add new PATs before the merge.
             var newParcelAllocationTypes = updatedParcelAllocationTypes.Where(x => x.ParcelAllocationTypeID == 0);
-            _dbContext.ParcelAllocationType.AddRange(newParcelAllocationTypes);
+            _dbContext.ParcelAllocationTypes.AddRange(newParcelAllocationTypes);
             _dbContext.SaveChanges();
             
-            var existingParcelAllocationTypes = _dbContext.ParcelAllocationType.ToList();
+            var existingParcelAllocationTypes = _dbContext.ParcelAllocationTypes.ToList();
             
             // blast parcel allocations/history for deleted types
             var deletedParcelAllocationTypeIDs = existingParcelAllocationTypes.Select(x => x.ParcelAllocationTypeID).Where(x =>
                 !parcelAllocationTypeDtos.Select(y => y.ParcelAllocationTypeID).Contains(x));
-            _dbContext.ParcelAllocation.RemoveRange(_dbContext.ParcelAllocation.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
-            _dbContext.ParcelAllocationHistory.RemoveRange(_dbContext.ParcelAllocationHistory.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
+            _dbContext.ParcelAllocations.RemoveRange(_dbContext.ParcelAllocations.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
+            _dbContext.ParcelAllocationHistories.RemoveRange(_dbContext.ParcelAllocationHistories.Where(x=> deletedParcelAllocationTypeIDs.Contains(x.ParcelAllocationTypeID)));
             
-            var allInDatabase = _dbContext.ParcelAllocationType;
+            var allInDatabase = _dbContext.ParcelAllocationTypes;
 
             existingParcelAllocationTypes.Merge(updatedParcelAllocationTypes, allInDatabase,
                 (x, y) => x.ParcelAllocationTypeID == y.ParcelAllocationTypeID,

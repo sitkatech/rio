@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static FileResourceMimeType GetFileResourceMimeTypeByContentTypeName(RioDbContext dbContext, string contentTypeName)
         {
-            return dbContext.FileResourceMimeType.Single(x => x.FileResourceMimeTypeContentTypeName == contentTypeName);
+            return dbContext.FileResourceMimeTypes.Single(x => x.FileResourceMimeTypeContentTypeName == contentTypeName);
         }
     }
 }

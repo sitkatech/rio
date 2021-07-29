@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("ParcelAllocationHistory")]
     public partial class ParcelAllocationHistory
     {
         [Key]
@@ -19,13 +23,13 @@ namespace Rio.EFModels.Entities
         public decimal? ParcelAllocationHistoryValue { get; set; }
 
         [ForeignKey(nameof(FileResourceID))]
-        [InverseProperty("ParcelAllocationHistory")]
+        [InverseProperty("ParcelAllocationHistories")]
         public virtual FileResource FileResource { get; set; }
         [ForeignKey(nameof(ParcelAllocationTypeID))]
-        [InverseProperty("ParcelAllocationHistory")]
+        [InverseProperty("ParcelAllocationHistories")]
         public virtual ParcelAllocationType ParcelAllocationType { get; set; }
         [ForeignKey(nameof(UserID))]
-        [InverseProperty("ParcelAllocationHistory")]
+        [InverseProperty("ParcelAllocationHistories")]
         public virtual User User { get; set; }
     }
 }

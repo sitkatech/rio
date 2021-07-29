@@ -9,7 +9,7 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<OfferStatusDto> List(RioDbContext dbContext)
         {
-            var offerStatusDtos = dbContext.OfferStatus
+            var offerStatusDtos = dbContext.OfferStatuses
                 .AsNoTracking()
                 .Select(x => x.AsDto());
 
@@ -18,7 +18,7 @@ namespace Rio.EFModels.Entities
 
         public static OfferStatusDto GetByOfferStatusID(RioDbContext dbContext, int offerStatusID)
         {
-            var offerStatus = dbContext.OfferStatus
+            var offerStatus = dbContext.OfferStatuses
                 .AsNoTracking()
                 .SingleOrDefault(x => x.OfferStatusID == offerStatusID);
 

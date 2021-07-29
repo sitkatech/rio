@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("ParcelMonthlyEvapotranspiration")]
+    [Index(nameof(ParcelID), nameof(WaterYear), nameof(WaterMonth), Name = "AK_ParcelMonthlyEvapotranspiration_ParcelID_WaterYear_WaterMonth", IsUnique = true)]
     public partial class ParcelMonthlyEvapotranspiration
     {
         [Key]
@@ -18,7 +23,7 @@ namespace Rio.EFModels.Entities
         public decimal? OverriddenEvapotranspirationRate { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
-        [InverseProperty("ParcelMonthlyEvapotranspiration")]
+        [InverseProperty("ParcelMonthlyEvapotranspirations")]
         public virtual Parcel Parcel { get; set; }
     }
 }

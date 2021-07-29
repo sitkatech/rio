@@ -47,9 +47,9 @@ namespace Rio.EFModels.Entities
                 waterTransferRegistrationBuyer.AccountID = postingDto.CreateAccount.AccountID;
             }
 
-            dbContext.WaterTransfer.Add(waterTransfer);
-            dbContext.WaterTransferRegistration.Add(waterTransferRegistrationBuyer);
-            dbContext.WaterTransferRegistration.Add(waterTransferRegistrationSeller);
+            dbContext.WaterTransfers.Add(waterTransfer);
+            dbContext.WaterTransferRegistrations.Add(waterTransferRegistrationBuyer);
+            dbContext.WaterTransferRegistrations.Add(waterTransferRegistrationSeller);
             dbContext.SaveChanges();
             dbContext.Entry(waterTransfer).Reload();
 
@@ -59,7 +59,7 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<WaterTransferDto> ListByAccountID(RioDbContext dbContext, int accountID)
         {
             var waterTransfers = GetWaterTransfersImpl(dbContext)
-                .Where(x => x.WaterTransferRegistration.Any(y => y.AccountID == accountID))
+                .Where(x => x.WaterTransferRegistrations.Any(y => y.AccountID == accountID))
                 .OrderByDescending(x => x.TransferDate)
                 .Select(x => x.AsDto())
                 .AsEnumerable();
@@ -69,8 +69,8 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<WaterTransfer> GetWaterTransfersImpl(RioDbContext dbContext)
         {
-            return dbContext.WaterTransfer
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account).ThenInclude(x => x.AccountUser).ThenInclude(x => x.User)
+            return dbContext.WaterTransfers
+                .Include(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
                 .Include(x => x.Offer).ThenInclude(x => x.Trade)
                 .AsNoTracking();
         }
@@ -111,7 +111,7 @@ namespace Rio.EFModels.Entities
             WaterTransferRegistrationDto waterTransferRegistrationDto,
             WaterTransferRegistrationStatusEnum waterTransferRegistrationStatusEnum)
         {
-            var waterTransferRegistration = dbContext.WaterTransferRegistration
+            var waterTransferRegistration = dbContext.WaterTransferRegistrations
                 .Single(x =>
                     x.WaterTransferID == waterTransferID &&
                     x.WaterTransferTypeID == waterTransferRegistrationDto.WaterTransferTypeID);
@@ -155,13 +155,13 @@ namespace Rio.EFModels.Entities
 
         public static WaterTransferDto GetMostRecentRegistered(RioDbContext dbContext)
         {
-            var waterTransfer = GetWaterTransfersImpl(dbContext).Where(x => x.WaterTransferRegistration.All(y => y.WaterTransferRegistrationStatusID == (int)WaterTransferRegistrationStatusEnum.Registered)).OrderByDescending(x => x.WaterTransferRegistration.Max(y => y.StatusDate)).FirstOrDefault();
+            var waterTransfer = GetWaterTransfersImpl(dbContext).Where(x => x.WaterTransferRegistrations.All(y => y.WaterTransferRegistrationStatusID == (int)WaterTransferRegistrationStatusEnum.Registered)).OrderByDescending(x => x.WaterTransferRegistrations.Max(y => y.StatusDate)).FirstOrDefault();
             return waterTransfer?.AsDto();
         }
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.WaterTransfer.RemoveRange(dbContext.WaterTransfer);
+            dbContext.WaterTransfers.RemoveRange(dbContext.WaterTransfers);
             dbContext.SaveChanges();
         }
     }

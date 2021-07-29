@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using System.Threading;
 using System;
+using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Rio.API
@@ -17,13 +18,17 @@ namespace Rio.API
         IOpenETRetrieveFromBucketJob
     {
         private readonly RioConfiguration _rioConfiguration;
+        private readonly IOpenETService _openETService;
+        private readonly HttpClient _httpClient;
 
         public OpenETRetrieveFromBucketJob(ILogger<OpenETRetrieveFromBucketJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService, IHttpClientFactory httpClientFactory) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
+            _openETService = openETService;
+            _httpClient = httpClientFactory.CreateClient("GenericClient");
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
@@ -33,22 +38,37 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync)
+            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
             {
                 return;
             }
-            //If we access the bucket too early, it can sometimes cause issues with writing to the buckets, so make sure it's been at least 15 minutes before going for it
-            var inProgressSyncs = _rioDbContext.OpenETSyncHistory
+            
+            var inProgressSyncs = _rioDbContext.OpenETSyncHistories
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
             if (inProgressSyncs.Any())
             {
+                var filesReadyForExport = _openETService.GetAllFilesReadyForExport();
                 inProgressSyncs.ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.UpdateParcelMonthlyEvapotranspirationWithETData(_rioDbContext,
-                            _rioConfiguration, x.OpenETSyncHistoryID);
+                    _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport, _httpClient);
                 });
             }
-
+            
+            //Fail any created syncs that have been in a created state for longer than 15 minutes
+            var createdSyncs = _rioDbContext.OpenETSyncHistories
+                .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.Created).ToList();
+            if (createdSyncs.Any())
+            {
+                createdSyncs.ForEach(x =>
+                {
+                    if (DateTime.UtcNow.Subtract(x.CreateDate).Minutes > 15)
+                    {
+                        OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, x.OpenETSyncHistoryID,
+                            OpenETSyncResultTypeEnum.Failed,
+                            "Request never exited the Created state. Please try again.");
+                    }
+                });
+            }
         }
     }
 

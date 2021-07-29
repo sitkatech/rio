@@ -12,7 +12,7 @@ namespace Rio.EFModels.Entities
     {
         public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext, int year)
         {
-            var parcels = dbContext.AccountParcelWaterYear
+            var parcels = dbContext.AccountParcelWaterYears
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .Include(x => x.WaterYear)
@@ -24,7 +24,7 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnershipsByYear(RioDbContext dbContext, int year)
         {
-            return dbContext.AccountParcelWaterYear
+            return dbContext.AccountParcelWaterYears
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .Include(x => x.WaterYear)
@@ -33,7 +33,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<ParcelDto> ListByAccountIDAndYear(RioDbContext dbContext, int accountID, int year)
         {
-            var parcelDtos = dbContext.AccountParcelWaterYear
+            var parcelDtos = dbContext.AccountParcelWaterYears
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .Include(x => x.WaterYear)
@@ -46,7 +46,7 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<ParcelDto> ListByAccountIDsAndYear(RioDbContext dbContext, List<int> accountIDs, int year)
         {
-            var parcelDtos = dbContext.AccountParcelWaterYear
+            var parcelDtos = dbContext.AccountParcelWaterYears
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .Include(x => x.WaterYear)
@@ -59,18 +59,18 @@ namespace Rio.EFModels.Entities
 
         public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
         {
-            var user = dbContext.User.Include(x => x.AccountUser).Single(x => x.UserID == userID);
-            var accountIDs = user.AccountUser.Select(x => x.AccountID).ToList();
+            var user = dbContext.Users.Include(x => x.AccountUsers).Single(x => x.UserID == userID);
+            var accountIDs = user.AccountUsers.Select(x => x.AccountID).ToList();
             
             return ListByAccountIDsAndYear(dbContext, accountIDs, year);
         }
 
         public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcel = dbContext.Parcel
-                .Include(x => x.AccountParcelWaterYear)
+            var parcel = dbContext.Parcels
+                .Include(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.Account)
-                .Include(x => x.AccountParcelWaterYear)
+                .Include(x => x.AccountParcelWaterYears)
                 .ThenInclude(x => x.WaterYear)
                 .AsNoTracking()
                 .SingleOrDefault(x => x.ParcelID == parcelID);
@@ -80,7 +80,7 @@ namespace Rio.EFModels.Entities
 
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcels = dbContext.Parcel
+            var parcels = dbContext.Parcels
                 .AsNoTracking()
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
@@ -90,7 +90,7 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<ParcelOwnershipDto> GetOwnershipHistory(RioDbContext dbContext, int parcelID)
         {
-            return dbContext.vParcelOwnership
+            return dbContext.vParcelOwnerships
                 .Include(x => x.Account)
                 .Include(x => x.WaterYear)
                 .AsNoTracking()
@@ -104,14 +104,14 @@ namespace Rio.EFModels.Entities
         }
         public static IEnumerable<ParcelDto> GetInactiveParcels(RioDbContext dbContext)
         {
-            return dbContext.Parcel
+            return dbContext.Parcels
                 .Where(x => x.ParcelStatusID == (int) ParcelStatusEnum.Inactive)
                 .Select(x => x.AsDto());
         }
 
         public static void UpdateParcelStatus(RioDbContext dbContext, int parcelID, int parcelStatusID)
         {
-            var currentParcel = dbContext.Parcel.Single(x => x.ParcelID == parcelID);
+            var currentParcel = dbContext.Parcels.Single(x => x.ParcelID == parcelID);
 
             currentParcel.ParcelStatusID = parcelStatusID;
             currentParcel.InactivateDate = parcelStatusID == (int)ParcelStatusEnum.Active ? (DateTime?)null : DateTime.UtcNow;

@@ -14,8 +14,13 @@ export class OpenETService {
         return this.apiService.getFromApi(route);
       }
 
-    public triggerGoogleBucketRefreshForWaterYear(selectedWaterYear: number): Observable<any> {
+    public triggerGoogleBucketRefreshForWaterYearMonth(selectedWaterYear: number): Observable<any> {
         const route = "openet-sync-history/trigger-openet-google-bucket-refresh";
         return this.apiService.postToApi(route, selectedWaterYear)
+    }
+
+    public isApiKeyValid(): Observable<boolean> {
+        const route = "openet/is-api-key-valid";
+        return this.apiService.getFromApi(route);
     }
 }

@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("TradeStatus")]
+    [Index(nameof(TradeStatusDisplayName), Name = "AK_TradeStatus_TradeStatusDisplayName", IsUnique = true)]
+    [Index(nameof(TradeStatusName), Name = "AK_TradeStatus_TradeStatusName", IsUnique = true)]
     public partial class TradeStatus
     {
         public TradeStatus()
         {
-            Trade = new HashSet<Trade>();
+            Trades = new HashSet<Trade>();
         }
 
         [Key]
@@ -21,7 +27,7 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string TradeStatusDisplayName { get; set; }
 
-        [InverseProperty("TradeStatus")]
-        public virtual ICollection<Trade> Trade { get; set; }
+        [InverseProperty(nameof(Trade.TradeStatus))]
+        public virtual ICollection<Trade> Trades { get; set; }
     }
 }

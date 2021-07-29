@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("DisadvantagedCommunity")]
+    [Index(nameof(DisadvantagedCommunityName), nameof(LSADCode), Name = "AK_DisadvantagedCommunity_DisadvantagedCommunityName_LSADCode", IsUnique = true)]
     public partial class DisadvantagedCommunity
     {
         [Key]
@@ -20,7 +25,7 @@ namespace Rio.EFModels.Entities
         public Geometry DisadvantagedCommunityGeometry { get; set; }
 
         [ForeignKey(nameof(DisadvantagedCommunityStatusID))]
-        [InverseProperty("DisadvantagedCommunity")]
+        [InverseProperty("DisadvantagedCommunities")]
         public virtual DisadvantagedCommunityStatus DisadvantagedCommunityStatus { get; set; }
     }
 }

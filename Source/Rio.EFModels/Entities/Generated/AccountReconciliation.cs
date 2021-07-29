@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("AccountReconciliation")]
     public partial class AccountReconciliation
     {
         [Key]
@@ -13,10 +17,10 @@ namespace Rio.EFModels.Entities
         public int AccountID { get; set; }
 
         [ForeignKey(nameof(AccountID))]
-        [InverseProperty("AccountReconciliation")]
+        [InverseProperty("AccountReconciliations")]
         public virtual Account Account { get; set; }
         [ForeignKey(nameof(ParcelID))]
-        [InverseProperty("AccountReconciliation")]
+        [InverseProperty("AccountReconciliations")]
         public virtual Parcel Parcel { get; set; }
     }
 }

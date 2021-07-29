@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("CustomRichTextType")]
+    [Index(nameof(CustomRichTextTypeDisplayName), Name = "AK_CustomRichTextType_CustomRichTextTypeDisplayName", IsUnique = true)]
+    [Index(nameof(CustomRichTextTypeName), Name = "AK_CustomRichTextType_CustomRichTextTypeName", IsUnique = true)]
     public partial class CustomRichTextType
     {
         public CustomRichTextType()
         {
-            CustomRichText = new HashSet<CustomRichText>();
+            CustomRichTexts = new HashSet<CustomRichText>();
         }
 
         [Key]
@@ -21,7 +27,7 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string CustomRichTextTypeDisplayName { get; set; }
 
-        [InverseProperty("CustomRichTextType")]
-        public virtual ICollection<CustomRichText> CustomRichText { get; set; }
+        [InverseProperty(nameof(CustomRichText.CustomRichTextType))]
+        public virtual ICollection<CustomRichText> CustomRichTexts { get; set; }
     }
 }

@@ -11,14 +11,14 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
             // get the registration record
-            var waterTransferRegistration = dbContext.WaterTransferRegistration.Single(x =>
+            var waterTransferRegistration = dbContext.WaterTransferRegistrations.Single(x =>
                 x.WaterTransferID == waterTransferID && x.WaterTransferTypeID == waterTransferRegistrationDto.WaterTransferTypeID);
 
             // delete existing parcels registered
-            var existingWaterTransferRegistrationParcels = dbContext.WaterTransferRegistrationParcel.Where(x => x.WaterTransferRegistrationID == waterTransferRegistration.WaterTransferRegistrationID);
+            var existingWaterTransferRegistrationParcels = dbContext.WaterTransferRegistrationParcels.Where(x => x.WaterTransferRegistrationID == waterTransferRegistration.WaterTransferRegistrationID);
             if (existingWaterTransferRegistrationParcels.Any())
             {
-                dbContext.WaterTransferRegistrationParcel.RemoveRange(existingWaterTransferRegistrationParcels);
+                dbContext.WaterTransferRegistrationParcels.RemoveRange(existingWaterTransferRegistrationParcels);
                 dbContext.SaveChanges();
             }
 
@@ -30,7 +30,7 @@ namespace Rio.EFModels.Entities
                     ParcelID = waterTransferParcelDto.ParcelID,
                     AcreFeetTransferred = waterTransferParcelDto.AcreFeetTransferred
                 };
-                dbContext.WaterTransferRegistrationParcel.Add(waterTransferRegistrationParcel);
+                dbContext.WaterTransferRegistrationParcels.Add(waterTransferRegistrationParcel);
             }
 
             dbContext.SaveChanges();
@@ -63,7 +63,7 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<WaterTransferRegistrationParcel> GetWaterTransferRegistrationParcelsImpl(RioDbContext dbContext)
         {
-            return dbContext.WaterTransferRegistrationParcel
+            return dbContext.WaterTransferRegistrationParcels
                 .Include(x => x.WaterTransferRegistration)
                 .Include(x => x.Parcel)
                 .AsNoTracking();
@@ -88,7 +88,7 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.WaterTransferRegistrationParcel.RemoveRange(dbContext.WaterTransferRegistrationParcel);
+            dbContext.WaterTransferRegistrationParcels.RemoveRange(dbContext.WaterTransferRegistrationParcels);
             dbContext.SaveChanges();
         }
     }

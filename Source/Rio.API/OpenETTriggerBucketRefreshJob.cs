@@ -16,14 +16,16 @@ namespace Rio.API
     {
         private readonly RioConfiguration _rioConfiguration;
         private IBackgroundJobClient _backgroundJobClient;
+        private readonly IOpenETService _openETService;
 
         public OpenETTriggerBucketRefreshJob(ILogger<OpenETTriggerBucketRefreshJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, IOpenETService openETService) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
             _backgroundJobClient = backgroundJobClient;
+            _openETService = openETService;
         }
 
         public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
@@ -33,20 +35,20 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync)
+            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
             {
                 return;
             }
 
-            var nonFinalizedWaterYears = _rioDbContext.WaterYear.Where(x => !x.FinalizeDate.HasValue);
-            if (!nonFinalizedWaterYears.Any())
+            var nonFinalizedWaterYearMonths = _rioDbContext.WaterYearMonths.Where(x => !x.FinalizeDate.HasValue);
+            if (!nonFinalizedWaterYearMonths.Any())
             {
                 return;
             }
 
-            nonFinalizedWaterYears.ToList().ForEach(x =>
+            nonFinalizedWaterYearMonths.ToList().ForEach(x =>
                 {
-                    OpenETGoogleBucketHelpers.TriggerOpenETGoogleBucketRefresh(_rioConfiguration, _rioDbContext, x.WaterYearID);
+                    _openETService.TriggerOpenETGoogleBucketRefresh(x.WaterYearMonthID);
                 });
         }
     }

@@ -24,7 +24,7 @@ namespace Rio.EFModels.Entities
                 PostingStatusID = (int) PostingStatusEnum.Open
             };
 
-            dbContext.Posting.Add(posting);
+            dbContext.Postings.Add(posting);
             dbContext.SaveChanges();
             dbContext.Entry(posting).Reload();
 
@@ -54,10 +54,10 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<Posting> GetPostingImpl(RioDbContext dbContext)
         {
-            return dbContext.Posting
+            return dbContext.Postings
                 .Include(x => x.PostingType)
                 .Include(x => x.PostingStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUser).ThenInclude(x=>x.User)
+                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUsers).ThenInclude(x=>x.User)
                 .Include(x=>x.CreateAccount.AccountStatus).AsNoTracking();
         }
 
@@ -81,7 +81,7 @@ namespace Rio.EFModels.Entities
         public static PostingDto UpdateStatus(RioDbContext dbContext, int postingID,
             PostingUpdateStatusDto postingUpdateStatusDto, int? availableQuantity)
         {
-            var posting = dbContext.Posting
+            var posting = dbContext.Postings
                 .Single(x => x.PostingID == postingID);
 
             posting.PostingStatusID = postingUpdateStatusDto.PostingStatusID;
@@ -106,15 +106,15 @@ namespace Rio.EFModels.Entities
 
         public static void Delete(RioDbContext dbContext, int postingID)
         {
-            var posting = dbContext.Posting
+            var posting = dbContext.Postings
                 .Single(x => x.PostingID == postingID);
-            dbContext.Posting.Remove(posting);
+            dbContext.Postings.Remove(posting);
             dbContext.SaveChanges();
         }
 
         public static IEnumerable<PostingDetailedDto> ListDetailedByYear(RioDbContext dbContext, int year)
         {
-            var postings = dbContext.vPostingDetailed.Where(x => x.PostingDate.Year == year).OrderByDescending(x => x.PostingDate).ToList()
+            var postings = dbContext.vPostingDetaileds.Where(x => x.PostingDate.Year == year).OrderByDescending(x => x.PostingDate).ToList()
                 .Select(posting =>
                 {
                     var postingDetailedDto = new PostingDetailedDto()
@@ -149,7 +149,7 @@ namespace Rio.EFModels.Entities
 
         public static bool HasOpenOfferByAccountID(RioDbContext dbContext, PostingDto posting, int createAccountID)
         {
-            return dbContext.Trade.Any(x =>
+            return dbContext.Trades.Any(x =>
                 x.PostingID == posting.PostingID && 
                 x.CreateAccountID == createAccountID &&
                 (x.TradeStatusID == (int) TradeStatusEnum.Accepted ||
@@ -158,7 +158,7 @@ namespace Rio.EFModels.Entities
 
         public static void DeleteAll(RioDbContext dbContext)
         {
-            dbContext.Posting.RemoveRange(dbContext.Posting);
+            dbContext.Postings.RemoveRange(dbContext.Postings);
             dbContext.SaveChanges();
         }
     }

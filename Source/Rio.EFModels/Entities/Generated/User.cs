@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+#nullable disable
 
 namespace Rio.EFModels.Entities
 {
+    [Table("User")]
+    [Index(nameof(Email), Name = "AK_User_Email", IsUnique = true)]
     public partial class User
     {
         public User()
         {
-            AccountUser = new HashSet<AccountUser>();
-            FileResource = new HashSet<FileResource>();
-            ParcelAllocationHistory = new HashSet<ParcelAllocationHistory>();
-            Posting = new HashSet<Posting>();
+            AccountUsers = new HashSet<AccountUser>();
+            FileResources = new HashSet<FileResource>();
+            ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
+            Postings = new HashSet<Posting>();
         }
 
         [Key]
@@ -45,15 +50,15 @@ namespace Rio.EFModels.Entities
         public string Company { get; set; }
 
         [ForeignKey(nameof(RoleID))]
-        [InverseProperty("User")]
+        [InverseProperty("Users")]
         public virtual Role Role { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<AccountUser> AccountUser { get; set; }
-        [InverseProperty("CreateUser")]
-        public virtual ICollection<FileResource> FileResource { get; set; }
-        [InverseProperty("User")]
-        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistory { get; set; }
-        [InverseProperty("CreateUser")]
-        public virtual ICollection<Posting> Posting { get; set; }
+        [InverseProperty(nameof(AccountUser.User))]
+        public virtual ICollection<AccountUser> AccountUsers { get; set; }
+        [InverseProperty(nameof(FileResource.CreateUser))]
+        public virtual ICollection<FileResource> FileResources { get; set; }
+        [InverseProperty(nameof(ParcelAllocationHistory.User))]
+        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
+        [InverseProperty(nameof(Posting.CreateUser))]
+        public virtual ICollection<Posting> Postings { get; set; }
     }
 }

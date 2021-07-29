@@ -52,7 +52,7 @@ import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-acco
 import { WaterAccountsListComponent } from './pages/water-accounts-list/water-accounts-list.component';
 import { AssignedNotDisabledGuard } from './shared/guards/unauthenticated-access/assigned-not-disabled-guard';
 import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/water-accounts-invite.component';
-import { OpenetSyncWaterYearStatusListComponent } from './pages/openet-sync-water-year-status-list/openet-sync-water-year-status-list.component';
+import { OpenetSyncWaterYearMonthStatusListComponent } from './pages/openet-sync-water-year-month-status-list/openet-sync-water-year-month-status-list.component';
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
 import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
@@ -91,7 +91,7 @@ const routes: Routes = [
   { path: "invite-partner", component: WaterAccountsInviteComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard]},
   { path: "water-accounts/add", component: WaterAccountsAddComponent, canActivate: [UnauthenticatedAccessGuard, AcknowledgedDisclaimerGuard] },
   { path: "water-accounts", component: WaterAccountsListComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
-  { path: "openet-integration", component: OpenetSyncWaterYearStatusListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
+  { path: "openet-integration", component: OpenetSyncWaterYearMonthStatusListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "update-parcels-and-accounts", component: ParcelUpdateLayerComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},

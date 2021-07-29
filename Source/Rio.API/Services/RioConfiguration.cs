@@ -24,9 +24,15 @@
         public string ValidParcelNumberPatternAsStringForDisplay { get; set; }
         public string OpenETAPIKey { get; set; }
         public string OpenETShapefilePath { get; set; }
-        public string OpenETCheckRasterUpdatedDateBaseURL { get; set; }
-        public string OpenETTriggerTimeSeriesBaseURL { get; set; }
-        public string OpenETGoogleBucketBaseURL { get; set; }
+        public string OpenETAPIBaseUrl { get; set; }
+        public string OpenETRasterTimeSeriesMultipolygonRoute { get; set; }
+        public string OpenETRasterMetadataRoute { get; set; }
+        public string OpenETAllFilesReadyForExportRoute { get; set; }
+        public string OpenETRasterMetadataBoundingBoxLeft {get; set;}
+        public string OpenETRasterMetadataBoundingBoxRight { get; set; }
+        public string OpenETRasterMetadataBoundingBoxTop { get; set; }
+        public string OpenETRasterMetadataBoundingBoxBottom { get; set; }
+        public string OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier { get; set; }
         public bool AllowOpenETSync { get; set; }
         public string SupportEmailAddress { get; set; }
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }

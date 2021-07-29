@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
 
         public static object List(RioDbContext dbContext)
         {
-            var roles = dbContext.AccountStatus
+            var roles = dbContext.AccountStatuses
                 .AsNoTracking()
                 .Select(x => x.AsDto());
 
@@ -17,7 +17,7 @@ namespace Rio.EFModels.Entities
 
         public static object GetByAccountStatusID(RioDbContext dbContext, int accountStatusID)
         {
-            var accountStatus = dbContext.AccountStatus
+            var accountStatus = dbContext.AccountStatuses
                 .AsNoTracking()
                 .FirstOrDefault(x => x.AccountStatusID == accountStatusID);
 
