@@ -330,7 +330,7 @@ namespace Rio.API.Services
                 return;
             }
 
-            if (!filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
+            if (filesReadyForExport == null || !filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
             {
                 UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, "OpenET API never reported the results as available.");
                 return;
