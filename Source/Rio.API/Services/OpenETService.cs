@@ -299,7 +299,7 @@ namespace Rio.API.Services
 
         private void UpdateStatusAndFailIfOperationHasExceeded24Hours(RioDbContext rioDbContext, OpenETSyncHistoryDto syncHistory, string errorMessage)
         {
-            var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistory.CreateDate).Hours;
+            var timeBetweenSyncCreationAndNow = DateTime.UtcNow.Subtract(syncHistory.CreateDate).TotalHours;
             var resultType = timeBetweenSyncCreationAndNow > 24
                 ? OpenETSyncResultTypeEnum.Failed
                 : OpenETSyncResultTypeEnum.InProgress;
