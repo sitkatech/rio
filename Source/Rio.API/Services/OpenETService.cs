@@ -91,20 +91,21 @@ namespace Rio.API.Services
                     return false;
                 }
 
-                var openETSyncHistoriesThatHaventFailed = _rioDbContext.OpenETSyncHistories
+                var openETSyncHistoriesThatHaventFailedOrReturnedNoNewData = _rioDbContext.OpenETSyncHistories
                     .Include(x => x.WaterYearMonth)
                     .ThenInclude(x => x.WaterYear)
                     .Where(x => x.WaterYearMonth.WaterYear.Year == year && x.WaterYearMonth.Month == month &&
-                                (x.OpenETSyncResultTypeID != (int) OpenETSyncResultTypeEnum.Failed) &&
+                                x.OpenETSyncResultTypeID != (int) OpenETSyncResultTypeEnum.Failed &&
+                                x.OpenETSyncResultTypeID != (int) OpenETSyncResultTypeEnum.DataNotAvailable &&
                                 x.OpenETSyncHistoryID != newSyncHistory.OpenETSyncHistoryID);
 
-                if (!openETSyncHistoriesThatHaventFailed.Any())
+                if (!openETSyncHistoriesThatHaventFailedOrReturnedNoNewData.Any())
                 {
                     return true;
                 }
 
                 var mostRecentSyncHistory =
-                    openETSyncHistoriesThatHaventFailed?.OrderByDescending(x => x.UpdateDate).First();
+                    openETSyncHistoriesThatHaventFailedOrReturnedNoNewData?.OrderByDescending(x => x.UpdateDate).First();
 
                 if (responseDate > mostRecentSyncHistory.UpdateDate)
                 {
