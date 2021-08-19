@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -346,17 +343,9 @@ namespace Rio.API.Services
             try
             {
                 var fileContents = new MemoryStream();
-                var gzipStream = new GZipInputStream(response.Content.ReadAsStreamAsync().Result);
-                using (var tarInputStream = new TarInputStream(gzipStream, Encoding.UTF8))
+                using (var gzipStream = new GZipStream(response.Content.ReadAsStreamAsync().Result, CompressionMode.Decompress))
                 {
-                    TarEntry entry;
-                    while ((entry = tarInputStream.GetNextEntry()) != null)
-                    {
-                        if (entry.Name == syncHistoryObject.GoogleBucketFileRetrievalURL.Split('/').Last().Replace(".tar.gz", ".csv"))
-                        {
-                            tarInputStream.CopyEntryContents(fileContents);
-                        }
-                    }
+                    gzipStream.CopyTo(fileContents);
                 }
 
                 fileContents.Position = 0;
