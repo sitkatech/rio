@@ -1,0 +1,11 @@
+2021-09-27 18:29:01,167 WARN [turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage
+2021-09-27 18:29:01,709 WARN [gce.imagemosaic] - Unable to set ordering between tiff readers spi
+2021-09-27 18:31:07,494 WARN [geoserver.security] - Failed login, user admin from 172.21.0.1
+2021-09-27 18:31:35,999 WARN [geoserver.security] - Failed login, user geoserver from 172.21.0.1
+2021-09-27 18:31:38,779 WARN [geoserver.security] - Failed login, user geoserver from 172.21.0.1, stopped 2 concurrent logins during authentication delay
+2021-09-27 20:05:53,990 WARN [operation.projection] - Possible use of "Popular Visualisation Pseudo Mercator" projection outside its valid area.
+Longitude 2147483287°00.0'W is out of range (±180°).
+2021-09-27 20:05:53,990 WARN [operation.projection] - Possible use of "Popular Visualisation Pseudo Mercator" projection outside its valid area.
+Longitude 2147483287°00.0'W is out of range (±180°).
+2021-09-27 20:05:53,991 WARN [operation.projection] - Possible use of "Popular Visualisation Pseudo Mercator" projection outside its valid area.
+Longitude 2147483287°00.0'W is out of range (±180°).
