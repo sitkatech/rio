@@ -12,3 +12,4 @@ Source/docker-compose/.env.rio
 /Source/Rio.GeoServer/data_dir/security/*
 Source/Rio.API/appsecrets.json
 /Source/Rio.API/sitka.localhost.rootca.crt
+/Source/Rio.GeoServer/data_dir/logs/*.log
