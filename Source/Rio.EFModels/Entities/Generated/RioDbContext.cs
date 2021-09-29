@@ -39,6 +39,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         public virtual DbSet<ParcelAllocationType> ParcelAllocationTypes { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
+        public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
         public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspirations { get; set; }
         public virtual DbSet<ParcelStatus> ParcelStatuses { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
@@ -50,6 +51,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasins { get; set; }
         public virtual DbSet<Trade> Trades { get; set; }
         public virtual DbSet<TradeStatus> TradeStatuses { get; set; }
+        public virtual DbSet<TransactionType> TransactionTypes { get; set; }
         public virtual DbSet<UploadedGdb> UploadedGdbs { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWells { get; set; }
@@ -364,6 +366,21 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
+            modelBuilder.Entity<ParcelLedger>(entity =>
+            {
+                entity.Property(e => e.TransactionDescription).IsUnicode(false);
+
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.TransactionType)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.TransactionTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
             {
                 entity.HasOne(d => d.Parcel)
@@ -489,6 +506,13 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.TradeStatusDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.TradeStatusName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TransactionType>(entity =>
+            {
+                entity.Property(e => e.TransactionTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.TransactionTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<UploadedGdb>(entity =>
