@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
         public int TransactionTypeID { get; set; }
         public double TransactionAmount { get; set; }
         [Required]
-        [StringLength(100)]
+        [StringLength(200)]
         public string TransactionDescription { get; set; }
 
         [ForeignKey(nameof(ParcelID))]

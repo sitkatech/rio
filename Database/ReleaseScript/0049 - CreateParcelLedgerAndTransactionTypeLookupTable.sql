@@ -11,7 +11,7 @@ CREATE TABLE dbo.ParcelLedger
 	TransactionDate datetime not null,
 	TransactionTypeID int not null constraint FK_ParcelLedger_TransactionType_TransactionTypeID foreign key references dbo.TransactionType(TransactionTypeID),
 	TransactionAmount float not null,
-	TransactionDescription varchar (100) not null,
+	TransactionDescription varchar (200) not null,
 	constraint AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID unique(ParcelID, TransactionDate, TransactionTypeID)
 )
 
