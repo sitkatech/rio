@@ -60,16 +60,16 @@
                 <hr class="p-0 m-0" />
               </td>
             </tr>
-            <ng-container *ngFor="let batch of parcelAllocationTypesBatched">
-              <tr *ngFor="let allocationType of batch">
+            <ng-container *ngFor="let batch of transactionTypesBatched">
+              <tr *ngFor="let transactionType of batch">
                 <th class="text-sm-right">
-                  {{allocationType.ParcelAllocationTypeName}}
+                  {{transactionType.TransactionTypeName}}
                   <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                      ngbTooltip="Learn about {{allocationType.ParcelAllocationTypeName}}"><i
+                      ngbTooltip="Learn about {{transactionType.TransactionTypeName}}"><i
                         class="fas fa-question-circle small"></i></a>
                 </th>
                 <td class="text-sm-right">
-                  {{getAnnualAllocationByAllocationType(allocationType) | number: '1.1-1'}} {{unitsShown}}
+                  {{getAnnualAllocationByAllocationType(transactionType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
             </ng-container>

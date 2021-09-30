@@ -1,7 +1,9 @@
 CREATE TABLE dbo.TransactionType
 (
 	TransactionTypeID int not null constraint PK_TransactionType_TransactionTypeID primary key,
-	TransactionTypeName varchar (50) not null
+	TransactionTypeName varchar (50) not null,
+	IsAllocation bit not null,
+	SortOrder int not null 
 )
 
 CREATE TABLE dbo.ParcelLedger
@@ -10,23 +12,23 @@ CREATE TABLE dbo.ParcelLedger
 	ParcelID int not null constraint FK_ParcelLedger_Parcel_ParcelID foreign key references dbo.Parcel(ParcelID),
 	TransactionDate datetime not null,
 	TransactionTypeID int not null constraint FK_ParcelLedger_TransactionType_TransactionTypeID foreign key references dbo.TransactionType(TransactionTypeID),
-	TransactionAmount float not null,
+	TransactionAmount decimal(10,4) not null,
 	TransactionDescription varchar (200) not null,
 	constraint AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID unique(ParcelID, TransactionDate, TransactionTypeID)
 )
 
 go
 
-insert into dbo.TransactionType (TransactionTypeID, TransactionTypeName)
+insert into dbo.TransactionType (TransactionTypeID, TransactionTypeName, IsAllocation, SortOrder)
 values 
-(1, 'Allocation - Project Water'),
-(2, 'Allocation - Reconciliation'),
-(3, 'Allocation - Native Yield'),
-(4, 'Allocation - Stored Water'),
-(5, 'Allocation - Precipitation'),
-(6, 'Allocation - Allowable Imbalance'),
-(7, 'Measured Usage'),
-(8, 'Measured Usage Correction'),
-(9, 'Manual Adjustment'),
-(10, 'Trade - Purchase'),
-(11, 'Trade - Sale')
+(11, 'Project Water', 1, 10),
+(12, 'Reconciliation', 1, 60),
+(13, 'Native Yield', 1, 20),
+(14, 'Stored Water', 1, 30),
+(15, 'Precipitation', 1, 40),
+(16, 'Allowable Imbalance', 1, 50),
+(17, 'Measured Usage', 0, 70),
+(18, 'Measured Usage Correction', 0, 80),
+(19, 'Manual Adjustment', 0, 90),
+(20, 'Trade - Purchase', 0, 100),
+(21, 'Trade - Sale', 0, 110)

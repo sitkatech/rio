@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Rio.Models.DataTransferObjects
+﻿namespace Rio.Models.DataTransferObjects
 {
     public class ParcelAllocationTypeDto
     {

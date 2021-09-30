@@ -14,4 +14,4 @@ SELECT [ParcelID],
 	   concat('Allocation of ', PAT.ParcelAllocationTypeName, ' for ', WaterYear, ' has been deposited into this water account by an administrator') as TransactionDescription
   FROM [dbo].[ParcelAllocation] PA 
   JOIN dbo.ParcelAllocationType PAT ON PA.ParcelAllocationTypeID = PAT.ParcelAllocationTypeID
-  JOIN dbo.TransactionType TT ON TT.TransactionTypeName = 'Allocation - ' + PAT.ParcelAllocationTypeName 
+  JOIN dbo.TransactionType TT ON TT.TransactionTypeName = PAT.ParcelAllocationTypeName 

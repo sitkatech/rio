@@ -160,8 +160,9 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
-            return dbContext.ParcelAllocations.AsNoTracking()
-                .Where(x => x.WaterYear == year)
+            var parcelAllocationBreakdownForYear = dbContext.ParcelLedgers.Include(x => x.TransactionType).AsNoTracking()
+                .Where(x => x.TransactionDate.Year == year &&
+                            x.TransactionType.IsAllocation == true)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
                 .Select(x => new ParcelAllocationBreakdownDto
@@ -169,16 +170,19 @@ namespace Rio.EFModels.Entities
                     ParcelID = x.Key,
                     // There's at most one ParcelAllocation per Parcel per AllocationType, so we just need to read elements of the group into this dictionary
                     Allocations = new Dictionary<int, decimal>(x.Select(y =>
-                        new KeyValuePair<int, decimal>(y.ParcelAllocationTypeID,
-                            y.AcreFeetAllocated)))
+                        new KeyValuePair<int, decimal>(y.TransactionTypeID,
+                            y.TransactionAmount)))
                 }).ToList();
+            return parcelAllocationBreakdownForYear;
         }
 
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = dbContext.ParcelAllocations.AsNoTracking().Where(x => x.WaterYear == year);
+            var parcelAllocations = dbContext.ParcelLedgers.Include(x => x.TransactionType).AsNoTracking()
+                .Where(x => x.TransactionDate.Year == year &&
+                            x.TransactionType.IsAllocation == true);
 
             return accountParcelWaterYearOwnershipsByYear
                 .GroupJoin(
@@ -195,8 +199,8 @@ namespace Rio.EFModels.Entities
                     (x, y) => new
                     {
                         x.ParcelOwnership.AccountID,
-                        y.ParcelAllocationTypeID,
-                        y.AcreFeetAllocated
+                        y.TransactionTypeID,
+                        y.TransactionAmount
                     })
                 .ToList()
                 .GroupBy(x => x.AccountID)
@@ -205,10 +209,10 @@ namespace Rio.EFModels.Entities
                     AccountID = x.Key,
                     Allocations = new Dictionary<int, decimal>(
                         //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
-                        x.GroupBy(z => z.ParcelAllocationTypeID)
+                        x.GroupBy(z => z.TransactionTypeID)
                         .Select(y =>
                         new KeyValuePair<int, decimal>(y.Key,
-                            y.Sum(x => x.AcreFeetAllocated))))
+                            y.Sum(x => x.TransactionAmount))))
                 })
                 .ToList();
         }

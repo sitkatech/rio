@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[ParcelID] [int] NOT NULL,
 	[TransactionDate] [datetime] NOT NULL,
 	[TransactionTypeID] [int] NOT NULL,
-	[TransactionAmount] [float] NOT NULL,
+	[TransactionAmount] [decimal](10, 4) NOT NULL,
 	[TransactionDescription] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
  CONSTRAINT [PK_ParcelLedger_ParcelLedgerID] PRIMARY KEY CLUSTERED 
 (

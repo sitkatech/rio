@@ -18,7 +18,8 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime TransactionDate { get; set; }
         public int TransactionTypeID { get; set; }
-        public double TransactionAmount { get; set; }
+        [Column(TypeName = "decimal(10, 4)")]
+        public decimal TransactionAmount { get; set; }
         [Required]
         [StringLength(200)]
         public string TransactionDescription { get; set; }
