@@ -101,7 +101,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/{parcelID}/getAllocations")]
         [ParcelViewFeature]
-        public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
+        public ActionResult<List<ParcelLedgerDto>> GetAllocations([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
@@ -109,8 +109,8 @@ namespace Rio.API.Controllers
                 return actionResult;
             }
 
-            var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
-            return Ok(parcelAllocationDtos);
+            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelID);
+            return Ok(parcelLedgerDtos);
         }
 
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
@@ -130,9 +130,9 @@ namespace Rio.API.Controllers
         [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
         [ParcelManageFeature]
         public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
-            [FromBody] List<ParcelAllocationDto> parcelAllocationDtos)
+            [FromBody] List<ParcelLedgerDto> parcelLedgerDtos)
         {
-            var parcel = _dbContext.Parcels.Include(x => x.ParcelAllocations)
+            var parcel = _dbContext.Parcels.Include(x => x.ParcelLedgers)
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
             if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
@@ -140,26 +140,29 @@ namespace Rio.API.Controllers
                 return actionResult;
             }
 
-            var updatedParcelAllocations = parcelAllocationDtos.Select(x => new ParcelAllocation()
+            var transactionTypeDict = TransactionType.GetAllocationTypes(_dbContext).ToDictionary(x => x.TransactionTypeID, x => x.TransactionTypeName);
+            var updatedParcelLedgers = parcelLedgerDtos.Select(x => new ParcelLedger()
             {
                 ParcelID = x.ParcelID,
-                ParcelAllocationTypeID = x.ParcelAllocationTypeID,
-                WaterYear = x.WaterYear,
-                AcreFeetAllocated = x.AcreFeetAllocated,
-                ParcelAllocationID = x.ParcelAllocationID
+                TransactionTypeID = x.TransactionTypeID,
+                TransactionDate = x.TransactionDate,
+                TransactionAmount = x.TransactionAmount,
+                ParcelLedgerID = x.ParcelLedgerID,
+                TransactionDescription =
+                    $"Allocation of {transactionTypeDict[x.TransactionTypeID]} for {x.TransactionDate.Year} has been deposited into this water account by an administrator"
             }).ToList();
 
             // add new PAs before the merge.
-            var newParcelAllocations = updatedParcelAllocations.Where(x => x.ParcelAllocationID == 0);
-            _dbContext.ParcelAllocations.AddRange(newParcelAllocations);
+            var newParcelLedgers = updatedParcelLedgers.Where(x => x.ParcelLedgerID == 0);
+            _dbContext.ParcelLedgers.AddRange(newParcelLedgers);
             _dbContext.SaveChanges();
 
-            var existingParcelAllocations = parcel.ParcelAllocations;
-            var allInDatabase = _dbContext.ParcelAllocations;
+            var existingParcelLedgers = parcel.ParcelLedgers;
+            var allInDatabase = _dbContext.ParcelLedgers;
 
-            existingParcelAllocations.Merge(updatedParcelAllocations, allInDatabase,
-                (x, y) => x.ParcelAllocationTypeID == y.ParcelAllocationTypeID && x.ParcelID == y.ParcelID && x.WaterYear == y.WaterYear,
-                (x, y) => x.AcreFeetAllocated = y.AcreFeetAllocated
+            existingParcelLedgers.Merge(updatedParcelLedgers, allInDatabase,
+                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.TransactionDate == y.TransactionDate,
+                (x, y) => x.TransactionAmount = y.TransactionAmount
                 );
 
             _dbContext.SaveChanges();

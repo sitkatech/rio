@@ -30,8 +30,8 @@
                 <thead>
                   <tr>
                     <th>Year</th>
-                    <th *ngFor="let parcelAllocationType of parcelAllocationTypes">
-                      {{parcelAllocationType.ParcelAllocationTypeName}} (Acre Feet)
+                    <th *ngFor="let transactionType of transactionTypes">
+                      {{transactionType.TransactionTypeName}} (Acre Feet)
                     </th>
                   </tr>
                 </thead>
@@ -39,8 +39,8 @@
                   <tr *ngFor="let waterYear of waterYears; let i = index">
                     <td>{{waterYear.Year}}</td>
                     
-                    <td *ngFor="let parcelAllocationType of parcelAllocationTypes; let j=index" [attr.title]="parcelAllocationType.IsAppliedProportionally === ParcelAllocationTypeApplicationType.Api ? 'Api-driven water types cannot be overriden' : null">
-                      <input type="number" class="form-control" name="{{i}}_{{j}}" [value]="getAllocationForYearByType(parcelAllocationType, waterYear.Year)" (change)="updateAllocationModel(parcelAllocationType, waterYear.Year, $event)" [disabled]="parcelAllocationType.IsAppliedProportionally === ParcelAllocationTypeApplicationType.Api"/>
+                    <td *ngFor="let transactionType of transactionTypes; let j=index" >
+                      <input type="number" class="form-control" name="{{i}}_{{j}}" [value]="getAllocationForYearByType(transactionType, waterYear.Year)" (change)="updateAllocationModel(transactionType, waterYear.Year, $event)"/>
                     </td>
                   </tr>
                 </tbody>

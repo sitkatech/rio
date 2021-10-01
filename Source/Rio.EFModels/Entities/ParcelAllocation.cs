@@ -9,38 +9,6 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelAllocation
     {
-        public static List<ParcelAllocationDto> Upsert(RioDbContext dbContext, int parcelID, List<ParcelAllocationUpsertDto> parcelAllocationUpsertDtos)
-        {
-            // delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x => x.ParcelID == parcelID);
-            if (existingParcelAllocations.Any())
-            {
-                dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
-                dbContext.SaveChanges();
-            }
-
-            foreach (var parcelAllocationUpsertDto in parcelAllocationUpsertDtos)
-            {
-                var parcelAllocation = dbContext.ParcelAllocations
-                    .SingleOrDefault(x => x.ParcelID == parcelID && x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
-
-                if (parcelAllocation == null)
-                {
-                    parcelAllocation = new ParcelAllocation
-                    {
-                        ParcelID = parcelID,
-                        WaterYear = parcelAllocationUpsertDto.WaterYear,
-                        ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID
-                    };
-                    dbContext.ParcelAllocations.Add(parcelAllocation);
-                }
-
-                parcelAllocation.AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated;
-            }
-            dbContext.SaveChanges();
-
-            return ListByParcelID(dbContext, parcelID);
-        }
         public static int BulkSetAllocation(RioDbContext dbContext, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
         {
             // delete existing parcel allocations
@@ -134,28 +102,6 @@ namespace Rio.EFModels.Entities
 
             dbContext.ParcelAllocations.AddRange(parcelAllocations);
             dbContext.SaveChanges();
-        }
-
-        public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
-        {
-            var parcelAllocations = dbContext.ParcelAllocations
-                .AsNoTracking()
-                .Where(x => x.ParcelID == parcelID);
-
-            return parcelAllocations.Any()
-                ? parcelAllocations.Select(x => x.AsDto()).ToList()
-                : new List<ParcelAllocationDto>();
-        }
-
-        public static List<ParcelAllocationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
-        {
-            var parcelAllocations = dbContext.ParcelAllocations
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID));
-
-            return parcelAllocations.Any()
-                ? parcelAllocations.Select(x => x.AsDto()).ToList()
-                : new List<ParcelAllocationDto>();
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)

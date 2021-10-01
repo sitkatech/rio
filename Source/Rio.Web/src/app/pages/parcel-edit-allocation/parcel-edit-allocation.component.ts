@@ -7,11 +7,11 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { TransactionTypeService } from 'src/app/services/transaction-type.service';
+import { TransactionTypeDto } from 'src/app/shared/models/transaction-type-dto';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
@@ -23,10 +23,9 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
 
   public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
-  public parcelAllocations: Array<ParcelAllocationDto>;
+  public parcelLedgers: Array<ParcelLedgerDto>;
   public isLoadingSubmit: boolean = false;
-  parcelAllocationTypes: ParcelAllocationTypeDto[];
-  ParcelAllocationTypeApplicationType = ParcelAllocationTypeApplicationTypeEnum;
+  transactionTypes: TransactionTypeDto[];
 
   constructor(
     private route: ActivatedRoute,
@@ -35,7 +34,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
     private waterYearService: WaterYearService,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private transactionTypeService: TransactionTypeService,
     private cdr: ChangeDetectorRef
   ) {
   }
@@ -48,21 +47,16 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelAllocations(id),
           this.waterYearService.getWaterYears(),
-          this.parcelAllocationTypeService.getParcelAllocationTypes()
+          this.transactionTypeService.getAllocationTypes()
         ).subscribe(
-          ([parcel, parcelAllocations, waterYears, parcelAllocationTypes]) => {
+          ([parcel, parcelLedgers, waterYears, transactionTypes]) => {
             this.parcel = parcel instanceof Array
               ? null
               : parcel as ParcelDto;
             this.parcel = parcel;
-            this.parcelAllocations = parcelAllocations;
+            this.parcelLedgers = parcelLedgers;
             this.waterYears = waterYears;
-
-            console.log(parcelAllocations);
-
-            this.parcelAllocationTypes = parcelAllocationTypes;
-
-            
+            this.transactionTypes = transactionTypes;
           }
         );
       }
@@ -75,19 +69,19 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
   
-  public getAllocationForYearByType(parcelAllocationType: ParcelAllocationTypeDto, year: number): number {
-    var parcelAllocation = this.parcelAllocations.find(x => x.WaterYear === year && x.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID);
-    return parcelAllocation ? parcelAllocation.AcreFeetAllocated : null;
+  public getAllocationForYearByType(transactionType: TransactionTypeDto, year: number): number {
+    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.TransactionTypeID === transactionType.TransactionTypeID);
+    return parcelLedger ? parcelLedger.TransactionAmount : null;
   }
 
-  public updateAllocationModel(parcelAllocationType: ParcelAllocationTypeDto, year: number, $event: Event): void{
+  public updateAllocationModel(transactionType: TransactionTypeDto, year: number, $event: Event): void{
     const newValue = Number((<HTMLInputElement>$event.target).value);
-    let updatedAllocation = this.parcelAllocations.find(x=>x.ParcelAllocationTypeID === parcelAllocationType.ParcelAllocationTypeID && x.WaterYear === year );
-    if (updatedAllocation !== null && updatedAllocation !== undefined) {
-      updatedAllocation.AcreFeetAllocated = newValue;
+    let updatedParcelLedger = this.parcelLedgers.find(x=>x.TransactionTypeID === transactionType.TransactionTypeID && x.WaterYear === year );
+    if (updatedParcelLedger !== null && updatedParcelLedger !== undefined) {
+      updatedParcelLedger.TransactionAmount = newValue;
     } else{
-      const newAllocation = new ParcelAllocationDto({ParcelAllocationTypeID : parcelAllocationType.ParcelAllocationTypeID, WaterYear: year, ParcelID: this.parcel.ParcelID, AcreFeetAllocated: newValue});
-      this.parcelAllocations.push(newAllocation);
+      const newParcelLedger = new ParcelLedgerDto({TransactionTypeID : transactionType.TransactionTypeID, transactionDate: new Date(year, 1, 1), ParcelID: this.parcel.ParcelID, TransactionAmount: newValue});
+      this.parcelLedgers.push(newParcelLedger);
     }
 
     this.cdr.detectChanges;
@@ -95,7 +89,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
 
   public onSubmit(editAllocationForm: HTMLFormElement): void {
          
-    this.parcelService.mergeParcelAllocations(this.parcel.ParcelID, this.parcelAllocations)
+    this.parcelService.mergeParcelAllocations(this.parcel.ParcelID, this.parcelLedgers)
       .subscribe(() => {
         this.isLoadingSubmit = false;
         editAllocationForm.reset();

@@ -6,7 +6,7 @@ import { AccountEditUsersDto } from "src/app/shared/models/account/account-edit-
 import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-dto';
 import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Environment } from 'ag-grid-community';
@@ -81,7 +81,7 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
-  getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
+  getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelLedgerDto>> {
       let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
       return this.apiService.getFromApi(route);
   }

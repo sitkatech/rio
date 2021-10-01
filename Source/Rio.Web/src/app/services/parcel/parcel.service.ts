@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
@@ -44,7 +44,7 @@ export class ParcelService {
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]): Observable<any> {
+  mergeParcelAllocations(parcelID: number, model: ParcelLedgerDto[]): Observable<any> {
     let route = `parcels/${parcelID}/mergeParcelAllocations`;
     return this.apiService.postToApi(route, model);
   }
@@ -78,7 +78,7 @@ export class ParcelService {
     return result;
   }
 
-  getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {
+  getParcelAllocations(parcelID: number): Observable<Array<ParcelLedgerDto>> {
     let route = `/parcels/${parcelID}/getAllocations`;
     return this.apiService.getFromApi(route);
   }
