@@ -58,9 +58,7 @@ namespace Rio.EFModels.Entities
         }
         public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelLedgerMeasuredUsages = dbContext.ParcelLedgers.Include(x => x.Parcel)
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == TransactionTypeIDMeasuredUsage);
+            var parcelLedgerMeasuredUsages = GetMeasuredUsagesByParcelIDs(dbContext, parcelIDs);
 
             var parcelMonthlyEvapotranspirationDtos = parcelLedgerMeasuredUsages.Select(x => 
                 new ParcelMonthlyEvapotranspirationDto()
@@ -72,9 +70,7 @@ namespace Rio.EFModels.Entities
                 }
             ).ToList();
             
-            var parcelLedgerMeasuredUsageCorrections = dbContext.ParcelLedgers.Include(x => x.Parcel)
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == TransactionTypeIDMeasuredUsageCorrection);
+            var parcelLedgerMeasuredUsageCorrections = GetMeasuredUsageCorrectionsByParcelIDs(dbContext, parcelIDs);
 
             var parcelMonthlyEvapotranspirationCorrectionDtos = parcelLedgerMeasuredUsageCorrections.Select(x => 
                 new ParcelMonthlyEvapotranspirationDto()
@@ -85,6 +81,7 @@ namespace Rio.EFModels.Entities
                     OverriddenEvapotranspirationRate = -x.TransactionAmount
                 }
             ).ToList();
+
             foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirationCorrectionDtos)
             {
                 var existingParcelMonthlyEvapotranspirationDto = parcelMonthlyEvapotranspirationDtos.SingleOrDefault(y =>
@@ -101,6 +98,25 @@ namespace Rio.EFModels.Entities
 
             return parcelMonthlyEvapotranspirationDtos;
         }
+
+        private static IQueryable<ParcelLedger> GetMeasuredUsageCorrectionsByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsageCorrection);
+        }
+
+        private static IQueryable<ParcelLedger> GetMeasuredUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsage);
+        }
+
+        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs,
+            int transactionTypeID)
+        {
+            return dbContext.ParcelLedgers.Include(x => x.Parcel)
+                .AsNoTracking()
+                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == transactionTypeID);
+        }
+
         public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelIDAndYear(RioDbContext dbContext, List<int> parcelIDs,
       List<ParcelDto> parcels, int year)
         {
@@ -114,10 +130,8 @@ namespace Rio.EFModels.Entities
                 }
             }
 
-            var parcelLedgerMeasuredUsages = dbContext.ParcelLedgers
-                .Include(x => x.Parcel)
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionDate.Year == year && x.TransactionTypeID == TransactionTypeIDMeasuredUsage).Select(x => x.AsDto()).ToList();
+            var parcelLedgerMeasuredUsages = GetMeasuredUsagesByParcelIDs(dbContext, parcelIDs)
+                .Where(x => x.TransactionDate.Year == year).Select(x => x.AsDto()).ToList();
 
             // fill in the real values into the full set
             foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirations)
@@ -133,11 +147,8 @@ namespace Rio.EFModels.Entities
                 }
             }
 
-            var parcelLedgerMeasuredUsageCorrections = dbContext.ParcelLedgers
-                .Include(x => x.Parcel)
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionDate.Year == year &&
-                            x.TransactionTypeID == TransactionTypeIDMeasuredUsageCorrection).Select(x => x.AsDto())
+            var parcelLedgerMeasuredUsageCorrections = GetMeasuredUsageCorrectionsByParcelIDs(dbContext, parcelIDs)
+                .Where(x => x.TransactionDate.Year == year).Select(x => x.AsDto())
                 .ToList();
 
             // fill in the real values into the full set
@@ -177,8 +188,8 @@ namespace Rio.EFModels.Entities
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var existingParcelLedgers =
-                dbContext.ParcelLedgers.Where(x =>
-                    parcelIDs.Contains(x.ParcelID) && x.TransactionDate.Year == waterYear && x.TransactionTypeID == TransactionTypeIDMeasuredUsageCorrection).ToList();
+                GetMeasuredUsageCorrectionsByParcelIDs(dbContext, parcelIDs).AsTracking()
+                    .Where(x => x.TransactionDate.Year == waterYear).ToList();
 
             var allInDatabase = dbContext.ParcelLedgers;
 
