@@ -34,6 +34,14 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             return parcels.Count;
         }
+        ////public static int BulkSetAllocationNew(RioDbContext dbContext, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
+        //{
+        //    // for each parcel
+        //    // get current balance for the given transaction type and year
+        //    // calculate what the new balance should be for the given transaction type and year
+        //    // write a parcel ledger record that is the difference between the current balance and the new balance
+
+        //}
 
         //Keep as reference for setting Allocation proportionally across an account and by volume
         //public static void BulkSetAllocation(RioDbContext dbContext, List<BulkSetAllocationCSV> records, int waterYear, int parcelAllocationType)

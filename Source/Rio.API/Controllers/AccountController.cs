@@ -213,7 +213,7 @@ namespace Rio.API.Controllers
             var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
@@ -235,7 +235,7 @@ namespace Rio.API.Controllers
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
             var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos
                 .GroupBy(x => x.WaterMonth)
                 .OrderBy(x => x.Key)

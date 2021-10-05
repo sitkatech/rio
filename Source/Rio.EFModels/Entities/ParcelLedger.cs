@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.EFModels.Entities
@@ -9,20 +11,25 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelLedgers = dbContext.ParcelLedgers.Include(x => x.TransactionType)
-                .AsNoTracking()
-                .Where(x => x.ParcelID == parcelID && x.TransactionType.IsAllocation);
+            var parcelLedgers = GetAllocationsImpl(dbContext)
+                .Where(x => x.ParcelID == parcelID);
 
             return parcelLedgers.Any()
                 ? parcelLedgers.Select(x => x.AsDto()).ToList()
                 : new List<ParcelLedgerDto>();
         }
 
+        private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
+        {
+            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
+                .AsNoTracking()
+                .Where(x => x.TransactionType.IsAllocation);
+        }
+
         public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelLedgers = dbContext.ParcelLedgers.Include(x => x.TransactionType)
-                .AsNoTracking()
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionType.IsAllocation);
+            var parcelLedgers = GetAllocationsImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID));
 
             return parcelLedgers.Any()
                 ? parcelLedgers.Select(x => x.AsDto()).ToList()
@@ -31,9 +38,8 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
-            var parcelAllocationBreakdownForYear = dbContext.ParcelLedgers.Include(x => x.TransactionType).AsNoTracking()
-                .Where(x => x.TransactionDate.Year == year &&
-                            x.TransactionType.IsAllocation == true)
+            var parcelAllocationBreakdownForYear = GetAllocationsImpl(dbContext)
+                .Where(x => x.TransactionDate.Year == year)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
                 .Select(x => new ParcelAllocationBreakdownDto
@@ -46,13 +52,48 @@ namespace Rio.EFModels.Entities
                 }).ToList();
             return parcelAllocationBreakdownForYear;
         }
+        public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelIDAndYear(RioDbContext dbContext, List<int> parcelIDs,
+      List<ParcelDto> parcels, int year)
+        {
+            var parcelMonthlyEvapotranspirations = new List<ParcelMonthlyEvapotranspirationDto>();
+            // make the full matrix of months * parcels and populate with zero/empty
+            foreach (var parcel in parcels)
+            {
+                for (var i = 1; i < 13; i++)
+                {
+                    parcelMonthlyEvapotranspirations.Add(new ParcelMonthlyEvapotranspirationDto { ParcelID = parcel.ParcelID, ParcelNumber = parcel.ParcelNumber, EvapotranspirationRate = null, WaterMonth = i, WaterYear = year, IsEmpty = true });
+                }
+            }
+
+            var parcelMonthlyEvapotranspirationsFromDB = dbContext.ParcelLedgers
+                .Include(x => x.Parcel)
+                .AsNoTracking()
+                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionDate.Year == year && x.TransactionTypeID == 17).Select(x => x.AsDto()).ToList();
+
+            // fill in the real values into the full set
+            foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirations)
+            {
+                var existing = parcelMonthlyEvapotranspirationsFromDB.SingleOrDefault(x =>
+                    x.ParcelID == parcelMonthlyEvapotranspirationDto.ParcelID &&
+                    x.WaterYear == parcelMonthlyEvapotranspirationDto.WaterYear &&
+                    x.TransactionDate.Month == parcelMonthlyEvapotranspirationDto.WaterMonth);
+                if (existing != null)
+                {
+                    parcelMonthlyEvapotranspirationDto.IsEmpty = false;
+                    parcelMonthlyEvapotranspirationDto.EvapotranspirationRate = -existing.TransactionAmount;
+                    parcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate = null;
+                    // TODO: pulling override numbers via transaction type ID
+                }
+            }
+            return parcelMonthlyEvapotranspirations;
+        }
+
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = dbContext.ParcelLedgers.Include(x => x.TransactionType).AsNoTracking()
-                .Where(x => x.TransactionDate.Year == year &&
-                            x.TransactionType.IsAllocation == true);
+            var parcelAllocations = GetAllocationsImpl(dbContext)
+                .Where(x => x.TransactionDate.Year == year);
 
             return accountParcelWaterYearOwnershipsByYear
                 .GroupJoin(

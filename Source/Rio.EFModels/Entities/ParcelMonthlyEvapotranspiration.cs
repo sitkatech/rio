@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.API.Util;
 using Rio.Models.DataTransferObjects.Parcel;
@@ -11,8 +10,7 @@ namespace Rio.EFModels.Entities
     {
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
-                .AsNoTracking()
+            var parcelMonthlyEvapotranspirations = GetParcelImpl(dbContext)
                 .Where(x => x.ParcelID == parcelID);
 
             return parcelMonthlyEvapotranspirations.Any()
@@ -20,10 +18,15 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelMonthlyEvapotranspirationDto>();
         }
 
+        private static IQueryable<ParcelMonthlyEvapotranspiration> GetParcelImpl(RioDbContext dbContext)
+        {
+            return dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
+                .AsNoTracking();
+        }
+
         public static List<ParcelMonthlyEvapotranspirationDto> ListByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var parcelMonthlyEvapotranspirations = dbContext.ParcelMonthlyEvapotranspirations.Include(x => x.Parcel)
-                .AsNoTracking()
+            var parcelMonthlyEvapotranspirations = GetParcelImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID));
 
             return parcelMonthlyEvapotranspirations.Any()
@@ -70,15 +73,17 @@ namespace Rio.EFModels.Entities
         public static int SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
             List<ParcelMonthlyEvapotranspirationDto> overriddenParcelMonthlyEvapotranspirationDtos)
         {
-            var postedDtos = overriddenParcelMonthlyEvapotranspirationDtos.Where(x => !x.IsEmpty || (x.IsEmpty && x.OverriddenEvapotranspirationRate != null)).Select(x => new ParcelMonthlyEvapotranspiration()
-            {
-                ParcelID = x.ParcelID,
-                WaterYear = x.WaterYear,
-                WaterMonth = x.WaterMonth,
-                //Don't write to EvapotranspirationRate. Only OpenET imports should adjust that data
-                //EvapotranspirationRate = x.EvapotranspirationRate,
-                OverriddenEvapotranspirationRate = x.OverriddenEvapotranspirationRate
-            }).ToList();
+            var postedDtos = overriddenParcelMonthlyEvapotranspirationDtos
+                .Where(x => !x.IsEmpty || (x.IsEmpty && x.OverriddenEvapotranspirationRate != null)).Select(x =>
+                    new ParcelMonthlyEvapotranspiration()
+                    {
+                        ParcelID = x.ParcelID,
+                        WaterYear = x.WaterYear,
+                        WaterMonth = x.WaterMonth,
+                        //Don't write to EvapotranspirationRate. Only OpenET imports should adjust that data
+                        //EvapotranspirationRate = x.EvapotranspirationRate,
+                        OverriddenEvapotranspirationRate = x.OverriddenEvapotranspirationRate
+                    }).ToList();
 
             var parcelDtos = Parcel.ListByAccountIDAndYear(dbContext, accountID, waterYear).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
