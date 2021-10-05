@@ -123,7 +123,7 @@ namespace Rio.API.Controllers
                 return actionResult;
             }
 
-            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
+            var parcelMonthlyEvapotranspirationDtos = ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, new List<int> { parcelID });
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
         

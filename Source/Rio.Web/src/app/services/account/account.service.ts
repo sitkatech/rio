@@ -84,8 +84,8 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
-  saveParcelMonthlyEvapotranspirationOverrideValues(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
-      let route = `/accounts/${accountID}/${year}/saveParcelMonthlyEvapotranspirationOverrideValues`;
+  saveParcelMeasuredUsageCorrections(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
+      let route = `/accounts/${accountID}/${year}/saveParcelMeasuredUsageCorrections`;
       return this.apiService.putToApi(route, model);
   }
 

@@ -217,12 +217,12 @@ namespace Rio.API.Controllers
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
-        [HttpPut("accounts/{accountID}/{year}/saveParcelMonthlyEvapotranspirationOverrideValues")]
+        [HttpPut("accounts/{accountID}/{year}/saveParcelMeasuredUsageCorrections")]
         [UserManageFeature]
-        public ActionResult<int> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
+        public ActionResult<int> SaveParcelMeasuredUsageCorrections( [FromRoute] int accountID, [FromRoute] int year,
             [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
         {
-            var numChanging = ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
+            var numChanging = ParcelLedger.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
             return Ok(numChanging);
         }
 
@@ -291,7 +291,7 @@ namespace Rio.API.Controllers
         private WaterUsageOverviewDto GetWaterUsageOverviewDtoForParcelIDs(List<int> parcelIDs)
         {
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs).ToList();
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, parcelIDs).ToList();
 
             var cumulativeWaterUsageByYearDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterYear).Select(x =>
                 new CumulativeWaterUsageByYearDto
