@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Rio.EFModels.Entities
 {
     [Table("ParcelLedger")]
-    [Index(nameof(ParcelID), nameof(TransactionDate), nameof(TransactionTypeID), Name = "AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID", IsUnique = true)]
+    [Index(nameof(ParcelID), nameof(TransactionDate), nameof(TransactionTypeID), nameof(WaterTypeID), Name = "AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID_WaterTypeID", IsUnique = true)]
     public partial class ParcelLedger
     {
         [Key]
@@ -20,6 +20,7 @@ namespace Rio.EFModels.Entities
         public int TransactionTypeID { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal TransactionAmount { get; set; }
+        public int? WaterTypeID { get; set; }
         [Required]
         [StringLength(200)]
         public string TransactionDescription { get; set; }
@@ -30,5 +31,8 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(TransactionTypeID))]
         [InverseProperty("ParcelLedgers")]
         public virtual TransactionType TransactionType { get; set; }
+        [ForeignKey(nameof(WaterTypeID))]
+        [InverseProperty(nameof(ParcelAllocationType.ParcelLedgers))]
+        public virtual ParcelAllocationType WaterType { get; set; }
     }
 }

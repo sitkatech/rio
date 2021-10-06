@@ -150,15 +150,15 @@
                       <hr class="p-0 m-0" />
                     </td>
                   </tr>
-                  <tr *ngFor="let transactionType of transactionTypes">
+                  <tr *ngFor="let parcelAllocationType of parcelAllocationTypes">
                     <th class="text-sm-right">
-                      {{transactionType.TransactionTypeName}}
+                      {{parcelAllocationType.ParcelAllocationTypeName}}
                       <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                        ngbTooltip="Learn about {{transactionType.TransactionTypeName}}"><i
+                        ngbTooltip="Learn about {{parcelAllocationType.ParcelAllocationTypeName}}"><i
                           class="fas fa-question-circle small"></i></a>
                     </th>
                     <td class="text-sm-right">
-                      {{getAllocationByAllocationType(transactionType) | number: '1.1-1'}} {{unitsShown}}
+                      {{getAllocationByWaterType(parcelAllocationType) | number: '1.1-1'}} {{unitsShown}}
                     </td>
                   </tr>
                 </ng-container>

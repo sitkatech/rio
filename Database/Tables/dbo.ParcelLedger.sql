@@ -8,16 +8,18 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[TransactionDate] [datetime] NOT NULL,
 	[TransactionTypeID] [int] NOT NULL,
 	[TransactionAmount] [decimal](10, 4) NOT NULL,
+	[WaterTypeID] [int] NULL,
 	[TransactionDescription] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
  CONSTRAINT [PK_ParcelLedger_ParcelLedgerID] PRIMARY KEY CLUSTERED 
 (
 	[ParcelLedgerID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
- CONSTRAINT [AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID] UNIQUE NONCLUSTERED 
+ CONSTRAINT [AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID_WaterTypeID] UNIQUE NONCLUSTERED 
 (
 	[ParcelID] ASC,
 	[TransactionDate] ASC,
-	[TransactionTypeID] ASC
+	[TransactionTypeID] ASC,
+	[WaterTypeID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
@@ -31,3 +33,8 @@ ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_Tr
 REFERENCES [dbo].[TransactionType] ([TransactionTypeID])
 GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_TransactionType_TransactionTypeID]
+GO
+ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_WaterType_WaterTypeID] FOREIGN KEY([WaterTypeID])
+REFERENCES [dbo].[ParcelAllocationType] ([ParcelAllocationTypeID])
+GO
+ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_WaterType_WaterTypeID]

@@ -19,9 +19,9 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("/parcel-allocation-types/")]
+        [HttpGet("/water-types/")]
         [LoggedInUnclassifiedFeature]
-        public ActionResult<List<ParcelAllocationTypeDto>> GetParcelAllocationTypes()
+        public ActionResult<List<ParcelAllocationTypeDto>> GetWaterTypes()
         {
             var parcelAllocationTypeDtos = ParcelAllocationType.GetParcelAllocationTypes(_dbContext);
             return Ok(parcelAllocationTypeDtos);

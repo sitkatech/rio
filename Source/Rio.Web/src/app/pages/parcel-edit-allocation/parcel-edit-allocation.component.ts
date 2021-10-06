@@ -10,8 +10,8 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
-import { TransactionTypeService } from 'src/app/services/transaction-type.service';
-import { TransactionTypeDto } from 'src/app/shared/models/transaction-type-dto';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 
 @Component({
   selector: 'rio-parcel-edit-allocation',
@@ -25,7 +25,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   public parcel: ParcelDto;
   public parcelLedgers: Array<ParcelLedgerDto>;
   public isLoadingSubmit: boolean = false;
-  transactionTypes: TransactionTypeDto[];
+  parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(
     private route: ActivatedRoute,
@@ -34,7 +34,7 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
     private waterYearService: WaterYearService,
     private alertService: AlertService,
     private authenticationService: AuthenticationService,
-    private transactionTypeService: TransactionTypeService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private cdr: ChangeDetectorRef
   ) {
   }
@@ -47,16 +47,16 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelAllocations(id),
           this.waterYearService.getWaterYears(),
-          this.transactionTypeService.getAllocationTypes()
+          this.parcelAllocationTypeService.getParcelAllocationTypes()
         ).subscribe(
-          ([parcel, parcelLedgers, waterYears, transactionTypes]) => {
+          ([parcel, parcelLedgers, waterYears, parcelAllocationTypes]) => {
             this.parcel = parcel instanceof Array
               ? null
               : parcel as ParcelDto;
             this.parcel = parcel;
             this.parcelLedgers = parcelLedgers;
             this.waterYears = waterYears;
-            this.transactionTypes = transactionTypes;
+            this.parcelAllocationTypes = parcelAllocationTypes;
           }
         );
       }
@@ -69,18 +69,18 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
   
-  public getAllocationForYearByType(transactionType: TransactionTypeDto, year: number): number {
-    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.TransactionTypeID === transactionType.TransactionTypeID);
+  public getAllocationForYearByType(parcelAllocationType: ParcelAllocationTypeDto, year: number): number {
+    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterTypeID === parcelAllocationType.ParcelAllocationTypeID);
     return parcelLedger ? parcelLedger.TransactionAmount : null;
   }
 
-  public updateAllocationModel(transactionType: TransactionTypeDto, year: number, $event: Event): void{
+  public updateAllocationModel(parcelAllocationType: ParcelAllocationTypeDto, year: number, $event: Event): void{
     const newValue = Number((<HTMLInputElement>$event.target).value);
-    let updatedParcelLedger = this.parcelLedgers.find(x=>x.TransactionTypeID === transactionType.TransactionTypeID && x.WaterYear === year );
+    let updatedParcelLedger = this.parcelLedgers.find(x=>x.TransactionTypeID === parcelAllocationType.ParcelAllocationTypeID && x.WaterYear === year );
     if (updatedParcelLedger !== null && updatedParcelLedger !== undefined) {
       updatedParcelLedger.TransactionAmount = newValue;
     } else{
-      const newParcelLedger = new ParcelLedgerDto({TransactionTypeID : transactionType.TransactionTypeID, transactionDate: new Date(year, 1, 1), ParcelID: this.parcel.ParcelID, TransactionAmount: newValue});
+      const newParcelLedger = new ParcelLedgerDto({TransactionTypeID : parcelAllocationType.ParcelAllocationTypeID, transactionDate: new Date(year, 1, 1), ParcelID: this.parcel.ParcelID, TransactionAmount: newValue});
       this.parcelLedgers.push(newParcelLedger);
     }
 

@@ -11,7 +11,7 @@ export class ParcelAllocationTypeService {
   constructor(private apiService: ApiService) { }
 
   public getParcelAllocationTypes(): Observable<ParcelAllocationTypeDto[]>{
-    return this.apiService.getFromApi('/parcel-allocation-types/');
+    return this.apiService.getFromApi('/water-types/');
   }
 
   public mergeParcelAllocationTypes(parcelAllocationTypes: ParcelAllocationTypeDto[]): Observable<any>{

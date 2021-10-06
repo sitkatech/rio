@@ -11,8 +11,8 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { TransactionTypeService } from 'src/app/services/transaction-type.service';
-import { TransactionTypeDto } from 'src/app/shared/models/transaction-type-dto';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -33,7 +33,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public rowData = [];
   public mapHeight: string = "500px"
   public columnDefs: any;
-  public transactionTypes: TransactionTypeDto[];
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -58,7 +58,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private transactionTypeService: TransactionTypeService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
@@ -117,21 +117,21 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.parcelsGrid.api.showLoadingOverlay();
       forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.transactionTypeService.getAllocationTypes()
-      ]).subscribe(([defaultYear, transactionTypes]) => {
+        this.parcelAllocationTypeService.getParcelAllocationTypes()
+      ]).subscribe(([defaultYear, parcelAllocationTypes]) => {
         this.waterYearToDisplay = defaultYear;
-        this.transactionTypes = transactionTypes;
+        this.parcelAllocationTypes = parcelAllocationTypes;
 
-        // finish setting up the column defs based on existing transactionTypes before loading data.
-        this.transactionTypes.forEach(transactionType => {
+        // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
+        this.parcelAllocationTypes.forEach(parcelAllocationType => {
           this.columnDefs.push({
-            headerName: transactionType.TransactionTypeName,
+            headerName: parcelAllocationType.ParcelAllocationTypeName,
             valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
             sortable: true,
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[transactionType.TransactionTypeID] ?? 0.0 : 0.0;
+              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
             }
           })
         });

@@ -11,5 +11,6 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         public string TransactionDescription { get; set; }
         public int ParcelLedgerID { get; set; }
         public int WaterYear => TransactionDate.Year;
+        public int? WaterTypeID { get; set; }
     }
 }

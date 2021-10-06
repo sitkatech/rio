@@ -379,6 +379,11 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.TransactionTypeID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.WaterType)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.WaterTypeID)
+                    .HasConstraintName("FK_ParcelLedger_WaterType_WaterTypeID");
             });
 
             modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>

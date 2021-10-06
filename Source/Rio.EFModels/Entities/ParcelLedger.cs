@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
     {
         private const int TransactionTypeIDMeasuredUsageCorrection = 18;
         private const int TransactionTypeIDMeasuredUsage = 17;
+        private const int TransactionTypeAllocation = 11;
 
         public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, int parcelID)
         {
@@ -27,7 +28,7 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.ParcelLedgers.Include(x => x.TransactionType)
                 .AsNoTracking()
-                .Where(x => x.TransactionType.IsAllocation);
+                .Where(x => x.TransactionTypeID == TransactionTypeAllocation);
         }
 
         public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
@@ -43,7 +44,7 @@ namespace Rio.EFModels.Entities
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
             var parcelAllocationBreakdownForYear = GetAllocationsImpl(dbContext)
-                .Where(x => x.TransactionDate.Year == year)
+                .Where(x => x.TransactionDate.Year == year && x.WaterTypeID != null)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
                 .Select(x => new ParcelAllocationBreakdownDto
@@ -51,7 +52,7 @@ namespace Rio.EFModels.Entities
                     ParcelID = x.Key,
                     // There's at most one ParcelAllocation per Parcel per AllocationType, so we just need to read elements of the group into this dictionary
                     Allocations = new Dictionary<int, decimal>(x.Select(y =>
-                        new KeyValuePair<int, decimal>(y.TransactionTypeID,
+                        new KeyValuePair<int, decimal>(y.WaterTypeID.Value,
                             y.TransactionAmount)))
                 }).ToList();
             return parcelAllocationBreakdownForYear;
@@ -225,38 +226,44 @@ namespace Rio.EFModels.Entities
 
             var parcelAllocations = GetAllocationsImpl(dbContext)
                 .Where(x => x.TransactionDate.Year == year);
+            if (parcelAllocations.Any())
+            {
 
-            return accountParcelWaterYearOwnershipsByYear
-                .GroupJoin(
-                    parcelAllocations,
-                    x => x.ParcelID,
-                    y => y.ParcelID,
-                    (x, y) => new
+                return accountParcelWaterYearOwnershipsByYear
+                    .GroupJoin(
+                        parcelAllocations,
+                        x => x.ParcelID,
+                        y => y.ParcelID,
+                        (x, y) => new
+                        {
+                            ParcelOwnership = x,
+                            ParcelAllocation = y
+                        })
+                    .SelectMany(
+                        parcelOwnershipAndAllocations =>
+                            parcelOwnershipAndAllocations.ParcelAllocation.DefaultIfEmpty(),
+                        (x, y) => new
+                        {
+                            x.ParcelOwnership.AccountID,
+                            WaterTypeID = y.WaterTypeID.Value,
+                            y.TransactionAmount
+                        })
+                    .ToList()
+                    .GroupBy(x => x.AccountID)
+                    .Select(x => new LandownerAllocationBreakdownDto()
                     {
-                        ParcelOwnership = x,
-                        ParcelAllocation = y
+                        AccountID = x.Key,
+                        Allocations = new Dictionary<int, decimal>(
+                            //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
+                            x.GroupBy(z => z.WaterTypeID)
+                                .Select(y =>
+                                    new KeyValuePair<int, decimal>(y.Key,
+                                        y.Sum(x => x.TransactionAmount))))
                     })
-                .SelectMany(
-                    parcelOwnershipAndAllocations => parcelOwnershipAndAllocations.ParcelAllocation.DefaultIfEmpty(),
-                    (x, y) => new
-                    {
-                        x.ParcelOwnership.AccountID,
-                        y.TransactionTypeID,
-                        y.TransactionAmount
-                    })
-                .ToList()
-                .GroupBy(x => x.AccountID)
-                .Select(x => new LandownerAllocationBreakdownDto()
-                {
-                    AccountID = x.Key,
-                    Allocations = new Dictionary<int, decimal>(
-                        //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
-                        x.GroupBy(z => z.TransactionTypeID)
-                            .Select(y =>
-                                new KeyValuePair<int, decimal>(y.Key,
-                                    y.Sum(x => x.TransactionAmount))))
-                })
-                .ToList();
+                    .ToList();
+            }
+
+            return new List<LandownerAllocationBreakdownDto>();
         }
 
     }

@@ -13,8 +13,8 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
 import { AccountService } from 'src/app/services/account/account.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { TransactionTypeDto } from 'src/app/shared/models/transaction-type-dto';
-import { TransactionTypeService } from 'src/app/services/transaction-type.service';
+import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -34,7 +34,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public parcelOwnershipHistory: ParcelOwnershipDto[];
 
   public today: Date = new Date();
-  public transactionTypes: TransactionTypeDto[];
+  public parcelAllocationTypes: ParcelAllocationTypeDto[];
 
   constructor(
     private route: ActivatedRoute,
@@ -42,7 +42,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
-    private transactionTypeService: TransactionTypeService,
+    private parcelAllocationTypeService: ParcelAllocationTypeService,
     private accountService: AccountService,
     private cdr: ChangeDetectorRef
   ) {
@@ -62,8 +62,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.parcelService.getWaterUsage(id),
           this.parcelService.getParcelOwnershipHistory(id),
           this.waterYearService.getWaterYears(),
-          this.transactionTypeService.getAllocationTypes()
-        ).subscribe(([parcel, parcelLedgers, waterUsage, parcelOwnershipHistory, waterYears, transactionTypes]) => {
+          this.parcelAllocationTypeService.getParcelAllocationTypes()
+        ).subscribe(([parcel, parcelLedgers, waterUsage, parcelOwnershipHistory, waterYears, parcelAllocationTypes]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
@@ -71,7 +71,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.waterUsage = waterUsage;
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
-          this.transactionTypes = transactionTypes;
+          this.parcelAllocationTypes = parcelAllocationTypes;
         });
       }
       this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -106,8 +106,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  public getAllocationForYearByType(transactionType: TransactionTypeDto, year: number): string {
-    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.TransactionTypeID === transactionType.TransactionTypeID);
+  public getAllocationForYearByType(parcelAllocationType: ParcelAllocationTypeDto, year: number): string {
+    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterTypeID === parcelAllocationType.ParcelAllocationTypeID);
     return parcelLedger ? parcelLedger.TransactionAmount.toFixed(1) : "-";
   }
 

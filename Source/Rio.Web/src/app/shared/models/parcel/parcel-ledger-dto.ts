@@ -8,7 +8,7 @@ export class ParcelLedgerDto {
     TransactionDescription: string;
     ParcelLedgerID: number;
     WaterYear: number;
-    WaterMonth: number;
+    WaterTypeID: number;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

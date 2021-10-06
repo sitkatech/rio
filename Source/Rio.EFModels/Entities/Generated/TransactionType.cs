@@ -21,7 +21,6 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(50)]
         public string TransactionTypeName { get; set; }
-        public bool IsAllocation { get; set; }
         public int SortOrder { get; set; }
 
         [InverseProperty(nameof(ParcelLedger.TransactionType))]

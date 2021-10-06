@@ -16,6 +16,7 @@ namespace Rio.EFModels.Entities
         {
             ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
             ParcelAllocations = new HashSet<ParcelAllocation>();
+            ParcelLedgers = new HashSet<ParcelLedger>();
         }
 
         [Key]
@@ -32,5 +33,7 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         [InverseProperty(nameof(ParcelAllocation.ParcelAllocationType))]
         public virtual ICollection<ParcelAllocation> ParcelAllocations { get; set; }
+        [InverseProperty(nameof(ParcelLedger.WaterType))]
+        public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
     }
 }

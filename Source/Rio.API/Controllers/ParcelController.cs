@@ -140,16 +140,17 @@ namespace Rio.API.Controllers
                 return actionResult;
             }
 
-            var transactionTypeDict = TransactionType.GetAllocationTypes(_dbContext).ToDictionary(x => x.TransactionTypeID, x => x.TransactionTypeName);
+            var waterTypeDict = ParcelAllocationType.GetParcelAllocationTypes(_dbContext).ToDictionary(x => x.ParcelAllocationTypeID, x => x.ParcelAllocationTypeName);
             var updatedParcelLedgers = parcelLedgerDtos.Select(x => new ParcelLedger()
             {
                 ParcelID = x.ParcelID,
                 TransactionTypeID = x.TransactionTypeID,
                 TransactionDate = x.TransactionDate,
                 TransactionAmount = x.TransactionAmount,
+                WaterTypeID = x.WaterTypeID,
                 ParcelLedgerID = x.ParcelLedgerID,
                 TransactionDescription =
-                    $"Allocation of {transactionTypeDict[x.TransactionTypeID]} for {x.TransactionDate.Year} has been deposited into this water account by an administrator"
+                    $"Allocation of {waterTypeDict[x.WaterTypeID.Value]} for {x.TransactionDate.Year} has been deposited into this water account by an administrator"
             }).ToList();
 
             // add new PAs before the merge.
@@ -161,7 +162,7 @@ namespace Rio.API.Controllers
             var allInDatabase = _dbContext.ParcelLedgers;
 
             existingParcelLedgers.Merge(updatedParcelLedgers, allInDatabase,
-                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.TransactionDate == y.TransactionDate,
+                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.TransactionDate == y.TransactionDate && x.WaterTypeID == y.WaterTypeID,
                 (x, y) => x.TransactionAmount = y.TransactionAmount
                 );
 

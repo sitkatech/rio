@@ -5,7 +5,6 @@ GO
 CREATE TABLE [dbo].[TransactionType](
 	[TransactionTypeID] [int] NOT NULL,
 	[TransactionTypeName] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	[IsAllocation] [bit] NOT NULL,
 	[SortOrder] [int] NOT NULL,
  CONSTRAINT [PK_TransactionType_TransactionTypeID] PRIMARY KEY CLUSTERED 
 (
