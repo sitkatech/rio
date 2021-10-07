@@ -35,6 +35,6 @@ GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_TransactionType_TransactionTypeID]
 GO
 ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_WaterType_WaterTypeID] FOREIGN KEY([WaterTypeID])
-REFERENCES [dbo].[ParcelAllocationType] ([ParcelAllocationTypeID])
+REFERENCES [dbo].[WaterType] ([WaterTypeID])
 GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_WaterType_WaterTypeID]

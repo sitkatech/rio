@@ -32,7 +32,7 @@ namespace Rio.EFModels.Entities
         [InverseProperty("ParcelLedgers")]
         public virtual TransactionType TransactionType { get; set; }
         [ForeignKey(nameof(WaterTypeID))]
-        [InverseProperty(nameof(ParcelAllocationType.ParcelLedgers))]
-        public virtual ParcelAllocationType WaterType { get; set; }
+        [InverseProperty("ParcelLedgers")]
+        public virtual WaterType WaterType { get; set; }
     }
 }

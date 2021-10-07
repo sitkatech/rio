@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
         {
             return new ParcelAllocationDto()
             {
-                ParcelAllocationTypeID = parcelAllocation.ParcelAllocationTypeID,
+                WaterTypeID = parcelAllocation.WaterTypeID,
                 ParcelID = parcelAllocation.ParcelID,
                 WaterYear = parcelAllocation.WaterYear,
                 AcreFeetAllocated = parcelAllocation.AcreFeetAllocated,

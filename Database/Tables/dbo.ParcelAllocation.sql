@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[ParcelAllocation](
 	[ParcelAllocationID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelID] [int] NOT NULL,
 	[WaterYear] [int] NOT NULL,
-	[ParcelAllocationTypeID] [int] NOT NULL,
+	[WaterTypeID] [int] NOT NULL,
 	[AcreFeetAllocated] [decimal](10, 4) NOT NULL,
  CONSTRAINT [PK_ParcelAllocation_ParcelAllocationID] PRIMARY KEY CLUSTERED 
 (
@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[ParcelAllocation](
 (
 	[ParcelID] ASC,
 	[WaterYear] ASC,
-	[ParcelAllocationTypeID] ASC
+	[WaterTypeID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
@@ -26,7 +26,7 @@ REFERENCES [dbo].[Parcel] ([ParcelID])
 GO
 ALTER TABLE [dbo].[ParcelAllocation] CHECK CONSTRAINT [FK_ParcelAllocation_Parcel_ParcelID]
 GO
-ALTER TABLE [dbo].[ParcelAllocation]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocation_ParcelAllocationType_ParcelAllocationTypeID] FOREIGN KEY([ParcelAllocationTypeID])
-REFERENCES [dbo].[ParcelAllocationType] ([ParcelAllocationTypeID])
+ALTER TABLE [dbo].[ParcelAllocation]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocation_WaterType_WaterTypeID] FOREIGN KEY([WaterTypeID])
+REFERENCES [dbo].[WaterType] ([WaterTypeID])
 GO
-ALTER TABLE [dbo].[ParcelAllocation] CHECK CONSTRAINT [FK_ParcelAllocation_ParcelAllocationType_ParcelAllocationTypeID]
+ALTER TABLE [dbo].[ParcelAllocation] CHECK CONSTRAINT [FK_ParcelAllocation_WaterType_WaterTypeID]

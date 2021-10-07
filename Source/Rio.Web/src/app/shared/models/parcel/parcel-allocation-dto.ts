@@ -1,7 +1,7 @@
 export class ParcelAllocationDto {
     ParcelID: number;
     WaterYear: number;
-    ParcelAllocationTypeID: number;
+    WaterTypeID: number;
     AcreFeetAllocated: number;
     ParcelAllocationID: number;
 

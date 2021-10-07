@@ -18,12 +18,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rio.API.GeoSpatial;
-using Rio.Models.DataTransferObjects.User;
 using static System.String;
 using MissingFieldException = CsvHelper.MissingFieldException;
 
@@ -132,15 +130,14 @@ namespace Rio.API.Controllers
         public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
             [FromBody] List<ParcelLedgerDto> parcelLedgerDtos)
         {
-            var parcel = _dbContext.Parcels.Include(x => x.ParcelLedgers)
-                .SingleOrDefault(x => x.ParcelID == parcelID);
+            var parcel = _dbContext.Parcels.SingleOrDefault(x => x.ParcelID == parcelID);
 
             if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
             {
                 return actionResult;
             }
 
-            var waterTypeDict = ParcelAllocationType.GetParcelAllocationTypes(_dbContext).ToDictionary(x => x.ParcelAllocationTypeID, x => x.ParcelAllocationTypeName);
+            var waterTypeDict = WaterType.GetWaterTypes(_dbContext).ToDictionary(x => x.WaterTypeID, x => x.WaterTypeName);
             var updatedParcelLedgers = parcelLedgerDtos.Select(x => new ParcelLedger()
             {
                 ParcelID = x.ParcelID,
@@ -158,7 +155,7 @@ namespace Rio.API.Controllers
             _dbContext.ParcelLedgers.AddRange(newParcelLedgers);
             _dbContext.SaveChanges();
 
-            var existingParcelLedgers = parcel.ParcelLedgers;
+            var existingParcelLedgers = _dbContext.ParcelLedgers.Where(x => x.TransactionTypeID == ParcelLedger.TransactionTypeAllocation && x.ParcelID == parcelID).ToList();
             var allInDatabase = _dbContext.ParcelLedgers;
 
             existingParcelLedgers.Merge(updatedParcelLedgers, allInDatabase,
@@ -170,6 +167,42 @@ namespace Rio.API.Controllers
 
             return Ok();
 
+            // TODO: We might need concept of effective date
+            //var parcel = _dbContext.Parcels.SingleOrDefault(x => x.ParcelID == parcelID);
+
+            //if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
+            //{
+            //    return actionResult;
+            //}
+
+            //var existingParcelLedgers = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelID);
+            //var waterTypeDict = WaterType.GetWaterTypes(_dbContext).ToDictionary(x => x.WaterTypeID, x => x.WaterTypeName);
+            //var newParcelLedgers = new List<ParcelLedger>();
+            //foreach (var parcelLedgerDto in parcelLedgerDtos)
+            //{
+            //    var existingAllocationAmount = existingParcelLedgers
+            //        .Where(x => x.WaterYear == parcelLedgerDto.WaterYear &&
+            //                    x.WaterTypeID == parcelLedgerDto.WaterTypeID).Sum(x => x.TransactionAmount);
+            //    var transactionAmountDelta = parcelLedgerDto.TransactionAmount - existingAllocationAmount;
+            //    if (transactionAmountDelta != 0)
+            //    {
+            //        var parcelLedger = new ParcelLedger()
+            //        {
+            //            ParcelID = parcelLedgerDto.ParcelID,
+            //            TransactionTypeID = parcelLedgerDto.TransactionTypeID,
+            //            TransactionDate = DateTime.UtcNow,
+            //            TransactionAmount = parcelLedgerDto.TransactionAmount,
+            //            WaterTypeID = parcelLedgerDto.WaterTypeID,
+            //            TransactionDescription =
+            //                $"Allocation of {waterTypeDict[parcelLedgerDto.WaterTypeID.Value]} for {parcelLedgerDto.TransactionDate.Year} has been deposited into this water account by an administrator"
+            //        };
+            //        newParcelLedgers.Add(parcelLedger);
+            //    }
+            //}
+
+            //_dbContext.ParcelLedgers.AddRange(newParcelLedgers);
+            //_dbContext.SaveChanges();
+            //return Ok();
         }
 
         [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]
@@ -187,20 +220,20 @@ namespace Rio.API.Controllers
             return Ok(numberOfParcels);
         }
 
-        [HttpPost("parcels/{waterYear}/{parcelAllocationTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
+        [HttpPost("parcels/{waterYear}/{waterTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
         public async Task<ActionResult> BulkSetAnnualParcelAllocationFileUpload([FromRoute] int waterYear,
-            [FromRoute] int parcelAllocationTypeID)
+            [FromRoute] int waterTypeID)
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
-            var parcelAllocationTypeDisplayName =
-                _dbContext.ParcelAllocationTypes.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeName;
+            var waterTypeDisplayName =
+                _dbContext.WaterTypes.Single(x => x.WaterTypeID == waterTypeID).WaterTypeName;
 
-            if (!ParseBulkSetAllocationUpload(fileResource, parcelAllocationTypeDisplayName, out var records, out var badRequestFromUpload))
+            if (!ParseBulkSetAllocationUpload(fileResource, waterTypeDisplayName, out var records, out var badRequestFromUpload))
             {
                 return badRequestFromUpload;
             }
 
-            if (!ValidateBulkSetAllocationUpload(records, parcelAllocationTypeDisplayName, out var badRequestFromValidation))
+            if (!ValidateBulkSetAllocationUpload(records, waterTypeDisplayName, out var badRequestFromValidation))
             {
                 return badRequestFromValidation;
             }
@@ -208,11 +241,11 @@ namespace Rio.API.Controllers
             _dbContext.FileResources.Add(fileResource);
             _dbContext.SaveChanges();
 
-            ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, parcelAllocationTypeID);
+            ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, waterTypeID);
 
             ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
                 UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID, fileResource.FileResourceID, waterYear,
-                parcelAllocationTypeID, null);
+                waterTypeID, null);
 
             return Ok();
         }
@@ -347,7 +380,7 @@ namespace Rio.API.Controllers
             return true;
         }
 
-        private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string parcelAllocationTypeDisplayName, out ActionResult badRequest)
+        private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string waterTypeDisplayName, out ActionResult badRequest)
         {
             // no duplicate apns permitted
             var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
@@ -386,7 +419,7 @@ namespace Rio.API.Controllers
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        $"The following APNs had no {parcelAllocationTypeDisplayName} Quantity entered: " +
+                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: " +
                         Join(", ", nullAllocationQuantities.Select(x => x.APN))
                 });
                 return false;
@@ -641,10 +674,10 @@ The updated Parcel data should be sent to the OpenET team, so that any new or mo
             Map(m => m.AllocationQuantity).Name("Allocation Quantity");
         }
 
-        public BulkSetAllocationCSVMap(RioDbContext dbContext, string parcelAllocationTypeDisplayName)
+        public BulkSetAllocationCSVMap(RioDbContext dbContext, string waterTypeDisplayName)
         {
             Map(m => m.APN).Name("APN");
-            Map(m => m.AllocationQuantity).Name(parcelAllocationTypeDisplayName + " Quantity");
+            Map(m => m.AllocationQuantity).Name(waterTypeDisplayName + " Quantity");
         }
     }
 }

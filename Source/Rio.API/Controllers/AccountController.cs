@@ -330,7 +330,7 @@ namespace Rio.API.Controllers
             for (var i = 1; i < 13; i++)
             {
                 var grouping = parcelMonthlyEvapotranspirationGroupedByMonth.SingleOrDefault(x => x.Key == i);
-                cumulativeTotal += grouping?.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate) ?? 0;
+                cumulativeTotal += grouping?.Sum(x => (x.OverriddenEvapotranspirationRate ?? 0) + x.EvapotranspirationRate) ?? 0;
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
                     Month = ((DateUtilities.Month)i).ShortMonthName(),

@@ -54,9 +54,9 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
-  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, allocationTypeID: number): Observable<any> {
+  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, waterTypeID: number): Observable<any> {
     const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/parcels/${waterYear}/${allocationTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
+    const route = `https://${apiHostName}/parcels/${waterYear}/${waterTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
     var result = this.httpClient.post<any>(
       route,
       file, // Send the File Blob as the POST body.

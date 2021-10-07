@@ -20,15 +20,13 @@ begin
 	left join 
 	(
 		select pl.ParcelID, 
-			isnull(sum(case when pl.WaterTypeID in (1,2,3,4,5,6) then pl.TransactionAmount else 0 end), 0) as Allocation, 
+			isnull(sum(case when pl.TransactionTypeID = 11 then pl.TransactionAmount else 0 end), 0) as Allocation, 
 			sum(case when pl.WaterTypeID = 1 then pl.TransactionAmount else 0 end) as ProjectWater,
 			sum(case when pl.WaterTypeID = 2 then pl.TransactionAmount else 0 end) as Reconciliation,
 			sum(case when pl.WaterTypeID = 3 then pl.TransactionAmount else 0 end) as NativeYield,
 			sum(case when pl.WaterTypeID = 4 then pl.TransactionAmount else 0 end) as StoredWater,
-			sum(case when pl.TransactionTypeID in (17,18) then abs(pl.TransactionAmount) else 0 end) as UsageToDate
-
+			abs(sum(case when pl.TransactionTypeID in (17,18) then pl.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.ParcelLedger pl 
-		join dbo.TransactionType tt on pl.TransactionTypeID = tt.TransactionTypeID
 		where year(pl.TransactionDate) = @year
 		group by pl.ParcelID
 	) pal on p.ParcelID = pal.ParcelID

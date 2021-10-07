@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
-using Rio.Models.DataTransferObjects.WaterUsage;
 
 namespace Rio.EFModels.Entities
 {
@@ -12,7 +11,7 @@ namespace Rio.EFModels.Entities
         public static int BulkSetAllocation(RioDbContext dbContext, ParcelAllocationUpsertDto parcelAllocationUpsertDto)
         {
             // delete existing parcel allocations
-            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x => x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.ParcelAllocationTypeID == parcelAllocationUpsertDto.ParcelAllocationTypeID);
+            var existingParcelAllocations = dbContext.ParcelAllocations.Where(x => x.WaterYear == parcelAllocationUpsertDto.WaterYear && x.WaterTypeID == parcelAllocationUpsertDto.WaterTypeID);
             if (existingParcelAllocations.Any())
             {
                 dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
@@ -26,7 +25,7 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     WaterYear = parcelAllocationUpsertDto.WaterYear,
-                    ParcelAllocationTypeID = parcelAllocationUpsertDto.ParcelAllocationTypeID,
+                    WaterTypeID = parcelAllocationUpsertDto.WaterTypeID,
                     AcreFeetAllocated = parcelAllocationUpsertDto.AcreFeetAllocated * (decimal)parcel.ParcelAreaInAcres
                 };
                 dbContext.ParcelAllocations.Add(parcelAllocation);
@@ -44,11 +43,11 @@ namespace Rio.EFModels.Entities
         //}
 
         //Keep as reference for setting Allocation proportionally across an account and by volume
-        //public static void BulkSetAllocation(RioDbContext dbContext, List<BulkSetAllocationCSV> records, int waterYear, int parcelAllocationType)
+        //public static void BulkSetAllocation(RioDbContext dbContext, List<BulkSetAllocationCSV> records, int waterYear, int waterType)
         //{
         //    // delete existing parcel allocations
         //    var existingParcelAllocations = dbContext.ParcelAllocation.Where(x =>
-        //        x.WaterYear == waterYear && x.ParcelAllocationTypeID == parcelAllocationType);
+        //        x.WaterYear == waterYear && x.WaterTypeID == waterType);
         //    if (existingParcelAllocations.Any())
         //    {
         //        dbContext.ParcelAllocation.RemoveRange(existingParcelAllocations);
@@ -74,7 +73,7 @@ namespace Rio.EFModels.Entities
         //            AcreFeetAllocated =
         //                (decimal)(record.AllocationVolume * (x.ParcelAreaInAcres / sum)),
         //            WaterYear = waterYear,
-        //            ParcelAllocationTypeID = parcelAllocationType
+        //            WaterTypeID = waterType
         //        }));
         //    }
 
@@ -83,11 +82,11 @@ namespace Rio.EFModels.Entities
         //}
 
         public static void BulkSetAllocation(RioDbContext dbContext, List<BulkSetAllocationCSV> records, int waterYear,
-            int parcelAllocationType)
+            int waterType)
         {
             //delete existing parcel allocations
             var existingParcelAllocations = dbContext.ParcelAllocations.Where(x =>
-                x.WaterYear == waterYear && x.ParcelAllocationTypeID == parcelAllocationType);
+                x.WaterYear == waterYear && x.WaterTypeID == waterType);
             if (existingParcelAllocations.Any())
             {
                 dbContext.ParcelAllocations.RemoveRange(existingParcelAllocations);
@@ -104,7 +103,7 @@ namespace Rio.EFModels.Entities
                     AcreFeetAllocated =
                         (decimal)(record.AllocationQuantity * parcel.ParcelAreaInAcres),
                     WaterYear = waterYear,
-                    ParcelAllocationTypeID = parcelAllocationType
+                    WaterTypeID = waterType
                 });
             }
 

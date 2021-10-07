@@ -150,15 +150,15 @@
                       <hr class="p-0 m-0" />
                     </td>
                   </tr>
-                  <tr *ngFor="let parcelAllocationType of parcelAllocationTypes">
+                  <tr *ngFor="let waterType of waterTypes">
                     <th class="text-sm-right">
-                      {{parcelAllocationType.ParcelAllocationTypeName}}
+                      {{waterType.WaterTypeName}}
                       <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                        ngbTooltip="Learn about {{parcelAllocationType.ParcelAllocationTypeName}}"><i
+                        ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
                           class="fas fa-question-circle small"></i></a>
                     </th>
                     <td class="text-sm-right">
-                      {{getAllocationByWaterType(parcelAllocationType) | number: '1.1-1'}} {{unitsShown}}
+                      {{getAllocationByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                     </td>
                   </tr>
                 </ng-container>

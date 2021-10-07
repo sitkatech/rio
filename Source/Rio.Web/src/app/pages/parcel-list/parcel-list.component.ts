@@ -11,8 +11,8 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
+import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
+import { WaterTypeService } from 'src/app/services/water-type.service';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -33,7 +33,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public rowData = [];
   public mapHeight: string = "500px"
   public columnDefs: any;
-  public parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public waterTypes: WaterTypeDto[];
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -58,7 +58,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
@@ -117,21 +117,21 @@ export class ParcelListComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.parcelsGrid.api.showLoadingOverlay();
       forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ]).subscribe(([defaultYear, parcelAllocationTypes]) => {
+        this.waterTypeService.getWaterTypes()
+      ]).subscribe(([defaultYear, waterTypes]) => {
         this.waterYearToDisplay = defaultYear;
-        this.parcelAllocationTypes = parcelAllocationTypes;
+        this.waterTypes = waterTypes;
 
-        // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
-        this.parcelAllocationTypes.forEach(parcelAllocationType => {
+        // finish setting up the column defs based on existing waterTypes before loading data.
+        this.waterTypes.forEach(waterType => {
           this.columnDefs.push({
-            headerName: parcelAllocationType.ParcelAllocationTypeName,
+            headerName: waterType.WaterTypeName,
             valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
             sortable: true,
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
+              return params.data.Allocations ? params.data.Allocations[waterType.WaterTypeID] ?? 0.0 : 0.0;
             }
           })
         });

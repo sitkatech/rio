@@ -32,12 +32,12 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            var parcelAllocationType = _rioDbContext.ParcelAllocationTypes.SingleOrDefault(x => x.IsSourcedFromApi);
-            if (parcelAllocationType == null)
+            var waterType = _rioDbContext.WaterTypes.SingleOrDefault(x => x.IsSourcedFromApi);
+            if (waterType == null)
             {
                 return;
             }
-            var parcelAllocationTypeID = parcelAllocationType.ParcelAllocationTypeID;
+            var waterTypeID = waterType.WaterTypeID;
             
             var startYear = DateUtilities.MinimumYear;
 
@@ -85,14 +85,14 @@ namespace Rio.API
                 parcelAllocations.AddRange(_rioDbContext.Parcels.Select(x => new ParcelAllocation()
                 {
                     AcreFeetAllocated = totalPrecipitation * (decimal)x.ParcelAreaInAcres / (decimal)12.0,
-                    ParcelAllocationTypeID = parcelAllocationTypeID,
+                    WaterTypeID = waterTypeID,
                     ParcelID = x.ParcelID,
                     WaterYear = year
                 }));
 
             }
 
-            _rioDbContext.ParcelAllocations.RemoveRange(_rioDbContext.ParcelAllocations.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
+            _rioDbContext.ParcelAllocations.RemoveRange(_rioDbContext.ParcelAllocations.Where(x => x.WaterTypeID == waterTypeID));
                 _rioDbContext.ParcelAllocations.AddRange(parcelAllocations);
                 _rioDbContext.SaveChanges();
         }

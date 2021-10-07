@@ -30,8 +30,8 @@
                 <thead>
                   <tr>
                     <th>Year</th>
-                    <th *ngFor="let parcelAllocationType of parcelAllocationTypes">
-                      {{parcelAllocationType.ParcelAllocationTypeName}} (Acre Feet)
+                    <th *ngFor="let waterType of waterTypes">
+                      {{waterType.WaterTypeName}} (Acre Feet)
                     </th>
                   </tr>
                 </thead>
@@ -39,8 +39,8 @@
                   <tr *ngFor="let waterYear of waterYears; let i = index">
                     <td>{{waterYear.Year}}</td>
                     
-                    <td *ngFor="let parcelAllocationType of parcelAllocationTypes; let j=index" >
-                      <input type="number" class="form-control" name="{{i}}_{{j}}" [value]="getAllocationForYearByType(parcelAllocationType, waterYear.Year)" (change)="updateAllocationModel(parcelAllocationType, waterYear.Year, $event)"/>
+                    <td *ngFor="let waterType of waterTypes; let j=index" >
+                      <input type="number" class="form-control" name="{{i}}_{{j}}" [value]="getAllocationForYearByType(waterType, waterYear.Year)" (change)="updateAllocationModel(waterType, waterYear.Year, $event)"/>
                     </td>
                   </tr>
                 </tbody>

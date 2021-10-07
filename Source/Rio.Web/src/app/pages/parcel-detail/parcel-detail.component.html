@@ -86,7 +86,7 @@
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th style="text-align: right;" *ngFor="let parcelAllocationType of parcelAllocationTypes">{{parcelAllocationType.ParcelAllocationTypeName}}</th>
+                  <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
                   <th class="text-right">Total Allocation</th>
                   <th class="text-right">Total Usage</th>
                   <th class="text-right">Jan</th>
@@ -106,7 +106,7 @@
               <tbody>
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear.Year}}</td>
-                  <td class="text-right" *ngFor="let parcelAllocationType of parcelAllocationTypes">{{getAllocationForYearByType(parcelAllocationType, waterYear.Year)}}</td>
+                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getAllocationForYearByType(waterType, waterYear.Year)}}</td>
                   <td class="text-right">
                     {{getTotalAllocationForYear(waterYear.Year)}}</td>
                   <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>

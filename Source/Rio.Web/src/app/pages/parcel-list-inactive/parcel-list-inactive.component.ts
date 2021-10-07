@@ -8,8 +8,8 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { WaterTypeService } from 'src/app/services/water-type.service';
+import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
@@ -58,7 +58,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private decimalPipe: DecimalPipe,
     private datePipe: DatePipe) { }
 

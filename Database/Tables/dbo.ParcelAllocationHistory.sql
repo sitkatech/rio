@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[ParcelAllocationHistory](
 	[ParcelAllocationHistoryID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelAllocationHistoryDate] [datetime] NOT NULL,
 	[ParcelAllocationHistoryWaterYear] [int] NOT NULL,
-	[ParcelAllocationTypeID] [int] NOT NULL,
+	[WaterTypeID] [int] NOT NULL,
 	[UserID] [int] NOT NULL,
 	[FileResourceID] [int] NULL,
 	[ParcelAllocationHistoryValue] [decimal](10, 4) NULL,
@@ -22,12 +22,12 @@ REFERENCES [dbo].[FileResource] ([FileResourceID])
 GO
 ALTER TABLE [dbo].[ParcelAllocationHistory] CHECK CONSTRAINT [FK_ParcelAllocationHistory_FileResource_FileResourceID]
 GO
-ALTER TABLE [dbo].[ParcelAllocationHistory]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocationHistory_ParcelAllocationType_ParcelAllocationTypeID] FOREIGN KEY([ParcelAllocationTypeID])
-REFERENCES [dbo].[ParcelAllocationType] ([ParcelAllocationTypeID])
-GO
-ALTER TABLE [dbo].[ParcelAllocationHistory] CHECK CONSTRAINT [FK_ParcelAllocationHistory_ParcelAllocationType_ParcelAllocationTypeID]
-GO
 ALTER TABLE [dbo].[ParcelAllocationHistory]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocationHistory_User_UserID] FOREIGN KEY([UserID])
 REFERENCES [dbo].[User] ([UserID])
 GO
 ALTER TABLE [dbo].[ParcelAllocationHistory] CHECK CONSTRAINT [FK_ParcelAllocationHistory_User_UserID]
+GO
+ALTER TABLE [dbo].[ParcelAllocationHistory]  WITH CHECK ADD  CONSTRAINT [FK_ParcelAllocationHistory_WaterType_WaterTypeID] FOREIGN KEY([WaterTypeID])
+REFERENCES [dbo].[WaterType] ([WaterTypeID])
+GO
+ALTER TABLE [dbo].[ParcelAllocationHistory] CHECK CONSTRAINT [FK_ParcelAllocationHistory_WaterType_WaterTypeID]

@@ -65,7 +65,7 @@ import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-e
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
-import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
+import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
@@ -134,7 +134,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     WaterTradingScenarioComponent,
     ManagedRechargeScenarioComponent,
     RolesAndPermissionsComponent,
-    ParcelAllocationTypeEditComponent,
+    WaterTypeEditComponent,
     TrainingVideosComponent,
     CreateUserProfileComponent,
     WaterAccountsAddComponent,

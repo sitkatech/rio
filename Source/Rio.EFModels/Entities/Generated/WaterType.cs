@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities
 {
-    [Table("ParcelAllocationType")]
-    [Index(nameof(ParcelAllocationTypeName), Name = "AK_ParcelAllocationType_ParcelAllocationTypeName", IsUnique = true)]
-    public partial class ParcelAllocationType
+    [Table("WaterType")]
+    [Index(nameof(WaterTypeName), Name = "AK_WaterType_WaterTypeName", IsUnique = true)]
+    public partial class WaterType
     {
-        public ParcelAllocationType()
+        public WaterType()
         {
             ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
             ParcelAllocations = new HashSet<ParcelAllocation>();
@@ -20,18 +20,18 @@ namespace Rio.EFModels.Entities
         }
 
         [Key]
-        public int ParcelAllocationTypeID { get; set; }
+        public int WaterTypeID { get; set; }
         [Required]
         [StringLength(50)]
-        public string ParcelAllocationTypeName { get; set; }
+        public string WaterTypeName { get; set; }
         public bool IsAppliedProportionally { get; set; }
-        public string ParcelAllocationTypeDefinition { get; set; }
+        public string WaterTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
         public int SortOrder { get; set; }
 
-        [InverseProperty(nameof(ParcelAllocationHistory.ParcelAllocationType))]
+        [InverseProperty(nameof(ParcelAllocationHistory.WaterType))]
         public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
-        [InverseProperty(nameof(ParcelAllocation.ParcelAllocationType))]
+        [InverseProperty(nameof(ParcelAllocation.WaterType))]
         public virtual ICollection<ParcelAllocation> ParcelAllocations { get; set; }
         [InverseProperty(nameof(ParcelLedger.WaterType))]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
