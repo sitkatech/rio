@@ -33,7 +33,7 @@ export class ParcelOverrideEtDataComponent implements OnInit, OnDestroy {
   public waterYears: Array<WaterYearDto>;
   public parcelMonthlyEvaporations: Array<ParcelMonthlyEvapotranspirationDto>;  
 
-  public isEditing: boolean = true;
+  public isEditing: boolean = false;
 
   public months = ["Jan",
         "Feb",
