@@ -38,6 +38,11 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getParcelLedgerEntriesByParcelID(parcelID: number): Observable<ParcelLedgerDto> {
+    let route = `parcels/${parcelID}/getLedgerEntries`;
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };

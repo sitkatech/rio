@@ -40,6 +40,16 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelLedgerDto>();
         }
 
+        public static List<ParcelLedgerDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
+        {
+            var parcelLedgers = dbContext.ParcelLedgers.AsNoTracking()
+                .Where(x => parcelID == x.ParcelID);
+
+            return parcelLedgers.Any()
+                ? parcelLedgers.Select(x => x.AsDto()).ToList()
+                : new List<ParcelLedgerDto>();
+        }
+
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
             var parcelAllocationBreakdownForYear = GetAllocationsImpl(dbContext)
