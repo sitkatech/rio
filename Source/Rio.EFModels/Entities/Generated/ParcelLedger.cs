@@ -17,6 +17,8 @@ namespace Rio.EFModels.Entities
         public int ParcelID { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime TransactionDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime EffectiveDate { get; set; }
         public int TransactionTypeID { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal TransactionAmount { get; set; }

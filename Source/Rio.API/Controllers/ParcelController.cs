@@ -142,12 +142,13 @@ namespace Rio.API.Controllers
             {
                 ParcelID = x.ParcelID,
                 TransactionTypeID = x.TransactionTypeID,
-                TransactionDate = x.TransactionDate,
+                TransactionDate = DateTime.UtcNow,
+                EffectiveDate = x.TransactionDate,
                 TransactionAmount = x.TransactionAmount,
                 WaterTypeID = x.WaterTypeID,
                 ParcelLedgerID = x.ParcelLedgerID,
                 TransactionDescription =
-                    $"Allocation of {waterTypeDict[x.WaterTypeID.Value]} for {x.TransactionDate.Year} has been deposited into this water account by an administrator"
+                    $"Allocation of {waterTypeDict[x.WaterTypeID.Value]} for {x.WaterYear} has been deposited into this water account by an administrator"
             }).ToList();
 
             // add new PAs before the merge.
@@ -159,7 +160,7 @@ namespace Rio.API.Controllers
             var allInDatabase = _dbContext.ParcelLedgers;
 
             existingParcelLedgers.Merge(updatedParcelLedgers, allInDatabase,
-                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.TransactionDate == y.TransactionDate && x.WaterTypeID == y.WaterTypeID,
+                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.EffectiveDate == y.EffectiveDate && x.WaterTypeID == y.WaterTypeID,
                 (x, y) => x.TransactionAmount = y.TransactionAmount
                 );
 

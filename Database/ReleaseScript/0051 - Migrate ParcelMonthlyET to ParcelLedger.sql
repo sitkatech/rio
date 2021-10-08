@@ -1,6 +1,7 @@
 INSERT INTO dbo.ParcelLedger(
 	[ParcelID], 
 	[TransactionDate], 
+	[EffectiveDate],
 	[TransactionTypeID], 
 	[TransactionAmount], 
 	[TransactionDescription]
@@ -8,6 +9,7 @@ INSERT INTO dbo.ParcelLedger(
 
 SELECT [ParcelID],
        concat([WaterMonth], '/2/', [WaterYear]) as TransactionDate,
+	   concat([WaterMonth], '/2/', [WaterYear]) as EffectiveDate,
 	   TT.TransactionTypeID,
        -[EvapotranspirationRate] as TransactionAmount,
 	   concat(WaterMonth, '/', WaterYear, ' Usage from OpenET has been withdrawn from this water account') as TransactionDescription
@@ -17,6 +19,7 @@ SELECT [ParcelID],
   INSERT INTO dbo.ParcelLedger(
 	[ParcelID], 
 	[TransactionDate], 
+	[EffectiveDate],
 	[TransactionTypeID], 
 	[TransactionAmount], 
 	[TransactionDescription]
@@ -24,6 +27,7 @@ SELECT [ParcelID],
 
 SELECT [ParcelID],
        concat([WaterMonth], '/2/', [WaterYear]) as TransactionDate,
+	   concat([WaterMonth], '/2/', [WaterYear]) as EffectiveDate,
 	   TT.TransactionTypeID,
        -[OverriddenEvapotranspirationRate] as TransactionAmount,
 	   concat('A correction to ', WaterMonth, '/', WaterYear, ' has been applied to this water account') as TransactionDescription

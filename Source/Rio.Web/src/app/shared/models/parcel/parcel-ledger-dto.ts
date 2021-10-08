@@ -3,11 +3,13 @@ import * as internal from "stream";
 export class ParcelLedgerDto {
     ParcelID: number;
     TransactionDate: Date;
+    EffectiveDate: Date;
     TransactionTypeID: number;
     TransactionAmount: number;
     TransactionDescription: string;
     ParcelLedgerID: number;
     WaterYear: number;
+    WaterMonth: number;
     WaterTypeID: number;
 
     constructor(obj?: any) {

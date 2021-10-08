@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[ParcelLedgerID] [int] IDENTITY(1,1) NOT NULL,
 	[ParcelID] [int] NOT NULL,
 	[TransactionDate] [datetime] NOT NULL,
+	[EffectiveDate] [datetime] NOT NULL,
 	[TransactionTypeID] [int] NOT NULL,
 	[TransactionAmount] [decimal](10, 4) NOT NULL,
 	[WaterTypeID] [int] NULL,

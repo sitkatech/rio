@@ -10,6 +10,7 @@ CREATE TABLE dbo.ParcelLedger
 	ParcelLedgerID int not null identity(1, 1) constraint PK_ParcelLedger_ParcelLedgerID primary key,
 	ParcelID int not null constraint FK_ParcelLedger_Parcel_ParcelID foreign key references dbo.Parcel(ParcelID),
 	TransactionDate datetime not null,
+	EffectiveDate datetime not null,
 	TransactionTypeID int not null constraint FK_ParcelLedger_TransactionType_TransactionTypeID foreign key references dbo.TransactionType(TransactionTypeID),
 	TransactionAmount decimal(10,4) not null,
 	WaterTypeID int null constraint FK_ParcelLedger_WaterType_WaterTypeID foreign key references dbo.ParcelAllocationType(ParcelAllocationTypeID),

@@ -378,7 +378,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return new Array<ParcelLedgerDto>();
     }
 
-    return this.parcelLedgers.filter(p => p.WaterYear.toString() === year.toString());
+    return this.parcelLedgers.filter(p => p.WaterYear === year);
   }
 
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {
