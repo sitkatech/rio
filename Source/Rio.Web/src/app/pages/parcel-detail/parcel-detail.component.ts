@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -15,6 +15,9 @@ import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { WaterTypeService } from 'src/app/services/water-type.service';
+import { ColDef } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -22,6 +25,7 @@ import { WaterTypeService } from 'src/app/services/water-type.service';
   styleUrls: ['./parcel-detail.component.scss']
 })
 export class ParcelDetailComponent implements OnInit, OnDestroy {
+  @ViewChild('parcelLedgerGrid') parcelLedgerGrid: AgGridAngular;
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
   private currentUserAccounts: AccountSimpleDto[];
@@ -36,6 +40,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public today: Date = new Date();
   public waterTypes: WaterTypeDto[];
 
+  public parcelLedgerGridColumnDefs: ColDef[];
+  public rowData = [];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -43,7 +50,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
     private waterTypeService: WaterTypeService,
-    private accountService: AccountService,
     private cdr: ChangeDetectorRef
   ) {
     // force route reload whenever params change;
@@ -55,26 +61,72 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
+      this.initializeLedgerGrid();
       if (id) {
         forkJoin(
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelAllocations(id),
+          this.parcelService.getParcelLedgerEntriesByParcelID(id),
           this.parcelService.getWaterUsage(id),
           this.parcelService.getParcelOwnershipHistory(id),
           this.waterYearService.getWaterYears(),
           this.waterTypeService.getWaterTypes()
-        ).subscribe(([parcel, parcelLedgers, waterUsage, parcelOwnershipHistory, waterYears, waterTypes]) => {
+        ).subscribe(([parcel, parcelLedgers, ledgerEntries, waterUsage, parcelOwnershipHistory, waterYears, waterTypes]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
           this.parcelLedgers = parcelLedgers;
+          this.rowData = ledgerEntries;
           this.waterUsage = waterUsage;
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
           this.waterTypes = waterTypes;
         });
       }
-      this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      
+    });
+  }
+
+  initializeLedgerGrid() {
+    // NOTE: using this date-time formatter gives the local date and time,
+    // so the numbers will not match the database, which is in UTC datetime stamps
+    let datePipe = new DatePipe('en-US');
+    this.parcelLedgerGridColumnDefs = [
+      { 
+        headerName: 'Transaction Date', valueGetter: function (params: any) {
+          return datePipe.transform(params.data.TransactionDate, "M/d/yyyy");
+        },
+        sortable: true,
+        sort: 'desc',
+        comparator: function(filterLocalDateAtMidnight, cellValue) {
+          if (cellValue == null) {
+            return 0;
+          }
+          const cellDate = Date.parse(cellValue);
+          if (cellDate == filterLocalDateAtMidnight) {
+            return 0;
+          }
+          return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+        }
+      },
+      { 
+        headerName: 'Effective Date', valueGetter: function (params: any) {
+          return datePipe.transform(params.data.EffectiveDate, "M/d/yyyy");
+        }
+      },
+      { headerName: 'Transaction Type', field: 'TransactionTypeDisplayName' },
+      {
+        headerName: 'Water Type', valueGetter: function (params: any) {
+          return params.data.WaterTypeDisplayName ? params.data.WaterTypeDisplayName : '-';
+        }
+      },
+      { headerName: 'Transaction Amount', field: 'TransactionAmount' },
+      { headerName: 'Transaction Description', field: 'TransactionDescription' },
+    ];
+
+    this.parcelLedgerGridColumnDefs.forEach(x => {
+      x.resizable = true;
     });
   }
 

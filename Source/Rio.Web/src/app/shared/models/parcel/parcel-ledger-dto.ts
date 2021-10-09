@@ -11,6 +11,8 @@ export class ParcelLedgerDto {
     WaterYear: number;
     WaterMonth: number;
     WaterTypeID: number;
+    TransactionTypeDisplayName: string;
+    WaterTypeDisplayName: string;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

@@ -120,6 +120,25 @@
       </div>
     </div>
   </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col">
+              <span class="align-middle">Parcel Ledger View</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive">
+          <ag-grid-angular #parcelLedgerGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
+            [columnDefs]="parcelLedgerGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
+            [rowData]="rowData">
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="row mt-4" *ngIf="isAdministrator() || isDemoUser()">
     <div class="col-sm-12">
       <div class="card">

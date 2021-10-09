@@ -14,5 +14,12 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         public int WaterYear => EffectiveDate.Year;
         public int WaterMonth => EffectiveDate.Month;
         public int? WaterTypeID { get; set; }
+
+    }
+
+    public class ParcelLedgerDisplayDto : ParcelLedgerDto
+    {
+        public string WaterTypeDisplayName { get; set; }
+        public string TransactionTypeDisplayName { get; set; }
     }
 }

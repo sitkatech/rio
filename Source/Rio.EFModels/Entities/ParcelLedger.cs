@@ -40,14 +40,27 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelLedgerDto>();
         }
 
-        public static List<ParcelLedgerDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
+        public static List<ParcelLedgerDisplayDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelLedgers = dbContext.ParcelLedgers.AsNoTracking()
-                .Where(x => parcelID == x.ParcelID);
-
+            var parcelLedgers = dbContext.ParcelLedgers
+                .Include(x => x.TransactionType)
+                .Include(x => x.WaterType)
+                .AsNoTracking()
+                .Where(x => parcelID == x.ParcelID)
+                .Select(x => new ParcelLedgerDisplayDto
+                    {
+                        ParcelID = x.ParcelID,
+                        TransactionDate = x.TransactionDate,
+                        EffectiveDate = x.EffectiveDate,
+                        TransactionAmount = x.TransactionAmount,
+                        TransactionTypeDisplayName = x.TransactionType.TransactionTypeName,
+                        WaterTypeDisplayName = x.WaterType.WaterTypeName,
+                        TransactionDescription = x.TransactionDescription
+                    }
+                );
             return parcelLedgers.Any()
-                ? parcelLedgers.Select(x => x.AsDto()).ToList()
-                : new List<ParcelLedgerDto>();
+                ? parcelLedgers.ToList()
+                : new List<ParcelLedgerDisplayDto>();
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)

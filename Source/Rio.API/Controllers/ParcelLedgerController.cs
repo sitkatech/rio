@@ -21,7 +21,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getLedgerEntries")]
-        public ActionResult<IEnumerable<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
+        public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
             var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
             return Ok(parcelLedgerDtos);
