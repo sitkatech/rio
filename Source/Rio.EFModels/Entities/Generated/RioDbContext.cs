@@ -39,7 +39,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
-        public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspirations { get; set; }
         public virtual DbSet<ParcelStatus> ParcelStatuses { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
@@ -367,14 +366,6 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.TransactionType)
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.TransactionTypeID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
-            {
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelMonthlyEvapotranspirations)
-                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
