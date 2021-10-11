@@ -26,7 +26,5 @@ namespace Rio.API.Controllers
             var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
             return Ok(parcelLedgerDtos);
         }
-
-
     }
 }

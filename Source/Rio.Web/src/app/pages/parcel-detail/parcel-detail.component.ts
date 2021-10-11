@@ -93,23 +93,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     // so the numbers will not match the database, which is in UTC datetime stamps
     let datePipe = new DatePipe('en-US');
     this.parcelLedgerGridColumnDefs = [
-      { 
-        headerName: 'Transaction Date', valueGetter: function (params: any) {
-          return datePipe.transform(params.data.TransactionDate, "M/d/yyyy");
-        },
-        sortable: true,
-        sort: 'desc',
-        comparator: function(filterLocalDateAtMidnight, cellValue) {
-          if (cellValue == null) {
-            return 0;
-          }
-          const cellDate = Date.parse(cellValue);
-          if (cellDate == filterLocalDateAtMidnight) {
-            return 0;
-          }
-          return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
-        }
-      },
+      this.createDateColumnDef(datePipe),
       { 
         headerName: 'Effective Date', valueGetter: function (params: any) {
           return datePipe.transform(params.data.EffectiveDate, "M/d/yyyy");
@@ -128,6 +112,23 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     this.parcelLedgerGridColumnDefs.forEach(x => {
       x.resizable = true;
     });
+  }
+
+  private createDateColumnDef(datePipe: DatePipe): ColDef {
+    return {
+      headerName: 'Transaction Date', valueGetter: function (params: any) {
+        return datePipe.transform(params.data["TransactionDate"], "M/d/yyyy");
+      },
+      sortable: true,
+      sort: 'desc',
+      comparator: function (filterLocalDateAtMidnight, cellValue) {
+        const cellDate = Date.parse(cellValue);
+        if (cellDate == filterLocalDateAtMidnight) {
+          return 0;
+        }
+        return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+      }
+    };
   }
 
   ngOnDestroy() {

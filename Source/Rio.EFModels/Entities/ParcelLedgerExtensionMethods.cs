@@ -19,22 +19,5 @@ namespace Rio.EFModels.Entities
                 TransactionDescription = parcelLedger.TransactionDescription
             };
         }
-
-        public static ParcelLedgerDisplayDto AsDisplayDto(this ParcelLedger parcelLedger)
-        {
-            return new ParcelLedgerDisplayDto()
-            {
-                TransactionTypeID = parcelLedger.TransactionTypeID,
-                ParcelID = parcelLedger.ParcelID,
-                TransactionDate = parcelLedger.TransactionDate,
-                EffectiveDate = parcelLedger.EffectiveDate,
-                TransactionAmount = parcelLedger.TransactionAmount,
-                ParcelLedgerID = parcelLedger.ParcelLedgerID,
-                WaterTypeID = parcelLedger.WaterTypeID,
-                TransactionDescription = parcelLedger.TransactionDescription,
-                TransactionTypeDisplayName = parcelLedger.TransactionType.TransactionTypeName,
-                WaterTypeDisplayName = parcelLedger.WaterType?.WaterTypeName
-            };
-        }
     }
 }
