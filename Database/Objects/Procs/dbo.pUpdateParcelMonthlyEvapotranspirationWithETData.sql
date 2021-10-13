@@ -6,16 +6,35 @@ create procedure dbo.pUpdateParcelMonthlyEvapotranspirationWithETData
 as
 
 begin
-	MERGE INTO dbo.ParcelMonthlyEvapotranspiration AS Target
-	USING (select p.ParcelID, p.ParcelAreaInAcres, et.WaterYear, et.WaterMonth, et.EvapotranspirationRateInches
-		   from dbo.Parcel p
-		   join dbo.OpenETGoogleBucketResponseEvapotranspirationData et
-		   on p.ParcelNumber = et.ParcelNumber) AS Source
-	ON Target.ParcelID = Source.ParcelID and Target.WaterYear = Source.WaterYear and Target.WaterMonth = Source.WaterMonth
-	WHEN MATCHED THEN
-	UPDATE SET
-		Target.EvapotranspirationRate = (Source.EvapotranspirationRateInches / 12) * Source.ParcelAreaInAcres
-	WHEN NOT MATCHED BY TARGET THEN
-		INSERT (ParcelID, WaterYear, WaterMonth, EvapotranspirationRate)
-		VALUES (Source.ParcelID, Source.WaterYear, Source.WaterMonth, (Source.EvapotranspirationRateInches / 12) * Source.ParcelAreaInAcres);
+	declare @transactionDate datetime
+	set @transactionDate = GETUTCDATE()
+
+	select p.ParcelID, p.ParcelAreaInAcres, dateadd(day, -1, dateadd(month, 1, cast(concat(et.WaterMonth, '/1/', et.WaterYear) as datetime))) as EffectiveDate, -((et.EvapotranspirationRateInches / 12) * p.ParcelAreaInAcres) as TransactionAmount
+	into #npl
+	from dbo.Parcel p
+	join dbo.OpenETGoogleBucketResponseEvapotranspirationData et
+	on p.ParcelNumber = et.ParcelNumber
+
+	-- insert any corrections first - changes in value
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount)
+	select npl.ParcelID, 18 as TransactionTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, (abs(pl.TransactionAmount) - abs(npl.TransactionAmount)) as TransactionAmount
+	from #npl npl
+	join dbo.ParcelLedger pl on npl.ParcelID = pl.ParcelID and npl.EffectiveDate = pl.EffectiveDate
+	where pl.ParcelLedgerID is null	and npl.TransactionAmount != pl.TransactionAmount
+
+	-- insert any corrections first - if they are no longer in the ET dataset we should treat it as a correction
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount)
+	select pl.ParcelID, 18 as TransactionTypeID, @transactionDate as TransactionDate, pl.EffectiveDate, -pl.TransactionAmount
+	from dbo.ParcelLedger pl 
+	left join #npl npl on pl.ParcelID = npl.ParcelID and pl.EffectiveDate = npl.EffectiveDate
+	where npl.ParcelID is null
+
+	-- then add any new ones
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount)
+	select npl.ParcelID, 17 as TransactionTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, npl.TransactionAmount
+	from #npl npl
+	left join dbo.ParcelLedger pl on npl.ParcelID = pl.ParcelID and npl.EffectiveDate = pl.EffectiveDate
+	where pl.ParcelLedgerID is null
+
+
 end

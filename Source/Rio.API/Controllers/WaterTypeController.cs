@@ -50,8 +50,8 @@ namespace Rio.API.Controllers
             
             // blast parcel allocations/history for deleted types
             var deletedWaterTypeIDs = existingWaterTypes.Select(x => x.WaterTypeID).Where(x =>
-                !waterTypeDtos.Select(y => y.WaterTypeID).Contains(x));
-            _dbContext.ParcelAllocations.RemoveRange(_dbContext.ParcelAllocations.Where(x=> deletedWaterTypeIDs.Contains(x.WaterTypeID)));
+                !waterTypeDtos.Select(y => y.WaterTypeID).Contains(x)).ToList();
+            _dbContext.ParcelLedgers.RemoveRange(_dbContext.ParcelLedgers.Where(x=> x.WaterTypeID.HasValue && deletedWaterTypeIDs.Contains(x.WaterTypeID.Value)));
             _dbContext.ParcelAllocationHistories.RemoveRange(_dbContext.ParcelAllocationHistories.Where(x=> deletedWaterTypeIDs.Contains(x.WaterTypeID)));
             
             var allInDatabase = _dbContext.WaterTypes;
