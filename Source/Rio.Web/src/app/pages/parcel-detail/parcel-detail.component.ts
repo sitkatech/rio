@@ -42,6 +42,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public parcelLedgerGridColumnDefs: ColDef[];
   public rowData = [];
+  public defaultColDef: ColDef;
+
+  private gridColumnApi;
 
   constructor(
     private route: ActivatedRoute,
@@ -91,44 +94,55 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   initializeLedgerGrid() {
     // NOTE: using this date-time formatter gives the local date and time,
     // so the numbers will not match the database, which is in UTC datetime stamps
-    let datePipe = new DatePipe('en-US');
     this.parcelLedgerGridColumnDefs = [
-      this.createDateColumnDef(datePipe),
-      { 
-        headerName: 'Effective Date', valueGetter: function (params: any) {
-          return datePipe.transform(params.data.EffectiveDate, "M/d/yyyy");
-        }
-      },
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'M/d/yyyy'),
+      this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       { headerName: 'Transaction Type', field: 'TransactionTypeDisplayName' },
       {
         headerName: 'Water Type', valueGetter: function (params: any) {
           return params.data.WaterTypeDisplayName ? params.data.WaterTypeDisplayName : '-';
         }
       },
-      { headerName: 'Transaction Amount', field: 'TransactionAmount' },
-      { headerName: 'Transaction Description', field: 'TransactionDescription' },
+      { headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter' },
+      { headerName: 'Transaction Description', field: 'TransactionDescription', filter: false, sortable: false },
     ];
 
-    this.parcelLedgerGridColumnDefs.forEach(x => {
-      x.resizable = true;
-    });
-  }
+    this.defaultColDef = {
+      resizable: true,
+      filter: true,
+      sortable: true
+    };
 
-  private createDateColumnDef(datePipe: DatePipe): ColDef {
+  }
+  
+  private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
+    const cellDate = Date.parse(cellValue);
+    if (cellDate == filterLocalDateAtMidnight) {
+      return 0;
+    }
+    return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+  }
+  
+  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+    let datePipe = new DatePipe('en-US');
+    
     return {
-      headerName: 'Transaction Date', valueGetter: function (params: any) {
-        return datePipe.transform(params.data["TransactionDate"], "M/d/yyyy");
+      headerName: headerName, valueGetter: function (params: any) {
+        return datePipe.transform(params.data[fieldName], "M/d/yyyy");
       },
-      sortable: true,
-      sort: 'desc',
-      comparator: function (filterLocalDateAtMidnight, cellValue) {
-        const cellDate = Date.parse(cellValue);
-        if (cellDate == filterLocalDateAtMidnight) {
-          return 0;
-        }
-        return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+      comparator: this.dateFilterComparator, sortable: true, sort: 'desc', filter: 'agDateColumnFilter',
+      filterParams: {
+        filterOptions: ['inRange'],
+        comparator: this.dateFilterComparator
       }
     };
+  }
+  
+  private onGridReady(params) {
+    this.gridColumnApi = params.columnApi;
+
+    let colIDs = this.gridColumnApi.getAllColumns().map(col => col.colId);
+    this.gridColumnApi.autoSizeColumns(colIDs);
   }
 
   ngOnDestroy() {
