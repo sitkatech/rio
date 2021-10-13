@@ -1,16 +1,14 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { isNullOrUndefined } from 'util';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
-import { AccountService } from 'src/app/services/account/account.service';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
@@ -143,7 +141,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public getConsumptionForYearAndMonth(year: number, month: number): string {
     var monthlyEvapotranspiration = this.waterUsage.find(x => x.WaterYear === year && x.WaterMonth === month);
-    return isNullOrUndefined(monthlyEvapotranspiration) ? "-" : isNullOrUndefined(monthlyEvapotranspiration.OverriddenEvapotranspirationRate) ? monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1) : monthlyEvapotranspiration.OverriddenEvapotranspirationRate.toFixed(1);
+    return (monthlyEvapotranspiration === null || monthlyEvapotranspiration === undefined) ?
+            "-" : (monthlyEvapotranspiration.OverriddenEvapotranspirationRate === null || monthlyEvapotranspiration.OverriddenEvapotranspirationRate === undefined) ?
+            monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1) : monthlyEvapotranspiration.OverriddenEvapotranspirationRate.toFixed(1);
   }
   
   public getTotalAllocationForYear(year: number): string {
