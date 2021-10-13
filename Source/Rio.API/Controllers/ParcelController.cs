@@ -215,10 +215,11 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var numberOfParcels = ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
+            // TODO: This needs to reference ParcelLedger. This will be tackled by Rio 346.
+
             ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext, userID, parcelAllocationUpsertDto, null);
 
-            return Ok(numberOfParcels);
+            return Ok(0);
         }
 
         [HttpPost("parcels/{waterYear}/{waterTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
@@ -242,7 +243,7 @@ namespace Rio.API.Controllers
             _dbContext.FileResources.Add(fileResource);
             _dbContext.SaveChanges();
 
-            ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, waterTypeID);
+            // TODO: This needs to reference ParcelLedger. This will be tackled by Rio 346.
 
             ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
                 UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID, fileResource.FileResourceID, waterYear,
