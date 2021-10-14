@@ -10,8 +10,8 @@ INSERT INTO dbo.ParcelLedger(
 )
 
 SELECT [ParcelID],
-       concat('1/1/', [WaterYear]) as TransactionDate,
-	   concat('1/1/', [WaterYear]) as EffectiveDate,
+       dateadd(hour, 8, cast(concat('1/1/', [WaterYear]) as datetime)) as TransactionDate,
+	   dateadd(hour, 8, cast(concat('1/1/', [WaterYear]) as datetime)) as EffectiveDate,
 	   TT.TransactionTypeID,
        [AcreFeetAllocated] as TransactionAmount,
 	   pa.ParcelAllocationTypeID as WaterTypeID,

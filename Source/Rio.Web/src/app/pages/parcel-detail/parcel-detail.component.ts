@@ -15,7 +15,7 @@ import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -51,7 +51,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
     private waterTypeService: WaterTypeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -92,8 +93,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   initializeLedgerGrid() {
     // NOTE: using this date-time formatter gives the local date and time,
     // so the numbers will not match the database, which is in UTC datetime stamps
+    let _decimalPipe = this.decimalPipe;
     this.parcelLedgerGridColumnDefs = [
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'M/d/yyyy'),
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       { headerName: 'Transaction Type', field: 'TransactionTypeDisplayName' },
       {
@@ -101,7 +103,12 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           return params.data.WaterTypeDisplayName ? params.data.WaterTypeDisplayName : '-';
         }
       },
-      { headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter' },
+      { 
+        headerName: 'Transaction Amount', field: 'TransactionAmount', 
+        valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-1"); }, 
+        filter: 'agNumberColumnFilter', 
+        type: 'numericColumn' 
+      },
       { headerName: 'Transaction Description', field: 'TransactionDescription', filter: false, sortable: false },
     ];
 
@@ -126,7 +133,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     
     return {
       headerName: headerName, valueGetter: function (params: any) {
-        return datePipe.transform(params.data[fieldName], "M/d/yyyy");
+        return datePipe.transform(params.data[fieldName], dateFormat);
       },
       comparator: this.dateFilterComparator, sortable: true, sort: 'desc', filter: 'agDateColumnFilter',
       filterParams: {
