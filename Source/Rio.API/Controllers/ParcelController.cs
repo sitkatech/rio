@@ -113,7 +113,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
         [ParcelViewFeature]
-        public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
+        public ActionResult<ParcelMonthlyEvapotranspirationDto> GetMeasuredUsage([FromRoute] int parcelID)
         {
             var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
             if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
