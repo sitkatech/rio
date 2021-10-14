@@ -22,8 +22,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rio.API.GeoSpatial;
-using static System.String;
-using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
 {
@@ -337,7 +335,7 @@ namespace Rio.API.Controllers
                     badRequest = BadRequest(new
                     {
                         validationMessage =
-                            $"The following header names appear more than once: {Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
+                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
                     });
                     records = null;
                     return false;
@@ -356,7 +354,7 @@ namespace Rio.API.Controllers
                 records = null;
                 return false;
             }
-            catch (MissingFieldException e)
+            catch (CsvHelper.MissingFieldException e)
             {
                 var headerMessage = e.Message.Split('.')[0];
                 badRequest = BadRequest(new
@@ -393,8 +391,7 @@ namespace Rio.API.Controllers
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        "The upload contained multiples rows with these APNs: " +
-                        Join(", ", duplicateAPNs)
+                        $"The upload contained multiples rows with these APNs: {string.Join(", ", duplicateAPNs)}"
                 });
                 return false;
             }
@@ -408,8 +405,7 @@ namespace Rio.API.Controllers
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        "The upload contained these APNs which did not match any record in the system: " +
-                        Join(", ", unmatchedRecords.Select(x => x.APN))
+                        $"The upload contained these APNs which did not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}"
                 });
                 return false;
             }
@@ -421,8 +417,7 @@ namespace Rio.API.Controllers
                 badRequest = BadRequest(new
                 {
                     validationMessage =
-                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: " +
-                        Join(", ", nullAllocationQuantities.Select(x => x.APN))
+                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullAllocationQuantities.Select(x => x.APN))}"
                 });
                 return false;
             }
@@ -585,7 +580,7 @@ namespace Rio.API.Controllers
 
                     var accountNamesToInactivate = currentDifferencesForAccounts
                         .Where(x => (x.AccountAlreadyExists.Value &&
-                                     !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
+                                     !string.IsNullOrWhiteSpace(x.ExistingParcels) && string.IsNullOrWhiteSpace(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && string.IsNullOrWhiteSpace(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
                     Account.BulkInactivate(_dbContext, _dbContext.Accounts
                         .Where(x => accountNamesToInactivate.Contains(x.AccountName))
                         .ToList());
