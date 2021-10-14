@@ -206,6 +206,19 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDtos);
         }
 
+        [HttpGet("accounts/{accountID}/parcel-ledgers/{year}")]
+        [UserViewFeature]
+        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
+        {
+            var parcelLedgerDtos = ParcelLedger.ListByAccountIDAndYear(_dbContext, accountID, year);
+            if (parcelLedgerDtos == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parcelLedgerDtos);
+        }
+
         [HttpGet("accounts/{accountID}/parcel-water-usage/{year}")]
         [UserViewFeature]
         public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> ListWaterUsagesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)

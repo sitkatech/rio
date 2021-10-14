@@ -294,5 +294,18 @@ namespace Rio.EFModels.Entities
             return new List<LandownerAllocationBreakdownDto>();
         }
 
+        public static List<ParcelLedgerDto> ListByAccountIDAndYear(RioDbContext dbContext, int accountID, int year)
+        {
+            var parcelIDs = Entities.Parcel.ListByAccountIDAndYear(dbContext, accountID, year)
+                .Select(x => x.ParcelID);
+
+            var parcelLedgerDtos = dbContext.ParcelLedgers.Include(x => x.TransactionType)
+                .AsNoTracking()
+                .Where(x => x.EffectiveDate.Year == year && parcelIDs.Contains(x.ParcelID))
+                .Select(x => x.AsDto())
+                .ToList();
+
+            return parcelLedgerDtos;
+        }
     }
 }
