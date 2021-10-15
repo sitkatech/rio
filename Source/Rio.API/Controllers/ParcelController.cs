@@ -109,6 +109,13 @@ namespace Rio.API.Controllers
             return Ok(parcelLedgerDtos);
         }
 
+        [HttpGet("parcels/{parcelID}/getLedgerEntries")]
+        public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
+        {
+            var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
+            return Ok(parcelLedgerDtos);
+        }
+
         [HttpGet("parcels/{parcelID}/getWaterUsage")]
         [ParcelViewFeature]
         public ActionResult<ParcelMonthlyEvapotranspirationDto> GetMeasuredUsage([FromRoute] int parcelID)
