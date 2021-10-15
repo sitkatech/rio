@@ -340,25 +340,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getAnnualAllocation(year: number, skipConvertToUnitsShown?: boolean): number {
     let parcelLedgers = this.getAllocationsForWaterYear(year);
-    return this.getTotalAcreFeetAllocated(parcelLedgers, skipConvertToUnitsShown);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown);
   }
 
   public getAllocationByWaterType(waterType: WaterTypeDto): number{
     let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.WaterTypeID === waterType.WaterTypeID);
-    return this.getTotalAcreFeetAllocated(parcelLedgers);
-  }
-
-  public getTotalAcreFeetAllocated(parcelLedgers: Array<ParcelLedgerDto>, skipConvertToUnitsShown?: boolean): number {
-    var result = 0;
-    if (parcelLedgers.length > 0) {
-      result = parcelLedgers.reduce(function (a, b) {
-        return (a + b.TransactionAmount);
-      }, 0);
-    }
-    if (skipConvertToUnitsShown){
-      return result
-    }
-    return this.getResultInUnitsShown(result);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers);
   }
 
   public getResultInUnitsShown(result: number): number {
@@ -382,17 +369,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     if (!this.parcelLedgers) {
       return null;
     }
-
-    var parcelLedgersForYear = this.parcelLedgers.filter(p => p.WaterYear == year && p.ParcelID == parcelID)
+    
+    var parcelLedgersForYear = this.getAllocationsForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
-      let result = parcelLedgersForYear.reduce(function (a, b) {
-        return (a + b.TransactionAmount);
-      }, 0);
-      return result.toFixed(1);
+      var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.ParcelID == parcelID)
+  
+      return this.getTotalTransactionAmountForParcelLedgers(parcelLedgersForYearAndParcel).toFixed(1);
     }
-    else {
-      return "-";
-    }
+    
+    return "-";
   }
 
   public getLastETReadingDate(): string {
@@ -406,11 +391,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcelLedgers.filter(x => x.WaterYear == year);
   }
 
-  public getSoldWaterTransfersForWaterYear(year?: number) {
+  public getTradeSalesForWaterYear(year?: number) {
     return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionTypeID === TransactionTypeEnum.TradeSale);
   }
 
-  public getPurchasedWaterTransfersForWaterYear(year?: number) {
+  public getTradePurchasesForWaterYear(year?: number) {
     return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionTypeID === TransactionTypeEnum.TradePurchase);
   }
 
@@ -419,14 +404,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getPurchasedAcreFeet(year?: number): number {
-    return this.getTradedQuantity(this.getPurchasedWaterTransfersForWaterYear(year));
+    return this.getTotalTransactionAmountForParcelLedgers(this.getTradePurchasesForWaterYear(year));
   }
 
   public getSoldAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
-    return this.getTradedQuantity(this.getSoldWaterTransfersForWaterYear(year), skipConvertToUnitsShown);
+    return this.getTotalTransactionAmountForParcelLedgers(this.getTradeSalesForWaterYear(year), skipConvertToUnitsShown);
   }
 
-  private getTradedQuantity(parcelLedgersForWaterYear: ParcelLedgerDto[], skipConvertToUnitsShown?: boolean): number {
+  private getTotalTransactionAmountForParcelLedgers(parcelLedgersForWaterYear: ParcelLedgerDto[], skipConvertToUnitsShown?: boolean): number {
     if (parcelLedgersForWaterYear.length > 0) {
       let result = parcelLedgersForWaterYear.reduce(function (a, b) {
         return (a + b.TransactionAmount);

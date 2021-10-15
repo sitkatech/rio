@@ -78,11 +78,6 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
-  getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelLedgerDto>> {
-      let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-
   saveParcelMeasuredUsageCorrections(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
       let route = `/accounts/${accountID}/${year}/saveParcelMeasuredUsageCorrections`;
       return this.apiService.putToApi(route, model);

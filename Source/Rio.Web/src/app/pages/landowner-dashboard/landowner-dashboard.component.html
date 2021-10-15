@@ -195,7 +195,7 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let parcelLedger of getPurchasedWaterTransfersForWaterYear()">
+                    <tr *ngFor="let parcelLedger of getTradePurchasesForWaterYear()">
                       <th class="text-sm-right">
                           ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
@@ -235,7 +235,7 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let parcelLedger of getSoldWaterTransfersForWaterYear()">
+                    <tr *ngFor="let parcelLedger of getTradeSalesForWaterYear()">
                       <th class="text-sm-right">
                           ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
