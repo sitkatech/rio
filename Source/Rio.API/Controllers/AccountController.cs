@@ -153,7 +153,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("accounts/{accountID}/getParcelsAllocations/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> ListParcelsAllocationByAccountID([FromRoute] int accountID, [FromRoute] int year)
+        public ActionResult<List<ParcelLedgerDto>> ListParcelsAllocationByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
         {
             var parcelDtosEnumerable = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
             if (parcelDtosEnumerable == null)
@@ -191,19 +191,6 @@ namespace Rio.API.Controllers
             }
 
             return Ok(postingDtos);
-        }
-
-        [HttpGet("accounts/{accountID}/water-transfers")]
-        [UserViewFeature]
-        public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int accountID)
-        {
-            var waterTransferDtos = WaterTransfer.ListByAccountID(_dbContext, accountID);
-            if (waterTransferDtos == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(waterTransferDtos);
         }
 
         [HttpGet("accounts/{accountID}/parcel-ledgers/{year}")]

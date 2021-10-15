@@ -6,7 +6,6 @@ import { AccountEditUsersDto } from "src/app/shared/models/account/account-edit-
 import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-dto';
 import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { HttpClient } from '@angular/common/http';
 import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
@@ -57,11 +56,6 @@ export class AccountService {
   getParcelLedgersByAccountIDAndYear(accountID: number, year: number): Observable<Array<ParcelLedgerDto>> {
     let route = `/accounts/${accountID}/parcel-ledgers/${year}`;
     return this.apiService.getFromApi(route);
-  }
-
-  getWaterTransfersByAccountID(accountID: number): Observable<Array<WaterTransferDto>> {
-      let route = `/accounts/${accountID}/water-transfers`;
-      return this.apiService.getFromApi(route);
   }
 
   getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto> {

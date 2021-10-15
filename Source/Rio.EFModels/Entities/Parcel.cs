@@ -118,5 +118,18 @@ namespace Rio.EFModels.Entities
 
             dbContext.SaveChanges();
         }
+
+        public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID)
+        {
+            var parcelDtos = dbContext.AccountParcelWaterYears
+                .Include(x => x.Parcel)
+                .Include(x => x.Account)
+                .Include(x => x.WaterYear)
+                .Where(x => x.Account.AccountID == accountID)
+                .Select(x => x.Parcel.AsDto()).AsEnumerable();
+
+            return parcelDtos;
+
+        }
     }
 }

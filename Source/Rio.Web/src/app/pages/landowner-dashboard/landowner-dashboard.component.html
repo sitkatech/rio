@@ -195,13 +195,12 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
-                      <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                          routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
-                          ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                    <tr *ngFor="let parcelLedger of getPurchasedWaterTransfersForWaterYear()">
+                      <th class="text-sm-right">
+                          ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
                       <td class="text-sm-right">
-                        {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                        {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
                       </td>
                     </tr>
                   </ng-container>
@@ -236,13 +235,12 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
-                      <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                          routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
-                          ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                    <tr *ngFor="let parcelLedger of getSoldWaterTransfersForWaterYear()">
+                      <th class="text-sm-right">
+                          ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
                       <td class="text-sm-right">
-                        {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                        {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
                       </td>
                     </tr>
                   </ng-container>
