@@ -146,14 +146,14 @@ namespace Rio.API.Controllers
             var updatedParcelLedgers = parcelLedgerDtos.Select(x => new ParcelLedger()
             {
                 ParcelID = x.ParcelID,
-                TransactionTypeID = x.TransactionTypeID,
+                TransactionTypeID = x.TransactionType.TransactionTypeID,
                 TransactionDate = DateTime.UtcNow,
                 EffectiveDate = x.TransactionDate,
                 TransactionAmount = x.TransactionAmount,
-                WaterTypeID = x.WaterTypeID,
+                WaterTypeID = x.WaterType.WaterTypeID,
                 ParcelLedgerID = x.ParcelLedgerID,
                 TransactionDescription =
-                    $"Allocation of {waterTypeDict[x.WaterTypeID.Value]} for {x.WaterYear} has been deposited into this water account by an administrator"
+                    $"Allocation of {waterTypeDict[x.WaterType.WaterTypeID]} for {x.WaterYear} has been deposited into this water account by an administrator"
             }).ToList();
 
             // add new PAs before the merge.

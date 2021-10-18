@@ -25,10 +25,17 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
         {
-            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
-                .AsNoTracking()
+            return GetParcelLedgersImpl(dbContext)
                 .Where(x => x.TransactionTypeID == TransactionTypeAllocation);
         }
+        private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
+        {
+            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
+                .Include(x => x.WaterType)
+                .Include(x => x.Parcel)
+                .AsNoTracking();
+        }
+
 
         public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
@@ -40,27 +47,14 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelLedgerDto>();
         }
 
-        public static List<ParcelLedgerDisplayDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
+        public static List<ParcelLedgerDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
         {
-            var parcelLedgers = dbContext.ParcelLedgers
-                .Include(x => x.TransactionType)
-                .Include(x => x.WaterType)
-                .AsNoTracking()
+            var parcelLedgers = GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelID == x.ParcelID)
-                .Select(x => new ParcelLedgerDisplayDto
-                    {
-                        ParcelID = x.ParcelID,
-                        TransactionDate = x.TransactionDate,
-                        EffectiveDate = x.EffectiveDate,
-                        TransactionAmount = x.TransactionAmount,
-                        TransactionTypeDisplayName = x.TransactionType.TransactionTypeName,
-                        WaterTypeDisplayName = x.WaterType.WaterTypeName,
-                        TransactionDescription = x.TransactionDescription
-                    }
-                );
-            return parcelLedgers.Any()
-                ? parcelLedgers.ToList()
-                : new List<ParcelLedgerDisplayDto>();
+                .Select(x => x.AsDto())
+                .ToList();
+
+            return parcelLedgers;
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
@@ -132,11 +126,11 @@ namespace Rio.EFModels.Entities
             return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsage);
         }
 
-        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs,
+        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext,
+            List<int> parcelIDs,
             int transactionTypeID)
         {
-            return dbContext.ParcelLedgers.Include(x => x.Parcel)
-                .AsNoTracking()
+            return GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == transactionTypeID);
         }
 
@@ -198,8 +192,7 @@ namespace Rio.EFModels.Entities
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var existingParcelLedgers =
-                dbContext.ParcelLedgers
-                    .AsNoTracking()
+                GetParcelLedgersImpl(dbContext)
                     .Where(x => x.EffectiveDate.Year == waterYear &&
                                 parcelIDs.Contains(x.ParcelID) &&
                                 (x.TransactionTypeID == TransactionTypeIDMeasuredUsageCorrection ||
@@ -299,8 +292,7 @@ namespace Rio.EFModels.Entities
             var parcelIDs = Entities.Parcel.ListByAccountIDAndYear(dbContext, accountID, year)
                 .Select(x => x.ParcelID);
 
-            var parcelLedgerDtos = dbContext.ParcelLedgers.Include(x => x.TransactionType)
-                .AsNoTracking()
+            var parcelLedgerDtos = GetParcelLedgersImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && parcelIDs.Contains(x.ParcelID))
                 .Select(x => x.AsDto())
                 .ToList();

@@ -1,17 +1,17 @@
+import { TransactionTypeDto } from "../transaction-type-dto";
+import { WaterTypeDto } from "../water-type-dto";
 
 export class ParcelLedgerDto {
     ParcelID: number;
     TransactionDate: Date;
     EffectiveDate: Date;
-    TransactionTypeID: number;
+    TransactionType: TransactionTypeDto;
     TransactionAmount: number;
     TransactionDescription: string;
     ParcelLedgerID: number;
     WaterYear: number;
     WaterMonth: number;
-    WaterTypeID: number;
-    TransactionTypeDisplayName: string;
-    WaterTypeDisplayName: string;
+    WaterType: WaterTypeDto;
 
     constructor(obj?: any) {
         Object.assign(this, obj);

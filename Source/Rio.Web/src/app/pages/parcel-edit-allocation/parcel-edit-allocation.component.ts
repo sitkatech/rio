@@ -71,20 +71,26 @@ export class ParcelEditAllocationComponent implements OnInit, OnDestroy {
   }
   
   public getAllocationForYearByType(waterType: WaterTypeDto, year: number): number {
-    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterTypeID === waterType.WaterTypeID);
+    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     return parcelLedger ? parcelLedger.TransactionAmount : null;
   }
 
   public updateAllocationModel(waterType: WaterTypeDto, year: number, $event: Event): void{
     const newValue = Number((<HTMLInputElement>$event.target).value);
-    let updatedParcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterTypeID === waterType.WaterTypeID);
+    let updatedParcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     if (updatedParcelLedger !== null && updatedParcelLedger !== undefined) {
       updatedParcelLedger.TransactionAmount = newValue;
     } else{
       const newParcelLedger = new ParcelLedgerDto(
         {
-          TransactionTypeID: TransactionTypeEnum.Allocation,
-          WaterTypeID : waterType.WaterTypeID, 
+          TransactionType:
+          {
+            TransactionTypeID: TransactionTypeEnum.Allocation        
+          },
+          WaterType:
+          {
+            WaterTypeID : waterType.WaterTypeID
+          },
           EffectiveDate: new Date(year, 1, 1), 
           ParcelID: this.parcel.ParcelID, 
           TransactionAmount: newValue

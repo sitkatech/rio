@@ -9,13 +9,13 @@ namespace Rio.EFModels.Entities
         {
             return new ParcelLedgerDto()
             {
-                TransactionTypeID = parcelLedger.TransactionTypeID,
+                TransactionType = parcelLedger.TransactionType.AsDto(),
                 ParcelID = parcelLedger.ParcelID,
                 TransactionDate = parcelLedger.TransactionDate,
                 EffectiveDate = parcelLedger.EffectiveDate,
                 TransactionAmount = parcelLedger.TransactionAmount,
                 ParcelLedgerID = parcelLedger.ParcelLedgerID,
-                WaterTypeID = parcelLedger.WaterTypeID,
+                WaterType = parcelLedger.WaterType?.AsDto(),
                 TransactionDescription = parcelLedger.TransactionDescription
             };
         }

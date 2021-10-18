@@ -97,10 +97,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     this.parcelLedgerGridColumnDefs = [
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
-      { headerName: 'Transaction Type', field: 'TransactionTypeDisplayName' },
+      { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
         headerName: 'Water Type', valueGetter: function (params: any) {
-          return params.data.WaterTypeDisplayName ? params.data.WaterTypeDisplayName : '-';
+          return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
         }
       },
       { 
@@ -181,7 +181,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationForYearByType(waterType: WaterTypeDto, year: number): string {
-    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterTypeID === waterType.WaterTypeID);
+    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     return parcelLedger ? parcelLedger.TransactionAmount.toFixed(1) : "-";
   }
 

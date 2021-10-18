@@ -344,7 +344,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationByWaterType(waterType: WaterTypeDto): number{
-    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.WaterTypeID === waterType.WaterTypeID);
+    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.WaterType.WaterTypeID === waterType.WaterTypeID);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers);
   }
 
@@ -362,7 +362,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return new Array<ParcelLedgerDto>();
     }
 
-    return this.parcelLedgers.filter(p => p.WaterYear === year && p.TransactionTypeID === TransactionTypeEnum.Allocation);
+    return this.parcelLedgers.filter(p => p.WaterYear === year && p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
   }
 
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {
@@ -392,11 +392,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradeSalesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionTypeID === TransactionTypeEnum.TradeSale);
+    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.TradeSale);
   }
 
   public getTradePurchasesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionTypeID === TransactionTypeEnum.TradePurchase);
+    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.TradePurchase);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDto) {
