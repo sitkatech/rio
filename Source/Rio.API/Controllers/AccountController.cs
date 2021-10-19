@@ -163,7 +163,7 @@ namespace Rio.API.Controllers
 
             var parcelDtos = parcelDtosEnumerable.ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelIDs);
+            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelIDs(_dbContext, parcelIDs);
             return Ok(parcelLedgerDtos);
         }
 

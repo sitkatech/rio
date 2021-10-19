@@ -23,21 +23,7 @@ namespace Rio.EFModels.Entities
                 : new List<ParcelLedgerDto>();
         }
 
-        private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
-        {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == TransactionTypeAllocation);
-        }
-        private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
-        {
-            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
-                .Include(x => x.WaterType)
-                .Include(x => x.Parcel)
-                .AsNoTracking();
-        }
-
-
-        public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
+        public static List<ParcelLedgerDto> ListAllocationsByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
             var parcelLedgers = GetAllocationsImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID));
@@ -46,6 +32,21 @@ namespace Rio.EFModels.Entities
                 ? parcelLedgers.Select(x => x.AsDto()).ToList()
                 : new List<ParcelLedgerDto>();
         }
+
+        private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
+        {
+            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
+                .Include(x => x.WaterType)
+                .Include(x => x.Parcel)
+                .AsNoTracking();
+        }
+
+        private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
+        {
+            return GetParcelLedgersImpl(dbContext)
+                .Where(x => x.TransactionTypeID == TransactionTypeAllocation);
+        }
+
 
         public static List<ParcelLedgerDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
         {
