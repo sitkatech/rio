@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
+import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
@@ -14,8 +14,6 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { ParcelLayerUpdateDto } from 'src/app/pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
-import { ParcelWithStatusDto } from 'src/app/shared/models/parcel/parcel-with-status-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -38,13 +36,18 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getParcelLedgerEntriesByParcelID(parcelID: number): Observable<Array<ParcelLedgerDto>> {
+    let route = `parcels/${parcelID}/getLedgerEntries`;
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]): Observable<any> {
+  mergeParcelAllocations(parcelID: number, model: ParcelLedgerDto[]): Observable<any> {
     let route = `parcels/${parcelID}/mergeParcelAllocations`;
     return this.apiService.postToApi(route, model);
   }
@@ -54,9 +57,9 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
-  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, allocationTypeID: number): Observable<any> {
+  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, waterTypeID: number): Observable<any> {
     const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/parcels/${waterYear}/${allocationTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
+    const route = `https://${apiHostName}/parcels/${waterYear}/${waterTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
     var result = this.httpClient.post<any>(
       route,
       file, // Send the File Blob as the POST body.
@@ -78,7 +81,7 @@ export class ParcelService {
     return result;
   }
 
-  getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {
+  getParcelAllocations(parcelID: number): Observable<Array<ParcelLedgerDto>> {
     let route = `/parcels/${parcelID}/getAllocations`;
     return this.apiService.getFromApi(route);
   }

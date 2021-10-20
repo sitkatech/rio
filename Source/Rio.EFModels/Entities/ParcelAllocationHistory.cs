@@ -20,7 +20,7 @@ namespace Rio.EFModels.Entities
             {
                 ParcelAllocationHistoryDate = DateTime.Now,
                 ParcelAllocationHistoryWaterYear = parcelAllocation.WaterYear,
-                ParcelAllocationTypeID = parcelAllocation.ParcelAllocationTypeID,
+                WaterTypeID = parcelAllocation.WaterTypeID,
                 UserID = userID,
                 FileResourceID = fileResourceID,
                 ParcelAllocationHistoryValue =
@@ -31,13 +31,13 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
         }
 
-        public static void CreateParcelAllocationHistoryEntity(RioDbContext dbContext, int userID, int? fileResourceID, int waterYear, int parcelAllocationTypeID, decimal? allocated)
+        public static void CreateParcelAllocationHistoryEntity(RioDbContext dbContext, int userID, int? fileResourceID, int waterYear, int waterTypeID, decimal? allocated)
         {
             var parcelAllocationHistoryEntry = new ParcelAllocationHistory()
             {
                 ParcelAllocationHistoryDate = DateTime.Now,
                 ParcelAllocationHistoryWaterYear = waterYear,
-                ParcelAllocationTypeID = parcelAllocationTypeID,
+                WaterTypeID = waterTypeID,
                 UserID = userID,
                 FileResourceID = fileResourceID,
                 ParcelAllocationHistoryValue =
@@ -52,13 +52,13 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.ParcelAllocationHistories
                 .Include(x => x.User)
-                .Include(x => x.ParcelAllocationType)
+                .Include(x => x.WaterType)
                 .Include(x => x.FileResource)
                 .ToList().Select(x => new ParcelAllocationHistoryDto()
                 {
                     Date = x.ParcelAllocationHistoryDate,
                     WaterYear = x.ParcelAllocationHistoryWaterYear,
-                    Allocation = x.ParcelAllocationType.ParcelAllocationTypeName,
+                    Allocation = x.WaterType.WaterTypeName,
                     Value = x.ParcelAllocationHistoryValue,
                     Filename = x.FileResource?.OriginalBaseFilename,
                     User = x.User.FirstName + " " + x.User.LastName

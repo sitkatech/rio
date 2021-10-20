@@ -153,7 +153,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("accounts/{accountID}/getParcelsAllocations/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelAllocationDto>> ListParcelsAllocationByAccountID([FromRoute] int accountID, [FromRoute] int year)
+        public ActionResult<List<ParcelLedgerDto>> ListParcelsAllocationByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
         {
             var parcelDtosEnumerable = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
             if (parcelDtosEnumerable == null)
@@ -163,8 +163,8 @@ namespace Rio.API.Controllers
 
             var parcelDtos = parcelDtosEnumerable.ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelIDs);
-            return Ok(parcelAllocationDtos);
+            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelIDs(_dbContext, parcelIDs);
+            return Ok(parcelLedgerDtos);
         }
 
         [HttpGet("accounts/{accountID}/parcels/{year}")]
@@ -193,17 +193,17 @@ namespace Rio.API.Controllers
             return Ok(postingDtos);
         }
 
-        [HttpGet("accounts/{accountID}/water-transfers")]
+        [HttpGet("accounts/{accountID}/parcel-ledgers/{year}")]
         [UserViewFeature]
-        public ActionResult<List<WaterTransferDto>> ListWaterTransfersByUserID([FromRoute] int accountID)
+        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
         {
-            var waterTransferDtos = WaterTransfer.ListByAccountID(_dbContext, accountID);
-            if (waterTransferDtos == null)
+            var parcelLedgerDtos = ParcelLedger.ListByAccountIDAndYear(_dbContext, accountID, year);
+            if (parcelLedgerDtos == null)
             {
                 return NotFound();
             }
 
-            return Ok(waterTransferDtos);
+            return Ok(parcelLedgerDtos);
         }
 
         [HttpGet("accounts/{accountID}/parcel-water-usage/{year}")]
@@ -213,16 +213,16 @@ namespace Rio.API.Controllers
             var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
             return Ok(parcelMonthlyEvapotranspirationDtos);
         }
 
-        [HttpPut("accounts/{accountID}/{year}/saveParcelMonthlyEvapotranspirationOverrideValues")]
+        [HttpPut("accounts/{accountID}/{year}/saveParcelMeasuredUsageCorrections")]
         [UserManageFeature]
-        public ActionResult<int> SaveParcelMonthlyEvapotranspirationOverrideValues( [FromRoute] int accountID, [FromRoute] int year,
+        public ActionResult<int> SaveParcelMeasuredUsageCorrections( [FromRoute] int accountID, [FromRoute] int year,
             [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
         {
-            var numChanging = ParcelMonthlyEvapotranspiration.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
+            var numChanging = ParcelLedger.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
             return Ok(numChanging);
         }
 
@@ -235,7 +235,7 @@ namespace Rio.API.Controllers
             var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
 
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
             var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos
                 .GroupBy(x => x.WaterMonth)
                 .OrderBy(x => x.Key)
@@ -291,7 +291,7 @@ namespace Rio.API.Controllers
         private WaterUsageOverviewDto GetWaterUsageOverviewDtoForParcelIDs(List<int> parcelIDs)
         {
             var parcelMonthlyEvapotranspirationDtos =
-                ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelIDs).ToList();
+                ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, parcelIDs).ToList();
 
             var cumulativeWaterUsageByYearDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterYear).Select(x =>
                 new CumulativeWaterUsageByYearDto
@@ -330,7 +330,7 @@ namespace Rio.API.Controllers
             for (var i = 1; i < 13; i++)
             {
                 var grouping = parcelMonthlyEvapotranspirationGroupedByMonth.SingleOrDefault(x => x.Key == i);
-                cumulativeTotal += grouping?.Sum(x => x.OverriddenEvapotranspirationRate ?? x.EvapotranspirationRate) ?? 0;
+                cumulativeTotal += grouping?.Sum(x => (x.OverriddenEvapotranspirationRate ?? 0) + x.EvapotranspirationRate) ?? 0;
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
                     Month = ((DateUtilities.Month)i).ShortMonthName(),

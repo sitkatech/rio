@@ -1,4 +1,3 @@
-import { UserSimpleDto } from './user/user-simple-dto';
 import { WaterTransferRegistrationSimpleDto } from './water-transfer-registration-simple-dto';
 
 export class WaterTransferDto {

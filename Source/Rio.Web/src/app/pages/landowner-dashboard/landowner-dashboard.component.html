@@ -150,15 +150,15 @@
                       <hr class="p-0 m-0" />
                     </td>
                   </tr>
-                  <tr *ngFor="let parcelAllocationType of parcelAllocationTypes">
+                  <tr *ngFor="let waterType of waterTypes">
                     <th class="text-sm-right">
-                      {{parcelAllocationType.ParcelAllocationTypeName}}
+                      {{waterType.WaterTypeName}}
                       <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                        ngbTooltip="Learn about {{parcelAllocationType.ParcelAllocationTypeName}}"><i
+                        ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
                           class="fas fa-question-circle small"></i></a>
                     </th>
                     <td class="text-sm-right">
-                      {{getAllocationByAllocationType(parcelAllocationType) | number: '1.1-1'}} {{unitsShown}}
+                      {{getAllocationByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                     </td>
                   </tr>
                 </ng-container>
@@ -195,13 +195,12 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let waterTransfer of getPurchasedWaterTransfersForWaterYear()">
-                      <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                          routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
-                          ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                    <tr *ngFor="let parcelLedger of getTradePurchasesForWaterYear()">
+                      <th class="text-sm-right">
+                          ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
                       <td class="text-sm-right">
-                        {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                        {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
                       </td>
                     </tr>
                   </ng-container>
@@ -236,13 +235,12 @@
                         <hr class="p-0 m-0" />
                       </td>
                     </tr>
-                    <tr *ngFor="let waterTransfer of getSoldWaterTransfersForWaterYear()">
-                      <th class="text-sm-right"><span *ngIf="isWaterTransferPending(waterTransfer)">*</span><a
-                          routerLink="/trades/{{waterTransfer.TradeNumber}}/{{activeAccount.AccountID}}">{{waterTransfer.TradeNumber}}
-                          ({{waterTransfer.TransferDate | date:"MM/dd"}})</a>
+                    <tr *ngFor="let parcelLedger of getTradeSalesForWaterYear()">
+                      <th class="text-sm-right">
+                          ({{parcelLedger.EffectiveDate | date:"MM/dd"}})
                       </th>
                       <td class="text-sm-right">
-                        {{getResultInUnitsShown(waterTransfer.AcreFeetTransferred) | number: '1.1-1'}} {{unitsShown}}
+                        {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
                       </td>
                     </tr>
                   </ng-container>
@@ -384,7 +382,7 @@
                 ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
               <a class="btn btn-rio btn-sm mr-3 float-right"
                 routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay?.Year}}"
-                *ngIf="this.currentUser.Role.RoleID == 1">Override OpenET Data</a>
+                *ngIf="false">Override OpenET Data</a>
             </div>
             <div class="card-body">
               <table class="table table-responsive">

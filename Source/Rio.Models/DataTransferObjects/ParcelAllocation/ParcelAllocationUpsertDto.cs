@@ -7,7 +7,7 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         [Required]
         public int WaterYear { get; set; }
         [Required]
-        public int ParcelAllocationTypeID { get; set; }
+        public int WaterTypeID { get; set; }
         [Required]
         public decimal AcreFeetAllocated { get; set; }
     }

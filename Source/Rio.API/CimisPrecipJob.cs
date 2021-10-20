@@ -27,17 +27,17 @@ namespace Rio.API
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment> { RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production };
+        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production };
         public const string JobName = "Update Precipitation Data";
 
         protected override void RunJobImplementation()
         {
-            var parcelAllocationType = _rioDbContext.ParcelAllocationTypes.SingleOrDefault(x => x.IsSourcedFromApi);
-            if (parcelAllocationType == null)
+            var waterType = _rioDbContext.WaterTypes.SingleOrDefault(x => x.IsSourcedFromApi);
+            if (waterType == null)
             {
                 return;
             }
-            var parcelAllocationTypeID = parcelAllocationType.ParcelAllocationTypeID;
+            var waterTypeID = waterType.WaterTypeID;
             
             var startYear = DateUtilities.MinimumYear;
 
@@ -75,25 +75,29 @@ namespace Rio.API
             var precipitationGroupedByYear = cimisPrecipitationResponse.Data.Providers.Single().Records
                 .GroupBy(x => x.Date.Year).ToList();
 
-            List<ParcelAllocation> parcelAllocations = new List<ParcelAllocation>();
+            var parcelLedgers = new List<ParcelLedger>();
             
             foreach (var precipitationDataForYear in precipitationGroupedByYear)
             {
                 var year = precipitationDataForYear.Key;
                 var totalPrecipitation = precipitationDataForYear.Sum(y => y.DayPrecip.Value.GetValueOrDefault());
 
-                parcelAllocations.AddRange(_rioDbContext.Parcels.Select(x => new ParcelAllocation()
+                parcelLedgers.AddRange(_rioDbContext.Parcels.Select(x => new ParcelLedger()
                 {
-                    AcreFeetAllocated = totalPrecipitation * (decimal)x.ParcelAreaInAcres / (decimal)12.0,
-                    ParcelAllocationTypeID = parcelAllocationTypeID,
+                    TransactionTypeID = (int) TransactionTypeEnum.Allocation,
+                    TransactionAmount = totalPrecipitation * (decimal)x.ParcelAreaInAcres / (decimal)12.0,
+                    WaterTypeID = waterTypeID,
                     ParcelID = x.ParcelID,
-                    WaterYear = year
+                    EffectiveDate = new DateTime(year, 1, 1),
+                    TransactionDate = DateTime.UtcNow,
+                    TransactionDescription =
+                        $"Allocation of precipitation for {year} has been deposited into this water account."
                 }));
 
             }
 
-            _rioDbContext.ParcelAllocations.RemoveRange(_rioDbContext.ParcelAllocations.Where(x => x.ParcelAllocationTypeID == parcelAllocationTypeID));
-                _rioDbContext.ParcelAllocations.AddRange(parcelAllocations);
+            _rioDbContext.ParcelLedgers.RemoveRange(_rioDbContext.ParcelLedgers.Where(x => x.WaterTypeID == waterTypeID));
+                _rioDbContext.ParcelLedgers.AddRange(parcelLedgers);
                 _rioDbContext.SaveChanges();
         }
     }

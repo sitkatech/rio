@@ -16,9 +16,9 @@
     <div class="row mt-4" >
         <div class="col-md-12">
             <dl>
-                <ng-container *ngFor="let parcelAllocationType of parcelAllocationTypes">
-                    <dt id="parcelAllocationType{{parcelAllocationType.ParcelAllocationTypeID}}">{{parcelAllocationType.ParcelAllocationTypeName}}</dt>
-                    <dd class="p-2">{{parcelAllocationType.ParcelAllocationTypeDefinition}}</dd>
+                <ng-container *ngFor="let waterType of waterTypes">
+                    <dt id="waterType{{waterType.WaterTypeID}}">{{waterType.WaterTypeName}}</dt>
+                    <dd class="p-2">{{waterType.WaterTypeDefinition}}</dd>
                 </ng-container>
             </dl>
         </div>

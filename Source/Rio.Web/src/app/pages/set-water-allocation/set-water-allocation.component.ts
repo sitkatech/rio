@@ -12,8 +12,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { forkJoin } from 'rxjs';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeApplicationTypeEnum, ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { WaterTypeService } from 'src/app/services/water-type.service';
+import { WaterTypeApplicationTypeEnum, WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WaterYearService } from 'src/app/services/water-year.service';
@@ -48,11 +48,11 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   public displayFileErrors: any = {};
 
   public fileName: string;
-  public parcelAllocationTypes: ParcelAllocationTypeDto[];
-  public applicationTypeToUpdate: ParcelAllocationTypeDto;
-  public acreageBasedAllocationTypes: ParcelAllocationTypeDto[];
-  public spreadsheetDrivenAllocationTypes: ParcelAllocationTypeDto[];
-  public parcelAllocationTypeToUpdate: ParcelAllocationTypeDto;
+  public waterTypes: WaterTypeDto[];
+  public applicationTypeToUpdate: WaterTypeDto;
+  public acreageBasedWaterTypes: WaterTypeDto[];
+  public spreadsheetDrivenWaterTypes: WaterTypeDto[];
+  public waterTypeToUpdate: WaterTypeDto;
 
   constructor(private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -61,7 +61,7 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     private waterYearService: WaterYearService,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private datePipe: DatePipe,
     private modalService: NgbModal) { }
 
@@ -74,16 +74,16 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
 
       forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
         this.waterYearService.getWaterYears(),
-        this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
+        this.waterTypeService.getWaterTypes()
+      ).subscribe(([defaultYear, waterYears, waterTypes]) => {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
-        this.parcelAllocationTypes = parcelAllocationTypes;
-        this.acreageBasedAllocationTypes = this.parcelAllocationTypes.filter(x => x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Proportional);
-        this.spreadsheetDrivenAllocationTypes = this.parcelAllocationTypes.filter(x => x.IsAppliedProportionally === ParcelAllocationTypeApplicationTypeEnum.Spreadsheet);
-        this.parcelAllocationTypes.forEach(x => {
-          this.displayErrors[x.ParcelAllocationTypeName] = false;
-          this.displayFileErrors[x.ParcelAllocationTypeName] = false;
+        this.waterTypes = waterTypes;
+        this.acreageBasedWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally === WaterTypeApplicationTypeEnum.Proportional);
+        this.spreadsheetDrivenWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally === WaterTypeApplicationTypeEnum.Spreadsheet);
+        this.waterTypes.forEach(x => {
+          this.displayErrors[x.WaterTypeName] = false;
+          this.displayFileErrors[x.WaterTypeName] = false;
         })
         this.updateParcelAllocationHistoryGrid();
       });
@@ -117,9 +117,9 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     this.cdr.detach();
   }
 
-  public submitBulkAllocation(allocationType: ParcelAllocationTypeDto): void {
-    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(allocationType)) {
-      this.parcelAllocationTypeToUpdate = null;
+  public submitBulkAllocation(waterType: WaterTypeDto): void {
+    if (this.doesWaterTypeHaveErrorsAndDisplayErrorsIfNecessary(waterType)) {
+      this.waterTypeToUpdate = null;
       return;
     }
 
@@ -129,31 +129,31 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     }
     
     this.isLoadingSubmit = true;
-    const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(allocationType)).nativeElement.value;
+    const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getWaterTypeLabel(waterType)).nativeElement.value;
     this.model.AcreFeetAllocated = +allocationValue;
-    this.model.ParcelAllocationTypeID = allocationType.ParcelAllocationTypeID;
+    this.model.WaterTypeID = waterType.WaterTypeID;
     this.model.WaterYear = this.waterYearToDisplay.Year;
 
     this.parcelService.bulkSetAnnualAllocations(this.model, this.currentUser.UserID)
       .subscribe(response => {
-        this.parcelAllocationTypeToUpdate = null;
+        this.waterTypeToUpdate = null;
         this.clearInputs()
         this.isLoadingSubmit = false;
         this.updateParcelAllocationHistoryGrid();
-        this.alertService.pushAlert(new Alert("The " + allocationType.ParcelAllocationTypeName + " for Water Year " + this.waterYearToDisplay?.Year + " was successfully allocated for all parcels.", AlertContext.Success));
+        this.alertService.pushAlert(new Alert("The " + waterType.WaterTypeName + " for Water Year " + this.waterYearToDisplay?.Year + " was successfully allocated for all parcels.", AlertContext.Success));
       }
         ,
         error => {
-          this.parcelAllocationTypeToUpdate = null;
+          this.waterTypeToUpdate = null;
           this.isLoadingSubmit = false;
           this.cdr.detectChanges();
         }
       );
   }
 
-  public uploadAllocationFile(allocationType: ParcelAllocationTypeDto): void {
-    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(allocationType)) {
-      this.parcelAllocationTypeToUpdate = null;
+  public uploadAllocationFile(waterType: WaterTypeDto): void {
+    if (this.doesWaterTypeHaveErrorsAndDisplayErrorsIfNecessary(waterType)) {
+      this.waterTypeToUpdate = null;
       return;
     }
 
@@ -162,14 +162,14 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       this.modalReference = null;
     }
 
-    var file = this.getFile(allocationType);
+    var file = this.getFile(waterType);
 
     this.isLoadingSubmit = true;
-    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay.Year, allocationType.ParcelAllocationTypeID).subscribe(x => {
-      this.alertService.pushAlert(new Alert(`Successfully set ${allocationType.ParcelAllocationTypeName} allocation for ${this.waterYearToDisplay?.Year}`, AlertContext.Success, true));
+    this.parcelService.bulkSetAnnualAllocationsFileUpload(file, this.waterYearToDisplay.Year, waterType.WaterTypeID).subscribe(x => {
+      this.alertService.pushAlert(new Alert(`Successfully set ${waterType.WaterTypeName} allocation for ${this.waterYearToDisplay?.Year}`, AlertContext.Success, true));
       this.updateParcelAllocationHistoryGrid();
       this.isLoadingSubmit = false;
-      this.parcelAllocationTypeToUpdate = null;
+      this.waterTypeToUpdate = null;
       this.clearInputs();
       this.cdr.detectChanges();
     }, error => {
@@ -179,63 +179,63 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
       else {
         this.alertService.pushAlert(new Alert("There was an error uploading the file.", AlertContext.Danger, true));
       }
-      this.parcelAllocationTypeToUpdate = null;
+      this.waterTypeToUpdate = null;
       this.isLoadingSubmit = false;
       this.clearInputs();
       this.cdr.detectChanges();
     });
   }
 
-  public doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(parcelAllocationType: ParcelAllocationTypeDto): boolean {
+  public doesWaterTypeHaveErrorsAndDisplayErrorsIfNecessary(waterType: WaterTypeDto): boolean {
     this.turnOffErrors();
-    if (this.isAcreageBasedAllocationType(parcelAllocationType)) {
-      const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(parcelAllocationType)).nativeElement.value;
+    if (this.isAcreageBasedWaterType(waterType)) {
+      const allocationValue = this.waterAllocations.find(x => x.nativeElement.id == this.getWaterTypeLabel(waterType)).nativeElement.value;
       if (allocationValue === undefined || allocationValue === null || allocationValue === "") {
-        this.chooseErrorToDisplay(parcelAllocationType);
+        this.chooseErrorToDisplay(waterType);
         return true;
       }
     }
 
-    if (this.isSpreadsheetDrivenAllocationType(parcelAllocationType)) {
-      var file = this.getFile(parcelAllocationType);
+    if (this.isSpreadsheetDrivenWaterType(waterType)) {
+      var file = this.getFile(waterType);
       if (!file) {
-        this.chooseErrorToDisplay(parcelAllocationType);
+        this.chooseErrorToDisplay(waterType);
         return true;
       }
 
       if (file.name.split(".").pop().toUpperCase() != "CSV") {
-        this.displayFileErrors[parcelAllocationType.ParcelAllocationTypeName] = true;
+        this.displayFileErrors[waterType.WaterTypeName] = true;
         return true;
       }
     }
     return false;
   }
 
-  fileEvent(allocationType: ParcelAllocationTypeDto) {
-    let file = this.getFile(allocationType);
-    this.displayErrors[allocationType.toString()] = false;
+  fileEvent(waterType: WaterTypeDto) {
+    let file = this.getFile(waterType);
+    this.displayErrors[waterType.toString()] = false;
 
     if (file && file.name.split(".").pop().toUpperCase() != "CSV") {
-      this.displayFileErrors[allocationType.ParcelAllocationTypeName] = true;
+      this.displayFileErrors[waterType.WaterTypeName] = true;
     } else {
-      this.displayFileErrors[allocationType.ParcelAllocationTypeName] = false;
+      this.displayFileErrors[waterType.WaterTypeName] = false;
     }
 
     this.cdr.detectChanges();
   }
 
-  public getFile(fileUploadType: ParcelAllocationTypeDto): File {
+  public getFile(fileUploadType: WaterTypeDto): File {
     if (!this.fileUploads) {
       return null;
     }
-    var element = this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0];
+    var element = this.fileUploads.filter(x => x.nativeElement.id == this.getWaterTypeLabel(fileUploadType))[0];
     if (!element) {
       return null;
     }
     return element.nativeElement.files[0];
   }
 
-  public getFileName(fileUploadType: ParcelAllocationTypeDto): string {
+  public getFileName(fileUploadType: WaterTypeDto): string {
     let file = this.getFile(fileUploadType);
     if (!file) {
       return ""
@@ -244,8 +244,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     return file.name;
   }
 
-  public openFileUpload(fileUploadType: ParcelAllocationTypeDto) {
-    this.fileUploads.filter(x => x.nativeElement.id == this.getParcelAllocationTypeLabel(fileUploadType))[0].nativeElement.click();
+  public openFileUpload(fileUploadType: WaterTypeDto) {
+    this.fileUploads.filter(x => x.nativeElement.id == this.getWaterTypeLabel(fileUploadType))[0].nativeElement.click();
   }
 
   public updateParcelAllocationHistoryGrid(): void {
@@ -265,8 +265,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     })
   }
 
-  public chooseErrorToDisplay(allocationType: ParcelAllocationTypeDto) {
-    this.displayErrors[allocationType.ParcelAllocationTypeName] = true;
+  public chooseErrorToDisplay(waterType: WaterTypeDto) {
+    this.displayErrors[waterType.WaterTypeName] = true;
   }
 
   public turnOffErrors() {
@@ -283,30 +283,30 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     return (lowerFirst.charAt(0).toLowerCase() + lowerFirst.slice(1)).replace(" ", "");
   }
 
-  public isAcreageBasedAllocationType(parcelAllocationType: ParcelAllocationTypeDto): boolean {
-    return this.acreageBasedAllocationTypes.some(x => x.ParcelAllocationTypeID == parcelAllocationType.ParcelAllocationTypeID);
+  public isAcreageBasedWaterType(waterType: WaterTypeDto): boolean {
+    return this.acreageBasedWaterTypes.some(x => x.WaterTypeID == waterType.WaterTypeID);
   }
 
-  public isSpreadsheetDrivenAllocationType(parcelAllocationType: ParcelAllocationTypeDto) {
-    return this.spreadsheetDrivenAllocationTypes.some(x => x.ParcelAllocationTypeID == parcelAllocationType.ParcelAllocationTypeID);
+  public isSpreadsheetDrivenWaterType(waterType: WaterTypeDto) {
+    return this.spreadsheetDrivenWaterTypes.some(x => x.WaterTypeID == waterType.WaterTypeID);
   }
 
-  public getParcelAllocationTypeLabel(parcelAllocationType: ParcelAllocationTypeDto): string {
-    if (!parcelAllocationType) {
+  public getWaterTypeLabel(waterType: WaterTypeDto): string {
+    if (!waterType) {
       debugger;
     }
-    return parcelAllocationType.ParcelAllocationTypeName.replace(" ", "");
+    return waterType.WaterTypeName.replace(" ", "");
   }
 
-  public getLastSetDateForParcelAllocationType(parcelAllocationType: ParcelAllocationTypeDto): string {
-    return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == parcelAllocationType.ParcelAllocationTypeName && x.WaterYear == this.waterYearToDisplay.Year).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
+  public getLastSetDateForWaterType(waterType: WaterTypeDto): string {
+    return this.datePipe.transform(this.allocationHistoryEntries.filter(x => x.Allocation == waterType.WaterTypeName && x.WaterYear == this.waterYearToDisplay.Year).reduce((x, y) => x.Date > y.Date ? x : y, { Date: null }).Date, "M/d/yyyy");
   }
 
-  public setAllocationTypeToUpdateAndLaunchModal(modalContent: any, parcelAllocationType: ParcelAllocationTypeDto) {
-    if (this.doesParcelAllocationTypeHaveErrorsAndDisplayErrorsIfNecessary(parcelAllocationType)) {
+  public setWaterTypeToUpdateAndLaunchModal(modalContent: any, waterType: WaterTypeDto) {
+    if (this.doesWaterTypeHaveErrorsAndDisplayErrorsIfNecessary(waterType)) {
       return;
     }
-    this.parcelAllocationTypeToUpdate = parcelAllocationType;
+    this.waterTypeToUpdate = waterType;
     this.launchModal(modalContent);
   }
 
@@ -314,8 +314,8 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
     this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', ariaLabelledBy: 'updateWaterAllocationModalTitle', backdrop: 'static', keyboard: false });
   }
 
-  public resetParcelAllocationTypeToUpdateAndCloseModal(modal: any) {
-    this.parcelAllocationTypeToUpdate = null;
+  public resetWaterTypeToUpdateAndCloseModal(modal: any) {
+    this.waterTypeToUpdate = null;
     this.closeModal(modal, "Cancel click")
   }
 

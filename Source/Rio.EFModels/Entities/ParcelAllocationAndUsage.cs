@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {

@@ -1,5 +1,4 @@
 import { AccountSimpleDto } from '../account/account-simple-dto';
-import { ParcelStatusDto } from './parcel-status-dto';
 
 export class ParcelAllocationAndUsageDto {
     ParcelID: number;

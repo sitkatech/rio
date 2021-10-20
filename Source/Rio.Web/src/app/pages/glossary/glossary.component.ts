@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { WaterTypeService } from 'src/app/services/water-type.service';
+import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 
 @Component({
   selector: 'rio-glossary',
@@ -8,15 +8,15 @@ import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation
   styleUrls: ['./glossary.component.scss']
 })
 export class GlossaryComponent implements OnInit {
-  parcelAllocationTypes: ParcelAllocationTypeDto[];
+  waterTypes: WaterTypeDto[];
 
   constructor(
-    private parcelAllocationTypeService: ParcelAllocationTypeService
+    private waterTypeService: WaterTypeService
   ) { }
 
   ngOnInit() {
-    this.parcelAllocationTypeService.getParcelAllocationTypes().subscribe(x=>{
-      this.parcelAllocationTypes = x;
+    this.waterTypeService.getWaterTypes().subscribe(x=>{
+      this.waterTypes = x;
     })
   }
 

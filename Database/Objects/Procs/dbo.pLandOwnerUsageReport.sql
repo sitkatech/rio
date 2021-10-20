@@ -26,7 +26,7 @@ from
 			isnull(pa.Allocation, 0) as Allocation,
 			isnull(wts.Purchased, 0) as Purchased,
 			isnull(wts.Sold, 0) as Sold,
-			isnull(pme.UsageToDate, 0) as UsageToDate,
+			isnull(pa.UsageToDate, 0) as UsageToDate,
 			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
 	from dbo.Account acc
@@ -46,11 +46,12 @@ from
 	left join
 	(
 		select acc.AccountID,
-				sum(pa.AcreFeetAllocated) as Allocation, 
-				sum(case when pa.ParcelAllocationTypeID = 1 then pa.AcreFeetAllocated else 0 end) as ProjectWater,
-				sum(case when pa.ParcelAllocationTypeID = 2 then pa.AcreFeetAllocated else 0 end) as Reconciliation,
-				sum(case when pa.ParcelAllocationTypeID = 3 then pa.AcreFeetAllocated else 0 end) as NativeYield,
-				sum(case when pa.ParcelAllocationTypeID = 4 then pa.AcreFeetAllocated else 0 end) as StoredWater
+				sum(case when pa.TransactionTypeID = 11 then pa.TransactionAmount else 0 end) as Allocation, 
+				sum(case when pa.WaterTypeID = 1 then pa.TransactionAmount else 0 end) as ProjectWater,
+				sum(case when pa.WaterTypeID = 2 then pa.TransactionAmount else 0 end) as Reconciliation,
+				sum(case when pa.WaterTypeID = 3 then pa.TransactionAmount else 0 end) as NativeYield,
+				sum(case when pa.WaterTypeID = 4 then pa.TransactionAmount else 0 end) as StoredWater,
+				sum(case when pa.TransactionTypeID in (17, 18) then pa.TransactionAmount else 0 end) as UsageToDate
 		from dbo.Account acc
 		join (
 			select apwy.AccountID, apwy.ParcelID
@@ -59,23 +60,9 @@ from
 			where wy.[year] = @year
 		) up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
-		join dbo.ParcelAllocation pa on p.ParcelID = pa.ParcelID and pa.WaterYear = @year
+		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.TransactionDate) = @year
 		group by acc.AccountID
 	) pa on acc.AccountID = pa.AccountID
-	left join
-	(
-		select acc.AccountID , sum(coalesce(pme.OverriddenEvapotranspirationRate, pme.EvapotranspirationRate)) as UsageToDate
-		from dbo.Account acc
-		join (
-			select apwy.AccountID, apwy.ParcelID
-			from dbo.AccountParcelWaterYear apwy
-			join dbo.WaterYear wy on wy.WaterYearID = apwy.WaterYearID
-			where wy.[year] = @year
-		) up on acc.AccountID = up.AccountID
-		join dbo.Parcel p on up.ParcelID = p.ParcelID
-		join dbo.ParcelMonthlyEvapotranspiration pme on p.ParcelID = pme.ParcelID and pme.WaterYear = @year
-		group by acc.AccountID
-	) pme on acc.AccountID = pme.AccountID
 	left join 
 	(
 		select acc.AccountID, 
