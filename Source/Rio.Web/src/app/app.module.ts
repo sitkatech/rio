@@ -65,7 +65,6 @@ import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-e
 import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/water-trading-scenario.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
-import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
@@ -79,6 +78,8 @@ import { GlobalErrorHandlerService } from './shared/services/global-error-handle
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
 import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
+import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
+import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -143,7 +144,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     OpenetSyncWaterYearMonthStatusListComponent,
     ParcelUpdateLayerComponent,
     ParcelListInactiveComponent,
-    AccountReconciliationComponent
+    AccountReconciliationComponent,
+    ParcelLedgerCreateComponent
   ],
   imports: [
     AppRoutingModule,

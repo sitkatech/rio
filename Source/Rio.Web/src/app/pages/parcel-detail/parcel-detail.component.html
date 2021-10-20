@@ -77,6 +77,10 @@
             routerLink="/parcels/{{parcel.ParcelID}}/edit-annual-allocation">
             <span class="fas fa-edit"></span> Edit Allocation
           </a>
+          <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right"
+            routerLink="/parcels/{{parcel.ParcelID}}/parcel-ledger-create">
+            <span class="fas fa-edit"></span> Create New Transaction
+          </a>
           Water Allocation and Usage
         </div>
         <div class="card-body">

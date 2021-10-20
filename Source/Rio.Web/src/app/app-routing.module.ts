@@ -45,7 +45,6 @@ import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/wa
 import { GETIntegrationEnabledGuard } from './shared/guards/unauthenticated-access/GET-integration-enabled-guard';
 import { ManagerOrDemoUserOnlyGuard } from './shared/guards/unauthenticated-access/manager-or-demouser-only-guard';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
-import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
@@ -56,6 +55,8 @@ import { OpenetSyncWaterYearMonthStatusListComponent } from './pages/openet-sync
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
 import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
+import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
+import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -72,6 +73,7 @@ const routes: Routes = [
   { path: "parcels/set-water-allocation", component: SetWaterAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id/edit-annual-allocation", component: ParcelEditAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcels/:id/parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id/change-owner", component: ParcelChangeOwnerComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
