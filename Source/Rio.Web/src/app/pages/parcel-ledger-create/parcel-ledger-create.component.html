@@ -1,0 +1,120 @@
+<div class="breadcrumb-container">
+    <div class="container">
+      <nav aria-label="breadcrumb" *ngIf="parcel">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/parcels">Parcels</a>
+          </li>
+          <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            Create New Transaction
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div class="container mt-sm-4" *ngIf="parcel">
+    <h2 class="d-inline-block">
+      Create New Transaction
+    </h2>
+    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm">
+      <div class="row mt-4">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-4 control-label">
+              <label>Parcel APN</label>
+            </div>
+            <div class="col-sm-8 font-weight-bold">
+              {{parcel.ParcelNumber}}
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label">
+              <label>Adjustment To</label>
+            </div>
+            <div class="col-sm-8">
+              <input type="radio" id="supply" name="adjustment-type" value="supply" [(ngModel)]="adjustmentValue" class="mr-2">
+              <label for="supply" class="mr-4">Supply</label>
+              <input type="radio" id="usage" name="adjustment-type" value="usage" [(ngModel)]="adjustmentValue" class="mr-2">
+              <label for="usage">Usage</label>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label" [ngStyle]="adjustmentValue === 'usage' ? { 'opacity': '40%' } : ''">
+              <label class="required">Water Type</label>
+            </div>
+            <div class="col-sm-8">
+              <select name="water-type" class="form-control" required 
+                [disabled]="adjustmentValue === 'usage'">
+                <option disabled selected hidden></option>
+                <option *ngFor="let waterType of waterTypes" [value]="waterType.WaterTypeID">
+                  {{waterType.WaterTypeName}}
+              </option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label">
+              <label class="required">Effective Date</label>
+            </div>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <input class="form-control" placeholder="yyyy-mm-dd"
+                       name="dp" [(ngModel)]="model" ngbDatepicker #d="ngbDatepicker" required>
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary fas fa-calendar" (click)="d.toggle()" type="button"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label">
+              <label class="required">Transaction Type</label>
+            </div>
+            <div class="col-sm-8">
+              <select name="transaction-type" class="form-control" required>
+                <option disabled selected hidden></option>
+                <option value="deposit">Deposit</option>
+                <option value="withdrawal">Withdrawal</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label">
+                <label class="required">Quantity</label>
+            </div>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <input type="number" class="form-control" name="Quantity" min="1" step="1" required/>
+                <div class="input-group-append">
+                  <span class="input-group-text"> ac-ft</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-sm-4 control-label">
+                <label>Comment</label>
+            </div>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="PostingDescription" style="height: 150px" placeholder=""></textarea>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-2">
+          <i class="fas fa-bolt"></i> Required field
+        </div>
+        <div class="col-sm-10 text-right">
+          <button type="submit" class="btn btn-rio" disabled>
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Save
+          </button>
+          <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
