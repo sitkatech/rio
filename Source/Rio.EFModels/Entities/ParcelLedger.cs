@@ -300,5 +300,32 @@ namespace Rio.EFModels.Entities
 
             return parcelLedgerDtos;
         }
+
+        public static ParcelLedgerDto getByParcelLedgerID(RioDbContext dbContext, int parcelLedgerID)
+        {
+            var parcelLedger = GetParcelLedgersImpl(dbContext).SingleOrDefault(x => x.ParcelLedgerID == parcelLedgerID);
+            return parcelLedger?.AsDto();
+        }
+
+        public static ParcelLedgerDto CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto)
+        {
+            var parcelLedger = new ParcelLedger
+            {
+                ParcelID = parcelLedgerCreateDto.ParcelID,
+                TransactionDate = DateTime.UtcNow,
+                EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
+                WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
+                // TODO: get actual transaction description
+                TransactionDescription = "A manual adjustment has been applied to this water account."
+            };
+
+            dbContext.ParcelLedgers.Add(parcelLedger);
+            dbContext.SaveChanges();
+            dbContext.Entry(parcelLedger).Reload();
+
+            return getByParcelLedgerID(dbContext, parcelLedger.ParcelLedgerID);
+        }
     }
 }
