@@ -5,20 +5,11 @@ namespace Rio.EFModels.Entities
 {
     public static class WaterTransferRegistrationExtensionMethods
     {
-        public static WaterTransferRegistrationDto AsDto(this WaterTransferRegistration waterTransferRegistration)
-        {
-            return new WaterTransferRegistrationDto
-            {
-                AccountID = waterTransferRegistration.AccountID,
-                WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
-                StatusDate = waterTransferRegistration.StatusDate
-            };
-        }
-
         public static WaterTransferRegistrationSimpleDto AsSimpleDto(this WaterTransferRegistration waterTransferRegistration)
         {
             return new WaterTransferRegistrationSimpleDto
             {
+                WaterTransferRegistrationID = waterTransferRegistration.WaterTransferRegistrationID,
                 Account = waterTransferRegistration.Account.AsDto(),
                 WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
                 WaterTransferRegistrationStatusID = waterTransferRegistration.WaterTransferRegistrationStatusID,
