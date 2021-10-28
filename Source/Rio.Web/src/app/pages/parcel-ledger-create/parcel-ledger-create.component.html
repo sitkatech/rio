@@ -20,6 +20,9 @@
     <h2 class="d-inline-block">
       Create New Transaction
     </h2>
+    <div class="container mt-4 mb-4 p-2">
+      <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+    </div>
     <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm">
       <div class="row mt-4">
         <div class="col-sm-6">
