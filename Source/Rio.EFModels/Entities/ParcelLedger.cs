@@ -74,6 +74,7 @@ namespace Rio.EFModels.Entities
                 }).ToList();
             return parcelAllocationBreakdownForYear;
         }
+
         public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
         {
             var parcelLedgerMeasuredUsages = GetMeasuredUsagesByParcelIDs(dbContext, parcelIDs);
@@ -288,13 +289,13 @@ namespace Rio.EFModels.Entities
             return new List<LandownerAllocationBreakdownDto>();
         }
 
-        public static List<ParcelLedgerDto> ListByAccountIDAndYear(RioDbContext dbContext, int accountID, int year)
+        public static List<ParcelLedgerDto> ListByAccountID(RioDbContext dbContext, int accountID)
         {
-            var parcelIDs = Entities.Parcel.ListByAccountIDAndYear(dbContext, accountID, year)
+            var parcelIDs = Entities.Parcel.ListByAccountID(dbContext, accountID)
                 .Select(x => x.ParcelID);
 
             var parcelLedgerDtos = GetParcelLedgersImpl(dbContext)
-                .Where(x => x.EffectiveDate.Year == year && parcelIDs.Contains(x.ParcelID))
+                .Where(x => parcelIDs.Contains(x.ParcelID))
                 .Select(x => x.AsDto())
                 .ToList();
 

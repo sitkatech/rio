@@ -53,14 +53,9 @@ export class AccountService {
     return this.apiService.putToApi(route, model);
   }
 
-  getParcelLedgersByAccountIDAndYear(accountID: number, year: number): Observable<Array<ParcelLedgerDto>> {
-    let route = `/accounts/${accountID}/parcel-ledgers/${year}`;
+  getParcelLedgersByAccountID(accountID: number): Observable<Array<ParcelLedgerDto>> {
+    let route = `/accounts/${accountID}/parcel-ledgers`;
     return this.apiService.getFromApi(route);
-  }
-
-  getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto> {
-      let route = `/accounts/${accountID}/water-usage/${year}`;
-      return this.apiService.getFromApi(route);
   }
   
   getParcelWaterUsageByAccountID(accountID: number, year: number): Observable<ParcelMonthlyEvapotranspirationDto[]> {

@@ -397,11 +397,8 @@
                     </td>
                     <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                       <ng-container *ngFor="let seriesData of monthData.series">
-                        <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''"
-                          *ngIf="seriesData.name === parcel.ParcelNumber"><span
-                            *ngIf="seriesData.IsOverridden === true">*</span>
-                          {{seriesData.IsEmpty === true && seriesData.IsOverridden === false ? "-" : (seriesData.value |
-                          number:"1.1-1")}}
+                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelID.toString()">
+                          {{(seriesData.value | number:"1.1-1")}}
                         </td>
                       </ng-container>
                     </ng-container>

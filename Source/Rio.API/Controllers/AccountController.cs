@@ -193,11 +193,11 @@ namespace Rio.API.Controllers
             return Ok(postingDtos);
         }
 
-        [HttpGet("accounts/{accountID}/parcel-ledgers/{year}")]
+        [HttpGet("accounts/{accountID}/parcel-ledgers")]
         [UserViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
+        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountID([FromRoute] int accountID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListByAccountIDAndYear(_dbContext, accountID, year);
+            var parcelLedgerDtos = ParcelLedger.ListByAccountID(_dbContext, accountID);
             if (parcelLedgerDtos == null)
             {
                 return NotFound();
@@ -224,36 +224,6 @@ namespace Rio.API.Controllers
         {
             var numChanging = ParcelLedger.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
             return Ok(numChanging);
-        }
-
-        [HttpGet("accounts/{accountID}/water-usage/{year}")]
-        [UserViewFeature]
-        public ActionResult<WaterUsageByParcelDto> GetWaterUsageByAccountIDAndYear([FromRoute] int accountID,
-            [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
-            var parcelMonthlyEvapotranspirationDtos =
-                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
-            var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos
-                .GroupBy(x => x.WaterMonth)
-                .OrderBy(x => x.Key)
-                .Select(x =>
-                    new MonthlyWaterUsageDto()
-                    {
-                        Month = ((DateUtilities.Month) x.Key).ShortMonthName(),
-                        WaterUsageByParcel = x.OrderBy(y => y.ParcelNumber).Select(y => new ParcelWaterUsageDto
-                        {
-                            ParcelNumber = y.ParcelNumber,
-                            WaterUsageInAcreFeet = y.OverriddenEvapotranspirationRate ?? y.EvapotranspirationRate ?? 0,
-                            IsOverridden = y.OverriddenEvapotranspirationRate != null,
-                            IsEmpty = y.IsEmpty
-                        }).ToList()
-                    })
-                .ToList();
-            var waterUsageDto = new WaterUsageByParcelDto {Year = year, WaterUsage = monthlyWaterUsageDtos.ToList()};
-            return Ok(waterUsageDto);
         }
 
         [HttpGet("accounts/{accountID}/water-usage-overview/{year}")]
