@@ -293,8 +293,19 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.ParcelID);
 
             var parcelLedgerDtos = GetParcelLedgersImpl(dbContext)
+                .Include(x => x.Parcel)
                 .Where(x => parcelIDs.Contains(x.ParcelID))
-                .Select(x => x.AsDto())
+                .Select(x => new ParcelLedgerDto()
+                {
+                    ParcelID = x.ParcelID,
+                    ParcelNumber = x.Parcel.ParcelNumber,
+                    TransactionDate = x.TransactionDate,
+                    EffectiveDate = x.EffectiveDate,
+                    TransactionType = x.TransactionType.AsDto(),
+                    WaterType = (x.WaterType != null ? x.WaterType.AsDto() : null),
+                    TransactionAmount = x.TransactionAmount,
+                    TransactionDescription = x.TransactionDescription
+                })
                 .ToList();
 
             return parcelLedgerDtos;
@@ -316,7 +327,7 @@ namespace Rio.EFModels.Entities
                 TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                 TransactionAmount = (parcelLedgerCreateDto.IsWithdrawal ? -parcelLedgerCreateDto.TransactionAmount : parcelLedgerCreateDto.TransactionAmount),
                 WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
-                // TODO: get actual transaction description
+                // A manual deposit/withdrawal to supply for ___/usage has been applied to this water account
                 TransactionDescription = "A manual adjustment has been applied to this water account.",
                 UserComment = parcelLedgerCreateDto.UserComment
             };

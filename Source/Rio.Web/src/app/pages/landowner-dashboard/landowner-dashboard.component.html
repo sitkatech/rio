@@ -397,8 +397,9 @@
                     </td>
                     <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                       <ng-container *ngFor="let seriesData of monthData.series">
-                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelID">
-                          {{(seriesData.value | number:"1.1-1")}}
+                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">
+                          {{seriesData.isEmpty === true ? "-" : (seriesData.value |
+                          number:"1.1-1")}}
                         </td>
                       </ng-container>
                     </ng-container>
@@ -416,8 +417,6 @@
                 </tfoot>
               </table>
               <p class="small">
-                <em>* Indicates OpenET usage data has been overridden</em>
-                <br>
                 Measurements are in acre-feet
                 <br>
                 Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
