@@ -28,7 +28,6 @@ import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto'
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
-import { Listener } from 'selenium-webdriver';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -206,24 +205,29 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
     });
 
-    forkJoin(
-      this.accountService.getParcelLedgersByAccountID(this.activeAccount.AccountID),
-      this.accountService.getWaterUsageOverviewByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year)
-    ).subscribe(([parcelLedgers, waterUsageOverview]) => {
-      this.parcelLedgers = parcelLedgers;
-      this.parcelLedgersForYear = parcelLedgers.filter(x => x.WaterYear == this.waterYearToDisplay.Year);
-      console.log(waterUsageOverview);
-      this.waterUsages = {
-          Year: this.waterYearToDisplay.Year,
-          AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
-          };
-      // user will have neither allocation nor usage to chart if they have no parcels in this year.
-      if (this.parcels && this.parcels.length > 0) {
-        this.initializeCharts(waterUsageOverview);
-      }
+    if (!this.parcelLedgers) {
+      this.accountService.getParcelLedgersByAccountID(this.activeAccount.AccountID).subscribe(parcelLedgers => {
+        this.parcelLedgers = parcelLedgers;
+        // call needs to wait until this.parcelLedgers is populated to avoid race condition
+        this.updateParcelLedgersAndChartDataForWaterYear();
+      });
+    } else {
+      this.updateParcelLedgersAndChartDataForWaterYear();
+    }    
+  }
 
-      this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
-    })
+  private updateParcelLedgersAndChartDataForWaterYear():void {
+    this.parcelLedgersForYear = this.parcelLedgers.filter(x => x.WaterYear == this.waterYearToDisplay.Year);
+    this.waterUsages = {
+        Year: this.waterYearToDisplay.Year,
+        AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
+        };
+    // user will have neither allocation nor usage to chart if they have no parcels in this year.
+    if (this.parcels && this.parcels.length > 0) {
+      this.initializeCharts();
+    }
+
+    this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
   }
 
   ngOnDestroy() {
@@ -442,12 +446,14 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  initializeCharts(waterUsageOverview: WaterAllocationOverviewDto) {
+  initializeCharts() {
+   let waterUsageOverview = this.createParcelUsageOverview();
+   
     this.waterUsageChartData = {
       Year: this.waterYearToDisplay.Year,
       ChartData: this.createParcelMonthlyUsage(this.waterYearToDisplay.Year)
     };
-    
+
     let values = [];
     for (const series of waterUsageOverview.Current) {
       for (const entry of series.CumulativeWaterUsage) {
@@ -489,21 +495,82 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             .map(z => {
               return {
                 name: z.ParcelID.toString(),
-                value: -z.TransactionAmount
+                value: Math.abs(z.TransactionAmount)
               };
             })
         };
       });
   }
 
-  private createWaterUsagesForYear(year: number) {
-    const totalUsage = this.getParcelLedgerUsageForYear(year).reduce((a, b) => {
-      return (a + b.TransactionAmount);
-    }, 0);
-    return Math.abs(totalUsage);
+  private createParcelUsageOverview(): WaterAllocationOverviewDto {
+    let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsage || 
+      x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsageCorrection || x.TransactionType.TransactionTypeID == TransactionTypeEnum.ManualAdjustment);
+    
+
+    // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
+    let usageByYearAndMonth: Object = {};
+    let historicUsageSums = {};
+
+    for (let waterYear of this.waterYears) {
+      let cumulativeMonthlyUsage = 0;
+      usageByYearAndMonth[waterYear.Year] = {};
+
+      for (let i = 1; i < 13; i++) {
+        let parcelLedgersForMonth = usageParcelLedgers.filter(x => x.WaterYear === waterYear.Year && x.WaterMonth === i);
+        let isEmpty = (parcelLedgersForMonth.length == 0);
+
+        if (!isEmpty) {
+          cumulativeMonthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
+            return a + Math.abs(b.TransactionAmount);
+          }, cumulativeMonthlyUsage);
+          
+          if (!historicUsageSums[i]) {
+            historicUsageSums[i] = { usageSum: cumulativeMonthlyUsage, monthsWithDataCount: 1}
+          } else {
+            historicUsageSums[i]['usageSum'] += cumulativeMonthlyUsage;
+            historicUsageSums[i]['monthsWithDataCount']++;
+          }
+        }
+        usageByYearAndMonth[waterYear.Year][i] = isEmpty ? null : cumulativeMonthlyUsage;
+      }
+    }
+
+    // shape usage matrix to return as chart data
+    return {
+      Current: this.waterYears.map(y => 
+        {
+          return {
+            Year: y.Year, 
+            CumulativeWaterUsage: this.months.map((month, i) => 
+            {
+              let monthlyUsageValue = usageByYearAndMonth[y.Year][i + 1];
+              let isEmpty = (monthlyUsageValue == null);
+    
+              return {
+                name: month,
+                isEmpty: isEmpty,
+                value: isEmpty ? 0 : monthlyUsageValue
+              }
+            })
+          }
+        }),
+      Historic: this.months.map((month, i) => 
+      {
+        return {
+          name: month,
+          value: historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']
+        }
+      })
+    }
   }
 
-  private getParcelLedgerUsageForYear(year: number)
+  private createWaterUsagesForYear(year: number): number {
+    return this.getParcelLedgerUsageForYear(year).reduce((a, b) => {
+      return (a + Math.abs(b.TransactionAmount));
+    }, 0);
+  }
+
+  private getParcelLedgerUsageForYear(year: number): ParcelLedgerDto[]
   {
     const usageTransactionTypeIDs = [TransactionTypeEnum.MeasuredUsage, TransactionTypeEnum.MeasuredUsageCorrection, TransactionTypeEnum.ManualAdjustment];
     return this.getParcelLedgersForWaterYear(year).filter(x => usageTransactionTypeIDs.includes(x.TransactionType.TransactionTypeID));

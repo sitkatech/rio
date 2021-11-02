@@ -397,7 +397,7 @@
                     </td>
                     <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                       <ng-container *ngFor="let seriesData of monthData.series">
-                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelID.toString()">
+                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelID">
                           {{(seriesData.value | number:"1.1-1")}}
                         </td>
                       </ng-container>
