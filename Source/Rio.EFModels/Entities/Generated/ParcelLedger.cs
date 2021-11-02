@@ -26,6 +26,7 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(200)]
         public string TransactionDescription { get; set; }
+        public string UserComment { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
         [InverseProperty("ParcelLedgers")]

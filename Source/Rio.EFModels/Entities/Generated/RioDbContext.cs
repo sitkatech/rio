@@ -344,6 +344,8 @@ namespace Rio.EFModels.Entities
             {
                 entity.Property(e => e.TransactionDescription).IsUnicode(false);
 
+                entity.Property(e => e.UserComment).IsUnicode(false);
+
                 entity.HasOne(d => d.Parcel)
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.ParcelID)

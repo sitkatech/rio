@@ -31,11 +31,9 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
-  public isWithdrawal: boolean = true;
-  public allocationID = TransactionTypeEnum.Allocation;
-  public manualAdjustmentID = TransactionTypeEnum.ManualAdjustment;
-  public comment: string = '';
-  public richTextTypeID = CustomRichTextType.ParcelLedgerCreate;
+  public allocationID: number = TransactionTypeEnum.Allocation;
+  public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
+  public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,7 +51,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
       this.currentUser = currentUser;
-      console.log(currentUser);
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       forkJoin(
         this.parcelService.getParcelByParcelID(id),
@@ -71,47 +68,18 @@ export class ParcelLedgerCreateComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.watchUserChangeSubscription.unsubscribe();
+    this.authenticationService.dispose();
+    this.cdr.detach();
+  }
+
   public isUsageAdjustment(): boolean {
     return this.model.TransactionTypeID != this.allocationID;
   }
 
-  private updateTransactionAmountSign(): void {
-    if (this.isWithdrawal) {
-      this.model.TransactionAmount *= -1;
-    }
-  }
-
-  private isTransactionFormValid(): boolean {
-    let formValid = true;
-
-    // const year = this.model.EffectiveDate.getFullYear();
-    // if (year > 9999 || year < 1000) {
-    //   this.alertService.pushAlert(new Alert("Error: Please enter a 4-digit year.", AlertContext.Danger));
-    //   formValid = false;
-    // }
-
-    if (this.model.TransactionAmount < 0) {
-      const errorMessage = "Error: Please enter a positive quantity. " + 
-      ( this.isWithdrawal ?
-        "A withdrawal will apply a negative correction by default." : 
-        "To apply a negative correction, select withdrawal."
-      );
-      this.alertService.pushAlert(new Alert(errorMessage, AlertContext.Danger));
-      formValid = false;
-    }
-
-    return formValid;
-  }
-
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    
-    if (!this.isTransactionFormValid()) {
-      this.isLoadingSubmit = false;
-      return;
-    }
-
-    this.updateTransactionAmountSign();
     
     this.parcelLedgerService.newTransaction(this.model)
       .subscribe(response => {

@@ -68,9 +68,7 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = x.Key,
                     // There's at most one ParcelAllocation per Parcel per WaterType, so we just need to read elements of the group into this dictionary
-                    Allocations = new Dictionary<int, decimal>(x.Select(y =>
-                        new KeyValuePair<int, decimal>(y.WaterTypeID.Value,
-                            y.TransactionAmount)))
+                    Allocations = x.Where(y => y.WaterTypeID.HasValue).GroupBy(y => y.WaterTypeID.Value).ToDictionary(y => y.Key, y => y.Sum(z => z.TransactionAmount))
                 }).ToList();
             return parcelAllocationBreakdownForYear;
         }
@@ -316,10 +314,11 @@ namespace Rio.EFModels.Entities
                 TransactionDate = DateTime.UtcNow,
                 EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
                 TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
-                TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
+                TransactionAmount = (parcelLedgerCreateDto.IsWithdrawal ? -parcelLedgerCreateDto.TransactionAmount : parcelLedgerCreateDto.TransactionAmount),
                 WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                 // TODO: get actual transaction description
-                TransactionDescription = "A manual adjustment has been applied to this water account."
+                TransactionDescription = "A manual adjustment has been applied to this water account.",
+                UserComment = parcelLedgerCreateDto.UserComment
             };
 
             dbContext.ParcelLedgers.Add(parcelLedger);
