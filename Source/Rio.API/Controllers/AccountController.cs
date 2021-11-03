@@ -226,18 +226,6 @@ namespace Rio.API.Controllers
             return Ok(numChanging);
         }
 
-        [HttpGet("accounts/{accountID}/water-usage-overview/{year}")]
-        [UserViewFeature]
-        public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverviewByAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
-            var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);
-            
-            return Ok(waterUsageOverviewDto);
-        }
-
         [HttpGet("accounts/{accountID}/account-reconciliation-parcels")]
         [UserViewFeature]
         public ActionResult<ParcelSimpleDto> GetAccountReconciliationParcelsByAccountID([FromRoute] int accountID)
