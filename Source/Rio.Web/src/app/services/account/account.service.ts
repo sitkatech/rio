@@ -57,23 +57,12 @@ export class AccountService {
     let route = `/accounts/${accountID}/parcel-ledgers`;
     return this.apiService.getFromApi(route);
   }
-  
-  // kill route & override et data pages
-  getParcelWaterUsageByAccountID(accountID: number, year: number): Observable<ParcelMonthlyEvapotranspirationDto[]> {
-      let route = `/accounts/${accountID}/parcel-water-usage/${year}`;
-      return this.apiService.getFromApi(route);
-  }
 
   getWaterUsageOverview(year: number): Observable<WaterAllocationOverviewDto> {
     let route = `/accounts/water-usage-overview/${year}`;
       return this.apiService.getFromApi(route);
   }
 
-  // kill
-  saveParcelMeasuredUsageCorrections(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
-      let route = `/accounts/${accountID}/${year}/saveParcelMeasuredUsageCorrections`;
-      return this.apiService.putToApi(route, model);
-  }
 
   getParcelsInAccountReconciliationByAccountID(accountID:number): Observable<Array<ParcelSimpleDto>> {
     let route = `/accounts/${accountID}/account-reconciliation-parcels`;

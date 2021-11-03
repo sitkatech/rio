@@ -27,7 +27,6 @@ import { HelpComponent } from './pages/help/help.component';
 import { SetWaterAllocationComponent } from './pages/set-water-allocation/set-water-allocation.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
-import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
 import { AccountListComponent } from './pages/account-list/account-list.component';
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
@@ -86,7 +85,6 @@ const routes: Routes = [
   { path: "accounts/:id/edit-users", component: AccountEditUsersComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "new-account", component: AccountNewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "landowner-dashboard/:accountNumber", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-override-et-data/:accountID/:waterYear", component: ParcelOverrideEtDataComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
