@@ -327,8 +327,8 @@ namespace Rio.EFModels.Entities
                 TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                 TransactionAmount = (parcelLedgerCreateDto.IsWithdrawal ? -parcelLedgerCreateDto.TransactionAmount : parcelLedgerCreateDto.TransactionAmount),
                 WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
-                // A manual deposit/withdrawal to supply for ___/usage has been applied to this water account
-                TransactionDescription = "A manual adjustment has been applied to this water account.",
+                TransactionDescription = 
+                    $"A manual {(parcelLedgerCreateDto.IsWithdrawal ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
                 UserComment = parcelLedgerCreateDto.UserComment
             };
 
