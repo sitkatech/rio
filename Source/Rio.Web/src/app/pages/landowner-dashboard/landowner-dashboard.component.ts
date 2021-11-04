@@ -102,7 +102,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
-  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
+  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return this.createSeriesEntry(y, 0); });
   public waterTypes: WaterTypeDto[];
 
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
@@ -474,7 +474,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         Year: x.Year,
         ChartData: {
           name: allocationLabel,
-          series: this.months.map(y => { return { name: y, value: allocation + purchased - sold } })
+          series: this.months.map(y => { return this.createSeriesEntry(y, allocation + purchased - sold) })
         }
       }
     });
@@ -485,6 +485,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
   
+  private createSeriesEntry(name: string, value: number, isEmpty?: boolean): SeriesEntry {
+    const seriesEntry = new SeriesEntry(name, value, isEmpty);
+    return seriesEntry;
+  }
+
   private createParcelMonthlyUsageChartData(year: number): MultiSeriesEntry[] {
     const parcelLedgers = this.getParcelLedgerUsageForYear(year);
     
@@ -513,11 +518,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           name: month,
           series: this.parcels.map(parcel => {
             let isEmpty = (usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1] === null);
-            return {
-              name: parcel.ParcelNumber,
-              isEmpty: isEmpty,
-              value: isEmpty ? 0 : usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1]
-            };
+            const seriesValue = isEmpty ? 0 : usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1];
+            return this.createSeriesEntry(parcel.ParcelNumber, seriesValue, isEmpty);
           })
         };
       });
@@ -565,21 +567,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             {
               let monthlyUsageValue = usageByYearAndMonth[y.Year][i + 1];
               let isEmpty = (monthlyUsageValue == null);
-    
-              return {
-                name: month,
-                isEmpty: isEmpty,
-                value: isEmpty ? 0 : monthlyUsageValue
-              }
+              return this.createSeriesEntry(month, isEmpty ? 0 : monthlyUsageValue, isEmpty);
             })
           }
         }),
       Historic: this.months.map((month, i) => 
       {
-        return {
-          name: month,
-          value: historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']
-        }
+        return this.createSeriesEntry(month,  historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']);
       })
     }
   }
