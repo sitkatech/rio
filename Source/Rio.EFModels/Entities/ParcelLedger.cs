@@ -126,12 +126,24 @@ namespace Rio.EFModels.Entities
             return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsage);
         }
 
+        public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            var usageTransactionTypeIDs = new List<int> { 17, 18, 19 };
+            return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, usageTransactionTypeIDs);
+        }
+
         private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext,
             List<int> parcelIDs,
             int transactionTypeID)
         {
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == transactionTypeID);
+        }
+
+        private static IQueryable<ParcelLedger> GetByTransactionTypeIDsAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, List<int> transactionTypeIDs)
+        {
+            return GetParcelLedgersImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID) && transactionTypeIDs.Contains(x.TransactionTypeID));
         }
 
         public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelIDAndYear(RioDbContext dbContext, List<int> parcelIDs,
