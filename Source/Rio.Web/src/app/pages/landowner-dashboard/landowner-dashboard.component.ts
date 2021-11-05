@@ -447,7 +447,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   initializeCharts() {
-   let waterUsageOverview = this.createParcelUsageOverviewChartData();
+    if (!this.waterUsageOverview) {
+      this.waterUsageOverview = this.createParcelUsageOverviewChartData();
+    }
    
     this.waterUsageChartData = {
       Year: this.waterYearToDisplay.Year,
@@ -455,7 +457,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     };
 
     let values = [];
-    for (const series of waterUsageOverview.Current) {
+    for (const series of this.waterUsageOverview.Current) {
       for (const entry of series.CumulativeWaterUsage) {
         values.push(entry.value);
       }
@@ -480,9 +482,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.allocationChartRange = [0, 1.2 * Math.max(...values)];
-    this.waterUsageOverview = waterUsageOverview;
-    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
+    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
   
   private createParcelMonthlyUsageChartData(year: number): MultiSeriesEntry[] {
@@ -503,20 +504,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] = 0;
       }
 
-      usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] += Math.abs(parcelLedger.TransactionAmount);
+      usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] += parcelLedger.TransactionAmount;
     }
-
-    console.log(usageByParcelAndMonth);
 
     return this.months.map((month, monthIndex) => {
         return {
           name: month,
           series: this.parcels.map(parcel => {
             let isEmpty = (usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1] === null);
+
             return {
               name: parcel.ParcelNumber,
               isEmpty: isEmpty,
-              value: isEmpty ? 0 : usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1]
+              value: isEmpty ? 0 : Math.abs(usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1])
             };
           })
         };
@@ -541,7 +541,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
         if (!isEmpty) {
           cumulativeMonthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
-            return a + Math.abs(b.TransactionAmount);
+            return a + b.TransactionAmount;
           }, cumulativeMonthlyUsage);
           
           if (!historicUsageSums[i]) {
@@ -555,7 +555,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    // shape usage matrix to return as chart data
     return {
       Current: this.waterYears.map(y => 
         {
@@ -569,7 +568,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
               return {
                 name: month,
                 isEmpty: isEmpty,
-                value: isEmpty ? 0 : monthlyUsageValue
+                value: isEmpty ? 0 : Math.abs(monthlyUsageValue)
               }
             })
           }
@@ -578,7 +577,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       {
         return {
           name: month,
-          value: historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']
+          value: Math.abs(historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount'])
         }
       })
     }
