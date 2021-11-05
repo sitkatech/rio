@@ -30,7 +30,6 @@
     "@ckeditor/ckeditor5-upload": "^18.0.0",
     "@microsoft/applicationinsights-web": "^2.5.10",
     "@ng-bootstrap/ng-bootstrap": "^6.1.0",
-    "@nguniversal/express-engine": "^9.1.0",
     "@ngx-progressbar/core": "^5.3.2",
     "@swimlane/ngx-charts": "^14.0.0",
     "@types/geojson": "^7946.0.7",
