@@ -8,7 +8,6 @@ import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { HttpClient } from '@angular/common/http';
 import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 
 @Injectable({
   providedIn: 'root'

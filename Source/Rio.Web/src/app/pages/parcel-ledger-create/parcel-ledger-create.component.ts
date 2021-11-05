@@ -15,7 +15,6 @@ import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-typ
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { UserDto } from 'src/app/shared/models';
-import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
