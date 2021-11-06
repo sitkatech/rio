@@ -46,7 +46,6 @@ import { SetWaterAllocationComponent } from './pages/set-water-allocation/set-wa
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
-import { MyDatePickerModule } from 'mydatepicker';
 import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
 import { AccountListComponent } from './pages/account-list/account-list.component';
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
@@ -159,7 +158,6 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     SelectDropDownModule,
-    MyDatePickerModule,
     NgxPaginationModule
   ],  
   providers: [

@@ -7,7 +7,6 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { isNullOrUndefined } from 'util';
 import { UserDto } from 'src/app/shared/models';
 import { PostingUpsertDto } from 'src/app/shared/models/posting/posting-upsert-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
@@ -78,7 +77,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   }
 
   public getTotalPrice(): number {
-    if (isNullOrUndefined(this.model.Price) || isNullOrUndefined(this.model.Quantity)) {
+    if (this.model.Price === null || this.model.Price === undefined || 
+      this.model.Quantity === null || this.model.Quantity === undefined) {
       return null;
     }
     return this.model.Price * this.model.Quantity;
