@@ -22,7 +22,6 @@ import { PostingListComponent } from './pages/posting-list/posting-list.componen
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
-import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { RegisterTransferComponent } from './pages/register-transfer/register-transfer.component';
@@ -103,7 +102,6 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     PostingNewComponent,
     PostingDetailComponent,
     ParcelDetailComponent,
-    ParcelEditAllocationComponent,
     LandownerDashboardComponent,
     TradeDetailComponent,
     RegisterTransferComponent,
