@@ -51,7 +51,7 @@ from
 				sum(case when pa.WaterTypeID = 2 then pa.TransactionAmount else 0 end) as Reconciliation,
 				sum(case when pa.WaterTypeID = 3 then pa.TransactionAmount else 0 end) as NativeYield,
 				sum(case when pa.WaterTypeID = 4 then pa.TransactionAmount else 0 end) as StoredWater,
-				sum(case when pa.TransactionTypeID in (17, 18) then pa.TransactionAmount else 0 end) as UsageToDate
+				abs(sum(case when pa.TransactionTypeID in (17, 18, 19) then pa.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.Account acc
 		join (
 			select apwy.AccountID, apwy.ParcelID
