@@ -5,7 +5,6 @@ import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
@@ -83,11 +82,6 @@ export class ParcelService {
 
   getParcelAllocations(parcelID: number): Observable<Array<ParcelLedgerDto>> {
     let route = `/parcels/${parcelID}/getAllocations`;
-    return this.apiService.getFromApi(route);
-  }
-
-  getWaterUsage(parcelID: number): Observable<Array<ParcelMonthlyEvapotranspirationDto>> {
-    let route = `/parcels/${parcelID}/getWaterUsage`;
     return this.apiService.getFromApi(route);
   }
 

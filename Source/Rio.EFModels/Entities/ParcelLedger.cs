@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.EFModels.Entities
@@ -73,68 +72,13 @@ namespace Rio.EFModels.Entities
             return parcelAllocationBreakdownForYear;
         }
 
-        public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelID(RioDbContext dbContext, List<int> parcelIDs)
-        {
-            var parcelLedgerMeasuredUsages = GetMeasuredUsagesByParcelIDs(dbContext, parcelIDs);
-
-            var parcelMonthlyEvapotranspirationDtos = parcelLedgerMeasuredUsages.Select(x => 
-                new ParcelMonthlyEvapotranspirationDto()
-                {
-                    ParcelID = x.ParcelID,
-                    WaterYear = x.EffectiveDate.Year,
-                    WaterMonth = x.EffectiveDate.Month,
-                    EvapotranspirationRate = -x.TransactionAmount
-                }
-            ).ToList();
-            
-            var parcelLedgerMeasuredUsageCorrections = GetMeasuredUsageCorrectionsByParcelIDs(dbContext, parcelIDs);
-
-            var parcelMonthlyEvapotranspirationCorrectionDtos = parcelLedgerMeasuredUsageCorrections.Select(x => 
-                new ParcelMonthlyEvapotranspirationDto()
-                {
-                    ParcelID = x.ParcelID,
-                    WaterYear = x.EffectiveDate.Year,
-                    WaterMonth = x.EffectiveDate.Month,
-                    OverriddenEvapotranspirationRate = -x.TransactionAmount
-                }
-            ).ToList();
-
-            foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirationCorrectionDtos)
-            {
-                var existingParcelMonthlyEvapotranspirationDto = parcelMonthlyEvapotranspirationDtos.SingleOrDefault(y =>
-                    y.ParcelID == parcelMonthlyEvapotranspirationDto.ParcelID && y.WaterMonth == parcelMonthlyEvapotranspirationDto.WaterMonth && y.WaterYear == parcelMonthlyEvapotranspirationDto.WaterYear);
-                if (existingParcelMonthlyEvapotranspirationDto == null)
-                {
-                    parcelMonthlyEvapotranspirationDtos.Add(parcelMonthlyEvapotranspirationDto);
-                }
-                else
-                {
-                    existingParcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate = parcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate;
-                }
-            }
-
-            return parcelMonthlyEvapotranspirationDtos;
-        }
-
-        private static IQueryable<ParcelLedger> GetMeasuredUsageCorrectionsByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
-        {
-            return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsageCorrection);
-        }
-
-        private static IQueryable<ParcelLedger> GetMeasuredUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
-        {
-            return GetByTransactionTypeIDAndParcelIDs(dbContext, parcelIDs, TransactionTypeIDMeasuredUsage);
-        }
-
         public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
             var usageTransactionTypeIDs = new List<int> { 17, 18, 19 };
             return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, usageTransactionTypeIDs);
         }
 
-        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext,
-            List<int> parcelIDs,
-            int transactionTypeID)
+        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, int transactionTypeID)
         {
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == transactionTypeID);
@@ -144,107 +88,6 @@ namespace Rio.EFModels.Entities
         {
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID) && transactionTypeIDs.Contains(x.TransactionTypeID));
-        }
-
-        public static List<ParcelMonthlyEvapotranspirationDto> ListMonthlyEvapotranspirationsByParcelIDAndYear(RioDbContext dbContext, List<int> parcelIDs,
-      List<ParcelDto> parcels, int year)
-        {
-            var parcelMonthlyEvapotranspirations = new List<ParcelMonthlyEvapotranspirationDto>();
-            // make the full matrix of months * parcels and populate with zero/empty
-            foreach (var parcel in parcels)
-            {
-                for (var i = 1; i < 13; i++)
-                {
-                    parcelMonthlyEvapotranspirations.Add(new ParcelMonthlyEvapotranspirationDto { ParcelID = parcel.ParcelID, ParcelNumber = parcel.ParcelNumber, EvapotranspirationRate = null, WaterMonth = i, WaterYear = year, IsEmpty = true });
-                }
-            }
-
-            var parcelLedgerMeasuredUsages = GetMeasuredUsagesByParcelIDs(dbContext, parcelIDs)
-                .Where(x => x.EffectiveDate.Year == year).Select(x => x.AsDto()).ToList();
-
-            // fill in the real values into the full set
-            foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirations)
-            {
-                var existing = parcelLedgerMeasuredUsages.SingleOrDefault(x =>
-                    x.ParcelID == parcelMonthlyEvapotranspirationDto.ParcelID &&
-                    x.WaterYear == parcelMonthlyEvapotranspirationDto.WaterYear &&
-                    x.WaterMonth == parcelMonthlyEvapotranspirationDto.WaterMonth);
-                if (existing != null)
-                {
-                    parcelMonthlyEvapotranspirationDto.IsEmpty = false;
-                    parcelMonthlyEvapotranspirationDto.EvapotranspirationRate = -existing.TransactionAmount;
-                }
-            }
-
-            var parcelLedgerMeasuredUsageCorrections = GetMeasuredUsageCorrectionsByParcelIDs(dbContext, parcelIDs)
-                .Where(x => x.EffectiveDate.Year == year).Select(x => x.AsDto())
-                .ToList();
-
-            // fill in the real values into the full set
-            foreach (var parcelMonthlyEvapotranspirationDto in parcelMonthlyEvapotranspirations)
-            {
-                var existing = parcelLedgerMeasuredUsageCorrections.SingleOrDefault(x =>
-                    x.ParcelID == parcelMonthlyEvapotranspirationDto.ParcelID &&
-                    x.WaterYear == parcelMonthlyEvapotranspirationDto.WaterYear &&
-                    x.WaterMonth == parcelMonthlyEvapotranspirationDto.WaterMonth);
-                if (existing != null)
-                {
-                    parcelMonthlyEvapotranspirationDto.IsEmpty = false;
-                    parcelMonthlyEvapotranspirationDto.OverriddenEvapotranspirationRate = -(existing.TransactionAmount + -parcelMonthlyEvapotranspirationDto.EvapotranspirationRate);
-                }
-            }
-            return parcelMonthlyEvapotranspirations;
-        }
-
-        // TODO: Guts of this need to ne fixed when we tackle the correction story
-        public static int SaveParcelMonthlyUsageOverrides(RioDbContext dbContext, int accountID, int waterYear,
-            List<ParcelMonthlyEvapotranspirationDto> overriddenParcelMonthlyEvapotranspirationDtos)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(dbContext, accountID, waterYear).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
-            var existingParcelLedgers =
-                GetParcelLedgersImpl(dbContext)
-                    .Where(x => x.EffectiveDate.Year == waterYear &&
-                                parcelIDs.Contains(x.ParcelID) &&
-                                (x.TransactionTypeID == TransactionTypeIDMeasuredUsageCorrection ||
-                                 x.TransactionTypeID == TransactionTypeIDMeasuredUsage))
-                    .ToList();
-
-            var parcelLedgersToSave = new List<ParcelLedger>();
-            foreach (var x in overriddenParcelMonthlyEvapotranspirationDtos.Where(x =>
-                x.OverriddenEvapotranspirationRate != null))
-            {
-                var currentMonthlyValue = existingParcelLedgers.Where(y => y.ParcelID == x.ParcelID
-                                                                           && y.EffectiveDate.Month == x.WaterMonth
-                                                                           && y.EffectiveDate.Year == x.WaterYear
-                ).Sum(y => y.TransactionAmount);
-                var transactionAmount = -(x.OverriddenEvapotranspirationRate.Value + currentMonthlyValue);
-                if (transactionAmount != 0)
-                {
-                    var effectiveDate = CreateEffectiveDateFromYearMonth(x.WaterYear, x.WaterMonth);
-                    var parcelLedger = new ParcelLedger
-                    {
-                        ParcelID = x.ParcelID,
-                        TransactionDate = DateTime.UtcNow,
-                        EffectiveDate = effectiveDate,
-                        TransactionTypeID = TransactionTypeIDMeasuredUsageCorrection,
-                        TransactionAmount = transactionAmount,
-                        TransactionDescription =
-                            $"A correction to {effectiveDate:MMMM yyyy} has been applied to this water account"
-                    };
-                    parcelLedgersToSave.Add(parcelLedger);
-                }
-            }
-
-            var parcelLedgersWithCorrections = parcelLedgersToSave.Where(x => x != null).ToList();
-            if (parcelLedgersWithCorrections.Any())
-            {
-                dbContext.ParcelLedgers.AddRange(parcelLedgersWithCorrections);
-            }
-
-            dbContext.SaveChanges();
-            return parcelLedgersWithCorrections.Count;
         }
 
         private static DateTime CreateEffectiveDateFromYearMonth(int waterYear, int waterMonth)

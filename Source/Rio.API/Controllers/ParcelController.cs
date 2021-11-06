@@ -116,20 +116,6 @@ namespace Rio.API.Controllers
             return Ok(parcelLedgerDtos);
         }
 
-        [HttpGet("parcels/{parcelID}/getWaterUsage")]
-        [ParcelViewFeature]
-        public ActionResult<ParcelMonthlyEvapotranspirationDto> GetMeasuredUsage([FromRoute] int parcelID)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelMonthlyEvapotranspirationDtos = ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, new List<int> { parcelID });
-            return Ok(parcelMonthlyEvapotranspirationDtos);
-        }
-        
         [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
         [ParcelManageFeature]
         public IActionResult MergeParcelAllocations([FromRoute] int parcelID,

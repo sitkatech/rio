@@ -6,7 +6,6 @@ import { forkJoin } from 'rxjs';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
 import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { WaterYearDto } from "src/app/shared/models/water-year-dto";
@@ -16,6 +15,7 @@ import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -31,7 +31,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
   public parcelLedgers: Array<ParcelLedgerDto>;
-  public waterUsage: Array<ParcelMonthlyEvapotranspirationDto>;
+  public allocationParcelLedgers: Array<ParcelLedgerDto>;
+  public usageParcelLedgers: Array<ParcelLedgerDto>;
   public months: number[];
   public parcelOwnershipHistory: ParcelOwnershipDto[];
 
@@ -67,19 +68,22 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       if (id) {
         forkJoin(
           this.parcelService.getParcelByParcelID(id),
-          this.parcelService.getParcelAllocations(id),
           this.parcelService.getParcelLedgerEntriesByParcelID(id),
-          this.parcelService.getWaterUsage(id),
           this.parcelService.getParcelOwnershipHistory(id),
           this.waterYearService.getWaterYears(),
           this.waterTypeService.getWaterTypes()
-        ).subscribe(([parcel, parcelLedgers, ledgerEntries, waterUsage, parcelOwnershipHistory, waterYears, waterTypes]) => {
+        ).subscribe(([parcel, parcelLedgers, parcelOwnershipHistory, waterYears, waterTypes]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
+          
           this.parcelLedgers = parcelLedgers;
-          this.rowData = ledgerEntries;
-          this.waterUsage = waterUsage;
+          this.rowData = parcelLedgers;
+          this.allocationParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Allocation);
+          this.usageParcelLedgers = parcelLedgers.filter(x => 
+            x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsage ||
+            x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsageCorrection || 
+            x.TransactionType.TransactionTypeID == TransactionTypeEnum.ManualAdjustment);
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
           this.waterTypes = waterTypes;
@@ -161,14 +165,20 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getConsumptionForYearAndMonth(year: number, month: number): string {
-    var monthlyEvapotranspiration = this.waterUsage.find(x => x.WaterYear === year && x.WaterMonth === month);
-    return (monthlyEvapotranspiration === null || monthlyEvapotranspiration === undefined) ?
-            "-" : (monthlyEvapotranspiration.OverriddenEvapotranspirationRate === null || monthlyEvapotranspiration.OverriddenEvapotranspirationRate === undefined) ?
-            monthlyEvapotranspiration.EvapotranspirationRate.toFixed(1) : monthlyEvapotranspiration.OverriddenEvapotranspirationRate.toFixed(1);
+    let parcelLedgersForMonth = this.usageParcelLedgers.filter(x => x.WaterYear == year && x.WaterMonth == month);
+    
+    if (parcelLedgersForMonth.length == 0) {
+      return "-";
+    }
+    let monthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
+        return a + b.TransactionAmount;
+      }, 0);
+
+    return Math.abs(monthlyUsage).toFixed(1);
   }
   
   public getTotalAllocationForYear(year: number): string {
-    var parcelLedgerForYear = this.parcelLedgers.filter(x => x.WaterYear === year);
+    var parcelLedgerForYear = this.allocationParcelLedgers.filter(x => x.WaterYear === year);
     if (parcelLedgerForYear.length > 0) {
       let result = parcelLedgerForYear.reduce(function (a, b) {
         return (a + b.TransactionAmount);
@@ -181,21 +191,21 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationForYearByType(waterType: WaterTypeDto, year: number): string {
-    var parcelLedger = this.parcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
+    var parcelLedger = this.allocationParcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     return parcelLedger ? parcelLedger.TransactionAmount.toFixed(1) : "-";
   }
 
   public getConsumptionForYear(year: number): string {
-    var monthlyEvapotranspiration = this.waterUsage.filter(x => x.WaterYear === year);
-    if (monthlyEvapotranspiration.length > 0) {
-      let result = monthlyEvapotranspiration.reduce(function (a, b) {
-        return (a + (b.OverriddenEvapotranspirationRate || b.EvapotranspirationRate));
-      }, 0);
-      return result.toFixed(1);
-    }
-    else {
+    let parcelLedgersForYear = this.usageParcelLedgers.filter(x => x.WaterYear == year);
+    
+    if (parcelLedgersForYear.length == 0) {
       return "-";
     }
+    let monthlyUsage = parcelLedgersForYear.reduce((a, b) => {
+        return a + b.TransactionAmount;
+      }, 0);
+
+    return Math.abs(monthlyUsage).toFixed(1);
   }
 
   public getCurrentOwner(): ParcelOwnershipDto{  
