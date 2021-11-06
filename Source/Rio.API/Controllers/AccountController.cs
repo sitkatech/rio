@@ -206,26 +206,6 @@ namespace Rio.API.Controllers
             return Ok(parcelLedgerDtos);
         }
 
-        [HttpGet("accounts/{accountID}/parcel-water-usage/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> ListWaterUsagesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelMonthlyEvapotranspirationDtos =
-                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
-            return Ok(parcelMonthlyEvapotranspirationDtos);
-        }
-
-        [HttpPut("accounts/{accountID}/{year}/saveParcelMeasuredUsageCorrections")]
-        [UserManageFeature]
-        public ActionResult<int> SaveParcelMeasuredUsageCorrections( [FromRoute] int accountID, [FromRoute] int year,
-            [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
-        {
-            var numChanging = ParcelLedger.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
-            return Ok(numChanging);
-        }
-
         [HttpGet("accounts/{accountID}/account-reconciliation-parcels")]
         [UserViewFeature]
         public ActionResult<ParcelSimpleDto> GetAccountReconciliationParcelsByAccountID([FromRoute] int accountID)
