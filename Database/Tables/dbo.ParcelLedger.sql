@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[TransactionAmount] [decimal](10, 4) NOT NULL,
 	[WaterTypeID] [int] NULL,
 	[TransactionDescription] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[UserID] [int] NULL,
 	[UserComment] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [PK_ParcelLedger_ParcelLedgerID] PRIMARY KEY CLUSTERED 
 (

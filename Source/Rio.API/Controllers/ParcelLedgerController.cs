@@ -27,7 +27,14 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var posting = ParcelLedger.CreateNew(_dbContext, parcelLedgerCreateDto);
+            var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+
+            if (userDto == null || userDto.Role.RoleID != (int)RoleEnum.Admin)
+            {
+                return Forbid();
+            }
+
+            var posting = ParcelLedger.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
             return Ok(posting);
         }
     }

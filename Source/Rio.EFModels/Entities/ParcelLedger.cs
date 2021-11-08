@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
+using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {
@@ -149,7 +150,7 @@ namespace Rio.EFModels.Entities
             return parcelLedger?.AsDto();
         }
 
-        public static ParcelLedgerDto CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto)
+        public static ParcelLedgerDto CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
         {
             var parcelLedger = new ParcelLedger
             {
@@ -161,6 +162,7 @@ namespace Rio.EFModels.Entities
                 WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                 TransactionDescription = 
                     $"A manual {(parcelLedgerCreateDto.IsWithdrawal ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                UserID = userID,
                 UserComment = parcelLedgerCreateDto.UserComment
             };
 
