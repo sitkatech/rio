@@ -6,7 +6,7 @@ import { MarketMetricsService } from 'src/app/services/market-metrics.service';
 import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
 import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
 import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
-import { ColorHelper, ScaleType } from '@swimlane/ngx-charts';
+import { Color, ColorHelper, ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -19,9 +19,8 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   marketMetrics: MarketMetricsDto;
   tradeActivityByMonth: TradeActivityByMonthDto[];
   tradeVolumeByMonthSeries: { name: string; value: number; }[];
-  //colorScheme: { domain: string[]; };
-  colorScheme: string;
-  volumeTradedColorScheme: { domain: string[]; };
+  colorScheme: Color = { name: "offerColors", domain: ['#636363', '#ff1100', '#37be23'], selectable: true, group: ScaleType.Ordinal};
+  volumeTradedColorScheme: Color = { name: "volumeColors", domain: ['#0f77d2'] , selectable: true, group: ScaleType.Ordinal};
   offerHistorySeries: { name: string; series: { name: string; value: number; }[] }[];
   public lineSeriesColors: ColorHelper;
   
@@ -55,12 +54,6 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
           return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.MaximumPrice }
         })});
 
-        // this.colorScheme = {
-        //   domain: ['#636363', '#ff1100', '#37be23'] 
-        // };
-        this.volumeTradedColorScheme = {
-          domain: ['#0f77d2'] 
-        };
         this.lineSeriesColors = new ColorHelper(this.colorScheme, ScaleType.Ordinal, this.priceLineSeries);
       });
     });

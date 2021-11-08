@@ -4,7 +4,6 @@ import { Color, ColorHelper, ScaleType } from '@swimlane/ngx-charts';
 
 import { MultiSeriesEntry } from "src/app/shared/models/series-entry";
 
-import * as ColorScheme from 'color-scheme';
 import * as palette from 'google-palette';
 
 
@@ -23,8 +22,7 @@ export class LandownerWaterUseChartComponent implements OnInit {
   public chartData: MultiSeriesEntry[];
 
   public colors: ColorHelper;
-  //public colorScheme: {domain: string[]};
-  public colorScheme: Color;
+  public colorScheme: Color = { name: "parcelColors", domain: [], selectable: true, group: ScaleType.Ordinal};
 
   view: any[] = [700, 400];
 
@@ -49,8 +47,8 @@ export class LandownerWaterUseChartComponent implements OnInit {
     const numOfParcels = this.parcelNumbers.length;
     colorList = palette('mpn65', numOfParcels).map(x =>`#${x}`);
     
-    //this.colorScheme = {domain: colorList};
-    this.colors = new ColorHelper(this.colorScheme, ScaleType.Ordinal, this.parcelNumbers, this.colorScheme);
+    this.colorScheme = { name: "parcelColors", domain: colorList, selectable: true, group: ScaleType.Ordinal};
+    this.colors = new ColorHelper(this.colorScheme, ScaleType.Ordinal, this.parcelNumbers, null);
   }
 
 }

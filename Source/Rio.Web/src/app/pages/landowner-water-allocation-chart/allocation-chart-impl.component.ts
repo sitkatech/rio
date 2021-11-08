@@ -23,7 +23,8 @@ import {
   ViewDimensions,
   ColorHelper,
   ScaleType,
-  LegendPosition
+  LegendPosition,
+  Color
 } from '@swimlane/ngx-charts';
 import { area, line, curveLinear } from 'd3-shape';
 import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
@@ -56,7 +57,7 @@ export class AllocationChartImplComponent extends BaseChartComponent {
   @Input() yAxisTickFormatting: any;
   @Input() yRightAxisTickFormatting: any;
   @Input() roundDomains: boolean = false;
-  @Input() colorSchemeLine: string;
+  @Input() colorSchemeLine: Color;
   @Input() autoScale;
   @Input() historicCumulativeWaterUsageSeries: any;
   @Input() currentCumulativeWaterUsageSeries: any;
