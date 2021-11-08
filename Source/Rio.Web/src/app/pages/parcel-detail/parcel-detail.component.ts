@@ -191,8 +191,13 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationForYearByType(waterType: WaterTypeDto, year: number): string {
-    var parcelLedger = this.allocationParcelLedgers.find(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
-    return parcelLedger ? parcelLedger.TransactionAmount.toFixed(1) : "-";
+    var parcelLedgers = this.allocationParcelLedgers.filter(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
+    if (parcelLedgers.length == 0) {
+      return "-";
+    }
+    return parcelLedgers.reduce((a, b) => {
+      return a + b.TransactionAmount;
+    }, 0).toFixed(1);
   }
 
   public getConsumptionForYear(year: number): string {
