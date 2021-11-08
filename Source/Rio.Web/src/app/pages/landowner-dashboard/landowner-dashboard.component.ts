@@ -72,7 +72,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private allocationChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelLedgers: Array<ParcelLedgerDto>;
-  public parcelLedgersForYear: Array<ParcelLedgerDto>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
 
@@ -217,7 +216,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private updateParcelLedgersAndChartDataForWaterYear():void {
-    this.parcelLedgersForYear = this.parcelLedgers.filter(x => x.WaterYear == this.waterYearToDisplay.Year);
     this.waterUsages = {
         Year: this.waterYearToDisplay.Year,
         AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
@@ -335,6 +333,31 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return 0;
   }
 
+  public getResultInUnitsShown(result: number): number {
+    if (this.unitsShown === "ac-ft / ac") {
+      return result / this.getTotalAPNAcreage();
+    }
+    else {
+      return result;
+    }
+  }
+
+  public getLastETReadingDate(): string {
+    return "12/31/" + this.waterYearToDisplay?.Year; //TODO: need to use the date from the latest monthly ET data
+  }
+
+  private getParcelLedgersForWaterYear(year?: number) {
+    if (!this.parcelLedgers) {
+      return new Array<ParcelLedgerDto>();
+    }
+
+    if (!year) {
+      year = this.waterYearToDisplay?.Year
+    }
+
+    return this.parcelLedgers.filter(x => x.WaterYear == year);
+  }
+
   public getAnnualAllocation(year: number, skipConvertToUnitsShown?: boolean): number {
     let parcelLedgers = this.getAllocationsForWaterYear(year);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown);
@@ -345,28 +368,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers);
   }
 
-  public getResultInUnitsShown(result: number): number {
-    if (this.unitsShown === "ac-ft / ac") {
-      return result / this.getTotalAPNAcreage();
-    }
-    else {
-      return result;
-    }
-  }
-
-  public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
-    if (!this.parcelLedgersForYear) {
-      return new Array<ParcelLedgerDto>();
-    }
-
-    return this.parcelLedgersForYear.filter(p => p.WaterYear === year && p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
-  }
-
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {
-    if (!this.parcelLedgersForYear) {
-      return null;
-    }
-    
     var parcelLedgersForYear = this.getAllocationsForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
       var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.ParcelID == parcelID)
@@ -377,15 +379,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "-";
   }
 
-  public getLastETReadingDate(): string {
-    return "12/31/" + this.waterYearToDisplay?.Year; //TODO: need to use the date from the latest monthly ET data
-  }
-
-  private getParcelLedgersForWaterYear(year?: number) {
-    if (!year) {
-      year = this.waterYearToDisplay?.Year
-    }
-    return this.parcelLedgersForYear.filter(x => x.WaterYear == year);
+  public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
+    return this.getParcelLedgersForWaterYear(year).filter(p => p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
   }
 
   public getTradeSalesForWaterYear(year?: number) {
