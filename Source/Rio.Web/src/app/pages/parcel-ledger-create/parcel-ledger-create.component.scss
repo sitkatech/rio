@@ -1,0 +1,24 @@
+.inactive {
+    opacity: 40%;
+}
+
+.fa-calendar {
+    background-color: #c4c4c4;
+    color: #000;
+}
+
+.fa-calendar:hover {
+    background-color: #a4a4a4;
+}
+
+.fa-info-circle {
+    color: #a4a4a4;
+}
+
+// display on xs devices
+@media (max-width: 575.98px) {
+    
+    .control-label {
+        text-align: left !important;
+    }
+}

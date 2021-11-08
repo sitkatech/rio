@@ -3,6 +3,7 @@ import { WaterTypeDto } from "../water-type-dto";
 
 export class ParcelLedgerDto {
     ParcelID: number;
+    ParcelNumber: string;
     TransactionDate: Date;
     EffectiveDate: Date;
     TransactionType: TransactionTypeDto;

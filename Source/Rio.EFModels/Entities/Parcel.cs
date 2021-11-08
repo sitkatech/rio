@@ -31,6 +31,18 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking().Where(x => x.WaterYear.Year == year);
         }
 
+        public static IEnumerable<ParcelDto> ListByAccountID(RioDbContext dbContext, int accountID)
+        {
+            var parcelDtos = dbContext.AccountParcelWaterYears
+                .Include(x => x.Parcel)
+                .Include(x => x.Account)
+                .Where(x => x.Account.AccountID == accountID)
+                .Select(x => x.Parcel.AsDto()).AsEnumerable();
+
+            return parcelDtos;
+
+        }
+
         public static IEnumerable<ParcelDto> ListByAccountIDAndYear(RioDbContext dbContext, int accountID, int year)
         {
             var parcelDtos = dbContext.AccountParcelWaterYears

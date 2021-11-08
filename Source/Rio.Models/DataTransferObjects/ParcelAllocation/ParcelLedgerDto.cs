@@ -5,6 +5,7 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
     public class ParcelLedgerDto
     {
         public int ParcelID { get; set; }
+        public string? ParcelNumber { get; set; }
         public DateTime TransactionDate { get; set; }
         public DateTime EffectiveDate { get; set; }
         public TransactionTypeDto TransactionType { get; set; }

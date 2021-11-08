@@ -25,7 +25,7 @@ begin
 			sum(case when pl.WaterTypeID = 2 then pl.TransactionAmount else 0 end) as Reconciliation,
 			sum(case when pl.WaterTypeID = 3 then pl.TransactionAmount else 0 end) as NativeYield,
 			sum(case when pl.WaterTypeID = 4 then pl.TransactionAmount else 0 end) as StoredWater,
-			abs(sum(case when pl.TransactionTypeID in (17,18) then pl.TransactionAmount else 0 end)) as UsageToDate
+			abs(sum(case when pl.TransactionTypeID in (17, 18, 19) then pl.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.ParcelLedger pl 
 		where year(pl.TransactionDate) = @year
 		group by pl.ParcelID

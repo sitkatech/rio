@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
-using Rio.API.Util;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
@@ -95,120 +94,11 @@ namespace Rio.API.Controllers
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
-        [HttpGet("parcels/{parcelID}/getAllocations")]
-        [ParcelViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> GetAllocations([FromRoute] int parcelID)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelID);
-            return Ok(parcelLedgerDtos);
-        }
-
         [HttpGet("parcels/{parcelID}/getLedgerEntries")]
         public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
             var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
             return Ok(parcelLedgerDtos);
-        }
-
-        [HttpGet("parcels/{parcelID}/getWaterUsage")]
-        [ParcelViewFeature]
-        public ActionResult<ParcelMonthlyEvapotranspirationDto> GetMeasuredUsage([FromRoute] int parcelID)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelMonthlyEvapotranspirationDtos = ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, new List<int> { parcelID });
-            return Ok(parcelMonthlyEvapotranspirationDtos);
-        }
-        
-        [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
-        [ParcelManageFeature]
-        public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
-            [FromBody] List<ParcelLedgerDto> parcelLedgerDtos)
-        {
-            var parcel = _dbContext.Parcels.SingleOrDefault(x => x.ParcelID == parcelID);
-
-            if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var waterTypeDict = WaterType.GetWaterTypes(_dbContext).ToDictionary(x => x.WaterTypeID, x => x.WaterTypeName);
-            var updatedParcelLedgers = parcelLedgerDtos.Select(x => new ParcelLedger()
-            {
-                ParcelID = x.ParcelID,
-                TransactionTypeID = x.TransactionType.TransactionTypeID,
-                TransactionDate = DateTime.UtcNow,
-                EffectiveDate = x.TransactionDate,
-                TransactionAmount = x.TransactionAmount,
-                WaterTypeID = x.WaterType.WaterTypeID,
-                ParcelLedgerID = x.ParcelLedgerID,
-                TransactionDescription =
-                    $"Allocation of {waterTypeDict[x.WaterType.WaterTypeID]} for {x.WaterYear} has been deposited into this water account by an administrator"
-            }).ToList();
-
-            // add new PAs before the merge.
-            var newParcelLedgers = updatedParcelLedgers.Where(x => x.ParcelLedgerID == 0);
-            _dbContext.ParcelLedgers.AddRange(newParcelLedgers);
-            _dbContext.SaveChanges();
-
-            var existingParcelLedgers = _dbContext.ParcelLedgers.Where(x => x.TransactionTypeID == ParcelLedger.TransactionTypeAllocation && x.ParcelID == parcelID).ToList();
-            var allInDatabase = _dbContext.ParcelLedgers;
-
-            existingParcelLedgers.Merge(updatedParcelLedgers, allInDatabase,
-                (x, y) => x.TransactionTypeID == y.TransactionTypeID && x.ParcelID == y.ParcelID && x.EffectiveDate == y.EffectiveDate && x.WaterTypeID == y.WaterTypeID,
-                (x, y) => x.TransactionAmount = y.TransactionAmount
-                );
-
-            _dbContext.SaveChanges();
-
-            return Ok();
-
-            // TODO: We might need concept of effective date
-            //var parcel = _dbContext.Parcels.SingleOrDefault(x => x.ParcelID == parcelID);
-
-            //if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
-            //{
-            //    return actionResult;
-            //}
-
-            //var existingParcelLedgers = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelID);
-            //var waterTypeDict = WaterType.GetWaterTypes(_dbContext).ToDictionary(x => x.WaterTypeID, x => x.WaterTypeName);
-            //var newParcelLedgers = new List<ParcelLedger>();
-            //foreach (var parcelLedgerDto in parcelLedgerDtos)
-            //{
-            //    var existingAllocationAmount = existingParcelLedgers
-            //        .Where(x => x.WaterYear == parcelLedgerDto.WaterYear &&
-            //                    x.WaterTypeID == parcelLedgerDto.WaterTypeID).Sum(x => x.TransactionAmount);
-            //    var transactionAmountDelta = parcelLedgerDto.TransactionAmount - existingAllocationAmount;
-            //    if (transactionAmountDelta != 0)
-            //    {
-            //        var parcelLedger = new ParcelLedger()
-            //        {
-            //            ParcelID = parcelLedgerDto.ParcelID,
-            //            TransactionTypeID = parcelLedgerDto.TransactionTypeID,
-            //            TransactionDate = DateTime.UtcNow,
-            //            TransactionAmount = parcelLedgerDto.TransactionAmount,
-            //            WaterTypeID = parcelLedgerDto.WaterTypeID,
-            //            TransactionDescription =
-            //                $"Allocation of {waterTypeDict[parcelLedgerDto.WaterTypeID.Value]} for {parcelLedgerDto.TransactionDate.Year} has been deposited into this water account by an administrator"
-            //        };
-            //        newParcelLedgers.Add(parcelLedger);
-            //    }
-            //}
-
-            //_dbContext.ParcelLedgers.AddRange(newParcelLedgers);
-            //_dbContext.SaveChanges();
-            //return Ok();
         }
 
         [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]

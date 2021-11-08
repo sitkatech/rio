@@ -13,7 +13,7 @@ import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { WaterAllocationOverviewDto, WaterUsageDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
@@ -101,7 +101,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         "Nov",
         "Dec"];
 
-  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
+  public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return this.createSeriesEntry(y, 0); });
   public waterTypes: WaterTypeDto[];
 
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
@@ -204,33 +204,28 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.parcelNumbers = Array.from(new Set(parcels.map(x => x.ParcelNumber)));
     });
 
-    forkJoin(
-      this.accountService.getParcelLedgersByAccountIDAndYear(this.activeAccount.AccountID, this.waterYearToDisplay.Year),
-      this.accountService.getWaterUsageByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year),
-      this.accountService.getWaterUsageOverviewByAccountID(this.activeAccount.AccountID, this.waterYearToDisplay.Year)
-    ).subscribe(([parcelLedgers, waterUsagesInChartForm, waterUsageOverview]) => {
-      this.parcelLedgers = parcelLedgers;
-      this.waterUsages = {
-          Year: waterUsagesInChartForm.Year,
-          AnnualUsage:
-          waterUsagesInChartForm.WaterUsage.map(wu => {
-              return {
-                monthlyValue: wu.series.reduce((a, b) => {
-                  return (a + b.value);
-                }, 0)
-              };
-            }).reduce((a, b) => {
-              return (a + b.monthlyValue);
-            }, 0)
-          };
+    if (!this.parcelLedgers) {
+      this.accountService.getParcelLedgersByAccountID(this.activeAccount.AccountID).subscribe(parcelLedgers => {
+        this.parcelLedgers = parcelLedgers;
+        // call needs to wait until this.parcelLedgers is populated to avoid race condition
+        this.updateParcelLedgersAndChartDataForWaterYear();
+      });
+    } else {
+      this.updateParcelLedgersAndChartDataForWaterYear();
+    }    
+  }
 
-      // user will have neither allocation nor usage to chart if they have no parcels in this year.
-      if (this.parcels && this.parcels.length > 0) {
-        this.initializeCharts(waterUsagesInChartForm, waterUsageOverview);
-      }
+  private updateParcelLedgersAndChartDataForWaterYear():void {
+    this.waterUsages = {
+        Year: this.waterYearToDisplay.Year,
+        AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
+        };
+    // user will have neither allocation nor usage to chart if they have no parcels in this year.
+    if (this.parcels && this.parcels.length > 0) {
+      this.initializeCharts();
+    }
 
-      this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
-    })
+    this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
   }
 
   ngOnDestroy() {
@@ -338,6 +333,31 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return 0;
   }
 
+  public getResultInUnitsShown(result: number): number {
+    if (this.unitsShown === "ac-ft / ac") {
+      return result / this.getTotalAPNAcreage();
+    }
+    else {
+      return result;
+    }
+  }
+
+  public getLastETReadingDate(): string {
+    return "12/31/" + this.waterYearToDisplay?.Year; //TODO: need to use the date from the latest monthly ET data
+  }
+
+  private getParcelLedgersForWaterYear(year?: number) {
+    if (!this.parcelLedgers) {
+      return new Array<ParcelLedgerDto>();
+    }
+
+    if (!year) {
+      year = this.waterYearToDisplay?.Year
+    }
+
+    return this.parcelLedgers.filter(x => x.WaterYear == year);
+  }
+
   public getAnnualAllocation(year: number, skipConvertToUnitsShown?: boolean): number {
     let parcelLedgers = this.getAllocationsForWaterYear(year);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown);
@@ -348,28 +368,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers);
   }
 
-  public getResultInUnitsShown(result: number): number {
-    if (this.unitsShown === "ac-ft / ac") {
-      return result / this.getTotalAPNAcreage();
-    }
-    else {
-      return result;
-    }
-  }
-
-  public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
-    if (!this.parcelLedgers) {
-      return new Array<ParcelLedgerDto>();
-    }
-
-    return this.parcelLedgers.filter(p => p.WaterYear === year && p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
-  }
-
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {
-    if (!this.parcelLedgers) {
-      return null;
-    }
-    
     var parcelLedgersForYear = this.getAllocationsForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
       var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.ParcelID == parcelID)
@@ -380,15 +379,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "-";
   }
 
-  public getLastETReadingDate(): string {
-    return "12/31/" + this.waterYearToDisplay?.Year; //TODO: need to use the date from the latest monthly ET data
-  }
-
-  private getParcelLedgersForWaterYear(year?: number) {
-    if (!year) {
-      year = this.waterYearToDisplay?.Year
-    }
-    return this.parcelLedgers.filter(x => x.WaterYear == year);
+  public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
+    return this.getParcelLedgersForWaterYear(year).filter(p => p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
   }
 
   public getTradeSalesForWaterYear(year?: number) {
@@ -449,14 +441,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  initializeCharts(waterUsage: WaterUsageDto, waterUsageOverview: WaterAllocationOverviewDto) {
+  initializeCharts() {
+    if (!this.waterUsageOverview) {
+      this.waterUsageOverview = this.createParcelUsageOverviewChartData();
+    }
+   
     this.waterUsageChartData = {
-      Year: waterUsage.Year,
-      ChartData: waterUsage.WaterUsage      
+      Year: this.waterYearToDisplay.Year,
+      ChartData: this.createParcelMonthlyUsageChartData(this.waterYearToDisplay.Year)
     };
 
     let values = [];
-    for (const series of waterUsageOverview.Current) {
+    for (const series of this.waterUsageOverview.Current) {
       for (const entry of series.CumulativeWaterUsage) {
         values.push(entry.value);
       }
@@ -475,15 +471,119 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         Year: x.Year,
         ChartData: {
           name: allocationLabel,
-          series: this.months.map(y => { return { name: y, value: allocation + purchased - sold } })
+          series: this.months.map(y => { return this.createSeriesEntry(y, allocation + purchased - sold) })
         }
       }
     });
 
     this.allocationChartRange = [0, 1.2 * Math.max(...values)];
-    this.waterUsageOverview = waterUsageOverview;
-    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+    this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
+    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+  }
+  
+  private createSeriesEntry(name: string, value: number, isEmpty?: boolean): SeriesEntry {
+    const seriesEntry = new SeriesEntry(name, value, isEmpty);
+    return seriesEntry;
+  }
+
+  private createParcelMonthlyUsageChartData(year: number): MultiSeriesEntry[] {
+    const parcelLedgers = this.getParcelLedgerUsageForYear(year);
+    
+    // create sparsly populated matrix of usages by parcel and month
+    let usageByParcelAndMonth = {};
+
+    for (let parcel of this.parcels) {
+      usageByParcelAndMonth[parcel.ParcelNumber] = {};
+      for (let i = 1; i < 13; i++) {
+        usageByParcelAndMonth[parcel.ParcelNumber][i] = null;
+      }
+    }
+    
+    for (let parcelLedger of parcelLedgers) {
+      if (!usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth]) {
+        usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] = 0;
+      }
+
+      usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] += parcelLedger.TransactionAmount;
+    }
+
+    return this.months.map((month, monthIndex) => {
+        return {
+          name: month,
+          series: this.parcels.map(parcel => {
+            const isEmpty = (usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1] === null);
+            const seriesValue = isEmpty ? 0 : Math.abs(usageByParcelAndMonth[parcel.ParcelNumber][monthIndex + 1]);
+
+            return this.createSeriesEntry(parcel.ParcelNumber, seriesValue, isEmpty);
+          })
+        };
+      });
+  }
+
+  private createParcelUsageOverviewChartData(): WaterAllocationOverviewDto {
+    let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsage || 
+      x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsageCorrection || x.TransactionType.TransactionTypeID == TransactionTypeEnum.ManualAdjustment);
+    
+    // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
+    let usageByYearAndMonth: Object = {};
+    let historicUsageSums = {};
+
+    for (let waterYear of this.waterYears) {
+      let cumulativeMonthlyUsage = 0;
+      usageByYearAndMonth[waterYear.Year] = {};
+
+      for (let i = 1; i < 13; i++) {
+        let parcelLedgersForMonth = usageParcelLedgers.filter(x => x.WaterYear === waterYear.Year && x.WaterMonth === i);
+        let isEmpty = (parcelLedgersForMonth.length == 0);
+
+        if (!isEmpty) {
+          cumulativeMonthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
+            return a + b.TransactionAmount;
+          }, cumulativeMonthlyUsage);
+          
+          if (!historicUsageSums[i]) {
+            historicUsageSums[i] = { usageSum: cumulativeMonthlyUsage, monthsWithDataCount: 1}
+          } else {
+            historicUsageSums[i]['usageSum'] += cumulativeMonthlyUsage;
+            historicUsageSums[i]['monthsWithDataCount']++;
+          }
+        }
+        usageByYearAndMonth[waterYear.Year][i] = isEmpty ? null : cumulativeMonthlyUsage;
+      }
+    }
+
+    return {
+      Current: this.waterYears.map(y => 
+        {
+          return {
+            Year: y.Year, 
+            CumulativeWaterUsage: this.months.map((month, i) => 
+            {
+              let monthlyUsageValue = usageByYearAndMonth[y.Year][i + 1];
+              let isEmpty = (monthlyUsageValue == null);
+
+              return this.createSeriesEntry(month, isEmpty ? 0 : Math.abs(monthlyUsageValue), isEmpty);
+            })
+          }
+        }),
+      Historic: this.months.map((month, i) => 
+      {
+        const seriesValue = Math.abs(historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']);
+        return this.createSeriesEntry(month, seriesValue);
+      })
+    }
+  }
+
+  private createWaterUsagesForYear(year: number): number {
+    return this.getParcelLedgerUsageForYear(year).reduce((a, b) => {
+      return (a + Math.abs(b.TransactionAmount));
+    }, 0);
+  }
+
+  private getParcelLedgerUsageForYear(year: number): ParcelLedgerDto[]
+  {
+    const usageTransactionTypeIDs = [TransactionTypeEnum.MeasuredUsage, TransactionTypeEnum.MeasuredUsageCorrection, TransactionTypeEnum.ManualAdjustment];
+    return this.getParcelLedgersForWaterYear(year).filter(x => usageTransactionTypeIDs.includes(x.TransactionType.TransactionTypeID));
   }
 
   public getWaterUsageForWaterYear(): MultiSeriesEntry[] {

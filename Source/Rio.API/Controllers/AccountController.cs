@@ -150,23 +150,6 @@ namespace Rio.API.Controllers
             return Ok(updatedAccount);
         }
 
-
-        [HttpGet("accounts/{accountID}/getParcelsAllocations/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> ListParcelsAllocationByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtosEnumerable = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
-            if (parcelDtosEnumerable == null)
-            {
-                return NotFound();
-            }
-
-            var parcelDtos = parcelDtosEnumerable.ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelIDs(_dbContext, parcelIDs);
-            return Ok(parcelLedgerDtos);
-        }
-
         [HttpGet("accounts/{accountID}/parcels/{year}")]
         [UserViewFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int accountID, [FromRoute] int year)
@@ -193,79 +176,17 @@ namespace Rio.API.Controllers
             return Ok(postingDtos);
         }
 
-        [HttpGet("accounts/{accountID}/parcel-ledgers/{year}")]
+        [HttpGet("accounts/{accountID}/parcel-ledgers")]
         [UserViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
+        public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountID([FromRoute] int accountID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListByAccountIDAndYear(_dbContext, accountID, year);
+            var parcelLedgerDtos = ParcelLedger.ListByAccountID(_dbContext, accountID);
             if (parcelLedgerDtos == null)
             {
                 return NotFound();
             }
 
             return Ok(parcelLedgerDtos);
-        }
-
-        [HttpGet("accounts/{accountID}/parcel-water-usage/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelMonthlyEvapotranspirationDto>> ListWaterUsagesByParcelAndAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).OrderBy(x => x.ParcelID).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelMonthlyEvapotranspirationDtos =
-                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
-            return Ok(parcelMonthlyEvapotranspirationDtos);
-        }
-
-        [HttpPut("accounts/{accountID}/{year}/saveParcelMeasuredUsageCorrections")]
-        [UserManageFeature]
-        public ActionResult<int> SaveParcelMeasuredUsageCorrections( [FromRoute] int accountID, [FromRoute] int year,
-            [FromBody] List<ParcelMonthlyEvapotranspirationDto> overriddenValues)
-        {
-            var numChanging = ParcelLedger.SaveParcelMonthlyUsageOverrides(_dbContext, accountID, year, overriddenValues);
-            return Ok(numChanging);
-        }
-
-        [HttpGet("accounts/{accountID}/water-usage/{year}")]
-        [UserViewFeature]
-        public ActionResult<WaterUsageByParcelDto> GetWaterUsageByAccountIDAndYear([FromRoute] int accountID,
-            [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year).ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
-            var parcelMonthlyEvapotranspirationDtos =
-                ParcelLedger.ListMonthlyEvapotranspirationsByParcelIDAndYear(_dbContext, parcelIDs, parcelDtos, year);
-            var monthlyWaterUsageDtos = parcelMonthlyEvapotranspirationDtos
-                .GroupBy(x => x.WaterMonth)
-                .OrderBy(x => x.Key)
-                .Select(x =>
-                    new MonthlyWaterUsageDto()
-                    {
-                        Month = ((DateUtilities.Month) x.Key).ShortMonthName(),
-                        WaterUsageByParcel = x.OrderBy(y => y.ParcelNumber).Select(y => new ParcelWaterUsageDto
-                        {
-                            ParcelNumber = y.ParcelNumber,
-                            WaterUsageInAcreFeet = y.OverriddenEvapotranspirationRate ?? y.EvapotranspirationRate ?? 0,
-                            IsOverridden = y.OverriddenEvapotranspirationRate != null,
-                            IsEmpty = y.IsEmpty
-                        }).ToList()
-                    })
-                .ToList();
-            var waterUsageDto = new WaterUsageByParcelDto {Year = year, WaterUsage = monthlyWaterUsageDtos.ToList()};
-            return Ok(waterUsageDto);
-        }
-
-        [HttpGet("accounts/{accountID}/water-usage-overview/{year}")]
-        [UserViewFeature]
-        public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverviewByAccountID([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
-            var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);
-            
-            return Ok(waterUsageOverviewDto);
         }
 
         [HttpGet("accounts/{accountID}/account-reconciliation-parcels")]
@@ -290,17 +211,20 @@ namespace Rio.API.Controllers
 
         private WaterUsageOverviewDto GetWaterUsageOverviewDtoForParcelIDs(List<int> parcelIDs)
         {
-            var parcelMonthlyEvapotranspirationDtos =
-                ParcelLedger.ListMonthlyEvapotranspirationsByParcelID(_dbContext, parcelIDs).ToList();
+            var parcelLedgerDtos = ParcelLedger.GetUsagesByParcelIDs(_dbContext, parcelIDs).Select(x => x.AsDto()).ToList();
 
-            var cumulativeWaterUsageByYearDtos = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterYear).Select(x =>
+            var cumulativeWaterUsageByYearDtos = parcelLedgerDtos.GroupBy(x => x.WaterYear)
+                .Select(x =>
                 new CumulativeWaterUsageByYearDto
-                    {Year = x.Key, CumulativeWaterUsage = GetCurrentWaterUsageOverview(x)}).ToList();
+                {
+                    Year = x.Key, 
+                    CumulativeWaterUsage = GetCurrentWaterUsageOverview(x)
+                }).ToList();
 
             var historicWaterUsageOverview =
                 GetHistoricWaterUsageOverview(cumulativeWaterUsageByYearDtos.SelectMany(x => x.CumulativeWaterUsage).ToList());
 
-            // the chart needs value to be non null, so we need to set the cumulativewaterusage values to be 0 for the null ones; we need them to be null originally when calculating historic since we don't want them to count
+            // chart data can't have null values, so null cumulativewaterusage values are set to 0 after calculating historic usage (which relies on null values to know which months to exclude from calculation)
             foreach (var cumulativeWaterUsageByMonthDto in cumulativeWaterUsageByYearDtos
                 .SelectMany(x => x.CumulativeWaterUsage).Where(y => y.CumulativeWaterUsageInAcreFeet == null))
             {
@@ -308,33 +232,41 @@ namespace Rio.API.Controllers
             }
 
             var waterUsageOverviewDto = new WaterUsageOverviewDto
-                {Current = cumulativeWaterUsageByYearDtos, Historic = historicWaterUsageOverview};
+            {
+                Current = cumulativeWaterUsageByYearDtos, 
+                Historic = historicWaterUsageOverview
+            };
             return waterUsageOverviewDto;
         }
 
         private static List<CumulativeWaterUsageByMonthDto> GetHistoricWaterUsageOverview(List<CumulativeWaterUsageByMonthDto> waterUsageOverviewDtos)
         {
-            var monthlyWaterUsageOverviewDtos = waterUsageOverviewDtos.GroupBy(x => x.Month).Select(x => new CumulativeWaterUsageByMonthDto
-                { Month = x.Key, CumulativeWaterUsageInAcreFeet = Math.Round(x.Where(y => y.CumulativeWaterUsageInAcreFeet.HasValue).Average(y => y.CumulativeWaterUsageInAcreFeet.Value), 1) });
+            var monthlyWaterUsageOverviewDtos = waterUsageOverviewDtos.GroupBy(x => x.Month)
+                .Select(x => new CumulativeWaterUsageByMonthDto
+                {
+                    Month = x.Key, 
+                    CumulativeWaterUsageInAcreFeet = Math.Round(x.Where(y => y.CumulativeWaterUsageInAcreFeet.HasValue)
+                        .Average(y => y.CumulativeWaterUsageInAcreFeet.Value), 1)
+                });
 
             return monthlyWaterUsageOverviewDtos.ToList();
         }
 
-        private static List<CumulativeWaterUsageByMonthDto> GetCurrentWaterUsageOverview(IGrouping<int, ParcelMonthlyEvapotranspirationDto> parcelMonthlyEvapotranspirationDtos)
+        private static List<CumulativeWaterUsageByMonthDto> GetCurrentWaterUsageOverview(IGrouping<int, ParcelLedgerDto> parcelLedgerDtos)
         {
-            var parcelMonthlyEvapotranspirationGroupedByMonth = parcelMonthlyEvapotranspirationDtos.GroupBy(x => x.WaterMonth).ToList();
+            var parcelLedgersGroupedByMonth = parcelLedgerDtos.GroupBy(x => x.WaterMonth).ToList();
             var monthlyWaterUsageOverviewDtos = new List<CumulativeWaterUsageByMonthDto>();
 
             decimal cumulativeTotal = 0;
 
             for (var i = 1; i < 13; i++)
             {
-                var grouping = parcelMonthlyEvapotranspirationGroupedByMonth.SingleOrDefault(x => x.Key == i);
-                cumulativeTotal += grouping?.Sum(x => (x.OverriddenEvapotranspirationRate ?? 0) + x.EvapotranspirationRate) ?? 0;
+                var grouping = parcelLedgersGroupedByMonth.SingleOrDefault(x => x.Key == i);
+                cumulativeTotal += grouping?.Sum(x => x.TransactionAmount) ?? 0;
                 var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
                 {
                     Month = ((DateUtilities.Month)i).ShortMonthName(),
-                    CumulativeWaterUsageInAcreFeet = grouping == null ? (decimal?)null : Math.Round(cumulativeTotal,1)
+                    CumulativeWaterUsageInAcreFeet = grouping == null ? null : Math.Abs(cumulativeTotal)
                 };
 
                 monthlyWaterUsageOverviewDtos.Add(monthlyWaterUsageOverviewDto);

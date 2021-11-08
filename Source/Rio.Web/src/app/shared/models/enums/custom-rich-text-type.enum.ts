@@ -20,5 +20,6 @@ export enum CustomRichTextType {
   OpenETIntegration = 19,
   ParcelUpdateLayer = 20,
   InactiveParcelList = 21,
-  AccountReconciliationReport = 22
+  AccountReconciliationReport = 22,
+  ParcelLedgerCreate = 23
 }

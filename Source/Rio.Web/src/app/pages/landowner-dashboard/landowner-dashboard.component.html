@@ -380,9 +380,6 @@
               <a routerLink="/measuring-water-use-with-openet" target="_blank"
                 style="cursor:pointer; vertical-align: middle;" placement="top"
                 ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
-              <a class="btn btn-rio btn-sm mr-3 float-right"
-                routerLink="/parcel-override-et-data/{{activeAccount.AccountID}}/{{waterYearToDisplay?.Year}}"
-                *ngIf="false">Override OpenET Data</a>
             </div>
             <div class="card-body">
               <table class="table table-responsive">
@@ -397,10 +394,8 @@
                     </td>
                     <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
                       <ng-container *ngFor="let seriesData of monthData.series">
-                        <td class="text-right" [ngClass]="seriesData.IsOverridden ? 'font-italic' : ''"
-                          *ngIf="seriesData.name === parcel.ParcelNumber"><span
-                            *ngIf="seriesData.IsOverridden === true">*</span>
-                          {{seriesData.IsEmpty === true && seriesData.IsOverridden === false ? "-" : (seriesData.value |
+                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">
+                          {{seriesData.isEmpty === true ? "-" : (seriesData.value |
                           number:"1.1-1")}}
                         </td>
                       </ng-container>
@@ -419,8 +414,6 @@
                 </tfoot>
               </table>
               <p class="small">
-                <em>* Indicates OpenET usage data has been overridden</em>
-                <br>
                 Measurements are in acre-feet
                 <br>
                 Estimated water usage is based on satellite imagery and may not be accurate at the APN level.

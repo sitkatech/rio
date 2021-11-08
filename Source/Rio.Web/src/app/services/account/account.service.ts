@@ -8,7 +8,6 @@ import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { HttpClient } from '@angular/common/http';
 import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -53,24 +52,9 @@ export class AccountService {
     return this.apiService.putToApi(route, model);
   }
 
-  getParcelLedgersByAccountIDAndYear(accountID: number, year: number): Observable<Array<ParcelLedgerDto>> {
-    let route = `/accounts/${accountID}/parcel-ledgers/${year}`;
+  getParcelLedgersByAccountID(accountID: number): Observable<Array<ParcelLedgerDto>> {
+    let route = `/accounts/${accountID}/parcel-ledgers`;
     return this.apiService.getFromApi(route);
-  }
-
-  getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto> {
-      let route = `/accounts/${accountID}/water-usage/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-  
-  getParcelWaterUsageByAccountID(accountID: number, year: number): Observable<ParcelMonthlyEvapotranspirationDto[]> {
-      let route = `/accounts/${accountID}/parcel-water-usage/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-  
-  getWaterUsageOverviewByAccountID(accountID: number, year: number): Observable<WaterAllocationOverviewDto> {
-      let route = `/accounts/${accountID}/water-usage-overview/${year}`;
-      return this.apiService.getFromApi(route);
   }
 
   getWaterUsageOverview(year: number): Observable<WaterAllocationOverviewDto> {
@@ -78,10 +62,6 @@ export class AccountService {
       return this.apiService.getFromApi(route);
   }
 
-  saveParcelMeasuredUsageCorrections(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
-      let route = `/accounts/${accountID}/${year}/saveParcelMeasuredUsageCorrections`;
-      return this.apiService.putToApi(route, model);
-  }
 
   getParcelsInAccountReconciliationByAccountID(accountID:number): Observable<Array<ParcelSimpleDto>> {
     let route = `/accounts/${accountID}/account-reconciliation-parcels`;
