@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { MultiLinkRendererComponent } from './multi-link-renderer.component';
+import { ParcelEditAllocationComponent } from './parcel-edit-allocation.component';
 
-describe('MultiLinkRendererComponent', () => {
-  let component: MultiLinkRendererComponent;
-  let fixture: ComponentFixture<MultiLinkRendererComponent>;
+describe('ParcelEditAllocationComponent', () => {
+  let component: ParcelEditAllocationComponent;
+  let fixture: ComponentFixture<ParcelEditAllocationComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MultiLinkRendererComponent ]
+      declarations: [ ParcelEditAllocationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MultiLinkRendererComponent);
+    fixture = TestBed.createComponent(ParcelEditAllocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

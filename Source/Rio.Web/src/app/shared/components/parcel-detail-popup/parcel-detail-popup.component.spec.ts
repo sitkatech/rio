@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ParcelDetailPopupComponent } from './parcel-detail-popup.component';
 
@@ -6,7 +6,7 @@ describe('ParcelDetailPopupComponent', () => {
   let component: ParcelDetailPopupComponent;
   let fixture: ComponentFixture<ParcelDetailPopupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ParcelDetailPopupComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ParcelPickerComponent } from './parcel-picker.component';
 
@@ -6,7 +6,7 @@ describe('ParcelPickerComponent', () => {
   let component: ParcelPickerComponent;
   let fixture: ComponentFixture<ParcelPickerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ParcelPickerComponent ]
     })

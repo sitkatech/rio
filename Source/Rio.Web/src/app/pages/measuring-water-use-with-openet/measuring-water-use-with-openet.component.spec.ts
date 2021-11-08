@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WaterUseMeasurementComponent } from './measuring-water-use-with-openet.component';
 
@@ -6,7 +6,7 @@ describe('WaterUseMeasurementComponent', () => {
   let component: WaterUseMeasurementComponent;
   let fixture: ComponentFixture<WaterUseMeasurementComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WaterUseMeasurementComponent ]
     })
