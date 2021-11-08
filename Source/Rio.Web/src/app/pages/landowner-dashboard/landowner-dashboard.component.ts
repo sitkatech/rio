@@ -115,7 +115,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
-    private waterYearSerivce: WaterYearService
+    private waterYearService: WaterYearService
   ) {
   }
 
@@ -181,8 +181,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     forkJoin(
       this.postingService.getPostingsByAccountID(account.AccountID),
       this.tradeService.getTradeActivityByAccountID(account.AccountID),
-      this.waterYearSerivce.getWaterYears(),
-      this.waterYearSerivce.getDefaultWaterYearToDisplay(),
+      this.waterYearService.getWaterYears(),
+      this.waterYearService.getDefaultWaterYearToDisplay(),
       this.accountService.getParcelsInAccountReconciliationByAccountID(account.AccountID)
     ).subscribe(([postings, trades, waterYears, defaultWaterYear, parcelsToBeReconciled]) => {
       this.waterYears = waterYears;
