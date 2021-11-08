@@ -37,6 +37,11 @@ REFERENCES [dbo].[TransactionType] ([TransactionTypeID])
 GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_TransactionType_TransactionTypeID]
 GO
+ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_User_UserID] FOREIGN KEY([UserID])
+REFERENCES [dbo].[User] ([UserID])
+GO
+ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_User_UserID]
+GO
 ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_WaterType_WaterTypeID] FOREIGN KEY([WaterTypeID])
 REFERENCES [dbo].[WaterType] ([WaterTypeID])
 GO

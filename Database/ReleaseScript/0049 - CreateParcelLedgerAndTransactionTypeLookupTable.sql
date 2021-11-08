@@ -15,7 +15,7 @@ CREATE TABLE dbo.ParcelLedger
 	TransactionAmount decimal(10,4) not null,
 	WaterTypeID int null constraint FK_ParcelLedger_WaterType_WaterTypeID foreign key references dbo.ParcelAllocationType(ParcelAllocationTypeID),
 	TransactionDescription varchar (200) not null,
-	UserID int null,
+	UserID int null constraint FK_ParcelLedger_User_UserID foreign key references dbo.[User](UserID),
 	UserComment varchar (max) null,
 	constraint AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID_WaterTypeID unique(ParcelID, TransactionDate, TransactionTypeID, WaterTypeID)
 )
