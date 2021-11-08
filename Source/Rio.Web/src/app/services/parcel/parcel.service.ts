@@ -75,11 +75,6 @@ export class ParcelService {
     return result;
   }
 
-  getParcelAllocations(parcelID: number): Observable<Array<ParcelLedgerDto>> {
-    let route = `/parcels/${parcelID}/getAllocations`;
-    return this.apiService.getFromApi(route);
-  }
-
   getParcelsWithLandOwners(year: number): Observable<Array<ParcelDto>> {
     let route = `/parcels/getParcelsWithLandOwners/${year}`;
     return this.apiService.getFromApi(route);

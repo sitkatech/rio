@@ -94,20 +94,6 @@ namespace Rio.API.Controllers
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
-        [HttpGet("parcels/{parcelID}/getAllocations")]
-        [ParcelViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> GetAllocations([FromRoute] int parcelID)
-        {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelID(_dbContext, parcelID);
-            return Ok(parcelLedgerDtos);
-        }
-
         [HttpGet("parcels/{parcelID}/getLedgerEntries")]
         public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {

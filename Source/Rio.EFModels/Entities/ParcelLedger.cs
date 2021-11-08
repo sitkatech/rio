@@ -8,29 +8,6 @@ namespace Rio.EFModels.Entities
 {
     public partial class ParcelLedger
     {
-        private const int TransactionTypeIDMeasuredUsageCorrection = 18;
-        private const int TransactionTypeIDMeasuredUsage = 17;
-        public const int TransactionTypeAllocation = 11;
-
-        public static List<ParcelLedgerDto> ListAllocationsByParcelID(RioDbContext dbContext, int parcelID)
-        {
-            var parcelLedgers = GetAllocationsImpl(dbContext)
-                .Where(x => x.ParcelID == parcelID);
-
-            return parcelLedgers.Any()
-                ? parcelLedgers.Select(x => x.AsDto()).ToList()
-                : new List<ParcelLedgerDto>();
-        }
-
-        public static List<ParcelLedgerDto> ListAllocationsByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
-        {
-            var parcelLedgers = GetAllocationsImpl(dbContext)
-                .Where(x => parcelIDs.Contains(x.ParcelID));
-
-            return parcelLedgers.Any()
-                ? parcelLedgers.Select(x => x.AsDto()).ToList()
-                : new List<ParcelLedgerDto>();
-        }
 
         private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
         {
@@ -43,7 +20,7 @@ namespace Rio.EFModels.Entities
         private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
         {
             return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == TransactionTypeAllocation);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Allocation);
         }
 
 

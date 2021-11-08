@@ -150,23 +150,6 @@ namespace Rio.API.Controllers
             return Ok(updatedAccount);
         }
 
-
-        [HttpGet("accounts/{accountID}/getParcelsAllocations/{year}")]
-        [UserViewFeature]
-        public ActionResult<List<ParcelLedgerDto>> ListParcelsAllocationByAccountIDAndYear([FromRoute] int accountID, [FromRoute] int year)
-        {
-            var parcelDtosEnumerable = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
-            if (parcelDtosEnumerable == null)
-            {
-                return NotFound();
-            }
-
-            var parcelDtos = parcelDtosEnumerable.ToList();
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-            var parcelLedgerDtos = ParcelLedger.ListAllocationsByParcelIDs(_dbContext, parcelIDs);
-            return Ok(parcelLedgerDtos);
-        }
-
         [HttpGet("accounts/{accountID}/parcels/{year}")]
         [UserViewFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int accountID, [FromRoute] int year)
