@@ -52,6 +52,7 @@
     "ngx-select-dropdown": "^2.1.0",
     "popper.js": "^1.16.1-lts",
     "rxjs": "^6.5.5",
+    "set-value": ">=4.0.1",
     "style-loader": "^1.2.1",
     "tslib": "^2.3.1",
     "zone.js": "~0.11.4"
