@@ -30,3 +30,14 @@ li.list-group-item.header.selected {
     background-color:  $button-border-and-background;
     color: #EEE;
 }
+
+#account-overview .label {
+    display: block;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+#account-overview .card-body {
+    max-height: 60vh;
+    overflow: auto;
+}

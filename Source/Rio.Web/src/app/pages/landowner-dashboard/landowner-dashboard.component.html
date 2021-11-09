@@ -19,7 +19,7 @@
 </ngb-alert>
 </div>
 <ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
-  <div class="container mb-4" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
+  <div class="container mb-3" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
     <div class="row">
       <div class="col col-auto mr-auto mt-2 mb-3">
         <h2>
@@ -52,21 +52,23 @@
       </div>
     </div>
   </div>
+  <div class="container d-flex mb-3">
+    <div class="btn-group btn-group-toggle m-auto">
+      <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
+        style="width:65px;">
+        <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
+      </label>
+      <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
+        <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
+      </label>
+    </div>
+  </div>
   <div class="container" *ngIf="activeAccount">
     <div class="row"
       *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
       <div class="col-sm-12 col-lg-5">
         <div class="card">
           <div class="card-header">
-            <div class="btn-group btn-group-toggle float-right">
-              <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
-                style="width:65px;">
-                <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
-              </label>
-              <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
-                <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
-              </label>
-            </div>
             <span class="align-middle"> Water Budget Overview </span>
           </div>
           <div class="card-body">
@@ -322,6 +324,57 @@
                   [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                   [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
                 </rio-landowner-water-allocation-chart>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 mt-4 mb-4">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="card" id="account-overview">
+              <div class="card-header">
+                <span>Account Overview</span>
+                <span class="float-right font-weight-normal">Viewing All Activity</span>
+              </div>
+              <div class="card-body">
+                <div class="row mb-5" *ngFor="let parcelLedger of getParcelLedgersForWaterYear().slice(0, 10)">
+                  <div class="col-md-2 mb-4 text-md-center text-sm-left">
+                    {{parcelLedger.EffectiveDate | date: 'shortDate'}}
+                  </div>
+                  <div class="col-md-10">
+                    <div class="row">
+                      <div class="col-lg-3 mb-4">
+                        <span class="label">Transaction Type</span>
+                        {{parcelLedger.TransactionType.TransactionTypeName}}
+                      </div>
+                      <div class="col-sm-9">
+                        <div class="row">
+                          <div class="col-sm-12 mb-4" *ngIf="parcelLedger.TransactionDescription">
+                            <span class="label">Description</span>
+                            {{parcelLedger.TransactionDescription}}
+                          </div>
+                          <div class="col-lg-3 col-md-6 mb-4" *ngIf="parcelLedger.WaterType">
+                            <span class="label">Water Type</span>
+                            {{parcelLedger.WaterType.WaterTypeName}}
+                          </div>
+                          <div class="col-lg-3 col-md-6 mb-4">
+                            <span class="label">Parcel</span>
+                            {{parcelLedger.ParcelNumber}}
+                          </div>
+                          <div class="col-lg-3 col-md-6 mb-4">
+                            <span class="label">Quantity</span>
+                            {{parcelLedger.TransactionAmount | number: '1.1-1'}}
+                          </div>
+                          <div class="col-lg-3 col-md-6 mb-4">
+                            <span class="label">Balance</span>
+                            TBD
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
