@@ -120,7 +120,7 @@ namespace Rio.EFModels.Entities
             return new List<LandownerAllocationBreakdownDto>();
         }
 
-        public static List<ParcelLedgerDto> ListByAccountID(RioDbContext dbContext, int accountID)
+        public static List<ParcelLedgerDto> ListDescByAccountID(RioDbContext dbContext, int accountID)
         {
             var parcelIDs = Entities.Parcel.ListByAccountID(dbContext, accountID)
                 .Select(x => x.ParcelID);
@@ -139,6 +139,7 @@ namespace Rio.EFModels.Entities
                     TransactionAmount = x.TransactionAmount,
                     TransactionDescription = x.TransactionDescription
                 })
+                .OrderByDescending(x => x.EffectiveDate)
                 .ToList();
 
             return parcelLedgerDtos;
