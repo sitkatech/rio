@@ -28,7 +28,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-2 col-sm-12 d-flex" *ngIf="waterYears">
+      <div class="col-lg-2 col-sm-12" *ngIf="waterYears">
         <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
           (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
       </div>
@@ -338,7 +338,7 @@
                 <span class="float-right font-weight-normal">Viewing All Activity</span>
               </div>
               <div class="card-body">
-                <div class="row mb-5" *ngFor="let parcelLedger of getParcelLedgersForWaterYear().slice(0, 10)">
+                <div class="row mb-5" *ngFor="let parcelLedger of getParcelLedgersForWaterYear() | slice: 0:accountOverviewEntryCount">
                   <div class="col-md-2 mb-4 text-md-center text-sm-left">
                     {{parcelLedger.EffectiveDate | date: 'shortDate'}}
                   </div>
@@ -373,6 +373,13 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div class="row d-flex">
+                  <div class="m-auto">
+                    <button class="btn btn-rio" *ngIf="accountOverviewEntryCount < getParcelLedgersForWaterYear().length; else noEntriesToLoad" 
+                      (click)="updateAccountOverviewEntryCount()">Load More</button>
+                    <ng-template #noEntriesToLoad>There are no more entries to show for selected water year.</ng-template>
                   </div>
                 </div>
               </div>

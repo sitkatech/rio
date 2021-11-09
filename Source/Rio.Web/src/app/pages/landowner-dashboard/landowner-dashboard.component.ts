@@ -74,6 +74,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public parcelLedgers: Array<ParcelLedgerDto>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
+  public accountOverviewEntryCount = 5;
 
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
@@ -439,6 +440,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return annualAllocation - estimatedAvailableSupply;
     }
     return null;
+  }
+
+  public updateAccountOverviewEntryCount() {
+    this.accountOverviewEntryCount += 5;
   }
 
   initializeCharts() {
