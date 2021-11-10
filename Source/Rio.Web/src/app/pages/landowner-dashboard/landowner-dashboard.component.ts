@@ -74,7 +74,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public parcelLedgers: Array<ParcelLedgerDto>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
-  public accountOverviewEntryCount = 5;
+  public activityDisplayCount = 5;
 
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
@@ -442,8 +442,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  public updateAccountOverviewEntryCount() {
-    this.accountOverviewEntryCount += 5;
+  public updateActivityDisplayCount() {
+    this.activityDisplayCount += 5;
   }
 
   initializeCharts() {

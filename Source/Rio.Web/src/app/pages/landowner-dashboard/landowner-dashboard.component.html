@@ -162,11 +162,8 @@
                   Viewing All Activity
                 </span>
               </div>
-              <div class="card-header card-header-secondary">
-                <span class="font-weight-normal font-italic">Account activity filters to go here</span>
-              </div>
               <div class="card-body">
-                <div class="row mt-4 mb-5" *ngFor="let parcelLedger of getParcelLedgersForWaterYear() | slice: 0:accountOverviewEntryCount">
+                <div class="row mt-4 mb-5" *ngFor="let parcelLedger of getParcelLedgersForWaterYear() | slice: 0:activityDisplayCount">
                   <div class="col-md-2 mb-4 text-md-center text-sm-left">
                     {{parcelLedger.EffectiveDate | date: 'shortDate'}}
                   </div>
@@ -192,7 +189,7 @@
                           </div>
                           <div class="col-lg-3 col-md-6 mb-4">
                             <span class="label">Quantity</span>
-                            {{parcelLedger.TransactionAmount | number: '1.1-1'}}
+                            {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
                           </div>
                           <div class="col-lg-3 col-md-6 mb-4">
                             <span class="label">Balance</span>
@@ -204,8 +201,8 @@
                   </div>
                 </div>
                 <div class="row d-flex">
-                  <button class="btn btn-secondary m-auto" *ngIf="accountOverviewEntryCount < getParcelLedgersForWaterYear().length; else noEntriesToLoad" 
-                    (click)="updateAccountOverviewEntryCount()">Show More Activity</button>
+                  <button class="btn btn-secondary m-auto" *ngIf="activityDisplayCount < getParcelLedgersForWaterYear().length; else noEntriesToLoad" 
+                    (click)="updateActivityDisplayCount()">Show More Activity</button>
                   <ng-template #noEntriesToLoad>
                     <div class="m-auto font-italic">There is no more activity to show for the selected water year.</div>
                   </ng-template>
