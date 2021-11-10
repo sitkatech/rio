@@ -114,6 +114,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         type: 'numericColumn' 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', filter: false, sortable: false },
+      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false }
     ];
 
     this.defaultColDef = {

@@ -15,5 +15,6 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         public int WaterYear => EffectiveDate.Year;
         public int WaterMonth => EffectiveDate.Month;
         public WaterTypeDto? WaterType { get; set; }
+        public string? UserComment { get; set; }
     }
 }
