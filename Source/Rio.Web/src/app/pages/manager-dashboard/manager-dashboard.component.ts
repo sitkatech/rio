@@ -582,7 +582,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public exportLandOwnerUsageReportToCsv() {
-    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv', null);
+    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay.Year + '.csv', null);
   }
 
   public exportTradeActivityToCsv() {
