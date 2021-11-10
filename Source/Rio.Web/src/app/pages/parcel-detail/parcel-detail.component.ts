@@ -16,6 +16,7 @@ import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -53,6 +54,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
+    private utilityFunctionsService: UtilityFunctionsService,
     private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
@@ -143,6 +145,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         comparator: this.dateFilterComparator
       }
     };
+  }
+
+  public exportParcelLedgerGridToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.parcelLedgerGrid, 'parcelLedgerfor' + this.parcel.ParcelNumber + '.csv', null);
   }
   
   private onGridReady(params) {
