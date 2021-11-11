@@ -19,8 +19,8 @@ from
 	select acc.AccountID, acc.AccountName, acc.AccountNumber, 
 			isnull(am.AcresManaged, 0) as AcresManaged,
 			isnull(pa.Allocation, 0) as Allocation,
-			isnull(wts.Purchased, 0) as Purchased,
-			isnull(wts.Sold, 0) as Sold,
+			isnull(pa.Purchased, 0) as Purchased,
+			isnull(pa.Sold, 0) as Sold,
 			isnull(pa.UsageToDate, 0) as UsageToDate,
 			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
@@ -42,6 +42,8 @@ from
 	(
 		select acc.AccountID,
 				sum(case when pa.TransactionTypeID = 11 then pa.TransactionAmount else 0 end) as Allocation, 
+				sum(case when pa.TransactionTypeID = 20 then pa.TransactionAmount else 0 end) as Purchased,
+				sum(case when pa.TransactionTypeID = 21 then pa.TransactionAmount else 0 end) as Sold,
 				abs(sum(case when pa.TransactionTypeID in (17, 18, 19) then pa.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.Account acc
 		join (
@@ -54,16 +56,6 @@ from
 		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.EffectiveDate) = @year
 		group by acc.AccountID
 	) pa on acc.AccountID = pa.AccountID
-	left join 
-	(
-		select acc.AccountID, 
-				sum(case when wtr.WaterTransferTypeID = 1 then wt.AcreFeetTransferred else 0 end) as Purchased,
-				sum(case when wtr.WaterTransferTypeID = 2 then wt.AcreFeetTransferred else 0 end) as Sold
-		from dbo.Account acc
-		join dbo.WaterTransferRegistration wtr on acc.AccountID = wtr.AccountID and wtr.WaterTransferRegistrationStatusID = 2 -- only want registered transfers
-		join dbo.WaterTransfer wt on wtr.WaterTransferID = wt.WaterTransferID and year(wt.TransferDate) = @year
-		group by acc.AccountID
-	) wts on acc.AccountID = wts.AccountID
 	left join 
 	(
 		select acc.AccountID, count(post.PostingID) as NumberOfPostings

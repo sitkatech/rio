@@ -9,8 +9,8 @@ namespace Rio.Models.DataTransferObjects
         public int AccountNumber { get; set; }
         public double? AcresManaged { get; set; }
         public decimal? Allocation { get; set; }
-        public int? Purchased { get; set; }
-        public int? Sold { get; set; }
+        public decimal? Purchased { get; set; }
+        public decimal? Sold { get; set; }
         public decimal? TotalSupply { get; set; }
         public decimal? UsageToDate { get; set; }
         public decimal? CurrentAvailable { get; set; }
