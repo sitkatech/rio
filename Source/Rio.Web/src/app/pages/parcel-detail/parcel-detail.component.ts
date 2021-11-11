@@ -167,19 +167,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
   }
-
-  public getConsumptionForYearAndMonth(year: number, month: number): string {
-    let parcelLedgersForMonth = this.usageParcelLedgers.filter(x => x.WaterYear == year && x.WaterMonth == month);
-    
-    if (parcelLedgersForMonth.length == 0) {
-      return "-";
-    }
-    let monthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
-        return a + b.TransactionAmount;
-      }, 0);
-
-    return Math.abs(monthlyUsage).toFixed(1);
-  }
   
   public getTotalAllocationForYear(year: number): string {
     var parcelLedgerForYear = this.allocationParcelLedgers.filter(x => x.WaterYear === year);
