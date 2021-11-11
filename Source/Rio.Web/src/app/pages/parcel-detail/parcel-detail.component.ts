@@ -139,7 +139,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       headerName: headerName, valueGetter: function (params: any) {
         return datePipe.transform(params.data[fieldName], dateFormat);
       },
-      comparator: this.dateFilterComparator, sortable: true, sort: 'desc', filter: 'agDateColumnFilter',
+      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
       filterParams: {
         filterOptions: ['inRange'],
         comparator: this.dateFilterComparator
