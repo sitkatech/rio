@@ -9,6 +9,7 @@ import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
 import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
 import { UserPartnerInviteDto } from 'src/app/shared/models/user/user-partner-invite-dto';
+import { LandownerUsageReportDto } from 'src/app/shared/models/landowner-usage-report';
 
 @Injectable({
     providedIn: 'root'
@@ -81,7 +82,7 @@ export class UserService {
         return this.apiService.deleteToApi(route);
     }
 
-    getLandownerUsageReportByYear(year: number): Observable<UserDto[]> {
+    getLandownerUsageReportByYear(year: number): Observable<LandownerUsageReportDto[]> {
         let route = `/landowner-usage-report/${year}`;
         return this.apiService.getFromApi(route);
     }

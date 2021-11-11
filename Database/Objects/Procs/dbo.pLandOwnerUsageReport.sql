@@ -10,7 +10,6 @@ as
 
 begin
 select a.AccountID, a.AccountName, a.AccountNumber, a.AcresManaged, a.Allocation, a.Purchased, a.Sold,
-a.ProjectWater, a.Reconciliation, a.NativeYield, a.StoredWater,
 a.Allocation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
 a.Allocation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
 a.NumberOfPostings, a.NumberOfTrades,
@@ -18,10 +17,6 @@ mrtr.TradeNumber as MostRecentTradeNumber
 from
 (
 	select acc.AccountID, acc.AccountName, acc.AccountNumber, 
-			isnull(pa.ProjectWater, 0) as ProjectWater,
-			isnull(pa.Reconciliation, 0) as Reconciliation,
-			isnull(pa.NativeYield, 0) as NativeYield,
-			isnull(pa.StoredWater, 0) as StoredWater,
 			isnull(am.AcresManaged, 0) as AcresManaged,
 			isnull(pa.Allocation, 0) as Allocation,
 			isnull(wts.Purchased, 0) as Purchased,
@@ -47,10 +42,6 @@ from
 	(
 		select acc.AccountID,
 				sum(case when pa.TransactionTypeID = 11 then pa.TransactionAmount else 0 end) as Allocation, 
-				sum(case when pa.WaterTypeID = 1 then pa.TransactionAmount else 0 end) as ProjectWater,
-				sum(case when pa.WaterTypeID = 2 then pa.TransactionAmount else 0 end) as Reconciliation,
-				sum(case when pa.WaterTypeID = 3 then pa.TransactionAmount else 0 end) as NativeYield,
-				sum(case when pa.WaterTypeID = 4 then pa.TransactionAmount else 0 end) as StoredWater,
 				abs(sum(case when pa.TransactionTypeID in (17, 18, 19) then pa.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.Account acc
 		join (
@@ -60,7 +51,7 @@ from
 			where wy.[year] = @year
 		) up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
-		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.TransactionDate) = @year
+		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.EffectiveDate) = @year
 		group by acc.AccountID
 	) pa on acc.AccountID = pa.AccountID
 	left join 

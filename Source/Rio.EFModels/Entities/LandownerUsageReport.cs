@@ -15,11 +15,6 @@ namespace Rio.EFModels.Entities
         public int AccountID { get; set; }
         public string AccountName { get; set; }
         public int AccountNumber { get; set; }
-
-        public decimal? ProjectWater { get; set; }
-        public decimal? Reconciliation { get; set; }
-        public decimal? NativeYield { get; set; }
-        public decimal? StoredWater { get; set; }
         public double? AcresManaged { get; set; }
         public decimal? Allocation { get; set; }
         public int? Purchased { get; set; }
@@ -41,10 +36,6 @@ namespace Rio.EFModels.Entities
                 AccountID = x.AccountID,
                 AccountName = x.AccountName,
                 AccountNumber = x.AccountNumber,
-                ProjectWater = x.ProjectWater,
-                Reconciliation = x.Reconciliation,
-                NativeYield = x.NativeYield,
-                StoredWater = x.StoredWater,
                 AcresManaged = x.AcresManaged,
                 Allocation = x.Allocation,
                 Purchased = x.Purchased,
