@@ -1,3 +1,4 @@
+import { StringLiteralLike } from "typescript";
 import { TransactionTypeDto } from "../transaction-type-dto";
 import { WaterTypeDto } from "../water-type-dto";
 
@@ -13,6 +14,7 @@ export class ParcelLedgerDto {
     WaterYear: number;
     WaterMonth: number;
     WaterType: WaterTypeDto;
+    UserComment: string;
 
     constructor(obj?: any) {
         Object.assign(this, obj);
