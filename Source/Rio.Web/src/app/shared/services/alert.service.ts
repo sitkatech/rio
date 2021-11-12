@@ -20,9 +20,6 @@ export class AlertService {
             }
 
         }
-
-
-        this.alerts.push(alert);
     }
 
     removeAlert(alert: Alert): void {
@@ -36,7 +33,7 @@ export class AlertService {
 
     clearAlerts(): void {
         this.alerts = [];
-    }
+    }   
 
     pushNotFoundUnauthorizedAlert(){
         this.pushAlert(new Alert("The page you are trying to access was not found, or you do not have permission to view it.", AlertContext.Info, true, AlertService.NOT_FOUND_UNAUTHORIZED));
