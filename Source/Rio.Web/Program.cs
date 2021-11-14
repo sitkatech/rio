@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using NetworkPorts;
 
 namespace Rio.Web
 {
@@ -21,11 +22,11 @@ namespace Rio.Web
                 {
                     var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"); // Same as env.IsDevelopment()
 
-                    options.Listen(IPAddress.Any, 80);
+                    options.Listen(IPAddress.Any, NetworkPort.Http);
                     // 1/23 CG & MK - This is done so that Azure wont load the cert, it will only be used locally.
                     if (env == Microsoft.Extensions.Hosting.Environments.Development)
                     {
-                        options.Listen(IPAddress.Any, 443, configure => { configure.UseHttps(new X509Certificate2("dev_cert.pfx", "password#1")); });
+                        options.Listen(IPAddress.Any, NetworkPort.Https, configure => { configure.UseHttps(new X509Certificate2("dev_cert.pfx", "password#1")); });
                     }
                 })
                 .Build();
