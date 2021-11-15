@@ -180,7 +180,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountID([FromRoute] int accountID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListDescByAccountID(_dbContext, accountID);
+            var parcelLedgerDtos = ParcelLedger.ListByAccountID(_dbContext, accountID);
             if (parcelLedgerDtos == null)
             {
                 return NotFound();
