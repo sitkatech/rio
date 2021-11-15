@@ -72,6 +72,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private allocationChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelLedgers: Array<ParcelLedgerDto>;
+  public parcelLedgersBalance: Map<number, number>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
   public activityDisplayCount = 5;
@@ -210,6 +211,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.parcelLedgers = parcelLedgers;
         // call needs to wait until this.parcelLedgers is populated to avoid race condition
         this.updateParcelLedgersAndChartDataForWaterYear();
+        this.parcelLedgersBalance = this.createParcelLedgersBalance();
       });
     } else {
       this.updateParcelLedgersAndChartDataForWaterYear();
@@ -577,6 +579,20 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         return this.createSeriesEntry(month, seriesValue);
       })
     }
+  }
+
+  private createParcelLedgersBalance(): Map<number, number> {
+    const map = new Map();
+    let currentBalance = this.getParcelLedgersForWaterYear().reduce((a, b) => {
+      return a + b.TransactionAmount;
+    }, 0);
+
+    for (let parcelLedger of this.getParcelLedgersForWaterYear()) {
+      map.set(parcelLedger.ParcelLedgerID, currentBalance);
+      currentBalance -= parcelLedger.TransactionAmount;
+    }
+    
+    return map;
   }
 
   private createWaterUsagesForYear(year: number): number {
