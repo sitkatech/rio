@@ -24,7 +24,6 @@ export class AppComponent {
 
     constructor(private router: Router, 
         private oauthService: OAuthService, 
-        private cookieStorageService: CookieStorageService, 
         private busyService: BusyService, 
         private authenticationService: AuthenticationService, 
         private titleService: Title, 
@@ -54,7 +53,6 @@ export class AppComponent {
         const subject = new Subject<void>();
         this.oauthService.configure(environment.keystoneAuthConfiguration);
         this.oauthService.setupAutomaticSilentRefresh();
-        this.oauthService.setStorage(this.cookieStorageService);
         this.oauthService.tokenValidationHandler = new JwksValidationHandler();
         this.oauthService.loadDiscoveryDocument();
         this.oauthService.events

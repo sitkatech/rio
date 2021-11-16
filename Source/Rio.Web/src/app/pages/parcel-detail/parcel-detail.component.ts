@@ -16,6 +16,7 @@ import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -53,6 +54,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
+    private utilityFunctionsService: UtilityFunctionsService,
     private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
@@ -108,12 +110,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         }
       },
       { 
-        headerName: 'Transaction Amount', field: 'TransactionAmount', 
+        headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter', cellStyle: {textAlign: "right"},
         valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-1"); }, 
-        filter: 'agNumberColumnFilter', 
-        type: 'numericColumn' 
       },
-      { headerName: 'Transaction Description', field: 'TransactionDescription', filter: false, sortable: false },
+      { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
     ];
 
     this.defaultColDef = {
@@ -139,12 +139,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       headerName: headerName, valueGetter: function (params: any) {
         return datePipe.transform(params.data[fieldName], dateFormat);
       },
-      comparator: this.dateFilterComparator, sortable: true, sort: 'desc', filter: 'agDateColumnFilter',
+      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
       filterParams: {
         filterOptions: ['inRange'],
         comparator: this.dateFilterComparator
       }
     };
+  }
+
+  public exportParcelLedgerGridToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.parcelLedgerGrid, 'parcelLedgerfor' + this.parcel.ParcelNumber + '.csv', null);
   }
   
   private onGridReady(params) {
@@ -162,19 +166,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
-  }
-
-  public getConsumptionForYearAndMonth(year: number, month: number): string {
-    let parcelLedgersForMonth = this.usageParcelLedgers.filter(x => x.WaterYear == year && x.WaterMonth == month);
-    
-    if (parcelLedgersForMonth.length == 0) {
-      return "-";
-    }
-    let monthlyUsage = parcelLedgersForMonth.reduce((a, b) => {
-        return a + b.TransactionAmount;
-      }, 0);
-
-    return Math.abs(monthlyUsage).toFixed(1);
   }
   
   public getTotalAllocationForYear(year: number): string {

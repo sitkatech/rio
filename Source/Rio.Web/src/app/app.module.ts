@@ -4,7 +4,7 @@ import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthStorage } from 'angular-oauth2-oidc';
 import { CookieService } from 'ngx-cookie-service';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './shared/interceptors/auth-interceptor';
@@ -77,6 +77,7 @@ import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel
 import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
 import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
+import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -167,6 +168,10 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     {
       provide: ErrorHandler,
       useClass: GlobalErrorHandlerService
+    },
+    {
+      provide: OAuthStorage,
+      useClass: CookieStorageService
     }
   ],
   entryComponents: [LinkRendererComponent, FontAwesomeIconLinkRendererComponent, MultiLinkRendererComponent],
