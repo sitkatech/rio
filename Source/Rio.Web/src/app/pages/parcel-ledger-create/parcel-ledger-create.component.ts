@@ -115,7 +115,8 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-   
+    this.alertService.clearAlerts();
+
     if (this.isUsageAdjustment) {
       if (!this.validateUsageCorrectionDate() || (!this.model.IsWithdrawal && !this.validateUsageDeposit())) {
         this.isLoadingSubmit = false;
