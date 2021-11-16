@@ -72,6 +72,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private allocationChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelLedgers: Array<ParcelLedgerDto>;
+  public parcelLedgersForWaterYear: Array<ParcelLedgerDto>;
   public parcelLedgersBalance: Map<number, number>;
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
@@ -211,7 +212,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         this.parcelLedgers = parcelLedgers;
         // call needs to wait until this.parcelLedgers is populated to avoid race condition
         this.updateParcelLedgersAndChartDataForWaterYear();
-        this.parcelLedgersBalance = this.createParcelLedgersBalance();
       });
     } else {
       this.updateParcelLedgersAndChartDataForWaterYear();
@@ -219,6 +219,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private updateParcelLedgersAndChartDataForWaterYear():void {
+    this.parcelLedgersForWaterYear = this.getParcelLedgersForWaterYear();
+    this.parcelLedgersBalance = this.createParcelLedgersBalance();
+
     this.waterUsages = {
         Year: this.waterYearToDisplay.Year,
         AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
@@ -420,7 +423,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalSupply(): number {
-    return this.getAnnualAllocation(this.waterYearToDisplay.Year) + this.getPurchasedAcreFeet() - this.getSoldAcreFeet();
+    return this.getAnnualAllocation(this.waterYearToDisplay.Year) + this.getPurchasedAcreFeet() + this.getSoldAcreFeet();
   }
 
   public getCurrentAvailableWater(): number {
@@ -583,11 +586,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private createParcelLedgersBalance(): Map<number, number> {
     const map = new Map();
-    let currentBalance = this.getParcelLedgersForWaterYear().reduce((a, b) => {
+    let currentBalance = this.parcelLedgersForWaterYear.reduce((a, b) => {
       return a + b.TransactionAmount;
     }, 0);
 
-    for (let parcelLedger of this.getParcelLedgersForWaterYear()) {
+    for (let parcelLedger of this.parcelLedgersForWaterYear) {
       map.set(parcelLedger.ParcelLedgerID, currentBalance);
       currentBalance -= parcelLedger.TransactionAmount;
     }
