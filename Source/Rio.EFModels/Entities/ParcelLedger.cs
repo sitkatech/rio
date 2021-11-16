@@ -130,7 +130,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDs.Contains(x.ParcelID))
                 .Select(x => new ParcelLedgerDto()
                 {
-                   ParcelLedgerID = x.ParcelLedgerID,
+                    ParcelLedgerID = x.ParcelLedgerID,
                     ParcelID = x.ParcelID,
                     ParcelNumber = x.Parcel.ParcelNumber,
                     TransactionDate = x.TransactionDate,
