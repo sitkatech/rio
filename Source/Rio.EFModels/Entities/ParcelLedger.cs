@@ -132,6 +132,7 @@ namespace Rio.EFModels.Entities
                 .Where(x => parcelIDs.Contains(x.ParcelID))
                 .Select(x => new ParcelLedgerDto()
                 {
+                    ParcelLedgerID = x.ParcelLedgerID,
                     ParcelID = x.ParcelID,
                     ParcelNumber = x.Parcel.ParcelNumber,
                     TransactionDate = x.TransactionDate,
@@ -141,6 +142,7 @@ namespace Rio.EFModels.Entities
                     TransactionAmount = x.TransactionAmount,
                     TransactionDescription = x.TransactionDescription
                 })
+                .OrderByDescending(x => x.EffectiveDate)
                 .ToList();
 
             return parcelLedgerDtos;
