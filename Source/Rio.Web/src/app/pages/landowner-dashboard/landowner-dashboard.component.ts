@@ -575,7 +575,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private createWaterUsagesForYear(year: number): number {
-    console.log(this.getParcelLedgerUsageForYear(year).map(x => x.TransactionAmount));
     let usageSum = this.getParcelLedgerUsageForYear(year).reduce((a, b) => {
       return (a + b.TransactionAmount);
     }, 0);
