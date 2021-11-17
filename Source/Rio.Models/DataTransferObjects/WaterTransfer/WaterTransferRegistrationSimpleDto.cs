@@ -5,6 +5,7 @@ namespace Rio.Models.DataTransferObjects.WaterTransfer
 {
     public class WaterTransferRegistrationSimpleDto
     {
+        public int WaterTransferRegistrationID { get; set;}
         public int WaterTransferTypeID { get; set; }
         public AccountDto Account { get; set; }
         public int WaterTransferRegistrationStatusID { get; set; }

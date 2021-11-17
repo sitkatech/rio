@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ParcelChangeOwnerComponent } from './parcel-change-owner.component';
 
@@ -6,7 +6,7 @@ describe('ParcelChangeOwnerComponent', () => {
   let component: ParcelChangeOwnerComponent;
   let fixture: ComponentFixture<ParcelChangeOwnerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ParcelChangeOwnerComponent ]
     })

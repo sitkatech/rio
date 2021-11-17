@@ -21,7 +21,10 @@ import {
   LineSeriesComponent,
   calculateViewDimensions,
   ViewDimensions,
-  ColorHelper
+  ColorHelper,
+  ScaleType,
+  LegendPosition,
+  Color
 } from '@swimlane/ngx-charts';
 import { area, line, curveLinear } from 'd3-shape';
 import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
@@ -36,7 +39,7 @@ export class AllocationChartImplComponent extends BaseChartComponent {
   @Input() curve: any = curveLinear;
   @Input() legend = false;
   @Input() legendTitle: string = 'Legend';
-  @Input() legendPosition: string = 'right';
+  @Input() legendPosition: LegendPosition = LegendPosition.Right;
   @Input() xAxis;
   @Input() yAxis;
   @Input() showXAxisLabel;
@@ -49,12 +52,12 @@ export class AllocationChartImplComponent extends BaseChartComponent {
   @Input() gradient: boolean;
   @Input() showGridLines: boolean = true;
   @Input() activeEntries: any[] = [];
-  @Input() schemeType: string;
+  @Input() schemeType: ScaleType;
   @Input() xAxisTickFormatting: any;
   @Input() yAxisTickFormatting: any;
   @Input() yRightAxisTickFormatting: any;
   @Input() roundDomains: boolean = false;
-  @Input() colorSchemeLine: any[];
+  @Input() colorSchemeLine: Color;
   @Input() autoScale;
   @Input() historicCumulativeWaterUsageSeries: any;
   @Input() currentCumulativeWaterUsageSeries: any;

@@ -4,6 +4,8 @@ Hotfixes
 Source/Rio.Web/src/assets/config.json
 /Source/Rio.Web/src/assets/config.edf.json.template
 /Source/Rio.Web/src/assets/config.rio.json.template
+/Source/Rio.Web/src/assets/config.edf.json
+/Source/Rio.Web/src/assets/config.rio.json
 Source/Rio.Web/src/assets/test.png
 /Source/docker-compose/.env.edf
 Source/docker-compose/.env.rio
@@ -14,5 +16,3 @@ Source/Rio.API/appsecrets.json
 /Source/Rio.API/sitka.localhost.rootca.crt
 /Source/Rio.GeoServer/data_dir/logs/*.log
 /Source/Rio.Web/package-lock.json
-/Source/Rio.Web/src/assets/config.edf.json
-/Source/Rio.Web/src/assets/config.rio.json

@@ -1,5 +1,4 @@
 ﻿using System;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.Models.DataTransferObjects.WaterTransfer
 {

@@ -6,7 +6,7 @@ import { NotFoundComponent } from './pages';
 import { HeaderNavComponent } from './components';
 import { UnauthenticatedComponent } from './pages/unauthenticated/unauthenticated.component';
 import { SubscriptionInsufficientComponent } from './pages/subscription-insufficient/subscription-insufficient.component';
-import { NgProgressModule } from '@ngx-progressbar/core';
+import { NgProgressModule } from 'ngx-progressbar';
 import { RouterModule } from '@angular/router';
 import { ParcelDetailPopupComponent } from './components/parcel-detail-popup/parcel-detail-popup.component';
 import { LinkRendererComponent } from './components/ag-grid/link-renderer/link-renderer.component';

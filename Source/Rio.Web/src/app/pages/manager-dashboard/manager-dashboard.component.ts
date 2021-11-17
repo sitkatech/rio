@@ -399,9 +399,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Buyer Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Buyer.AccountID, LinkDisplay: params.data.Buyer.ShortAccountDisplayName };
+          return { LinkValue: params.data.Buyer.AccountNumber, LinkDisplay: params.data.Buyer.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/accounts/" },
+        cellRendererParams: { inRouterLink: "/landowner-dashboard/" },
         filterValueGetter: function (params: any) {
           return params.data.Buyer.ShortAccountDisplayName;
         },
@@ -420,9 +420,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Seller Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Seller.AccountID, LinkDisplay: params.data.Seller.ShortAccountDisplayName };
+          return { LinkValue: params.data.Seller.AccountNumber, LinkDisplay: params.data.Seller.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/accounts/" },
+        cellRendererParams: { inRouterLink: "/landowner-dashboard/" },
         filterValueGetter: function (params: any) {
           return params.data.Seller.ShortAccountDisplayName;
         },

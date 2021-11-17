@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { MultiLinkRendererComponent } from './multi-link-renderer.component';
+import { ParcelOverrideEtDataComponent } from './parcel-override-et-data.component';
 
-describe('MultiLinkRendererComponent', () => {
-  let component: MultiLinkRendererComponent;
-  let fixture: ComponentFixture<MultiLinkRendererComponent>;
+describe('ParcelOverrideEtDataComponent', () => {
+  let component: ParcelOverrideEtDataComponent;
+  let fixture: ComponentFixture<ParcelOverrideEtDataComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MultiLinkRendererComponent ]
+      declarations: [ ParcelOverrideEtDataComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MultiLinkRendererComponent);
+    fixture = TestBed.createComponent(ParcelOverrideEtDataComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

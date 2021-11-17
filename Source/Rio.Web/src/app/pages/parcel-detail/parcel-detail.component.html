@@ -89,18 +89,6 @@
                   <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
                   <th class="text-right">Total Allocation</th>
                   <th class="text-right">Total Usage</th>
-                  <th class="text-right">Jan</th>
-                  <th class="text-right">Feb</th>
-                  <th class="text-right">Mar</th>
-                  <th class="text-right">Apr</th>
-                  <th class="text-right">May</th>
-                  <th class="text-right">Jun</th>
-                  <th class="text-right">Jul</th>
-                  <th class="text-right">Aug</th>
-                  <th class="text-right">Sep</th>
-                  <th class="text-right">Oct</th>
-                  <th class="text-right">Nov</th>
-                  <th class="text-right">Dec</th>
                 </tr>
               </thead>
               <tbody>
@@ -110,8 +98,6 @@
                   <td class="text-right">
                     {{getTotalAllocationForYear(waterYear.Year)}}</td>
                   <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>
-                  <td class="text-right" *ngFor="let month of months">
-                    {{getConsumptionForYearAndMonth(waterYear.Year, month)}}</td>
                 </tr>
               </tbody>
             </table>
@@ -126,7 +112,11 @@
         <div class="card-header">
           <div class="row">
             <div class="col">
-              <span class="align-middle">Parcel Ledger View</span>
+              <span class="align-middle">Parcel Ledger Activity</span>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportParcelLedgerGridToCsv()" placement="top"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i>
+              </a>
             </div>
           </div>
         </div>

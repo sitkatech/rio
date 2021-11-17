@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -70,6 +71,13 @@ namespace Rio.API.Controllers
             waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto, WaterTransferRegistrationStatusEnum.Registered);
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
+                // create a parcel ledger entry since the water transfer has been confirmed by both parties
+                var tradePurchaseParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, TransactionTypeEnum.TradePurchase, waterTransferDto.BuyerRegistration);
+                var tradeSaleParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, TransactionTypeEnum.TradeSale, waterTransferDto.SellerRegistration);
+                _dbContext.ParcelLedgers.AddRange(tradePurchaseParcelLedgers);
+                _dbContext.ParcelLedgers.AddRange(tradeSaleParcelLedgers);
+                _dbContext.SaveChanges();
+
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
                 var mailMessages = GenerateConfirmTransferEmail(_rioConfiguration.WEB_URL, waterTransferDto, smtpClient);
                 foreach (var mailMessage in mailMessages)
@@ -79,6 +87,25 @@ namespace Rio.API.Controllers
             }
 
             return Ok(waterTransferDto);
+        }
+
+        private IEnumerable<ParcelLedger> CreateParcelLedgersFromWaterTransferRegistration(WaterTransferDto waterTransferDto, TransactionTypeEnum transactionTypeEnum, WaterTransferRegistrationSimpleDto waterTransferRegistrationSimpleDto)
+        {
+            var waterTransferRegistrationParcelDtos =
+                WaterTransferRegistrationParcel.ListByWaterTransferRegistrationID(_dbContext,
+                    waterTransferRegistrationSimpleDto.WaterTransferRegistrationID);
+            var parcelLedgers = waterTransferRegistrationParcelDtos.Select(waterTransferRegistrationParcelDto =>
+                    new ParcelLedger
+                    {
+                        ParcelID = waterTransferRegistrationParcelDto.ParcelID,
+                        TransactionAmount = transactionTypeEnum == TransactionTypeEnum.TradePurchase ? waterTransferRegistrationParcelDto.AcreFeetTransferred : -waterTransferRegistrationParcelDto.AcreFeetTransferred,
+                        TransactionTypeID = (int)transactionTypeEnum,
+                        TransactionDate = DateTime.UtcNow,
+                        EffectiveDate = waterTransferDto.TransferDate,
+                        TransactionDescription = $"Water from Trade {waterTransferDto.TradeNumber} has been {(transactionTypeEnum == TransactionTypeEnum.TradePurchase ? "deposited" : "withdrawn")} into this water account"
+                    })
+                .ToList();
+            return parcelLedgers;
         }
 
         [HttpPost("/water-transfers/{waterTransferID}/cancel")]
