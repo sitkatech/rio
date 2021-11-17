@@ -26,17 +26,6 @@
           {{getAccountDisplayName()}}
         </h2>
       </div>
-      <div class="col col-auto ml-auto mt-1">
-        <div class="btn-group btn-group-toggle">
-          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
-            style="width:65px;">
-            <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
-          </label>
-          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
-            <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
-          </label>
-        </div>
-      </div>
     </div>
     <div class="row mb-3">
       <div class="col-lg-2 col-sm-12" *ngIf="waterYears">
@@ -61,20 +50,39 @@
           </li>
         </ul>
       </div>
-      <div class="col-sm-12 mt-2 text-right">
-        <a routerLink="/measuring-water-use-with-openet">
-          <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
-        </a>
-      </div>
     </div>
   </div>
   <div class="container" *ngIf="activeAccount">
-    <div class="row"
+    <div class="row mb-5"
       *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
+      <div class="col-sm-12 mb-2">
+        <div class="btn-group btn-group-toggle">
+          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
+            style="width:65px;">
+            <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
+          </label>
+          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
+            <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
+          </label>
+        </div>
+        <div class="float-right">
+          <a routerLink="/measuring-water-use-with-openet">
+            <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
+          </a>
+        </div>
+      </div>
       <div class="col-sm-12 col-lg-5 mt-5 pr-5">
         <div class="h3 mb-3">Overview</div>
         <div class="table-responsive">
           <table class="table table-sm table-borderless">
+            <tr>
+              <th class="text-sm-left font-weight-normal pb-3">
+                Total Annual Allocation
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                {{getAnnualAllocation(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
             <tr>
               <th class="text-sm-left font-weight-normal pb-3">
                 Usage to Date
@@ -95,14 +103,6 @@
               <th class="text-sm-left font-weight-normal pb-3">Current Available</th>
               <td class="text-sm-right font-weight-bold pb-3">
                 {{getCurrentAvailableWater() | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr>
-            <tr>
-              <th class="text-sm-left font-weight-normal pb-3">
-                Total Annual Allocation
-              </th>
-              <td class="text-sm-right font-weight-bold pb-3">
-                {{getAnnualAllocation(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
@@ -127,7 +127,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 mt-4 mb-4">
+      <div class="col-sm-12 mt-2 mb-2">
         <div class="row mt-2 mb-5">
           <div class="col-sm-12">
             <div class="h3 mb-3">{{waterYearToDisplay.Year}} Account Activity</div>
@@ -311,11 +311,13 @@
     <ng-container *ngIf="userHasParcels() && waterUsageChartData && sectionCurrentlyViewing == LandownerDashboardViewEnum.UsageByParcel">
       <div class="row">
         <div class="col-sm-12">
-          <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Visualization </span>
-          <a routerLink="/measuring-water-use-with-openet" target="_blank"
-            style="cursor:pointer; vertical-align: middle;" placement="top"
-            ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i>
-          </a>
+          <div class="mt-3 mb-3">
+            <span class="h3 align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Visualization </span>
+            <a routerLink="/measuring-water-use-with-openet" target="_blank"
+              style="cursor:pointer; vertical-align: middle;" placement="top"
+              ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i>
+            </a>
+          </div>
           <rio-landowner-water-use-chart *ngIf="!isWaterUsageForWaterYearNullOrEmpty()"
             [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
           </rio-landowner-water-use-chart>
@@ -331,73 +333,65 @@
       </div>
       <div class="row mt-4">
         <div class="col-sm-12">
-          <div class="card">
-            <div class="card-header">
-              <span class="align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Tabular </span>
-              <a routerLink="/measuring-water-use-with-openet" target="_blank"
-                style="cursor:pointer; vertical-align: middle;" placement="top"
-                ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i></a>
-            </div>
-            <div class="card-body">
-              <table class="table table-responsive">
-                <thead>
-                  <th></th>
-                  <th class="text-right" *ngFor="let month of months">{{month}}</th>
-                  <th>Total</th>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let parcel of parcels">
-                    <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
-                    </td>
-                    <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
-                      <ng-container *ngFor="let seriesData of monthData.series">
-                        <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">
-                          {{seriesData.isEmpty === true ? "-" : (seriesData.value |
-                          number:"1.1-1")}}
-                        </td>
-                      </ng-container>
-                    </ng-container>
-                    <td class="text-right">
-                      <strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1-1"}}</strong>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <th><strong>Total</strong></th>
-                  <th class="text-right" *ngFor="let month of months; let i = index">
-                    {{getTotalWaterUsageForMonth(i) | number:"1.1-1"}}
-                  </th>
-                  <th class="text-right">{{getWaterUsageToDate() | number: "1.1-1"}}</th>
-                </tfoot>
-              </table>
-              <p class="small">
-                Measurements are in acre-feet
-                <br>
-                Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
-                <br>
-                Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
-                  routerLinkActive="true">OpenET FAQ</a>.
-              </p>
-            </div>
+          <div class="mb-3">
+            <span class="h3 align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Tabular </span>
+            <a routerLink="/measuring-water-use-with-openet" target="_blank"
+              style="cursor:pointer; vertical-align: middle;" placement="top"
+              ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i>
+            </a>
           </div>
+          <table class="table table-responsive">
+            <thead>
+              <th></th>
+              <th class="text-right" *ngFor="let month of months">{{month}}</th>
+              <th>Total</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let parcel of parcels">
+                <td class="text-nowrap"><a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+                </td>
+                <ng-container *ngFor="let monthData of getWaterUsageForWaterYear()">
+                  <ng-container *ngFor="let seriesData of monthData.series">
+                    <td class="text-right" *ngIf="seriesData.name === parcel.ParcelNumber">
+                      {{seriesData.isEmpty === true ? "-" : (seriesData.value |
+                      number:"1.1-1")}}
+                    </td>
+                  </ng-container>
+                </ng-container>
+                <td class="text-right">
+                  <strong>{{getTotalWaterUsageForParcel(parcel.ParcelNumber) | number:"1.1-1"}}</strong>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <th><strong>Total</strong></th>
+              <th class="text-right" *ngFor="let month of months; let i = index">
+                {{getTotalWaterUsageForMonth(i) | number:"1.1-1"}}
+              </th>
+              <th class="text-right">{{getWaterUsageToDate() | number: "1.1-1"}}</th>
+            </tfoot>
+          </table>
+          <p class="small">
+            Measurements are in acre-feet
+            <br>
+            Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
+            <br>
+            Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
+              routerLinkActive="true">OpenET FAQ</a>.
+          </p>
         </div>
       </div>
-      <div class="row mt-4" *ngIf="parcelsToBeReconciled">
+      <div class="row mt-4" *ngIf="parcelsToBeReconciled.length > 0">
         <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              Parcels Not Included in Your Water Budget
-            </div>
-            <div class="card-body">
-              The following parcels have an association this Water Account but could not be imported because the APN was associated with multiple Water Accounts:
-              <br>
-              <br>
-              <ng-container *ngFor="let parcel of parcelsToBeReconciled">
-                <span>{{parcel.ParcelNumber}}</span>
-                <br/>
-              </ng-container>
-            </div>
+          <div class="mb-3">
+            <div class="h3 mb-2">Parcels Not Included in Your Water Budget</div>
+            The following parcels have an association this Water Account but could not be imported because the APN was associated with multiple Water Accounts:
           </div>
+          hello
+          <ng-container *ngFor="let parcel of parcelsToBeReconciled">
+            <span>{{parcel.ParcelNumber}}</span>
+            <br/>
+          </ng-container>
         </div>
       </div>
     </ng-container>
