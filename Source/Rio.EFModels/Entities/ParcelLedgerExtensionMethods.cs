@@ -16,7 +16,8 @@ namespace Rio.EFModels.Entities
                 TransactionAmount = parcelLedger.TransactionAmount,
                 ParcelLedgerID = parcelLedger.ParcelLedgerID,
                 WaterType = parcelLedger.WaterType?.AsDto(),
-                TransactionDescription = parcelLedger.TransactionDescription
+                TransactionDescription = parcelLedger.TransactionDescription,
+                UserComment = parcelLedger.UserComment
             };
         }
     }

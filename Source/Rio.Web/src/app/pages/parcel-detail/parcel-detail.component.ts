@@ -113,7 +113,12 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter', cellStyle: {textAlign: "right"},
         valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-1"); }, 
       },
-      { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
+      { headerName: 'Transaction Description', field: 'TransactionDescription', filter: false, sortable: false },
+      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
+        valueGetter: function (params: any) {
+          return params.data.UserComment ?? '-';
+        }
+      }
     ];
 
     this.defaultColDef = {
