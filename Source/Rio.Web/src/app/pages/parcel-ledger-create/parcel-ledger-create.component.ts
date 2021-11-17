@@ -35,6 +35,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public allocationID: number = TransactionTypeEnum.Allocation;
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
+  private alertsCountOnLoad: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -49,7 +50,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.model = new ParcelLedgerCreateDto();
-
+    
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
       this.currentUser = currentUser;
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -113,9 +114,17 @@ export class ParcelLedgerCreateComponent implements OnInit {
     return true;
   }
 
+  private clearErrorAlerts() {
+    if (!this.alertsCountOnLoad) {
+      this.alertsCountOnLoad = this.alertService.getAlerts().length;
+    }
+
+    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
+  }
+
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.alertService.clearAlerts();
+    this.clearErrorAlerts();
 
     if (this.isUsageAdjustment) {
       if (!this.validateUsageCorrectionDate() || (!this.model.IsWithdrawal && !this.validateUsageDeposit())) {

@@ -25,18 +25,14 @@ export class AlertService {
         this.alertSubject.next(this.alerts);
     }
 
-    private removeAlertWithoutRefresh(alert: Alert): void {
+    removeAlert(alert: Alert): void {
         const index: number = this.alerts.indexOf(alert);
         this.alerts.splice(index, 1);
-    }
-
-    removeAlert(alert: Alert): void {
-        this.removeAlertWithoutRefresh(alert);
         this.alertSubject.next(this.alerts);
     }
 
-    removeAlerts(alerts: Array<Alert>): void {
-        alerts.map(x => this.removeAlertWithoutRefresh(x));
+    removeAlertsSubset(start, deleteCount) {
+        this.alerts.splice(start, deleteCount);
         this.alertSubject.next(this.alerts);
     }
 
