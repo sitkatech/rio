@@ -20,20 +20,20 @@
     <h2 class="d-inline-block">
       Create New Transaction
     </h2>
-    <div class="card mt-2 mb-4 p-2">
+    <div class="card card-body mt-2 mb-5">
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
-    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm"  *ngIf="parcel">
+    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="parcel">
       <div class="row">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label>Parcel APN</label>
         </div>
-        <div class="col-sm-6 font-weight-bold">
-          {{parcel.ParcelNumber}}
+        <div class="col-sm-5">
+          <input id="typeahead-basic" type="text" class="form-control font-weight-bold" name="parcel-number" [(ngModel)]="parcel.ParcelNumber" [ngbTypeahead]="search" required/>
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Water Budget Category</label>
         </div>
         <div class="col-sm-5">
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
+        <div class="col-sm-3 control-label text-sm-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
           <label class="required">Supply Type</label>
         </div>
         <div class="col-sm-5">
@@ -60,7 +60,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Transaction Type</label>
         </div>
         <div class="col-sm-5">
@@ -75,7 +75,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Quantity</label>
         </div>
         <div class="col-sm-5">
@@ -89,7 +89,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Effective Date</label>
         </div>
         <div class="col-sm-5">
@@ -107,7 +107,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
             <label>Comment</label>
         </div>
         <div class="col-sm-5">

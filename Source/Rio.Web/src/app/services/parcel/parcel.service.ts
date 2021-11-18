@@ -40,6 +40,11 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getAllParcelNumbers(): Observable<Array<string>> {
+    let route = 'parcels/getParcelNumbers';
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };

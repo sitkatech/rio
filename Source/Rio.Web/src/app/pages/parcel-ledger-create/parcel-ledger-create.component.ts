@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, OperatorFunction, Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -16,6 +16,7 @@ import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootst
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
@@ -27,6 +28,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
+  private parcelNumbers: Array<string>;
   public parcel: ParcelDto;
   public parcelLedgers: ParcelLedgerDto[];
   public waterTypes: WaterTypeDto[];
@@ -53,22 +55,34 @@ export class ParcelLedgerCreateComponent implements OnInit {
     
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
       this.currentUser = currentUser;
-      const id = parseInt(this.route.snapshot.paramMap.get("id"));
+
+      const id = this.route.snapshot.paramMap.get("id");
+      if (id) {
+        const parcelID = parseInt(id);
+        forkJoin(
+          this.parcelService.getParcelByParcelID(parcelID),
+          this.parcelService.getParcelLedgerEntriesByParcelID(parcelID)
+        ).subscribe(
+          ([parcel, parcelLedgers]) => {
+            this.parcel = parcel instanceof Array
+              ? null
+              : parcel as ParcelDto;
+            this.parcel = parcel;
+            this.parcelLedgers = parcelLedgers;
+            this.model.ParcelID = parcel.ParcelID;
+          }
+        );
+      } else {
+        this.parcel = new ParcelDto;
+      }
+
       forkJoin(
-        this.parcelService.getParcelByParcelID(id),
-        this.parcelService.getParcelLedgerEntriesByParcelID(id),
-        this.waterTypeService.getWaterTypes()
-      ).subscribe(
-        ([parcel, parcelLedgers, waterTypes]) => {
-          this.parcel = parcel instanceof Array
-            ? null
-            : parcel as ParcelDto;
-          this.parcel = parcel;
-          this.parcelLedgers = parcelLedgers;
-          this.model.ParcelID = parcel.ParcelID;
-          this.waterTypes = waterTypes;
-        }
-      );
+      this.waterTypeService.getWaterTypes(),
+      this.parcelService.getAllParcelNumbers()
+      ).subscribe(([waterTypes, parcelNumbers]) => {
+        this.waterTypes = waterTypes;
+        this.parcelNumbers = parcelNumbers;
+      });
     });
   }
 
@@ -147,5 +161,13 @@ export class ParcelLedgerCreateComponent implements OnInit {
         }
       );
   }
+
+  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged(),
+      map(term => term.length < 2 ? []
+        : this.parcelNumbers.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+    )
 }
 

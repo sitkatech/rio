@@ -90,6 +90,11 @@ namespace Rio.EFModels.Entities
             return parcel?.AsDto();
         }
 
+        public static object ListParcelNumbers(RioDbContext dbContext)
+        {
+            return dbContext.Parcels.Select(x => x.ParcelNumber).ToList();
+        }
+
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
             var parcels = dbContext.Parcels
