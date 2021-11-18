@@ -7,7 +7,7 @@ export enum CustomRichTextType {
   PlatformOverview = 6,
   MeasuringWaterUse = 7,
   ConfigureWaterTypes = 8,
-  SetWaterAllocation = 9,
+  CreateWaterTransactions = 9,
   TrainingVideos = 10,
   CreateUserProfile = 11,
   CreateUserProfileStepOne = 12,
