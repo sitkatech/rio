@@ -36,7 +36,6 @@ export class SetWaterAllocationComponent implements OnInit, OnDestroy {
   public parcelAllocationHistoryGridColumnDefs: ColDef[];
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
-  public richTextTypeID: number = CustomRichTextType.SetWaterAllocation;
 
   public model: ParcelAllocationUpsertDto;
   public isLoadingSubmit: boolean = false;
