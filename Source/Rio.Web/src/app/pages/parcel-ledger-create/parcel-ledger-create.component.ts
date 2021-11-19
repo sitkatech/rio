@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { forkJoin, OperatorFunction, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -16,7 +16,8 @@ import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootst
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { UserDto } from 'src/app/shared/models';
 import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
@@ -28,7 +29,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
-  private parcelNumbers: Array<string>;
   public parcel: ParcelDto;
   public parcelLedgers: ParcelLedgerDto[];
   public waterTypes: WaterTypeDto[];
@@ -38,6 +38,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
   private alertsCountOnLoad: number;
+  public searchFailed : boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,12 +66,8 @@ export class ParcelLedgerCreateComponent implements OnInit {
         );
       }
 
-      forkJoin(
-      this.waterTypeService.getWaterTypes(),
-      this.parcelService.getAllParcelNumbers()
-      ).subscribe(([waterTypes, parcelNumbers]) => {
+      this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
         this.waterTypes = waterTypes;
-        this.parcelNumbers = parcelNumbers;
       });
     });
   }
@@ -120,12 +117,17 @@ export class ParcelLedgerCreateComponent implements OnInit {
       );
   }
 
-  search: OperatorFunction<string, readonly string[]> = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      distinctUntilChanged(),
-      map(term => term.length < 2 ? []
-        : this.parcelNumbers.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    )
+  search = (text$: Observable<string>) => {
+    return text$.pipe(      
+        debounceTime(200), 
+        distinctUntilChanged(),
+        tap(() => this.searchFailed = false),
+        switchMap(searchText => searchText.length > 2 ? this.parcelService.searchParcelNumber(searchText) : ([])), 
+        catchError(() => {
+          this.searchFailed = true;
+          return of([]);
+        })     
+      );                 
+  }
 }
 

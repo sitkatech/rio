@@ -103,9 +103,15 @@ namespace Rio.EFModels.Entities
             return parcel?.AsDto();
         }
 
-        public static object ListParcelNumbers(RioDbContext dbContext)
+        public static List<string> SearchParcelNumber(RioDbContext dbContext, string parcelNumber)
         {
-            return dbContext.Parcels.Select(x => x.ParcelNumber).ToList();
+            var parcelNumbers = dbContext.Parcels
+                .AsNoTracking()
+                .Where(x => x.ParcelNumber.Contains(parcelNumber))
+                .Select(x => x.ParcelNumber)
+                .ToList();
+
+            return parcelNumbers;
         }
 
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)

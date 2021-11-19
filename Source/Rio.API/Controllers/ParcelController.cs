@@ -94,6 +94,13 @@ namespace Rio.API.Controllers
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
+        [HttpGet("parcels/search/{parcelNumber}")]
+        public ActionResult<List<string>> SearchByParcelNumber([FromRoute] string parcelNumber)
+        {
+            var parcelNumbers = Parcel.SearchParcelNumber(_dbContext, parcelNumber);
+            return Ok(parcelNumbers);
+        }
+
         [HttpGet("parcels/getParcelNumbers")]
         public ActionResult<List<string>> GetAllParcelNumbers()
         {
