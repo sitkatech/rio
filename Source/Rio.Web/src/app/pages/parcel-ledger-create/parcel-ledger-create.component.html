@@ -1,12 +1,12 @@
 <div class="breadcrumb-container">
     <div class="container">
-      <nav aria-label="breadcrumb" *ngIf="parcel">
+      <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/parcels">Parcels</a>
+            <a routerLink="/manager-dashboard">Manager Dashboard</a>
           </li>
           <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+            <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">
             Create New Transaction
@@ -20,20 +20,21 @@
     <h2 class="d-inline-block">
       Create New Transaction
     </h2>
-    <div class="card mt-2 mb-4 p-2">
+    <div class="card card-body mt-2 mb-5">
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
-    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm"  *ngIf="parcel">
+    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="model">
       <div class="row">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label>Parcel APN</label>
         </div>
-        <div class="col-sm-6 font-weight-bold">
-          {{parcel.ParcelNumber}}
+        <div class="col-sm-5">
+          <input id="typeahead-http" type="text" class="form-control font-weight-bold" name="parcel-number" [(ngModel)]="model.ParcelNumber" [ngbTypeahead]="search" />
+          <small class="form-text text-muted font-italic" *ngIf="searchFailed">Suggestions could not be loaded.</small>
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Water Budget Category</label>
         </div>
         <div class="col-sm-5">
@@ -46,7 +47,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
+        <div class="col-sm-3 control-label text-sm-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
           <label class="required">Supply Type</label>
         </div>
         <div class="col-sm-5">
@@ -60,7 +61,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Transaction Type</label>
         </div>
         <div class="col-sm-5">
@@ -75,7 +76,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Quantity</label>
         </div>
         <div class="col-sm-5">
@@ -89,7 +90,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Effective Date</label>
         </div>
         <div class="col-sm-5">
@@ -107,7 +108,7 @@
         </div>
       </div>
       <div class="row mt-3">
-        <div class="col-sm-3 control-label text-right">
+        <div class="col-sm-3 control-label text-sm-right">
             <label>Comment</label>
         </div>
         <div class="col-sm-5">
@@ -126,7 +127,10 @@
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Save
           </button>
-          <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+          <a *ngIf="!parcel; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
+          <ng-template #redirectToParcelDetail>
+            <a class="btn btn-secondary ml-1" *ngIf="parcel" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+          </ng-template>
         </div>
       </div>
     </form>

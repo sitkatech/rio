@@ -8,7 +8,7 @@ USING (VALUES
 (6, 'PlatformOverview', 'Platform Overview'),
 (7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET'),
 (8, 'ConfigureWaterTypes', 'Configure Water Types'),
-(9, 'SetWaterAllocation', 'SetWaterAllocation'),
+(9, 'CreateWaterTransactions', 'Create Water Transactions'),
 (10, 'TrainingVideos', 'Training Videos'),
 (11, 'CreateUserProfile', 'Create User Profile'),
 (12, 'CreateUserProfileStepOne', 'Create User Profile Step One'),

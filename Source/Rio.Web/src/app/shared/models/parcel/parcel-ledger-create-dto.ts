@@ -1,5 +1,6 @@
 export class ParcelLedgerCreateDto {
     ParcelID: number;
+    ParcelNumber: string;
     EffectiveDate: Date;
     TransactionTypeID: number;
     TransactionAmount: number;

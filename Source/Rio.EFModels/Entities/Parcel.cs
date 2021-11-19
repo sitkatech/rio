@@ -90,6 +90,30 @@ namespace Rio.EFModels.Entities
             return parcel?.AsDto();
         }
 
+        public static ParcelDto GetByParcelNumber(RioDbContext dbContext, string parcelNumber)
+        {
+            var parcel = dbContext.Parcels
+                .Include(x => x.AccountParcelWaterYears)
+                .ThenInclude(x => x.Account)
+                .Include(x => x.AccountParcelWaterYears)
+                .ThenInclude(x => x.WaterYear)
+                .AsNoTracking()
+                .SingleOrDefault(x => x.ParcelNumber == parcelNumber);
+
+            return parcel?.AsDto();
+        }
+
+        public static List<string> SearchParcelNumber(RioDbContext dbContext, string parcelNumber)
+        {
+            var parcelNumbers = dbContext.Parcels
+                .AsNoTracking()
+                .Where(x => x.ParcelNumber.Contains(parcelNumber))
+                .Select(x => x.ParcelNumber)
+                .ToList();
+
+            return parcelNumbers;
+        }
+
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
             var parcels = dbContext.Parcels

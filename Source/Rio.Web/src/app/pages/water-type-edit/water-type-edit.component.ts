@@ -7,7 +7,6 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRichTextComponent } from 'src/app/shared/components/custom-rich-text/custom-rich-text.component';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
@@ -68,11 +67,6 @@ export class WaterTypeEditComponent implements OnInit, OnDestroy {
 
   onSubmit(form: any) {
     this.launchModal(this.deleteWarningModalContent)
-  }
-
-  isSourcedFromApiValid():boolean{
-    const sourcedfromApiCount = this.waterTypes.filter(x=>x.IsAppliedProportionally ==  WaterTypeApplicationTypeEnum.Api).length ;
-    return sourcedfromApiCount <= 1;
   }
 
   submitImpl(): void {

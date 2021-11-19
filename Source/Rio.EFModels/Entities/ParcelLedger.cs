@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.User;
 
@@ -175,6 +176,14 @@ namespace Rio.EFModels.Entities
             dbContext.Entry(parcelLedger).Reload();
 
             return getByParcelLedgerID(dbContext, parcelLedger.ParcelLedgerID);
+        }
+
+        public static decimal getUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
+        {
+            var transactionTypeIDs = new List<int> {(int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment};
+            return GetParcelLedgersImpl(dbContext)
+                .Where(x => x.ParcelID == parcelID && transactionTypeIDs.Contains(x.TransactionTypeID) && x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
+                .Sum(x => x.TransactionAmount);
         }
     }
 }

@@ -26,85 +26,42 @@
             <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
         </div>
     </div>
-    <form (ngSubmit)="onSubmit(editWaterTypesForm)" #editWaterTypesForm="ngForm">
-        <div class="row mt-4">
-            <table class="table table-responsive table-condensed">
-                <thead>
-
-                </thead>
-                <tbody>
-                    <ng-container *ngFor="let waterType of waterTypes; let i = index">
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Allocation Method</th>
-                            <th>Sort Order</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <i class="fas fa-trash deleteWaterType" title="Delete water type"
-                                    (click)="deleteWaterType(waterType)"></i>
-                            </td>
-                            <td>
-                                <input type="text" class="form-control"
-                                    [(ngModel)]="waterType.WaterTypeName"
-                                    name="WaterTypeName[{{i}}]" required />
-                            </td>
-                            <td>
-                                <select class="form-control" name="WaterTypeIsAppliedProportionally[{{i}}]"
-                                    [(ngModel)]="waterType.IsAppliedProportionally" required>
-                                    <option [ngValue]="WaterTypeApplicationTypeEnum.Proportional">Apply
-                                        proportionally to parcel area</option>
-                                    <option [ngValue]="WaterTypeApplicationTypeEnum.Spreadsheet">Upload a
-                                        spreadsheet</option>
-                                    <option [ngValue]="WaterTypeApplicationTypeEnum.Api">Sourced from API
-                                    </option>
-                                </select>
-                            </td>
-                            <td>
-                                <input type="number" step="1" class="form-control"
-                                [(ngModel)]="waterType.SortOrder"
-                                name="WaterTypeSortOrder[{{i}}]" required/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th colspan="3"> Definition </th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td colspan="3">
-                                <textarea class="form-control" rows="4"
-                                    [(ngModel)]="waterType.WaterTypeDefinition"
-                                    name="WaterTypeDefinition[{{i}}]">
-                                </textarea>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-            <button type="button" class="btn btn-rio" (click)="addWaterType()">Add Water Type</button>
-        </div>
-
-        <div class="row mt-2">
+    <form (ngSubmit)="onSubmit(editWaterTypesForm)" #editWaterTypesForm="ngForm" class="mt-4">
+        <ng-container *ngFor="let waterType of waterTypes; let i = index; let last = last;">
+            <div class="row pt-2 pb-4">
+                <div class="col-sm-1 text-center">
+                    <i class="fas fa-trash deleteWaterType mt-4" title="Delete water type" (click)="deleteWaterType(waterType)"></i>
+                </div>
+                <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label class="font-weight-bold">Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="waterType.WaterTypeName" name="WaterTypeName[{{i}}]" required />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="font-weight-bold">Sort Order</label>
+                            <input type="number" step="1" class="form-control" [(ngModel)]="waterType.SortOrder" name="WaterTypeSortOrder[{{i}}]" required />
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <label class="font-weight-bold">Description</label>
+                            <textarea class="form-control" rows="4" [(ngModel)]="waterType.WaterTypeDefinition" name="WaterTypeDefinition[{{i}}]"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr *ngIf="!last">
+        </ng-container>
+        <div class="row mt-5 mb-5">
             <div class="col-sm">
-                <i class="fas fa-bolt"></i> Required field
+                <button type="button" class="btn btn-rio" (click)="addWaterType()">Add Water Type</button>
             </div>
             <div class="col-sm text-right">
-                <button type="submit" class="btn btn-rio"
-                    [disabled]="!editWaterTypesForm.form.valid || isLoadingSubmit || !isSourcedFromApiValid()">
+                <button type="submit" class="btn btn-rio" [disabled]="!editWaterTypesForm.form.valid || isLoadingSubmit">
                     <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                     Save
                 </button>
-                <button type="button" class="btn btn-secondary ml-1"
-                    (click)="resetWaterTypes()">Reset</button>
-                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
-            </div>
-        </div>
-        <div class="row mt-1">
-            <div class="col text-right">
-                <small *ngIf="!isSourcedFromApiValid()" class="text-danger">Only one Water Type can be sourced from the
-                    CIMIS API</small>
+                <button type="button" class="btn btn-secondary ml-2" (click)="resetWaterTypes()">Reset</button>
+                <a class="btn btn-secondary ml-2" routerLink="/manager-dashboard">Cancel</a>
             </div>
         </div>
     </form>
