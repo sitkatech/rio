@@ -34,7 +34,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
-  public routeHasParcelID: boolean = false;
   public allocationID: number = TransactionTypeEnum.Allocation;
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
@@ -59,7 +58,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
       const id = this.route.snapshot.paramMap.get("id");
       if (id) {
-        this.routeHasParcelID = true;
         this.parcelService.getParcelByParcelID(parseInt(id)).subscribe(parcel => {
             this.parcel = parcel;
             this.model.ParcelNumber = parcel.ParcelNumber;
@@ -104,7 +102,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
         this.isLoadingSubmit = false;
         createTransactionForm.reset();
         
-        if (this.routeHasParcelID) {
+        if (this.parcel) {
           this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
             this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
           });

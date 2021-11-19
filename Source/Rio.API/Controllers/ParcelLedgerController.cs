@@ -26,17 +26,14 @@ namespace Rio.API.Controllers
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
             var parcelDto = Parcel.GetByParcelNumber(_dbContext, parcelLedgerCreateDto.ParcelNumber);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelLedgerCreateDto.ParcelNumber, out var actionResult))
+            if (parcelDto == null)
             {
-                return BadRequest(new { validationMessage = $"{parcelLedgerCreateDto.ParcelNumber} is not a valid Parcel APN." });
+                ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumber} is not a valid Parcel APN.");
+                return BadRequest(ModelState);
             }
 
             parcelLedgerCreateDto.ParcelID = parcelDto.ParcelID;
-
-            if (!ValidateNewParcelLedger(parcelLedgerCreateDto, out var badRequestFromValidation))
-            {
-                return badRequestFromValidation;
-            }
+            ValidateNewParcelLedger(parcelLedgerCreateDto);
 
             if (!ModelState.IsValid)
             {
@@ -47,14 +44,13 @@ namespace Rio.API.Controllers
             return Ok(posting);
         }
 
-        private bool ValidateNewParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto, out ActionResult badRequest)
+        private void ValidateNewParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.ManualAdjustment)
             {
                 if (parcelLedgerCreateDto.EffectiveDate > DateTime.UtcNow)
                 {
-                    badRequest = BadRequest(new { validationMessage = "Transactions to adjust usage for future dates are not allowed." });
-                    return false;
+                    ModelState.AddModelError("EffectiveDate","Transactions to adjust usage for future dates are not allowed.");
                 }
 
                 if (!parcelLedgerCreateDto.IsWithdrawal)
@@ -62,19 +58,10 @@ namespace Rio.API.Controllers
                    var monthlyUsageSum = ParcelLedger.getUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
                    if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                    {
-                       badRequest = BadRequest(new
-                       {
-                           validationMessage =
-                               $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0."
-                       });
-
-                       return false;
+                       ModelState.AddModelError("TransactionAmount", $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");
                    }
                 }
             }
-
-            badRequest = null;
-            return true;
         }
     }
 }

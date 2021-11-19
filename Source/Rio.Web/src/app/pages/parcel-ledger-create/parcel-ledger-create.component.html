@@ -1,7 +1,10 @@
 <div class="breadcrumb-container">
     <div class="container">
-      <nav aria-label="breadcrumb" *ngIf="!routeHasParcelID; else parcelDetailBreadcrumb">
+      <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/manager-dashboard">Manager Dashboard</a>
+          </li>
           <li class="breadcrumb-item" aria-current="page">
             <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
           </li>
@@ -10,21 +13,6 @@
           </li>
         </ol>
       </nav>
-      <ng-template #parcelDetailBreadcrumb>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item" aria-current="page">
-              <a routerLink="/parcels">Parcels</a>
-            </li>
-            <li class="breadcrumb-item" aria-current="page">
-              <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              Create New Transaction
-            </li>
-          </ol>
-        </nav>
-      </ng-template>
     </div>
   </div>
   <app-alert-display></app-alert-display>
@@ -138,9 +126,9 @@
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Save
           </button>
-          <a *ngIf="!routeHasParcelID; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
+          <a *ngIf="!parcel; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
           <ng-template #redirectToParcelDetail>
-            <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+            <a class="btn btn-secondary ml-1" *ngIf="parcel" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
           </ng-template>
         </div>
       </div>
