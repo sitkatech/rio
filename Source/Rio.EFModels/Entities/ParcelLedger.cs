@@ -180,7 +180,7 @@ namespace Rio.EFModels.Entities
 
         public static decimal getUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
         {
-            var transactionTypeIDs = new List<int> {17, 18, 19};
+            var transactionTypeIDs = new List<int> {(int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment};
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => x.ParcelID == parcelID && transactionTypeIDs.Contains(x.TransactionTypeID) && x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
                 .Sum(x => x.TransactionAmount);

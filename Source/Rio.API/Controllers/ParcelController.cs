@@ -95,6 +95,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/search/{parcelNumber}")]
+        [ParcelViewFeature]
         public ActionResult<List<string>> SearchByParcelNumber([FromRoute] string parcelNumber)
         {
             var parcelNumbers = Parcel.SearchParcelNumber(_dbContext, parcelNumber);
@@ -102,6 +103,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpGet("parcels/{parcelID}/getLedgerEntries")]
+        [ParcelViewFeature]
         public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
             var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
