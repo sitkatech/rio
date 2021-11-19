@@ -1,18 +1,30 @@
 <div class="breadcrumb-container">
     <div class="container">
-      <nav aria-label="breadcrumb" *ngIf="parcel">
+      <nav aria-label="breadcrumb" *ngIf="!routeHasParcelID; else parcelDetailBreadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/parcels">Parcels</a>
-          </li>
-          <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+            <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
           </li>
           <li class="breadcrumb-item active" aria-current="page">
             Create New Transaction
           </li>
         </ol>
       </nav>
+      <ng-template #parcelDetailBreadcrumb>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">
+              <a routerLink="/parcels">Parcels</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page">
+              <a routerLink="/parcels/{{parcel.ParcelID}}">{{parcel.ParcelNumber}}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              Create New Transaction
+            </li>
+          </ol>
+        </nav>
+      </ng-template>
     </div>
   </div>
   <app-alert-display></app-alert-display>
@@ -23,13 +35,13 @@
     <div class="card card-body mt-2 mb-5">
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
-    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="parcel">
+    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="model">
       <div class="row">
         <div class="col-sm-3 control-label text-sm-right">
           <label>Parcel APN</label>
         </div>
         <div class="col-sm-5">
-          <input id="typeahead-basic" type="text" class="form-control font-weight-bold" name="parcel-number" [(ngModel)]="parcel.ParcelNumber" [ngbTypeahead]="search" required/>
+          <input id="typeahead-basic" type="text" class="form-control font-weight-bold" name="parcel-number" [(ngModel)]="model.ParcelNumber" [ngbTypeahead]="search" required/>
         </div>
       </div>
       <div class="row mt-3">
@@ -126,7 +138,10 @@
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Save
           </button>
-          <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+          <a *ngIf="!routeHasParcelID; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
+          <ng-template #redirectToParcelDetail>
+            <a class="btn btn-secondary ml-1" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+          </ng-template>
         </div>
       </div>
     </form>

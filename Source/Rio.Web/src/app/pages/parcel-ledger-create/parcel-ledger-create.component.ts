@@ -34,6 +34,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
+  public routeHasParcelID: boolean = false;
   public allocationID: number = TransactionTypeEnum.Allocation;
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
@@ -58,22 +59,12 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
       const id = this.route.snapshot.paramMap.get("id");
       if (id) {
-        const parcelID = parseInt(id);
-        forkJoin(
-          this.parcelService.getParcelByParcelID(parcelID),
-          this.parcelService.getParcelLedgerEntriesByParcelID(parcelID)
-        ).subscribe(
-          ([parcel, parcelLedgers]) => {
-            this.parcel = parcel instanceof Array
-              ? null
-              : parcel as ParcelDto;
+        this.routeHasParcelID = true;
+        this.parcelService.getParcelByParcelID(parseInt(id)).subscribe(parcel => {
             this.parcel = parcel;
-            this.parcelLedgers = parcelLedgers;
-            this.model.ParcelID = parcel.ParcelID;
+            this.model.ParcelNumber = parcel.ParcelNumber;
           }
         );
-      } else {
-        this.parcel = new ParcelDto;
       }
 
       forkJoin(
@@ -96,38 +87,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
     return this.model.TransactionTypeID != this.allocationID;
   }
 
-  private validateUsageCorrectionDate(): boolean {
-    const effectiveDate = this.model.EffectiveDate;
-    const currentDate = new Date();
-    
-    // checks that usage correction is not being applied towards future date
-    if (effectiveDate.getFullYear() > currentDate.getFullYear() || effectiveDate.getMonth() > currentDate.getMonth() || effectiveDate.getDate() > currentDate.getDate()) {
-      let errorMessage = "Transactions to adjust usage for future dates are not allowed."
-      this.alertService.pushAlert(new Alert(errorMessage, AlertContext.Danger));
-      return false;
-    }
-    return true;
-  }
-
-  private validateUsageDeposit(): boolean {
-    let usageTransactionTypeIDs = [TransactionTypeEnum.MeasuredUsage, TransactionTypeEnum.MeasuredUsageCorrection, TransactionTypeEnum.ManualAdjustment];
-    let monthlyUsageSum = Math.abs(this.parcelLedgers
-      .filter(x => x.WaterYear == this.model.EffectiveDate.getFullYear() && x.WaterMonth == this.model.EffectiveDate.getMonth() + 1 && usageTransactionTypeIDs.includes(x.TransactionType.TransactionTypeID))
-      .reduce((a, b) => {
-        return a + b.TransactionAmount;
-      }, 0));
-      
-    // checks that transaction amount doesn't exceed parcel's usage total for effective month
-    if (this.model.TransactionAmount > monthlyUsageSum) {
-      let errorMessage = "Parcel usage for " + (this.model.EffectiveDate.getMonth() + 1) + "/" + this.model.EffectiveDate.getFullYear() + 
-      " is currently " + monthlyUsageSum.toFixed(2) + ". Please update quantity for correction so that usage is not less than 0."
-      this.alertService.pushAlert(new Alert(errorMessage, AlertContext.Danger));
-      
-      return false;
-    }
-    return true;
-  }
-
   private clearErrorAlerts() {
     if (!this.alertsCountOnLoad) {
       this.alertsCountOnLoad = this.alertService.getAlerts().length;
@@ -140,23 +99,24 @@ export class ParcelLedgerCreateComponent implements OnInit {
     this.isLoadingSubmit = true;
     this.clearErrorAlerts();
 
-    if (this.isUsageAdjustment) {
-      if (!this.validateUsageCorrectionDate() || (!this.model.IsWithdrawal && !this.validateUsageDeposit())) {
-        this.isLoadingSubmit = false;
-        return;
-      }
-    }
-
     this.parcelLedgerService.newTransaction(this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         createTransactionForm.reset();
-        this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
-          this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
-        });
+        
+        if (this.routeHasParcelID) {
+          this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
+            this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
+          });
+        } else {
+          this.router.navigateByUrl("/parcels/create-water-transactions").then(x => {
+            this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
+          });
+        }
       },
         error => {
           this.isLoadingSubmit = false;
+          console.log(error);
           this.cdr.detectChanges();
         }
       );
