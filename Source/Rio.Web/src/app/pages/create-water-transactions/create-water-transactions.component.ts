@@ -141,7 +141,6 @@ export class CreateWaterTransactions implements OnInit, OnDestroy {
 
   public updateParcelAllocationHistoryGrid(): void {
     this.parcelService.getParcelAllocationHistory().subscribe(parcelAllocationHistory => {
-      console.log(parcelAllocationHistory.map(x => x.Value));
       this.allocationHistoryEntries = parcelAllocationHistory;
       this.parcelAllocationHistoryGrid ? this.parcelAllocationHistoryGrid.api.setRowData(parcelAllocationHistory) : null;
     });
