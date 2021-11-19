@@ -38,7 +38,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
   private alertsCountOnLoad: number;
-  public searchFailed : boolean = true;
+  public searchFailed : boolean = false;
 
   constructor(
     private route: ActivatedRoute,
