@@ -92,10 +92,11 @@ export class CreateWaterTransactions implements OnInit, OnDestroy {
   }
 
   private initializeParcelAllocationHistoryGrid(): void {
+    // TODO: Date should become Transaction Date, Water Year should become Effective Date once Parcel Allocation History is updated to use Parcel Ledger
     this.parcelAllocationHistoryGridColumnDefs = [
       this.createDateColumnDef('Date', 'Date', 'M/d/yyyy'),
       { headerName: 'Water Year', field: 'WaterYear'},
-      { headerName: 'Allocation', field: 'Allocation', width: 150 },
+      { headerName: 'Supply Type', field: 'Allocation', width: 150 },
       { headerName: 'Value (ac-ft/ac)', field: 'Value', width: 150, cellStyle: {textAlign: "right"},
         valueGetter: function (params: any) {
           return params.data.Value ?? '-';
