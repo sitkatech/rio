@@ -40,7 +40,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var posting = ParcelLedger.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
+            var posting = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
             return Ok(posting);
         }
 
@@ -55,7 +55,7 @@ namespace Rio.API.Controllers
 
                 if (!parcelLedgerCreateDto.IsWithdrawal)
                 {
-                   var monthlyUsageSum = ParcelLedger.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
+                   var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
                    if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                    {
                        ModelState.AddModelError("TransactionAmount", $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");

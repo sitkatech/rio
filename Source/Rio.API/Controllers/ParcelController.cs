@@ -37,7 +37,7 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYear([FromRoute] int year)
         {
             var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            var parcelAllocationBreakdownForYear = ParcelLedger.GetParcelAllocationBreakdownForYear(_dbContext, year);
+            var parcelAllocationBreakdownForYear = ParcelLedgers.GetParcelAllocationBreakdownForYearAsDto(_dbContext, year);
             var parcelDtosWithAllocation = parcelDtos
                 .GroupJoin(
                     parcelAllocationBreakdownForYear,
@@ -106,7 +106,7 @@ namespace Rio.API.Controllers
         [ParcelViewFeature]
         public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListByParcelIDAsDto(_dbContext, parcelID);
+            var parcelLedgerDtos = ParcelLedgers.ListByParcelIDAsDto(_dbContext, parcelID);
             return Ok(parcelLedgerDtos);
         }
 

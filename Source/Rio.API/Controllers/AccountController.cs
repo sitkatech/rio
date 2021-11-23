@@ -176,7 +176,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelLedgerDto>> ListParcelLedgersByAccountID([FromRoute] int accountID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListByAccountID(_dbContext, accountID);
+            var parcelLedgerDtos = ParcelLedgers.ListByAccountID(_dbContext, accountID);
             if (parcelLedgerDtos == null)
             {
                 return NotFound();
@@ -206,7 +206,7 @@ namespace Rio.API.Controllers
 
         private WaterUsageOverviewDto GetWaterUsageOverviewDtoForParcelIDs(List<int> parcelIDs)
         {
-            var parcelLedgerDtos = ParcelLedger.GetUsagesByParcelIDs(_dbContext, parcelIDs).ToList();
+            var parcelLedgerDtos = ParcelLedgers.GetUsagesByParcelIDs(_dbContext, parcelIDs).ToList();
 
             var cumulativeWaterUsageByYearDtos = parcelLedgerDtos.GroupBy(x => x.WaterYear)
                 .Select(x =>

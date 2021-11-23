@@ -423,7 +423,7 @@ namespace Rio.API.Controllers
         {
             var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
 
-            var landownerAllocationBreakdownForYear = ParcelLedger.GetLandownerAllocationBreakdownForYear(_dbContext, year);
+            var landownerAllocationBreakdownForYear = ParcelLedgers.GetLandownerAllocationBreakdownForYear(_dbContext, year);
 
             var landownerUsageReportDtosWithAllocation = landownerUsageReportDtos.Join(
                 landownerAllocationBreakdownForYear, x => x.AccountID, y => y.AccountID,
