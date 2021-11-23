@@ -11,13 +11,18 @@
  */
 
 export class AccountSimpleDto { 
+    AccountDisplayName?: string;
+    ShortAccountDisplayName?: string;
     AccountID?: number;
     AccountNumber?: number;
     AccountName?: string;
-    AccountVerificationKey?: string;
+    AccountStatusID?: number;
     Notes?: string;
-    AccountDisplayName?: string;
-    ShortAccountDisplayName?: string;
+    UpdateDate?: string;
+    AccountVerificationKey?: string;
+    AccountVerificationKeyLastUseDate?: string;
+    CreateDate?: string;
+    InactivateDate?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

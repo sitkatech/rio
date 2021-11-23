@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.Models.DataTransferObjects.Parcel
 {

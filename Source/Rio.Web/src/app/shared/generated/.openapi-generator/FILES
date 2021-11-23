@@ -2,7 +2,7 @@
 model/account-dto.ts
 model/account-edit-users-dto.ts
 model/account-include-parcels-dto.ts
-model/account-reconciliation-dto.ts
+model/account-reconciliation-custom-dto.ts
 model/account-simple-dto.ts
 model/account-status-dto.ts
 model/account-update-dto.ts
@@ -10,6 +10,9 @@ model/bounding-box-dto.ts
 model/cumulative-water-usage-by-month-dto.ts
 model/cumulative-water-usage-by-year-dto.ts
 model/custom-rich-text-dto.ts
+model/custom-rich-text-type-dto.ts
+model/file-resource-dto.ts
+model/file-resource-mime-type-dto.ts
 model/landowner-usage-report-dto.ts
 model/market-metrics-dto.ts
 model/models.ts
@@ -30,6 +33,7 @@ model/parcel-ledger-dto.ts
 model/parcel-ownership-dto.ts
 model/parcel-required-column-and-mapping-dto.ts
 model/parcel-simple-dto.ts
+model/parcel-status-dto.ts
 model/parcel-update-expected-results-dto.ts
 model/posting-detailed-dto.ts
 model/posting-dto.ts
@@ -52,11 +56,14 @@ model/user-invite-dto.ts
 model/user-partner-invite-dto.ts
 model/user-simple-dto.ts
 model/user-upsert-dto.ts
+model/water-transfer-detailed-dto.ts
 model/water-transfer-dto.ts
 model/water-transfer-registration-dto.ts
-model/water-transfer-registration-parcel-dto.ts
+model/water-transfer-registration-parcel-upsert-dto.ts
 model/water-transfer-registration-simple-dto.ts
-model/water-type-application-type-enum.ts
+model/water-transfer-registration-status-dto.ts
+model/water-transfer-registration-upsert-dto.ts
+model/water-transfer-type-dto.ts
 model/water-type-dto.ts
 model/water-usage-overview-dto.ts
 model/water-year-dto.ts

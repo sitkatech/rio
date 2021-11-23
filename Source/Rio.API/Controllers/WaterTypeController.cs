@@ -34,8 +34,8 @@ namespace Rio.API.Controllers
             var updatedWaterTypes = waterTypeDtos.Select(x => new WaterType()
             {
                 WaterTypeName = x.WaterTypeName,
-                IsAppliedProportionally = x.IsAppliedProportionally == WaterTypeApplicationTypeEnum.Proportionally,
-                IsSourcedFromApi = x.IsAppliedProportionally == WaterTypeApplicationTypeEnum.Api,
+                IsAppliedProportionally = x.IsAppliedProportionally,
+                IsSourcedFromApi = x.IsSourcedFromApi,
                 WaterTypeID = x.WaterTypeID,
                 WaterTypeDefinition = x.WaterTypeDefinition,
                 SortOrder = x.SortOrder

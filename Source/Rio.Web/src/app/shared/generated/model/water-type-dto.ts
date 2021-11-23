@@ -9,13 +9,13 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { WaterTypeApplicationTypeEnum } from '././water-type-application-type-enum';
 
 export class WaterTypeDto { 
     WaterTypeID?: number;
     WaterTypeName?: string;
-    IsAppliedProportionally?: WaterTypeApplicationTypeEnum;
+    IsAppliedProportionally?: boolean;
     WaterTypeDefinition?: string;
+    IsSourcedFromApi?: boolean;
     SortOrder?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);

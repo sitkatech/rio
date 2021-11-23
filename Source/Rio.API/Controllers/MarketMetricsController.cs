@@ -42,7 +42,7 @@ namespace Rio.API.Controllers
             return Ok(marketMetricsDto);
         }
 
-        private static void SetMostRecentOfferOfType(OfferDto mostRecentOffer, PostingDto mostRecentPosting,
+        private static void SetMostRecentOfferOfType(Offer mostRecentOffer, Posting mostRecentPosting,
             MarketMetricsDto marketMetricsDto, Expression<Func<MarketMetricsDto, int?>> quantityFunc, Expression<Func<MarketMetricsDto, decimal?>> priceFunc)
         {
             var quantityExpression = (MemberExpression) quantityFunc.Body;

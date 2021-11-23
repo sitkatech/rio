@@ -4,8 +4,6 @@ using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects.WaterUsage;
 using System;
 using System.Collections.Generic;
@@ -13,9 +11,7 @@ using System.Linq;
 using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Rio.Models.DataTransferObjects.Posting;
-using Rio.Models.DataTransferObjects.User;
-using Rio.Models.DataTransferObjects.WaterTransfer;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {
@@ -154,7 +150,7 @@ namespace Rio.API.Controllers
         [UserViewFeature]
         public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int accountID, [FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountIDAndYear(_dbContext, accountID, year);
+            var parcelDtos = Parcel.ListByAccountIDAndYearAsDto(_dbContext, accountID, year);
             if (parcelDtos == null)
             {
                 return NotFound();
@@ -201,9 +197,8 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<WaterUsageOverviewDto> GetWaterUsageOverview([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListByAccountIDsAndYear(_dbContext, _dbContext.Accounts.Select(x => x.AccountID).ToList(), year);
-            var parcelIDs = parcelDtos.Select(x => x.ParcelID).ToList();
-
+            var accountIDs = _dbContext.Accounts.Select(x => x.AccountID).ToList();
+            var parcelIDs = Parcel.ListByAccountIDsAndYear(_dbContext, accountIDs, year).Select(x => x.ParcelID).ToList();
             var waterUsageOverviewDto = GetWaterUsageOverviewDtoForParcelIDs(parcelIDs);
 
             return Ok(waterUsageOverviewDto);
@@ -211,7 +206,7 @@ namespace Rio.API.Controllers
 
         private WaterUsageOverviewDto GetWaterUsageOverviewDtoForParcelIDs(List<int> parcelIDs)
         {
-            var parcelLedgerDtos = ParcelLedger.GetUsagesByParcelIDs(_dbContext, parcelIDs).Select(x => x.AsDto()).ToList();
+            var parcelLedgerDtos = ParcelLedger.GetUsagesByParcelIDs(_dbContext, parcelIDs).ToList();
 
             var cumulativeWaterUsageByYearDtos = parcelLedgerDtos.GroupBy(x => x.WaterYear)
                 .Select(x =>
@@ -252,9 +247,9 @@ namespace Rio.API.Controllers
             return monthlyWaterUsageOverviewDtos.ToList();
         }
 
-        private static List<CumulativeWaterUsageByMonthDto> GetCurrentWaterUsageOverview(IGrouping<int, ParcelLedgerDto> parcelLedgerDtos)
+        private static List<CumulativeWaterUsageByMonthDto> GetCurrentWaterUsageOverview(IGrouping<int, ParcelLedger> parcelLedgers)
         {
-            var parcelLedgersGroupedByMonth = parcelLedgerDtos.GroupBy(x => x.WaterMonth).ToList();
+            var parcelLedgersGroupedByMonth = parcelLedgers.GroupBy(x => x.WaterMonth).ToList();
             var monthlyWaterUsageOverviewDtos = new List<CumulativeWaterUsageByMonthDto>();
 
             decimal cumulativeTotal = 0;

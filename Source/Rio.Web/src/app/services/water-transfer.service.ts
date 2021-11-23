@@ -5,6 +5,7 @@ import { WaterTransferDto } from '../shared/generated/model/water-transfer-dto';
 import { WaterTransferRegistrationDto } from '../shared/generated/model/water-transfer-registration-dto';
 import { WaterTransferRegistrationParcelDto } from '../shared/generated/model/water-transfer-registration-parcel-dto';
 import { WaterTransferRegistrationSimpleDto } from '../shared/generated/model/water-transfer-registration-simple-dto';
+import { WaterTransferDetailedDto } from '../shared/generated/model/water-transfer-detailed-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ import { WaterTransferRegistrationSimpleDto } from '../shared/generated/model/wa
 export class WaterTransferService {
   constructor(private apiService: ApiService) { }
 
-  public getWaterTransferFromWaterTransferID(waterTransferID: number): Observable<WaterTransferDto> {
+  public getWaterTransferFromWaterTransferID(waterTransferID: number): Observable<WaterTransferDetailedDto> {
       let route = `/water-transfers/${waterTransferID}`;
       return this.apiService.getFromApi(route);
   }

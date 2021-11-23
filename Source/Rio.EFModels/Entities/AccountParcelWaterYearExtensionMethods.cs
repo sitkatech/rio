@@ -2,7 +2,7 @@
 
 namespace Rio.EFModels.Entities
 {
-    public static class AccountParcelWaterYearExtensionMethods
+    public static partial class AccountParcelWaterYearExtensionMethods
     {
         public static ParcelOwnershipDto AsParcelOwnershipDto(this AccountParcelWaterYear accountParcelWaterYear)
         {

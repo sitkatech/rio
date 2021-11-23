@@ -9,15 +9,21 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { WaterTransferRegistrationParcelDto } from '././water-transfer-registration-parcel-dto';
+import { WaterTransferDto } from '././water-transfer-dto';
+import { WaterTransferTypeDto } from '././water-transfer-type-dto';
+import { WaterTransferRegistrationStatusDto } from '././water-transfer-registration-status-dto';
+import { AccountDto } from '././account-dto';
 
 export class WaterTransferRegistrationDto { 
-    WaterTransferTypeID: number;
-    AccountID: number;
-    WaterTransferRegistrationStatusID?: number;
+    WaterTransferRegistrationID?: number;
+    WaterTransfer?: WaterTransferDto;
+    WaterTransferType?: WaterTransferTypeDto;
+    Account?: AccountDto;
+    WaterTransferRegistrationStatus?: WaterTransferRegistrationStatusDto;
     StatusDate?: string;
-    WaterTransferRegistrationParcels?: Array<WaterTransferRegistrationParcelDto>;
-    UserID?: number;
+    IsRegistered?: boolean;
+    IsCanceled?: boolean;
+    IsPending?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

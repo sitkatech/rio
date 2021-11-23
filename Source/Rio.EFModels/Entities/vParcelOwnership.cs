@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Account;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {

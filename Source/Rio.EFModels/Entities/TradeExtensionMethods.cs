@@ -3,20 +3,8 @@ using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
-    public static class TradeExtensionMethods
+    public static partial class TradeExtensionMethods
     {
-        public static TradeDto AsDto(this Trade trade)
-        {
-            return new TradeDto()
-            {
-                TradeID = trade.TradeID,
-                TradeNumber = trade.TradeNumber,
-                CreateAccount = trade.CreateAccount.AsDto(),
-                TradeStatus = trade.TradeStatus.AsDto(),
-                Posting = trade.Posting.AsDto()
-            };
-        }
-
         public static TradeWithMostRecentOfferDto AsTradeWithMostRecentOfferDto(this Trade trade)
         {
             var mostRecentOffer = trade.Offers.OrderByDescending(x => x.OfferDate).First();
@@ -42,8 +30,8 @@ namespace Rio.EFModels.Entities
                 var sellerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Selling);
                 var buyerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Buying);
 
-                tradeWithMostRecentOfferDto.BuyerRegistration = buyerRegistration.AsSimpleDto();
-                tradeWithMostRecentOfferDto.SellerRegistration = sellerRegistration.AsSimpleDto();
+                tradeWithMostRecentOfferDto.BuyerRegistration = buyerRegistration.AsDto();
+                tradeWithMostRecentOfferDto.SellerRegistration = sellerRegistration.AsDto();
             }
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)

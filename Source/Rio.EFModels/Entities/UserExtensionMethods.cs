@@ -1,35 +1,17 @@
-﻿using Rio.Models.DataTransferObjects.User;
+﻿using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
-    public static class UserExtensionMethods
+    public static partial class UserExtensionMethods
     {
-        public static UserDto AsDto(this User user)
+        static partial void DoCustomMappings(User user, UserDto userDto)
         {
-            return new UserDto()
-            {
-                UserID = user.UserID,
-                UserGuid = user.UserGuid,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Phone = user.Phone,
-                Role = user.Role?.AsDto(),
-                LoginName = user.LoginName,
-                DisclaimerAcknowledgedDate = user.DisclaimerAcknowledgedDate,
-                ReceiveSupportEmails = user.ReceiveSupportEmails
-            };
+            userDto.FullName = $"{user.FirstName} {user.LastName}";
         }
 
-        public static UserSimpleDto AsSimpleDto(this User user)
+        static partial void DoCustomSimpleDtoMappings(User user, UserSimpleDto userSimpleDto)
         {
-            return new UserSimpleDto()
-            {
-                UserID = user.UserID,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-            };
+            userSimpleDto.FullName = $"{user.FirstName} {user.LastName}";
         }
     }
 }

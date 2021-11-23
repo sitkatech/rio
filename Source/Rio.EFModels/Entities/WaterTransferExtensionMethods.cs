@@ -2,14 +2,14 @@
 
 namespace Rio.EFModels.Entities
 {
-    public static class WaterTransferExtensionMethods
+    public static partial class WaterTransferExtensionMethods
     {
-        public static WaterTransferDto AsDto(this WaterTransfer waterTransfer)
+        public static WaterTransferDetailedDto AsDetailedDto(this WaterTransfer waterTransfer)
         {
             var sellerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Selling);
             var buyerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Buying);
 
-            return new WaterTransferDto()
+            return new WaterTransferDetailedDto()
             {
                 WaterTransferID = waterTransfer.WaterTransferID,
                 OfferID = waterTransfer.OfferID,
@@ -17,8 +17,8 @@ namespace Rio.EFModels.Entities
                 TransferYear = waterTransfer.TransferDate.Year,
                 AcreFeetTransferred = waterTransfer.AcreFeetTransferred,
                 UnitPrice = waterTransfer.Offer?.Price,
-                SellerRegistration = sellerRegistration.AsSimpleDto(),
-                BuyerRegistration = buyerRegistration.AsSimpleDto(),
+                SellerRegistration = sellerRegistration.AsDto(),
+                BuyerRegistration = buyerRegistration.AsDto(),
                 Notes = waterTransfer.Notes,
                 // ReSharper disable once PossibleNullReferenceException
                 TradeNumber = waterTransfer.Offer.Trade.TradeNumber

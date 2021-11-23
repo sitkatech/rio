@@ -1,18 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.Offer;
-using Rio.Models.DataTransferObjects.Posting;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {
     public partial class WaterTransfer
     {
-        public static WaterTransferDto CreateNew(RioDbContext dbContext, OfferDto offerDto, TradeDto tradeDto, PostingDto postingDto)
+        public static WaterTransferDetailedDto CreateNew(RioDbContext dbContext, OfferDto offerDto, TradeDto tradeDto, PostingDto postingDto)
         {
             var waterTransfer = new WaterTransfer
             {
@@ -53,7 +50,7 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(waterTransfer).Reload();
 
-            return GetByWaterTransferID(dbContext, waterTransfer.WaterTransferID);
+            return GetByWaterTransferIDAsWaterTransferDetailedDto(dbContext, waterTransfer.WaterTransferID);
         }
 
         public static IEnumerable<WaterTransferDto> ListByAccountID(RioDbContext dbContext, int accountID)
@@ -75,30 +72,30 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        public static WaterTransferDto GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
+        public static WaterTransferDetailedDto GetByWaterTransferIDAsWaterTransferDetailedDto(RioDbContext dbContext, int waterTransferID)
         {
             var waterTransfer = GetWaterTransfersImpl(dbContext).SingleOrDefault(x => x.WaterTransferID == waterTransferID);
-            return waterTransfer?.AsDto();
+            return waterTransfer?.AsDetailedDto();
         }
 
         public static List<ErrorMessage> ValidateConfirmTransfer(
-            WaterTransferRegistrationDto waterTransferRegistrationDto, WaterTransferDto waterTransferDto,
+            WaterTransferRegistrationUpsertDto waterTransferRegistrationUpsertDto, WaterTransferDetailedDto waterTransferDto,
             UserDto currentUser)
         {
             var result = new List<ErrorMessage>();
 
             if (currentUser.Role.RoleID != (int)RoleEnum.Admin)
             {
-                if (waterTransferRegistrationDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Selling &&
+                if (waterTransferRegistrationUpsertDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Selling &&
                     !waterTransferDto.SellerRegistration.Account.Users.Select(x => (int?)x.UserID)
-                        .Contains(waterTransferRegistrationDto.UserID))
+                        .Contains(waterTransferRegistrationUpsertDto.UserID))
                 {
                     result.Add(new ErrorMessage() { Message = "Confirming user does not match seller." });
                 }
 
-                if (waterTransferRegistrationDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Buying &&
+                if (waterTransferRegistrationUpsertDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Buying &&
                     !waterTransferDto.BuyerRegistration.Account.Users.Select(x => (int?)x.UserID)
-                        .Contains(waterTransferRegistrationDto.UserID))
+                        .Contains(waterTransferRegistrationUpsertDto.UserID))
                 {
                     result.Add(new ErrorMessage() { Message = "Confirming user does not match buyer." });
                 }
@@ -107,8 +104,8 @@ namespace Rio.EFModels.Entities
             return result;
         }
 
-        public static WaterTransferDto ChangeWaterRegistrationStatus(RioDbContext dbContext, int waterTransferID,
-            WaterTransferRegistrationDto waterTransferRegistrationDto,
+        public static WaterTransferDetailedDto ChangeWaterRegistrationStatus(RioDbContext dbContext, int waterTransferID,
+            WaterTransferRegistrationUpsertDto waterTransferRegistrationDto,
             WaterTransferRegistrationStatusEnum waterTransferRegistrationStatusEnum)
         {
             var waterTransferRegistration = dbContext.WaterTransferRegistrations
@@ -119,32 +116,32 @@ namespace Rio.EFModels.Entities
             waterTransferRegistration.StatusDate = DateTime.Now;
             dbContext.SaveChanges();
             dbContext.Entry(waterTransferRegistration).Reload();
-            return GetByWaterTransferID(dbContext, waterTransferID);
+            return GetByWaterTransferIDAsWaterTransferDetailedDto(dbContext, waterTransferID);
         }
 
         public static List<ErrorMessage> ValidateCancelTransfer(
-            WaterTransferRegistrationDto waterTransferRegistrationDto, WaterTransferDto waterTransferDto,
+            WaterTransferRegistrationUpsertDto waterTransferRegistrationUpsertDto, WaterTransferDetailedDto waterTransferDetailedDto,
             UserDto currentUser)
         {
             var result = new List<ErrorMessage>();
 
-            if (waterTransferDto.BuyerRegistration.IsRegistered || waterTransferDto.SellerRegistration.IsRegistered)
+            if (waterTransferDetailedDto.BuyerRegistration.IsRegistered || waterTransferDetailedDto.SellerRegistration.IsRegistered)
             {
                 result.Add(new ErrorMessage() { Message = "Cannot cancel transfer because one of the parties has already registered this transfer." });
             }
 
             if (currentUser.Role.RoleID != (int)RoleEnum.Admin)
             {
-                if (waterTransferRegistrationDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Selling && !
-                        waterTransferDto.SellerRegistration.Account.Users.Select(x => (int?)x.UserID)
-                            .Contains(waterTransferRegistrationDto.UserID))
+                if (waterTransferRegistrationUpsertDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Selling && !
+                        waterTransferDetailedDto.SellerRegistration.Account.Users.Select(x => (int?)x.UserID)
+                            .Contains(waterTransferRegistrationUpsertDto.UserID))
                 {
                     result.Add(new ErrorMessage() { Message = "Canceling user does not match seller." });
                 }
 
-                if (waterTransferRegistrationDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Buying && !
-                        waterTransferDto.BuyerRegistration.Account.Users.Select(x => (int?)x.UserID)
-                            .Contains(waterTransferRegistrationDto.UserID))
+                if (waterTransferRegistrationUpsertDto.WaterTransferTypeID == (int)WaterTransferTypeEnum.Buying && !
+                        waterTransferDetailedDto.BuyerRegistration.Account.Users.Select(x => (int?)x.UserID)
+                            .Contains(waterTransferRegistrationUpsertDto.UserID))
                 {
                     result.Add(new ErrorMessage() { Message = "Canceling user does not match buyer." });
                 }

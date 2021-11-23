@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Account;
+using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
@@ -48,11 +48,11 @@ namespace Rio.EFModels.Entities
 
                 if (parcel.AccountID.HasValue)
                 {
-                    parcelAllocationAndUsageDto.LandOwner = new AccountSimpleDto()
+                    parcelAllocationAndUsageDto.LandOwner = new AccountDto()
                     {
                         AccountID = parcel.AccountID.Value,
                         AccountName = parcel.AccountName,
-                        AccountNumber = parcel.AccountNumber,
+                        AccountNumber = parcel.AccountNumber.Value,
                         AccountDisplayName = $"#{parcel.AccountNumber} ({parcel.AccountName.Trim()})"
                     };
                 }

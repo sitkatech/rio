@@ -13,6 +13,7 @@ import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dt
 import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-ownership-dto';
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
 import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
+import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsByUserID(userID: number, year: number): Observable<ParcelDto[]> {
+  getParcelsByUserID(userID: number, year: number): Observable<ParcelSimpleDto[]> {
     let route = `/users/${userID}/parcels/${year}`;
     return this.apiService.getFromApi(route);
   }

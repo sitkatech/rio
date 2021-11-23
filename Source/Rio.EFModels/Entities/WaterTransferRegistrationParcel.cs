@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class WaterTransferRegistrationParcel
     {
-        public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
             // get the registration record
             var waterTransferRegistration = dbContext.WaterTransferRegistrations.Single(x =>
@@ -69,7 +69,7 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        public static List<ErrorMessage> ValidateParcels(List<WaterTransferRegistrationParcelDto> waterTransferParcelDtos, WaterTransferDto waterTransferDto)
+        public static List<ErrorMessage> ValidateParcels(List<WaterTransferRegistrationParcelUpsertDto> waterTransferRegistrationParcelUpsertDtos, WaterTransferDetailedDto waterTransferDto)
         {
             var result = new List<ErrorMessage>();
 

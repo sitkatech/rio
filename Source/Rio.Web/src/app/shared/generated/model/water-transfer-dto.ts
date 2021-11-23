@@ -9,19 +9,14 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { WaterTransferRegistrationSimpleDto } from '././water-transfer-registration-simple-dto';
+import { OfferDto } from '././offer-dto';
 
 export class WaterTransferDto { 
     WaterTransferID?: number;
-    OfferID?: number;
     TransferDate?: string;
-    TransferYear?: number;
     AcreFeetTransferred?: number;
-    UnitPrice?: number;
+    Offer?: OfferDto;
     Notes?: string;
-    TradeNumber?: string;
-    BuyerRegistration?: WaterTransferRegistrationSimpleDto;
-    SellerRegistration?: WaterTransferRegistrationSimpleDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

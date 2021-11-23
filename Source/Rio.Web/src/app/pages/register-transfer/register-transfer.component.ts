@@ -13,9 +13,9 @@ import { TradeService } from 'src/app/services/trade.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
-import { WaterTransferDto } from 'src/app/shared/generated/model/water-transfer-dto';
-import { WaterTransferRegistrationDto } from 'src/app/shared/generated/model/water-transfer-registration-dto';
 import { WaterTransferRegistrationParcelDto } from 'src/app/shared/generated/model/water-transfer-registration-parcel-dto';
+import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
+import { WaterTransferRegistrationUpsertDto } from 'src/app/shared/generated/model/water-transfer-registration-upsert-dto';
 
 
 @Component({
@@ -26,7 +26,7 @@ import { WaterTransferRegistrationParcelDto } from 'src/app/shared/generated/mod
 export class RegisterTransferComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private currentUser: UserDto;
-  public waterTransfer: WaterTransferDto;
+  public waterTransfer: WaterTransferDetailedDto;
   public isRegisteringTransfer: boolean = false;
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
@@ -88,7 +88,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
-          : waterTransfer as WaterTransferDto;
+          : waterTransfer as WaterTransferDetailedDto;
 
         if (this.waterTransfer.BuyerRegistration.Account.AccountID != this.accountID && this.waterTransfer.SellerRegistration.Account.AccountID != this.accountID) {
           this.router.navigate(["/"]).then(() => {
@@ -108,7 +108,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       });
   }
 
-  public getTotalPrice(waterTransfer: WaterTransferDto): number {
+  public getTotalPrice(waterTransfer: WaterTransferDetailedDto): number {
     return waterTransfer.UnitPrice * waterTransfer.AcreFeetTransferred;
   }
 
@@ -150,7 +150,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public submitRegistration(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferRegistrationDto();
+    let model = new WaterTransferRegistrationUpsertDto();
     model.UserID = this.currentUser.UserID;
     model.WaterTransferTypeID = this.waterTransferType;
     this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
@@ -171,7 +171,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public onSubmitParcels(): void {
     this.parcelPicker.isLoadingSubmit = true;
-    const waterTransferRegistrationDto = new WaterTransferRegistrationDto();
+    const waterTransferRegistrationDto = new WaterTransferRegistrationUpsertDto();
     waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
     waterTransferRegistrationDto.UserID = this.currentUser.UserID;
     let waterTransferRegistrationParcels = this.parcelPicker.selectedParcels.map(p => {
@@ -200,7 +200,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public cancelTrade(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferRegistrationDto();
+    let model = new WaterTransferRegistrationUpsertDto();
     model.UserID = this.currentUser.UserID;
     model.WaterTransferTypeID = this.waterTransferType;
     this.waterTransferService.cancelTrade(this.waterTransfer.WaterTransferID, model)

@@ -9,10 +9,13 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { CustomRichTextTypeDto } from '././custom-rich-text-type-dto';
 
 export class CustomRichTextDto { 
-    CustomRichTextContent?: string;
     IsEmptyContent?: boolean;
+    CustomRichTextID?: number;
+    CustomRichTextType?: CustomRichTextTypeDto;
+    CustomRichTextContent?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

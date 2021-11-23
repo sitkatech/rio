@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.Account;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using Rio.API.Util;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 using Rio.Models.DataTransferObjects;
 
@@ -51,18 +47,10 @@ namespace Rio.EFModels.Entities
         public static IEnumerable<ParcelAllocationHistoryDto> GetParcelAllocationHistoryDtos(RioDbContext dbContext)
         {
             return dbContext.ParcelAllocationHistories
-                .Include(x => x.User)
+                .Include(x => x.User).ThenInclude(x => x.Role)
                 .Include(x => x.WaterType)
-                .Include(x => x.FileResource)
-                .ToList().Select(x => new ParcelAllocationHistoryDto()
-                {
-                    Date = x.ParcelAllocationHistoryDate,
-                    WaterYear = x.ParcelAllocationHistoryWaterYear,
-                    Allocation = x.WaterType.WaterTypeName,
-                    Value = x.ParcelAllocationHistoryValue,
-                    Filename = x.FileResource?.OriginalBaseFilename,
-                    User = x.User.FirstName + " " + x.User.LastName
-                });
+                .Include(x => x.FileResource).ThenInclude(x => x.FileResourceMimeType)
+                .Select(x => x.AsDto()).ToList();
         }
     }
 }

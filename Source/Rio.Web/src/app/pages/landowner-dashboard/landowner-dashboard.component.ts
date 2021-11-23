@@ -28,6 +28,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTransferDto } from 'src/app/shared/generated/model/water-transfer-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
+import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -377,7 +378,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {
     var parcelLedgersForYear = this.getAllocationsForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
-      var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.ParcelID == parcelID)
+      var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.Parcel.ParcelID == parcelID)
   
       return this.getTotalTransactionAmountForParcelLedgers(parcelLedgersForYearAndParcel).toFixed(1);
     }
@@ -397,7 +398,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.TradePurchase);
   }
 
-  public isWaterTransferPending(waterTransfer: WaterTransferDto) {
+  public isWaterTransferPending(waterTransfer: WaterTransferDetailedDto) {
     return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
@@ -510,11 +511,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
     
     for (let parcelLedger of parcelLedgers) {
-      if (!usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth]) {
-        usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] = 0;
+      if (!usageByParcelAndMonth[parcelLedger.Parcel.ParcelNumber][parcelLedger.WaterMonth]) {
+        usageByParcelAndMonth[parcelLedger.Parcel.ParcelNumber][parcelLedger.WaterMonth] = 0;
       }
 
-      usageByParcelAndMonth[parcelLedger.ParcelNumber][parcelLedger.WaterMonth] += parcelLedger.TransactionAmount;
+      usageByParcelAndMonth[parcelLedger.Parcel.ParcelNumber][parcelLedger.WaterMonth] += parcelLedger.TransactionAmount;
     }
 
     return this.months.map((month, monthIndex) => {

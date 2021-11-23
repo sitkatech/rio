@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
-using Rio.Models.DataTransferObjects.User;
 
 namespace Rio.EFModels.Entities
 {
     public partial class ParcelLedger
     {
+        public int WaterYear => EffectiveDate.Year;
+        public int WaterMonth => EffectiveDate.Month;
 
         private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
         {
-            return dbContext.ParcelLedgers.Include(x => x.TransactionType)
+            return dbContext.ParcelLedgers
+                .Include(x => x.TransactionType)
                 .Include(x => x.WaterType)
                 .Include(x => x.Parcel)
+                .ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();
         }
 
@@ -23,19 +26,6 @@ namespace Rio.EFModels.Entities
         {
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Allocation);
-        }
-
-
-        public static List<ParcelLedgerDto> ListLedgerEntriesByParcelID(RioDbContext dbContext, int parcelID)
-        {
-            var parcelLedgers = GetParcelLedgersImpl(dbContext)
-                .Where(x => parcelID == x.ParcelID)
-                .OrderByDescending(x => x.TransactionDate)
-                .ThenByDescending(x => x.EffectiveDate)
-                .Select(x => x.AsDto())
-                .ToList();
-
-            return parcelLedgers;
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYear(RioDbContext dbContext, int year)
@@ -53,16 +43,17 @@ namespace Rio.EFModels.Entities
             return parcelAllocationBreakdownForYear;
         }
 
-        public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
+        public static decimal GetUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
         {
-            var usageTransactionTypeIDs = new List<int> { 17, 18, 19 };
-            return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, usageTransactionTypeIDs);
+            return GetUsagesByParcelIDs(dbContext, new List<int>{parcelID})
+                .Where(x => x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
+                .Sum(x => x.TransactionAmount);
         }
 
-        private static IQueryable<ParcelLedger> GetByTransactionTypeIDAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, int transactionTypeID)
+        public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == transactionTypeID);
+            var transactionTypeIDs = new List<int> { (int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment };
+            return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, transactionTypeIDs);
         }
 
         private static IQueryable<ParcelLedger> GetByTransactionTypeIDsAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, List<int> transactionTypeIDs)
@@ -70,12 +61,6 @@ namespace Rio.EFModels.Entities
             return GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID) && transactionTypeIDs.Contains(x.TransactionTypeID));
         }
-
-        private static DateTime CreateEffectiveDateFromYearMonth(int waterYear, int waterMonth)
-        {
-            return new DateTime(waterYear, waterMonth, 2);
-        }
-
 
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
         {
@@ -125,31 +110,35 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelLedgerDto> ListByAccountID(RioDbContext dbContext, int accountID)
         {
-            var parcelIDs = Entities.Parcel.ListByAccountID(dbContext, accountID)
+            var parcelIDs = Parcel.ListByAccountID(dbContext, accountID)
                 .Select(x => x.ParcelID);
 
-            var parcelLedgerDtos = GetParcelLedgersImpl(dbContext)
-                .Include(x => x.Parcel)
-                .Where(x => parcelIDs.Contains(x.ParcelID))
-                .Select(x => new ParcelLedgerDto()
-                {
-                    ParcelLedgerID = x.ParcelLedgerID,
-                    ParcelID = x.ParcelID,
-                    ParcelNumber = x.Parcel.ParcelNumber,
-                    TransactionDate = x.TransactionDate,
-                    EffectiveDate = x.EffectiveDate,
-                    TransactionType = x.TransactionType.AsDto(),
-                    WaterType = (x.WaterType != null ? x.WaterType.AsDto() : null),
-                    TransactionAmount = x.TransactionAmount,
-                    TransactionDescription = x.TransactionDescription
-                })
+            var parcelLedgerDtos = ListByParcelIDAsDto(dbContext, parcelIDs)
                 .OrderByDescending(x => x.EffectiveDate)
                 .ToList();
 
             return parcelLedgerDtos;
         }
 
-        public static ParcelLedgerDto getByParcelLedgerID(RioDbContext dbContext, int parcelLedgerID)
+        public static List<ParcelLedgerDto> ListByParcelIDAsDto(RioDbContext dbContext, IEnumerable<int> parcelIDs)
+        {
+            var parcelLedgers = GetParcelLedgersImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID))
+                .OrderByDescending(x => x.TransactionDate)
+                .ThenByDescending(x => x.EffectiveDate)
+                .Select(x => x.AsDto())
+                .ToList();
+
+            return parcelLedgers;
+        }
+
+        public static List<ParcelLedgerDto> ListByParcelIDAsDto(RioDbContext dbContext, int parcelID)
+        {
+            var parcelLedgers = ListByParcelIDAsDto(dbContext, new List<int> { parcelID });
+            return parcelLedgers;
+        }
+
+        public static ParcelLedgerDto GetByParcelLedgerID(RioDbContext dbContext, int parcelLedgerID)
         {
             var parcelLedger = GetParcelLedgersImpl(dbContext).SingleOrDefault(x => x.ParcelLedgerID == parcelLedgerID);
             return parcelLedger?.AsDto();
@@ -175,15 +164,7 @@ namespace Rio.EFModels.Entities
             dbContext.SaveChanges();
             dbContext.Entry(parcelLedger).Reload();
 
-            return getByParcelLedgerID(dbContext, parcelLedger.ParcelLedgerID);
-        }
-
-        public static decimal getUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
-        {
-            var transactionTypeIDs = new List<int> {(int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment};
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.ParcelID == parcelID && transactionTypeIDs.Contains(x.TransactionTypeID) && x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
-                .Sum(x => x.TransactionAmount);
+            return GetByParcelLedgerID(dbContext, parcelLedger.ParcelLedgerID);
         }
     }
 }

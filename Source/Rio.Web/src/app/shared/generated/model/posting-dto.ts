@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { UserDto } from '././user-dto';
 import { AccountDto } from '././account-dto';
 import { PostingStatusDto } from '././posting-status-dto';
 import { PostingTypeDto } from '././posting-type-dto';
@@ -17,12 +18,13 @@ export class PostingDto {
     PostingID?: number;
     PostingType?: PostingTypeDto;
     PostingDate?: string;
+    CreateAccount?: AccountDto;
     Quantity?: number;
-    AvailableQuantity?: number;
     Price?: number;
     PostingDescription?: string;
-    CreateAccount?: AccountDto;
     PostingStatus?: PostingStatusDto;
+    AvailableQuantity?: number;
+    CreateUser?: UserDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

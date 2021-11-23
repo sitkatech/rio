@@ -12,10 +12,20 @@
 
 export class UserSimpleDto { 
     UserID?: number;
+    UserGuid?: string;
     FirstName?: string;
     LastName?: string;
     Email?: string;
-    readonly FullName?: string;
+    Phone?: string;
+    RoleID?: number;
+    CreateDate?: string;
+    UpdateDate?: string;
+    LastActivityDate?: string;
+    DisclaimerAcknowledgedDate?: string;
+    ReceiveSupportEmails?: boolean;
+    LoginName?: string;
+    Company?: string;
+    FullName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

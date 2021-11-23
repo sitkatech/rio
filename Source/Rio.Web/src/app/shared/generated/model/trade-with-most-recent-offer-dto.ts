@@ -13,7 +13,7 @@ import { TradeStatusDto } from '././trade-status-dto';
 import { AccountSimpleDto } from '././account-simple-dto';
 import { OfferStatusDto } from '././offer-status-dto';
 import { UserSimpleDto } from '././user-simple-dto';
-import { WaterTransferRegistrationSimpleDto } from '././water-transfer-registration-simple-dto';
+import { WaterTransferRegistrationDto } from '././water-transfer-registration-dto';
 
 export class TradeWithMostRecentOfferDto { 
     TradeID?: number;
@@ -31,8 +31,8 @@ export class TradeWithMostRecentOfferDto {
     Seller?: AccountSimpleDto;
     TradePostingTypeID?: number;
     WaterTransferID?: number;
-    BuyerRegistration?: WaterTransferRegistrationSimpleDto;
-    SellerRegistration?: WaterTransferRegistrationSimpleDto;
+    BuyerRegistration?: WaterTransferRegistrationDto;
+    SellerRegistration?: WaterTransferRegistrationDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

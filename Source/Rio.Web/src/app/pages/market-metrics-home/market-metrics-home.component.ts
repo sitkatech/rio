@@ -88,7 +88,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   {
     if(this.marketMetrics.MostRecentWaterTransfer)
     {
-      return this.decimalPipe.transform(this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(this.marketMetrics.MostRecentWaterTransfer.UnitPrice, "USD") + " per ac-ft";
+      return this.decimalPipe.transform(this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(this.marketMetrics.MostRecentWaterTransfer.Offer.Price, "USD") + " per ac-ft";
     }
     return "-";
   }

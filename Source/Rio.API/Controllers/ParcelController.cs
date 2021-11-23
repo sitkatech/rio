@@ -63,7 +63,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetInactiveParcels()
         {
-            var parcelDtos = Parcel.GetInactiveParcels(_dbContext);
+            var parcelDtos = Parcel.ListInactiveAsDto(_dbContext);
             return Ok(parcelDtos);
         }
 
@@ -90,7 +90,7 @@ namespace Rio.API.Controllers
                 }
             }
 
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
@@ -106,7 +106,7 @@ namespace Rio.API.Controllers
         [ParcelViewFeature]
         public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
-            var parcelLedgerDtos = ParcelLedger.ListLedgerEntriesByParcelID(_dbContext, parcelID);
+            var parcelLedgerDtos = ParcelLedger.ListByParcelIDAsDto(_dbContext, parcelID);
             return Ok(parcelLedgerDtos);
         }
 
@@ -160,7 +160,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
         {
-            return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.Date));
+            return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.ParcelAllocationHistoryDate));
         }
 
         [HttpPost("parcels/getBoundingBox")]
@@ -181,7 +181,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext, year);
+            var parcelDtos = Parcel.ListForWaterYearAsDto(_dbContext, year);
             return Ok(parcelDtos);
         }
 
@@ -198,7 +198,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
         {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
             if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
             {
                 return actionResult;

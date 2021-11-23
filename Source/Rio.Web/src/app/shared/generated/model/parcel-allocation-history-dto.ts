@@ -9,14 +9,18 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { FileResourceDto } from '././file-resource-dto';
+import { UserDto } from '././user-dto';
+import { WaterTypeDto } from '././water-type-dto';
 
 export class ParcelAllocationHistoryDto { 
-    Date?: string;
-    WaterYear?: number;
-    Allocation?: string;
-    Value?: number;
-    Filename?: string;
-    User?: string;
+    ParcelAllocationHistoryID?: number;
+    ParcelAllocationHistoryDate?: string;
+    ParcelAllocationHistoryWaterYear?: number;
+    WaterType?: WaterTypeDto;
+    User?: UserDto;
+    FileResource?: FileResourceDto;
+    ParcelAllocationHistoryValue?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

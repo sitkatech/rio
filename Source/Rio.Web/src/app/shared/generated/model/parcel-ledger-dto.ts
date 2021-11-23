@@ -10,21 +10,23 @@
  * Do not edit the class manually.
  */
 import { TransactionTypeDto } from '././transaction-type-dto';
+import { UserDto } from '././user-dto';
+import { ParcelDto } from '././parcel-dto';
 import { WaterTypeDto } from '././water-type-dto';
 
 export class ParcelLedgerDto { 
-    ParcelID?: number;
-    ParcelNumber?: string;
+    ParcelLedgerID?: number;
+    Parcel?: ParcelDto;
     TransactionDate?: string;
     EffectiveDate?: string;
     TransactionType?: TransactionTypeDto;
     TransactionAmount?: number;
+    WaterType?: WaterTypeDto;
     TransactionDescription?: string;
-    ParcelLedgerID?: number;
+    User?: UserDto;
+    UserComment?: string;
     readonly WaterYear?: number;
     readonly WaterMonth?: number;
-    WaterType?: WaterTypeDto;
-    UserComment?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

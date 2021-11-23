@@ -1,7 +1,4 @@
-﻿using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.WaterTransfer;
-using System;
-using Rio.Models.DataTransferObjects.User;
+﻿using System;
 
 namespace Rio.Models.DataTransferObjects.Offer
 {
@@ -22,7 +19,7 @@ namespace Rio.Models.DataTransferObjects.Offer
         public AccountSimpleDto Seller { get; set; }
         public int TradePostingTypeID { get; set; }
         public int? WaterTransferID { get; set; }
-        public WaterTransferRegistrationSimpleDto BuyerRegistration { get; set; }
-        public WaterTransferRegistrationSimpleDto SellerRegistration { get; set; }
+        public WaterTransferRegistrationDto BuyerRegistration { get; set; }
+        public WaterTransferRegistrationDto SellerRegistration { get; set; }
     }
 }

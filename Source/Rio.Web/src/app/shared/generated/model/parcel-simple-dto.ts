@@ -13,6 +13,10 @@
 export class ParcelSimpleDto { 
     ParcelID?: number;
     ParcelNumber?: string;
+    ParcelAreaInSquareFeet?: number;
+    ParcelAreaInAcres?: number;
+    ParcelStatusID?: number;
+    InactivateDate?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -14,8 +14,8 @@ import { WaterYearMonthDto } from '././water-year-month-dto';
 
 export class OpenETSyncHistoryDto { 
     OpenETSyncHistoryID?: number;
-    OpenETSyncResultType?: OpenETSyncResultTypeDto;
     WaterYearMonth?: WaterYearMonthDto;
+    OpenETSyncResultType?: OpenETSyncResultTypeDto;
     CreateDate?: string;
     UpdateDate?: string;
     GoogleBucketFileRetrievalURL?: string;

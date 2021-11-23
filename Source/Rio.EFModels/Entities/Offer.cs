@@ -3,6 +3,7 @@ using Rio.Models.DataTransferObjects.Offer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
@@ -61,12 +62,12 @@ namespace Rio.EFModels.Entities
             return dbContext.Offers
                 .Include(x => x.OfferStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.CreateAccount)
-                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Trade).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
                 .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
                 .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .Include(x => x.CreateAccount)
-                .Include(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
+                .Include(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
                 .AsNoTracking();
         }
 
@@ -76,7 +77,7 @@ namespace Rio.EFModels.Entities
             return offer?.AsDto();
         }
 
-        public static OfferDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
+        public static Offer GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
         {
             var offer = dbContext.Offers
                 .Include(x => x.CreateAccount)
@@ -100,7 +101,7 @@ namespace Rio.EFModels.Entities
                              x.Trade.Posting.CreateAccountID == x.CreateAccountID)
                             || (x.Trade.Posting.PostingStatusID != (int) postingTypeEnum &&
                                 x.Trade.Posting.CreateAccountID != x.CreateAccountID)).OrderByDescending(x => x.OfferDate).FirstOrDefault();
-            return offer?.AsDto();
+            return offer;
         }
 
         public static object GetActiveOffersFromPostingIDAndCreateAccountID(RioDbContext dbContext, int postingID, int accountID)

@@ -4,7 +4,7 @@ using Rio.Models.DataTransferObjects.Account;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {

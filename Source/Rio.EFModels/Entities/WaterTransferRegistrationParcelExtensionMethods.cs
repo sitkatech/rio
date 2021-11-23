@@ -2,11 +2,11 @@
 
 namespace Rio.EFModels.Entities
 {
-    public static class WaterTransferRegistrationParcelExtensionMethods
+    public static partial class WaterTransferRegistrationParcelExtensionMethods
     {
-        public static WaterTransferRegistrationParcelDto AsDto(this WaterTransferRegistrationParcel waterTransferRegistrationParcel)
+        public static WaterTransferRegistrationParcelUpsertDto AsUpsertDto(this WaterTransferRegistrationParcel waterTransferRegistrationParcel)
         {
-            return new WaterTransferRegistrationParcelDto
+            return new WaterTransferRegistrationParcelUpsertDto
             {
                 ParcelID = waterTransferRegistrationParcel.ParcelID,
                 ParcelNumber = waterTransferRegistrationParcel.Parcel.ParcelNumber,

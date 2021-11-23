@@ -3,7 +3,7 @@ using Rio.Models.DataTransferObjects.Posting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rio.Models.DataTransferObjects.Offer;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
@@ -141,10 +141,10 @@ namespace Rio.EFModels.Entities
             return postings;
         }
 
-        public static PostingDto GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
+        public static Posting GetMostRecentOfferOfType(RioDbContext dbContext, PostingTypeEnum postingTypeEnum)
         {
-            var offer = GetPostingImpl(dbContext).Where(x => x.PostingTypeID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
-            return offer?.AsDto();
+            var posting = GetPostingImpl(dbContext).Where(x => x.PostingTypeID == (int)postingTypeEnum).OrderByDescending(x => x.PostingDate).FirstOrDefault();
+            return posting;
         }
 
         public static bool HasOpenOfferByAccountID(RioDbContext dbContext, PostingDto posting, int createAccountID)

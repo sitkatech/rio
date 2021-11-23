@@ -602,7 +602,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AccountReconciliationDto"
+                    "$ref": "#/components/schemas/AccountReconciliationCustomDto"
                   }
                 }
               },
@@ -610,7 +610,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AccountReconciliationDto"
+                    "$ref": "#/components/schemas/AccountReconciliationCustomDto"
                   }
                 }
               },
@@ -618,7 +618,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AccountReconciliationDto"
+                    "$ref": "#/components/schemas/AccountReconciliationCustomDto"
                   }
                 }
               }
@@ -3272,7 +3272,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelDto"
+                    "$ref": "#/components/schemas/ParcelSimpleDto"
                   }
                 }
               },
@@ -3280,7 +3280,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelDto"
+                    "$ref": "#/components/schemas/ParcelSimpleDto"
                   }
                 }
               },
@@ -3288,7 +3288,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelDto"
+                    "$ref": "#/components/schemas/ParcelSimpleDto"
                   }
                 }
               }
@@ -3368,17 +3368,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               }
             }
@@ -3455,22 +3455,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             }
           }
@@ -3481,17 +3481,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WaterTransferDto"
+                  "$ref": "#/components/schemas/WaterTransferDetailedDto"
                 }
               }
             }
@@ -3519,22 +3519,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             }
           }
@@ -3579,7 +3579,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelDto"
+                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelUpsertDto"
                   }
                 }
               },
@@ -3587,7 +3587,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelDto"
+                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelUpsertDto"
                   }
                 }
               },
@@ -3595,7 +3595,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelDto"
+                    "$ref": "#/components/schemas/WaterTransferRegistrationParcelUpsertDto"
                   }
                 }
               }
@@ -3624,22 +3624,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+                "$ref": "#/components/schemas/WaterTransferRegistrationUpsertDto"
               }
             }
           }
@@ -3652,7 +3652,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferDto"
+                    "$ref": "#/components/schemas/WaterTransferDetailedDto"
                   }
                 }
               },
@@ -3660,7 +3660,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferDto"
+                    "$ref": "#/components/schemas/WaterTransferDetailedDto"
                   }
                 }
               },
@@ -3668,7 +3668,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/WaterTransferDto"
+                    "$ref": "#/components/schemas/WaterTransferDetailedDto"
                   }
                 }
               }
@@ -3973,50 +3973,12 @@
       "AccountDto": {
         "type": "object",
         "properties": {
-          "AccountID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AccountNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "AccountName": {
-            "type": "string",
-            "nullable": true
-          },
-          "CreateDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "InactivateDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "Notes": {
-            "type": "string",
-            "nullable": true
-          },
-          "AccountVerificationKey": {
-            "type": "string",
-            "nullable": true
-          },
-          "AccountVerificationKeyLastUseDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
           "Users": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UserSimpleDto"
             },
             "nullable": true
-          },
-          "AccountStatus": {
-            "$ref": "#/components/schemas/AccountStatusDto"
           },
           "AccountDisplayName": {
             "type": "string",
@@ -4033,6 +3995,48 @@
           "NumberOfUsers": {
             "type": "integer",
             "format": "int32"
+          },
+          "AccountID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AccountNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AccountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountStatus": {
+            "$ref": "#/components/schemas/AccountStatusDto"
+          },
+          "Notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AccountVerificationKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountVerificationKeyLastUseDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "InactivateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4067,7 +4071,7 @@
         },
         "additionalProperties": false
       },
-      "AccountReconciliationDto": {
+      "AccountReconciliationCustomDto": {
         "type": "object",
         "properties": {
           "Parcel": {
@@ -4089,33 +4093,55 @@
       "AccountSimpleDto": {
         "type": "object",
         "properties": {
-          "AccountID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AccountNumber": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "AccountName": {
-            "type": "string",
-            "nullable": true
-          },
-          "AccountVerificationKey": {
-            "type": "string",
-            "nullable": true
-          },
-          "Notes": {
-            "type": "string",
-            "nullable": true
-          },
           "AccountDisplayName": {
             "type": "string",
             "nullable": true
           },
           "ShortAccountDisplayName": {
             "type": "string",
+            "nullable": true
+          },
+          "AccountID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AccountNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AccountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AccountVerificationKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "AccountVerificationKeyLastUseDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "InactivateDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -4126,7 +4152,10 @@
         "properties": {
           "AccountStatusID": {
             "type": "integer",
-            "format": "int32",
+            "format": "int32"
+          },
+          "AccountStatusName": {
+            "type": "string",
             "nullable": true
           },
           "AccountStatusDisplayName": {
@@ -4211,12 +4240,104 @@
       "CustomRichTextDto": {
         "type": "object",
         "properties": {
+          "IsEmptyContent": {
+            "type": "boolean"
+          },
+          "CustomRichTextID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CustomRichTextType": {
+            "$ref": "#/components/schemas/CustomRichTextTypeDto"
+          },
           "CustomRichTextContent": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomRichTextTypeDto": {
+        "type": "object",
+        "properties": {
+          "CustomRichTextTypeID": {
+            "type": "integer",
+            "format": "int32"
           },
-          "IsEmptyContent": {
-            "type": "boolean"
+          "CustomRichTextTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CustomRichTextTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileResourceDto": {
+        "type": "object",
+        "properties": {
+          "FileResourceID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceMimeType": {
+            "$ref": "#/components/schemas/FileResourceMimeTypeDto"
+          },
+          "OriginalBaseFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "OriginalFileExtension": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceGUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "FileResourceData": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "CreateUser": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileResourceMimeTypeDto": {
+        "type": "object",
+        "properties": {
+          "FileResourceMimeTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "FileResourceMimeTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMimeTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMimeTypeContentTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMimeTypeIconSmallFilename": {
+            "type": "string",
+            "nullable": true
+          },
+          "FileResourceMimeTypeIconNormalFilename": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4338,6 +4459,9 @@
             "type": "integer",
             "format": "int32"
           },
+          "Trade": {
+            "$ref": "#/components/schemas/TradeDto"
+          },
           "OfferDate": {
             "type": "string",
             "format": "date-time"
@@ -4350,18 +4474,15 @@
             "type": "number",
             "format": "double"
           },
+          "OfferStatus": {
+            "$ref": "#/components/schemas/OfferStatusDto"
+          },
           "OfferNotes": {
             "type": "string",
             "nullable": true
           },
           "CreateAccount": {
             "$ref": "#/components/schemas/AccountDto"
-          },
-          "OfferStatus": {
-            "$ref": "#/components/schemas/OfferStatusDto"
-          },
-          "Trade": {
-            "$ref": "#/components/schemas/TradeDto"
           },
           "WaterTransferID": {
             "type": "integer",
@@ -4440,11 +4561,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "OpenETSyncResultType": {
-            "$ref": "#/components/schemas/OpenETSyncResultTypeDto"
-          },
           "WaterYearMonth": {
             "$ref": "#/components/schemas/WaterYearMonthDto"
+          },
+          "OpenETSyncResultType": {
+            "$ref": "#/components/schemas/OpenETSyncResultTypeDto"
           },
           "CreateDate": {
             "type": "string",
@@ -4532,21 +4653,24 @@
             "type": "string",
             "nullable": true
           },
+          "ParcelAreaInSquareFeet": {
+            "type": "integer",
+            "format": "int32"
+          },
           "ParcelAreaInAcres": {
             "type": "number",
             "format": "double"
           },
-          "LandOwner": {
-            "$ref": "#/components/schemas/AccountSimpleDto"
-          },
-          "ParcelStatusID": {
-            "type": "integer",
-            "format": "int32"
+          "ParcelStatus": {
+            "$ref": "#/components/schemas/ParcelStatusDto"
           },
           "InactivateDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "LandOwner": {
+            "$ref": "#/components/schemas/AccountDto"
           }
         },
         "additionalProperties": false
@@ -4554,29 +4678,30 @@
       "ParcelAllocationHistoryDto": {
         "type": "object",
         "properties": {
-          "Date": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "WaterYear": {
+          "ParcelAllocationHistoryID": {
             "type": "integer",
             "format": "int32"
           },
-          "Allocation": {
+          "ParcelAllocationHistoryDate": {
             "type": "string",
-            "nullable": true
+            "format": "date-time"
           },
-          "Value": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
+          "ParcelAllocationHistoryWaterYear": {
+            "type": "integer",
+            "format": "int32"
           },
-          "Filename": {
-            "type": "string",
-            "nullable": true
+          "WaterType": {
+            "$ref": "#/components/schemas/WaterTypeDto"
           },
           "User": {
-            "type": "string",
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "FileResource": {
+            "$ref": "#/components/schemas/FileResourceDto"
+          },
+          "ParcelAllocationHistoryValue": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
@@ -4643,21 +4768,24 @@
             "type": "string",
             "nullable": true
           },
+          "ParcelAreaInSquareFeet": {
+            "type": "integer",
+            "format": "int32"
+          },
           "ParcelAreaInAcres": {
             "type": "number",
             "format": "double"
           },
-          "LandOwner": {
-            "$ref": "#/components/schemas/AccountSimpleDto"
-          },
-          "ParcelStatusID": {
-            "type": "integer",
-            "format": "int32"
+          "ParcelStatus": {
+            "$ref": "#/components/schemas/ParcelStatusDto"
           },
           "InactivateDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "LandOwner": {
+            "$ref": "#/components/schemas/AccountDto"
           }
         },
         "additionalProperties": false
@@ -4751,13 +4879,12 @@
       "ParcelLedgerDto": {
         "type": "object",
         "properties": {
-          "ParcelID": {
+          "ParcelLedgerID": {
             "type": "integer",
             "format": "int32"
           },
-          "ParcelNumber": {
-            "type": "string",
-            "nullable": true
+          "Parcel": {
+            "$ref": "#/components/schemas/ParcelDto"
           },
           "TransactionDate": {
             "type": "string",
@@ -4774,13 +4901,19 @@
             "type": "number",
             "format": "double"
           },
+          "WaterType": {
+            "$ref": "#/components/schemas/WaterTypeDto"
+          },
           "TransactionDescription": {
             "type": "string",
             "nullable": true
           },
-          "ParcelLedgerID": {
-            "type": "integer",
-            "format": "int32"
+          "User": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "UserComment": {
+            "type": "string",
+            "nullable": true
           },
           "WaterYear": {
             "type": "integer",
@@ -4791,13 +4924,6 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
-          },
-          "WaterType": {
-            "$ref": "#/components/schemas/WaterTypeDto"
-          },
-          "UserComment": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4840,6 +4966,41 @@
             "format": "int32"
           },
           "ParcelNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ParcelAreaInSquareFeet": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelAreaInAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "ParcelStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "InactivateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelStatusDto": {
+        "type": "object",
+        "properties": {
+          "ParcelStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ParcelStatusDisplayName": {
             "type": "string",
             "nullable": true
           }
@@ -4975,11 +5136,10 @@
             "type": "string",
             "format": "date-time"
           },
-          "Quantity": {
-            "type": "integer",
-            "format": "int32"
+          "CreateAccount": {
+            "$ref": "#/components/schemas/AccountDto"
           },
-          "AvailableQuantity": {
+          "Quantity": {
             "type": "integer",
             "format": "int32"
           },
@@ -4991,11 +5151,15 @@
             "type": "string",
             "nullable": true
           },
-          "CreateAccount": {
-            "$ref": "#/components/schemas/AccountDto"
-          },
           "PostingStatus": {
             "$ref": "#/components/schemas/PostingStatusDto"
+          },
+          "AvailableQuantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateUser": {
+            "$ref": "#/components/schemas/UserDto"
           }
         },
         "additionalProperties": false
@@ -5104,6 +5268,14 @@
           "RoleDisplayName": {
             "type": "string",
             "nullable": true
+          },
+          "RoleDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "SortOrder": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -5145,18 +5317,22 @@
             "type": "integer",
             "format": "int32"
           },
-          "TradeNumber": {
-            "type": "string",
-            "nullable": true
+          "Posting": {
+            "$ref": "#/components/schemas/PostingDto"
           },
-          "CreateAccount": {
-            "$ref": "#/components/schemas/AccountDto"
+          "TradeDate": {
+            "type": "string",
+            "format": "date-time"
           },
           "TradeStatus": {
             "$ref": "#/components/schemas/TradeStatusDto"
           },
-          "Posting": {
-            "$ref": "#/components/schemas/PostingDto"
+          "CreateAccount": {
+            "$ref": "#/components/schemas/AccountDto"
+          },
+          "TradeNumber": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5237,10 +5413,10 @@
             "nullable": true
           },
           "BuyerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
           },
           "SellerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
           }
         },
         "additionalProperties": false
@@ -5255,9 +5431,6 @@
           "TransactionTypeName": {
             "type": "string",
             "nullable": true
-          },
-          "IsAllocation": {
-            "type": "boolean"
           },
           "SortOrder": {
             "type": "integer",
@@ -5399,33 +5572,14 @@
       "UserDto": {
         "type": "object",
         "properties": {
+          "UserID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "UserGuid": {
             "type": "string",
             "format": "uuid",
             "nullable": true
-          },
-          "Phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "LoginName": {
-            "type": "string",
-            "nullable": true
-          },
-          "Role": {
-            "$ref": "#/components/schemas/RoleDto"
-          },
-          "DisclaimerAcknowledgedDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "ReceiveSupportEmails": {
-            "type": "boolean"
-          },
-          "UserID": {
-            "type": "integer",
-            "format": "int32"
           },
           "FirstName": {
             "type": "string",
@@ -5439,10 +5593,46 @@
             "type": "string",
             "nullable": true
           },
+          "Phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "Role": {
+            "$ref": "#/components/schemas/RoleDto"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "DisclaimerAcknowledgedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ReceiveSupportEmails": {
+            "type": "boolean"
+          },
+          "LoginName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Company": {
+            "type": "string",
+            "nullable": true
+          },
           "FullName": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5521,6 +5711,11 @@
             "type": "integer",
             "format": "int32"
           },
+          "UserGuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "FirstName": {
             "type": "string",
             "nullable": true
@@ -5533,10 +5728,47 @@
             "type": "string",
             "nullable": true
           },
+          "Phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "RoleID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UpdateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "DisclaimerAcknowledgedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ReceiveSupportEmails": {
+            "type": "boolean"
+          },
+          "LoginName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Company": {
+            "type": "string",
+            "nullable": true
+          },
           "FullName": {
             "type": "string",
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5578,7 +5810,7 @@
         },
         "additionalProperties": false
       },
-      "WaterTransferDto": {
+      "WaterTransferDetailedDto": {
         "type": "object",
         "properties": {
           "WaterTransferID": {
@@ -5615,55 +5847,75 @@
             "nullable": true
           },
           "BuyerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
           },
           "SellerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WaterTransferDto": {
+        "type": "object",
+        "properties": {
+          "WaterTransferID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TransferDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "AcreFeetTransferred": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Offer": {
+            "$ref": "#/components/schemas/OfferDto"
+          },
+          "Notes": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
       },
       "WaterTransferRegistrationDto": {
-        "required": [
-          "AccountID",
-          "WaterTransferTypeID"
-        ],
         "type": "object",
         "properties": {
-          "WaterTransferTypeID": {
+          "WaterTransferRegistrationID": {
             "type": "integer",
             "format": "int32"
           },
-          "AccountID": {
-            "type": "integer",
-            "format": "int32"
+          "WaterTransfer": {
+            "$ref": "#/components/schemas/WaterTransferDto"
           },
-          "WaterTransferRegistrationStatusID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "WaterTransferType": {
+            "$ref": "#/components/schemas/WaterTransferTypeDto"
+          },
+          "Account": {
+            "$ref": "#/components/schemas/AccountDto"
+          },
+          "WaterTransferRegistrationStatus": {
+            "$ref": "#/components/schemas/WaterTransferRegistrationStatusDto"
           },
           "StatusDate": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
-          "WaterTransferRegistrationParcels": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/WaterTransferRegistrationParcelDto"
-            },
-            "nullable": true
+          "IsRegistered": {
+            "type": "boolean"
           },
-          "UserID": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+          "IsCanceled": {
+            "type": "boolean"
+          },
+          "IsPending": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
       },
-      "WaterTransferRegistrationParcelDto": {
+      "WaterTransferRegistrationParcelUpsertDto": {
         "required": [
           "AcreFeetTransferred",
           "ParcelID"
@@ -5724,14 +5976,81 @@
         },
         "additionalProperties": false
       },
-      "WaterTypeApplicationTypeEnum": {
-        "enum": [
-          0,
-          1,
-          2
+      "WaterTransferRegistrationStatusDto": {
+        "type": "object",
+        "properties": {
+          "WaterTransferRegistrationStatusID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WaterTransferRegistrationStatusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "WaterTransferRegistrationStatusDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WaterTransferRegistrationUpsertDto": {
+        "required": [
+          "AccountID",
+          "WaterTransferTypeID"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "object",
+        "properties": {
+          "WaterTransferTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AccountID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WaterTransferRegistrationStatusID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "StatusDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "WaterTransferRegistrationParcels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WaterTransferRegistrationParcelUpsertDto"
+            },
+            "nullable": true
+          },
+          "UserID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WaterTransferTypeDto": {
+        "type": "object",
+        "properties": {
+          "WaterTransferTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WaterTransferTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "WaterTransferTypeDisplayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "WaterTypeDto": {
         "type": "object",
@@ -5745,11 +6064,14 @@
             "nullable": true
           },
           "IsAppliedProportionally": {
-            "$ref": "#/components/schemas/WaterTypeApplicationTypeEnum"
+            "type": "boolean"
           },
           "WaterTypeDefinition": {
             "type": "string",
             "nullable": true
+          },
+          "IsSourcedFromApi": {
+            "type": "boolean"
           },
           "SortOrder": {
             "type": "integer",

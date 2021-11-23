@@ -15,10 +15,11 @@ import { AccountDto } from '././account-dto';
 
 export class TradeDto { 
     TradeID?: number;
-    TradeNumber?: string;
-    CreateAccount?: AccountDto;
-    TradeStatus?: TradeStatusDto;
     Posting?: PostingDto;
+    TradeDate?: string;
+    TradeStatus?: TradeStatusDto;
+    CreateAccount?: AccountDto;
+    TradeNumber?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

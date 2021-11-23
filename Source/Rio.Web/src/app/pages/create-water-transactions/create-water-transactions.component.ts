@@ -72,15 +72,15 @@ export class CreateWaterTransactions implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.initializeParcelAllocationHistoryGrid();
 
-      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
+      forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
         this.waterYearService.getWaterYears(),
-        this.waterTypeService.getWaterTypes()
+        this.waterTypeService.getWaterTypes()]
       ).subscribe(([defaultYear, waterYears, waterTypes]) => {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
         this.waterTypes = waterTypes;
-        this.acreageBasedWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally === WaterTypeApplicationTypeEnum.Proportional);
-        this.spreadsheetDrivenWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally === WaterTypeApplicationTypeEnum.Spreadsheet);
+        this.acreageBasedWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally);
+        this.spreadsheetDrivenWaterTypes = this.waterTypes.filter(x => x.IsAppliedProportionally);
         this.waterTypes.forEach(x => {
           this.displayErrors[x.WaterTypeName] = false;
           this.displayFileErrors[x.WaterTypeName] = false;
@@ -93,16 +93,16 @@ export class CreateWaterTransactions implements OnInit, OnDestroy {
   private initializeParcelAllocationHistoryGrid(): void {
     // TODO: Date should become Transaction Date, Water Year should become Effective Date once Parcel Allocation History is updated to use Parcel Ledger
     this.parcelAllocationHistoryGridColumnDefs = [
-      this.createDateColumnDef('Date', 'Date', 'M/d/yyyy'),
-      { headerName: 'Water Year', field: 'WaterYear'},
-      { headerName: 'Supply Type', field: 'Allocation', width: 150 },
-      { headerName: 'Value (ac-ft/ac)', field: 'Value', width: 150, cellStyle: {textAlign: "right"},
+      this.createDateColumnDef('Date', 'ParcelAllocationHistoryDate', 'M/d/yyyy'),
+      { headerName: 'Water Year', field: 'ParcelAllocationHistoryWaterYear'},
+      { headerName: 'Supply Type', field: 'WaterType.WaterTypeName', width: 150 },
+      { headerName: 'Value (ac-ft/ac)', field: 'ParcelAllocationHistoryValue', width: 150, cellStyle: {textAlign: "right"},
         valueGetter: function (params: any) {
-          return params.data.Value ?? '-';
+          return params.data.ParcelAllocationHistoryValue ?? '-';
         } 
       },
-      { headerName: 'Uploaded Filename', field: 'Filename', width: 275 },
-      { headerName: 'User', field: 'User'}
+      { headerName: 'Uploaded Filename', field: 'FileResource.OriginalBaseFilename', width: 275 },
+      { headerName: 'User', field: 'User.FullName'}
     ];
 
     this.defaultColDef = {

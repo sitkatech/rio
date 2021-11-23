@@ -6,7 +6,6 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 using System;
 using System.Collections.Generic;
@@ -407,7 +406,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("users/{userID}/parcels/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int userID, [FromRoute] int year)
+        public ActionResult<List<ParcelSimpleDto>> ListParcelsByAccountID([FromRoute] int userID, [FromRoute] int year)
         {
             var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year);
             if (parcelDtos == null)

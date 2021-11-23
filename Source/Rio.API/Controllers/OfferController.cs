@@ -5,14 +5,13 @@ using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
-using Rio.Models.DataTransferObjects.User;
-using Rio.Models.DataTransferObjects.WaterTransfer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.WaterTransfer;
 
 namespace Rio.API.Controllers
 {
@@ -151,7 +150,7 @@ namespace Rio.API.Controllers
         }
 
         private static List<MailMessage> GenerateAcceptedOfferEmail(string rioUrl, OfferDto offer,
-            TradeDto currentTrade, PostingDto posting, WaterTransferDto waterTransfer, SitkaSmtpClientService smtpClient)
+            TradeDto currentTrade, PostingDto posting, WaterTransferDetailedDto waterTransfer, SitkaSmtpClientService smtpClient)
         {
             AccountDto buyer;
             AccountDto seller;

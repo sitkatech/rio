@@ -25,7 +25,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            var parcelDto = Parcel.GetByParcelNumber(_dbContext, parcelLedgerCreateDto.ParcelNumber);
+            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumber);
             if (parcelDto == null)
             {
                 ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumber} is not a valid Parcel APN.");
@@ -55,7 +55,7 @@ namespace Rio.API.Controllers
 
                 if (!parcelLedgerCreateDto.IsWithdrawal)
                 {
-                   var monthlyUsageSum = ParcelLedger.getUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
+                   var monthlyUsageSum = ParcelLedger.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
                    if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                    {
                        ModelState.AddModelError("TransactionAmount", $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");
