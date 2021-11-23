@@ -13,20 +13,20 @@ import { AccountStatusDto } from '././account-status-dto';
 import { UserSimpleDto } from '././user-simple-dto';
 
 export class AccountDto { 
-    accountID?: number;
-    accountNumber?: number;
-    accountName?: string;
-    createDate?: string;
-    inactivateDate?: string;
-    notes?: string;
-    accountVerificationKey?: string;
-    accountVerificationKeyLastUseDate?: string;
-    users?: Array<UserSimpleDto>;
-    accountStatus?: AccountStatusDto;
-    accountDisplayName?: string;
-    shortAccountDisplayName?: string;
-    numberOfParcels?: number;
-    numberOfUsers?: number;
+    AccountID?: number;
+    AccountNumber?: number;
+    AccountName?: string;
+    CreateDate?: string;
+    InactivateDate?: string;
+    Notes?: string;
+    AccountVerificationKey?: string;
+    AccountVerificationKeyLastUseDate?: string;
+    Users?: Array<UserSimpleDto>;
+    AccountStatus?: AccountStatusDto;
+    AccountDisplayName?: string;
+    ShortAccountDisplayName?: string;
+    NumberOfParcels?: number;
+    NumberOfUsers?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

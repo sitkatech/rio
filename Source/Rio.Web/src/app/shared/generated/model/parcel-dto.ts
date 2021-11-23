@@ -12,12 +12,12 @@
 import { AccountSimpleDto } from '././account-simple-dto';
 
 export class ParcelDto { 
-    parcelID?: number;
-    parcelNumber?: string;
-    parcelAreaInAcres?: number;
-    landOwner?: AccountSimpleDto;
-    parcelStatusID?: number;
-    inactivateDate?: string;
+    ParcelID?: number;
+    ParcelNumber?: string;
+    ParcelAreaInAcres?: number;
+    LandOwner?: AccountSimpleDto;
+    ParcelStatusID?: number;
+    InactivateDate?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

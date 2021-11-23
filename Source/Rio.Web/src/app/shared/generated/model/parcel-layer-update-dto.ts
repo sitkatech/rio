@@ -12,10 +12,10 @@
 import { ParcelRequiredColumnAndMappingDto } from '././parcel-required-column-and-mapping-dto';
 
 export class ParcelLayerUpdateDto { 
-    parcelLayerNameInGDB?: string;
-    uploadedGDBID?: number;
-    columnMappings?: Array<ParcelRequiredColumnAndMappingDto>;
-    yearChangesToTakeEffect?: number;
+    ParcelLayerNameInGDB?: string;
+    UploadedGDBID?: number;
+    ColumnMappings?: Array<ParcelRequiredColumnAndMappingDto>;
+    YearChangesToTakeEffect?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

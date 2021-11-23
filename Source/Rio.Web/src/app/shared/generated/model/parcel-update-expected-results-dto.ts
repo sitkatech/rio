@@ -11,14 +11,14 @@
  */
 
 export class ParcelUpdateExpectedResultsDto { 
-    numAccountsUnchanged?: number;
-    numAccountsToBeCreated?: number;
-    numAccountsToBeInactivated?: number;
-    numParcelsUnchanged?: number;
-    numParcelsUpdatedGeometries?: number;
-    numParcelsAssociatedWithNewAccount?: number;
-    numParcelsToBeInactivated?: number;
-    numParcelsWithConflicts?: number;
+    NumAccountsUnchanged?: number;
+    NumAccountsToBeCreated?: number;
+    NumAccountsToBeInactivated?: number;
+    NumParcelsUnchanged?: number;
+    NumParcelsUpdatedGeometries?: number;
+    NumParcelsAssociatedWithNewAccount?: number;
+    NumParcelsToBeInactivated?: number;
+    NumParcelsWithConflicts?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

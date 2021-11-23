@@ -11,10 +11,10 @@
  */
 
 export class WaterTransferRegistrationParcelDto { 
-    parcelID: number;
-    parcelNumber?: string;
-    acreFeetTransferred: number;
-    parcelAreaInAcres?: number;
+    ParcelID: number;
+    ParcelNumber?: string;
+    AcreFeetTransferred: number;
+    ParcelAreaInAcres?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

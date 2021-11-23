@@ -11,9 +11,9 @@
  */
 
 export class ParcelAllocationUpsertDto { 
-    waterYear: number;
-    waterTypeID: number;
-    acreFeetAllocated: number;
+    WaterYear: number;
+    WaterTypeID: number;
+    AcreFeetAllocated: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -13,8 +13,8 @@ import { ParcelSimpleDto } from '././parcel-simple-dto';
 import { AccountDto } from '././account-dto';
 
 export class AccountIncludeParcelsDto { 
-    account?: AccountDto;
-    parcels?: Array<ParcelSimpleDto>;
+    Account?: AccountDto;
+    Parcels?: Array<ParcelSimpleDto>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -11,8 +11,8 @@
  */
 
 export class ParcelSimpleDto { 
-    parcelID?: number;
-    parcelNumber?: string;
+    ParcelID?: number;
+    ParcelNumber?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

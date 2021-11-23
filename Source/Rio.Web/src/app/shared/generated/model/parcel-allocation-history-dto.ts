@@ -10,8 +10,13 @@
  * Do not edit the class manually.
  */
 
-export class UserEditAcountsDto { 
-    AccountIDs?: Array<number>;
+export class ParcelAllocationHistoryDto { 
+    Date?: string;
+    WaterYear?: number;
+    Allocation?: string;
+    Value?: number;
+    Filename?: string;
+    User?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

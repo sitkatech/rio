@@ -11,9 +11,9 @@
  */
 
 export class OfferStatusDto { 
-    offerStatusID?: number;
-    offerStatusName?: string;
-    offerStatusDisplayName?: string;
+    OfferStatusID?: number;
+    OfferStatusName?: string;
+    OfferStatusDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

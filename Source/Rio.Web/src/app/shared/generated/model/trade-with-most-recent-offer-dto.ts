@@ -16,23 +16,23 @@ import { UserSimpleDto } from '././user-simple-dto';
 import { WaterTransferRegistrationSimpleDto } from '././water-transfer-registration-simple-dto';
 
 export class TradeWithMostRecentOfferDto { 
-    tradeID?: number;
-    tradeNumber?: string;
-    createAccount?: AccountSimpleDto;
-    offerPostingTypeID?: number;
-    tradeStatus?: TradeStatusDto;
-    quantity?: number;
-    price?: number;
-    offerDate?: string;
-    offerCreateAccount?: AccountSimpleDto;
-    offerCreateAccountUser?: UserSimpleDto;
-    offerStatus?: OfferStatusDto;
-    buyer?: AccountSimpleDto;
-    seller?: AccountSimpleDto;
-    tradePostingTypeID?: number;
-    waterTransferID?: number;
-    buyerRegistration?: WaterTransferRegistrationSimpleDto;
-    sellerRegistration?: WaterTransferRegistrationSimpleDto;
+    TradeID?: number;
+    TradeNumber?: string;
+    CreateAccount?: AccountSimpleDto;
+    OfferPostingTypeID?: number;
+    TradeStatus?: TradeStatusDto;
+    Quantity?: number;
+    Price?: number;
+    OfferDate?: string;
+    OfferCreateAccount?: AccountSimpleDto;
+    OfferCreateAccountUser?: UserSimpleDto;
+    OfferStatus?: OfferStatusDto;
+    Buyer?: AccountSimpleDto;
+    Seller?: AccountSimpleDto;
+    TradePostingTypeID?: number;
+    WaterTransferID?: number;
+    BuyerRegistration?: WaterTransferRegistrationSimpleDto;
+    SellerRegistration?: WaterTransferRegistrationSimpleDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

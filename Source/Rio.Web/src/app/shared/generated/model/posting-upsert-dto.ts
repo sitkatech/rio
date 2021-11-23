@@ -11,12 +11,12 @@
  */
 
 export class PostingUpsertDto { 
-    postingTypeID: number;
-    quantity: number;
-    price: number;
-    postingDescription?: string;
-    createAccountID: number;
-    createUserID: number;
+    PostingTypeID: number;
+    Quantity: number;
+    Price: number;
+    PostingDescription?: string;
+    CreateAccountID: number;
+    CreateUserID: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -11,11 +11,11 @@
  */
 
 export class UserSimpleDto { 
-    userID?: number;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    readonly fullName?: string;
+    UserID?: number;
+    FirstName?: string;
+    LastName?: string;
+    Email?: string;
+    readonly FullName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

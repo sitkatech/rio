@@ -13,13 +13,13 @@ import { OpenETSyncResultTypeDto } from '././open-et-sync-result-type-dto';
 import { WaterYearMonthDto } from '././water-year-month-dto';
 
 export class OpenETSyncHistoryDto { 
-    openETSyncHistoryID?: number;
-    openETSyncResultType?: OpenETSyncResultTypeDto;
-    waterYearMonth?: WaterYearMonthDto;
-    createDate?: string;
-    updateDate?: string;
-    googleBucketFileRetrievalURL?: string;
-    errorMessage?: string;
+    OpenETSyncHistoryID?: number;
+    OpenETSyncResultType?: OpenETSyncResultTypeDto;
+    WaterYearMonth?: WaterYearMonthDto;
+    CreateDate?: string;
+    UpdateDate?: string;
+    GoogleBucketFileRetrievalURL?: string;
+    ErrorMessage?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -11,10 +11,10 @@
  */
 
 export class ParcelChangeOwnerDto { 
-    parcelID: number;
-    accountID?: number;
-    effectiveWaterYearID: number;
-    applyToSubsequentYears: boolean;
+    ParcelID: number;
+    AccountID?: number;
+    EffectiveWaterYearID: number;
+    ApplyToSubsequentYears: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

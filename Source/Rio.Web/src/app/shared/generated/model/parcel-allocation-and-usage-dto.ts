@@ -12,19 +12,19 @@
 import { AccountSimpleDto } from '././account-simple-dto';
 
 export class ParcelAllocationAndUsageDto { 
-    parcelID?: number;
-    parcelNumber?: string;
-    parcelAreaInAcres?: number;
-    landOwner?: AccountSimpleDto;
-    parcelStatusID?: number;
-    inactivateDate?: string;
-    allocation?: number;
-    projectWater?: number;
-    reconciliation?: number;
-    nativeYield?: number;
-    storedWater?: number;
-    usageToDate?: number;
-    allocations?: { [key: string]: number; };
+    Allocation?: number;
+    ProjectWater?: number;
+    Reconciliation?: number;
+    NativeYield?: number;
+    StoredWater?: number;
+    UsageToDate?: number;
+    Allocations?: { [key: string]: number; };
+    ParcelID?: number;
+    ParcelNumber?: string;
+    ParcelAreaInAcres?: number;
+    LandOwner?: AccountSimpleDto;
+    ParcelStatusID?: number;
+    InactivateDate?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

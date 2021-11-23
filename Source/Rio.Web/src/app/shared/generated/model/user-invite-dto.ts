@@ -11,10 +11,10 @@
  */
 
 export class UserInviteDto { 
-    firstName: string;
-    lastName: string;
-    email: string;
-    roleID: number;
+    FirstName: string;
+    LastName: string;
+    Email: string;
+    RoleID: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

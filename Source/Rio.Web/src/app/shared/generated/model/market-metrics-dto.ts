@@ -12,13 +12,13 @@
 import { WaterTransferDto } from '././water-transfer-dto';
 
 export class MarketMetricsDto { 
-    mostRecentOfferToBuyQuantity?: number;
-    mostRecentOfferToBuyPrice?: number;
-    mostRecentOfferToSellQuantity?: number;
-    mostRecentOfferToSellPrice?: number;
-    mostRecentWaterTransfer?: WaterTransferDto;
-    totalBuyVolume?: number;
-    totalSellVolume?: number;
+    MostRecentOfferToBuyQuantity?: number;
+    MostRecentOfferToBuyPrice?: number;
+    MostRecentOfferToSellQuantity?: number;
+    MostRecentOfferToSellPrice?: number;
+    MostRecentWaterTransfer?: WaterTransferDto;
+    TotalBuyVolume?: number;
+    TotalSellVolume?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

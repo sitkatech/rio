@@ -12,10 +12,10 @@
 import { WaterYearDto } from '././water-year-dto';
 
 export class WaterYearMonthDto { 
-    waterYearMonthID?: number;
-    waterYear?: WaterYearDto;
-    month?: number;
-    finalizeDate?: string;
+    WaterYearMonthID?: number;
+    WaterYear?: WaterYearDto;
+    Month?: number;
+    FinalizeDate?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -6,6 +6,7 @@ model/account-reconciliation-dto.ts
 model/account-simple-dto.ts
 model/account-status-dto.ts
 model/account-update-dto.ts
+model/bounding-box-dto.ts
 model/cumulative-water-usage-by-month-dto.ts
 model/cumulative-water-usage-by-year-dto.ts
 model/custom-rich-text-dto.ts
@@ -18,6 +19,7 @@ model/offer-upsert-dto.ts
 model/open-et-sync-history-dto.ts
 model/open-et-sync-result-type-dto.ts
 model/parcel-allocation-and-usage-dto.ts
+model/parcel-allocation-history-dto.ts
 model/parcel-allocation-upsert-dto.ts
 model/parcel-change-owner-dto.ts
 model/parcel-dto.ts

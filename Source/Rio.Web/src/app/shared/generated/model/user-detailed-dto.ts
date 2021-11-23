@@ -12,22 +12,22 @@
 import { AccountSimpleDto } from '././account-simple-dto';
 
 export class UserDetailedDto { 
-    userID?: number;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    readonly fullName?: string;
-    userGuid?: string;
-    phone?: string;
-    loginName?: string;
-    receiveSupportEmails?: boolean;
-    roleID?: number;
-    roleDisplayName?: string;
-    hasActiveTrades?: boolean;
-    acreFeetOfWaterPurchased?: number;
-    acreFeetOfWaterSold?: number;
-    isActive?: boolean;
-    associatedAccounts?: Array<AccountSimpleDto>;
+    UserID?: number;
+    FirstName?: string;
+    LastName?: string;
+    Email?: string;
+    readonly FullName?: string;
+    UserGuid?: string;
+    Phone?: string;
+    LoginName?: string;
+    ReceiveSupportEmails?: boolean;
+    RoleID?: number;
+    RoleDisplayName?: string;
+    HasActiveTrades?: boolean;
+    AcreFeetOfWaterPurchased?: number;
+    AcreFeetOfWaterSold?: number;
+    IsActive?: boolean;
+    AssociatedAccounts?: Array<AccountSimpleDto>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

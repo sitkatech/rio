@@ -11,7 +11,7 @@
  */
 
 export class PostingUpdateStatusDto { 
-    postingStatusID: number;
+    PostingStatusID: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

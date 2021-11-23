@@ -12,11 +12,11 @@
 import { WaterTypeApplicationTypeEnum } from '././water-type-application-type-enum';
 
 export class WaterTypeDto { 
-    waterTypeID?: number;
-    waterTypeName?: string;
-    isAppliedProportionally?: WaterTypeApplicationTypeEnum;
-    waterTypeDefinition?: string;
-    sortOrder?: number;
+    WaterTypeID?: number;
+    WaterTypeName?: string;
+    IsAppliedProportionally?: WaterTypeApplicationTypeEnum;
+    WaterTypeDefinition?: string;
+    SortOrder?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

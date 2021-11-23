@@ -11,14 +11,14 @@
  */
 
 export class ParcelLedgerCreateDto { 
-    parcelID: number;
-    parcelNumber: string;
-    effectiveDate: string;
-    transactionTypeID: number;
-    waterTypeID?: number;
-    isWithdrawal: boolean;
-    transactionAmount: number;
-    userComment?: string;
+    ParcelID: number;
+    ParcelNumber: string;
+    EffectiveDate: string;
+    TransactionTypeID: number;
+    WaterTypeID?: number;
+    IsWithdrawal: boolean;
+    TransactionAmount: number;
+    UserComment?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

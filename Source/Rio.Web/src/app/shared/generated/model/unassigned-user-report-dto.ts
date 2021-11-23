@@ -11,7 +11,7 @@
  */
 
 export class UnassignedUserReportDto { 
-    count?: number;
+    Count?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

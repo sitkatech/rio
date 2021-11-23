@@ -11,9 +11,9 @@
  */
 
 export class OpenETSyncResultTypeDto { 
-    openETSyncResultTypeID?: number;
-    openETSyncResultTypeName?: string;
-    openETSyncResultTypeDisplayName?: string;
+    OpenETSyncResultTypeID?: number;
+    OpenETSyncResultTypeName?: string;
+    OpenETSyncResultTypeDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

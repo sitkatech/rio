@@ -12,8 +12,8 @@
 import { CumulativeWaterUsageByMonthDto } from '././cumulative-water-usage-by-month-dto';
 
 export class CumulativeWaterUsageByYearDto { 
-    year?: number;
-    cumulativeWaterUsage?: Array<CumulativeWaterUsageByMonthDto>;
+    Year?: number;
+    CumulativeWaterUsage?: Array<CumulativeWaterUsageByMonthDto>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

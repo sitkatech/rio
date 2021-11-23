@@ -11,9 +11,9 @@
  */
 
 export class PostingTypeDto { 
-    postingTypeID?: number;
-    postingTypeName?: string;
-    postingTypeDisplayName?: string;
+    PostingTypeID?: number;
+    PostingTypeName?: string;
+    PostingTypeDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

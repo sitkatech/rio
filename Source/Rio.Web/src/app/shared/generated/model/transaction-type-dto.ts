@@ -11,10 +11,10 @@
  */
 
 export class TransactionTypeDto { 
-    transactionTypeID?: number;
-    transactionTypeName?: string;
-    isAllocation?: boolean;
-    sortOrder?: number;
+    TransactionTypeID?: number;
+    TransactionTypeName?: string;
+    IsAllocation?: boolean;
+    SortOrder?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

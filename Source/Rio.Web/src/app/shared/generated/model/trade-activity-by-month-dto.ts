@@ -11,12 +11,12 @@
  */
 
 export class TradeActivityByMonthDto { 
-    groupingDate?: string;
-    tradeVolume?: number;
-    minimumPrice?: number;
-    maximumPrice?: number;
-    averagePrice?: number;
-    numberOfTrades?: number;
+    GroupingDate?: string;
+    TradeVolume?: number;
+    MinimumPrice?: number;
+    MaximumPrice?: number;
+    AveragePrice?: number;
+    NumberOfTrades?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

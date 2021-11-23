@@ -12,16 +12,16 @@
 import { WaterTransferRegistrationSimpleDto } from '././water-transfer-registration-simple-dto';
 
 export class WaterTransferDto { 
-    waterTransferID?: number;
-    offerID?: number;
-    transferDate?: string;
-    transferYear?: number;
-    acreFeetTransferred?: number;
-    unitPrice?: number;
-    notes?: string;
-    tradeNumber?: string;
-    buyerRegistration?: WaterTransferRegistrationSimpleDto;
-    sellerRegistration?: WaterTransferRegistrationSimpleDto;
+    WaterTransferID?: number;
+    OfferID?: number;
+    TransferDate?: string;
+    TransferYear?: number;
+    AcreFeetTransferred?: number;
+    UnitPrice?: number;
+    Notes?: string;
+    TradeNumber?: string;
+    BuyerRegistration?: WaterTransferRegistrationSimpleDto;
+    SellerRegistration?: WaterTransferRegistrationSimpleDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

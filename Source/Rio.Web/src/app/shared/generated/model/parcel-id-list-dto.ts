@@ -11,7 +11,7 @@
  */
 
 export class ParcelIDListDto { 
-    parcelIDs?: Array<number>;
+    ParcelIDs?: Array<number>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

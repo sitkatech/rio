@@ -11,8 +11,8 @@
  */
 
 export class CustomRichTextDto { 
-    customRichTextContent?: string;
-    isEmptyContent?: boolean;
+    CustomRichTextContent?: string;
+    IsEmptyContent?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

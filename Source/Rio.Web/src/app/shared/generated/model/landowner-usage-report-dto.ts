@@ -11,20 +11,20 @@
  */
 
 export class LandownerUsageReportDto { 
-    accountID?: number;
-    accountName?: string;
-    accountNumber?: number;
-    acresManaged?: number;
-    allocation?: number;
-    purchased?: number;
-    sold?: number;
-    totalSupply?: number;
-    usageToDate?: number;
-    currentAvailable?: number;
-    numberOfPostings?: number;
-    numberOfTrades?: number;
-    mostRecentTradeNumber?: string;
-    allocations?: { [key: string]: number; };
+    AccountID?: number;
+    AccountName?: string;
+    AccountNumber?: number;
+    AcresManaged?: number;
+    Allocation?: number;
+    Purchased?: number;
+    Sold?: number;
+    TotalSupply?: number;
+    UsageToDate?: number;
+    CurrentAvailable?: number;
+    NumberOfPostings?: number;
+    NumberOfTrades?: number;
+    MostRecentTradeNumber?: string;
+    Allocations?: { [key: string]: number; };
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

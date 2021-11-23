@@ -11,8 +11,8 @@
  */
 
 export class ParcelRequiredColumnAndMappingDto { 
-    requiredColumnName?: string;
-    mappedColumnName?: string;
+    RequiredColumnName?: string;
+    MappedColumnName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

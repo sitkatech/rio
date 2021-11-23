@@ -13,8 +13,8 @@ import { CumulativeWaterUsageByYearDto } from '././cumulative-water-usage-by-yea
 import { CumulativeWaterUsageByMonthDto } from '././cumulative-water-usage-by-month-dto';
 
 export class WaterUsageOverviewDto { 
-    current?: Array<CumulativeWaterUsageByYearDto>;
-    historic?: Array<CumulativeWaterUsageByMonthDto>;
+    Current?: Array<CumulativeWaterUsageByYearDto>;
+    Historic?: Array<CumulativeWaterUsageByMonthDto>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

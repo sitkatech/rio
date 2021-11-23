@@ -12,14 +12,14 @@
 import { AccountDto } from '././account-dto';
 
 export class WaterTransferRegistrationSimpleDto { 
-    waterTransferRegistrationID?: number;
-    waterTransferTypeID?: number;
-    account?: AccountDto;
-    waterTransferRegistrationStatusID?: number;
-    statusDate?: string;
-    isRegistered?: boolean;
-    isCanceled?: boolean;
-    isPending?: boolean;
+    WaterTransferRegistrationID?: number;
+    WaterTransferTypeID?: number;
+    Account?: AccountDto;
+    WaterTransferRegistrationStatusID?: number;
+    StatusDate?: string;
+    IsRegistered?: boolean;
+    IsCanceled?: boolean;
+    IsPending?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

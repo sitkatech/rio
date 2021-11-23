@@ -13,9 +13,9 @@ import { AccountSimpleDto } from '././account-simple-dto';
 import { ParcelSimpleDto } from '././parcel-simple-dto';
 
 export class AccountReconciliationDto { 
-    parcel?: ParcelSimpleDto;
-    lastKnownOwner?: AccountSimpleDto;
-    accountsClaimingOwnership?: Array<AccountSimpleDto>;
+    Parcel?: ParcelSimpleDto;
+    LastKnownOwner?: AccountSimpleDto;
+    AccountsClaimingOwnership?: Array<AccountSimpleDto>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

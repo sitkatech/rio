@@ -14,15 +14,15 @@ import { OfferStatusDto } from '././offer-status-dto';
 import { AccountDto } from '././account-dto';
 
 export class OfferDto { 
-    offerID?: number;
-    offerDate?: string;
-    quantity?: number;
-    price?: number;
-    offerNotes?: string;
-    createAccount?: AccountDto;
-    offerStatus?: OfferStatusDto;
-    trade?: TradeDto;
-    waterTransferID?: number;
+    OfferID?: number;
+    OfferDate?: string;
+    Quantity?: number;
+    Price?: number;
+    OfferNotes?: string;
+    CreateAccount?: AccountDto;
+    OfferStatus?: OfferStatusDto;
+    Trade?: TradeDto;
+    WaterTransferID?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -12,12 +12,12 @@
 import { WaterTransferRegistrationParcelDto } from '././water-transfer-registration-parcel-dto';
 
 export class WaterTransferRegistrationDto { 
-    waterTransferTypeID: number;
-    accountID: number;
-    waterTransferRegistrationStatusID?: number;
-    statusDate?: string;
-    waterTransferRegistrationParcels?: Array<WaterTransferRegistrationParcelDto>;
-    userID?: number;
+    WaterTransferTypeID: number;
+    AccountID: number;
+    WaterTransferRegistrationStatusID?: number;
+    StatusDate?: string;
+    WaterTransferRegistrationParcels?: Array<WaterTransferRegistrationParcelDto>;
+    UserID?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

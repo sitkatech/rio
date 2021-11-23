@@ -13,8 +13,8 @@ import { AccountSimpleDto } from '././account-simple-dto';
 import { WaterYearDto } from '././water-year-dto';
 
 export class ParcelOwnershipDto { 
-    account?: AccountSimpleDto;
-    waterYear?: WaterYearDto;
+    Account?: AccountSimpleDto;
+    WaterYear?: WaterYearDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

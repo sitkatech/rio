@@ -11,12 +11,12 @@
  */
 
 export class OfferUpsertDto { 
-    tradeID?: number;
-    quantity: number;
-    price: number;
-    offerNotes?: string;
-    offerStatusID?: number;
-    createAccountID?: number;
+    TradeID?: number;
+    Quantity: number;
+    Price: number;
+    OfferNotes?: string;
+    OfferStatusID?: number;
+    CreateAccountID?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -11,8 +11,8 @@
  */
 
 export class AccountStatusDto { 
-    accountStatusID?: number;
-    accountStatusDisplayName?: string;
+    AccountStatusID?: number;
+    AccountStatusDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

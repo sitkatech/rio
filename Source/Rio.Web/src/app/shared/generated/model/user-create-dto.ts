@@ -11,15 +11,15 @@
  */
 
 export class UserCreateDto { 
-    firstName?: string;
-    lastName?: string;
-    organizationName?: string;
-    email?: string;
-    phoneNumber?: string;
-    roleID: number;
-    receiveSupportEmails: boolean;
-    loginName?: string;
-    userGuid?: string;
+    LoginName?: string;
+    UserGuid?: string;
+    FirstName?: string;
+    LastName?: string;
+    OrganizationName?: string;
+    Email?: string;
+    PhoneNumber?: string;
+    RoleID: number;
+    ReceiveSupportEmails: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

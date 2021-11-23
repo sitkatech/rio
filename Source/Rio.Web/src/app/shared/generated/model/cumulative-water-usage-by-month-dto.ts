@@ -11,8 +11,8 @@
  */
 
 export class CumulativeWaterUsageByMonthDto { 
-    month?: string;
-    cumulativeWaterUsageInAcreFeet?: number;
+    name?: string;
+    value?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

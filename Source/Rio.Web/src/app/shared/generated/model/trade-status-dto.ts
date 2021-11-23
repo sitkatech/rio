@@ -11,9 +11,9 @@
  */
 
 export class TradeStatusDto { 
-    tradeStatusID?: number;
-    tradeStatusName?: string;
-    tradeStatusDisplayName?: string;
+    TradeStatusID?: number;
+    TradeStatusName?: string;
+    TradeStatusDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

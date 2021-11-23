@@ -14,15 +14,15 @@ import { PostingStatusDto } from '././posting-status-dto';
 import { PostingTypeDto } from '././posting-type-dto';
 
 export class PostingDto { 
-    postingID?: number;
-    postingType?: PostingTypeDto;
-    postingDate?: string;
-    quantity?: number;
-    availableQuantity?: number;
-    price?: number;
-    postingDescription?: string;
-    createAccount?: AccountDto;
-    postingStatus?: PostingStatusDto;
+    PostingID?: number;
+    PostingType?: PostingTypeDto;
+    PostingDate?: string;
+    Quantity?: number;
+    AvailableQuantity?: number;
+    Price?: number;
+    PostingDescription?: string;
+    CreateAccount?: AccountDto;
+    PostingStatus?: PostingStatusDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

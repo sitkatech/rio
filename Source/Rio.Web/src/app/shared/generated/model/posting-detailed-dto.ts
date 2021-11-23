@@ -11,23 +11,23 @@
  */
 
 export class PostingDetailedDto { 
-    postingID?: number;
-    postingDate?: string;
-    postingTypeID?: number;
-    postingTypeDisplayName?: string;
-    postingStatusID?: number;
-    postingStatusDisplayName?: string;
-    postedByUserID?: number;
-    postedByAccountID?: number;
-    postedByFirstName?: string;
-    postedByLastName?: string;
-    postedByEmail?: string;
-    readonly postedByFullName?: string;
-    price?: number;
-    quantity?: number;
-    availableQuantity?: number;
-    numberOfOffers?: number;
-    postedByAccountName?: string;
+    PostingID?: number;
+    PostingDate?: string;
+    PostingTypeID?: number;
+    PostingTypeDisplayName?: string;
+    PostingStatusID?: number;
+    PostingStatusDisplayName?: string;
+    PostedByUserID?: number;
+    PostedByAccountID?: number;
+    PostedByFirstName?: string;
+    PostedByLastName?: string;
+    PostedByEmail?: string;
+    readonly PostedByFullName?: string;
+    Price?: number;
+    Quantity?: number;
+    AvailableQuantity?: number;
+    NumberOfOffers?: number;
+    PostedByAccountName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

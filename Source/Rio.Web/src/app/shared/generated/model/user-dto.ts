@@ -12,17 +12,17 @@
 import { RoleDto } from '././role-dto';
 
 export class UserDto { 
-    userID?: number;
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    readonly fullName?: string;
-    userGuid?: string;
-    phone?: string;
-    loginName?: string;
-    role?: RoleDto;
-    disclaimerAcknowledgedDate?: string;
-    receiveSupportEmails?: boolean;
+    UserGuid?: string;
+    Phone?: string;
+    LoginName?: string;
+    Role?: RoleDto;
+    DisclaimerAcknowledgedDate?: string;
+    ReceiveSupportEmails?: boolean;
+    UserID?: number;
+    FirstName?: string;
+    LastName?: string;
+    Email?: string;
+    readonly FullName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

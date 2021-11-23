@@ -11,7 +11,7 @@
  */
 
 export class AccountEditUsersDto { 
-    userIDs?: Array<number>;
+    UserIDs?: Array<number>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

@@ -14,11 +14,11 @@ import { PostingDto } from '././posting-dto';
 import { AccountDto } from '././account-dto';
 
 export class TradeDto { 
-    tradeID?: number;
-    tradeNumber?: string;
-    createAccount?: AccountDto;
-    tradeStatus?: TradeStatusDto;
-    posting?: PostingDto;
+    TradeID?: number;
+    TradeNumber?: string;
+    CreateAccount?: AccountDto;
+    TradeStatus?: TradeStatusDto;
+    Posting?: PostingDto;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
