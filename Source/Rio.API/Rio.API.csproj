@@ -31,6 +31,7 @@
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Email" Version="2.4.0" />
     <PackageReference Include="SharpZipLib" Version="1.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
 
@@ -39,4 +40,13 @@
     <ProjectReference Include="..\Rio.Models\Rio.Models.csproj" />
   </ItemGroup>
 
+  <!-- 
+    This PostBuild target is used to generate the static swagger.json file that is meant to be 
+    used by the web project to generate typescript models using `npm run gen-model`
+  -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
+    <Exec Command="dotnet new tool-manifest --force" />
+    <Exec Command="dotnet tool install --version 6.2.2 Swashbuckle.AspNetCore.Cli" />
+    <Exec Command="dotnet swagger tofile --output swagger.json $(OutputPath)\$(AssemblyName).dll v1 " />
+  </Target>
 </Project>

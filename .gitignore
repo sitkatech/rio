@@ -16,3 +16,4 @@ Source/Rio.API/appsecrets.json
 /Source/Rio.API/sitka.localhost.rootca.crt
 /Source/Rio.GeoServer/data_dir/logs/*.log
 /Source/Rio.Web/package-lock.json
+/Source/Rio.API/.config
