@@ -45,7 +45,7 @@ export * from '././unassigned-user-report-dto';
 export * from '././user-create-dto';
 export * from '././user-detailed-dto';
 export * from '././user-dto';
-export * from '././user-edit-acounts-dto';
+export * from '././user-edit-accounts-dto';
 export * from '././user-invite-dto';
 export * from '././user-partner-invite-dto';
 export * from '././user-simple-dto';

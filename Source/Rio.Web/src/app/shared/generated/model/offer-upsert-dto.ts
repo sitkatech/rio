@@ -17,6 +17,7 @@ export class OfferUpsertDto {
     OfferNotes?: string;
     OfferStatusID?: number;
     CreateAccountID?: number;
+    OfferID?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

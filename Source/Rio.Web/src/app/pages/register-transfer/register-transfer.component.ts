@@ -1,21 +1,21 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterTransferRegistrationDto } from 'src/app/shared/models/water-transfer-registration-dto';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/parcel-picker.component';
-import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { TradeService } from 'src/app/services/trade.service';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTransferDto } from 'src/app/shared/generated/model/water-transfer-dto';
+import { WaterTransferRegistrationDto } from 'src/app/shared/generated/model/water-transfer-registration-dto';
+import { WaterTransferRegistrationParcelDto } from 'src/app/shared/generated/model/water-transfer-registration-parcel-dto';
 
 
 @Component({

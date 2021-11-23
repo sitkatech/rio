@@ -47,7 +47,7 @@ model/unassigned-user-report-dto.ts
 model/user-create-dto.ts
 model/user-detailed-dto.ts
 model/user-dto.ts
-model/user-edit-acounts-dto.ts
+model/user-edit-accounts-dto.ts
 model/user-invite-dto.ts
 model/user-partner-invite-dto.ts
 model/user-simple-dto.ts

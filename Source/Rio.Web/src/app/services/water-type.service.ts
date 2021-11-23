@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../shared/services';
 import { Observable } from 'rxjs';
-import { WaterTypeDto } from '../shared/models/water-type-dto';
+import { WaterTypeDto } from '../shared/generated/model/water-type-dto';
 
 @Injectable({
   providedIn: 'root'

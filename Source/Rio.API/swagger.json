@@ -3108,22 +3108,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             }
           }
@@ -3195,22 +3195,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserEditAcountsDto"
+                "$ref": "#/components/schemas/UserEditAccountsDto"
               }
             }
           }
@@ -4424,6 +4424,11 @@
           "CreateAccountID": {
             "type": "integer",
             "format": "int32"
+          },
+          "OfferID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4817,6 +4822,10 @@
             "nullable": true
           },
           "MappedColumnName": {
+            "type": "string",
+            "nullable": true
+          },
+          "CommonName": {
             "type": "string",
             "nullable": true
           }
@@ -5438,7 +5447,7 @@
         },
         "additionalProperties": false
       },
-      "UserEditAcountsDto": {
+      "UserEditAccountsDto": {
         "type": "object",
         "properties": {
           "AccountIDs": {

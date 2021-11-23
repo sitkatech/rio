@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 
 @Component({
   selector: 'rio-glossary',

@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
     selector: 'template-user-detail',

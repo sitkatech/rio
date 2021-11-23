@@ -2,16 +2,16 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserDto } from 'src/app/shared/models/user/user-dto';
 import { forkJoin } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
 
 @Component({
   selector: 'rio-user-edit-accounts',

@@ -13,7 +13,7 @@ import { ColDef } from 'ag-grid-community';
 import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { forkJoin } from 'rxjs';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeApplicationTypeEnum, WaterTypeDto } from 'src/app/shared/models/water-type-dto';
+import { WaterTypeApplicationTypeEnum, WaterTypeDto } from 'src/app/shared/models/water-type-application-type-enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WaterYearService } from 'src/app/services/water-year.service';

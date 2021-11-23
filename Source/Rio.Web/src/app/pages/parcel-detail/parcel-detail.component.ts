@@ -3,20 +3,20 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { UserDto } from 'src/app/shared/models';
-import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-ownership-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 
 @Component({
   selector: 'template-parcel-detail',

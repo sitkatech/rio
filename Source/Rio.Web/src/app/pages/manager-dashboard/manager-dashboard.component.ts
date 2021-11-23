@@ -1,7 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { ColDef } from 'ag-grid-community';
@@ -14,22 +12,24 @@ import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-en
 import { UserService } from 'src/app/services/user/user.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { environment } from 'src/environments/environment';
 import { forkJoin } from 'rxjs';
-import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
-import { PostingDetailedDto } from 'src/app/shared/models/posting/posting-detailed-dto';
 import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entry';
 import { AccountService } from 'src/app/services/account/account.service';
 import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
+import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { PostingDetailedDto } from 'src/app/shared/generated/model/posting-detailed-dto';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/generated/model/trade-with-most-recent-offer-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',

@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
-import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
-import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
-import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
-import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ParcelLayerUpdateDto } from 'src/app/pages/parcel-update-layer/parcel-update-layer.component';
-import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
+import { BoundingBoxDto } from 'src/app/shared/generated/model/bounding-box-dto';
+import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
+import { ParcelAllocationHistoryDto } from 'src/app/shared/generated/model/parcel-allocation-history-dto';
+import { ParcelAllocationUpsertDto } from 'src/app/shared/generated/model/parcel-allocation-upsert-dto';
+import { ParcelChangeOwnerDto } from 'src/app/shared/generated/model/parcel-change-owner-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-ownership-dto';
+import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
+import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
 
 @Injectable({
   providedIn: 'root'

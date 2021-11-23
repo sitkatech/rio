@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -7,10 +6,11 @@ import { forkJoin } from 'rxjs';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AccountStatusService } from 'src/app/services/accountStatus/account-status.service';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountUpdateDto } from "src/app/shared/models/account/account-update-dto";
-import { AccountStatusDto } from "src/app/shared/models/account/account-status-dto";
 import { AccountService } from 'src/app/services/account/account.service';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountStatusDto } from 'src/app/shared/generated/model/account-status-dto';
+import { AccountUpdateDto } from 'src/app/shared/generated/model/account-update-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-account-edit',

@@ -1,19 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 @Component({
   selector: 'rio-parcel-list',

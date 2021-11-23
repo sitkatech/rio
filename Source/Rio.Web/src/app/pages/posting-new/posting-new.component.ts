@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostingService } from 'src/app/services/posting.service';
-import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
-import { PostingUpsertDto } from 'src/app/shared/models/posting/posting-upsert-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { UserService } from 'src/app/services/user/user.service';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { PostingTypeDto } from 'src/app/shared/generated/model/posting-type-dto';
+import { PostingUpsertDto } from 'src/app/shared/generated/model/posting-upsert-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-posting-new',

@@ -1,7 +1,7 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import '../../../../node_modules/leaflet-timedimension/dist/leaflet.timedimension.src.js';
-import { BoundingBoxDto } from '../../shared/models/bounding-box-dto';
+import { BoundingBoxDto } from '../../shared/generated/model/bounding-box-dto';
 import { CustomCompileService } from '../../shared/services/custom-compile.service';
 import { environment } from "src/environments/environment";
 

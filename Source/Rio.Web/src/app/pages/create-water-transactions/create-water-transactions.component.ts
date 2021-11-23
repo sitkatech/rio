@@ -3,21 +3,20 @@ import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
-import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
-import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { Alert } from 'src/app/shared/models/alert';
-import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
-import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { forkJoin } from 'rxjs';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeApplicationTypeEnum, WaterTypeDto } from 'src/app/shared/models/water-type-dto';
+import { WaterTypeApplicationTypeEnum } from 'src/app/shared/models/water-type-application-type-enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { ParcelAllocationHistoryDto } from 'src/app/shared/generated/model/parcel-allocation-history-dto';
+import { ParcelAllocationUpsertDto } from 'src/app/shared/generated/model/parcel-allocation-upsert-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 @Component({
   selector: 'rio-create-water-transactions',

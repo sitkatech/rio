@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { WaterTypeDto, WaterTypeApplicationTypeEnum } from 'src/app/shared/models/water-type-dto';
+import { WaterTypeApplicationTypeEnum } from 'src/app/shared/models/water-type-application-type-enum';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 
 @Component({
   selector: 'rio-water-type-edit',

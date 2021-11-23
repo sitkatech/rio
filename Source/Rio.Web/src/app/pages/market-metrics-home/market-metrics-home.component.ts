@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { MarketMetricsService } from 'src/app/services/market-metrics.service';
-import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
 import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
-import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
 import { Color, ColorHelper, ScaleType } from '@swimlane/ngx-charts';
+import { MarketMetricsDto } from 'src/app/shared/generated/model/market-metrics-dto';
+import { TradeActivityByMonthDto } from 'src/app/shared/generated/model/trade-activity-by-month-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'template-market-metrics-home',

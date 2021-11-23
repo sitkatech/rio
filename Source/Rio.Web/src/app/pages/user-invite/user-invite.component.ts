@@ -1,16 +1,16 @@
-import { Component, OnInit, Output, Input, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { RoleService } from 'src/app/services/role/role.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Router, ActivatedRoute } from '@angular/router';
-import { RoleDto } from 'src/app/shared/models/role/role-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
-import { UserInviteDto } from 'src/app/shared/models/user/user-invite-dto';
 import { environment } from 'src/environments/environment';
+import { RoleDto } from 'src/app/shared/generated/model/role-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserInviteDto } from 'src/app/shared/generated/model/user-invite-dto';
 
 
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountEditUsersDto } from "src/app/shared/models/account/account-edit-users-dto";
-import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-dto';
-import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
-import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
+import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { HttpClient } from '@angular/common/http';
-import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountEditUsersDto } from 'src/app/shared/generated/model/account-edit-users-dto';
+import { AccountUpdateDto } from 'src/app/shared/generated/model/account-update-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
 
 @Injectable({
   providedIn: 'root'

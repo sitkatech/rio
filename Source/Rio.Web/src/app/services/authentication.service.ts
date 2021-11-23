@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from './user/user.service';
-import { UserDto } from '../shared/models';
-import { Subject, throwError, BehaviorSubject, Observable } from 'rxjs';
-import { catchError, map, filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
-import { isNullOrUndefined } from 'util';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
-import { AccountSimpleDto } from '../shared/models/account/account-simple-dto';
 import { AlertService } from '../shared/services/alert.service';
 import { Alert } from '../shared/models/alert';
 import { AlertContext } from '../shared/models/enums/alert-context.enum';
-import { UserCreateDto } from '../shared/models/user/user-create-dto';
 import { environment } from 'src/environments/environment';
+import { AccountSimpleDto } from '../shared/generated/model/account-simple-dto';
+import { UserCreateDto } from '../shared/generated/model/user-create-dto';
+import { UserDto } from '../shared/generated/model/user-dto';
 
 @Injectable({
   providedIn: 'root'

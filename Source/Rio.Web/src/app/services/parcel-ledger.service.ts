@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { ParcelLedgerCreateDto } from 'src/app/shared/models/parcel/parcel-ledger-create-dto';
+import { ParcelLedgerCreateDto } from '../shared/generated/model/parcel-ledger-create-dto';
 
 @Injectable({
   providedIn: 'root'

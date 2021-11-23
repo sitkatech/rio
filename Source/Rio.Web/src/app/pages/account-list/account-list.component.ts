@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
 import { AccountService } from 'src/app/services/account/account.service';
 import { ColDef } from 'ag-grid-community';
-import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountStatusEnum } from 'src/app/shared/models/enums/account-status-enum';
 import { DatePipe } from '@angular/common';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+
 @Component({
   selector: 'rio-account-list',
   templateUrl: './account-list.component.html',

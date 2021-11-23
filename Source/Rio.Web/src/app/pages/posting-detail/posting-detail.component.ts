@@ -2,22 +2,20 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { PostingService } from 'src/app/services/posting.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { forkJoin } from 'rxjs';
-import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
-import { OfferUpsertDto } from 'src/app/shared/models/offer/offer-upsert-dto';
 import { OfferService } from 'src/app/services/offer.service';
-import { OfferDto } from 'src/app/shared/models/offer/offer-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
-import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
-import { PostingUpdateStatusDto } from 'src/app/shared/models/posting/posting-update-status-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { UserDto } from 'src/app/shared/models';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
-import { PostingStatusDto } from 'src/app/shared/models/posting/posting-status-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { OfferDto } from 'src/app/shared/generated/model/offer-dto';
+import { OfferUpsertDto } from 'src/app/shared/generated/model/offer-upsert-dto';
+import { PostingDto } from 'src/app/shared/generated/model/posting-dto';
+import { PostingTypeDto } from 'src/app/shared/generated/model/posting-type-dto';
+import { PostingUpdateStatusDto } from 'src/app/shared/generated/model/posting-update-status-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
     selector: 'template-posting-detail',

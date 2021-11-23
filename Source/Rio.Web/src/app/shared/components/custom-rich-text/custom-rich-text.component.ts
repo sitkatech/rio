@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { CustomRichTextService } from '../../services/custom-rich-text.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from '../../models';
-import { CustomRichTextDto } from '../../models/custom-rich-text-dto';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { AlertContext } from '../../models/enums/alert-context.enum';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { environment } from 'src/environments/environment';
 import { DomSanitizer,  SafeHtml } from '@angular/platform-browser'
+import { CustomRichTextDto } from '../../generated/model/custom-rich-text-dto';
+import { UserDto } from '../../generated/model/user-dto';
 
 @Component({
   selector: 'rio-custom-rich-text',

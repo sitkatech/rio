@@ -6,8 +6,8 @@ import { GeoJSON, LeafletMouseEvent, TileLayer } from "leaflet";
 import { ParcelMapComponent } from '../parcel-map/parcel-map.component';
 import { WfsService } from '../../services/wfs.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { WaterTransferRegistrationParcelDto } from '../../models/water-transfer-registration-parcel-dto';
-import { ParcelDto } from '../../models/parcel/parcel-dto';
+import { ParcelDto } from '../../generated/model/parcel-dto';
+import { WaterTransferRegistrationParcelDto } from '../../generated/model/water-transfer-registration-parcel-dto';
 
 
 @Component({

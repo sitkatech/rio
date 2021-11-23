@@ -1,5 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
@@ -8,26 +7,27 @@ import { TradeService } from 'src/app/services/trade.service';
 import { OfferStatusEnum } from 'src/app/shared/models/enums/offer-status-enum';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
-import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
 import { PostingService } from 'src/app/services/posting.service';
-import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
 import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
-import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
 import { LandownerWaterUseChartComponent } from '../landowner-water-use-chart/landowner-water-use-chart.component';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { LandownerDashboardViewEnum } from 'src/app/shared/models/enums/landowner-dashboard-view.enum';
-import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
+import { PostingDto } from 'src/app/shared/generated/model/posting-dto';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/generated/model/trade-with-most-recent-offer-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTransferDto } from 'src/app/shared/generated/model/water-transfer-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',

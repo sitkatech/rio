@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountService } from 'src/app/services/account/account.service';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { forkJoin } from 'rxjs';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-account-detail',

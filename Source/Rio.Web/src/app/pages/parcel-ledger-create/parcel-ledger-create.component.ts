@@ -5,19 +5,18 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelLedgerCreateDto } from 'src/app/shared/models/parcel/parcel-ledger-create-dto';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
-import { WaterTypeDto } from 'src/app/shared/models/water-type-dto';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { UserDto } from 'src/app/shared/models';
-import { ParcelLedgerDto } from 'src/app/shared/models/parcel/parcel-ledger-dto';
 import { debounceTime, distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-create',

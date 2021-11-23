@@ -10,10 +10,8 @@
  * Do not edit the class manually.
  */
 
-export class ParcelRequiredColumnAndMappingDto { 
-    RequiredColumnName?: string;
-    MappedColumnName?: string;
-    CommonName?: string;
+export class UserEditAccountsDto { 
+    AccountIDs?: Array<number>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

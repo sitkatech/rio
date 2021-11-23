@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountIncludeParcelsDto } from 'src/app/shared/generated/model/account-include-parcels-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-water-accounts-list',

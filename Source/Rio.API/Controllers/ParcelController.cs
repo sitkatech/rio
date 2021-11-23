@@ -567,6 +567,7 @@ The updated Parcel data should be sent to the OpenET team, so that any new or mo
     {
         public string RequiredColumnName { get; set; }
         public string MappedColumnName { get; set; }
+        public string CommonName { get; set; }
     }
 
     public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>

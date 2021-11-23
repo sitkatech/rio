@@ -4,17 +4,17 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { OpenETService } from 'src/app/services/openet.service';
-import { UserDto } from 'src/app/shared/models';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { OpenETSyncHistoryDto } from 'src/app/shared/models/openet-sync-history-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 import { WaterYearMonthService } from 'src/app/services/water-year-month.service';
-import { WaterYearMonthDto } from 'src/app/shared/models/water-year-month-dto';
 import { finalize } from 'rxjs/operators';
 import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/enums/open-et-sync-result-type-enum';
+import { OpenETSyncHistoryDto } from 'src/app/shared/generated/model/open-et-sync-history-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterYearMonthDto } from 'src/app/shared/generated/model/water-year-month-dto';
 
 @Component({
   selector: 'rio-openet-sync-water-year-month-status-list',
