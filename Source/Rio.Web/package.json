@@ -1,6 +1,11 @@
 {
   "name": "rio-web",
   "version": "0.0.0",
+  "config": {
+    "template_dir": "../../Build/typescript-angular",
+    "output_dir": "src/app/shared/generated",
+    "swagger_json_path": "../Rio.API/swagger.json"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --disable-host-check true --port 8787",
@@ -11,7 +16,8 @@
     "build-prod": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=production --configuration production",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "gen-model": "node src/scripts/clean-model.js %npm_package_config_output_dir% && npx @openapitools/openapi-generator-cli generate --additional-properties=modelPropertyNaming=original --additional-properties=fileNaming=kebab-case -i %npm_package_config_swagger_json_path%  -g typescript-angular -o %npm_package_config_output_dir% -t %npm_package_config_template_dir%"
   },
   "private": true,
   "dependencies": {
@@ -65,6 +71,7 @@
     "@angular/compiler-cli": "^12.2.13",
     "@angular/language-service": "^12.2.13",
     "@fortawesome/fontawesome-free": "^5.13.0",
+    "@openapitools/openapi-generator-cli": "^2.4.13",
     "@types/node": "^13.13.50",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.3.0",

@@ -17,3 +17,4 @@ Source/Rio.API/appsecrets.json
 /Source/Rio.GeoServer/data_dir/logs/*.log
 /Source/Rio.Web/package-lock.json
 /Source/Rio.API/.config
+/Source/Rio.Web/openapitools.json
