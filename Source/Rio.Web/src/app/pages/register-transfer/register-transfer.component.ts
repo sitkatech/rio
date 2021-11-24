@@ -13,7 +13,7 @@ import { TradeService } from 'src/app/services/trade.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
-import { WaterTransferRegistrationParcelDto } from 'src/app/shared/generated/model/water-transfer-registration-parcel-dto';
+import { WaterTransferRegistrationParcelUpsertDto } from 'src/app/shared/generated/model/water-transfer-registration-parcel-upsert-dto';
 import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
 import { WaterTransferRegistrationUpsertDto } from 'src/app/shared/generated/model/water-transfer-registration-upsert-dto';
 
@@ -30,7 +30,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   public isRegisteringTransfer: boolean = false;
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
-  public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
+  public selectedParcels: Array<WaterTransferRegistrationParcelUpsertDto> = [];
   public visibleParcels: Array<ParcelDto> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
@@ -175,7 +175,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
     waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
     waterTransferRegistrationDto.UserID = this.currentUser.UserID;
     let waterTransferRegistrationParcels = this.parcelPicker.selectedParcels.map(p => {
-      let waterTransferParcelDto = new WaterTransferRegistrationParcelDto();
+      let waterTransferParcelDto = new WaterTransferRegistrationParcelUpsertDto();
       waterTransferParcelDto.ParcelID = p.ParcelID;
       waterTransferParcelDto.AcreFeetTransferred = Math.round(p.AcreFeetTransferred);
       return waterTransferParcelDto;

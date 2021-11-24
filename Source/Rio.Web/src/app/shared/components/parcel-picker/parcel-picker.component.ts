@@ -7,7 +7,7 @@ import { ParcelMapComponent } from '../parcel-map/parcel-map.component';
 import { WfsService } from '../../services/wfs.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelDto } from '../../generated/model/parcel-dto';
-import { WaterTransferRegistrationParcelDto } from '../../generated/model/water-transfer-registration-parcel-dto';
+import { WaterTransferRegistrationParcelUpsertDto } from '../../generated/model/water-transfer-registration-parcel-upsert-dto';
 
 
 @Component({
@@ -21,7 +21,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     public visibleParcels: Array<ParcelDto> = [];
 
     @Input("selectedParcels")
-    public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
+    public selectedParcels: Array<WaterTransferRegistrationParcelUpsertDto> = [];
 
     @Input("maxTotalQuantity")
     public maxTotalQuantity: number;
@@ -90,7 +90,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
         if (this.visibleParcelIDs.includes(selectedParcelID)) {
             if(!this.removeParcelIfSelected(selectedParcelID))
             {
-                let parcelToAdd = new WaterTransferRegistrationParcelDto();
+                let parcelToAdd = new WaterTransferRegistrationParcelUpsertDto();
                 parcelToAdd.ParcelID = feature.properties.ParcelID;
                 parcelToAdd.ParcelNumber = feature.properties.ParcelNumber;
                 parcelToAdd.ParcelAreaInAcres = feature.properties.ParcelAreaInAcres;
@@ -112,7 +112,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
 
     public selectAllParcels(): void {
         this.selectedParcels = this.visibleParcels.map(p => {
-            let parcelToAdd = new WaterTransferRegistrationParcelDto();
+            let parcelToAdd = new WaterTransferRegistrationParcelUpsertDto();
             parcelToAdd.ParcelID = p.ParcelID;
             parcelToAdd.ParcelNumber = p.ParcelNumber;
             parcelToAdd.ParcelAreaInAcres = p.ParcelAreaInAcres;
@@ -122,7 +122,7 @@ export class ParcelPickerComponent implements OnInit, AfterViewInit {
     }
 
     private removeParcelIfSelected(parcelIDToRemove: number) : boolean {
-        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelDto) => parcel.ParcelID === parcelIDToRemove);
+        const selectedParcelIndex = this.selectedParcels.findIndex((parcel: WaterTransferRegistrationParcelUpsertDto) => parcel.ParcelID === parcelIDToRemove);
         if (selectedParcelIndex !== -1) {
             this.selectedParcels.splice(selectedParcelIndex, 1);
             return true;

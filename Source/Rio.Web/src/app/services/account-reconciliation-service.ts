@@ -1,7 +1,7 @@
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { AccountReconciliationDto } from '../shared/generated/model/account-reconciliation-dto';
+import { AccountReconciliationCustomDto } from '../shared/generated/model/account-reconciliation-custom-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { AccountReconciliationDto } from '../shared/generated/model/account-reco
 export class AccountReconciliationService {
   constructor(private apiService: ApiService) { }
 
-  getAccountsToBeReconciled(): Observable<Array<AccountReconciliationDto>> {
+  getAccountsToBeReconciled(): Observable<Array<AccountReconciliationCustomDto>> {
     let route = `/account-reconciliations`;
     return this.apiService.getFromApi(route);
   }

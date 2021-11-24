@@ -3,7 +3,7 @@ import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { WaterTransferDto } from '../shared/generated/model/water-transfer-dto';
 import { WaterTransferRegistrationDto } from '../shared/generated/model/water-transfer-registration-dto';
-import { WaterTransferRegistrationParcelDto } from '../shared/generated/model/water-transfer-registration-parcel-dto';
+import { WaterTransferRegistrationParcelUpsertDto } from '../shared/generated/model/water-transfer-registration-parcel-upsert-dto';
 import { WaterTransferRegistrationSimpleDto } from '../shared/generated/model/water-transfer-registration-simple-dto';
 import { WaterTransferDetailedDto } from '../shared/generated/model/water-transfer-detailed-dto';
 
@@ -23,12 +23,12 @@ export class WaterTransferService {
       return this.apiService.getFromApi(route);
   }
 
-  public getParcelsForWaterTransferIDAndUserID(waterTransferID: number, userID: number): Observable<Array<WaterTransferRegistrationParcelDto>> {
+  public getParcelsForWaterTransferIDAndUserID(waterTransferID: number, userID: number): Observable<Array<WaterTransferRegistrationParcelUpsertDto>> {
       let route = `/water-transfers/${waterTransferID}/parcels/${userID}`;
       return this.apiService.getFromApi(route);
   }
 
-  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferRegistrationParcelDto> {
+  public selectParcelsForWaterTransferID(waterTransferID: number, waterTransferRegistrationDto: WaterTransferRegistrationDto): Observable<WaterTransferRegistrationParcelUpsertDto> {
     let route = `/water-transfers/${waterTransferID}/selectParcels`;
     return this.apiService.postToApi(route, waterTransferRegistrationDto);
   }
