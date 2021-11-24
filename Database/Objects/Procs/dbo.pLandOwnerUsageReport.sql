@@ -10,8 +10,8 @@ as
 
 begin
 select a.AccountID, a.AccountName, a.AccountNumber, a.AcresManaged, a.Allocation, a.Purchased, a.Sold,
-a.Allocation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
-a.Allocation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
+a.Allocation + a.Purchased + a.Sold as TotalSupply, a.UsageToDate,
+a.Allocation + a.Purchased + a.Sold - a.UsageToDate as CurrentAvailable,
 a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
