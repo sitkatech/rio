@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using Rio.Models.DataTransferObjects;
-using WaterTransferRegistrationSimpleDto = Rio.Models.DataTransferObjects.WaterTransfer.WaterTransferRegistrationSimpleDto;
 
 namespace Rio.API.Controllers
 {

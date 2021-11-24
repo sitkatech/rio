@@ -9,14 +9,16 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { AccountDto } from '././account-dto';
+import { AccountSimpleDto } from '././account-simple-dto';
 
 export class WaterTransferRegistrationSimpleDto { 
     WaterTransferRegistrationID?: number;
+    WaterTransferID?: number;
     WaterTransferTypeID?: number;
-    Account?: AccountDto;
+    AccountID?: number;
     WaterTransferRegistrationStatusID?: number;
     StatusDate?: string;
+    Account?: AccountSimpleDto;
     IsRegistered?: boolean;
     IsCanceled?: boolean;
     IsPending?: boolean;

@@ -30,8 +30,8 @@ namespace Rio.EFModels.Entities
                 var sellerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Selling);
                 var buyerRegistration = waterTransfer.GetWaterTransferRegistrationByWaterTransferType(WaterTransferTypeEnum.Buying);
 
-                tradeWithMostRecentOfferDto.BuyerRegistration = buyerRegistration.AsDto();
-                tradeWithMostRecentOfferDto.SellerRegistration = sellerRegistration.AsDto();
+                tradeWithMostRecentOfferDto.BuyerRegistration = buyerRegistration.AsSimpleDto();
+                tradeWithMostRecentOfferDto.SellerRegistration = sellerRegistration.AsSimpleDto();
             }
 
             if (trade.Posting.PostingTypeID == (int) PostingTypeEnum.OfferToSell)
