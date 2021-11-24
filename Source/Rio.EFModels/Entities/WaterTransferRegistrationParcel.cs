@@ -64,8 +64,8 @@ namespace Rio.EFModels.Entities
         private static IQueryable<WaterTransferRegistrationParcel> GetWaterTransferRegistrationParcelsImpl(RioDbContext dbContext)
         {
             return dbContext.WaterTransferRegistrationParcels
-                .Include(x => x.WaterTransferRegistration)
-                .Include(x => x.Parcel)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
+                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();
         }
 

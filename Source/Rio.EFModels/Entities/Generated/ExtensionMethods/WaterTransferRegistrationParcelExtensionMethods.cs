@@ -14,7 +14,7 @@ namespace Rio.EFModels.Entities
             var waterTransferRegistrationParcelDto = new WaterTransferRegistrationParcelDto()
             {
                 WaterTransferRegistrationParcelID = waterTransferRegistrationParcel.WaterTransferRegistrationParcelID,
-                WaterTransferRegistration = waterTransferRegistrationParcel.WaterTransferRegistration.AsDto(),
+                WaterTransferRegistration = waterTransferRegistrationParcel.WaterTransferRegistration.AsSimpleDto(),
                 Parcel = waterTransferRegistrationParcel.Parcel.AsDto(),
                 AcreFeetTransferred = waterTransferRegistrationParcel.AcreFeetTransferred
             };
