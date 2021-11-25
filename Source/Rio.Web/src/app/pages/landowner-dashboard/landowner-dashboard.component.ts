@@ -372,7 +372,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getAllocationByWaterType(waterType: WaterTypeDto): number{
     let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.WaterType.WaterTypeID === waterType.WaterTypeID);
-    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
   }
 
   public getAllocationForParcelAndYear(parcelID: number, year: number): string {

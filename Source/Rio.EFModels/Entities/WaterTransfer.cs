@@ -68,7 +68,16 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.WaterTransfers
                 .Include(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
-                .Include(x => x.Offer).ThenInclude(x => x.Trade)
+                .Include(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.WaterTransferRegistrations).ThenInclude(x => x.WaterTransferType)
+                .Include(x => x.WaterTransferRegistrations).ThenInclude(x => x.WaterTransferRegistrationStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude((x => x.AccountStatus))
+                .Include(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.CreateAccount).ThenInclude((x => x.AccountStatus))
+                .Include(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.TradeStatus)
+                .Include(x => x.Offer).ThenInclude(x => x.OfferStatus)
                 .AsNoTracking();
         }
 

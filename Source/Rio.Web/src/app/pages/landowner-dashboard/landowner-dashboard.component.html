@@ -158,7 +158,7 @@
                             </div>
                             <div class="col-lg-3 col-md-6 mb-4">
                               <span class="label">Parcel</span>
-                              <a routerLink="/parcels/{{parcelLedger.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
+                              <a routerLink="/parcels/{{parcelLedger.Parcel.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
                             </div>
                             <div class="col-lg-3 col-md-6 mb-4">
                               <span class="label">Quantity</span>
@@ -232,7 +232,7 @@
             <ng-container *ngIf="allowTrading()">
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
-                  Purchased
+                  Purchased to Date
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getPurchasedAcreFeet() as purchasedAcreFeet else noPurchasedAcreFeet">
@@ -258,7 +258,7 @@
               </tr>
               <tr>
                 <th class="text-sm-left pb-0 mb-0">
-                  Sold
+                  Sold to Date
                 </th>
                 <td class="text-sm-right pb-0 mb-0">
                   <span *ngIf="getSoldAcreFeet() as soldAcreFeet else noSoldAcreFeet">

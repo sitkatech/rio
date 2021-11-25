@@ -5413,10 +5413,10 @@
             "nullable": true
           },
           "BuyerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
           },
           "SellerRegistration": {
-            "$ref": "#/components/schemas/WaterTransferRegistrationDto"
+            "$ref": "#/components/schemas/WaterTransferRegistrationSimpleDto"
           }
         },
         "additionalProperties": false
@@ -5949,12 +5949,17 @@
             "type": "integer",
             "format": "int32"
           },
+          "WaterTransferID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "WaterTransferTypeID": {
             "type": "integer",
             "format": "int32"
           },
-          "Account": {
-            "$ref": "#/components/schemas/AccountDto"
+          "AccountID": {
+            "type": "integer",
+            "format": "int32"
           },
           "WaterTransferRegistrationStatusID": {
             "type": "integer",
@@ -5963,6 +5968,9 @@
           "StatusDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "Account": {
+            "$ref": "#/components/schemas/AccountSimpleDto"
           },
           "IsRegistered": {
             "type": "boolean"
