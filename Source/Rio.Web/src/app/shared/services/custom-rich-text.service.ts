@@ -21,8 +21,8 @@ export class CustomRichTextService {
   }
 
   uploadFile(file: any): Observable<any> {
-    const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/FileResource/CkEditorUpload`;
+    const programApiRoute = environment.mainAppApiUrl
+    const route = `${programApiRoute}/FileResource/CkEditorUpload`;
     var result = this.httpClient.post<any>(
       route,
       file, // Send the File Blob as the POST body.

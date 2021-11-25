@@ -2,7 +2,7 @@
     "production": [TODO],
     "staging": [TODO],
     "dev": [TODO],
-    "apiHostName": [TODO],
+    "mainAppApiUrl": [TODO],
     "createAccountUrl": [TODO],
     "createAccountRedirectUrl": [TODO],
     "allowTrading": [TODO],
