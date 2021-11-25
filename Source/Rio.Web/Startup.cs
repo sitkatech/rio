@@ -72,7 +72,7 @@ namespace Rio.Web
     {
         public ConfigDto(IConfiguration configuration)
         {
-            ApiHostName = configuration["ApiHostName"];
+            MainAppApiUrl = configuration["MainAppApiUrl"];
             CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
             AllowTrading = bool.Parse(configuration["AllowTrading"]);
             GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
@@ -96,8 +96,8 @@ namespace Rio.Web
             AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
         }
 
-        [JsonProperty("apiHostName")]
-        public string ApiHostName { get; set; }
+        [JsonProperty("mainAppApiUrl")]
+        public string MainAppApiUrl { get; set; }
         [JsonProperty("createAccountRedirectUrl")]
         public string CreateAccountRedirectUrl { get; set; }
         [JsonProperty("allowTrading")]
