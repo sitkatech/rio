@@ -29,7 +29,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
   private watchUserChangeSubscription: any;
   public currentUser: UserDto;
   public parcel: ParcelDto;
-  public parcelLedgers: ParcelLedgerDto[];
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
