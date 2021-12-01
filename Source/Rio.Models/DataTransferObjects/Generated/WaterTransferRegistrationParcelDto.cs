@@ -10,7 +10,7 @@ namespace Rio.Models.DataTransferObjects
     public partial class WaterTransferRegistrationParcelDto
     {
         public int WaterTransferRegistrationParcelID { get; set; }
-        public WaterTransferRegistrationSimpleDto WaterTransferRegistration { get; set; }
+        public WaterTransferRegistrationDto WaterTransferRegistration { get; set; }
         public ParcelDto Parcel { get; set; }
         public int AcreFeetTransferred { get; set; }
     }

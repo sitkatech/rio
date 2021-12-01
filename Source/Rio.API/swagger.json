@@ -4915,6 +4915,9 @@
             "type": "string",
             "nullable": true
           },
+          "ParcelLedgerEntrySourceType": {
+            "$ref": "#/components/schemas/ParcelLedgerEntrySourceTypeDto"
+          },
           "WaterYear": {
             "type": "integer",
             "format": "int32",
@@ -4924,6 +4927,20 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelLedgerEntrySourceTypeDto": {
+        "type": "object",
+        "properties": {
+          "ParcelLedgerEntrySourceTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelLedgerEntrySourceTypeName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

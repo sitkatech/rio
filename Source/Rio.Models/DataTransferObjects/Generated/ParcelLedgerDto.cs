@@ -19,6 +19,7 @@ namespace Rio.Models.DataTransferObjects
         public string TransactionDescription { get; set; }
         public UserDto User { get; set; }
         public string UserComment { get; set; }
+        public ParcelLedgerEntrySourceTypeDto ParcelLedgerEntrySourceType { get; set; }
     }
 
     public partial class ParcelLedgerSimpleDto
@@ -33,6 +34,7 @@ namespace Rio.Models.DataTransferObjects
         public string TransactionDescription { get; set; }
         public int? UserID { get; set; }
         public string UserComment { get; set; }
+        public int ParcelLedgerEntrySourceTypeID { get; set; }
     }
 
 }

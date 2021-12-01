@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[WaterType](
 	[WaterTypeDefinition] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[IsSourcedFromApi] [bit] NOT NULL,
 	[SortOrder] [int] NOT NULL,
+	[IsUserDefined] [bit] NOT NULL,
  CONSTRAINT [PK_WaterType_WaterTypeID] PRIMARY KEY CLUSTERED 
 (
 	[WaterTypeID] ASC
@@ -26,3 +27,5 @@ CREATE UNIQUE NONCLUSTERED INDEX [CK_WaterType_AtMostOne_IsSourcedFromApi_True] 
 )
 WHERE ([IsSourcedFromApi]=(1))
 WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[WaterType] ADD  DEFAULT ((1)) FOR [IsUserDefined]

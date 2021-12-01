@@ -15,6 +15,7 @@ namespace Rio.Models.DataTransferObjects
         public string WaterTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
         public int SortOrder { get; set; }
+        public bool IsUserDefined { get; set; }
     }
 
     public partial class WaterTypeSimpleDto
@@ -25,6 +26,7 @@ namespace Rio.Models.DataTransferObjects
         public string WaterTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
         public int SortOrder { get; set; }
+        public bool IsUserDefined { get; set; }
     }
 
 }

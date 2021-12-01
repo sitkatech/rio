@@ -38,6 +38,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
+        public virtual DbSet<ParcelLedgerEntrySourceType> ParcelLedgerEntrySourceTypes { get; set; }
         public virtual DbSet<ParcelStatus> ParcelStatuses { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
@@ -342,6 +343,8 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<ParcelLedger>(entity =>
             {
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeID).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.TransactionDescription).IsUnicode(false);
 
                 entity.Property(e => e.UserComment).IsUnicode(false);
@@ -351,10 +354,23 @@ namespace Rio.EFModels.Entities
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 
+                entity.HasOne(d => d.ParcelLedgerEntrySourceType)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.ParcelLedgerEntrySourceTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ParcelLed__Parce__0777106D");
+
                 entity.HasOne(d => d.TransactionType)
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.TransactionTypeID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelLedgerEntrySourceType>(entity =>
+            {
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<ParcelStatus>(entity =>
@@ -588,6 +604,8 @@ namespace Rio.EFModels.Entities
                 entity.HasIndex(e => e.IsSourcedFromApi, "CK_WaterType_AtMostOne_IsSourcedFromApi_True")
                     .IsUnique()
                     .HasFilter("([IsSourcedFromApi]=(1))");
+
+                entity.Property(e => e.IsUserDefined).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.WaterTypeDefinition).IsUnicode(false);
 

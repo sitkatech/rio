@@ -8,21 +8,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities
 {
-    [Table("TransactionType")]
-    public partial class TransactionType
+    [Table("ParcelLedgerEntrySourceType")]
+    public partial class ParcelLedgerEntrySourceType
     {
-        public TransactionType()
+        public ParcelLedgerEntrySourceType()
         {
             ParcelLedgers = new HashSet<ParcelLedger>();
         }
 
         [Key]
-        public int TransactionTypeID { get; set; }
+        public int ParcelLedgerEntrySourceTypeID { get; set; }
         [Required]
         [StringLength(50)]
-        public string TransactionTypeName { get; set; }
+        public string ParcelLedgerEntrySourceTypeName { get; set; }
 
-        [InverseProperty(nameof(ParcelLedger.TransactionType))]
+        [InverseProperty(nameof(ParcelLedger.ParcelLedgerEntrySourceType))]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
     }
 }
