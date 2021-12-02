@@ -38,7 +38,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public isLoadingSubmit: boolean = false;
   public allocationID: number = TransactionTypeEnum.Allocation;
   public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
-  public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
+  public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   public decimalPipe: DecimalPipe;

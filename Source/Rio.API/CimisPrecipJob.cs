@@ -84,9 +84,10 @@ namespace Rio.API
 
                 parcelLedgers.AddRange(_rioDbContext.Parcels.Select(x => new ParcelLedger()
                 {
-                    TransactionTypeID = (int) TransactionTypeEnum.Allocation,
+                    TransactionTypeID = (int) TransactionTypeEnum.Supply,
                     TransactionAmount = totalPrecipitation * (decimal)x.ParcelAreaInAcres / (decimal)12.0,
                     WaterTypeID = waterTypeID,
+                    ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.CIMIS,
                     ParcelID = x.ParcelID,
                     EffectiveDate = new DateTime(year, 1, 1),
                     TransactionDate = DateTime.UtcNow,

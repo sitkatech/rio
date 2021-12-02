@@ -22,7 +22,7 @@ namespace Rio.EFModels.Entities
         private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
         {
             return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Allocation);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual);
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
@@ -42,20 +42,14 @@ namespace Rio.EFModels.Entities
 
         public static decimal GetUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
         {
-            return GetUsagesByParcelIDs(dbContext, new List<int> {parcelID}).Where(x => x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
-                .Sum(x => x.TransactionAmount);
+            return GetUsagesByParcelIDs(dbContext, new List<int>(parcelID))
+                    .Where(x => x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
+                    .Sum(x => x.TransactionAmount);
         }
 
         public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var transactionTypeIDs = new List<int> { (int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment };
-            return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, transactionTypeIDs);
-        }
-
-        private static IQueryable<ParcelLedger> GetByTransactionTypeIDsAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, List<int> transactionTypeIDs)
-        {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => parcelIDs.Contains(x.ParcelID) && transactionTypeIDs.Contains(x.TransactionTypeID));
+            return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Usage);
         }
 
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)

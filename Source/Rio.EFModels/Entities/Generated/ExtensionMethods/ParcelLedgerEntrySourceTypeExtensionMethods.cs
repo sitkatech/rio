@@ -14,7 +14,8 @@ namespace Rio.EFModels.Entities
             var parcelLedgerEntrySourceTypeDto = new ParcelLedgerEntrySourceTypeDto()
             {
                 ParcelLedgerEntrySourceTypeID = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID,
-                ParcelLedgerEntrySourceTypeName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeName
+                ParcelLedgerEntrySourceTypeName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeName,
+                ParcelLedgerEntrySourceTypeDisplayName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName
             };
             DoCustomMappings(parcelLedgerEntrySourceType, parcelLedgerEntrySourceTypeDto);
             return parcelLedgerEntrySourceTypeDto;
@@ -27,7 +28,8 @@ namespace Rio.EFModels.Entities
             var parcelLedgerEntrySourceTypeSimpleDto = new ParcelLedgerEntrySourceTypeSimpleDto()
             {
                 ParcelLedgerEntrySourceTypeID = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID,
-                ParcelLedgerEntrySourceTypeName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeName
+                ParcelLedgerEntrySourceTypeName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeName,
+                ParcelLedgerEntrySourceTypeDisplayName = parcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName
             };
             DoCustomSimpleDtoMappings(parcelLedgerEntrySourceType, parcelLedgerEntrySourceTypeSimpleDto);
             return parcelLedgerEntrySourceTypeSimpleDto;

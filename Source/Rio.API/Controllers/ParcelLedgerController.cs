@@ -46,7 +46,7 @@ namespace Rio.API.Controllers
 
         private void ValidateNewParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.ManualAdjustment)
+            if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
                 if (parcelLedgerCreateDto.EffectiveDate > DateTime.UtcNow)
                 {

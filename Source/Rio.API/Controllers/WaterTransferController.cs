@@ -72,8 +72,8 @@ namespace Rio.API.Controllers
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
                 // create a parcel ledger entry since the water transfer has been confirmed by both parties
-                var tradePurchaseParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, TransactionTypeEnum.TradePurchase, waterTransferDto.BuyerRegistration);
-                var tradeSaleParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, TransactionTypeEnum.TradeSale, waterTransferDto.SellerRegistration);
+                var tradePurchaseParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, true, waterTransferDto.BuyerRegistration);
+                var tradeSaleParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, false, waterTransferDto.SellerRegistration);
                 _dbContext.ParcelLedgers.AddRange(tradePurchaseParcelLedgers);
                 _dbContext.ParcelLedgers.AddRange(tradeSaleParcelLedgers);
                 _dbContext.SaveChanges();
@@ -89,7 +89,7 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
-        private IEnumerable<ParcelLedger> CreateParcelLedgersFromWaterTransferRegistration(WaterTransferDetailedDto waterTransferDto, TransactionTypeEnum transactionTypeEnum, WaterTransferRegistrationDto waterTransferRegistrationSimpleDto)
+        private IEnumerable<ParcelLedger> CreateParcelLedgersFromWaterTransferRegistration(WaterTransferDetailedDto waterTransferDto, bool isPurchase, WaterTransferRegistrationDto waterTransferRegistrationSimpleDto)
         {
             var waterTransferRegistrationParcelDtos =
                 WaterTransferRegistrationParcel.ListByWaterTransferRegistrationID(_dbContext,
@@ -98,11 +98,12 @@ namespace Rio.API.Controllers
                     new ParcelLedger
                     {
                         ParcelID = waterTransferRegistrationParcelDto.Parcel.ParcelID,
-                        TransactionAmount = transactionTypeEnum == TransactionTypeEnum.TradePurchase ? waterTransferRegistrationParcelDto.AcreFeetTransferred : -waterTransferRegistrationParcelDto.AcreFeetTransferred,
-                        TransactionTypeID = (int)transactionTypeEnum,
+                        TransactionAmount = isPurchase ? waterTransferRegistrationParcelDto.AcreFeetTransferred : -waterTransferRegistrationParcelDto.AcreFeetTransferred,
+                        TransactionTypeID = (int) TransactionTypeEnum.Supply,
+                        ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Trade,
                         TransactionDate = DateTime.UtcNow,
                         EffectiveDate = waterTransferDto.TransferDate,
-                        TransactionDescription = $"Water from Trade {waterTransferDto.TradeNumber} has been {(transactionTypeEnum == TransactionTypeEnum.TradePurchase ? "deposited" : "withdrawn")} into this water account"
+                        TransactionDescription = $"Water from Trade {waterTransferDto.TradeNumber} has been {(isPurchase ? "deposited into" : "withdrawn from")} this water account"
                     })
                 .ToList();
             return parcelLedgers;

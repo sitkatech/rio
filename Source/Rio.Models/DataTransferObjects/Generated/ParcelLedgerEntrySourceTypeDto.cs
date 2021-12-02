@@ -11,12 +11,14 @@ namespace Rio.Models.DataTransferObjects
     {
         public int ParcelLedgerEntrySourceTypeID { get; set; }
         public string ParcelLedgerEntrySourceTypeName { get; set; }
+        public string ParcelLedgerEntrySourceTypeDisplayName { get; set; }
     }
 
     public partial class ParcelLedgerEntrySourceTypeSimpleDto
     {
         public int ParcelLedgerEntrySourceTypeID { get; set; }
         public string ParcelLedgerEntrySourceTypeName { get; set; }
+        public string ParcelLedgerEntrySourceTypeDisplayName { get; set; }
     }
 
 }

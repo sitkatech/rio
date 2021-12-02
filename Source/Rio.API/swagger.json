@@ -5448,10 +5448,6 @@
           "TransactionTypeName": {
             "type": "string",
             "nullable": true
-          },
-          "SortOrder": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -6101,6 +6097,9 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
+          },
+          "IsUserDefined": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

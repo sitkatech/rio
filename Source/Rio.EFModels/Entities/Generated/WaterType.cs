@@ -27,8 +27,7 @@ namespace Rio.EFModels.Entities
         public string WaterTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
         public int SortOrder { get; set; }
-        [Required]
-        public bool? IsUserDefined { get; set; }
+        public bool IsUserDefined { get; set; }
 
         [InverseProperty(nameof(ParcelAllocationHistory.WaterType))]
         public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }

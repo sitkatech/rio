@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Rio.EFModels.Entities
 {
     [Table("ParcelLedgerEntrySourceType")]
+    [Index(nameof(ParcelLedgerEntrySourceTypeDisplayName), Name = "AK_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeDisplayName", IsUnique = true)]
+    [Index(nameof(ParcelLedgerEntrySourceTypeName), Name = "AK_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeName", IsUnique = true)]
     public partial class ParcelLedgerEntrySourceType
     {
         public ParcelLedgerEntrySourceType()
@@ -21,6 +23,9 @@ namespace Rio.EFModels.Entities
         [Required]
         [StringLength(50)]
         public string ParcelLedgerEntrySourceTypeName { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string ParcelLedgerEntrySourceTypeDisplayName { get; set; }
 
         [InverseProperty(nameof(ParcelLedger.ParcelLedgerEntrySourceType))]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
