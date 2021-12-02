@@ -28,15 +28,15 @@ CREATE TABLE [dbo].[ParcelLedger](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-ALTER TABLE [dbo].[ParcelLedger] ADD  CONSTRAINT [FK_ParcelLedger_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeID]  DEFAULT ((1)) FOR [ParcelLedgerEntrySourceTypeID]
-GO
-ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD FOREIGN KEY([ParcelLedgerEntrySourceTypeID])
-REFERENCES [dbo].[ParcelLedgerEntrySourceType] ([ParcelLedgerEntrySourceTypeID])
-GO
 ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_Parcel_ParcelID] FOREIGN KEY([ParcelID])
 REFERENCES [dbo].[Parcel] ([ParcelID])
 GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_Parcel_ParcelID]
+GO
+ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeID] FOREIGN KEY([ParcelLedgerEntrySourceTypeID])
+REFERENCES [dbo].[ParcelLedgerEntrySourceType] ([ParcelLedgerEntrySourceTypeID])
+GO
+ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeID]
 GO
 ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_TransactionType_TransactionTypeID] FOREIGN KEY([TransactionTypeID])
 REFERENCES [dbo].[TransactionType] ([TransactionTypeID])

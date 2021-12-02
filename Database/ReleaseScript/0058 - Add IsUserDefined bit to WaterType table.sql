@@ -1,7 +1,10 @@
 alter table dbo.WaterType
-add IsUserDefined bit not null default 1
+add IsUserDefined bit null
 
 go 
+
+update dbo.WaterType set IsUserDefined = 1
+alter table dbo.WaterType alter column IsUserDefined bit not null
 
 -- Precip not user defined
 update dbo.WaterType

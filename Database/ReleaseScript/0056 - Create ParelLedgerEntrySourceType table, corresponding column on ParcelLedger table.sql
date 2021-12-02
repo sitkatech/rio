@@ -10,7 +10,7 @@ go
 insert into dbo.ParcelLedgerEntrySourceType (ParcelLedgerEntrySourceTypeID, ParcelLedgerEntrySourceTypeName, ParcelLedgerEntrySourceTypeDisplayName)
 values
 (1, 'Manual', 'Manual'),
-(2, 'OpenET', 'Open ET'),
+(2, 'OpenET', 'OpenET'),
 (3, 'CIMIS', 'CIMIS'),
 (4, 'Trade', 'Trade')
 
@@ -30,6 +30,11 @@ GO
 update dbo.ParcelLedger
 set ParcelLedgerEntrySourceTypeID = 1
 where TransactionTypeID = 11 or TransactionTypeID = 19
+
+-- Allocation of Precipitation as CIMIS
+update dbo.ParcelLedger
+set ParcelLedgerEntrySourceTypeID = 3
+where WaterTypeID = 5
 
 -- Measured Usage, Measured Usage Correction as OpenET
 update dbo.ParcelLedger
