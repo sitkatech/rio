@@ -14,8 +14,8 @@ namespace Rio.EFModels.Entities
             return dbContext.ParcelLedgers
                 .Include(x => x.TransactionType)
                 .Include(x => x.WaterType)
-                .Include(x => x.Parcel)
-                .ThenInclude(x => x.ParcelStatus)
+                .Include(x => x.ParcelLedgerEntrySourceType)
+                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();
         }
 
@@ -141,10 +141,11 @@ namespace Rio.EFModels.Entities
                 TransactionDate = DateTime.UtcNow,
                 EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
                 TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
-                TransactionAmount = (parcelLedgerCreateDto.IsWithdrawal ? -parcelLedgerCreateDto.TransactionAmount : parcelLedgerCreateDto.TransactionAmount),
+                ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
+                TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
                 WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                 TransactionDescription = 
-                    $"A manual {(parcelLedgerCreateDto.IsWithdrawal ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                    $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
                 UserID = userID,
                 UserComment = parcelLedgerCreateDto.UserComment
             };

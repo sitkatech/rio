@@ -4832,7 +4832,6 @@
       "ParcelLedgerCreateDto": {
         "required": [
           "EffectiveDate",
-          "IsWithdrawal",
           "ParcelID",
           "ParcelNumber",
           "TransactionAmount",
@@ -4860,12 +4859,7 @@
             "format": "int32",
             "nullable": true
           },
-          "IsWithdrawal": {
-            "type": "boolean"
-          },
           "TransactionAmount": {
-            "maximum": 1934,
-            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -4939,6 +4933,10 @@
             "format": "int32"
           },
           "ParcelLedgerEntrySourceTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ParcelLedgerEntrySourceTypeDisplayName": {
             "type": "string",
             "nullable": true
           }

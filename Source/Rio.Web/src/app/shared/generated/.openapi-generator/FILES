@@ -30,6 +30,7 @@ model/parcel-id-list-dto.ts
 model/parcel-layer-update-dto.ts
 model/parcel-ledger-create-dto.ts
 model/parcel-ledger-dto.ts
+model/parcel-ledger-entry-source-type-dto.ts
 model/parcel-ownership-dto.ts
 model/parcel-required-column-and-mapping-dto.ts
 model/parcel-simple-dto.ts

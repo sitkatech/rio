@@ -36,8 +36,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
-  public allocationID: number = TransactionTypeEnum.Allocation;
-  public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
+
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;

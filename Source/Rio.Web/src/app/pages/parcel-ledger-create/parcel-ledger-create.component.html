@@ -39,10 +39,10 @@
         </div>
         <div class="col-sm-5">
           <input type="radio" id="supply" name="adjustment-type" class="mr-2" required 
-            [value]="allocationID" [(ngModel)]="model.TransactionTypeID">
+            [value]="transactionTypeEnum.Supply" [(ngModel)]="model.TransactionTypeID">
           <label for="supply" class="mr-4">Supply</label>
           <input type="radio" id="usage" name="adjustment-type" class="mr-2" 
-            [value]="manualAdjustmentID" [(ngModel)]="model.TransactionTypeID">
+            [value]="transactionTypeEnum.Usage" [(ngModel)]="model.TransactionTypeID">
           <label for="usage">Usage</label>
         </div>
       </div>
@@ -51,7 +51,7 @@
           <label class="required">Supply Type</label>
         </div>
         <div class="col-sm-5">
-          <select name="water-type" class="form-control" required 
+          <select name="water-type" class="form-control" 
             [disabled]="isUsageAdjustment()" [(ngModel)]="model.WaterTypeID">
             <option disabled selected hidden></option>
             <option *ngFor="let waterType of waterTypes" [value]="waterType.WaterTypeID">
@@ -62,26 +62,11 @@
       </div>
       <div class="row mt-3">
         <div class="col-sm-3 control-label text-sm-right">
-          <label class="required">Transaction Type</label>
-        </div>
-        <div class="col-sm-5">
-          <input type="radio" id="deposit" name="transaction-type" class="mr-2" required 
-            [value]="false" [(ngModel)]="model.IsWithdrawal">
-          <label for="deposit" class="mr-4">Deposit</label>
-          <div class="d-inline-block">
-            <input type="radio" id="withdrawal" name="transaction-type" class="mr-2" 
-              [value]="true" [(ngModel)]="model.IsWithdrawal">
-            <label for="withdrawal">Withdrawal</label>
-          </div>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Quantity</label>
         </div>
         <div class="col-sm-5">
           <div class="input-group">
-            <input type="number" class="form-control" name="Quantity" min="1" step="1" required
+            <input type="number" class="form-control" name="Quantity" step="1" required
               [(ngModel)]="model.TransactionAmount"/>
             <div class="input-group-append">
               <span class="input-group-text"> ac-ft</span>

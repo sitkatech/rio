@@ -53,7 +53,7 @@ namespace Rio.API.Controllers
                     ModelState.AddModelError("EffectiveDate","Transactions to adjust usage for future dates are not allowed.");
                 }
 
-                if (!parcelLedgerCreateDto.IsWithdrawal)
+                if (parcelLedgerCreateDto.TransactionAmount < 0)
                 {
                    var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelID);
                    if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)

@@ -32,11 +32,10 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
   public isLoadingSubmit: boolean = false;
-  public allocationID: number = TransactionTypeEnum.Allocation;
-  public manualAdjustmentID: number = TransactionTypeEnum.ManualAdjustment;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
+  public transactionTypeEnum = TransactionTypeEnum;
 
   constructor(
     private route: ActivatedRoute,
@@ -76,16 +75,16 @@ export class ParcelLedgerCreateComponent implements OnInit {
     this.cdr.detach();
   }
 
-  public isUsageAdjustment(): boolean {
-    return this.model.TransactionTypeID != this.allocationID;
-  }
-
   private clearErrorAlerts() {
     if (!this.alertsCountOnLoad) {
       this.alertsCountOnLoad = this.alertService.getAlerts().length;
     }
 
     this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
+  }
+
+  public isUsageAdjustment(): boolean {
+    return this.model.TransactionTypeID != TransactionTypeEnum.Supply;
   }
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
