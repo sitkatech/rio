@@ -6,9 +6,12 @@ create procedure dbo.pUpdateParcelMonthlyEvapotranspirationWithETData
 as
 
 begin
+	--Currently the job that triggers this procedure only does one month at a time, which is why we can set the effective date globally
+	--If this needs to be updated to account for more than one month's worth of data, be sure to test thoroughly
+
 	declare @transactionDate datetime
 	set @transactionDate = GETUTCDATE()
-	--We only ever change one month at a time
+
 	declare @effectiveDate datetime
 	declare @effectiveDateMonth int
 	declare @effectiveDateYear int
@@ -25,7 +28,7 @@ begin
 	join dbo.OpenETGoogleBucketResponseEvapotranspirationData et
 	on p.ParcelNumber = et.ParcelNumber
 
-	select ParcelID, EffectiveDate, sum(TransactionAmount) TransactionAmount, max(ParcelLedgerID) ParcelLedgerID
+	select ParcelID, EffectiveDate, sum(TransactionAmount) TransactionAmount
 	into #openETPLEntriesForDate
 	from dbo.ParcelLedger pal
 	where EffectiveDate = @effectiveDate and TransactionTypeID in (17,18)
@@ -50,6 +53,6 @@ begin
 	select npl.ParcelID, 17 as TransactionTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, npl.TransactionAmount, concat(@effectiveDateMonth, '/', @effectiveDateYear, ' Usage from OpenET has been withdrawn from this water account') as TransactionDescription
 	from #npl npl
 	left join #openETPLEntriesForDate pl on npl.ParcelID = pl.ParcelID and npl.EffectiveDate = pl.EffectiveDate
-	where pl.ParcelLedgerID is null
+	where pl.ParcelID is null
 
 end
