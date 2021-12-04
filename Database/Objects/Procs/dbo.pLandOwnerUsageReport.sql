@@ -41,10 +41,11 @@ from
 	left join
 	(
 		select acc.AccountID,
-				sum(case when pa.TransactionTypeID = 11 then pa.TransactionAmount else 0 end) as Allocation, 
-				sum(case when pa.TransactionTypeID = 20 then pa.TransactionAmount else 0 end) as Purchased,
-				sum(case when pa.TransactionTypeID = 21 then pa.TransactionAmount else 0 end) as Sold,
-				abs(sum(case when pa.TransactionTypeID in (17, 18, 19) then pa.TransactionAmount else 0 end)) as UsageToDate
+				-- changes here to match new data model
+				sum(case when pa.TransactionTypeID = 1 and (pa.ParcelLedgerEntrySourceTypeID = 1 or ParcelLedgerEntrySourceTypeID = 3) then pa.TransactionAmount else 0 end) as Allocation, 
+				sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount > 0 then pa.TransactionAmount else 0 end) as Purchased,
+				sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount < 0 then pa.TransactionAmount else 0 end) as Sold,
+				abs(sum(case when pa.TransactionTypeID = 2 then pa.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.Account acc
 		join (
 			select apwy.AccountID, apwy.ParcelID

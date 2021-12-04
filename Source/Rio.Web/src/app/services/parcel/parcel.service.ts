@@ -106,6 +106,11 @@ export class ParcelService {
     return this.apiService.postToApi(route, model);
   }
 
+  // getParcelLedgerBulkCreateParcelReport() {
+  //   let route = '/parcels/parcelLedgerBulkCreateParcelReport'
+  //   return this.apiService.getFromApi(route);
+  // }
+
   public uploadGDB(gdbInputFile: any): Observable<any> {
     // we need to do it this way because the apiService.postToApi does a json.stringify, which won't work for input type="file"
     let formData = new FormData();
