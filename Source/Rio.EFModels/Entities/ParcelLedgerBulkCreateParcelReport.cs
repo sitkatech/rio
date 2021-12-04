@@ -14,8 +14,8 @@ namespace Rio.EFModels.Entities
 
         public string ParcelNumber { get; set; } 
         public decimal ParcelAreaInAcres { get; set; }
-        public string AccountNumber { get; set; }
-        public string AccountName { get; set; }
+        public int AccountID { get; set; }
+        public string AccountDisplayName { get; set; }
         public double Allocation { get; set; }
         public double ProjectWater { get; set; }
         public double NativeYield { get; set; }
@@ -26,12 +26,12 @@ namespace Rio.EFModels.Entities
         {
             var ParcelLedgerBulkCreateParcelReports = dbContext.ParcelLedgerBulkCreateParcelReport.FromSqlRaw($"EXECUTE dbo.ParcelLedgerBulkCreateParcelReport").ToList();
 
-            var ParcelLedgerBulkCreateParcelReportDtos = ParcelLedgerBulkCreateParcelReports.OrderBy(x => x.AccountNumber).Select(x => new ParcelLedgerBulkCreateParcelReportDto
+            var ParcelLedgerBulkCreateParcelReportDtos = ParcelLedgerBulkCreateParcelReports.Select(x => new ParcelLedgerBulkCreateParcelReportDto
             {
                 ParcelNumber = x.ParcelNumber,
                 ParcelAreaInAcres = x.ParcelAreaInAcres,
-                AccountNumber = x.AccountNumber,
-                AccountName = x.AccountName,
+                AccountID = x.AccountID,
+                AccountDisplayName = x.AccountDisplayName,
                 Allocation = x.Allocation,
                 ProjectWater = x.ProjectWater,
                 NativeYield = x.NativeYield,

@@ -225,7 +225,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/parcelLedgerBulkCreateParcelReport")]
         [ManagerDashboardFeature]
-        public ActionResult<List<LandownerUsageReportDto>> GetParcelLedgerBulkCreateParcelReport()
+        public ActionResult<ParcelLedgerBulkCreateParcelReportDto> GetParcelLedgerBulkCreateParcelReport()
         {
             var parcelLedgerBulkCreateParcelReportDto = ParcelLedgerBulkCreateParcelReport.GetAsDto(_dbContext);
             return Ok(parcelLedgerBulkCreateParcelReportDto);

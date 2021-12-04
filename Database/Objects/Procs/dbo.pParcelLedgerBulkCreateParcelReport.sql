@@ -10,7 +10,7 @@ begin
 	declare @year int
 	set @year = Year(GETUTCDATE())
 
-	select p.ParcelNumber, p.ParcelAreaInAcres, a.AccountID, a.AccountNumber, a.AccountName, 
+	select p.ParcelNumber, p.ParcelAreaInAcres, a.AccountID, concat('#', a.AccountNumber, ' (', a.AccountName, ')') as AccountDisplayName, 
 			pal.Allocation, pal.ProjectWater, pal.NativeYield, pal.StoredWater, pal.Precipitation
 		from dbo.Parcel p
 		join dbo.AccountParcelWaterYear apwy on p.ParcelID = apwy.ParcelID

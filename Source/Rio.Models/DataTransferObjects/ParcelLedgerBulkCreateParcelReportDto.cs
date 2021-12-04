@@ -4,8 +4,8 @@
     {
         public string ParcelNumber { get; set; }
         public decimal ParcelAreaInAcres { get; set; }
-        public string AccountNumber { get; set; }
-        public string AccountName { get; set; }
+        public int AccountID { get; set; }
+        public string AccountDisplayName { get; set; }
         public double Allocation { get; set; }
         public double ProjectWater { get; set; }
         public double NativeYield { get; set; }

@@ -26,6 +26,7 @@ export * from '././parcel-change-owner-dto';
 export * from '././parcel-dto';
 export * from '././parcel-id-list-dto';
 export * from '././parcel-layer-update-dto';
+export * from '././parcel-ledger-bulk-create-parcel-report-dto';
 export * from '././parcel-ledger-create-dto';
 export * from '././parcel-ledger-dto';
 export * from '././parcel-ledger-entry-source-type-dto';

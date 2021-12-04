@@ -14,6 +14,7 @@ import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-owners
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
 import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
 import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
+import { ParcelLedgerBulkCreateParcelReportDto } from 'src/app/shared/generated/model/parcel-ledger-bulk-create-parcel-report-dto'
 
 @Injectable({
   providedIn: 'root'
@@ -101,15 +102,15 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getParcelLedgerBulkCreateParcelReport(): Observable<ParcelLedgerBulkCreateParcelReportDto> {
+    let route = `/parcels/parcelLedgerBulkCreateParcelReport`
+    return this.apiService.getFromApi(route);
+  }
+
   changeParcelOwner(parcelID: number, model: ParcelChangeOwnerDto): Observable<any[]> {
     let route = `/parcels/${parcelID}/changeOwner`
     return this.apiService.postToApi(route, model);
   }
-
-  // getParcelLedgerBulkCreateParcelReport() {
-  //   let route = '/parcels/parcelLedgerBulkCreateParcelReport'
-  //   return this.apiService.getFromApi(route);
-  // }
 
   public uploadGDB(gdbInputFile: any): Observable<any> {
     // we need to do it this way because the apiService.postToApi does a json.stringify, which won't work for input type="file"
