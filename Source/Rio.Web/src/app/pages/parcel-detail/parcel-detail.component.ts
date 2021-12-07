@@ -84,7 +84,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.rowData = parcelLedgers;
           this.allocationParcelLedgers = parcelLedgers.filter(x => 
             x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
-            x.ParcelLedgerEntrySourceType == ParcelLedgerEntrySourceTypeEnum.Manual);
+            (x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.Manual ||
+              x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.CIMIS));
           this.usageParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
@@ -159,8 +160,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   private onGridReady(params) {
     this.gridColumnApi = params.columnApi;
 
-    let colIDs = this.gridColumnApi.getAllColumns().map(col => col.colId);
-    this.gridColumnApi.autoSizeColumns(colIDs);
+    this.gridColumnApi.autoSizeAllColumns();
   }
 
   ngOnDestroy() {
