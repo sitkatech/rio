@@ -4812,19 +4812,17 @@
       "ParcelLedgerCreateDto": {
         "required": [
           "EffectiveDate",
-          "ParcelID",
-          "ParcelNumber",
+          "ParcelNumbers",
           "TransactionAmount",
           "TransactionTypeID"
         ],
         "type": "object",
         "properties": {
-          "ParcelID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelNumber": {
-            "type": "string"
+          "ParcelNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "EffectiveDate": {
             "type": "string",

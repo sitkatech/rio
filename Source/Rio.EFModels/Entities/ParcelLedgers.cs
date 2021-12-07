@@ -140,28 +140,33 @@ namespace Rio.EFModels.Entities
             return parcelLedger?.AsDto();
         }
 
-        public static ParcelLedgerDto CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
+        public static List<ParcelLedgerDto> CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
         {
-            var parcelLedger = new ParcelLedger
+            var parcelLedgers = parcelLedgerCreateDto.ParcelNumbers.Select(parcelNumber =>
             {
-                ParcelID = parcelLedgerCreateDto.ParcelID,
-                TransactionDate = DateTime.UtcNow,
-                EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
-                TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
-                ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
-                TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
-                WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
-                TransactionDescription = 
-                    $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
-                UserID = userID,
-                UserComment = parcelLedgerCreateDto.UserComment
-            };
+                var parcel = Parcel.GetByParcelNumberAsDto(dbContext, parcelNumber);
+                var parcelLedger = new ParcelLedger()
+                {
+                    ParcelID = parcel.ParcelID,
+                    TransactionDate = DateTime.UtcNow,
+                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                    TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                    ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
+                    TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
+                    WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
+                    TransactionDescription =
+                        $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                    UserID = userID,
+                    UserComment = parcelLedgerCreateDto.UserComment
+                };
+                dbContext.ParcelLedgers.Add(parcelLedger);
+                dbContext.SaveChanges();
+                dbContext.Entry(parcelLedger).Reload();
 
-            dbContext.ParcelLedgers.Add(parcelLedger);
-            dbContext.SaveChanges();
-            dbContext.Entry(parcelLedger).Reload();
+                return GetByIDAsDto(dbContext, parcelLedger.ParcelLedgerID);
+            }).ToList();
 
-            return GetByIDAsDto(dbContext, parcelLedger.ParcelLedgerID);
+            return parcelLedgers;
         }
     }
 }

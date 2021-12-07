@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Rio.Models.DataTransferObjects.Parcel;
 
@@ -7,9 +8,7 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
     public class ParcelLedgerCreateDto
     {
         [Required]
-        public int ParcelID { get; set; }
-        [Required]
-        public string ParcelNumber { get; set; }
+        public List<string> ParcelNumbers { get; set; }
         [Required]
         [Range(typeof(DateTime), "1/1/2018", "12/31/9999",
             ErrorMessage = "Date must be between 1/1/2018 and 12/31/9999")]

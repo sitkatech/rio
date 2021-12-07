@@ -29,7 +29,8 @@
           <label>Parcel APN</label>
         </div>
         <div class="col-sm-5">
-          <input id="typeahead-http" type="text" class="form-control font-weight-bold" name="parcel-number" [(ngModel)]="model.ParcelNumber" [ngbTypeahead]="search" />
+          <input id="typeahead-http" type="text" class="form-control" name="parcel-number" placeholder="Begin typing to search Parcel APNs"
+            [(ngModel)]="selectedParcelNumber" [ngbTypeahead]="search" [ngClass]="selectedParcelNumber ? 'font-weight-bold' : 'font-weight-light'"/>
           <small class="form-text text-muted font-italic" *ngIf="searchFailed">Suggestions could not be loaded.</small>
         </div>
       </div>
@@ -112,7 +113,7 @@
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Save
           </button>
-          <a *ngIf="!parcel; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
+          <a *ngIf="!parcelFromRoute; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
           <ng-template #redirectToParcelDetail>
             <a class="btn btn-secondary ml-1" *ngIf="parcel" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
           </ng-template>
