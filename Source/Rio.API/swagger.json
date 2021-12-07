@@ -1930,35 +1930,6 @@
         }
       }
     },
-    "/parcels/parcelLedgerBulkCreateParcelReport": {
-      "get": {
-        "tags": [
-          "Parcel"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelLedgerBulkCreateParcelReportDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelLedgerBulkCreateParcelReportDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelLedgerBulkCreateParcelReportDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/parcels/parcelGDBCommonMappingToParcelStagingColumn": {
       "get": {
         "tags": [
@@ -4641,26 +4612,6 @@
             "format": "double",
             "nullable": true
           },
-          "ProjectWater": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Reconciliation": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "NativeYield": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "StoredWater": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "UsageToDate": {
             "type": "number",
             "format": "double",
@@ -4854,48 +4805,6 @@
           "YearChangesToTakeEffect": {
             "type": "integer",
             "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParcelLedgerBulkCreateParcelReportDto": {
-        "type": "object",
-        "properties": {
-          "ParcelNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "ParcelAreaInAcres": {
-            "type": "number",
-            "format": "double"
-          },
-          "AccountID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AccountDisplayName": {
-            "type": "string",
-            "nullable": true
-          },
-          "Allocation": {
-            "type": "number",
-            "format": "double"
-          },
-          "ProjectWater": {
-            "type": "number",
-            "format": "double"
-          },
-          "NativeYield": {
-            "type": "number",
-            "format": "double"
-          },
-          "StoredWater": {
-            "type": "number",
-            "format": "double"
-          },
-          "Precipitation": {
-            "type": "number",
-            "format": "double"
           }
         },
         "additionalProperties": false

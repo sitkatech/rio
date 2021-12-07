@@ -223,14 +223,6 @@ namespace Rio.API.Controllers
             return Ok();
         }
 
-        [HttpGet("parcels/parcelLedgerBulkCreateParcelReport")]
-        [ManagerDashboardFeature]
-        public ActionResult<ParcelLedgerBulkCreateParcelReportDto> GetParcelLedgerBulkCreateParcelReport()
-        {
-            var parcelLedgerBulkCreateParcelReportDto = ParcelLedgerBulkCreateParcelReport.GetAsDto(_dbContext);
-            return Ok(parcelLedgerBulkCreateParcelReportDto);
-        }
-
         private bool ParseBulkSetAllocationUpload(FileResource fileResource, string parcelTypeDisplayName, out List<BulkSetAllocationCSV> records, out ActionResult badRequest)
         {
             try

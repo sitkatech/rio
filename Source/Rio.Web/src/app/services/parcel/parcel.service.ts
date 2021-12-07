@@ -14,7 +14,6 @@ import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-owners
 import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
 import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
 import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
-import { ParcelLedgerBulkCreateParcelReportDto } from 'src/app/shared/generated/model/parcel-ledger-bulk-create-parcel-report-dto'
 
 @Injectable({
   providedIn: 'root'
@@ -99,11 +98,6 @@ export class ParcelService {
 
   getParcelAllocationHistory(): Observable<Array<ParcelAllocationHistoryDto>> {
     let route = `/parcels/getParcelAllocationHistory`
-    return this.apiService.getFromApi(route);
-  }
-
-  getParcelLedgerBulkCreateParcelReport(): Observable<ParcelLedgerBulkCreateParcelReportDto> {
-    let route = `/parcels/parcelLedgerBulkCreateParcelReport`
     return this.apiService.getFromApi(route);
   }
 
