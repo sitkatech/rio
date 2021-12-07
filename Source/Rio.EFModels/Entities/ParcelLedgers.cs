@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
@@ -98,13 +99,19 @@ namespace Rio.EFModels.Entities
             return new List<LandownerAllocationBreakdownDto>();
         }
 
-        public static List<ParcelLedgerDto> ListByAccountID(RioDbContext dbContext, int accountID)
+        public static List<ParcelLedgerDto> ListByAccountIDForAllWaterYears(RioDbContext dbContext, int accountID)
         {
-            var parcelIDs = Parcel.ListByAccountID(dbContext, accountID)
-                .Select(x => x.ParcelID);
-
-            var parcelLedgerDtos = ListByParcelIDAsDto(dbContext, parcelIDs).OrderByDescending(x => x.EffectiveDate)
-                .ToList();
+            var parcelLedgerDtos = new List<ParcelLedgerDto>();
+            var parcelIDsForYearGroups = Parcel.AccountParcelWaterYearOwnerships(dbContext)
+                .Where(x => x.AccountID == accountID)
+                .AsEnumerable()
+                .GroupBy(x => x.WaterYear.Year);
+            foreach (var group in parcelIDsForYearGroups)
+            {
+                var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
+                parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext).Where(x =>
+                    parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key).Select(x => x.AsDto()));
+            }
 
             return parcelLedgerDtos;
         }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace Rio.EFModels.Entities
 {
@@ -16,6 +17,11 @@ namespace Rio.EFModels.Entities
                 .Select(x => x.Parcel.AsDto()).AsEnumerable();
 
             return parcels;
+        }
+
+        public static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnerships(RioDbContext dbContext)
+        {
+            return AccountParcelWaterYearOwnershipsImpl(dbContext);
         }
 
         public static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnershipsByYear(RioDbContext dbContext, int year)
