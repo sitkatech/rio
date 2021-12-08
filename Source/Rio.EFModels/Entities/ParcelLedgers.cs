@@ -106,11 +106,14 @@ namespace Rio.EFModels.Entities
                 .Where(x => x.AccountID == accountID)
                 .AsEnumerable()
                 .GroupBy(x => x.WaterYear.Year);
+
             foreach (var group in parcelIDsForYearGroups)
             {
                 var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
-                parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext).Where(x =>
-                    parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key).Select(x => x.AsDto()));
+                parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext)
+                    .Where(x => parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key)
+                    .OrderByDescending(x => x.EffectiveDate)
+                    .Select(x => x.AsDto()));
             }
 
             return parcelLedgerDtos;
