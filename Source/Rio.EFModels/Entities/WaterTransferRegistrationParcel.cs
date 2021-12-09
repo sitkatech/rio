@@ -73,7 +73,6 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.OfferStatus)
                 .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude((x => x.AccountStatus))
                 .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferRegistrationStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferRegistrationStatus)
                 .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferType)
                 .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace Rio.EFModels.Entities
 {
@@ -36,16 +35,6 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.Account).ThenInclude(x => x.AccountStatus)
                 .Include(x => x.WaterYear)
                 .AsNoTracking();
-        }
-
-        public static List<Parcel> ListByAccountID(RioDbContext dbContext, int accountID)
-        {
-            var parcels = AccountParcelWaterYearOwnershipsImpl(dbContext)
-                .Where(x => x.Account.AccountID == accountID)
-                .Select(x => x.Parcel).ToList();
-
-            return parcels;
-
         }
 
         public static IQueryable<AccountParcelWaterYear> ListByAccountIDsAndYear(RioDbContext dbContext, List<int> accountIDs, int year)
