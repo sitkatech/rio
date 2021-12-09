@@ -27,19 +27,16 @@ namespace Rio.API.Controllers
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
             
-            if (parcelLedgerCreateDto.ParcelNumbers.Count == 1)
+            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]); 
+            if (parcelDto == null)
             {
-                // manual ParcelNumber entry is only allowed for single transactions, so this check is only needed when ParcelNumbers count is 1
-                var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]);
-                if (parcelDto == null)
-                {
-                    ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
-                    return BadRequest(ModelState);
-                }
+                ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
+                return BadRequest(ModelState);
+            }
 
-                // validates usage adjustments, which are only allowed via single transaction
-                ValidateNewParcelLedger(parcelLedgerCreateDto);
-
+            if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
+            {
+                ValidateUsageParcelLedger(parcelLedgerCreateDto);
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
@@ -47,27 +44,33 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postings = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
-            return Ok(postings);
+            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
+            return Ok(postingCount);
         }
 
-        private void ValidateNewParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        [HttpPost("parcel-ledgers/bulk-new")]
+        [ParcelManageFeature]
+        public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
-            {
-                if (parcelLedgerCreateDto.EffectiveDate > DateTime.UtcNow)
-                {
-                    ModelState.AddModelError("EffectiveDate","Transactions to adjust usage for future dates are not allowed.");
-                }
+            var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
+            return Ok(postingCount);
+        }
 
-                if (parcelLedgerCreateDto.TransactionAmount > 0)
+        private void ValidateUsageParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        { 
+            if (parcelLedgerCreateDto.EffectiveDate > DateTime.UtcNow)
+            {
+                ModelState.AddModelError("EffectiveDate","Transactions to adjust usage for future dates are not allowed.");
+            }
+
+            if (parcelLedgerCreateDto.TransactionAmount > 0)
+            {
+                var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
+                if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                 {
-                   var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
-                   if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
-                   {
-                       ModelState.AddModelError("TransactionAmount", 
-                           $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");
-                   }
+                    ModelState.AddModelError("TransactionAmount", 
+                        $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");
                 }
             }
         }

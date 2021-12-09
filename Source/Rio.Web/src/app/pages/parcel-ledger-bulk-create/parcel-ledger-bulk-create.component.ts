@@ -3,22 +3,29 @@ import { forkJoin } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { Alert } from 'src/app/shared/models/alert';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridApi } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
 import { DecimalPipe } from '@angular/common';
-
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { CheckboxRendererComponent } from 'src/app/shared/components/ag-grid/checkbox-renderer/checkbox-renderer.component';
+import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
+import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
   templateUrl: './parcel-ledger-bulk-create.component.html',
-  styleUrls: ['./parcel-ledger-bulk-create.component.scss']
+  styleUrls: ['./parcel-ledger-bulk-create.component.scss'],
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+
 })
 export class ParcelLedgerBulkCreateComponent implements OnInit {
   @ViewChild('parcelSelectGrid') parcelSelectGrid: AgGridAngular;
@@ -27,9 +34,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private gridApi;
   private columnApi;
   public currentUser: UserDto;
-  public parcels: Array<ParcelDto>;
   public waterTypes: WaterTypeDto[];
   public model: ParcelLedgerCreateDto;
+  public noParcelsSelected: boolean = true;
   public isLoadingSubmit: boolean = false;
 
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
@@ -47,13 +54,15 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
     private parcelService: ParcelService,
+    private parcelLedgerService: ParcelLedgerService,
     private waterTypeService: WaterTypeService,
     private decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
     this.model = new ParcelLedgerCreateDto();
-    
+    this.model.ParcelNumbers = [];
+
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
       this.currentUser = currentUser;
 
@@ -61,7 +70,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         this.waterTypeService.getWaterTypes(),
         this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
       ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
-        this.waterTypes = waterTypes;
+        this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
         this.rowData = parcelAllocationAndUsagesByYear;
 
         this.insertWaterTypeColDefs();
@@ -77,7 +86,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.cdr.detach();
   }
 
-  private onGridReady(params) {
+  public onGridReady(params) {
     this.gridApi = params.api;
     this.columnApi = params.columnApi;
   }
@@ -85,16 +94,23 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private initializeParcelSelectGrid() {
     let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
-      { filter: false, sortable: false, cellRenderer: function(params) { return '<input type="checkbox">'}},
+      { 
+        filter: false, sortable: false, valueGetter: function (params: any) {
+          return { onChangeFunctionParams: [params.data.ParcelNumber] }
+        }, cellRendererFramework: CheckboxRendererComponent, cellRendererParams: {
+          _self: this,
+          onChangeFunction: 'onParcelSelectionChange'
+        }
+      },
       { headerName: 'APN', field: 'ParcelNumber' },
       {
         headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
         valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1')); }
       },
       { 
-        headerName: 'Account', field: 'LandOwner.AccountDisplayName', cellRenderer: function(params: any) {
-          return '<a href="/accounts/'+ params.data.LandOwner.AccountID +'">' + params.value + '</a>';
-        }
+        headerName: 'Account', valueGetter: function (params: any) {
+          return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName };
+        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
       },
       { 
         headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
@@ -134,32 +150,38 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
   }
 
+  public onParcelSelectionChange(parcelNumber: string) {
+    const index = this.model.ParcelNumbers.indexOf(parcelNumber);
+    if (index > -1) {
+      this.model.ParcelNumbers.splice(index, 1);
+    } else {
+      this.model.ParcelNumbers.push(parcelNumber);
+    }
+
+    this.noParcelsSelected = this.model.ParcelNumbers.length === 0;
+  }
+
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    alert("form submitted");
     this.clearErrorAlerts();
-    this.isLoadingSubmit = false;
 
-    // this.parcelLedgerService.newTransaction(this.model)
-    //   .subscribe(response => {
-    //     this.isLoadingSubmit = false;
-    //     createTransactionForm.reset();
+    this.model.TransactionTypeID = TransactionTypeEnum.Supply;
+    console.log(this.model);
+
+    this.parcelLedgerService.newTransaction(this.model)
+      .subscribe(response => {
+        this.isLoadingSubmit = false;
+        createTransactionForm.reset();
         
-    //     if (this.parcel) {
-    //       this.router.navigateByUrl("/parcels/" + this.parcel.ParcelID).then(x => {
-    //         this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
-    //       });
-    //     } else {
-    //       this.router.navigateByUrl("/parcels/create-water-transactions").then(x => {
-    //         this.alertService.pushAlert(new Alert("Your transaction was successfully created.", AlertContext.Success));
-    //       });
-    //     }
-    //   },
-    //     error => {
-    //       this.isLoadingSubmit = false;
-    //       console.log(error);
-    //       this.cdr.detectChanges();
-    //     }
-    //   );
+        this.router.navigateByUrl("/parcels/create-water-transactions").then(x => {
+            this.alertService.pushAlert(new Alert(response + " transactions were successfully created.", AlertContext.Success));
+          });
+        },
+        error => {
+          this.isLoadingSubmit = false;
+          console.log(error);
+          this.cdr.detectChanges();
+        }
+      );
   }
 }
