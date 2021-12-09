@@ -26,7 +26,7 @@ SELECT ParcelID,
 )
 
 SELECT ParcelID,
-	   dateadd(hour, 8, dateadd(day, -1, dateadd(month, 1, cast(concat(WaterMonth, '/1/', WaterYear) as datetime)))) as TransactionDate,
+	   dateadd(second, 1, dateadd(hour, 8, dateadd(day, -1, dateadd(month, 1, cast(concat(WaterMonth, '/1/', WaterYear) as datetime))))) as TransactionDate,
 	   dateadd(hour, 8, dateadd(day, -1, dateadd(month, 1, cast(concat(WaterMonth, '/1/', WaterYear) as datetime)))) as EffectiveDate,
 	   TT.TransactionTypeID,
        -OverriddenEvapotranspirationRate as TransactionAmount,
