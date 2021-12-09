@@ -112,7 +112,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
         error => {
           this.isLoadingSubmit = false;
           window.scroll(0,0);
-          console.log(error);
           this.cdr.detectChanges();
         }
       );

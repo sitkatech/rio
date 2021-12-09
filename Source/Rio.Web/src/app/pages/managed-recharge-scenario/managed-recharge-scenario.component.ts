@@ -165,7 +165,6 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         map.on("moveend", (event: L.LeafletEvent) => {
             this.onMapMoveEnd.emit(event);
             var map = event.target;
-            console.log(map.getBounds());
         });
 
         map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
