@@ -29,6 +29,7 @@ import { WaterTransferDto } from 'src/app/shared/generated/model/water-transfer-
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
+import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -387,15 +388,20 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
-    return this.getParcelLedgersForWaterYear(year).filter(p => p.TransactionType.TransactionTypeID === TransactionTypeEnum.Allocation);
+    let parcelLedgers = this.getParcelLedgersForWaterYear(year).filter(p => 
+      p.TransactionType.TransactionTypeID === TransactionTypeEnum.Supply && 
+      (p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Manual ||
+      p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS)
+    );
+    return parcelLedgers;
   }
 
   public getTradeSalesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.TradeSale);
+    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount < 0);
   }
 
   public getTradePurchasesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.TradePurchase);
+    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount > 0);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDetailedDto) {
@@ -532,8 +538,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private createParcelUsageOverviewChartData(): WaterAllocationOverviewDto {
-    let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsage || 
-      x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsageCorrection || x.TransactionType.TransactionTypeID == TransactionTypeEnum.ManualAdjustment);
+    let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
     
     // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
     let usageByYearAndMonth: Object = {};
@@ -608,8 +613,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private getParcelLedgerUsageForYear(year: number): ParcelLedgerDto[]
   {
-    const usageTransactionTypeIDs = [TransactionTypeEnum.MeasuredUsage, TransactionTypeEnum.MeasuredUsageCorrection, TransactionTypeEnum.ManualAdjustment];
-    return this.getParcelLedgersForWaterYear(year).filter(x => usageTransactionTypeIDs.includes(x.TransactionType.TransactionTypeID));
+    return this.getParcelLedgersForWaterYear(year).filter(x => x.TransactionType.TransactionTypeID === TransactionTypeEnum.Usage);
   }
 
   public getWaterUsageForWaterYear(): MultiSeriesEntry[] {

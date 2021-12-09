@@ -14,4 +14,9 @@ export class ParcelLedgerService {
     let route = `parcel-ledgers/new`;
     return this.apiService.postToApi(route, model);
   }
+
+  newBulkTransaction(model: ParcelLedgerCreateDto): Observable<any[]> {
+    let route = `parcel-ledgers/bulk-new`;
+    return this.apiService.postToApi(route, model);
+  }
 }

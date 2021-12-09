@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[WaterType](
 	[WaterTypeDefinition] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[IsSourcedFromApi] [bit] NOT NULL,
 	[SortOrder] [int] NOT NULL,
+	[IsUserDefined] [bit] NOT NULL,
  CONSTRAINT [PK_WaterType_WaterTypeID] PRIMARY KEY CLUSTERED 
 (
 	[WaterTypeID] ASC

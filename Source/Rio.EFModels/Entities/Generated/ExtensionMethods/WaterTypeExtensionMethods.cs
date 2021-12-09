@@ -18,7 +18,8 @@ namespace Rio.EFModels.Entities
                 IsAppliedProportionally = waterType.IsAppliedProportionally,
                 WaterTypeDefinition = waterType.WaterTypeDefinition,
                 IsSourcedFromApi = waterType.IsSourcedFromApi,
-                SortOrder = waterType.SortOrder
+                SortOrder = waterType.SortOrder,
+                IsUserDefined = waterType.IsUserDefined
             };
             DoCustomMappings(waterType, waterTypeDto);
             return waterTypeDto;
@@ -35,7 +36,8 @@ namespace Rio.EFModels.Entities
                 IsAppliedProportionally = waterType.IsAppliedProportionally,
                 WaterTypeDefinition = waterType.WaterTypeDefinition,
                 IsSourcedFromApi = waterType.IsSourcedFromApi,
-                SortOrder = waterType.SortOrder
+                SortOrder = waterType.SortOrder,
+                IsUserDefined = waterType.IsUserDefined
             };
             DoCustomSimpleDtoMappings(waterType, waterTypeSimpleDto);
             return waterTypeSimpleDto;

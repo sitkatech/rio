@@ -31,26 +31,26 @@ begin
 	select ParcelID, EffectiveDate, sum(TransactionAmount) TransactionAmount
 	into #openETPLEntriesForDate
 	from dbo.ParcelLedger pal
-	where EffectiveDate = @effectiveDate and TransactionTypeID in (17,18)
+	where EffectiveDate = @effectiveDate and TransactionTypeID in (2)
 	group by ParcelID, EffectiveDate
 
 	-- insert any corrections first - changes in value
-	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
-	select npl.ParcelID, 18 as TransactionTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, (abs(pl.TransactionAmount) - abs(npl.TransactionAmount)) as TransactionAmount, concat('A correction to ', @effectiveDateMonth, '/', @effectiveDateYear, ' has been applied to this water account') as TransactionDescription
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, ParcelLedgerEntrySourceTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
+	select npl.ParcelID, 2 as TransactionTypeID, 2 as ParcelLedgerEntrySourceTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, (abs(pl.TransactionAmount) - abs(npl.TransactionAmount)) as TransactionAmount, concat('A correction to ', @effectiveDateMonth, '/', @effectiveDateYear, ' has been applied to this water account') as TransactionDescription
 	from #npl npl
 	join #openETPLEntriesForDate pl on npl.ParcelID = pl.ParcelID and npl.EffectiveDate = pl.EffectiveDate
 	where npl.TransactionAmount != pl.TransactionAmount
 
 	-- insert any corrections first - if they are no longer in the ET dataset we should treat it as a correction
-	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
-	select pl.ParcelID, 18 as TransactionTypeID, @transactionDate as TransactionDate, pl.EffectiveDate, -pl.TransactionAmount, concat('A correction to ', @effectiveDateMonth, '/', @effectiveDateYear, ' has been applied to this water account') as TransactionDescription
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, ParcelLedgerEntrySourceTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
+	select pl.ParcelID, 2 as TransactionTypeID, 2 as ParcelLedgerEntrySourceTypeID, @transactionDate as TransactionDate, pl.EffectiveDate, -pl.TransactionAmount, concat('A correction to ', @effectiveDateMonth, '/', @effectiveDateYear, ' has been applied to this water account') as TransactionDescription
 	from #openETPLEntriesForDate pl 
 	left join #npl npl on pl.ParcelID = npl.ParcelID and pl.EffectiveDate = npl.EffectiveDate
 	where npl.ParcelID is null
 
 	-- then add any new ones
-	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
-	select npl.ParcelID, 17 as TransactionTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, npl.TransactionAmount, concat(@effectiveDateMonth, '/', @effectiveDateYear, ' Usage from OpenET has been withdrawn from this water account') as TransactionDescription
+	insert into dbo.ParcelLedger(ParcelID, TransactionTypeID, ParcelLedgerEntrySourceTypeID, TransactionDate, EffectiveDate, TransactionAmount, TransactionDescription)
+	select npl.ParcelID, 2 as TransactionTypeID, 2 as ParcelLedgerEntrySourceTypeID, @transactionDate as TransactionDate, npl.EffectiveDate, npl.TransactionAmount, concat(@effectiveDateMonth, '/', @effectiveDateYear, ' Usage from OpenET has been withdrawn from this water account') as TransactionDescription
 	from #npl npl
 	left join #openETPLEntriesForDate pl on npl.ParcelID = pl.ParcelID and npl.EffectiveDate = pl.EffectiveDate
 	where pl.ParcelID is null

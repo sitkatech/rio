@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { ParcelLedgerEntrySourceTypeDto } from '././parcel-ledger-entry-source-type-dto';
 import { TransactionTypeDto } from '././transaction-type-dto';
 import { UserDto } from '././user-dto';
 import { ParcelDto } from '././parcel-dto';
@@ -25,6 +26,7 @@ export class ParcelLedgerDto {
     TransactionDescription?: string;
     User?: UserDto;
     UserComment?: string;
+    ParcelLedgerEntrySourceType?: ParcelLedgerEntrySourceTypeDto;
     readonly WaterYear?: number;
     readonly WaterMonth?: number;
     constructor(obj?: any) {

@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[TransactionDescription] [varchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[UserID] [int] NULL,
 	[UserComment] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[ParcelLedgerEntrySourceTypeID] [int] NOT NULL,
  CONSTRAINT [PK_ParcelLedger_ParcelLedgerID] PRIMARY KEY CLUSTERED 
 (
 	[ParcelLedgerID] ASC
@@ -31,6 +32,11 @@ ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_Pa
 REFERENCES [dbo].[Parcel] ([ParcelID])
 GO
 ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_Parcel_ParcelID]
+GO
+ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeID] FOREIGN KEY([ParcelLedgerEntrySourceTypeID])
+REFERENCES [dbo].[ParcelLedgerEntrySourceType] ([ParcelLedgerEntrySourceTypeID])
+GO
+ALTER TABLE [dbo].[ParcelLedger] CHECK CONSTRAINT [FK_ParcelLedger_ParcelLedgerEntrySourceType_ParcelLedgerEntrySourceTypeID]
 GO
 ALTER TABLE [dbo].[ParcelLedger]  WITH CHECK ADD  CONSTRAINT [FK_ParcelLedger_TransactionType_TransactionTypeID] FOREIGN KEY([TransactionTypeID])
 REFERENCES [dbo].[TransactionType] ([TransactionTypeID])

@@ -22,7 +22,8 @@ USING (VALUES
 (20, 'ParcelUpdateLayer', 'Parcel Update Layer'),
 (21, 'InactiveParcelList', 'Inactive Parcel List'),
 (22, 'AccountReconciliationReport', 'Account Reconciliation Report'),
-(23, 'ParcelLedgerCreate', 'Create New Transaction')
+(23, 'ParcelLedgerCreate', 'Create New Transaction'),
+(24, 'ParcelLedgerBulkCreate', 'Create Bulk Transaction')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

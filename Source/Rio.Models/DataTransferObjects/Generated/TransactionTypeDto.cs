@@ -11,14 +11,12 @@ namespace Rio.Models.DataTransferObjects
     {
         public int TransactionTypeID { get; set; }
         public string TransactionTypeName { get; set; }
-        public int SortOrder { get; set; }
     }
 
     public partial class TransactionTypeSimpleDto
     {
         public int TransactionTypeID { get; set; }
         public string TransactionTypeName { get; set; }
-        public int SortOrder { get; set; }
     }
 
 }

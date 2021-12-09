@@ -14,8 +14,7 @@ namespace Rio.EFModels.Entities
             var transactionTypeDto = new TransactionTypeDto()
             {
                 TransactionTypeID = transactionType.TransactionTypeID,
-                TransactionTypeName = transactionType.TransactionTypeName,
-                SortOrder = transactionType.SortOrder
+                TransactionTypeName = transactionType.TransactionTypeName
             };
             DoCustomMappings(transactionType, transactionTypeDto);
             return transactionTypeDto;
@@ -28,8 +27,7 @@ namespace Rio.EFModels.Entities
             var transactionTypeSimpleDto = new TransactionTypeSimpleDto()
             {
                 TransactionTypeID = transactionType.TransactionTypeID,
-                TransactionTypeName = transactionType.TransactionTypeName,
-                SortOrder = transactionType.SortOrder
+                TransactionTypeName = transactionType.TransactionTypeName
             };
             DoCustomSimpleDtoMappings(transactionType, transactionTypeSimpleDto);
             return transactionTypeSimpleDto;

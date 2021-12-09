@@ -13,7 +13,6 @@
 export class TransactionTypeDto { 
     TransactionTypeID?: number;
     TransactionTypeName?: string;
-    SortOrder?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

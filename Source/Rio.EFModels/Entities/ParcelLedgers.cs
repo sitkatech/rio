@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
@@ -14,15 +15,15 @@ namespace Rio.EFModels.Entities
             return dbContext.ParcelLedgers
                 .Include(x => x.TransactionType)
                 .Include(x => x.WaterType)
-                .Include(x => x.Parcel)
-                .ThenInclude(x => x.ParcelStatus)
+                .Include(x => x.ParcelLedgerEntrySourceType)
+                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();
         }
 
         private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
         {
             return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Allocation);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual);
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
@@ -42,20 +43,14 @@ namespace Rio.EFModels.Entities
 
         public static decimal GetUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
         {
-            return GetUsagesByParcelIDs(dbContext, new List<int> {parcelID}).Where(x => x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
-                .Sum(x => x.TransactionAmount);
+            return GetUsagesByParcelIDs(dbContext, new List<int>(parcelID))
+                    .Where(x => x.EffectiveDate.Year == year && x.EffectiveDate.Month == month)
+                    .Sum(x => x.TransactionAmount);
         }
 
         public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
-            var transactionTypeIDs = new List<int> { (int)TransactionTypeEnum.MeasuredUsage, (int)TransactionTypeEnum.MeasureUsageCorrection, (int)TransactionTypeEnum.ManualAdjustment };
-            return GetByTransactionTypeIDsAndParcelIDs(dbContext, parcelIDs, transactionTypeIDs);
-        }
-
-        private static IQueryable<ParcelLedger> GetByTransactionTypeIDsAndParcelIDs(RioDbContext dbContext, List<int> parcelIDs, List<int> transactionTypeIDs)
-        {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => parcelIDs.Contains(x.ParcelID) && transactionTypeIDs.Contains(x.TransactionTypeID));
+            return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Usage);
         }
 
         public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
@@ -104,13 +99,22 @@ namespace Rio.EFModels.Entities
             return new List<LandownerAllocationBreakdownDto>();
         }
 
-        public static List<ParcelLedgerDto> ListByAccountID(RioDbContext dbContext, int accountID)
+        public static List<ParcelLedgerDto> ListByAccountIDForAllWaterYears(RioDbContext dbContext, int accountID)
         {
-            var parcelIDs = Parcel.ListByAccountID(dbContext, accountID)
-                .Select(x => x.ParcelID);
+            var parcelLedgerDtos = new List<ParcelLedgerDto>();
+            var parcelIDsForYearGroups = Parcel.AccountParcelWaterYearOwnerships(dbContext)
+                .Where(x => x.AccountID == accountID)
+                .AsEnumerable()
+                .GroupBy(x => x.WaterYear.Year);
 
-            var parcelLedgerDtos = ListByParcelIDAsDto(dbContext, parcelIDs).OrderByDescending(x => x.EffectiveDate)
-                .ToList();
+            foreach (var group in parcelIDsForYearGroups)
+            {
+                var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
+                parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext)
+                    .Where(x => parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key)
+                    .OrderByDescending(x => x.EffectiveDate)
+                    .Select(x => x.AsDto()));
+            }
 
             return parcelLedgerDtos;
         }
@@ -139,27 +143,37 @@ namespace Rio.EFModels.Entities
             return parcelLedger?.AsDto();
         }
 
-        public static ParcelLedgerDto CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
+        public static int CreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
         {
-            var parcelLedger = new ParcelLedger
+            int createdCount = 0;
+            foreach (var parcelNumber in parcelLedgerCreateDto.ParcelNumbers)
             {
-                ParcelID = parcelLedgerCreateDto.ParcelID,
-                TransactionDate = DateTime.UtcNow,
-                EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
-                TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
-                TransactionAmount = (parcelLedgerCreateDto.IsWithdrawal ? -parcelLedgerCreateDto.TransactionAmount : parcelLedgerCreateDto.TransactionAmount),
-                WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
-                TransactionDescription = 
-                    $"A manual {(parcelLedgerCreateDto.IsWithdrawal ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
-                UserID = userID,
-                UserComment = parcelLedgerCreateDto.UserComment
-            };
 
-            dbContext.ParcelLedgers.Add(parcelLedger);
+                var parcelID = dbContext.Parcels.SingleOrDefault(x => x.ParcelNumber == parcelNumber)?.ParcelID;
+                if (parcelID.HasValue)
+                {
+                    var parcelLedger = new ParcelLedger()
+                    {
+                        ParcelID = parcelID.Value,
+                        TransactionDate = DateTime.UtcNow,
+                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                        TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                        ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
+                        TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
+                        WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
+                        TransactionDescription =
+                            $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                        UserID = userID,
+                        UserComment = parcelLedgerCreateDto.UserComment
+                    };
+                    dbContext.ParcelLedgers.Add(parcelLedger);
+                    createdCount++;
+                }
+            }
+
             dbContext.SaveChanges();
-            dbContext.Entry(parcelLedger).Reload();
 
-            return GetByIDAsDto(dbContext, parcelLedger.ParcelLedgerID);
+            return createdCount;
         }
     }
 }

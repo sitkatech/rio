@@ -28,6 +28,7 @@ export * from '././parcel-id-list-dto';
 export * from '././parcel-layer-update-dto';
 export * from '././parcel-ledger-create-dto';
 export * from '././parcel-ledger-dto';
+export * from '././parcel-ledger-entry-source-type-dto';
 export * from '././parcel-ownership-dto';
 export * from '././parcel-required-column-and-mapping-dto';
 export * from '././parcel-simple-dto';

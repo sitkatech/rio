@@ -17,6 +17,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -81,11 +82,11 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           
           this.parcelLedgers = parcelLedgers;
           this.rowData = parcelLedgers;
-          this.allocationParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Allocation);
-          this.usageParcelLedgers = parcelLedgers.filter(x => 
-            x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsage ||
-            x.TransactionType.TransactionTypeID == TransactionTypeEnum.MeasuredUsageCorrection || 
-            x.TransactionType.TransactionTypeID == TransactionTypeEnum.ManualAdjustment);
+          this.allocationParcelLedgers = parcelLedgers.filter(x => 
+            x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
+            (x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.Manual ||
+              x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.CIMIS));
+          this.usageParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
           this.waterTypes = waterTypes;
@@ -159,8 +160,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   private onGridReady(params) {
     this.gridColumnApi = params.columnApi;
 
-    let colIDs = this.gridColumnApi.getAllColumns().map(col => col.colId);
-    this.gridColumnApi.autoSizeColumns(colIDs);
+    this.gridColumnApi.autoSizeAllColumns();
   }
 
   ngOnDestroy() {

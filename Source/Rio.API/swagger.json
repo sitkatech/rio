@@ -2223,6 +2223,42 @@
         }
       }
     },
+    "/parcel-ledgers/bulk-new": {
+      "post": {
+        "tags": [
+          "ParcelLedger"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLedgerCreateDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLedgerCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLedgerCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLedgerCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/postings/new": {
       "post": {
         "tags": [
@@ -4612,26 +4648,6 @@
             "format": "double",
             "nullable": true
           },
-          "ProjectWater": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Reconciliation": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "NativeYield": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "StoredWater": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "UsageToDate": {
             "type": "number",
             "format": "double",
@@ -4832,20 +4848,17 @@
       "ParcelLedgerCreateDto": {
         "required": [
           "EffectiveDate",
-          "IsWithdrawal",
-          "ParcelID",
-          "ParcelNumber",
+          "ParcelNumbers",
           "TransactionAmount",
           "TransactionTypeID"
         ],
         "type": "object",
         "properties": {
-          "ParcelID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelNumber": {
-            "type": "string"
+          "ParcelNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "EffectiveDate": {
             "type": "string",
@@ -4860,12 +4873,7 @@
             "format": "int32",
             "nullable": true
           },
-          "IsWithdrawal": {
-            "type": "boolean"
-          },
           "TransactionAmount": {
-            "maximum": 1934,
-            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -4915,6 +4923,9 @@
             "type": "string",
             "nullable": true
           },
+          "ParcelLedgerEntrySourceType": {
+            "$ref": "#/components/schemas/ParcelLedgerEntrySourceTypeDto"
+          },
           "WaterYear": {
             "type": "integer",
             "format": "int32",
@@ -4924,6 +4935,24 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelLedgerEntrySourceTypeDto": {
+        "type": "object",
+        "properties": {
+          "ParcelLedgerEntrySourceTypeID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelLedgerEntrySourceTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ParcelLedgerEntrySourceTypeDisplayName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5431,10 +5460,6 @@
           "TransactionTypeName": {
             "type": "string",
             "nullable": true
-          },
-          "SortOrder": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -6084,6 +6109,9 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
+          },
+          "IsUserDefined": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

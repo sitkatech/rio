@@ -10,13 +10,10 @@
  * Do not edit the class manually.
  */
 
-export class ParcelLedgerCreateDto { 
-    ParcelNumbers: Array<string>;
-    EffectiveDate: string;
-    TransactionTypeID: number;
-    WaterTypeID?: number;
-    TransactionAmount: number;
-    UserComment?: string;
+export class ParcelLedgerEntrySourceTypeDto { 
+    ParcelLedgerEntrySourceTypeID?: number;
+    ParcelLedgerEntrySourceTypeName?: string;
+    ParcelLedgerEntrySourceTypeDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

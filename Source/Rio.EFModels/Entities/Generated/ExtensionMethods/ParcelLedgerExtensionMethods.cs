@@ -22,7 +22,8 @@ namespace Rio.EFModels.Entities
                 WaterType = parcelLedger.WaterType?.AsDto(),
                 TransactionDescription = parcelLedger.TransactionDescription,
                 User = parcelLedger.User?.AsDto(),
-                UserComment = parcelLedger.UserComment
+                UserComment = parcelLedger.UserComment,
+                ParcelLedgerEntrySourceType = parcelLedger.ParcelLedgerEntrySourceType.AsDto()
             };
             DoCustomMappings(parcelLedger, parcelLedgerDto);
             return parcelLedgerDto;
@@ -43,7 +44,8 @@ namespace Rio.EFModels.Entities
                 WaterTypeID = parcelLedger.WaterTypeID,
                 TransactionDescription = parcelLedger.TransactionDescription,
                 UserID = parcelLedger.UserID,
-                UserComment = parcelLedger.UserComment
+                UserComment = parcelLedger.UserComment,
+                ParcelLedgerEntrySourceTypeID = parcelLedger.ParcelLedgerEntrySourceTypeID
             };
             DoCustomSimpleDtoMappings(parcelLedger, parcelLedgerSimpleDto);
             return parcelLedgerSimpleDto;
