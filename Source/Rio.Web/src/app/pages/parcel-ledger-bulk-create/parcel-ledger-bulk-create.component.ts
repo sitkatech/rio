@@ -15,7 +15,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { CheckboxRendererComponent } from 'src/app/shared/components/ag-grid/checkbox-renderer/checkbox-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
@@ -46,6 +45,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
   public rowData = [];
+  public gridOptions;
   
   constructor(
     private route: ActivatedRoute,
@@ -94,14 +94,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private initializeParcelSelectGrid() {
     let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
-      { 
-        filter: false, sortable: false, valueGetter: function (params: any) {
-          return { onChangeFunctionParams: [params.data.ParcelNumber] }
-        }, cellRendererFramework: CheckboxRendererComponent, cellRendererParams: {
-          _self: this,
-          onChangeFunction: 'onParcelSelectionChange'
-        }
-      },
+      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true },
       { headerName: 'APN', field: 'ParcelNumber' },
       {
         headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
@@ -118,9 +111,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       }
     ];
 
-    this.defaultColDef = {
-      sortable: true, filter: true
-    }
+    this.defaultColDef = { sortable: true, filter: true }
+    this.gridOptions = { rowSelection: 'multiple' }
   }
 
   private insertWaterTypeColDefs() {
@@ -151,6 +143,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   public onParcelSelectionChange(parcelNumber: string) {
+    this.gridApi.getColumnDefs()[0].headerComponentParams.isChecked = true;
+    console.log(this.gridApi.getColumnDefs()[0].headerComponentParams);
+
     const index = this.model.ParcelNumbers.indexOf(parcelNumber);
     if (index > -1) {
       this.model.ParcelNumbers.splice(index, 1);

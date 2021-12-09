@@ -20,7 +20,6 @@ import { ScenarioMapComponent } from './components/scenario-map/scenario-map.com
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { CheckboxRendererComponent } from './components/ag-grid/checkbox-renderer/checkbox-renderer.component';
 
 @NgModule({
     declarations: [
@@ -36,8 +35,7 @@ import { CheckboxRendererComponent } from './components/ag-grid/checkbox-rendere
         MultiLinkRendererComponent,
         WaterYearSelectComponent,
         ScenarioMapComponent,
-        CustomRichTextComponent,
-        CheckboxRendererComponent
+        CustomRichTextComponent
     ],
     imports: [
         CommonModule,
