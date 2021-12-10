@@ -12,7 +12,7 @@ import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-led
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, RowSelectedEvent } from 'ag-grid-community';
 import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
@@ -112,7 +112,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     ];
 
     this.defaultColDef = { sortable: true, filter: true }
-    this.gridOptions = { rowSelection: 'multiple' }
+    this.gridOptions = { rowSelection: 'multiple', onRowSelected: (event: RowSelectedEvent) => this.onParcelSelectionChange(event) }
   }
 
   private insertWaterTypeColDefs() {
@@ -142,11 +142,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
   }
 
-  public onParcelSelectionChange(parcelNumber: string) {
-    this.gridApi.getColumnDefs()[0].headerComponentParams.isChecked = true;
-    console.log(this.gridApi.getColumnDefs()[0].headerComponentParams);
-
+  public onParcelSelectionChange(e: RowSelectedEvent) {
+    const parcelNumber = e.data.ParcelNumber;
     const index = this.model.ParcelNumbers.indexOf(parcelNumber);
+    
     if (index > -1) {
       this.model.ParcelNumbers.splice(index, 1);
     } else {
