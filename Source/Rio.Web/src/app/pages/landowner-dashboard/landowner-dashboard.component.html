@@ -19,7 +19,7 @@
 </ngb-alert>
 </div>
 <ng-container *ngIf="!loadingActiveAccount; else loadingBlock">
-  <div class="container mb-3" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
+  <div class="container mb-5" style="position:sticky; top:0; background-color:#FFF; z-index: 1000;">
     <div class="row mt-2 mb-3">
       <div class="col col-auto mr-auto">
         <h2>
@@ -27,20 +27,47 @@
         </h2>
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-lg-2 col-sm-12" *ngIf="waterYears">
-        <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
-          (selectedYearChange)="updateAnnualData()"></rio-water-year-select>
+    <div class="row">
+      <div class="col-sm-12 p-1 pl-4 pr-4" id="page-controls-bar">
+        <div class="row">
+          <div class="col-lg-4 col-sm-12" *ngIf="waterYears">
+            <div class="d-inline d-lg-none float-right">
+              <a routerLink="/measuring-water-use-with-openet" class="d-inline align-middle">
+                <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
+              </a>
+            </div>
+            <rio-water-year-select [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
+              (selectedYearChange)="updateAnnualData()">
+            </rio-water-year-select>
+          </div>
+          <div class="col-lg-4 col-sm-12 text-lg-center" id="unit-selector">
+            <span class="align-middle d-inline-block mt-1">Viewing in units of &nbsp;</span>
+            <div class="btn-group btn-group-toggle h-75 mt-1">
+              <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
+                style="width:65px;">
+                <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
+              </label>
+              <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
+                <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-4 text-right pt-1 d-none d-lg-block">
+            <a routerLink="/measuring-water-use-with-openet" class="d-inline align-middle">
+              <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
+            </a>
+          </div>
+        </div>
       </div>
-      <div class="col">
+      <div class="col p-0">
         <ul class="list-group list-group-flush text-center text-lg-left flex-row" style="width:100%">
           <li class="list-group-item header p-0" style="width:100%" *ngFor="let item of getViewEnum()"
             [class.selected]="checkSelectedView(item)" (click)="updateView(item)" (mouseenter)="hoverItem = item"
             (mouseleave)="hoverItem = null" placement="top" ngbTooltip="{{item}}" tooltipClass="selector-tooltip">
             <div class="container" style="height:100%">
-              <div class="row d-flex flex-wrap align-items-center" style="height:100%">
+              <div class="row d-flex flex-wrap align-items-center ml-1" style="height:100%">
                 <div class="col-lg-3 col-sm-12 p-0">
-                  <img src="{{getImgSrcForSelector(item)}}" style="max-width:75px;width:100%" alt="{{item}}">
+                  <img src="{{getImgSrcForSelector(item)}}" style="max-width:60px;width:100%" alt="{{item}}">
                 </div>
                 <div class="col-lg-9 pl-0 d-lg-block d-none">
                   {{item}}
@@ -55,24 +82,10 @@
   <div class="container" *ngIf="activeAccount">
     <div class="row mb-5"
       *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
-      <div class="col-sm-12 mb-2">
-        <div class="btn-group btn-group-toggle">
-          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft' ? 'active' : ''"
-            style="width:65px;">
-            <input type="radio" name="units" id="ac-ft" (click)="toggleUnitsShown('ac-ft')"> ac-ft
-          </label>
-          <label class="btn btn-toggle btn-sm btn-rio" [ngClass]="unitsShown === 'ac-ft / ac' ? 'active' : ''">
-            <input type="radio" name="units" id="ac-ft/ac" (click)="toggleUnitsShown('ac-ft / ac')"> ac-ft/ac
-          </label>
-        </div>
-        <div class="float-right">
-          <a routerLink="/measuring-water-use-with-openet">
-            <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
-          </a>
-        </div>
+      <div class="col-sm-12 mb-3">
+        <div class="h3">Supply and Usage Overview</div>
       </div>
-      <div class="col-sm-12 col-lg-5 mt-5 pr-5">
-        <div class="h3 mb-3">Overview</div>
+      <div class="col-sm-12 col-lg-5 pr-5">
         <div class="table-responsive">
           <table class="table table-sm table-borderless">
             <tr>
@@ -117,7 +130,6 @@
       <div class="col-sm-12 col-lg-7 mt-4 mt-lg-0">
         <div class="row">
           <div class="col-sm-12">
-            <div class="h3">{{waterYearToDisplay?.Year}} Allocation and Usage</div>
             <div *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
               <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
                 [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
@@ -128,23 +140,48 @@
         </div>
       </div>
       <div class="col-sm-12 mt-2 mb-2">
-        <div class="row mt-2 mb-5">
+        <div class="row mt-4 mb-5">
           <div class="col-sm-12">
-            <div class="h3 mb-3">{{waterYearToDisplay.Year}} Account Activity</div>
-            <div class="font-weight-normal mb-2">Showing All Activity</div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="h3 mb-3">Account Activity</div>
+              </div>
+              <div class="col-sm-6">
+                <div class="font-weight-normal mb-2">Showing All Activity</div>
+              </div>
+              <div class="col-sm-6 text-sm-right mb-2">
+                <div class="btn-group btn-group-toggle">
+                  <label class="btn btn-toggle btn-sm btn-rio border active" style="width:130px;">
+                    <input type="radio" name="activity-view" id="summary"> Summary
+                  </label>
+                  <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;">
+                    <input type="radio" name="activity-view" id="detail" ngbTooltip="Detailed view coming soon"> Detail
+                  </label>
+                </div>
+              </div>
+            </div>
             <div class="card" id="account-overview">
               <div class="card-header bg-white font-italic font-weight-normal">filters</div>
               <div class="card-body">
                 <div *ngFor="let parcelLedger of parcelLedgersForWaterYear | slice: 0:activityDisplayCount; let last = last;">
                   <div class="row">
-                    <div class="col-md-2 mb-4 text-md-center text-sm-left">
+                    <div class="col-md-2 mb-4">
+                      <span class="label">Effective Date</span>
                       {{parcelLedger.EffectiveDate | date: 'shortDate'}}
                     </div>
                     <div class="col-md-10">
                       <div class="row">
                         <div class="col-lg-3 mb-4">
-                          <span class="label">Transaction Type</span>
-                          {{parcelLedger.TransactionType.TransactionTypeName}}
+                          <div class="row">
+                            <div class="col-sm-12 mb-4">
+                              <span class="label">Transaction Type</span>
+                              {{parcelLedger.TransactionType.TransactionTypeName}}
+                            </div>
+                            <div class="col-sm-12">
+                              <span class="label">Source Type</span>
+                              {{parcelLedger.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName}}
+                            </div>
+                          </div>
                         </div>
                         <div class="col-sm-9">
                           <div class="row">
@@ -152,13 +189,13 @@
                               <span class="label">Description</span>
                               {{parcelLedger.TransactionDescription}}
                             </div>
-                            <div class="col-lg-3 col-md-6 mb-4" *ngIf="parcelLedger.WaterType">
-                              <span class="label">Water Type</span>
-                              {{parcelLedger.WaterType.WaterTypeName}}
-                            </div>
                             <div class="col-lg-3 col-md-6 mb-4">
                               <span class="label">Parcel</span>
                               <a routerLink="/parcels/{{parcelLedger.Parcel.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-4" *ngIf="parcelLedger.WaterType">
+                              <span class="label">Water Type</span>
+                              {{parcelLedger.WaterType.WaterTypeName}}
                             </div>
                             <div class="col-lg-3 col-md-6 mb-4">
                               <span class="label">Quantity</span>
@@ -187,8 +224,10 @@
           </div>
         </div>
       </div>
+      <div class="col-sm-12">
+        <span class="h3 mb-3">Water Budget Overview</span>
+      </div>
       <div class="col-sm-12 col-lg-6 border-right">
-        <span class="h3 mb-3">{{waterYearToDisplay.Year}} Water Budget Overview</span>
         <div class="table-responsive mt-4">
           <table class="table table-sm table-borderless">
             <tr>
