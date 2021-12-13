@@ -30,13 +30,13 @@ li.list-group-item.header.selected {
     color: #EEE;
 }
 
-#account-overview .label {
+#activity-summary .label {
     display: block;
     font-size: 10pt;
     font-weight: bold;
 }
 
-#account-overview .card-body {
+#activity-summary .card-body {
     max-height: 60vh;
     overflow: auto;
 }

@@ -30,6 +30,11 @@ import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
+import { ColDef, ColumnApi, GridApi } from 'ag-grid-community';
+import { AgGridAngular } from 'ag-grid-angular';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -38,6 +43,7 @@ import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/par
 })
 export class LandownerDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('landownerWaterUseChart') landownerWaterUseChart: LandownerWaterUseChartComponent;
+  @ViewChild('activityDetailGrid') activityDetailGrid: AgGridAngular;
   
   public waterYearToDisplay: WaterYearDto;
   public currentUser: UserDto;
@@ -79,6 +85,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public waterUsages: any;
   public activeAccount: AccountSimpleDto;
   public activityDisplayCount = 5;
+  public displayAccountActivityDetailed: boolean = false;
+ 
+  public activityDetailGridColDefs: ColDef[];
+  public defaultColDef: ColDef;
+  public rowData = [];
+  private columnApi: ColumnApi;
+  private gridApi: GridApi;
 
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
@@ -120,7 +133,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
-    private waterYearService: WaterYearService
+    private waterYearService: WaterYearService,
+    private decimalPipe: DecimalPipe,
+    private utilityFunctionsService: UtilityFunctionsService
   ) {
   }
 
@@ -148,10 +163,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
             this.updateAccountData(account);
           });
         }
-      })
+      });
+
+      this.createActivityDetailGridColDefs();
 
       this.cdr.detectChanges();      
-    }); 
+    });
   }
 
   public getAccountDisplayName(): string {
@@ -223,16 +240,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private updateParcelLedgersAndChartDataForWaterYear():void {
     this.parcelLedgersForWaterYear = this.getParcelLedgersForWaterYear();
     this.parcelLedgersBalance = this.createParcelLedgersBalance();
-
+    
     this.waterUsages = {
-        Year: this.waterYearToDisplay.Year,
-        AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
-        };
+      Year: this.waterYearToDisplay.Year,
+      AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
+    };
     // user will have neither allocation nor usage to chart if they have no parcels in this year.
     if (this.parcels && this.parcels.length > 0) {
       this.initializeCharts();
     }
-
     this.landownerWaterUseChart ? this.landownerWaterUseChart.buildColorScheme() : null;
   }
 
@@ -457,6 +473,77 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public updateActivityDisplayCount() {
     this.activityDisplayCount += 5;
   }
+
+  private createActivityDetailGridColDefs() {
+    let _decimalPipe = this.decimalPipe;
+
+    this.activityDetailGridColDefs = [
+      { 
+        headerName: 'APN', field: 'Parcel.ParcelNumber', filter: true, valueGetter: function (params: any) {
+          return { LinkValue: params.data.Parcel.ParcelID, LinkDisplay: params.data.Parcel.ParcelNumber }
+        }, filterValueGetter: function (params: any) {
+          return params.data.Parcel.ParcelNumber;
+        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' }
+      },
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
+      this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
+      {
+        headerName: 'Supply Type', valueGetter: function (params: any) {
+          return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
+        }
+      },
+      { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
+      { 
+        headerName: 'Quantity (ac-ft)', field: 'TransactionAmount', filter: 'agNumberColumnFilter', cellStyle: {textAlign: "right"},
+        valueGetter: function (params: any) { return parseFloat(_decimalPipe.transform(params.data.TransactionAmount, "1.0-1")); }, 
+      },
+      { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
+      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
+        valueGetter: function (params: any) {
+          return params.data.UserComment ?? '-';
+        }
+      }
+    ];
+  }
+
+  private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
+    const cellDate = Date.parse(cellValue);
+    if (cellDate == filterLocalDateAtMidnight) {
+      return 0;
+    }
+    return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+  }
+  
+  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+    let datePipe = new DatePipe('en-US');
+    
+    return {
+      headerName: headerName, valueGetter: function (params: any) {
+        return datePipe.transform(params.data[fieldName], dateFormat);
+      },
+      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
+      filterParams: {
+        filterOptions: ['inRange'],
+        comparator: this.dateFilterComparator
+      }
+    };
+  }
+
+  public onGridReady(params: any) {
+    this.columnApi = params.columnApi;
+    this.gridApi = params.api;
+
+    this.gridApi.setRowData(this.parcelLedgersForWaterYear);
+    this.columnApi.autoSizeAllColumns();
+
+  }
+
+  public exportActivityDetailGridToCsv() {
+    console.log(":)");
+    this.utilityFunctionsService.exportGridToCsv(this.activityDetailGrid, this.waterYearToDisplay.Year + 'ActivityforAccount' + this.activeAccount.AccountNumber + '.csv', null);
+  }
+  
 
   initializeCharts() {
     if (!this.waterUsageOverview) {

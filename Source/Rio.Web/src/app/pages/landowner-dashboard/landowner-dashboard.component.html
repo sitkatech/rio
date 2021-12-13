@@ -139,90 +139,98 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-12 mt-2 mb-2">
-        <div class="row mt-4 mb-5">
-          <div class="col-sm-12">
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="h3 mb-3">Account Activity</div>
-              </div>
-              <div class="col-sm-6">
-                <div class="font-weight-normal mb-2">Showing All Activity</div>
-              </div>
-              <div class="col-sm-6 text-sm-right mb-2">
-                <div class="btn-group btn-group-toggle">
-                  <label class="btn btn-toggle btn-sm btn-rio border active" style="width:130px;">
-                    <input type="radio" name="activity-view" id="summary"> Summary
-                  </label>
-                  <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;">
-                    <input type="radio" name="activity-view" id="detail" ngbTooltip="Detailed view coming soon"> Detail
-                  </label>
-                </div>
-              </div>
+      <div class="col-sm-12 mt-5 pt-4 mb-5 pb-2">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="h3">Account Activity</div>
+          </div>
+          <div class="col-sm-6 text-sm-right mb-2">
+            <div class="btn-group btn-group-toggle">
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': !displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="summary" [(ngModel)]="displayAccountActivityDetailed" [value]="false"> Summary
+              </label>
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="detailed" [(ngModel)]="displayAccountActivityDetailed" [value]="true"> Detail
+              </label>
             </div>
-            <div class="card" id="account-overview">
-              <div class="card-header bg-white font-italic font-weight-normal">filters</div>
-              <div class="card-body">
-                <div *ngFor="let parcelLedger of parcelLedgersForWaterYear | slice: 0:activityDisplayCount; let last = last;">
+          </div>
+        </div>
+        <div class="card" id="activity-summary"  *ngIf="!displayAccountActivityDetailed; else accountActivityDetailed">
+          <div class="card-body">
+            <div *ngFor="let parcelLedger of parcelLedgersForWaterYear | slice: 0:activityDisplayCount; let last = last;">
+              <div class="row">
+                <div class="col-md-2 mb-4">
+                  <span class="label">Effective Date</span>
+                  {{parcelLedger.EffectiveDate | date: 'shortDate'}}
+                </div>
+                <div class="col-md-10">
                   <div class="row">
-                    <div class="col-md-2 mb-4">
-                      <span class="label">Effective Date</span>
-                      {{parcelLedger.EffectiveDate | date: 'shortDate'}}
-                    </div>
-                    <div class="col-md-10">
+                    <div class="col-lg-3 mb-4">
                       <div class="row">
-                        <div class="col-lg-3 mb-4">
-                          <div class="row">
-                            <div class="col-sm-12 mb-4">
-                              <span class="label">Transaction Type</span>
-                              {{parcelLedger.TransactionType.TransactionTypeName}}
-                            </div>
-                            <div class="col-sm-12">
-                              <span class="label">Source Type</span>
-                              {{parcelLedger.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName}}
-                            </div>
-                          </div>
+                        <div class="col-sm-12 mb-4">
+                          <span class="label">Transaction Type</span>
+                          {{parcelLedger.TransactionType.TransactionTypeName}}
                         </div>
-                        <div class="col-sm-9">
-                          <div class="row">
-                            <div class="col-sm-12 mb-4" *ngIf="parcelLedger.TransactionDescription">
-                              <span class="label">Description</span>
-                              {{parcelLedger.TransactionDescription}}
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                              <span class="label">Parcel</span>
-                              <a routerLink="/parcels/{{parcelLedger.Parcel.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4" *ngIf="parcelLedger.WaterType">
-                              <span class="label">Water Type</span>
-                              {{parcelLedger.WaterType.WaterTypeName}}
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                              <span class="label">Quantity</span>
-                              {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                              <span class="label">Balance</span>
-                              {{parcelLedgersBalance.get(parcelLedger.ParcelLedgerID) | number: '1.1-1'}} {{unitsShown}}
-                            </div>
-                          </div>
+                        <div class="col-sm-12">
+                          <span class="label">Source Type</span>
+                          {{parcelLedger.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName}}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-9">
+                      <div class="row">
+                        <div class="col-sm-12 mb-4" *ngIf="parcelLedger.TransactionDescription">
+                          <span class="label">Description</span>
+                          {{parcelLedger.TransactionDescription}}
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                          <span class="label">Parcel</span>
+                          <a routerLink="/parcels/{{parcelLedger.Parcel.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4" *ngIf="parcelLedger.WaterType">
+                          <span class="label">Water Type</span>
+                          {{parcelLedger.WaterType.WaterTypeName}}
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                          <span class="label">Quantity</span>
+                          {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.1-1'}} {{unitsShown}}
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                          <span class="label">Balance</span>
+                          {{parcelLedgersBalance.get(parcelLedger.ParcelLedgerID) | number: '1.1-1'}} {{unitsShown}}
                         </div>
                       </div>
                     </div>
                   </div>
-                  <hr *ngIf="!last" />
-                </div>
-                <div class="row d-flex mt-4">
-                  <button class="btn btn-secondary m-auto" *ngIf="activityDisplayCount < parcelLedgersForWaterYear.length; else noEntriesToLoad" 
-                    (click)="updateActivityDisplayCount()">Show More Activity</button>
-                  <ng-template #noEntriesToLoad>
-                    <div class="m-auto font-italic">There is no more activity to show for the selected water year.</div>
-                  </ng-template>
                 </div>
               </div>
+              <hr *ngIf="!last" />
+            </div>
+            <div class="row d-flex mt-4">
+              <button class="btn btn-secondary m-auto" *ngIf="activityDisplayCount < parcelLedgersForWaterYear.length; else noEntriesToLoad" 
+                (click)="updateActivityDisplayCount()">Show More Activity</button>
+              <ng-template #noEntriesToLoad>
+                <div class="m-auto font-italic">There is no more activity to show for the selected water year.</div>
+              </ng-template>
             </div>
           </div>
         </div>
+        <ng-template #accountActivityDetailed>
+          <div class="card">
+            <div class="card-body">
+              <div class="col-sm-12 text-right mb-2">
+                <a class="btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportActivityDetailGridToCsv()" placement="top"
+                ngbTooltip="Download Account Activity Report"><i class="fas fa-download"></i>
+              </a>
+              </div>
+              <ag-grid-angular #activityDetailGrid class="ag-theme-balham" style="width: 100%; height: 700px;"
+              [columnDefs]="activityDetailGridColDefs" [defaultColDef]="defaultColDef" [rowData]="rowData" (gridReady)="onGridReady($event)"
+                [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+              </ag-grid-angular>
+            </div>
+          </div>
+        </ng-template>
       </div>
       <div class="col-sm-12">
         <span class="h3 mb-3">Water Budget Overview</span>
