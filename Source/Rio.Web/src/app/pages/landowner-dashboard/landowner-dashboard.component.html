@@ -225,7 +225,7 @@
               </a>
               </div>
               <ag-grid-angular #activityDetailGrid class="ag-theme-balham" style="width: 100%; height: 700px;"
-              [columnDefs]="activityDetailGridColDefs" [defaultColDef]="defaultColDef" [rowData]="rowData" (gridReady)="onGridReady($event)"
+                [columnDefs]="activityDetailGridColDefs" [defaultColDef]="defaultColDef" (gridReady)="onGridReady($event)"
                 [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
               </ag-grid-angular>
             </div>

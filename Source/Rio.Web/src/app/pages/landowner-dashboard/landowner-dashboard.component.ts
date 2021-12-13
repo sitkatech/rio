@@ -89,7 +89,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
  
   public activityDetailGridColDefs: ColDef[];
   public defaultColDef: ColDef;
-  public rowData = [];
   private columnApi: ColumnApi;
   private gridApi: GridApi;
 
@@ -483,7 +482,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
     this.activityDetailGridColDefs = [
       { 
-        headerName: 'APN', field: 'Parcel.ParcelNumber', filter: true, valueGetter: function (params: any) {
+        headerName: 'APN', field: 'Parcel.ParcelNumber', valueGetter: function (params: any) {
           return { LinkValue: params.data.Parcel.ParcelID, LinkDisplay: params.data.Parcel.ParcelNumber }
         }, filterValueGetter: function (params: any) {
           return params.data.Parcel.ParcelNumber;
@@ -509,6 +508,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         }
       }
     ];
+
+    this.defaultColDef = {
+      sortable: true, filter: true
+    }
   }
 
   private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
