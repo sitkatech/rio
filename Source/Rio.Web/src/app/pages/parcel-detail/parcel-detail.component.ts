@@ -106,10 +106,11 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
-        headerName: 'Water Type', valueGetter: function (params: any) {
+        headerName: 'Supply Type', valueGetter: function (params: any) {
           return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
         }
       },
+      { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
       { 
         headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter', cellStyle: {textAlign: "right"},
         valueGetter: function (params: any) { return parseFloat(_decimalPipe.transform(params.data.TransactionAmount, "1.0-1")); }, 
