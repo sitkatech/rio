@@ -240,6 +240,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private updateParcelLedgersAndChartDataForWaterYear():void {
     this.parcelLedgersForWaterYear = this.getParcelLedgersForWaterYear();
     this.parcelLedgersBalance = this.createParcelLedgersBalance();
+
+    if (this.displayAccountActivityDetailed) {
+      this.gridApi.setRowData(this.parcelLedgersForWaterYear);
+    }
     
     this.waterUsages = {
       Year: this.waterYearToDisplay.Year,
@@ -540,7 +544,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public exportActivityDetailGridToCsv() {
-    console.log(":)");
     this.utilityFunctionsService.exportGridToCsv(this.activityDetailGrid, this.waterYearToDisplay.Year + 'ActivityforAccount' + this.activeAccount.AccountNumber + '.csv', null);
   }
   
