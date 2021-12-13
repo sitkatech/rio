@@ -6,6 +6,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 import { ApplicationInternalNameEnum } from 'src/app/shared/models/enums/application-internal-name.enum';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-home-index',
@@ -20,25 +21,36 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
     public ApplicationInternalNameEnum = ApplicationInternalNameEnum;
     public currentUserAccounts: AccountSimpleDto[];
 
-    constructor(private authenticationService: AuthenticationService) {
+    constructor(private authenticationService: AuthenticationService,
+        private router: Router,
+        private route: ActivatedRoute) {
     }
 
     public ngOnInit(): void {
-        if (localStorage.getItem("loginOnReturn")){
-            localStorage.removeItem("loginOnReturn");
-            this.authenticationService.login();
-        }
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => { 
-            this.currentUser = currentUser;
-
-            if (currentUser && !this.userIsUnassigned() && !this.userRoleIsDisabled()) {
-                this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
+        this.route.queryParams.subscribe(params => {
+            //We're logging in
+            if (params.hasOwnProperty("code")) {
+                this.router.navigate(["/signin-oidc"], { queryParams: params });
+                return;
             }
+
+            if (localStorage.getItem("loginOnReturn")) {
+                localStorage.removeItem("loginOnReturn");
+                this.authenticationService.login();
+            }
+
+            this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+                this.currentUser = currentUser;
+                if (currentUser && !this.userIsUnassigned() && !this.userRoleIsDisabled()) {
+                    this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
+                }
+            });
+
         });
     }
 
     ngOnDestroy(): void {
-      this.watchUserChangeSubscription.unsubscribe();
+      this.watchUserChangeSubscription?.unsubscribe();
     }
     
     public userIsUnassigned(){

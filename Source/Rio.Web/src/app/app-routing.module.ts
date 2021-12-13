@@ -99,7 +99,6 @@ const routes: Routes = [
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "create-user-profile", component: CreateUserProfileComponent },
   { path: "training-videos", component: TrainingVideosComponent},
-  { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
   { path: "help", component: HelpComponent },
@@ -108,11 +107,12 @@ const routes: Routes = [
   { path: "measuring-water-use-with-openet", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "roles-and-permissions", component: RolesAndPermissionsComponent },
-  { path: "signin-oidc", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },
   { path: 'unauthenticated', component: UnauthenticatedComponent },
+  { path: "signin-oidc", component: LoginCallbackComponent },
+  { path: "", component: HomeIndexComponent},
   { path: '**', component: NotFoundComponent }
 ];
 

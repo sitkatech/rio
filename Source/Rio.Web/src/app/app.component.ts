@@ -70,16 +70,15 @@ export class AppComponent {
                         console.log("token_received");
                         subject.next();
                         subject.complete();
-                        this.authenticationService.checkAuthentication();
                         break;
                     case 'token_refreshed':
                         subject.next();
                         subject.complete();
-                        //this.authenticationService.checkAuthentication();
+                        this.authenticationService.checkAuthentication();
                         break;
                     case 'token_refresh_error':
                         console.log("token_refresh_error");
-                        this.authenticationService.logout();
+                        this.authenticationService.forcedLogout();
                         break;
                     // case 'session_changed':
                     //     console.log("session_changed");

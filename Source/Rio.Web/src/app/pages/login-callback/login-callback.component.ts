@@ -17,7 +17,13 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-        if (this.authenticationService.isUserAnAdministrator(currentUser)){
+        if (sessionStorage.getItem("authRedirectUrl")) {
+          this.router.navigateByUrl(sessionStorage.getItem("authRedirectUrl"))
+              .then(() => {
+                  sessionStorage.removeItem("authRedirectUrl");
+              });
+        } 
+        else if (this.authenticationService.isUserAnAdministrator(currentUser)){
           this.router.navigate(['/manager-dashboard']);
         } else if (this.authenticationService.isUserALandOwnerOrDemoUser(currentUser)){
           this.userService.listAccountsByUserID(currentUser.UserID).subscribe(result => {

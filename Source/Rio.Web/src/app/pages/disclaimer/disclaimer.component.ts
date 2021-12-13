@@ -15,8 +15,9 @@ export class DisclaimerComponent implements OnInit {
   private watchUserChangeSubscription : any;
   private currentUser : UserDto;
   private forced : boolean = true;
-  private return : string = '';
+  private returnRoute : string = '';
   public richTextTypeID: number = CustomRichTextType.Disclaimer;
+  returnQueryParams: any;
 
   constructor(
     private userService: UserService,
@@ -29,7 +30,10 @@ export class DisclaimerComponent implements OnInit {
     this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
       this.currentUser = currentUser;
     });
-    this.route.queryParams.subscribe(params => this.return =  params['return'] || '/');
+    this.route.queryParams.subscribe(params => {
+      this.returnRoute =  params['route'] || '/';
+      this.returnQueryParams = params['queryParams'] || null;
+    });
     this.forced = this.route.snapshot.paramMap.get("forced") === "true";
   }
 
@@ -40,7 +44,7 @@ export class DisclaimerComponent implements OnInit {
   public setDisclaimerAcknowledged(): void {
     this.userService.setDisclaimerAcknowledgedDate(this.currentUser.UserID).subscribe(x=>{
       this.authenticationService.refreshUserInfo(x);
-      this.router.navigate([this.return]);
+      this.router.navigate([this.returnRoute], {queryParams : JSON.parse(this.returnQueryParams)});
     });
   }
 }
