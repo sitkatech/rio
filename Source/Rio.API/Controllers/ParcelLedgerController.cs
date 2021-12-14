@@ -44,8 +44,8 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
-            return Ok(postingCount);
+            ParcelLedgers.CreateNew(_dbContext, parcelDto, parcelLedgerCreateDto, userDto.UserID);
+            return Ok();
         }
 
         [HttpPost("parcel-ledgers/bulk-new")]
@@ -53,7 +53,7 @@ namespace Rio.API.Controllers
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
+            var postingCount = ParcelLedgers.BulkCreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
             return Ok(postingCount);
         }
 

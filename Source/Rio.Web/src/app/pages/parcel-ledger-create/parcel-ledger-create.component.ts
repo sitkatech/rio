@@ -95,7 +95,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
     this.model.ParcelNumbers.push(this.selectedParcelNumber);
 
     this.parcelLedgerService.newTransaction(this.model)
-      .subscribe(response => {
+      .subscribe(() => {
         this.isLoadingSubmit = false;
         createTransactionForm.reset();
         
