@@ -19,7 +19,8 @@ begin
 	left join 
 	(
 		select pl.ParcelID, 
-			isnull(sum(case when pl.TransactionTypeID = 1 and pl.ParcelLedgerEntrySourceTypeID = 1 then pl.TransactionAmount else 0 end), 0) as Allocation,
+			isnull(sum(case when pl.TransactionTypeID = 1 and (pl.ParcelLedgerEntrySourceTypeID = 1 or pl.ParcelLedgerEntrySourceTypeID = 3)
+				then pl.TransactionAmount else 0 end), 0) as Allocation,
 			abs(sum(case when pl.TransactionTypeID = 2 then pl.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.ParcelLedger pl 
 		where year(pl.TransactionDate) = @year

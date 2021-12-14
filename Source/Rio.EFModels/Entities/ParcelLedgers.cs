@@ -23,7 +23,8 @@ namespace Rio.EFModels.Entities
         private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
         {
             return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && 
+                            (x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual || x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.CIMIS));
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
