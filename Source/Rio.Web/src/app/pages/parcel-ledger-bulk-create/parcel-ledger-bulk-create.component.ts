@@ -95,19 +95,25 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
       { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true },
-      { headerName: 'APN', field: 'ParcelNumber' },
+      { 
+        headerName: 'APN', 
+        valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
+        filterValueGetter: function (params) { return params.data.ParcelNumber; },  
+      },
       {
-        headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        headerName: 'Area (acres)', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
         valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1')); }
       },
       { 
-        headerName: 'Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName };
-        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
+        headerName: 'Account', 
+        valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
+        filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
       },
       { 
-        headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.Allocation, '1.1-1')); }
+        headerName: 'Total Allocation', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
+        valueGetter: function(params: any) { return _decimalPipe.transform(params.data.Allocation, '1.1-1'); }
       }
     ];
 
@@ -122,9 +128,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.waterTypes.forEach(waterType => {
       colDefsWithWaterTypes.push(
         {
-          headerName: waterType.WaterTypeName, field: 'Allocations[waterType.WaterTypeID]', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+          headerName: waterType.WaterTypeName, field: 'Allocations[waterType.WaterTypeID]', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
           valueGetter: function (params) { return !params.data.Allocations[waterType.WaterTypeID] ? 0.0 : 
-            parseFloat(_decimalPipe.transform(params.data.Allocations[waterType.WaterTypeID], "1.1-1"))
+            _decimalPipe.transform(params.data.Allocations[waterType.WaterTypeID], "1.1-1");
           },
         }
       );
