@@ -12,12 +12,13 @@ import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-led
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, RowSelectedEvent } from 'ag-grid-community';
+import { ColDef, GridOptions, RowSelectedEvent } from 'ag-grid-community';
 import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
@@ -42,10 +43,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
+  public parcelAllocationAndUsagesByYear: ParcelAllocationAndUsageDto[];
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
-  public rowData = [];
-  public gridOptions;
+  public gridOptions: GridOptions;
   
   constructor(
     private route: ActivatedRoute,
@@ -71,7 +72,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
       ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
         this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
-        this.rowData = parcelAllocationAndUsagesByYear;
+        this.parcelAllocationAndUsagesByYear = parcelAllocationAndUsagesByYear;
 
         this.insertWaterTypeColDefs();
       });
@@ -94,7 +95,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private initializeParcelSelectGrid() {
     let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
-      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true },
+      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true },
       { 
         headerName: 'APN', 
         valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
@@ -136,7 +137,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
-    this.parcelSelectGrid.api.setRowData(this.rowData);
+    this.parcelSelectGrid.api.setRowData(this.parcelAllocationAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
 
@@ -166,9 +167,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.clearErrorAlerts();
 
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
-    console.log(this.model);
 
-    this.parcelLedgerService.newTransaction(this.model)
+    this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         createTransactionForm.reset();
