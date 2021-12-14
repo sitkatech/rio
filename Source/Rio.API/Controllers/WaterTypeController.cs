@@ -38,7 +38,8 @@ namespace Rio.API.Controllers
                 IsSourcedFromApi = x.IsSourcedFromApi,
                 WaterTypeID = x.WaterTypeID,
                 WaterTypeDefinition = x.WaterTypeDefinition,
-                SortOrder = x.SortOrder
+                SortOrder = x.SortOrder,
+                IsUserDefined = true
             }).ToList();
 
             // add new PATs before the merge.
