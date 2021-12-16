@@ -65,7 +65,7 @@ namespace Rio.API.Controllers
 
         private void ValidateEffectiveDate(ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            var earliestWaterYear = WaterYear.List(_dbContext)[^1];
+            var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();
             if (parcelLedgerCreateDto.EffectiveDate.Year < earliestWaterYear.Year)
             {
                 ModelState.AddModelError("EffectiveDate", 
