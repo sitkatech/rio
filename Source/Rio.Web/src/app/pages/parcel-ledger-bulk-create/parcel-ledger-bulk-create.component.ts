@@ -17,14 +17,14 @@ import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
-import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
   templateUrl: './parcel-ledger-bulk-create.component.html',
   styleUrls: ['./parcel-ledger-bulk-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
 
 })
 export class ParcelLedgerBulkCreateComponent implements OnInit {
@@ -167,6 +167,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.clearErrorAlerts();
 
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
+    debugger;
 
     this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {
