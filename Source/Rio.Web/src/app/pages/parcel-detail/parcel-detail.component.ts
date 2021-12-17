@@ -112,8 +112,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
       { 
-        headerName: 'Transaction Amount', field: 'TransactionAmount', filter: 'agNumberColumnFilter', cellStyle: {textAlign: "right"},
-        valueGetter: function (params: any) { return parseFloat(_decimalPipe.transform(params.data.TransactionAmount, "1.0-1")); }, 
+        headerName: 'Transaction Amount', field: 'TransactionAmount', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
+        valueGetter: function (params: any) { return _decimalPipe.transform(params.data.TransactionAmount, "1.0-1"); }, 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
