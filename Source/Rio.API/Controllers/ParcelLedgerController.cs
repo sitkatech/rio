@@ -36,6 +36,8 @@ namespace Rio.API.Controllers
             ValidateEffectiveDate(parcelLedgerCreateDto);
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
+                // flip TransactionAmount sign for usage adjustment; usage is negative in the ledgera user-inputted positive value should increase usage sum (and vice versa)
+                parcelLedgerCreateDto.TransactionAmount *= -1;
                 ValidateUsageAmount(parcelLedgerCreateDto);
             }
             if (!ModelState.IsValid)
@@ -87,7 +89,7 @@ namespace Rio.API.Controllers
                 if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                 {
                     ModelState.AddModelError("TransactionAmount", 
-                        $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Please update quantity for correction so usage is not less than 0.");
+                        $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Month}/{parcelLedgerCreateDto.EffectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Usage correction quantity cannot exceed total usage for month.");
                 }
             }
         }
