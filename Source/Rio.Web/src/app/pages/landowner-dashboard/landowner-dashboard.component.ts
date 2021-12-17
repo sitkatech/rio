@@ -502,7 +502,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         valueGetter: function (params: any) { return parseFloat(_decimalPipe.transform(params.data.TransactionAmount, "1.0-1")); }, 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
-      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
+      { headerName: 'Comment', field: 'UserComment', sortable: false,
         valueGetter: function (params: any) {
           return params.data.UserComment ?? '-';
         }
