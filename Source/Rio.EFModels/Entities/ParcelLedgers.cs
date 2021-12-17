@@ -112,7 +112,8 @@ namespace Rio.EFModels.Entities
                 var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
                 parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext)
                     .Where(x => parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key)
-                    .OrderByDescending(x => x.EffectiveDate)
+                    .OrderByDescending(x => x.TransactionDate)
+                    .ThenByDescending(x => x.EffectiveDate)
                     .Select(x => x.AsDto()));
             }
 
