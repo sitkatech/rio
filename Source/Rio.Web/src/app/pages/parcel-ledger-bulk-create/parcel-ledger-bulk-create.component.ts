@@ -167,7 +167,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.clearErrorAlerts();
 
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
-    debugger;
 
     this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {

@@ -170,33 +170,27 @@ namespace Rio.EFModels.Entities
         public static int BulkCreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
         {
             int createdCount = 0;
-            foreach (var parcelNumber in parcelLedgerCreateDto.ParcelNumbers)
+            var parcels = Parcel.ListByParcelNumbers(dbContext, parcelLedgerCreateDto.ParcelNumbers);
+            
+            foreach (var parcel in parcels)
             {
-                var parcel = dbContext.Parcels.SingleOrDefault(x => x.ParcelNumber == parcelNumber);
-                var parcelID = parcel?.ParcelID;
-                var parcelAreaInAcres = parcel?.ParcelAreaInAcres;
-
-                if (parcelID.HasValue && parcelAreaInAcres.HasValue)
+                var parcelLedger = new ParcelLedger()
                 {
-                    var parcelLedger = new ParcelLedger()
-                    {
-                        ParcelID = parcelID.Value,
-                        TransactionDate = DateTime.UtcNow,
-                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
-                        TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
-                        ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
-                        TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcelAreaInAcres.Value,
-                        WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
-                        TransactionDescription =
-                            $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
-                        UserID = userID,
-                        UserComment = parcelLedgerCreateDto.UserComment
-                    };
-                    dbContext.ParcelLedgers.Add(parcelLedger);
-                    createdCount++;
-                }
+                    ParcelID = parcel.ParcelID,
+                    TransactionDate = DateTime.UtcNow,
+                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                    TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                    ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
+                    TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcel.ParcelAreaInAcres,
+                    WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
+                    TransactionDescription =
+                        $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                    UserID = userID,
+                    UserComment = parcelLedgerCreateDto.UserComment
+                };
+                dbContext.ParcelLedgers.Add(parcelLedger);
+                createdCount++;
             }
-
             dbContext.SaveChanges();
 
             return createdCount;
