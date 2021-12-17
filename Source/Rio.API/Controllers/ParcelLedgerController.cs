@@ -26,7 +26,6 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            
             var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]); 
             if (parcelDto == null)
             {
@@ -34,36 +33,54 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            ValidateEffectiveDate(parcelLedgerCreateDto);
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
-                ValidateUsageParcelLedger(parcelLedgerCreateDto);
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                ValidateUsageAmount(parcelLedgerCreateDto);
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
-            return Ok(postingCount);
+            ParcelLedgers.CreateNew(_dbContext, parcelDto, parcelLedgerCreateDto, userDto.UserID);
+            return Ok();
         }
 
         [HttpPost("parcel-ledgers/bulk-new")]
         [ParcelManageFeature]
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
+            ValidateEffectiveDate(parcelLedgerCreateDto);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
+            var postingCount = ParcelLedgers.BulkCreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
             return Ok(postingCount);
         }
 
-        private void ValidateUsageParcelLedger(ParcelLedgerCreateDto parcelLedgerCreateDto)
-        { 
-            if (parcelLedgerCreateDto.EffectiveDate > DateTime.UtcNow)
+        private void ValidateEffectiveDate(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        {
+            var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();
+            if (parcelLedgerCreateDto.EffectiveDate.Year < earliestWaterYear.Year)
             {
-                ModelState.AddModelError("EffectiveDate","Transactions to adjust usage for future dates are not allowed.");
+                ModelState.AddModelError("EffectiveDate", 
+                    $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
             }
 
+            var currentDate = DateTime.Today.AddDays(1).AddSeconds(-1);
+            if (DateTime.Compare(parcelLedgerCreateDto.EffectiveDate, currentDate) > 0)
+            {
+                ModelState.AddModelError("EffectiveDate", "Transactions for future dates are not allowed.");
+            }
+        }
+
+        private void ValidateUsageAmount(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        { 
             if (parcelLedgerCreateDto.TransactionAmount > 0)
             {
                 var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Year, parcelLedgerCreateDto.EffectiveDate.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
