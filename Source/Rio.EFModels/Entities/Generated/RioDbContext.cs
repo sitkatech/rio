@@ -35,7 +35,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<OpenETSyncHistory> OpenETSyncHistories { get; set; }
         public virtual DbSet<OpenETSyncResultType> OpenETSyncResultTypes { get; set; }
         public virtual DbSet<Parcel> Parcels { get; set; }
-        public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
         public virtual DbSet<ParcelLedgerEntrySourceType> ParcelLedgerEntrySourceTypes { get; set; }
@@ -315,19 +314,6 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.ParcelStatus)
                     .WithMany(p => p.Parcels)
                     .HasForeignKey(d => d.ParcelStatusID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelAllocationHistory>(entity =>
-            {
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ParcelAllocationHistories)
-                    .HasForeignKey(d => d.UserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.WaterType)
-                    .WithMany(p => p.ParcelAllocationHistories)
-                    .HasForeignKey(d => d.WaterTypeID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 

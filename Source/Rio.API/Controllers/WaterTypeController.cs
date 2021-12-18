@@ -38,8 +38,7 @@ namespace Rio.API.Controllers
                 IsSourcedFromApi = x.IsSourcedFromApi,
                 WaterTypeID = x.WaterTypeID,
                 WaterTypeDefinition = x.WaterTypeDefinition,
-                SortOrder = x.SortOrder,
-                IsUserDefined = true
+                SortOrder = x.SortOrder
             }).ToList();
 
             // add new PATs before the merge.
@@ -53,7 +52,6 @@ namespace Rio.API.Controllers
             var deletedWaterTypeIDs = existingWaterTypes.Select(x => x.WaterTypeID).Where(x =>
                 !waterTypeDtos.Select(y => y.WaterTypeID).Contains(x)).ToList();
             _dbContext.ParcelLedgers.RemoveRange(_dbContext.ParcelLedgers.Where(x=> x.WaterTypeID.HasValue && deletedWaterTypeIDs.Contains(x.WaterTypeID.Value)));
-            _dbContext.ParcelAllocationHistories.RemoveRange(_dbContext.ParcelAllocationHistories.Where(x=> deletedWaterTypeIDs.Contains(x.WaterTypeID)));
             
             var allInDatabase = _dbContext.WaterTypes;
 

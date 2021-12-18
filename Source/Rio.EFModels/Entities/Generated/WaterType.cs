@@ -14,7 +14,6 @@ namespace Rio.EFModels.Entities
     {
         public WaterType()
         {
-            ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
             ParcelLedgers = new HashSet<ParcelLedger>();
         }
 
@@ -27,10 +26,7 @@ namespace Rio.EFModels.Entities
         public string WaterTypeDefinition { get; set; }
         public bool IsSourcedFromApi { get; set; }
         public int SortOrder { get; set; }
-        public bool IsUserDefined { get; set; }
 
-        [InverseProperty(nameof(ParcelAllocationHistory.WaterType))]
-        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
         [InverseProperty(nameof(ParcelLedger.WaterType))]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
     }

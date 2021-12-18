@@ -5,8 +5,6 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { BoundingBoxDto } from 'src/app/shared/generated/model/bounding-box-dto';
 import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
-import { ParcelAllocationHistoryDto } from 'src/app/shared/generated/model/parcel-allocation-history-dto';
-import { ParcelAllocationUpsertDto } from 'src/app/shared/generated/model/parcel-allocation-upsert-dto';
 import { ParcelChangeOwnerDto } from 'src/app/shared/generated/model/parcel-change-owner-dto';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
@@ -52,35 +50,6 @@ export class ParcelService {
     return this.apiService.postToApi(route, parcelIDListDto);
   }
 
-  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto, userID: number): Observable<any[]> {
-    let route = `/parcels/${userID}/bulkSetAnnualParcelAllocation`;
-    return this.apiService.postToApi(route, model);
-  }
-
-  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, waterTypeID: number): Observable<any> {
-    const programApiRoute = environment.mainAppApiUrl
-    const route = `${programApiRoute}/parcels/${waterYear}/${waterTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
-    var result = this.httpClient.post<any>(
-      route,
-      file, // Send the File Blob as the POST body.
-      {
-        // NOTE: Because we are posting a Blob (File is a specialized Blob
-        // object) as the POST body, we have to include the Content-Type
-        // header. If we don't, the server will try to parse the body as
-        // plain text.
-        headers: {
-          "Content-Type": "application/vnd.ms-excel"
-        },
-        params: {
-          clientFilename: file.name,
-          mimeType: "application/vnd.ms-excel"
-        }
-      }
-    );
-
-    return result;
-  }
-
   getParcelsWithLandOwners(year: number): Observable<Array<ParcelDto>> {
     let route = `/parcels/getParcelsWithLandOwners/${year}`;
     return this.apiService.getFromApi(route);
@@ -93,11 +62,6 @@ export class ParcelService {
 
   getParcelOwnershipHistory(parcelID: number): Observable<Array<ParcelOwnershipDto>> {
     let route = `/parcels/${parcelID}/getOwnershipHistory`
-    return this.apiService.getFromApi(route);
-  }
-
-  getParcelAllocationHistory(): Observable<Array<ParcelAllocationHistoryDto>> {
-    let route = `/parcels/getParcelAllocationHistory`
     return this.apiService.getFromApi(route);
   }
 

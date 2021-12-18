@@ -1589,123 +1589,6 @@
         }
       }
     },
-    "/parcels/{userID}/bulkSetAnnualParcelAllocation": {
-      "post": {
-        "tags": [
-          "Parcel"
-        ],
-        "parameters": [
-          {
-            "name": "userID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelAllocationUpsertDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelAllocationUpsertDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelAllocationUpsertDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelAllocationUpsertDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/parcels/{waterYear}/{waterTypeID}/bulkSetAnnualParcelAllocationFileUpload": {
-      "post": {
-        "tags": [
-          "Parcel"
-        ],
-        "parameters": [
-          {
-            "name": "waterYear",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "waterTypeID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/parcels/getParcelAllocationHistory": {
-      "get": {
-        "tags": [
-          "Parcel"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationHistoryDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationHistoryDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationHistoryDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/parcels/getBoundingBox": {
       "post": {
         "tags": [
@@ -4311,73 +4194,6 @@
         },
         "additionalProperties": false
       },
-      "FileResourceDto": {
-        "type": "object",
-        "properties": {
-          "FileResourceID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FileResourceMimeType": {
-            "$ref": "#/components/schemas/FileResourceMimeTypeDto"
-          },
-          "OriginalBaseFilename": {
-            "type": "string",
-            "nullable": true
-          },
-          "OriginalFileExtension": {
-            "type": "string",
-            "nullable": true
-          },
-          "FileResourceGUID": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "FileResourceData": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "CreateUser": {
-            "$ref": "#/components/schemas/UserDto"
-          },
-          "CreateDate": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "FileResourceMimeTypeDto": {
-        "type": "object",
-        "properties": {
-          "FileResourceMimeTypeID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "FileResourceMimeTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FileResourceMimeTypeDisplayName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FileResourceMimeTypeContentTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "FileResourceMimeTypeIconSmallFilename": {
-            "type": "string",
-            "nullable": true
-          },
-          "FileResourceMimeTypeIconNormalFilename": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "LandownerUsageReportDto": {
         "type": "object",
         "properties": {
@@ -4687,61 +4503,6 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParcelAllocationHistoryDto": {
-        "type": "object",
-        "properties": {
-          "ParcelAllocationHistoryID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelAllocationHistoryDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "ParcelAllocationHistoryWaterYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "WaterType": {
-            "$ref": "#/components/schemas/WaterTypeDto"
-          },
-          "User": {
-            "$ref": "#/components/schemas/UserDto"
-          },
-          "FileResource": {
-            "$ref": "#/components/schemas/FileResourceDto"
-          },
-          "ParcelAllocationHistoryValue": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParcelAllocationUpsertDto": {
-        "required": [
-          "AcreFeetAllocated",
-          "WaterTypeID",
-          "WaterYear"
-        ],
-        "type": "object",
-        "properties": {
-          "WaterYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "WaterTypeID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AcreFeetAllocated": {
-            "type": "number",
-            "format": "double"
           }
         },
         "additionalProperties": false
@@ -6109,9 +5870,6 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
-          },
-          "IsUserDefined": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
