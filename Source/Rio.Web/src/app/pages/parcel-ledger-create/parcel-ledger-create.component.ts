@@ -64,7 +64,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
       }
 
       this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
-        this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
+        this.waterTypes = waterTypes;
       });
     });
   }
