@@ -23,7 +23,7 @@ import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
   templateUrl: './create-water-transactions.component.html',
   styleUrls: ['./create-water-transactions.component.scss']
 })
-export class CreateWaterTransactions implements OnInit, OnDestroy {
+export class CreateWaterTransactionsComponent implements OnInit, OnDestroy {
   @ViewChild('parcelAllocationHistoryGrid') parcelAllocationHistoryGrid: AgGridAngular;
   @ViewChild("updateWaterAllocationModalContent") updateWaterAllocationModalContent
 

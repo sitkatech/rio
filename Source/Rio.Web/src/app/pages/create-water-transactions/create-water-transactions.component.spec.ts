@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { SetWaterAllocationComponent } from './set-water-allocation.component';
+import { CreateWaterTransactionsComponent } from './create-water-transactions.component';
 
-describe('ParcelBulkSetAllocationComponent', () => {
-  let component: SetWaterAllocationComponent;
-  let fixture: ComponentFixture<SetWaterAllocationComponent>;
+describe('CreateWaterTransactionsComponent', () => {
+  let component: CreateWaterTransactionsComponent;
+  let fixture: ComponentFixture<CreateWaterTransactionsComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ SetWaterAllocationComponent ]
+      declarations: [ CreateWaterTransactionsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SetWaterAllocationComponent);
+    fixture = TestBed.createComponent(CreateWaterTransactionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
