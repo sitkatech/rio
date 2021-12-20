@@ -500,6 +500,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
       { headerName: 'Total Allocation (ac-ft)', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
+      { headerName: 'Precipitation', field: 'Precipitation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
       // N.B.: The columns for individual allocation types will be inserted here via a splice after the WaterTypes are retrieved.
       // 
       { headerName: 'Purchased (ac-ft)', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },

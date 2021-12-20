@@ -14,6 +14,7 @@ import { ParcelStatusDto } from '././parcel-status-dto';
 
 export class ParcelAllocationAndUsageDto { 
     Allocation?: number;
+    Precipitation?: number;
     UsageToDate?: number;
     Allocations?: { [key: string]: number; };
     ParcelID?: number;
