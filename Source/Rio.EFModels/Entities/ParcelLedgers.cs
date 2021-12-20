@@ -59,7 +59,7 @@ namespace Rio.EFModels.Entities
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
             var parcelAllocations = GetAllocationsImpl(dbContext)
-                .Where(x => x.EffectiveDate.Year == year);
+                .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
             if (parcelAllocations.Any())
             {
 
