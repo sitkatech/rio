@@ -6,6 +6,7 @@ import { GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef } from 'ag-grid-community';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { WaterYearService } from 'src/app/services/water-year.service';
@@ -32,8 +33,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public gridOptions: GridOptions;
   public rowData = [];
   public mapHeight: string = "500px"
-  public columnDefs: any;
+  public columnDefs: Array<ColDef>;
   public waterTypes: WaterTypeDto[];
+  private waterTypeColumnDefInsertIndex = 4;
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -109,8 +111,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
         { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
+        { headerName: 'Precipitation', field: 'Precipitation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
+        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
       ];
 
       this.gridOptions = <GridOptions>{};
@@ -123,8 +126,9 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.waterTypes = waterTypes;
 
         // finish setting up the column defs based on existing waterTypes before loading data.
+        var waterTypeColDefs: Array<ColDef> = [];
         this.waterTypes.forEach(waterType => {
-          this.columnDefs.push({
+          waterTypeColDefs.push({
             headerName: waterType.WaterTypeName,
             valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
             sortable: true,
@@ -135,6 +139,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             }
           })
         });
+
+        this.columnDefs.splice(this.waterTypeColumnDefInsertIndex, 0, ...waterTypeColDefs)
 
         this.columnDefs.forEach(x => {
           x.resizable = true;

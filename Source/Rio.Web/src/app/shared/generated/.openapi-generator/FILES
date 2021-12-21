@@ -11,8 +11,6 @@ model/cumulative-water-usage-by-month-dto.ts
 model/cumulative-water-usage-by-year-dto.ts
 model/custom-rich-text-dto.ts
 model/custom-rich-text-type-dto.ts
-model/file-resource-dto.ts
-model/file-resource-mime-type-dto.ts
 model/landowner-usage-report-dto.ts
 model/market-metrics-dto.ts
 model/models.ts
@@ -22,8 +20,6 @@ model/offer-upsert-dto.ts
 model/open-et-sync-history-dto.ts
 model/open-et-sync-result-type-dto.ts
 model/parcel-allocation-and-usage-dto.ts
-model/parcel-allocation-history-dto.ts
-model/parcel-allocation-upsert-dto.ts
 model/parcel-change-owner-dto.ts
 model/parcel-dto.ts
 model/parcel-id-list-dto.ts

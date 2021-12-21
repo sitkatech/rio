@@ -35,6 +35,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { ParcelLedgerEntrySourceTypeDto } from 'src/app/shared/generated/model/parcel-ledger-entry-source-type-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -50,9 +51,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private watchUserChangeSubscription: any;
   private watchAccountChangeSubscription: any;
   public showAcresManagedDetails: boolean;
-  public showAllocationDetails: boolean;
-  public showPurchasedDetails: boolean;
-  public showSoldDetails: boolean;
+  public showSupplyDetails: boolean;
   public unitsShown: string = "ac-ft";
   public waterUsageByParcelViewType: string = "chart";
   public LandownerDashboardViewEnum = LandownerDashboardViewEnum;
@@ -144,9 +143,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.currentUser = currentUser;
       this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Countered, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
       this.postingStatusIDs = [PostingStatusEnum.Open, PostingStatusEnum.Closed];
-      this.showAllocationDetails = false;
-      this.showPurchasedDetails = false;
-      this.showSoldDetails = false;
+      this.showSupplyDetails = false;
 
       this.currentDate = (new Date());
 
@@ -391,7 +388,12 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAllocationByWaterType(waterType: WaterTypeDto): number{
-    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.WaterType.WaterTypeID === waterType.WaterTypeID);
+    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(p => p.WaterType?.WaterTypeID === waterType.WaterTypeID);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
+  }
+
+  public getPrecipSupply(): number {
+    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
   }
 
@@ -428,11 +430,11 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getPurchasedAcreFeet(year?: number): number {
-    return this.getTotalTransactionAmountForParcelLedgers(this.getTradePurchasesForWaterYear(year));
+    return this.getTotalTransactionAmountForParcelLedgers(this.getTradePurchasesForWaterYear(year)) ?? 0;
   }
 
   public getSoldAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
-    return this.getTotalTransactionAmountForParcelLedgers(this.getTradeSalesForWaterYear(year), skipConvertToUnitsShown);
+    return this.getTotalTransactionAmountForParcelLedgers(this.getTradeSalesForWaterYear(year), skipConvertToUnitsShown) ?? 0;
   }
 
   private getTotalTransactionAmountForParcelLedgers(parcelLedgersForWaterYear: ParcelLedgerDto[], skipConvertToUnitsShown?: boolean): number {
@@ -502,7 +504,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         valueGetter: function (params: any) { return _decimalPipe.transform(params.data.TransactionAmount, "1.0-1"); }, 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
-      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
+      { headerName: 'Comment', field: 'UserComment', sortable: false,
         valueGetter: function (params: any) {
           return params.data.UserComment ?? '-';
         }

@@ -71,7 +71,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         this.waterTypeService.getWaterTypes(),
         this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
       ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
-        this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
+        this.waterTypes = waterTypes;
         this.parcelAllocationAndUsagesByYear = parcelAllocationAndUsagesByYear;
 
         this.insertWaterTypeColDefs();

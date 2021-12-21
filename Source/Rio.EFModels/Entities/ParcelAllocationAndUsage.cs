@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
@@ -17,6 +18,7 @@ namespace Rio.EFModels.Entities
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
         public decimal? Allocation { get; set; }
+        public decimal? Precipitation { get; set; }
         public decimal? UsageToDate { get; set; }
         public string AccountName { get; set; }
         public int? AccountID { get; set; }
@@ -35,6 +37,7 @@ namespace Rio.EFModels.Entities
                     ParcelNumber = parcel.ParcelNumber,
                     ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                     Allocation = parcel.Allocation,
+                    Precipitation = parcel.Precipitation,
                     UsageToDate = parcel.UsageToDate,
                 };
 

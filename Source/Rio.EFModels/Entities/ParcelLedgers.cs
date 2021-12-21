@@ -59,7 +59,7 @@ namespace Rio.EFModels.Entities
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
             var parcelAllocations = GetAllocationsImpl(dbContext)
-                .Where(x => x.EffectiveDate.Year == year);
+                .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
             if (parcelAllocations.Any())
             {
 
@@ -113,7 +113,8 @@ namespace Rio.EFModels.Entities
                 var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
                 parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext)
                     .Where(x => parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key)
-                    .OrderByDescending(x => x.EffectiveDate)
+                    .OrderByDescending(x => x.TransactionDate)
+                    .ThenByDescending(x => x.EffectiveDate)
                     .Select(x => x.AsDto()));
             }
 
