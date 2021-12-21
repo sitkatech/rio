@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
@@ -23,6 +24,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     private waterTypeService: WaterTypeService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document
   ) { }
 
   ngOnInit(): void {
@@ -40,6 +42,10 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.watchUserChangeSubscription.unsubscribe();
     this.authenticationService.dispose();
     this.cdr.detach();
+  }
+
+  public clickFileInput() {
+    this.document.getElementById("file-upload").click();
   }
 
   public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { }
