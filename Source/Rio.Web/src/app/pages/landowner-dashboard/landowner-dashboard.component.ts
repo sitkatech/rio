@@ -517,11 +517,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
+    const filterDate = Date.parse(filterLocalDateAtMidnight);
     const cellDate = Date.parse(cellValue);
-    if (cellDate == filterLocalDateAtMidnight) {
+
+    if (cellDate == filterDate) {
       return 0;
     }
-    return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+    return (cellDate < filterDate) ? -1 : 1;
   }
   
   private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
