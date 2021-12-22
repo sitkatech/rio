@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
@@ -9,6 +13,7 @@ using Org.BouncyCastle.Asn1.Sec;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.API.Controllers
@@ -63,6 +68,136 @@ namespace Rio.API.Controllers
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
             var postingCount = ParcelLedgers.BulkCreateNew(_dbContext, parcelLedgerCreateDto, userDto.UserID);
             return Ok(postingCount);
+        }
+
+        [HttpPost("parcel-ledgers/new-csv-upload")]
+        public async Task<ActionResult> NewCSVUpload(ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
+        {
+            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
+            var waterTypeDisplayName =
+                _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
+
+            if (!ParseCSVUpload(fileResource, waterTypeDisplayName, out var records, out var badRequestFromUpload))
+            {
+                return badRequestFromUpload;
+            }
+
+            if (!ValidateCSVUpload(records, waterTypeDisplayName, out var badRequestFromValidation))
+            {
+                return badRequestFromValidation;
+            }
+
+            var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+            ParcelLedgers.CreateNewFromCSV(_dbContext, parcelLedgerCreateCSVUploadDto, records, userDto.UserID);
+            return Ok();
+        }
+
+        private bool ParseCSVUpload(FileResource fileResource, string waterTypeDisplayName, out List<ParcelLedgerCreateCSV> records, out ActionResult badRequest)
+        {
+            try
+            {
+                using var memoryStream = new MemoryStream(fileResource.FileResourceData);
+                using var reader = new StreamReader(memoryStream);
+                using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+                csvReader.Configuration.RegisterClassMap(new ParcelLedgerCreateCSVMap(_dbContext, waterTypeDisplayName));
+                csvReader.Read();
+                csvReader.ReadHeader();
+                var headerNamesDuplicated =
+                    csvReader.Context.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                if (headerNamesDuplicated.Any())
+                {
+                    badRequest = BadRequest(new
+                    {
+                        validationMessage =
+                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
+                    });
+                    records = null;
+                    return false;
+                }
+
+                records = csvReader.GetRecords<ParcelLedgerCreateCSV>().ToList();
+            }
+            catch (HeaderValidationException e)
+            {
+                var headerMessage = e.Message.Split('.')[0];
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
+                });
+                records = null;
+                return false;
+            }
+            catch (CsvHelper.MissingFieldException e)
+            {
+                var headerMessage = e.Message.Split('.')[0];
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
+                });
+                records = null;
+                return false;
+            }
+            catch
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                       "There was an error parsing the CSV. Please ensure the file was formatted correctly."
+                });
+                records = null;
+                return false;
+            }
+
+            badRequest = null;
+            return true;
+        }
+
+        private bool ValidateCSVUpload(List<ParcelLedgerCreateCSV> records, string waterTypeDisplayName, out ActionResult badRequest)
+        {
+            // no duplicate APNs permitted
+            var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
+                .Select(x => x.Key).ToList();
+
+            if (duplicateAPNs.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The upload contained multiples rows with these APNs: {string.Join(", ", duplicateAPNs)}"
+                });
+                return false;
+            }
+
+            // all parcel numbers must match an existing Parcel record
+            var allParcelNumbers = _dbContext.Parcels.Select(y => y.ParcelNumber);
+            var unmatchedRecords = records.Where(x => !allParcelNumbers.Contains(x.APN)).ToList();
+
+            if (unmatchedRecords.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The upload contained these APNs which did not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}"
+                });
+                return false;
+            }
+
+            // no null quantities
+            var nullQuantities = records.Where(x => x.Quantity == null).ToList();
+            if (nullQuantities.Any())
+            {
+                badRequest = BadRequest(new
+                {
+                    validationMessage =
+                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullQuantities.Select(x => x.APN))}"
+                });
+                return false;
+            }
+
+            badRequest = null;
+            return true;
         }
 
         private void ValidateEffectiveDate(ParcelLedgerCreateDto parcelLedgerCreateDto)

@@ -5,11 +5,14 @@ import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'rio-parcel-ledger-create-from-spreadsheet',
   templateUrl: './parcel-ledger-create-from-spreadsheet.component.html',
-  styleUrls: ['./parcel-ledger-create-from-spreadsheet.component.scss']
+  styleUrls: ['./parcel-ledger-create-from-spreadsheet.component.scss'],
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
 })
 export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
 
@@ -18,7 +21,8 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   public richTextTypeID = CustomRichTextType.ParcelLedgerCreateFromSpreadsheet;
   public waterTypes: WaterTypeDto[];
   public isLoadingSubmit: boolean = false;
-  public fileUpload: File;
+  
+  public csvInputFile: File;
 
   constructor(
     private waterTypeService: WaterTypeService,
@@ -32,8 +36,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
       this.currentUser = currentUser;
 
       this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
-        // only grab user defined water types
-        this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
+        this.waterTypes = waterTypes;
       });
     });
   }
@@ -44,8 +47,24 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.cdr.detach();
   }
 
+  private getSelectedFile(event: any) {
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      return event.target.files.item(0);
+    }
+    return null;
+  }
+
+  public onCSVFileChange(event: any) {
+    this.csvInputFile = this.getSelectedFile(event);
+  }
+
+  public getCSVInputFile() {
+    return this.csvInputFile ? this.csvInputFile.name : "No file chosen...";
+  }
+
   public clickFileInput() {
-    this.document.getElementById("file-upload").click();
+    this.document.getElementById("CSV-upload").click();
   }
 
   public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { }

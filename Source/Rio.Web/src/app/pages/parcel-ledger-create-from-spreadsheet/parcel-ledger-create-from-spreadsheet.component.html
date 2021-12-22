@@ -57,9 +57,9 @@
         </div>
         <div class="col-sm-5 input-group">
           <div class="custom-file">
-              <input type="file" id="file-upload" class="form-control custom-file-input">
-              <label for="file-upload"
-                class="custom-file-label">file file file
+              <input type="file" id="CSV-upload" class="form-control custom-file-input" (change)="onCSVFileChange($event)">
+              <label for="CSV-upload"
+                class="custom-file-label">{{ getCSVInputFile() }}
               </label>
           </div>
           <div class="input-group-append">

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.Models.DataTransferObjects.ParcelAllocation
 {

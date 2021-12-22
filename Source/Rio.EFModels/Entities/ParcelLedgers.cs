@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
+using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.EFModels.Entities
@@ -185,9 +186,39 @@ namespace Rio.EFModels.Entities
                     TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcel.ParcelAreaInAcres,
                     WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                     TransactionDescription =
-                        $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
+                        $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water supply has been applied to this water account.",
                     UserID = userID,
                     UserComment = parcelLedgerCreateDto.UserComment
+                };
+                dbContext.ParcelLedgers.Add(parcelLedger);
+                createdCount++;
+            }
+            dbContext.SaveChanges();
+
+            return createdCount;
+        }
+
+        public static int CreateNewFromCSV(RioDbContext dbContext, ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto, List<ParcelLedgerCreateCSV> records, int userID)
+        {
+            int createdCount = 0;
+            var parcelNumbers = records.Select(x => x.APN).ToList();
+            var parcels = Parcel.ListByParcelNumbers(dbContext, parcelNumbers);
+
+            foreach (var record in records)
+            {
+                var parcel = parcels.SingleOrDefault(x => x.ParcelNumber == record.APN);
+                var parcelLedger = new ParcelLedger()
+                {
+                    ParcelID = parcel.ParcelID,
+                    TransactionDate = DateTime.UtcNow,
+                    EffectiveDate = parcelLedgerCreateCSVUploadDto.EffectiveDate.AddHours(8),
+                    TransactionTypeID = (int)TransactionTypeEnum.Supply,
+                    ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
+                    TransactionAmount = (decimal)record.Quantity,
+                    WaterTypeID = parcelLedgerCreateCSVUploadDto.WaterTypeID,
+                    TransactionDescription =
+                        $"A manual {(record.Quantity < 0 ? "withdrawal from" : "deposit to")} water supply has been applied to this water account.",
+                    UserID = userID
                 };
                 dbContext.ParcelLedgers.Add(parcelLedger);
                 createdCount++;
