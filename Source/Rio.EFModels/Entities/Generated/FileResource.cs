@@ -12,11 +12,6 @@ namespace Rio.EFModels.Entities
     [Index(nameof(FileResourceGUID), Name = "AK_FileResource_FileResourceGUID", IsUnique = true)]
     public partial class FileResource
     {
-        public FileResource()
-        {
-            ParcelAllocationHistories = new HashSet<ParcelAllocationHistory>();
-        }
-
         [Key]
         public int FileResourceID { get; set; }
         public int FileResourceMimeTypeID { get; set; }
@@ -39,7 +34,5 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(FileResourceMimeTypeID))]
         [InverseProperty("FileResources")]
         public virtual FileResourceMimeType FileResourceMimeType { get; set; }
-        [InverseProperty(nameof(ParcelAllocationHistory.FileResource))]
-        public virtual ICollection<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
     }
 }

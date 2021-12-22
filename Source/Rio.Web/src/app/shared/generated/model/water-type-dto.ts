@@ -17,7 +17,6 @@ export class WaterTypeDto {
     WaterTypeDefinition?: string;
     IsSourcedFromApi?: boolean;
     SortOrder?: number;
-    IsUserDefined?: boolean;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

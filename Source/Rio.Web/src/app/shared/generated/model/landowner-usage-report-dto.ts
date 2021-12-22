@@ -16,6 +16,7 @@ export class LandownerUsageReportDto {
     AccountNumber?: number;
     AcresManaged?: number;
     Allocation?: number;
+    Precipitation?: number;
     Purchased?: number;
     Sold?: number;
     TotalSupply?: number;

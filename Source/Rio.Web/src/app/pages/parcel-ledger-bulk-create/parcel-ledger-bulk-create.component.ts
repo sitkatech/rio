@@ -12,18 +12,19 @@ import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-led
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, RowSelectedEvent } from 'ag-grid-community';
+import { ColDef, GridOptions, RowSelectedEvent } from 'ag-grid-community';
 import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
-import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
   templateUrl: './parcel-ledger-bulk-create.component.html',
   styleUrls: ['./parcel-ledger-bulk-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
 
 })
 export class ParcelLedgerBulkCreateComponent implements OnInit {
@@ -42,10 +43,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
+  public parcelAllocationAndUsagesByYear: ParcelAllocationAndUsageDto[];
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
-  public rowData = [];
-  public gridOptions;
+  public gridOptions: GridOptions;
   
   constructor(
     private route: ActivatedRoute,
@@ -70,8 +71,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         this.waterTypeService.getWaterTypes(),
         this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
       ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
-        this.waterTypes = waterTypes.filter(x => x.IsUserDefined);
-        this.rowData = parcelAllocationAndUsagesByYear;
+        this.waterTypes = waterTypes;
+        this.parcelAllocationAndUsagesByYear = parcelAllocationAndUsagesByYear;
 
         this.insertWaterTypeColDefs();
       });
@@ -94,20 +95,26 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private initializeParcelSelectGrid() {
     let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
-      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true },
-      { headerName: 'APN', field: 'ParcelNumber' },
+      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true },
+      { 
+        headerName: 'APN', 
+        valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
+        filterValueGetter: function (params) { return params.data.ParcelNumber; },  
+      },
       {
-        headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        headerName: 'Area (acres)', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
         valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1')); }
       },
       { 
-        headerName: 'Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName };
-        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
+        headerName: 'Account', 
+        valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
+        filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
       },
       { 
-        headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.Allocation, '1.1-1')); }
+        headerName: 'Total Allocation', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
+        valueGetter: function(params: any) { return _decimalPipe.transform(params.data.Allocation, '1.1-1'); }
       }
     ];
 
@@ -122,15 +129,15 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.waterTypes.forEach(waterType => {
       colDefsWithWaterTypes.push(
         {
-          headerName: waterType.WaterTypeName, field: 'Allocations[waterType.WaterTypeID]', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+          headerName: waterType.WaterTypeName, field: 'Allocations[waterType.WaterTypeID]', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
           valueGetter: function (params) { return !params.data.Allocations[waterType.WaterTypeID] ? 0.0 : 
-            parseFloat(_decimalPipe.transform(params.data.Allocations[waterType.WaterTypeID], "1.1-1"))
+            _decimalPipe.transform(params.data.Allocations[waterType.WaterTypeID], "1.1-1");
           },
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
-    this.parcelSelectGrid.api.setRowData(this.rowData);
+    this.parcelSelectGrid.api.setRowData(this.parcelAllocationAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
 
@@ -160,9 +167,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.clearErrorAlerts();
 
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
-    console.log(this.model);
 
-    this.parcelLedgerService.newTransaction(this.model)
+    this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         createTransactionForm.reset();

@@ -110,59 +110,6 @@ namespace Rio.API.Controllers
             return Ok(parcelLedgerDtos);
         }
 
-        [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]
-        [ParcelManageFeature]
-        public ActionResult BulkSetAnnualParcelAllocation([FromRoute] int userID, [FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // TODO: This needs to reference ParcelLedger. This will be tackled by Rio 346.
-
-            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext, userID, parcelAllocationUpsertDto, null);
-
-            return Ok(0);
-        }
-
-        [HttpPost("parcels/{waterYear}/{waterTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
-        public async Task<ActionResult> BulkSetAnnualParcelAllocationFileUpload([FromRoute] int waterYear,
-            [FromRoute] int waterTypeID)
-        {
-            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
-            var waterTypeDisplayName =
-                _dbContext.WaterTypes.Single(x => x.WaterTypeID == waterTypeID).WaterTypeName;
-
-            if (!ParseBulkSetAllocationUpload(fileResource, waterTypeDisplayName, out var records, out var badRequestFromUpload))
-            {
-                return badRequestFromUpload;
-            }
-
-            if (!ValidateBulkSetAllocationUpload(records, waterTypeDisplayName, out var badRequestFromValidation))
-            {
-                return badRequestFromValidation;
-            }
-
-            _dbContext.FileResources.Add(fileResource);
-            _dbContext.SaveChanges();
-
-            // TODO: This needs to reference ParcelLedger. This will be tackled by Rio 346.
-
-            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
-                UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID, fileResource.FileResourceID, waterYear,
-                waterTypeID, null);
-
-            return Ok();
-        }
-
-        [HttpGet("parcels/getParcelAllocationHistory")]
-        [ManagerDashboardFeature]
-        public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
-        {
-            return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.ParcelAllocationHistoryDate));
-        }
-
         [HttpPost("parcels/getBoundingBox")]
         [ParcelViewFeature]
         public ActionResult<BoundingBoxDto> GetBoundingBoxByParcelIDs([FromBody] ParcelIDListDto parcelIDListDto)

@@ -41,7 +41,7 @@ import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-gri
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
-import { CreateWaterTransactions } from './pages/create-water-transactions/create-water-transactions.component';
+import { CreateWaterTransactionsComponent } from './pages/create-water-transactions/create-water-transactions.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown'
@@ -115,7 +115,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     PostingDeleteComponent,
     LoginCallbackComponent,
     HelpComponent,
-    CreateWaterTransactions,
+    CreateWaterTransactionsComponent,
     GlossaryComponent,
     ParcelChangeOwnerComponent,
     AccountListComponent,
