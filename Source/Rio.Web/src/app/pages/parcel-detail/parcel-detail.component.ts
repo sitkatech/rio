@@ -13,7 +13,7 @@ import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
@@ -56,7 +56,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
-    private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -99,7 +98,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   initializeLedgerGrid() {
     // NOTE: using this date-time formatter gives the local date and time,
     // so the numbers will not match the database, which is in UTC datetime stamps
-    let _decimalPipe = this.decimalPipe;
     this.parcelLedgerGridColumnDefs = [
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
@@ -111,8 +109,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
       { 
-        headerName: 'Transaction Amount', field: 'TransactionAmount', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
-        valueGetter: function (params: any) { return _decimalPipe.transform(params.data.TransactionAmount, "1.0-1"); }, 
+        headerName: 'Transaction Amount', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: function (params: any) { return parseFloat(params.data.TransactionAmount.toFixed(2)); }, 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,

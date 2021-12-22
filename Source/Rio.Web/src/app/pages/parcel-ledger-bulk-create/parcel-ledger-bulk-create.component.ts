@@ -13,7 +13,6 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridOptions, RowSelectedEvent } from 'ag-grid-community';
-import { DecimalPipe } from '@angular/common';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
@@ -57,7 +56,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     private parcelService: ParcelService,
     private parcelLedgerService: ParcelLedgerService,
     private waterTypeService: WaterTypeService,
-    private decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
@@ -93,7 +91,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   private initializeParcelSelectGrid() {
-    let _decimalPipe = this.decimalPipe;
     this.columnDefs = [
       { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true },
       { 
@@ -103,8 +100,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         filterValueGetter: function (params) { return params.data.ParcelNumber; },  
       },
       {
-        headerName: 'Area (acres)', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
-        valueGetter: function(params: any) { return parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1')); }
+        headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => this.numberColumnValueGetter(params.data.ParcelAreaInAcres)
       },
       { 
         headerName: 'Account', 
@@ -113,8 +110,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
       },
       { 
-        headerName: 'Total Allocation', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
-        valueGetter: function(params: any) { return _decimalPipe.transform(params.data.Allocation, '1.1-1'); }
+        headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => this.numberColumnValueGetter(params.data.Allocation)
       }
     ];
 
@@ -123,24 +120,26 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   private insertWaterTypeColDefs() {
-    let _decimalPipe = this.decimalPipe;
     let colDefsWithWaterTypes = this.columnDefs;
-
+    
     this.waterTypes.forEach(waterType => {
       colDefsWithWaterTypes.push(
         {
-          headerName: waterType.WaterTypeName, field: 'Allocations[waterType.WaterTypeID]', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
-          valueGetter: function (params) { return !params.data.Allocations[waterType.WaterTypeID] ? 0.0 : 
-            _decimalPipe.transform(params.data.Allocations[waterType.WaterTypeID], "1.1-1");
-          },
+          headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+          valueGetter: params => this.numberColumnValueGetter(params.data.Allocations[waterType.WaterTypeID])
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
+
     this.parcelSelectGrid.api.setRowData(this.parcelAllocationAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
 
+  private numberColumnValueGetter(value: number): number {
+    return (value === null || value === undefined) ? 0 : parseFloat(value.toFixed(1));
+  }
+    
   private clearErrorAlerts() {
     if (!this.alertsCountOnLoad) {
       this.alertsCountOnLoad = this.alertService.getAlerts().length;
@@ -179,7 +178,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         },
         error => {
           this.isLoadingSubmit = false;
-          console.log(error);
+          window.scroll(0,0);
           this.cdr.detectChanges();
         }
       );
