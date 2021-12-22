@@ -153,7 +153,7 @@ namespace Rio.EFModels.Entities
                 {
                         ParcelID = parcel.ParcelID,
                         TransactionDate = DateTime.UtcNow,
-                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
                         TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                         ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
                         TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
@@ -179,7 +179,7 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     TransactionDate = DateTime.UtcNow,
-                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
                     TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                     ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
                     TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcel.ParcelAreaInAcres,

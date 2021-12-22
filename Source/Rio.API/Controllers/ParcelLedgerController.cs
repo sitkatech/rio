@@ -74,7 +74,7 @@ namespace Rio.API.Controllers
                     $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
             }
 
-            var currentDate = DateTime.Today.AddDays(1).AddSeconds(-1);
+            var currentDate = DateTime.UtcNow;
             if (DateTime.Compare(parcelLedgerCreateDto.EffectiveDate, currentDate) > 0)
             {
                 ModelState.AddModelError("EffectiveDate", "Transactions for future dates are not allowed.");
