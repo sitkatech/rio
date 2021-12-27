@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
@@ -20,16 +19,21 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
+        public static IQueryable<ParcelLedger> GetSupplyByParcelLedgerEntrySourceType(RioDbContext dbContext, List<ParcelLedgerEntrySourceTypeEnum> parcelLedgerEntrySourceTypeEnums)
         {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && 
-                            (x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual || x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.CIMIS));
+            var parcelLedgerEntrySourceTypeIDs = parcelLedgerEntrySourceTypeEnums.Select(x => (int)x).ToList();
+            return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply &&
+                            parcelLedgerEntrySourceTypeIDs.Contains(x.ParcelLedgerEntrySourceTypeID));
+        }
+
+        private static IQueryable<ParcelLedger> GetSupplyImpl(RioDbContext dbContext)
+        {
+            return GetSupplyByParcelLedgerEntrySourceType(dbContext, new List<ParcelLedgerEntrySourceTypeEnum>{ ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS });
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
         {
-            var parcelAllocationBreakdownForYear = GetAllocationsImpl(dbContext)
+            var parcelAllocationBreakdownForYear = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
@@ -58,11 +62,10 @@ namespace Rio.EFModels.Entities
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = GetAllocationsImpl(dbContext)
+            var parcelAllocations = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
             if (parcelAllocations.Any())
             {
-
                 return accountParcelWaterYearOwnershipsByYear
                     .GroupJoin(
                         parcelAllocations,

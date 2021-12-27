@@ -81,6 +81,13 @@ namespace Rio.API
             services.Configure<RioConfiguration>(Configuration);
             var rioConfiguration = Configuration.Get<RioConfiguration>();
 
+            services.AddHttpClient<CimisService>(c =>
+            {
+                c.BaseAddress = new Uri(rioConfiguration.CimisApiUrl);
+                c.Timeout = TimeSpan.FromMinutes(60);
+            });
+
+
             var keystoneHost = rioConfiguration.KEYSTONE_HOST;
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

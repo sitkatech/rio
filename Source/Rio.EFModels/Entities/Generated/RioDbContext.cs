@@ -22,6 +22,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<AccountReconciliation> AccountReconciliations { get; set; }
         public virtual DbSet<AccountStatus> AccountStatuses { get; set; }
         public virtual DbSet<AccountUser> AccountUsers { get; set; }
+        public virtual DbSet<CimisPrecipitationDatum> CimisPrecipitationData { get; set; }
         public virtual DbSet<CustomRichText> CustomRichTexts { get; set; }
         public virtual DbSet<CustomRichTextType> CustomRichTextTypes { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigrations { get; set; }

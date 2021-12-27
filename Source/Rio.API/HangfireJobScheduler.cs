@@ -14,8 +14,7 @@ namespace Rio.API
         {
             var recurringJobIds = new List<string>();
 
-            // TODO: This will be reintroduced in Rio 343
-            //AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), MakeDailyUtcCronJobStringFromLocalTime(1, 30), recurringJobIds);
+            AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), MakeDailyUtcCronJobStringFromLocalTime(1, 30), recurringJobIds);
             AddRecurringJob<OpenETTriggerBucketRefreshJob>(OpenETTriggerBucketRefreshJob.JobName, x => x.RunJob(Null), MakeDailyUtcCronJobStringFromLocalTime(2, 00), recurringJobIds);
             AddRecurringJob<OpenETRetrieveFromBucketJob>(OpenETRetrieveFromBucketJob.JobName, x => x.RunJob(Null) , "*/1 * * * *", recurringJobIds);
 
