@@ -18,14 +18,14 @@ namespace Rio.API
         private readonly RioConfiguration _rioConfiguration;
 
 
-        public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext, IOptions<RioConfiguration> rioConfiguration, CimisService cimisService) : base("Precipitation Update Job", logger, webHostEnvironment, rioDbContext)
+        public CimisPrecipJob(ILogger<CimisPrecipJob> logger, IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext, IOptions<RioConfiguration> rioConfiguration, CimisService cimisService) : base(JobName, logger, webHostEnvironment, rioDbContext)
         {
             _cimisService = cimisService;
             _rioConfiguration = rioConfiguration.Value;
         }
 
-        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production };
-        public const string JobName = "Update Precipitation Data";
+        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Staging, RunEnvironment.Production };
+        public const string JobName = "CIMIS Update Precipitation Data";
 
         protected override void RunJobImplementation()
         {

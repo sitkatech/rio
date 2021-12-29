@@ -6,10 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
-using System.Threading;
 using System;
 using System.Net.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Rio.API
 {
@@ -23,7 +21,7 @@ namespace Rio.API
 
         public OpenETRetrieveFromBucketJob(ILogger<OpenETRetrieveFromBucketJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService, IHttpClientFactory httpClientFactory) : base("Parcel Evapotranspiration Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IOpenETService openETService, IHttpClientFactory httpClientFactory) : base(JobName, logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
@@ -31,10 +29,9 @@ namespace Rio.API
             _httpClient = httpClientFactory.CreateClient("GenericClient");
         }
 
-        public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
-            {RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production};
+        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Staging, RunEnvironment.Production};
 
-        public const string JobName = "Update Parcel Evapotranspiration Data";
+        public const string JobName = "OpenET Retrieve from Google Bucket and Update Usage Data";
 
         protected override void RunJobImplementation()
         {
