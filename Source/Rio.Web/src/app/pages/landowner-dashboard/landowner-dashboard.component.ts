@@ -487,8 +487,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           return params.data.Parcel.ParcelNumber;
         }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' }
       },
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
       {
         headerName: 'Supply Type', valueGetter: function (params: any) {

@@ -128,8 +128,8 @@ namespace Rio.EFModels.Entities
         {
             var parcelLedgers = GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID))
-                .OrderByDescending(x => x.TransactionDate)
-                .ThenByDescending(x => x.EffectiveDate)
+                .OrderByDescending(x => x.EffectiveDate)
+                .ThenByDescending(x => x.TransactionDate)
                 .Select(x => x.AsDto())
                 .ToList();
 
