@@ -99,8 +99,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     // NOTE: using this date-time formatter gives the local date and time,
     // so the numbers will not match the database, which is in UTC datetime stamps
     this.parcelLedgerGridColumnDefs = [
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
         headerName: 'Supply Type', valueGetter: function (params: any) {
