@@ -30,7 +30,7 @@
             <label class="required">Supply Type</label>
         </div>
         <div class="col-sm-5">
-            <select name="water-type" class="form-control">
+            <select name="water-type" class="form-control" [(ngModel)]="waterTypeID">
             <option disabled selected hidden></option>
             <option *ngFor="let waterType of waterTypes" [value]="waterType.WaterTypeID">
                 {{waterType.WaterTypeName}}
@@ -44,7 +44,7 @@
         </div>
         <div class="col-sm-5">
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #d="ngbDatepicker" required>
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #d="ngbDatepicker" [(ngModel)]="effectiveDate" required>
             <div class="input-group-append">
               <button class="btn btn-secondary far fa-calendar" (click)="d.toggle()" type="button"></button>
             </div>
@@ -59,7 +59,7 @@
           <div class="custom-file">
               <input type="file" id="CSV-upload" class="form-control custom-file-input" (change)="onCSVFileChange($event)">
               <label for="CSV-upload"
-                class="custom-file-label">{{csvInputFile ? this.csvInputFile.name : "No file chosen..."}}
+                class="custom-file-label">{{inputtedFile ? this.inputtedFile.name : "No file chosen..."}}
               </label>
           </div>
           <div class="input-group-append">
@@ -71,7 +71,7 @@
         <div class="col-sm-10 text-right">
             <button type="submit" class="btn btn-rio" [disabled]="createTransactionFromSpreadsheetForm.form.invalid || isLoadingSubmit">
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-            Save
+            Submit
             </button>
             <a class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
         </div>

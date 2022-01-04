@@ -2149,24 +2149,39 @@
         ],
         "requestBody": {
           "content": {
-            "application/json-patch+json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ParcelLedgerCreateCSVUploadDto"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelLedgerCreateCSVUploadDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelLedgerCreateCSVUploadDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ParcelLedgerCreateCSVUploadDto"
+                "required": [
+                  "EffectiveDate",
+                  "UploadedFile",
+                  "WaterTypeID"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "EffectiveDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "WaterTypeID": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                },
+                "EffectiveDate": {
+                  "style": "form"
+                },
+                "WaterTypeID": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -4646,29 +4661,6 @@
             "nullable": true
           },
           "YearChangesToTakeEffect": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ParcelLedgerCreateCSVUploadDto": {
-        "required": [
-          "EffectiveDate",
-          "UploadedFile",
-          "WaterTypeID"
-        ],
-        "type": "object",
-        "properties": {
-          "UploadedFile": {
-            "type": "string",
-            "format": "binary"
-          },
-          "EffectiveDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "WaterTypeID": {
             "type": "integer",
             "format": "int32"
           }

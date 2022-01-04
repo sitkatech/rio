@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -69,29 +70,31 @@ namespace Rio.API.Controllers
             return Ok(postingCount);
         }
 
-        [HttpPost("parcel-ledgers/new-csv-upload")]
-        public async Task<ActionResult> NewCSVUpload(ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
+        [HttpPost("/parcel-ledgers/new-csv-upload")]
+        [RequestSizeLimit(524288000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
+        public async Task<IActionResult> NewCSVUpload([FromForm] ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
         {
             var fileResource = await HttpUtilities.MakeFileResourceFromIFormFile(parcelLedgerCreateCSVUploadDto.UploadedFile, _dbContext, HttpContext);
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
 
-            if (!ParseCSVUpload(fileResource, waterTypeDisplayName, out var records, out var badRequestFromUpload))
+            if (!ParseCSVUpload(fileResource, waterTypeDisplayName, out var records))
             {
-                return badRequestFromUpload;
+                return BadRequest(ModelState);
             }
 
-            if (!ValidateCSVUpload(records, waterTypeDisplayName, out var badRequestFromValidation))
+            if (!ValidateCSVUpload(records, waterTypeDisplayName))
             {
-                return badRequestFromValidation;
+                return BadRequest(ModelState);
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            ParcelLedgers.CreateNewFromCSV(_dbContext, records, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
-            return Ok();
+            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
+            return Ok(postingCount);
         }
 
-        private bool ParseCSVUpload(FileResource fileResource, string waterTypeDisplayName, out List<ParcelLedgerCreateCSV> records, out ActionResult badRequest)
+        private bool ParseCSVUpload(FileResource fileResource, string waterTypeDisplayName, out List<ParcelLedgerCreateCSV> records)
         {
             try
             {
@@ -105,11 +108,8 @@ namespace Rio.API.Controllers
                     csvReader.Context.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
-                    badRequest = BadRequest(new
-                    {
-                        validationMessage =
-                            $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
-                    });
+                    ModelState.AddModelError("UploadedFile",
+                        $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}");
                     records = null;
                     return false;
                 }
@@ -119,53 +119,50 @@ namespace Rio.API.Controllers
             catch (HeaderValidationException e)
             {
                 var headerMessage = e.Message.Split('.')[0];
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
-                });
+                ModelState.AddModelError("UploadedFile",
+                    $"{headerMessage}. Please check that the column name is not missing or misspelled.");
                 records = null;
                 return false;
             }
             catch (CsvHelper.MissingFieldException e)
             {
                 var headerMessage = e.Message.Split('.')[0];
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
-                });
+                ModelState.AddModelError("UploadedFile",
+                    $"{headerMessage}. Please check that the column name is not missing or misspelled.");
                 records = null;
                 return false;
             }
             catch
             {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                       "There was an error parsing the CSV. Please ensure the file was formatted correctly."
-                });
+                ModelState.AddModelError("UploadedFile",
+                    "There was an error parsing the CSV. Please ensure the file was formatted correctly.");
                 records = null;
                 return false;
             }
 
-            badRequest = null;
             return true;
         }
 
-        private bool ValidateCSVUpload(List<ParcelLedgerCreateCSV> records, string waterTypeDisplayName, out ActionResult badRequest)
+        private bool ValidateCSVUpload(List<ParcelLedgerCreateCSV> records, string waterTypeDisplayName)
         {
+            // no null APNs
+            var nullAPNsCount = records.Count(x => x.APN == "");
+            if (nullAPNsCount > 0)
+            {
+                var pluralizeIfMultipleRows = (nullAPNsCount > 1 ? "s" : "");
+                ModelState.AddModelError("UploadedFile",
+                    $"The uploaded file contains {nullAPNsCount} row{pluralizeIfMultipleRows} specifying a value with no corresponding APN.");
+                return false;
+            }
+
             // no duplicate APNs permitted
             var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
                 .Select(x => x.Key).ToList();
 
             if (duplicateAPNs.Any())
             {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The upload contained multiples rows with these APNs: {string.Join(", ", duplicateAPNs)}"
-                });
+                ModelState.AddModelError("UploadedFile", 
+                    $"The uploaded file contains multiples rows with these APNs: {string.Join(", ", duplicateAPNs)}");
                 return false;
             }
 
@@ -175,11 +172,8 @@ namespace Rio.API.Controllers
 
             if (unmatchedRecords.Any())
             {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The upload contained these APNs which did not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}"
-                });
+                ModelState.AddModelError("UploadedFile", 
+                    $"The upload contained these APNs which did not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}");
                 return false;
             }
 
@@ -187,15 +181,11 @@ namespace Rio.API.Controllers
             var nullQuantities = records.Where(x => x.Quantity == null).ToList();
             if (nullQuantities.Any())
             {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullQuantities.Select(x => x.APN))}"
-                });
+                ModelState.AddModelError("UploadedFile", 
+                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullQuantities.Select(x => x.APN))}");
                 return false;
             }
-
-            badRequest = null;
+            
             return true;
         }
 

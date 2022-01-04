@@ -1,7 +1,10 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Router } from '@angular/router';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
@@ -23,14 +26,20 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   public richTextTypeID = CustomRichTextType.ParcelLedgerCreateFromSpreadsheet;
   public waterTypes: WaterTypeDto[];
   public isLoadingSubmit: boolean = false;
-  
-  public csvInputFile: File;
+  private alertsCountOnLoad: number;
+ 
+  public inputtedFile: any;
+  public effectiveDate: Date;
+  public waterTypeID: number;
 
   constructor(
     private waterTypeService: WaterTypeService,
     private authenticationService: AuthenticationService,
+    private parcelLedgerService: ParcelLedgerService,
     private cdr: ChangeDetectorRef,
     private alertService: AlertService,
+    private router: Router,
+    private datePipe: DatePipe,
     @Inject(DOCUMENT) private document: Document
   ) { }
 
@@ -59,12 +68,46 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   }
 
   public onCSVFileChange(event: any) {
-    this.csvInputFile = this.getSelectedFile(event);
+    this.inputtedFile = this.getSelectedFile(event);
   }
 
   public onClickFileInput() {
     this.document.getElementById("CSV-upload").click();
   }
 
-  public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { }
+  private clearErrorAlerts() {
+    if (!this.alertsCountOnLoad) {
+      this.alertsCountOnLoad = this.alertService.getAlerts().length;
+    }
+
+    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
+  }
+
+  public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { 
+    this.isLoadingSubmit = true;
+    this.clearErrorAlerts();
+
+    const _datePipe = this.datePipe;
+    const effectiveDateAsString = _datePipe.transform(this.effectiveDate, 'MM/dd/yyyy');
+
+    this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, effectiveDateAsString, this.waterTypeID)
+      .subscribe(response => {
+        this.isLoadingSubmit = false;
+        createTransactionFromSpreadsheetForm.reset();
+
+        this.router.navigateByUrl("/parcels/create-water-transactions").then(x => {
+          this.alertService.pushAlert(new Alert(response + " transactions were successfully created.", AlertContext.Success));
+        });
+      },
+      error => {
+        this.isLoadingSubmit = false;
+        this.inputtedFile = null;
+        
+        if (error.error.UploadedFile) {
+          this.alertService.pushAlert(new Alert(error.error.UploadedFile, AlertContext.Danger));
+        }
+        window.scroll(0,0);
+        this.cdr.detectChanges();
+      });
+    }
 }
