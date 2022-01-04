@@ -21,10 +21,10 @@ export class ParcelLedgerService {
     return this.apiService.postToApi(route, model);
   }
 
-  newCSVUploadTransaction(uploadedFile: any, effectiveDate: string, waterTypeID: number): Observable<any[]> {
+  newCSVUploadTransaction(uploadedFile: any, effectiveDateAsString: string, waterTypeID: number): Observable<any[]> {
     let formData = new FormData();
     formData.append("UploadedFile", uploadedFile);
-    formData.append("EffectiveDate", effectiveDate);
+    formData.append("EffectiveDate", effectiveDateAsString);
     formData.append("WaterTypeID", waterTypeID.toString());
 
     const programApiRoute = environment.mainAppApiUrl;
