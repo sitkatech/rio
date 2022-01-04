@@ -108,8 +108,9 @@ namespace Rio.API.Controllers
                     csvReader.Context.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
+                    var singularOrPluralName = (headerNamesDuplicated.Count > 1 ? "names" : "name");
                     ModelState.AddModelError("UploadedFile",
-                        $"The following header names appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}");
+                        $"The following header {singularOrPluralName} appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}");
                     records = null;
                     return false;
                 }
@@ -135,7 +136,7 @@ namespace Rio.API.Controllers
             catch
             {
                 ModelState.AddModelError("UploadedFile",
-                    "There was an error parsing the CSV. Please ensure the file was formatted correctly.");
+                    "There was an error parsing the CSV. Please ensure the file is formatted correctly.");
                 records = null;
                 return false;
             }
@@ -149,9 +150,19 @@ namespace Rio.API.Controllers
             var nullAPNsCount = records.Count(x => x.APN == "");
             if (nullAPNsCount > 0)
             {
-                var pluralizeIfMultipleRows = (nullAPNsCount > 1 ? "s" : "");
+                var singularOrPluralRow = (nullAPNsCount > 1 ? "rows" : "row");
                 ModelState.AddModelError("UploadedFile",
-                    $"The uploaded file contains {nullAPNsCount} row{pluralizeIfMultipleRows} specifying a value with no corresponding APN.");
+                    $"The uploaded file contains {nullAPNsCount} {singularOrPluralRow} specifying a value with no corresponding APN.");
+                return false;
+            }
+
+            // no null quantities
+            var nullQuantities = records.Where(x => x.Quantity == null).ToList();
+            if (nullQuantities.Any())
+            {
+                var singularOrPluralAPN = (nullQuantities.Count > 1 ? "APNs" : "APN");
+                ModelState.AddModelError("UploadedFile",
+                    $"The following {singularOrPluralAPN} had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullQuantities.Select(x => x.APN))}");
                 return false;
             }
 
@@ -161,8 +172,9 @@ namespace Rio.API.Controllers
 
             if (duplicateAPNs.Any())
             {
+                var singularOrPluralAPN = (duplicateAPNs.Count > 1 ? "these APNs" : "this APN");
                 ModelState.AddModelError("UploadedFile", 
-                    $"The uploaded file contains multiples rows with these APNs: {string.Join(", ", duplicateAPNs)}");
+                    $"The uploaded file contains multiples rows with {singularOrPluralAPN}: {string.Join(", ", duplicateAPNs)}");
                 return false;
             }
 
@@ -172,20 +184,12 @@ namespace Rio.API.Controllers
 
             if (unmatchedRecords.Any())
             {
+                var singularOrPluralAPN = (unmatchedRecords.Count > 1 ? "these APNs which do" : "this APN which does");
                 ModelState.AddModelError("UploadedFile", 
-                    $"The upload contained these APNs which did not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}");
+                    $"The uploaded file contains {singularOrPluralAPN} not match any record in the system: {string.Join(", ", unmatchedRecords.Select(x => x.APN))}");
                 return false;
             }
 
-            // no null quantities
-            var nullQuantities = records.Where(x => x.Quantity == null).ToList();
-            if (nullQuantities.Any())
-            {
-                ModelState.AddModelError("UploadedFile", 
-                        $"The following APNs had no {waterTypeDisplayName} Quantity entered: {string.Join(", ", nullQuantities.Select(x => x.APN))}");
-                return false;
-            }
-            
             return true;
         }
 
