@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { Alert } from 'src/app/shared/models/alert';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
@@ -28,6 +30,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     private waterTypeService: WaterTypeService,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef,
+    private alertService: AlertService,
     @Inject(DOCUMENT) private document: Document
   ) { }
 
@@ -59,11 +62,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.csvInputFile = this.getSelectedFile(event);
   }
 
-  public getCSVInputFile() {
-    return this.csvInputFile ? this.csvInputFile.name : "No file chosen...";
-  }
-
-  public clickFileInput() {
+  public onClickFileInput() {
     this.document.getElementById("CSV-upload").click();
   }
 

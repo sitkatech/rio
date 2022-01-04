@@ -59,11 +59,11 @@
           <div class="custom-file">
               <input type="file" id="CSV-upload" class="form-control custom-file-input" (change)="onCSVFileChange($event)">
               <label for="CSV-upload"
-                class="custom-file-label">{{ getCSVInputFile() }}
+                class="custom-file-label">{{csvInputFile ? this.csvInputFile.name : "No file chosen..."}}
               </label>
           </div>
           <div class="input-group-append">
-               <button type="button" class="btn btn-secondary fas fa-folder-open" (click)="clickFileInput()"></button>
+               <button type="button" class="btn btn-secondary fas fa-folder-open" (click)="onClickFileInput()"></button>
           </div>
       </div>
     </div>
