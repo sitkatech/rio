@@ -102,9 +102,13 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
       error => {
         this.isLoadingSubmit = false;
         this.inputtedFile = null;
-        
+        (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
+
         if (error.error.UploadedFile) {
-          this.alertService.pushAlert(new Alert(error.error.UploadedFile, AlertContext.Danger));
+          this.alertService.pushAlert(new Alert(error.error.UploadedFile));
+        }
+        if (error.error.EffectiveDate) {
+          this.alertService.pushAlert(new Alert(error.error.EffectiveDate));
         }
         window.scroll(0,0);
         this.cdr.detectChanges();

@@ -38,7 +38,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            ValidateEffectiveDate(parcelLedgerCreateDto);
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate);
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
                 // flip TransactionAmount sign for usage adjustment; usage is negative in the ledgera user-inputted positive value should increase usage sum (and vice versa)
@@ -59,7 +59,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            ValidateEffectiveDate(parcelLedgerCreateDto);
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -79,6 +79,11 @@ namespace Rio.API.Controllers
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
 
+            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             if (!ParseCSVUpload(fileResource, waterTypeDisplayName, out var records))
             {
                 return BadRequest(ModelState);
@@ -108,9 +113,9 @@ namespace Rio.API.Controllers
                     csvReader.Context.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
-                    var singularOrPluralName = (headerNamesDuplicated.Count > 1 ? "names" : "name");
+                    var singularOrPluralName = (headerNamesDuplicated.Count > 1 ? "names appear" : "name appears");
                     ModelState.AddModelError("UploadedFile",
-                        $"The following header {singularOrPluralName} appear more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}");
+                        $"The following header {singularOrPluralName} more than once: {string.Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}");
                     records = null;
                     return false;
                 }
@@ -193,17 +198,17 @@ namespace Rio.API.Controllers
             return true;
         }
 
-        private void ValidateEffectiveDate(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        private void ValidateEffectiveDate(DateTime effectiveDate)
         {
             var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();
-            if (parcelLedgerCreateDto.EffectiveDate.Year < earliestWaterYear.Year)
+            if (effectiveDate.Year < earliestWaterYear.Year)
             {
                 ModelState.AddModelError("EffectiveDate", 
                     $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
             }
 
             var currentDate = DateTime.Today.AddDays(1).AddSeconds(-1);
-            if (DateTime.Compare(parcelLedgerCreateDto.EffectiveDate, currentDate) > 0)
+            if (DateTime.Compare(effectiveDate, currentDate) > 0)
             {
                 ModelState.AddModelError("EffectiveDate", "Transactions for future dates are not allowed.");
             }
