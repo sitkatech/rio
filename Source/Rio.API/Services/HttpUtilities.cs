@@ -35,6 +35,36 @@ namespace Rio.API.Services
             };
         }
 
+        public static async Task<FileResource> MakeFileResourceFromIFormFile(IFormFile inputFile, RioDbContext rioDbContext, HttpContext httpContext)
+        {
+            byte[] bytes;
+            await using (var ms = new MemoryStream())
+            {
+                await inputFile.CopyToAsync(ms);
+                bytes = ms.ToArray();
+            }
+
+            var userDto = UserContext.GetUserFromHttpContext(rioDbContext, httpContext);
+
+            var fileResourceMimeType = FileResourceMimeType.GetFileResourceMimeTypeByContentTypeName(rioDbContext,
+                inputFile.ContentType);
+
+            var clientFilename = inputFile.FileName;
+            var extension = clientFilename.Split('.').Last();
+            var fileResourceGuid = Guid.NewGuid();
+
+            return new FileResource
+            {
+                CreateDate = DateTime.Now,
+                CreateUserID = userDto.UserID,
+                FileResourceData = bytes,
+                FileResourceGUID = fileResourceGuid,
+                FileResourceMimeTypeID = fileResourceMimeType.FileResourceMimeTypeID,
+                OriginalBaseFilename = clientFilename,
+                OriginalFileExtension = extension,
+            };
+        }
+
         public static async Task<byte[]> GetData(this HttpRequest httpRequest)
         {
             byte[] bytes;

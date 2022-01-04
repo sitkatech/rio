@@ -198,7 +198,7 @@ namespace Rio.EFModels.Entities
             return createdCount;
         }
 
-        public static int CreateNewFromCSV(RioDbContext dbContext, ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto, List<ParcelLedgerCreateCSV> records, int userID)
+        public static int CreateNewFromCSV(RioDbContext dbContext, List<ParcelLedgerCreateCSV> records, DateTime effectiveDate, int waterTypeID, int userID)
         {
             int createdCount = 0;
             var parcelNumbers = records.Select(x => x.APN).ToList();
@@ -211,11 +211,11 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     TransactionDate = DateTime.UtcNow,
-                    EffectiveDate = parcelLedgerCreateCSVUploadDto.EffectiveDate.AddHours(8),
+                    EffectiveDate = effectiveDate.AddHours(8),
                     TransactionTypeID = (int)TransactionTypeEnum.Supply,
                     ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
                     TransactionAmount = (decimal)record.Quantity,
-                    WaterTypeID = parcelLedgerCreateCSVUploadDto.WaterTypeID,
+                    WaterTypeID = waterTypeID,
                     TransactionDescription =
                         $"A manual {(record.Quantity < 0 ? "withdrawal from" : "deposit to")} water supply has been applied to this water account.",
                     UserID = userID

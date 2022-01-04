@@ -6,15 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Asn1.Sec;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.ParcelAllocation;
+using ParcelLedgerCreateCSVUploadDto = Rio.API.Models.ParcelLedgerCreateCSVUploadDto;
 
 namespace Rio.API.Controllers
 {
@@ -73,7 +72,7 @@ namespace Rio.API.Controllers
         [HttpPost("parcel-ledgers/new-csv-upload")]
         public async Task<ActionResult> NewCSVUpload(ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
         {
-            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
+            var fileResource = await HttpUtilities.MakeFileResourceFromIFormFile(parcelLedgerCreateCSVUploadDto.UploadedFile, _dbContext, HttpContext);
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
 
@@ -88,7 +87,7 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            ParcelLedgers.CreateNewFromCSV(_dbContext, parcelLedgerCreateCSVUploadDto, records, userDto.UserID);
+            ParcelLedgers.CreateNewFromCSV(_dbContext, records, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
             return Ok();
         }
 

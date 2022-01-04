@@ -1,10 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
-namespace Rio.Models.DataTransferObjects.ParcelAllocation
+namespace Rio.API.Models
 {
     public class ParcelLedgerCreateCSVUploadDto
     {
+        [Required]
+        public IFormFile UploadedFile { get; set; }
         [Required]
         public DateTime EffectiveDate { get; set; }
         [Required]
