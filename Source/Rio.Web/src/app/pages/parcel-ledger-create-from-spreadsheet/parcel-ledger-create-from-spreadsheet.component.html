@@ -52,26 +52,30 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col-sm-3 control-label text-sm-right">
-            <label class="required">Select File</label>
+      <div class="col-sm-3 control-label text-sm-right">
+          <label class="required">Select File</label>
+      </div>
+      <div class="col-sm-5 input-group">
+        <div class="custom-file">
+            <input type="file" id="CSV-upload" class="form-control custom-file-input" (change)="onCSVFileChange($event)">
+            <label for="CSV-upload"
+              class="custom-file-label">{{inputtedFile ? this.inputtedFile.name : "No file chosen..."}}
+            </label>
         </div>
-        <div class="col-sm-5 input-group">
-          <div class="custom-file">
-              <input type="file" id="CSV-upload" class="form-control custom-file-input" (change)="onCSVFileChange($event)">
-              <label for="CSV-upload"
-                class="custom-file-label">{{inputtedFile ? this.inputtedFile.name : "No file chosen..."}}
-              </label>
-          </div>
-          <div class="input-group-append">
-               <button type="button" class="btn btn-secondary fas fa-folder-open" (click)="onClickFileInput()"></button>
-          </div>
+        <div class="input-group-append">
+          <button type="button" class="btn btn-secondary fas fa-folder-open" (click)="onClickFileInput()"></button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="float-left"><i class="fas fa-info-circle p-2" aria-hidden="true"></i></div>
+        <div class="font-italic font-weight-light">Accepted File Types: CSV</div>
       </div>
     </div>
-    <div class="row mt-3">
-        <div class="col-sm-10 text-right">
+    <div class="row mt-5">
+        <div class="col-sm-8 text-right">
             <button type="submit" class="btn btn-rio" [disabled]="createTransactionFromSpreadsheetForm.form.invalid || isLoadingSubmit">
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
-            Submit
+            Save
             </button>
             <a class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
         </div>
