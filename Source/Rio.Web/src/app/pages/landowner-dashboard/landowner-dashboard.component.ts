@@ -32,7 +32,7 @@ import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-t
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 import { ColDef, ColumnApi, GridApi } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerEntrySourceTypeDto } from 'src/app/shared/generated/model/parcel-ledger-entry-source-type-dto';
@@ -132,7 +132,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
     private waterYearService: WaterYearService,
-    private decimalPipe: DecimalPipe,
     private utilityFunctionsService: UtilityFunctionsService
   ) {
   }
@@ -480,8 +479,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private createActivityDetailGridColDefs() {
-    let _decimalPipe = this.decimalPipe;
-
     this.activityDetailGridColDefs = [
       { 
         headerName: 'APN', field: 'Parcel.ParcelNumber', valueGetter: function (params: any) {
@@ -490,8 +487,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
           return params.data.Parcel.ParcelNumber;
         }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' }
       },
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
       {
         headerName: 'Supply Type', valueGetter: function (params: any) {
@@ -500,8 +497,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
       { 
-        headerName: 'Quantity (ac-ft)', field: 'TransactionAmount', cellStyle: { textAlign: 'right'}, filterParams: { defaultOption: 'equals' },
-        valueGetter: function (params: any) { return _decimalPipe.transform(params.data.TransactionAmount, "1.0-1"); }, 
+        headerName: 'Quantity (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: function (params: any) { return parseFloat(params.data.TransactionAmount.toFixed(2)); }, 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', sortable: false,
@@ -517,11 +514,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
+    const filterDate = Date.parse(filterLocalDateAtMidnight);
     const cellDate = Date.parse(cellValue);
-    if (cellDate == filterLocalDateAtMidnight) {
+
+    if (cellDate == filterDate) {
       return 0;
     }
-    return (cellDate < filterLocalDateAtMidnight) ? -1 : 1;
+    return (cellDate < filterDate) ? -1 : 1;
   }
   
   private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {

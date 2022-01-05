@@ -9,7 +9,7 @@ import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
-import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { debounceTime, distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
@@ -21,7 +21,7 @@ import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
   selector: 'rio-parcel-ledger-create',
   templateUrl: './parcel-ledger-create.component.html',
   styleUrls: ['./parcel-ledger-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
 })
 export class ParcelLedgerCreateComponent implements OnInit {
 

@@ -15,8 +15,8 @@ SELECT [ParcelID],
 	   TT.TransactionTypeID,
        [AcreFeetAllocated] as TransactionAmount,
 	   pa.ParcelAllocationTypeID as WaterTypeID,
-	   concat('Allocation of ', PAT.ParcelAllocationTypeName, ' for ', WaterYear, ' has been deposited into this water account by an administrator') as TransactionDescription
+	   concat('Supply of ', PAT.ParcelAllocationTypeName, ' for ', WaterYear, ' has been deposited into this water account by an administrator') as TransactionDescription
   FROM [dbo].[ParcelAllocation] PA 
   JOIN dbo.ParcelAllocationType PAT ON PA.ParcelAllocationTypeID = PAT.ParcelAllocationTypeID
   JOIN dbo.TransactionType TT ON TT.TransactionTypeName = 'Allocation'
-
+  where PAT.ParcelAllocationTypeID != 5 -- the existing CIMIS precip data is junk so no need to import it

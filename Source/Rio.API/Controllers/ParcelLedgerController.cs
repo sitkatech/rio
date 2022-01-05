@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -41,7 +40,7 @@ namespace Rio.API.Controllers
             ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate);
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
-                // flip TransactionAmount sign for usage adjustment; usage is negative in the ledgera user-inputted positive value should increase usage sum (and vice versa)
+                // flip TransactionAmount sign for usage adjustment; usage is negative in the ledger, but a user-inputted positive value should increase usage sum (and vice versa)
                 parcelLedgerCreateDto.TransactionAmount *= -1;
                 ValidateUsageAmount(parcelLedgerCreateDto);
             }
@@ -207,7 +206,7 @@ namespace Rio.API.Controllers
                     $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
             }
 
-            var currentDate = DateTime.Today.AddDays(1).AddSeconds(-1);
+            var currentDate = DateTime.UtcNow;
             if (DateTime.Compare(effectiveDate, currentDate) > 0)
             {
                 ModelState.AddModelError("EffectiveDate", "Transactions for future dates are not allowed.");

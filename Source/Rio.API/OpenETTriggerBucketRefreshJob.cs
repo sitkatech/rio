@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Rio.EFModels.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
@@ -20,7 +19,7 @@ namespace Rio.API
 
         public OpenETTriggerBucketRefreshJob(ILogger<OpenETTriggerBucketRefreshJob> logger,
             IWebHostEnvironment webHostEnvironment, RioDbContext rioDbContext,
-            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, IOpenETService openETService) : base("Trigger OpenET Google Bucket Update Job", logger, webHostEnvironment,
+            IOptions<RioConfiguration> rioConfiguration, IBackgroundJobClient backgroundJobClient, IOpenETService openETService) : base(JobName, logger, webHostEnvironment,
             rioDbContext)
         {
             _rioConfiguration = rioConfiguration.Value;
@@ -28,8 +27,7 @@ namespace Rio.API
             _openETService = openETService;
         }
 
-        public override List<RunEnvironment> RunEnvironments => new List<RunEnvironment>
-            {RunEnvironment.Development, RunEnvironment.Staging, RunEnvironment.Production};
+        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Staging, RunEnvironment.Production};
 
         public const string JobName = "OpenET Trigger Google Bucket Update";
 

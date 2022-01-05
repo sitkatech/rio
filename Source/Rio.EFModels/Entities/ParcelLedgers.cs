@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
@@ -21,16 +20,21 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        private static IQueryable<ParcelLedger> GetAllocationsImpl(RioDbContext dbContext)
+        public static IQueryable<ParcelLedger> GetSupplyByParcelLedgerEntrySourceType(RioDbContext dbContext, List<ParcelLedgerEntrySourceTypeEnum> parcelLedgerEntrySourceTypeEnums)
         {
-            return GetParcelLedgersImpl(dbContext)
-                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply && 
-                            (x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual || x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.CIMIS));
+            var parcelLedgerEntrySourceTypeIDs = parcelLedgerEntrySourceTypeEnums.Select(x => (int)x).ToList();
+            return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply &&
+                            parcelLedgerEntrySourceTypeIDs.Contains(x.ParcelLedgerEntrySourceTypeID));
+        }
+
+        private static IQueryable<ParcelLedger> GetSupplyImpl(RioDbContext dbContext)
+        {
+            return GetSupplyByParcelLedgerEntrySourceType(dbContext, new List<ParcelLedgerEntrySourceTypeEnum>{ ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS });
         }
 
         public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
         {
-            var parcelAllocationBreakdownForYear = GetAllocationsImpl(dbContext)
+            var parcelAllocationBreakdownForYear = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
@@ -59,11 +63,10 @@ namespace Rio.EFModels.Entities
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = GetAllocationsImpl(dbContext)
+            var parcelAllocations = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
             if (parcelAllocations.Any())
             {
-
                 return accountParcelWaterYearOwnershipsByYear
                     .GroupJoin(
                         parcelAllocations,
@@ -114,8 +117,8 @@ namespace Rio.EFModels.Entities
                 var parcelIDsForYear = group.Select(x => x.ParcelID).ToList();
                 parcelLedgerDtos.AddRange(GetParcelLedgersImpl(dbContext)
                     .Where(x => parcelIDsForYear.Contains(x.ParcelID) && x.EffectiveDate.Year == group.Key)
-                    .OrderByDescending(x => x.TransactionDate)
-                    .ThenByDescending(x => x.EffectiveDate)
+                    .OrderByDescending(x => x.EffectiveDate)
+                    .ThenByDescending(x => x.TransactionDate)
                     .Select(x => x.AsDto()));
             }
 
@@ -126,8 +129,8 @@ namespace Rio.EFModels.Entities
         {
             var parcelLedgers = GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID))
-                .OrderByDescending(x => x.TransactionDate)
-                .ThenByDescending(x => x.EffectiveDate)
+                .OrderByDescending(x => x.EffectiveDate)
+                .ThenByDescending(x => x.TransactionDate)
                 .Select(x => x.AsDto())
                 .ToList();
 
@@ -154,7 +157,7 @@ namespace Rio.EFModels.Entities
                 {
                         ParcelID = parcel.ParcelID,
                         TransactionDate = DateTime.UtcNow,
-                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
                         TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                         ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
                         TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
@@ -180,7 +183,7 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     TransactionDate = DateTime.UtcNow,
-                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate,
+                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
                     TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
                     ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
                     TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcel.ParcelAreaInAcres,

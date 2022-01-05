@@ -15,8 +15,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NetTopologySuite.DataStructures;
-using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using Rio.API.Controllers;
 using Rio.API.Services.Telemetry;

@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Rio.EFModels.Entities
 {
     [Table("ParcelLedger")]
-    [Index(nameof(ParcelID), nameof(TransactionDate), nameof(TransactionTypeID), nameof(WaterTypeID), Name = "AK_ParcelLedger_ParcelID_TransactionDate_TransactionTypeID_WaterTypeID", IsUnique = true)]
     public partial class ParcelLedger
     {
         [Key]
