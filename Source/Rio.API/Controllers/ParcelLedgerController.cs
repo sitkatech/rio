@@ -95,7 +95,7 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
+            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
             return Ok(postingCount);
         }
 
