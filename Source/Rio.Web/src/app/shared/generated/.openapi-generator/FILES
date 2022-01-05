@@ -24,6 +24,7 @@ model/parcel-change-owner-dto.ts
 model/parcel-dto.ts
 model/parcel-id-list-dto.ts
 model/parcel-layer-update-dto.ts
+model/parcel-ledger-create-csv-upload-dto.ts
 model/parcel-ledger-create-dto.ts
 model/parcel-ledger-dto.ts
 model/parcel-ledger-entry-source-type-dto.ts

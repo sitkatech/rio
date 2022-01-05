@@ -2142,6 +2142,57 @@
         }
       }
     },
+    "/parcel-ledgers/new-csv-upload": {
+      "post": {
+        "tags": [
+          "ParcelLedger"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "EffectiveDate",
+                  "UploadedFile",
+                  "WaterTypeID"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "EffectiveDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "WaterTypeID": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                },
+                "EffectiveDate": {
+                  "style": "form"
+                },
+                "WaterTypeID": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/postings/new": {
       "post": {
         "tags": [

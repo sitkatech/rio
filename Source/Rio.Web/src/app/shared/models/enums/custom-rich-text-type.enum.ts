@@ -22,5 +22,6 @@ export enum CustomRichTextType {
   InactiveParcelList = 21,
   AccountReconciliationReport = 22,
   ParcelLedgerCreate = 23,
-  ParcelLedgerBulkCreate = 24
+  ParcelLedgerBulkCreate = 24,
+  ParcelLedgerCreateFromSpreadsheet = 25
 }
