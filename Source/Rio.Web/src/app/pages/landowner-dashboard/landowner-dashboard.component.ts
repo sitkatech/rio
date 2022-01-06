@@ -48,7 +48,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   
   public waterYearToDisplay: WaterYearDto;
   public currentUser: UserDto;
-  private watchUserChangeSubscription: any;
+  
   private watchAccountChangeSubscription: any;
   public showAcresManagedDetails: boolean;
   public showSupplyDetails: boolean;
@@ -138,7 +138,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadingActiveAccount = true;
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.tradeStatusIDs = [TradeStatusEnum.Accepted, TradeStatusEnum.Countered, TradeStatusEnum.Rejected, TradeStatusEnum.Rescinded];
       this.postingStatusIDs = [PostingStatusEnum.Open, PostingStatusEnum.Closed];
@@ -252,9 +252,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
+    
     this.watchAccountChangeSubscription?.unsubscribe();
-    this.authenticationService.dispose();
+    
     this.cdr.detach();
   }
 

@@ -29,7 +29,7 @@ import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parc
 export class ParcelLedgerBulkCreateComponent implements OnInit {
   @ViewChild('parcelSelectGrid') parcelSelectGrid: AgGridAngular;
 
-  private watchUserChangeSubscription: any;
+  
   private gridApi;
   private columnApi;
   public currentUser: UserDto;
@@ -62,7 +62,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.model = new ParcelLedgerCreateDto();
     this.model.ParcelNumbers = [];
 
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
+    this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
 
       forkJoin(
@@ -80,8 +80,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

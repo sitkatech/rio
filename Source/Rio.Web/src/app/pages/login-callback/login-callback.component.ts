@@ -9,14 +9,14 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./login-callback.component.scss']
 })
 export class LoginCallbackComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
 
   constructor(private router: Router, 
     private authenticationService: AuthenticationService,
     private userService: UserService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       let authRedirectUrl = this.authenticationService.getAuthRedirectUrl();  
       if (authRedirectUrl && authRedirectUrl !== "/") {
           this.router.navigateByUrl(authRedirectUrl)
@@ -41,6 +41,6 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.watchUserChangeSubscription.unsubscribe();
+    
   }
 }

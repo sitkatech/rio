@@ -15,7 +15,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+    
     private currentUser: UserDto;
 
     public user: UserDto;
@@ -35,7 +35,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+        this.authenticationService.getCurrentUser().subscribe(currentUser => {
             this.currentUser = currentUser;
             const id = parseInt(this.route.snapshot.paramMap.get("id"));
             if (id) {
@@ -55,8 +55,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.watchUserChangeSubscription.unsubscribe();
-        this.authenticationService.dispose();
+        
+        
         this.cdr.detach();
     }
 

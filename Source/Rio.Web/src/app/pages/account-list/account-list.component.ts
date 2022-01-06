@@ -18,7 +18,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 })
 export class AccountListComponent implements OnInit, OnDestroy {
   @ViewChild("accountsGrid") accountsGrid: AgGridAngular;
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public accounts: Array<AccountDto>
@@ -35,9 +35,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.accountsGrid.api.showLoadingOverlay();
+      this.accountsGrid?.api.showLoadingOverlay();
       this.accountService.listAllAccounts().subscribe(accounts => {
         this.accounts = accounts;
         this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusID === AccountStatusEnum.Active);
@@ -224,8 +224,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -26,7 +26,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 export class ParcelUpdateLayerComponent implements OnInit {
 
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
-  private watchUserChangeSubscription: any;
+  
   public modalReference: NgbModalRef;
   public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
 
@@ -69,7 +69,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       forkJoin([
       this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
       this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1)]).subscribe(([model, waterYears]) => {
@@ -97,8 +97,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -117,7 +117,7 @@ export class AuthenticationService {
     this.updateUser(user);
   }
 
-  public getCurrentUser(): Observable<UserDetailedDto> {
+  public getCurrentUser(): Observable<UserDto> {
     return race(
       new Observable(subscriber => {
         if (this.currentUser) {

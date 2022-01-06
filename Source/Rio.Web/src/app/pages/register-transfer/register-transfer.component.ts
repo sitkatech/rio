@@ -24,7 +24,7 @@ import { WaterTransferRegistrationUpsertDto } from 'src/app/shared/generated/mod
   styleUrls: ['./register-transfer.component.scss']
 })
 export class RegisterTransferComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   public waterTransfer: WaterTransferDetailedDto;
   public isRegisteringTransfer: boolean = false;
@@ -57,7 +57,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
@@ -74,8 +74,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -18,7 +18,7 @@ import { UserSimpleDto } from 'src/app/shared/generated/model/user-simple-dto';
   styleUrls: ['./account-edit-users.component.scss']
 })
 export class AccountEditUsersComponent implements OnInit, OnDestroy {
-  public watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public accountID: number;
   public account: AccountDto;
@@ -50,7 +50,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allUsers = new Array<UserDto>();
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.accountID = parseInt(this.route.snapshot.paramMap.get("id"));
 
@@ -68,8 +68,8 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

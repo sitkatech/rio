@@ -10,7 +10,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 })
 export class CreateUserProfileComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   
   public introRichText : number = CustomRichTextType.CreateUserProfile;
