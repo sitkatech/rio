@@ -22,7 +22,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
 
   public richTextTypeID: number = CustomRichTextType.InactiveParcelList;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public waterYears: Array<WaterYearDto>;
@@ -60,7 +60,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
 
       let _datePipe = this.datePipe;
       this.columnDefs = [
@@ -124,7 +124,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.parcelsGrid.api.showLoadingOverlay();
+      this.parcelsGrid?.api.showLoadingOverlay();
 
       this.parcelService.getInactiveParcels().subscribe((parcels) => {
         this.rowData = parcels;
@@ -141,8 +141,8 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

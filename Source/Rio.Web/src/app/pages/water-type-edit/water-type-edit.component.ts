@@ -36,13 +36,13 @@ export class WaterTypeEditComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.resetWaterTypes();
     })
   }
 
   ngOnDestroy(): void {
-    this.watchUserChangeSubscription.unsubscribe();
+    
   }
 
   resetWaterTypes(): void {

@@ -9,7 +9,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./create-water-transactions.component.scss']
 })
 export class CreateWaterTransactionsComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   public richTextTypeID: number = CustomRichTextType.CreateWaterTransactions;
 
@@ -18,14 +18,14 @@ export class CreateWaterTransactionsComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
     });
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 }

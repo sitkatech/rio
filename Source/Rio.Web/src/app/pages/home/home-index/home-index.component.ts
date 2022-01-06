@@ -39,7 +39,7 @@ export class HomeIndexComponent implements OnInit, OnDestroy {
                 this.authenticationService.login();
             }
 
-            this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+            this.authenticationService.getCurrentUser().subscribe(currentUser => {
                 this.currentUser = currentUser;
                 if (currentUser && !this.userIsUnassigned() && !this.userRoleIsDisabled()) {
                     this.currentUserAccounts = this.authenticationService.getAvailableAccounts();

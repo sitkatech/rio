@@ -17,7 +17,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./posting-delete.component.scss']
 })
 export class PostingDeleteComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public posting: PostingDto;
@@ -38,7 +38,7 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.authenticationService.getCurrentUser().subscribe(currentUser => {
           this.currentUser = currentUser;
           const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
           if (postingID) {
@@ -57,8 +57,8 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-      this.watchUserChangeSubscription.unsubscribe();
-      this.authenticationService.dispose();
+      
+      
       this.cdr.detach();
   }
 

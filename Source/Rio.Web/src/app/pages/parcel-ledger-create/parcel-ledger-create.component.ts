@@ -25,7 +25,7 @@ import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 })
 export class ParcelLedgerCreateComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public parcelFromRoute: ParcelDto;
   public waterTypes: WaterTypeDto[];
@@ -51,7 +51,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   ngOnInit(): void {
     this.model = new ParcelLedgerCreateDto();
     
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
+    this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
 
       const id = this.route.snapshot.paramMap.get("id");
@@ -70,8 +70,8 @@ export class ParcelLedgerCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

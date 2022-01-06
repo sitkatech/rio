@@ -22,7 +22,7 @@ import { WaterYearMonthDto } from 'src/app/shared/generated/model/water-year-mon
   styleUrls: ['./openet-sync-water-year-month-status-list.component.scss']
 })
 export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
-  public watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public richTextTypeID: number = CustomRichTextType.OpenETIntegration;
   public modalReference: NgbModalRef;
@@ -50,7 +50,7 @@ export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.loadingPage = true;
       this.currentUser = currentUser;
       this.openETService.isApiKeyValid().subscribe(isValid => {
