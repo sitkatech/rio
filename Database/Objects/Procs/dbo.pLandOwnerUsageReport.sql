@@ -10,8 +10,8 @@ as
 
 begin
 select a.AccountID, a.AccountName, a.AccountNumber, a.AcresManaged, a.Allocation, a.Precipitation, a.Purchased, a.Sold,
-a.Allocation + a.Precipitation + a.Purchased + a.Sold as TotalSupply, a.UsageToDate,
-a.Allocation + a.Precipitation + a.Purchased + a.Sold - a.UsageToDate as CurrentAvailable,
+a.Allocation + a.Precipitation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
+a.Allocation + a.Precipitation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
 a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
@@ -42,7 +42,6 @@ from
 	left join
 	(
 		select acc.AccountID,
-				-- changes here to match new data model
 				sum(case when pa.TransactionTypeID = 1 and pa.ParcelLedgerEntrySourceTypeID = 1 then pa.TransactionAmount else 0 end) as Allocation, 
 				sum(case when pa.ParcelLedgerEntrySourceTypeID = 3 then pa.TransactionAmount else 0 end) as Precipitation,
 				sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount > 0 then pa.TransactionAmount else 0 end) as Purchased,
