@@ -17,7 +17,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 export class PostingListComponent implements OnInit, OnDestroy {
   @ViewChild('postingsGrid') postingsGrid: AgGridAngular;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   descriptionMaxLength: number = 300;
@@ -29,10 +29,10 @@ export class PostingListComponent implements OnInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private postingService: PostingService, private datePipe: DatePipe, private currencyPipe: CurrencyPipe, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.postingTypeFilter = 0;
       this.currentUser = currentUser;
-      this.postingsGrid.api.showLoadingOverlay();
+      this.postingsGrid?.api.showLoadingOverlay();
       this.postingService.getPostings().subscribe(result => {
         this.postings = result;
         this.postingsGrid.api.hideOverlay();
@@ -102,8 +102,8 @@ export class PostingListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

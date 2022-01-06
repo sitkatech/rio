@@ -14,7 +14,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./market-metrics-home.component.scss']
 })
 export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   marketMetrics: MarketMetricsDto;
   tradeActivityByMonth: TradeActivityByMonthDto[];
@@ -35,7 +35,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
 ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       forkJoin(this.marketMetricsService.getMarketMetrics(), this.marketMetricsService.getMonthlyTradeActivity()).subscribe(([marketMetrics, tradeActivityByMonth]) => {
         this.marketMetrics = marketMetrics;
@@ -60,8 +60,8 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

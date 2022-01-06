@@ -16,7 +16,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./water-accounts-list.component.scss']
 })
 export class WaterAccountsListComponent implements OnInit {
-  public watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public currentPage: number =  1;
 
@@ -35,7 +35,7 @@ export class WaterAccountsListComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.loadingAccounts = true;
       this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {

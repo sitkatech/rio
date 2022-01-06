@@ -21,7 +21,7 @@ import { environment } from 'src/environments/environment';
 })
 export class WaterAccountsAddComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
 
   public verificationKeyToSearchFor: string;
@@ -53,7 +53,7 @@ export class WaterAccountsAddComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       
       this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
@@ -63,8 +63,8 @@ export class WaterAccountsAddComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

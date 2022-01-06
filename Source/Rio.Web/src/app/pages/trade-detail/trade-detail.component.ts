@@ -28,7 +28,7 @@ import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/generated/mod
   styleUrls: ['./trade-detail.component.scss']
 })
 export class TradeDetailComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public trade: TradeDto;
@@ -69,7 +69,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
@@ -97,8 +97,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

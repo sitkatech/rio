@@ -16,12 +16,10 @@ export class CookieStorageService extends OAuthStorage {
   }
 
   removeItem(key: string): void {
-    // passing in the path parameter that was explicitly set 
     return this.cookieService.delete(key, '/');
   }
 
   removeAll(): void {
-    // passing in the path parameter that was explicitly set 
     return this.cookieService.deleteAll('/');
   }
 

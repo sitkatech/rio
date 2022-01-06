@@ -18,7 +18,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./account-detail.component.scss']
 })
 export class AccountDetailComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public account: AccountDto;
@@ -39,7 +39,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.authenticationService.getCurrentUser().subscribe(currentUser => {
           this.currentUser = currentUser;
           const id = parseInt(this.route.snapshot.paramMap.get("id"));
           if (id) {
@@ -60,8 +60,8 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-      this.watchUserChangeSubscription.unsubscribe();
-      this.authenticationService.dispose();
+      
+      
       this.cdr.detach();
   }
 

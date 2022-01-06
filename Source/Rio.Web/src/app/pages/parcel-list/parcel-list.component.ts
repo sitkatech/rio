@@ -25,7 +25,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   public richTextTypeID: number = CustomRichTextType.ParcelList;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public waterYears: Array<WaterYearDto>;
@@ -64,9 +64,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-
-
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
         {
@@ -118,7 +116,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.parcelsGrid.api.showLoadingOverlay();
+      this.parcelsGrid?.api.showLoadingOverlay();
       forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
         this.waterTypeService.getWaterTypes()
       ]).subscribe(([defaultYear, waterTypes]) => {
@@ -166,8 +164,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

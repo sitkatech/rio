@@ -19,7 +19,7 @@ import { UserUpsertDto } from 'src/app/shared/generated/model/user-upsert-dto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserEditComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public userID: number;
@@ -40,7 +40,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
 
       if (!this.authenticationService.isUserAnAdministrator(this.currentUser)) {
@@ -77,8 +77,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -20,7 +20,7 @@ export class AccountReconciliationComponent implements OnInit {
 
   public richTextTypeID: number = CustomRichTextType.AccountReconciliationReport;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   public gridOptions: GridOptions;
   public rowData = [];
@@ -51,7 +51,7 @@ export class AccountReconciliationComponent implements OnInit {
     private accountReconciliationService: AccountReconciliationService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
 
       this.columnDefs = [
         {
@@ -127,7 +127,7 @@ export class AccountReconciliationComponent implements OnInit {
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.accountReconciliationGrid.api.showLoadingOverlay();
+      this.accountReconciliationGrid?.api.showLoadingOverlay();
 
       this.accountReconciliationService.getAccountsToBeReconciled().subscribe((parcels) => {
         this.rowData = parcels;
@@ -144,8 +144,8 @@ export class AccountReconciliationComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

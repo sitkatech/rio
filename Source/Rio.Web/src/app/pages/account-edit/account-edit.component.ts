@@ -18,7 +18,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./account-edit.component.scss']
 })
 export class AccountEditComponent implements OnInit {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public accountID: number;
@@ -41,7 +41,7 @@ export class AccountEditComponent implements OnInit {
   ngOnInit() {
     this.model = new AccountUpdateDto();
     
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
 
       if (!this.authenticationService.isUserAnAdministrator(this.currentUser)) {
@@ -78,8 +78,8 @@ export class AccountEditComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

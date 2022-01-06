@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from './user/user.service';
-import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Observable, race, Subject } from 'rxjs';
+import { filter, first } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { AccountSimpleDto } from '../shared/generated/model/account-simple-dto';
 import { UserCreateDto } from '../shared/generated/model/user-create-dto';
 import { UserDto } from '../shared/generated/model/user-dto';
+import { UserDetailedDto } from '../shared/generated/model/user-detailed-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,8 @@ import { UserDto } from '../shared/generated/model/user-dto';
 export class AuthenticationService {
   private currentUser: UserDto;
 
-  private getUserObservable: any;
-
   private _currentUserSetSubject = new Subject<UserDto>();
-  public currentUserSetObservable = this._currentUserSetSubject.asObservable();
+  private currentUserSetObservable = this._currentUserSetSubject.asObservable();
 
 
   constructor(private router: Router,
@@ -31,62 +30,86 @@ export class AuthenticationService {
     private cookieStorageService: CookieStorageService,
     private userService: UserService,
     private alertService: AlertService) {
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe((e: NavigationEnd) => {
+    this.oauthService.events.subscribe(_ => {
+      this.checkAuthentication();
+    });
+
+    this.oauthService.events
+      .pipe(filter(e => ['token_received'].includes(e.type)))
+      .subscribe(e => this.oauthService.loadUserProfile());
+
+    this.oauthService.events
+      .pipe(filter(e => ['token_refresh_error'].includes(e.type)))
+      .subscribe(e => {
+        //If we're still authenticated, don't worry about the error
         if (this.isAuthenticated()) {
-          this.getGlobalIDFromClaimsAndAttemptToSetUserObservableAndCreateUserIfNecessary();
-        } else {
-          this.currentUser = null;
-          this._currentUserSetSubject.next(null);
+          return;
         }
+
+        //If we haven't cleared our cookies and done the logout, do so
+        var token = this.oauthService.getAccessToken();
+        if (token != null && token != undefined && token != "") {
+          this.logout();
+          return;
+        }
+
+        this.router
+          .navigateByUrl("/")
+          .then(() => this.alertService.pushAlert(new Alert("Your session has been terminated. Please login again.")));
       });
 
-    // check for a currentUser at NavigationStart so that authorization-based guards can work with promises.
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationStart))
-      .subscribe((e: NavigationStart) => {
-        this.checkAuthentication();
-      })
+    this.oauthService.setupAutomaticSilentRefresh();
+  }
+
+  public initialLoginSequence() : Promise<void> {
+    return this.oauthService.loadDiscoveryDocument()
+      .then(() => this.oauthService.tryLogin())
+      .then(() => {
+        if (this.oauthService.hasValidAccessToken()) {
+          return Promise.resolve();
+        }
+        return this.oauthService.silentRefresh().then(() => Promise.resolve());
+      }).catch(() => {});
   }
 
   public checkAuthentication() {
     if (this.isAuthenticated() && !this.currentUser) {
       console.log("Authenticated but no user found...");
-      this.getGlobalIDFromClaimsAndAttemptToSetUserObservableAndCreateUserIfNecessary();
+      var claims = this.oauthService.getIdentityClaims();
+      this.getUser(claims);
     }
   }
 
-  public getGlobalIDFromClaimsAndAttemptToSetUserObservableAndCreateUserIfNecessary() {
-    var claims = this.oauthService.getIdentityClaims();
+  public getUser(claims:any) {
     var globalID = claims["sub"];
 
-    this.getUserObservable = this.userService.getUserFromGlobalID(globalID).subscribe(result => {
-      this.getUserCallback(result);
-    }, error => {
-      if (error.status !== 404) {
-        this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
-        this.router.navigate(['/']);
-      } else {
-        this.alertService.clearAlerts();
-        const newUser = new UserCreateDto({
-          FirstName: claims["given_name"],
-          LastName: claims["family_name"],
-          Email: claims["email"],
-          RoleID: RoleEnum.Unassigned,
-          LoginName: claims["login_name"],
-          UserGuid: claims["sub"],
-        });
-
-        this.userService.createNewUser(newUser).subscribe(user => {
-          this.getUserCallback(user);
-        })
-
-      }
-    });
+    this.userService.getUserFromGlobalID(globalID).subscribe(
+      result => { this.updateUser(result);},
+      error => { this.onGetUserError(error, claims) }
+    );
   }
 
-  private getUserCallback(user: UserDto) {
+  private onGetUserError(error: any, claims: any) {
+    if (error.status !== 404) {
+      this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
+      this.router.navigate(['/']);
+    } else {
+      this.alertService.clearAlerts();
+      const newUser = new UserCreateDto({
+        FirstName: claims["given_name"],
+        LastName: claims["family_name"],
+        Email: claims["email"],
+        LoginName: claims["login_name"],
+        UserGuid: claims["sub"],
+      });
+
+      this.userService.createNewUser(newUser).subscribe(user => {
+        this.updateUser(user);
+      })
+    }
+  }
+
+  private updateUser(user: UserDto) {
     this.currentUser = user;
 
     if (this.isUserRoleDisabled(this.currentUser)) {
@@ -107,24 +130,23 @@ export class AuthenticationService {
   }
 
   public refreshUserInfo(user: UserDto) {
-    this.getUserCallback(user);
+    this.updateUser(user);
   }
 
-  dispose() {
-    this.getUserObservable.unsubscribe();
+  public getCurrentUser(): Observable<UserDto> {
+    return race(
+      new Observable(subscriber => {
+        if (this.currentUser) {
+          subscriber.next(this.currentUser);
+          subscriber.complete();
+        }
+      }),
+      this.currentUserSetObservable.pipe(first())
+    );
   }
 
   public isAuthenticated(): boolean {
     return this.oauthService.hasValidAccessToken();
-  }
-
-  public handleUnauthorized(): void {
-    this.forcedLogout();
-  }
-
-  public forcedLogout() {
-    sessionStorage["authRedirectUrl"] = window.location.href;
-    this.logout();
   }
 
   public login() {
@@ -242,5 +264,17 @@ export class AuthenticationService {
 
   public hasCurrentUserAcknowledgedDisclaimer(): boolean {
     return this.currentUser != null && this.currentUser.DisclaimerAcknowledgedDate != null;
+  }
+
+  public getAuthRedirectUrl() {
+    return sessionStorage["authRedirectUrl"];
+  }
+
+  public setAuthRedirectUrl(url: string) {
+    sessionStorage["authRedirectUrl"] = url;
+  }
+
+  public clearAuthRedirectUrl() {
+    this.setAuthRedirectUrl("");
   }
 }

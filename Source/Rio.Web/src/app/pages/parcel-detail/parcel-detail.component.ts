@@ -26,7 +26,7 @@ import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/par
 })
 export class ParcelDetailComponent implements OnInit, OnDestroy {
   @ViewChild('parcelLedgerGrid') parcelLedgerGrid: AgGridAngular;
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   private currentUserAccounts: AccountSimpleDto[];
 
@@ -62,7 +62,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -164,8 +164,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
