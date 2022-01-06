@@ -46,7 +46,7 @@ from
 				sum(case when pa.TransactionTypeID = 1 and pa.ParcelLedgerEntrySourceTypeID = 1 then pa.TransactionAmount else 0 end) as Allocation, 
 				sum(case when pa.ParcelLedgerEntrySourceTypeID = 3 then pa.TransactionAmount else 0 end) as Precipitation,
 				sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount > 0 then pa.TransactionAmount else 0 end) as Purchased,
-				sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount < 0 then pa.TransactionAmount else 0 end) as Sold,
+				abs(sum(case when pa.ParcelLedgerEntrySourceTypeID = 4 and pa.TransactionAmount < 0 then pa.TransactionAmount else 0 end)) as Sold,
 				abs(sum(case when pa.TransactionTypeID = 2 then pa.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.Account acc
 		join (
