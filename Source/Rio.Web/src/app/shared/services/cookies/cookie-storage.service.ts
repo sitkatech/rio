@@ -16,11 +16,11 @@ export class CookieStorageService extends OAuthStorage {
   }
 
   removeItem(key: string): void {
-    return this.cookieService.delete(key);
+    return this.cookieService.delete(key, '/');
   }
 
   removeAll(): void {
-    return this.cookieService.deleteAll();
+    return this.cookieService.deleteAll('/');
   }
 
   setItem(key: string, data: string): void {
