@@ -2,15 +2,15 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { SeriesEntry, MultiSeriesEntry } from "src/app/shared/models/series-entry";
 import { environment } from 'src/environments/environment';
 @Component({
-  selector: 'rio-landowner-water-allocation-chart',
-  templateUrl: './landowner-water-allocation-chart.component.html',
-  styleUrls: ['./landowner-water-allocation-chart.component.scss']
+  selector: 'rio-landowner-water-supply-chart',
+  templateUrl: './landowner-water-supply-chart.component.html',
+  styleUrls: ['./landowner-water-supply-chart.component.scss']
 })
-export class LandownerWaterAllocationChartComponent implements OnInit {
-  @Input() annualAllocationSeries: any;
+export class LandownerWaterSupplyChartComponent implements OnInit {
+  @Input() annualSupplySeries: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
-  @Input() allocationLabel: string = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+  @Input() supplyLabel: string = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
 
   fake: MultiSeriesEntry[] = [];
 
@@ -35,6 +35,6 @@ export class LandownerWaterAllocationChartComponent implements OnInit {
 
   constructor() { }
   ngOnInit() {
-    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.allocationLabel];
+    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.supplyLabel];
   }
 }

@@ -52,8 +52,8 @@
               <th class="text-sm-left">
                 Total Supply
               </th>
-              <td class="text-sm-right">
-                {{getAnnualAllocation(false) | number: '1.1-1'}} {{unitsShown}}
+              <td class="text-sm-right font-weight-bold">
+                {{getAnnualSupply(false) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <ng-container *ngFor="let batch of waterTypesBatched">
@@ -102,7 +102,7 @@
               <th class="text-sm-left">
                 Total Usage
               </th>
-              <td class="text-sm-right">
+              <td class="text-sm-right font-weight-bold">
                 {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
@@ -110,7 +110,7 @@
               <th class="text-sm-left">
                 Average Annual Usage
               </th>
-              <td class="text-sm-right">
+              <td class="text-sm-right font-weight-bold">
                 {{getResultInUnitsShown(historicAverageAnnualUsage) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
@@ -118,16 +118,11 @@
               <th class="text-sm-left pb-0 mb-0">
                 Total APN Acreage
               </th>
-              <td class="text-sm-right pb-0 mb-0">
+              <td class="text-sm-right pb-0 mb-0  font-weight-bold">
                 {{getTotalAPNAcreage() | number: '1.1-1'}} ac
               </td>
             </tr>
           </table>
-          <div class="updating" *ngIf="loadingParcelAllocationsAndUsages">
-            <div class="updating-text">
-                <span class="fa fa-spinner loading-spinner"></span>
-            </div>
-          </div>  
         </div>
         <div class="card-body text-center" *ngIf="!landownerUsageReport">
           <i class="fa fa-spinner loading-spinner"></i>
@@ -139,25 +134,20 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay?.Year}} District Allocation and Usage
+              {{waterYearToDisplay?.Year}} District Supply and Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>
               </a>
             </div>
-            <div class="card-body" style="position:relative" *ngIf="annualAllocationChartData && waterUsageOverview">
-              <rio-landowner-water-allocation-chart [allocationLabel]="allocationLabel"
-                [annualAllocationSeries]="getAnnualAllocationSeries()" [yDomain]="allocationChartRange"
+            <div class="card-body" style="position:relative" *ngIf="annualSupplyChartData && waterUsageOverview">
+              <rio-landowner-water-supply-chart [supplyLabel]="supplyLabel"
+                [annualSupplySeries]="getAnnualSupplySeries()" [yDomain]="supplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
-              </rio-landowner-water-allocation-chart>
-              <div class="updating" *ngIf="loadingParcelAllocationsAndUsages">
-                <div class="updating-text">
-                    <span class="fa fa-spinner loading-spinner"></span>
-                </div>
-              </div>  
+              </rio-landowner-water-supply-chart> 
             </div>
-            <div class="card-body text-center" *ngIf="!annualAllocationChartData || !waterUsageOverview">
+            <div class="card-body text-center" *ngIf="!annualSupplyChartData || !waterUsageOverview">
               <i class="fa fa-spinner loading-spinner"></i>
             </div>
           </div>

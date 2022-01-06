@@ -34,9 +34,9 @@ import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
-import { AllocationChartImplComponent } from './pages/landowner-water-allocation-chart/allocation-chart-impl.component';
+import { SupplyChartImplComponent } from './pages/landowner-water-supply-chart/supply-chart-impl.component';
 import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/combo-series-vertical.component'
-import { LandownerWaterAllocationChartComponent } from './pages/landowner-water-allocation-chart/landowner-water-allocation-chart.component';
+import { LandownerWaterSupplyChartComponent } from './pages/landowner-water-supply-chart/landowner-water-supply-chart.component';
 import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
@@ -109,9 +109,9 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     RegisterTransferComponent,
     ParcelListComponent,
     LandownerWaterUseChartComponent,
-    AllocationChartImplComponent,
+    SupplyChartImplComponent,
     ComboSeriesVerticalComponent,
-    LandownerWaterAllocationChartComponent,
+    LandownerWaterSupplyChartComponent,
     PostingDeleteComponent,
     LoginCallbackComponent,
     HelpComponent,

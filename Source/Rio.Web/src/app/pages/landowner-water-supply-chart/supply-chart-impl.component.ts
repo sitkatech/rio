@@ -30,12 +30,12 @@ import { area, line, curveLinear } from 'd3-shape';
 import { scaleBand, scaleLinear, scalePoint, scaleTime } from 'd3-scale';
 
 @Component({
-  selector: 'rio-allocation-chart-impl-component',
-  templateUrl: './allocation-chart-impl.component.html',
-  styleUrls: ['./allocation-chart-impl.component.scss'],
+  selector: 'rio-supply-chart-impl-component',
+  templateUrl: './supply-chart-impl.component.html',
+  styleUrls: ['./supply-chart-impl.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class AllocationChartImplComponent extends BaseChartComponent {
+export class SupplyChartImplComponent extends BaseChartComponent {
   @Input() curve: any = curveLinear;
   @Input() legend = false;
   @Input() legendTitle: string = 'Legend';
@@ -61,7 +61,7 @@ export class AllocationChartImplComponent extends BaseChartComponent {
   @Input() autoScale;
   @Input() historicCumulativeWaterUsageSeries: any;
   @Input() currentCumulativeWaterUsageSeries: any;
-  @Input() annualAllocationSeries: any;
+  @Input() annualSupplySeries: any;
   @Input() yLeftAxisScaleFactor: any;
   @Input() yRightAxisScaleFactor: any;
   @Input() rangeFillOpacity: number;
@@ -144,7 +144,7 @@ export class AllocationChartImplComponent extends BaseChartComponent {
 
     this.yDomainLine = this.getYDomainLine();
     this.combinedSeries = [];
-    this.combinedSeries.push(this.annualAllocationSeries);
+    this.combinedSeries.push(this.annualSupplySeries);
     this.combinedSeries.push(this.historicCumulativeWaterUsageSeries);
     this.combinedSeries.push({
       name: "Cumulative Monthly Usage",

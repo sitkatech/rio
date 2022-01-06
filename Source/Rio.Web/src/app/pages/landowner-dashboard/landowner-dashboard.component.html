@@ -209,10 +209,10 @@
         <div class="row">
           <div class="col-sm-12">
             <div *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
-              <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
+              <rio-landowner-water-supply-chart [annualSupplySeries]="getAnnualSupplySeries()"
                 [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
-              </rio-landowner-water-allocation-chart>
+              </rio-landowner-water-supply-chart>
             </div>
           </div>
         </div>
