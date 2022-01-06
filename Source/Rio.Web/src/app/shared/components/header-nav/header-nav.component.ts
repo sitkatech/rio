@@ -109,6 +109,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public login(): void {
+        this.authenticationService.setAuthRedirectUrl(this.router.url);
         this.authenticationService.login();
     }
 
