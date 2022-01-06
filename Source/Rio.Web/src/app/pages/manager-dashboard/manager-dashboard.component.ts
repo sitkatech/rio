@@ -30,6 +30,7 @@ import { TradeWithMostRecentOfferDto } from 'src/app/shared/generated/model/trad
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
+import { LandownerUsageReportDto } from 'src/app/shared/generated/model/landowner-usage-report-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -48,6 +49,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public parcels: Array<ParcelDto>;
   public parcelAllocationAndUsages: Array<ParcelAllocationAndUsageDto>;
+  public landownerUsageReport: Array<LandownerUsageReportDto>;
 
   public tradesGridColumnDefs: ColDef[];
   public postingsGridColumnDefs: ColDef[];
@@ -86,7 +88,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public allocationChartRange: number[];
   public historicCumulativeWaterUsage: MultiSeriesEntry;
   public historicAverageAnnualUsage: number;
-  public loadingParcelAllocationsAndUsages: boolean = false;
 
   public isPerformingAction: boolean = false;
 
@@ -540,31 +541,23 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     {
       return;
     }
-    
     this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
       this.parcels = parcels;
     })
     if (this.landOwnerUsageReportGrid) {
       this.landOwnerUsageReportGrid.api.showLoadingOverlay();
     }
-    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(result => {
+    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(landownerUsageReport => {
+      this.landownerUsageReport = landownerUsageReport;
       if (!this.landOwnerUsageReportGrid) {
         return;
       }
-      
-      this.landOwnerUsageReportGrid.api.setRowData(result);
+      this.landOwnerUsageReportGrid.api.setRowData(landownerUsageReport);
       this.landOwnerUsageReportGrid.api.hideOverlay();
     });
     this.getTradesAndPostingsForYear();
-    this.loadingParcelAllocationsAndUsages = true;
-    forkJoin([
-      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
-      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year)
-    ])
-    .subscribe(([result, waterUsageOverview]) => {
-      this.parcelAllocationAndUsages = result;
+    this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
       this.waterUsageOverview = waterUsageOverview;
-      this.loadingParcelAllocationsAndUsages = false;
       this.initializeCharts(this.waterUsageOverview);
     });
   }
@@ -610,44 +603,33 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAnnualAllocation(skipConvertToUnitsShown?: boolean): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "Allocation", skipConvertToUnitsShown);
+    return this.getSumOfLandownerUsageReportValuesByField("Allocation", skipConvertToUnitsShown);
   }
 
   public getAnnualUsage(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "UsageToDate");
+    return this.getSumOfLandownerUsageReportValuesByField("UsageToDate");
   }
 
-  public getAnnualAllocationByWaterType(waterType: WaterTypeDto): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocatedByWaterType(parcelAllocations, waterType);
+  public getAnnualSupplyByWaterType(waterType: WaterTypeDto): number {
+    return this.getTotalSupplyByWaterType(this.landownerUsageReport, waterType);
   }
 
-  public getAnnualProjectWater(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "ProjectWater");
+  public getPrecipSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Precipitation");
   }
 
-  public getAnnualReconciliation(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "Reconciliation");
+  public getPurchasedSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Purchased");
   }
 
-  public getAnnualNativeYield(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "NativeYield");
+  public getSoldSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Sold");
   }
 
-  public getAnnualStoredWater(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "StoredWater");
-  }
-
-  public getTotalAcreFeetAllocated(parcelAllocations : Array<ParcelAllocationAndUsageDto>, field: string, skipConvertToUnitsShown?: boolean): number {
+  public getSumOfLandownerUsageReportValuesByField(field: string, skipConvertToUnitsShown?: boolean): number {
     var result = 0;
-    if (parcelAllocations.length > 0) {
-      result = parcelAllocations.reduce(function (a, b) {
+    if (this.landownerUsageReport.length > 0) {
+      result = this.landownerUsageReport.reduce(function (a, b) {
         return (a + b[field]);
       }, 0);
     }
@@ -657,10 +639,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.getResultInUnitsShown(result);
   }
 
-  public getTotalAcreFeetAllocatedByWaterType(parcelAllocations: Array<ParcelAllocationAndUsageDto>, waterType: WaterTypeDto): number{
+  public getTotalSupplyByWaterType(landownerUsageReport: Array<LandownerUsageReportDto>, waterType: WaterTypeDto): number{
     var result = 0;
-    if (parcelAllocations.length > 0){
-      result = parcelAllocations.reduce(function(a,b) {
+    if (landownerUsageReport.length > 0){
+      result = landownerUsageReport.reduce(function(a,b) {
         return (a + (b.Allocations ? b.Allocations[waterType.WaterTypeID] ?? 0 : 0))
       }, 0);
     }
@@ -678,13 +660,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalAPNAcreage(): number {
-    if (this.parcelAllocationAndUsages.length > 0) {
-      let result = this.parcelAllocationAndUsages.reduce(function (a, b) {
-        return (a + b.ParcelAreaInAcres);
-      }, 0);
-      return result;
-    }
-    return 0;
+    return this.getSumOfLandownerUsageReportValuesByField("AcresManaged", true);
   }
 
   // batch the parcel allocation types into twos for the district wide statistics panel

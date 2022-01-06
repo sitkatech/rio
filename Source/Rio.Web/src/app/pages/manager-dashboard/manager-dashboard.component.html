@@ -46,53 +46,80 @@
           </div>
           <span class="align-middle"> District-Wide Statistics </span>
         </div>
-        <div class="card-body" style="position:relative" *ngIf="parcelAllocationAndUsages">
+        <div class="card-body" style="position:relative" *ngIf="landownerUsageReport">
           <table class="table table-sm table-borderless">
             <tr>
-              <th class="text-sm-left pb-0 mb-0">
-                Total Allocation
+              <th class="text-sm-left">
+                Total Supply
               </th>
-              <td class="text-sm-right pb-0 mb-0">
+              <td class="text-sm-right">
                 {{getAnnualAllocation(false) | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <hr class="p-0 m-0" />
               </td>
             </tr>
             <ng-container *ngFor="let batch of waterTypesBatched">
               <tr *ngFor="let waterType of batch">
-                <th class="text-sm-right">
+                <td class="text-sm-right">
                   {{waterType.WaterTypeName}}
                   <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
                       ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
                         class="fas fa-question-circle small"></i></a>
-                </th>
+                </td>
                 <td class="text-sm-right">
-                  {{getAnnualAllocationByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
+                  {{getAnnualSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
             </ng-container>
             <tr>
-              <td colspan="2">
-                <hr style="border: 1px solid #000;" />
+              <th class="text-sm-right font-weight-normal">
+                Precipitation
+              </th>
+              <td class="text-sm-right">
+                {{getPrecipSupply() | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr> 
+            <tr>
+              <th class="text-sm-right font-weight-normal">
+                Purchased
+              </th>
+              <td class="text-sm-right">
+                {{getPurchasedSupply() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
-              <th class="text-sm-left pb-0 mb-0">
+              <th class="text-sm-right font-weight-normal">
+                Sold
+              </th>
+              <td class="text-sm-right">
+                {{getSoldSupply() | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <hr class="mt-3" />
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left">
                 Total Usage
               </th>
-              <td class="text-sm-right pb-0 mb-0">
+              <td class="text-sm-right">
                 {{getAnnualUsage() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
-              <th class="text-sm-left pb-0 mb-0">
+              <th class="text-sm-left">
                 Average Annual Usage
               </th>
-              <td class="text-sm-right pb-0 mb-0">
+              <td class="text-sm-right">
                 {{getResultInUnitsShown(historicAverageAnnualUsage) | number: '1.1-1'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-0 mb-0">
+                Total APN Acreage
+              </th>
+              <td class="text-sm-right pb-0 mb-0">
+                {{getTotalAPNAcreage() | number: '1.1-1'}} ac
               </td>
             </tr>
           </table>
@@ -102,7 +129,7 @@
             </div>
           </div>  
         </div>
-        <div class="card-body text-center" *ngIf="!parcelAllocationAndUsages">
+        <div class="card-body text-center" *ngIf="!landownerUsageReport">
           <i class="fa fa-spinner loading-spinner"></i>
         </div>
       </div>
