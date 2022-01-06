@@ -39,8 +39,24 @@ export class AuthenticationService {
       .subscribe(e => this.oauthService.loadUserProfile());
 
     this.oauthService.events
-      .pipe(filter(e => ['token_error'].includes(e.type)))
-      .subscribe(e => this.router.navigateByUrl("/"));
+      .pipe(filter(e => ['token_refresh_error'].includes(e.type)))
+      .subscribe(e => {
+        //If we're still authenticated, don't worry about the error
+        if (this.isAuthenticated()) {
+          return;
+        }
+
+        //If we haven't cleared our cookies and done the logout, do so
+        var token = this.oauthService.getAccessToken();
+        if (token != null && token != undefined && token != "") {
+          this.logout();
+          return;
+        }
+
+        this.router
+          .navigateByUrl("/")
+          .then(() => this.alertService.pushAlert(new Alert("Your session has been terminated. Please login again.")));
+      });
 
     this.oauthService.setupAutomaticSilentRefresh();
   }
@@ -131,11 +147,6 @@ export class AuthenticationService {
 
   public isAuthenticated(): boolean {
     return this.oauthService.hasValidAccessToken();
-  }
-
-  public forcedLogout(url: string) {
-    this.setAuthRedirectUrl(url);
-    this.logout();
   }
 
   public login() {
