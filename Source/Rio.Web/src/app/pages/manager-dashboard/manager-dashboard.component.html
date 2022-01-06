@@ -141,8 +141,8 @@
               </a>
             </div>
             <div class="card-body" style="position:relative" *ngIf="annualSupplyChartData && waterUsageOverview">
-              <rio-landowner-water-supply-chart [supplyLabel]="supplyLabel"
-                [annualSupplySeries]="getAnnualSupplySeries()" [yDomain]="supplyChartRange"
+              <rio-landowner-water-supply-chart [waterSupplyLabel]="waterSupplyLabel"
+                [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="supplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-supply-chart> 

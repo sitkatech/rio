@@ -569,7 +569,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    const supplyLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+    const waterSupplyLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
     
     this.annualAllocationChartData = this.waterYears.map(x => {
       const allocation = this.getAnnualAllocation(x.Year, true);
@@ -581,7 +581,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return {
         Year: x.Year,
         ChartData: {
-          name: supplyLabel,
+          name: waterSupplyLabel,
           series: this.months.map(y => { return this.createSeriesEntry(y, allocation + purchased - sold) })
         }
       }
@@ -735,7 +735,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
-  public getAnnualSupplySeries(): MultiSeriesEntry {
+  public getAnnualWaterSupplySeries(): MultiSeriesEntry {
     if (!this.annualAllocationChartData) {
       return null;
     }

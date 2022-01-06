@@ -34,7 +34,7 @@ import { LinkRendererComponent } from './shared/components/ag-grid/link-renderer
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { LandownerWaterUseChartComponent } from './pages/landowner-water-use-chart/landowner-water-use-chart.component';
-import { SupplyChartImplComponent } from './pages/landowner-water-supply-chart/supply-chart-impl.component';
+import { WaterSupplyChartImplComponent } from './pages/landowner-water-supply-chart/water-supply-chart-impl.component';
 import { ComboSeriesVerticalComponent } from './shared/components/combo-chart/combo-series-vertical.component'
 import { LandownerWaterSupplyChartComponent } from './pages/landowner-water-supply-chart/landowner-water-supply-chart.component';
 import { FontAwesomeIconLinkRendererComponent } from './shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
@@ -109,7 +109,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     RegisterTransferComponent,
     ParcelListComponent,
     LandownerWaterUseChartComponent,
-    SupplyChartImplComponent,
+    WaterSupplyChartImplComponent,
     ComboSeriesVerticalComponent,
     LandownerWaterSupplyChartComponent,
     PostingDeleteComponent,

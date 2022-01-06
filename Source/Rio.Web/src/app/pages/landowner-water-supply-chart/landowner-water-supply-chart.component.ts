@@ -7,10 +7,10 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./landowner-water-supply-chart.component.scss']
 })
 export class LandownerWaterSupplyChartComponent implements OnInit {
-  @Input() annualSupplySeries: any;
+  @Input() annualWaterSupplySeries: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
-  @Input() supplyLabel: string = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+  @Input() waterSupplyLabel: string = environment.allowTrading ? "Annual Water Supply (Allocation +/- Trades)" : "Annual Supply"
 
   fake: MultiSeriesEntry[] = [];
 
@@ -35,6 +35,6 @@ export class LandownerWaterSupplyChartComponent implements OnInit {
 
   constructor() { }
   ngOnInit() {
-    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.supplyLabel];
+    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.waterSupplyLabel];
   }
 }

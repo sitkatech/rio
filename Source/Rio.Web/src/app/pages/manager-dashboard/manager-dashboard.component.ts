@@ -62,7 +62,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public waterTypesBatched: WaterTypeDto[][];
   private waterTypeSupplyColDefInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
-  public supplyLabel: string = "Annual Supply";
+  public waterSupplyLabel: string = "Annual Supply";
   postingActivity: PostingDetailedDto[];
 
   public months = ["Jan",
@@ -180,7 +180,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       return {
         Year: x.Year,
         ChartData: {
-          name: this.supplyLabel,
+          name: this.waterSupplyLabel,
           series: this.months.map(y => { return { name: y, value: supply } })
         }
       }
@@ -191,7 +191,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
 
-  public getAnnualSupplySeries(): MultiSeriesEntry {
+  public getAnnualWaterSupplySeries(): MultiSeriesEntry {
     if (!this.annualSupplyChartData) {
       return null;
     }
