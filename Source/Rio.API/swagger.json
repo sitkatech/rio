@@ -4265,11 +4265,6 @@
             "format": "double",
             "nullable": true
           },
-          "Allocation": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "Precipitation": {
             "type": "number",
             "format": "double",
@@ -4312,7 +4307,7 @@
             "type": "string",
             "nullable": true
           },
-          "Allocations": {
+          "WaterSupplyByWaterType": {
             "type": "object",
             "additionalProperties": {
               "type": "number",

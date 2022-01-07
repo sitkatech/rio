@@ -2,9 +2,9 @@
 
 namespace Rio.Models.DataTransferObjects.ParcelAllocation
 {
-    public class LandownerAllocationBreakdownDto
+    public class LandownerWaterSupplyBreakdownDto
     {
         public int AccountID { get; set; }
-        public Dictionary<int,decimal> Allocations { get; set; }
+        public Dictionary<int,decimal> WaterSupplyByWaterType { get; set; }
     }
 }

@@ -126,14 +126,14 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
         // define column defs for water types
         this.waterTypes.forEach(waterType => {
-            newLandownerUsageReportGridColumnDefs.push({
+          newLandownerUsageReportGridColumnDefs.push({
             headerName: waterType.WaterTypeName,
             valueFormatter: function (params) { return decimalPipe.transform(params.value, "1.1-1"); },
             sortable: true,
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations[waterType.WaterTypeID] ?? 0.0;
+              return params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0;
             }
           })
         });
@@ -502,8 +502,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
       { headerName: 'Precipitation', field: 'Precipitation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
-      { headerName: 'Purchased (ac-ft)', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },
-      { headerName: 'Sold (ac-ft)', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 100 },
+      { headerName: 'Purchased (ac-ft)', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-0"); }, sortable: true, filter: true, width: 140 },
+      { headerName: 'Sold (ac-ft)', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-0"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
       { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 180 },
       { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 },
@@ -600,7 +600,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAnnualWaterSupply(skipConvertToUnitsShown?: boolean): number {
-    return this.getSumOfLandownerUsageReportValuesByField("Allocation", skipConvertToUnitsShown);
+    return this.getSumOfLandownerUsageReportValuesByField("TotalSupply", skipConvertToUnitsShown);
   }
 
   public getAnnualUsage(): number {
@@ -640,7 +640,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     var result = 0;
     if (landownerUsageReport.length > 0){
       result = landownerUsageReport.reduce(function(a,b) {
-        return (a + (b.Allocations ? b.Allocations[waterType.WaterTypeID] ?? 0 : 0))
+        return (a + (b.WaterSupplyByWaterType ? b.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0 : 0))
       }, 0);
     }
     return this.getResultInUnitsShown(result);

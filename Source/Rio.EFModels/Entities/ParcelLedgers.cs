@@ -59,27 +59,27 @@ namespace Rio.EFModels.Entities
             return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Usage);
         }
 
-        public static List<LandownerAllocationBreakdownDto> GetLandownerAllocationBreakdownForYear(RioDbContext dbContext, int year)
+        public static List<LandownerWaterSupplyBreakdownDto> GetLandownerWaterSupplyBreakdownForYear(RioDbContext dbContext, int year)
         {
             var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
 
-            var parcelAllocations = GetSupplyImpl(dbContext)
+            var parcelWaterSupply = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
-            if (parcelAllocations.Any())
+            if (parcelWaterSupply.Any())
             {
                 return accountParcelWaterYearOwnershipsByYear
                     .GroupJoin(
-                        parcelAllocations,
+                        parcelWaterSupply,
                         x => x.ParcelID,
                         y => y.ParcelID,
                         (x, y) => new
                         {
                             ParcelOwnership = x,
-                            ParcelAllocation = y
+                            ParcelWaterSupply = y
                         })
                     .SelectMany(
-                        parcelOwnershipAndAllocations =>
-                            parcelOwnershipAndAllocations.ParcelAllocation.DefaultIfEmpty(),
+                        parcelOwnershipAndWaterSupply =>
+                            parcelOwnershipAndWaterSupply.ParcelWaterSupply.DefaultIfEmpty(),
                         (x, y) => new
                         {
                             x.ParcelOwnership.AccountID,
@@ -88,10 +88,10 @@ namespace Rio.EFModels.Entities
                         })
                     .ToList()
                     .GroupBy(x => x.AccountID)
-                    .Select(x => new LandownerAllocationBreakdownDto()
+                    .Select(x => new LandownerWaterSupplyBreakdownDto()
                     {
                         AccountID = x.Key,
-                        Allocations = new Dictionary<int, decimal>(
+                        WaterSupplyByWaterType = new Dictionary<int, decimal>(
                             //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
                             x.GroupBy(z => z.WaterTypeID)
                                 .Select(y =>
@@ -101,7 +101,7 @@ namespace Rio.EFModels.Entities
                     .ToList();
             }
 
-            return new List<LandownerAllocationBreakdownDto>();
+            return new List<LandownerWaterSupplyBreakdownDto>();
         }
 
         public static List<ParcelLedgerDto> ListByAccountIDForAllWaterYears(RioDbContext dbContext, int accountID)
