@@ -53,7 +53,7 @@
                 Total Supply
               </th>
               <td class="text-sm-right font-weight-bold">
-                {{getAnnualSupply(false) | number: '1.1-1'}} {{unitsShown}}
+                {{getAnnualWaterSupply(false) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <ng-container *ngFor="let batch of waterTypesBatched">
@@ -65,7 +65,7 @@
                         class="fas fa-question-circle small"></i></a>
                 </td>
                 <td class="text-sm-right">
-                  {{getAnnualSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
+                  {{getAnnualWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
             </ng-container>
@@ -74,7 +74,7 @@
                 Precipitation
               </th>
               <td class="text-sm-right">
-                {{getPrecipSupply() | number: '1.1-1'}} {{unitsShown}}
+                {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr> 
             <tr>
@@ -82,7 +82,7 @@
                 Purchased
               </th>
               <td class="text-sm-right">
-                {{getPurchasedSupply() | number: '1.1-1'}} {{unitsShown}}
+                {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
@@ -90,7 +90,7 @@
                 Sold
               </th>
               <td class="text-sm-right">
-                {{getSoldSupply() | number: '1.1-1'}} {{unitsShown}}
+                {{getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <tr>
@@ -140,14 +140,14 @@
                   class="fas fa-question-circle small"></i>
               </a>
             </div>
-            <div class="card-body" style="position:relative" *ngIf="annualSupplyChartData && waterUsageOverview">
+            <div class="card-body" style="position:relative" *ngIf="annualWaterSupplyChartData && waterUsageOverview">
               <rio-landowner-water-supply-chart [waterSupplyLabel]="waterSupplyLabel"
-                [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="supplyChartRange"
+                [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="waterSupplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-supply-chart> 
             </div>
-            <div class="card-body text-center" *ngIf="!annualSupplyChartData || !waterUsageOverview">
+            <div class="card-body text-center" *ngIf="!annualWaterSupplyChartData || !waterUsageOverview">
               <i class="fa fa-spinner loading-spinner"></i>
             </div>
           </div>
