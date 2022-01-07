@@ -417,22 +417,26 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradeSalesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount < 0);
+    return this.getParcelLedgersForWaterYear(year).filter(x => 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade && 
+      x.TransactionAmount < 0);
   }
 
   public getTradePurchasesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount > 0);
+    return this.getParcelLedgersForWaterYear(year).filter(x => 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade && 
+      x.TransactionAmount > 0);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDetailedDto) {
     return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
-  public getPurchasedAcreFeet(year?: number): number {
+  public getPurchasedWaterSupply(year?: number): number {
     return this.getTotalTransactionAmountForParcelLedgers(this.getTradePurchasesForWaterYear(year)) ?? 0;
   }
 
-  public getSoldAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
+  public getSoldWaterSupply(year?: number, skipConvertToUnitsShown?: boolean): number {
     return this.getTotalTransactionAmountForParcelLedgers(this.getTradeSalesForWaterYear(year), skipConvertToUnitsShown) ?? 0;
   }
 
@@ -450,7 +454,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalSupply(): number {
-    return this.getAnnualWaterSupply(this.waterYearToDisplay.Year) + this.getPurchasedAcreFeet() + this.getSoldAcreFeet();
+    return this.getAnnualWaterSupply(this.waterYearToDisplay.Year) + this.getPurchasedWaterSupply() + this.getSoldWaterSupply();
   }
 
   public getCurrentAvailableWater(): number {
@@ -573,8 +577,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     
     this.annualWaterSupplyChartData = this.waterYears.map(x => {
       const waterSupply = this.getAnnualWaterSupply(x.Year, true);
-      const sold = this.getSoldAcreFeet(x.Year, true);
-      const purchased = this.getPurchasedAcreFeet(x.Year);
+      const sold = this.getSoldWaterSupply(x.Year, true);
+      const purchased = this.getPurchasedWaterSupply(x.Year);
 
       values.push(waterSupply + purchased - sold);      
 

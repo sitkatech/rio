@@ -121,7 +121,7 @@
                   Precipitation
                 </th>
                 <td class="text-sm-right">
-                  {{getPrecipSupply() | number: '1.1-1'}} {{unitsShown}}
+                  {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr> 
               <tr>
@@ -129,7 +129,7 @@
                   Purchased
                 </th>
                 <td class="text-sm-right">
-                  {{getPurchasedAcreFeet() | number: '1.1-1'}} {{unitsShown}}
+                  {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <tr>
@@ -137,7 +137,7 @@
                   Sold
                 </th>
                 <td class="text-sm-right">
-                  {{getSoldAcreFeet() | number: '1.1-1'}} {{unitsShown}}
+                  {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
             </ng-container>
