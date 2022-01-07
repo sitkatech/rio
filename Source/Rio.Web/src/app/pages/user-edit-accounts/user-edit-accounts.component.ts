@@ -64,7 +64,6 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
         this.user = user;
         if (user.Role.RoleID == RoleEnum.Admin){
-          debugger;
           this.alertService.pushAlert(new Alert("Oops! Looks like you typed or copied and pasted a URL that doesn't quite work. That feature may have been removed or disabled."));
           this.router.navigate(["/"]);
         }
