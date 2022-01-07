@@ -132,7 +132,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
     private waterYearService: WaterYearService,
-    private utilityFunctionsService: UtilityFunctionsService
+    private utilityFunctionsService: UtilityFunctionsService,
+    private datePipe: DatePipe
   ) {
   }
 
@@ -513,7 +514,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     ];
 
     this.defaultColDef = {
-      sortable: true, filter: true
+      sortable: true, 
+      filter: true, 
+      resizable: true
     }
   }
 
@@ -526,21 +529,33 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
     return (cellDate < filterDate) ? -1 : 1;
   }
-  
-  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-    let datePipe = new DatePipe('en-US');
-    
-    return {
-      headerName: headerName, valueGetter: function (params: any) {
-        return datePipe.transform(params.data[fieldName], dateFormat);
-      },
-      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
-      filterParams: {
-        filterOptions: ['inRange'],
-        comparator: this.dateFilterComparator
-      }
-    };
-  }
+
+  private dateSortComparer (id1: any, id2: any) {
+    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
+    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
+    if (date1 < date2) {
+      return -1;
+    }
+    return (date1 > date2)  ?  1 : 0;
+}
+
+private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+  const _datePipe = this.datePipe;
+  return {
+    headerName: headerName, valueGetter: function (params: any) {
+      return _datePipe.transform(params.data[fieldName], dateFormat);
+    },
+    comparator: this.dateSortComparer,
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      filterOptions: ['inRange'],
+      comparator: this.dateFilterComparator
+    }, 
+    width: 110,
+    resizable: true,
+    sortable: true
+  };
+}
 
   public onGridReady(params: any) {
     this.columnApi = params.columnApi;

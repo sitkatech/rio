@@ -56,6 +56,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
+    private datePipe: DatePipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -130,26 +131,38 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     const filterDate = Date.parse(filterLocalDateAtMidnight);
     const cellDate = Date.parse(cellValue);
 
-    if (cellDate === filterDate) {
+    if (cellDate == filterDate) {
       return 0;
     }
     return (cellDate < filterDate) ? -1 : 1;
   }
-  
-  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-    let datePipe = new DatePipe('en-US');
-    
-    return {
-      headerName: headerName, valueGetter: function (params: any) {
-        return datePipe.transform(params.data[fieldName], dateFormat);
-      },
-      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
-      filterParams: {
-        filterOptions: ['inRange'],
-        comparator: this.dateFilterComparator
-      }
-    };
-  }
+
+  private dateSortComparer (id1: any, id2: any) {
+    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
+    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
+    if (date1 < date2) {
+      return -1;
+    }
+    return (date1 > date2)  ?  1 : 0;
+}
+
+private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+  const _datePipe = this.datePipe;
+  return {
+    headerName: headerName, valueGetter: function (params: any) {
+      return _datePipe.transform(params.data[fieldName], dateFormat);
+    },
+    comparator: this.dateSortComparer,
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      filterOptions: ['inRange'],
+      comparator: this.dateFilterComparator
+    }, 
+    width: 110,
+    resizable: true,
+    sortable: true
+  };
+}
 
   public exportParcelLedgerGridToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.parcelLedgerGrid, 'parcelLedgerfor' + this.parcel.ParcelNumber + '.csv', null);
