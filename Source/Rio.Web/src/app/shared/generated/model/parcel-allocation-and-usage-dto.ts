@@ -13,8 +13,10 @@ import { AccountDto } from '././account-dto';
 import { ParcelStatusDto } from '././parcel-status-dto';
 
 export class ParcelAllocationAndUsageDto { 
-    Allocation?: number;
+    TotalSupply?: number;
     Precipitation?: number;
+    Purchased?: number;
+    Sold?: number;
     UsageToDate?: number;
     Allocations?: { [key: string]: number; };
     ParcelID?: number;

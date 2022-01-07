@@ -10,7 +10,7 @@ export class LandownerWaterSupplyChartComponent implements OnInit {
   @Input() annualWaterSupplySeries: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
-  @Input() waterSupplyLabel: string = environment.allowTrading ? "Annual Water Supply (Allocation +/- Trades)" : "Annual Supply"
+  @Input() waterSupplyLabel: string = environment.allowTrading ? "Annual Water Supply (Water Supply +/- Trades)" : "Annual Supply"
 
   fake: MultiSeriesEntry[] = [];
 

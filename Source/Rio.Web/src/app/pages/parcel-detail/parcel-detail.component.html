@@ -77,7 +77,7 @@
             routerLink="/parcels/{{parcel.ParcelID}}/parcel-ledger-create">
             <span class="fas fa-edit"></span> Create New Transaction
           </a>
-          Water Allocation and Usage
+          Water Supply and Usage
         </div>
         <div class="card-body">
           <p>All data is in units of acre-feet</p>
@@ -88,16 +88,16 @@
                   <th>Year</th>
                   <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
                   <th class="text-right">Precipitation</th>
-                  <th class="text-right">Total Allocation</th>
+                  <th class="text-right">Total Supply</th>
                   <th class="text-right">Total Usage</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear.Year}}</td>
-                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getAllocationForYearByType(waterType, waterYear.Year)}}</td>
+                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
                   <td class="text-right">{{getPrecipSupplyForYear(waterYear.Year)}}</td>
-                  <td class="text-right">{{getTotalAllocationForYear(waterYear.Year)}}</td>
+                  <td class="text-right">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
                   <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>
                 </tr>
               </tbody>

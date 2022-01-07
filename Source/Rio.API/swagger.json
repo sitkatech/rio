@@ -4515,12 +4515,22 @@
       "ParcelAllocationAndUsageDto": {
         "type": "object",
         "properties": {
-          "Allocation": {
+          "TotalSupply": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
           "Precipitation": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Purchased": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Sold": {
             "type": "number",
             "format": "double",
             "nullable": true

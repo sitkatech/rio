@@ -110,8 +110,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
       },
       { 
-        headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => this.numberColumnValueGetter(params.data.Allocation)
+        headerName: 'Total Supply', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => this.numberColumnValueGetter(params.data.TotalSupply)
       }
     ];
 

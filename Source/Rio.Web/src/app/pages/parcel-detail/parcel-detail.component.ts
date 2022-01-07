@@ -33,7 +33,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
   public parcelLedgers: Array<ParcelLedgerDto>;
-  public allocationParcelLedgers: Array<ParcelLedgerDto>;
+  public waterSupplyParcelLedgers: Array<ParcelLedgerDto>;
   public usageParcelLedgers: Array<ParcelLedgerDto>;
   public months: number[];
   public parcelOwnershipHistory: ParcelOwnershipDto[];
@@ -81,9 +81,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           
           this.parcelLedgers = parcelLedgers;
           this.rowData = parcelLedgers;
-          this.allocationParcelLedgers = parcelLedgers.filter(x => 
-            x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
-            x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.Manual);
+          this.waterSupplyParcelLedgers = this.getWaterSupplyParcelLedgers(parcelLedgers);
           this.usageParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
@@ -172,17 +170,25 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
   }
+
+  public getWaterSupplyParcelLedgers(parcelLedgersForWaterYear: Array<ParcelLedgerDto>): Array<ParcelLedgerDto> {
+    const supplyEntrySourceTypeIDs = [ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS, ParcelLedgerEntrySourceTypeEnum.Trade];
+    return parcelLedgersForWaterYear.filter(x => 
+      x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
+      supplyEntrySourceTypeIDs.indexOf(x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID) > -1
+    );
+  }
   
-  public getTotalAllocationForYear(year: number): string {
-    var parcelLedgerForYear = this.allocationParcelLedgers.filter(x => x.WaterYear === year);
+  public getTotalWaterSupplyForYear(year: number): string {
+    var parcelLedgerForYear = this.waterSupplyParcelLedgers.filter(x => x.WaterYear === year);
     if (parcelLedgerForYear.length === 0) {
       return "-";
     }
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgerForYear).toFixed(1);
   }
 
-  public getAllocationForYearByType(waterType: WaterTypeDto, year: number): string {
-    var parcelLedgers = this.allocationParcelLedgers.filter(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
+  public getWaterSupplyForYearByType(waterType: WaterTypeDto, year: number): string {
+    var parcelLedgers = this.waterSupplyParcelLedgers.filter(x => x.WaterYear === year && x.WaterType != null && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     if (parcelLedgers.length === 0) {
       return "-";
     }
