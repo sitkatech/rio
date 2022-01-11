@@ -27,7 +27,7 @@ export class DisclaimerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
     });
     this.route.queryParams.subscribe(params => {

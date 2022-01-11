@@ -23,7 +23,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
     styleUrls: ['./posting-detail.component.scss']
 })
 export class PostingDetailComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+    
     private currentUser: UserDto;
 
     public posting: PostingDto;
@@ -58,7 +58,7 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+        this.authenticationService.getCurrentUser().subscribe(currentUser => {
             this.currentUser = currentUser;
             this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
             const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
@@ -78,8 +78,8 @@ export class PostingDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.watchUserChangeSubscription.unsubscribe();
-        this.authenticationService.dispose();
+        
+        
         this.cdr.detach();
     }
 

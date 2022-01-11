@@ -21,7 +21,7 @@ import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap
 })
 export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   public richTextTypeID = CustomRichTextType.ParcelLedgerCreateFromSpreadsheet;
   public waterTypes: WaterTypeDto[];
@@ -44,7 +44,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe((currentUser) => {
+    this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
 
       this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
@@ -54,8 +54,8 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

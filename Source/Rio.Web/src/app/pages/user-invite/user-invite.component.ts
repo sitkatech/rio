@@ -21,7 +21,7 @@ import { UserInviteDto } from 'src/app/shared/generated/model/user-invite-dto';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserInviteComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+    
     private currentUser: UserDto;
 
     public roles: Array<RoleDto>;
@@ -33,7 +33,7 @@ export class UserInviteComponent implements OnInit, OnDestroy {
         private router: Router, private userService: UserService, private roleService: RoleService, private authenticationService: AuthenticationService, private alertService: AlertService) { }
 
     ngOnInit(): void {
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+        this.authenticationService.getCurrentUser().subscribe(currentUser => {
             this.currentUser = currentUser;
             this.roleService.getRoles().subscribe(result => {
                 this.roles = result;
@@ -64,8 +64,8 @@ export class UserInviteComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.watchUserChangeSubscription.unsubscribe();
-        this.authenticationService.dispose();
+        
+        
         this.cdr.detach();
     }
 

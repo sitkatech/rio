@@ -51,7 +51,7 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allAccounts = new Array<AccountDto>();
-    this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.watchAccountChangeSubscription = this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
 
       this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -77,7 +77,7 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchAccountChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
     this.cdr.detach();
   }
 

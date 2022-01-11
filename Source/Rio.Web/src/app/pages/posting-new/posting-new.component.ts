@@ -18,7 +18,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
   styleUrls: ['./posting-new.component.scss']
 })
 export class PostingNewComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public postingTypes: Array<PostingTypeDto>;
@@ -38,7 +38,7 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       if (this.currentUserAccounts?.length == 1) {
@@ -52,8 +52,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

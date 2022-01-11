@@ -64,7 +64,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadingFormData = true;
-    this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.watchAccountChangeSubscription = this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.parcelID = parseInt(this.route.snapshot.paramMap.get("id"));
       this.parcelToBeInactivated = false;
       forkJoin(
@@ -84,7 +84,7 @@ export class ParcelChangeOwnerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchAccountChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
     this.cdr.detach();
   }
 

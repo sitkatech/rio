@@ -26,7 +26,7 @@ export class AccountNewComponent implements OnInit {
   constructor(private accountService: AccountService, private router: Router, private alertService: AlertService, private cdr: ChangeDetectorRef, private accountStatusService: AccountStatusService, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.model = new AccountUpdateDto();
       this.accountStatusService.getAccountStatuses().subscribe(accountStatuses => {

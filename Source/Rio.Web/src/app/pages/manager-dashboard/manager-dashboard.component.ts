@@ -43,7 +43,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public modalReference: NgbModalRef;
 
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
 
   public parcels: Array<ParcelDto>;
@@ -107,7 +107,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.initializeTradeActivityGrid();
       this.initializePostingActivityGrid();
@@ -156,8 +156,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -542,7 +542,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.parcels = parcels;
     })
     if (this.landOwnerUsageReportGrid) {
-      this.landOwnerUsageReportGrid.api.showLoadingOverlay();
+      this.landOwnerUsageReportGrid?.api.showLoadingOverlay();
     }
     this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(landownerUsageReport => {
       this.landownerUsageReport = landownerUsageReport;

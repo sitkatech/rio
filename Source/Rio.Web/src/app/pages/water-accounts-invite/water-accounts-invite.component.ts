@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 export class WaterAccountsInviteComponent implements OnInit {
   public introRichText: number = CustomRichTextType.WaterAccountsInvite;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public model: UserPartnerInviteDto;
@@ -38,7 +38,7 @@ export class WaterAccountsInviteComponent implements OnInit {
 
   ngOnInit(): void {
     this.model = new UserPartnerInviteDto();
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.loadingAccounts = true;
       this.userService.listAccountsByUserID(currentUser.UserID).subscribe(accounts => {
@@ -49,8 +49,8 @@ export class WaterAccountsInviteComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

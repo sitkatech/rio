@@ -9,18 +9,19 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./login-callback.component.scss']
 })
 export class LoginCallbackComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
 
   constructor(private router: Router, 
     private authenticationService: AuthenticationService,
     private userService: UserService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-        if (sessionStorage.getItem("authRedirectUrl")) {
-          this.router.navigateByUrl(sessionStorage.getItem("authRedirectUrl"))
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
+      let authRedirectUrl = this.authenticationService.getAuthRedirectUrl();  
+      if (authRedirectUrl && authRedirectUrl !== "/") {
+          this.router.navigateByUrl(authRedirectUrl)
               .then(() => {
-                  sessionStorage.removeItem("authRedirectUrl");
+                  this.authenticationService.clearAuthRedirectUrl();
               });
         } 
         else if (this.authenticationService.isUserAnAdministrator(currentUser)){
@@ -40,6 +41,6 @@ export class LoginCallbackComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.watchUserChangeSubscription.unsubscribe();
+    
   }
 }
