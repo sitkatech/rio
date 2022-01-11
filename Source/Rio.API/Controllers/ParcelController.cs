@@ -8,7 +8,6 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -30,31 +29,31 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
+        [HttpGet("parcels/getParcelsWithWaterSupplyAndUsage/{year}")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYear([FromRoute] int year)
+        public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            var parcelAllocationBreakdownForYear = ParcelLedgers.GetParcelAllocationBreakdownForYearAsDto(_dbContext, year);
-            var parcelDtosWithAllocation = parcelDtos
+            var parcelDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year);
+            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year);
+            var parcelDtosWithWaterSupply = parcelDtos
                 .GroupJoin(
-                    parcelAllocationBreakdownForYear,
+                    parcelWaterSupplyBreakdownForYear,
                     x => x.ParcelID,
                     y => y.ParcelID,
                     (x, y) => new
                     {
-                        ParcelAllocationAndUsage = x,
-                        ParcelAllocationBreakdown = y
+                        ParcelWaterSupplyAndUsage = x,
+                        ParcelWaterSupplyBreakdown = y
                     })
                 .SelectMany(
-                    parcelAllocationUsageAndBreakdown =>
-                        parcelAllocationUsageAndBreakdown.ParcelAllocationBreakdown.DefaultIfEmpty(),
+                    parcelWaterSupplyAndUsageWithBreakdown =>
+                        parcelWaterSupplyAndUsageWithBreakdown.ParcelWaterSupplyBreakdown.DefaultIfEmpty(),
                     (x, y) =>
                     {
-                        x.ParcelAllocationAndUsage.Allocations = y?.Allocations;
-                        return x.ParcelAllocationAndUsage;
+                        x.ParcelWaterSupplyAndUsage.WaterSupplyByWaterType = y?.WaterSupplyByWaterType;
+                        return x.ParcelWaterSupplyAndUsage;
                     });
-            return Ok(parcelDtosWithAllocation);
+            return Ok(parcelDtosWithWaterSupply);
         }
 
         [HttpGet("parcels/inactive")]

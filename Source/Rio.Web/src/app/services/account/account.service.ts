@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { HttpClient } from '@angular/common/http';
 import { AccountDto } from 'src/app/shared/generated/model/account-dto';
 import { AccountEditUsersDto } from 'src/app/shared/generated/model/account-edit-users-dto';
@@ -57,7 +57,7 @@ export class AccountService {
     return this.apiService.getFromApi(route);
   }
 
-  getWaterUsageOverview(year: number): Observable<WaterAllocationOverviewDto> {
+  getWaterUsageOverview(year: number): Observable<WaterSupplyOverviewDto> {
     let route = `/accounts/water-usage-overview/${year}`;
       return this.apiService.getFromApi(route);
   }

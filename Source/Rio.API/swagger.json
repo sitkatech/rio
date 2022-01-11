@@ -1365,7 +1365,7 @@
         }
       }
     },
-    "/parcels/getParcelsWithAllocationAndUsage/{year}": {
+    "/parcels/getParcelsWithWaterSupplyAndUsage/{year}": {
       "get": {
         "tags": [
           "Parcel"
@@ -1389,7 +1389,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationAndUsageDto"
+                    "$ref": "#/components/schemas/ParcelWaterSupplyAndUsageDto"
                   }
                 }
               },
@@ -1397,7 +1397,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationAndUsageDto"
+                    "$ref": "#/components/schemas/ParcelWaterSupplyAndUsageDto"
                   }
                 }
               },
@@ -1405,7 +1405,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelAllocationAndUsageDto"
+                    "$ref": "#/components/schemas/ParcelWaterSupplyAndUsageDto"
                   }
                 }
               }
@@ -1975,90 +1975,6 @@
               "schema": {
                 "type": "integer",
                 "format": "int32"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/water-types": {
-      "get": {
-        "tags": [
-          "ParcelAllocation"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WaterTypeDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WaterTypeDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WaterTypeDto"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "ParcelAllocation"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/WaterTypeDto"
-                }
-              }
-            },
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/WaterTypeDto"
-                }
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/WaterTypeDto"
-                }
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/WaterTypeDto"
-                }
               }
             }
           }
@@ -3647,6 +3563,90 @@
         }
       }
     },
+    "/water-types": {
+      "get": {
+        "tags": [
+          "WaterType"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTypeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTypeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WaterTypeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "WaterType"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WaterTypeDto"
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WaterTypeDto"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WaterTypeDto"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WaterTypeDto"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/water-years": {
       "get": {
         "tags": [
@@ -4507,72 +4507,6 @@
         },
         "additionalProperties": false
       },
-      "ParcelAllocationAndUsageDto": {
-        "type": "object",
-        "properties": {
-          "TotalSupply": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Precipitation": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Purchased": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Sold": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "UsageToDate": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "Allocations": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "number",
-              "format": "double"
-            },
-            "nullable": true
-          },
-          "ParcelID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "ParcelAreaInSquareFeet": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ParcelAreaInAcres": {
-            "type": "number",
-            "format": "double"
-          },
-          "ParcelStatus": {
-            "$ref": "#/components/schemas/ParcelStatusDto"
-          },
-          "InactivateDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "LandOwner": {
-            "$ref": "#/components/schemas/AccountDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "ParcelChangeOwnerDto": {
         "required": [
           "ApplyToSubsequentYears",
@@ -4897,6 +4831,72 @@
           "NumParcelsWithConflicts": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelWaterSupplyAndUsageDto": {
+        "type": "object",
+        "properties": {
+          "TotalSupply": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Precipitation": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Purchased": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Sold": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "UsageToDate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "WaterSupplyByWaterType": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "format": "double"
+            },
+            "nullable": true
+          },
+          "ParcelID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ParcelAreaInSquareFeet": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelAreaInAcres": {
+            "type": "number",
+            "format": "double"
+          },
+          "ParcelStatus": {
+            "$ref": "#/components/schemas/ParcelStatusDto"
+          },
+          "InactivateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LandOwner": {
+            "$ref": "#/components/schemas/AccountDto"
           }
         },
         "additionalProperties": false

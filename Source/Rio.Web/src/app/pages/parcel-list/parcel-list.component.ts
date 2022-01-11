@@ -137,7 +137,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[waterType.WaterTypeID] ?? 0.0 : 0.0;
+              return params.data.WaterSupplyByWaterType ? params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0 : 0.0;
             }
           })
         });
@@ -152,7 +152,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin([
-          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+          this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year),
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
           this.rowData = parcelsWithWaterUsage;
@@ -177,7 +177,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     if (!this.waterYearToDisplay) {
       return;
     }
-    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
+    this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.rowData = result;
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);

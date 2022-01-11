@@ -423,10 +423,10 @@ namespace Rio.API.Controllers
         {
             var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
 
-            var landownerAllocationBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
+            var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
             var landownerUsageReportDtosWithWaterSupplyByWaterType = landownerUsageReportDtos.Join(
-                landownerAllocationBreakdownForYear, x => x.AccountID, y => y.AccountID,
+                landownerWaterSupplyBreakdownForYear, x => x.AccountID, y => y.AccountID,
                 (x, y) =>
                 {
                     x.WaterSupplyByWaterType = y.WaterSupplyByWaterType;
@@ -446,7 +446,7 @@ namespace Rio.API.Controllers
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
+            messageBody += $"You can view parcels associated with these accounts and the water supply and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
 
             var mailTo = updatedUser;
             var mailMessage = new MailMessage

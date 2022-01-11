@@ -16,7 +16,7 @@ import { environment } from 'src/environments/environment';
 import { forkJoin } from 'rxjs';
 import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entry';
 import { AccountService } from 'src/app/services/account/account.service';
-import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -82,7 +82,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private annualWaterSupplyChartData: { Year: number, ChartData: MultiSeriesEntry }[];
 
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
-  public waterUsageOverview: WaterAllocationOverviewDto;
+  public waterUsageOverview: WaterSupplyOverviewDto;
   public waterSupplyChartRange: number[];
   public historicCumulativeWaterUsage: MultiSeriesEntry;
   public historicAverageAnnualUsage: number;
@@ -165,7 +165,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
 
-  initializeCharts(waterUsageOverview: WaterAllocationOverviewDto) {
+  initializeCharts(waterUsageOverview: WaterSupplyOverviewDto) {
     let values = [];
     for (const series of waterUsageOverview.Current) {
       for (const entry of series.CumulativeWaterUsage) {

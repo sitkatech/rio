@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
+using Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV;
+using Rio.Models.DataTransferObjects.ParcelLedgerCreateDto;
+using Rio.Models.DataTransferObjects.ParcelWaterSupplyBreakdownDto;
+using Rio.Models.DataTransferObjects.LandownerWaterSupplyBreakdownDto;
 
 namespace Rio.EFModels.Entities
 {
@@ -32,19 +34,18 @@ namespace Rio.EFModels.Entities
             return GetSupplyByParcelLedgerEntrySourceType(dbContext, new List<ParcelLedgerEntrySourceTypeEnum>{ ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS });
         }
 
-        public static List<ParcelAllocationBreakdownDto> GetParcelAllocationBreakdownForYearAsDto(RioDbContext dbContext, int year)
+        public static List<ParcelWaterSupplyBreakdownDto> GetParcelWaterSupplyBreakdownForYearAsDto(RioDbContext dbContext, int year)
         {
-            var parcelAllocationBreakdownForYear = GetSupplyImpl(dbContext)
+            var parcelWaterSupplyBreakdownForYear = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
-                .Select(x => new ParcelAllocationBreakdownDto
+                .Select(x => new ParcelWaterSupplyBreakdownDto
                 {
                     ParcelID = x.Key,
-                    // There's at most one ParcelAllocation per Parcel per WaterType, so we just need to read elements of the group into this dictionary
-                    Allocations = x.Where(y => y.WaterTypeID.HasValue).GroupBy(y => y.WaterTypeID.Value).ToDictionary(y => y.Key, y => y.Sum(z => z.TransactionAmount))
+                    WaterSupplyByWaterType = x.Where(y => y.WaterTypeID.HasValue).GroupBy(y => y.WaterTypeID.Value).ToDictionary(y => y.Key, y => y.Sum(z => z.TransactionAmount))
                 }).ToList();
-            return parcelAllocationBreakdownForYear;
+            return parcelWaterSupplyBreakdownForYear;
         }
 
         public static decimal GetUsageSumForMonthAndParcelID(RioDbContext dbContext, int year, int month, int parcelID)
@@ -92,7 +93,6 @@ namespace Rio.EFModels.Entities
                     {
                         AccountID = x.Key,
                         WaterSupplyByWaterType = new Dictionary<int, decimal>(
-                            //unlike above, there may be many ParcelAllocations per Account per Allocation Type, so we need an additional grouping.
                             x.GroupBy(z => z.WaterTypeID)
                                 .Select(y =>
                                     new KeyValuePair<int, decimal>(y.Key,

@@ -17,7 +17,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
+import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
@@ -42,7 +42,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
-  public parcelAllocationAndUsagesByYear: ParcelAllocationAndUsageDto[];
+  public parcelWaterSupplyAndUsagesByYear: ParcelWaterSupplyAndUsageDto[];
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
   public gridOptions: GridOptions;
@@ -67,10 +67,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
       forkJoin(
         this.waterTypeService.getWaterTypes(),
-        this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
-      ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
+        this.parcelService.getParcelWaterSupplyAndUsagesByYear(new Date().getFullYear())
+      ).subscribe(([waterTypes, parcelWaterSupplyAndUsagesByYear]) => {
         this.waterTypes = waterTypes;
-        this.parcelAllocationAndUsagesByYear = parcelAllocationAndUsagesByYear;
+        this.parcelWaterSupplyAndUsagesByYear = parcelWaterSupplyAndUsagesByYear;
 
         this.insertWaterTypeColDefs();
       });
@@ -126,13 +126,13 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       colDefsWithWaterTypes.push(
         {
           headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-          valueGetter: params => this.numberColumnValueGetter(params.data.Allocations[waterType.WaterTypeID])
+          valueGetter: params => this.numberColumnValueGetter(params.data.WaterSupplyByWaterType[waterType.WaterTypeID])
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
 
-    this.parcelSelectGrid.api.setRowData(this.parcelAllocationAndUsagesByYear);
+    this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
 

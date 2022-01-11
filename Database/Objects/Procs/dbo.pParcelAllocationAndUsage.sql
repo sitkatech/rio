@@ -1,8 +1,8 @@
-﻿IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.pParcelAllocationAndUsage'))
-    drop procedure dbo.pParcelAllocationAndUsage
+﻿IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.pParcelWaterSupplyAndUsage'))
+    drop procedure dbo.pParcelWaterSupplyAndUsage
 go
 
-create procedure dbo.pParcelAllocationAndUsage
+create procedure dbo.pParcelWaterSupplyAndUsage
 (
     @year int
 )

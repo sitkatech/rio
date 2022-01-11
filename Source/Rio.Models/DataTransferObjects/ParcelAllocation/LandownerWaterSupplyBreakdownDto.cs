@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Rio.Models.DataTransferObjects.ParcelAllocation
+namespace Rio.Models.DataTransferObjects.LandownerWaterSupplyBreakdownDto
 {
     public class LandownerWaterSupplyBreakdownDto
     {

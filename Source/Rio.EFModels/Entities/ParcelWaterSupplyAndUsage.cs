@@ -8,9 +8,9 @@ using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
 {
-    public partial class ParcelAllocationAndUsage
+    public partial class ParcelWaterSupplyAndUsage
     {
-        public ParcelAllocationAndUsage()
+        public ParcelWaterSupplyAndUsage()
         {
         }
 
@@ -26,14 +26,14 @@ namespace Rio.EFModels.Entities
         public int? AccountID { get; set; }
         public int? AccountNumber { get; set; }
 
-        public static IEnumerable<ParcelAllocationAndUsageDto> GetByYear(RioDbContext dbContext, int year)
+        public static IEnumerable<ParcelWaterSupplyAndUsageDto> GetByYear(RioDbContext dbContext, int year)
         {
             var sqlParameter = new SqlParameter("year", year);
-            var parcelAllocationAndUsages = dbContext.ParcelAllocationAndUsages.FromSqlRaw($"EXECUTE dbo.pParcelAllocationAndUsage @year", sqlParameter).ToList();
+            var parcelWaterSupplyAndUsages = dbContext.ParcelWaterSupplyAndUsages.FromSqlRaw($"EXECUTE dbo.pParcelWaterSupplyAndUsage @year", sqlParameter).ToList();
 
-            var parcelAllocationAndUsageDtos = parcelAllocationAndUsages.OrderBy(x => x.ParcelNumber).Select(parcel =>
+            var parcelWaterSupplyAndUsageDtos = parcelWaterSupplyAndUsages.OrderBy(x => x.ParcelNumber).Select(parcel =>
             {
-                var parcelAllocationAndUsageDto = new ParcelAllocationAndUsageDto()
+                var parcelWaterSupplyAndUsageDto = new ParcelWaterSupplyAndUsageDto()
                 {
                     ParcelID = parcel.ParcelID,
                     ParcelNumber = parcel.ParcelNumber,
@@ -47,7 +47,7 @@ namespace Rio.EFModels.Entities
 
                 if (parcel.AccountID.HasValue)
                 {
-                    parcelAllocationAndUsageDto.LandOwner = new AccountDto()
+                    parcelWaterSupplyAndUsageDto.LandOwner = new AccountDto()
                     {
                         AccountID = parcel.AccountID.Value,
                         AccountName = parcel.AccountName,
@@ -56,10 +56,10 @@ namespace Rio.EFModels.Entities
                     };
                 }
 
-                return parcelAllocationAndUsageDto;
+                return parcelWaterSupplyAndUsageDto;
             });
 
-            return parcelAllocationAndUsageDtos;
+            return parcelWaterSupplyAndUsageDtos;
         }
     }
 }

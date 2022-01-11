@@ -9,7 +9,7 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
@@ -73,7 +73,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private postingStatusIDs: PostingStatusEnum[];
 
   private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] };
-  private waterUsageOverview: WaterAllocationOverviewDto;
+  private waterUsageOverview: WaterSupplyOverviewDto;
   private historicCumulativeWaterUsage: MultiSeriesEntry;
   private annualWaterSupplyChartData: { Year: number, ChartData: MultiSeriesEntry }[];
   private waterSupplyChartRange: number[];
@@ -650,7 +650,7 @@ private createDateColumnDef(headerName: string, fieldName: string, dateFormat: s
       });
   }
 
-  private createParcelUsageOverviewChartData(): WaterAllocationOverviewDto {
+  private createParcelUsageOverviewChartData(): WaterSupplyOverviewDto {
     let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
     
     // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages

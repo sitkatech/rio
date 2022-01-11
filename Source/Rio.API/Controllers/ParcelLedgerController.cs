@@ -11,8 +11,8 @@ using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
+using Rio.Models.DataTransferObjects.ParcelLedgerCreateDto;
+using Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV;
 using ParcelLedgerCreateCSVUploadDto = Rio.API.Models.ParcelLedgerCreateCSVUploadDto;
 
 namespace Rio.API.Controllers

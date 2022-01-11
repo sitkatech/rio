@@ -12,13 +12,13 @@
 import { AccountDto } from '././account-dto';
 import { ParcelStatusDto } from '././parcel-status-dto';
 
-export class ParcelAllocationAndUsageDto { 
+export class ParcelWaterSupplyAndUsageDto { 
     TotalSupply?: number;
     Precipitation?: number;
     Purchased?: number;
     Sold?: number;
     UsageToDate?: number;
-    Allocations?: { [key: string]: number; };
+    WaterSupplyByWaterType?: { [key: string]: number; };
     ParcelID?: number;
     ParcelNumber?: string;
     ParcelAreaInSquareFeet?: number;
