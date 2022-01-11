@@ -102,7 +102,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
-        headerName: 'Supply Type', valueGetter: function (params: any) {
+        headerName: 'Water Type', valueGetter: function (params: any) {
           return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
         }
       },
@@ -208,14 +208,36 @@ private createDateColumnDef(headerName: string, fieldName: string, dateFormat: s
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
   }
 
-  public getPrecipSupplyForYear(year: number): string {
+  public getPrecipWaterSupplyForYear(year: number): string {
     var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
       x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
+    
+      if (parcelLedgers.length === 0) {
+      return "-";
+    }
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
+  }
+
+  public getPurchasedWaterSupplyForYear(year: number): string {
+    var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade &&
+      x.TransactionAmount > 0);
+    
     if (parcelLedgers.length === 0) {
       return "-";
     }
-
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
+  }
+
+  public getSoldWaterSupplyForYear(year: number): string {
+    var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade &&
+      x.TransactionAmount < 0);
+    
+    if (parcelLedgers.length === 0) {
+      return "-";
+    }
+    return Math.abs(this.getTotalTransactionAmountForParcelLedgers(parcelLedgers)).toFixed(1);
   }
 
   public getConsumptionForYear(year: number): string {
