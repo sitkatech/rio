@@ -97,7 +97,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         headerName: 'APN', 
         valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
-        filterValueGetter: function (params) { return params.data.ParcelNumber; },  
+        filterValueGetter: params => params.data.ParcelNumber,  
       },
       {
         headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
@@ -107,7 +107,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         headerName: 'Account', 
         valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
-        filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
+        filterValueGetter: params => params.data.LandOwner.AccountDisplayName, 
       },
       { 
         headerName: 'Total Supply', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
@@ -126,7 +126,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       colDefsWithWaterTypes.push(
         {
           headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-          valueGetter: params => this.numberColumnValueGetter(params.data.WaterSupplyByWaterType[waterType.WaterTypeID])
+          valueGetter: params => params.data.WaterSupplyByWaterType ? this.numberColumnValueGetter(params.data.WaterSupplyByWaterType[waterType.WaterTypeID]) : 0.0
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
@@ -137,7 +137,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   private numberColumnValueGetter(value: number): number {
-    return (value === null || value === undefined) ? 0 : parseFloat(value.toFixed(1));
+    return (value === null || value === undefined) ? 0.0 : parseFloat(value.toFixed(1));
   }
     
   private clearErrorAlerts() {
