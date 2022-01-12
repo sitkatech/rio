@@ -62,46 +62,39 @@ namespace Rio.EFModels.Entities
 
         public static List<LandownerWaterSupplyBreakdownDto> GetLandownerWaterSupplyBreakdownForYear(RioDbContext dbContext, int year)
         {
-            var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year);
-
+            var accountParcelWaterYearOwnershipsByYear = Entities.Parcel.AccountParcelWaterYearOwnershipsByYear(dbContext, year).ToList();
             var parcelWaterSupply = GetSupplyImpl(dbContext)
                 .Where(x => x.EffectiveDate.Year == year && x.WaterTypeID != null);
-            if (parcelWaterSupply.Any())
-            {
-                return accountParcelWaterYearOwnershipsByYear
-                    .GroupJoin(
-                        parcelWaterSupply,
-                        x => x.ParcelID,
-                        y => y.ParcelID,
-                        (x, y) => new
-                        {
-                            ParcelOwnership = x,
-                            ParcelWaterSupply = y
-                        })
-                    .SelectMany(
-                        parcelOwnershipAndWaterSupply =>
-                            parcelOwnershipAndWaterSupply.ParcelWaterSupply.DefaultIfEmpty(),
-                        (x, y) => new
-                        {
-                            x.ParcelOwnership.AccountID,
-                            WaterTypeID = y.WaterTypeID.Value,
-                            y.TransactionAmount
-                        })
-                    .ToList()
-                    .GroupBy(x => x.AccountID)
-                    .Select(x => new LandownerWaterSupplyBreakdownDto()
-                    {
-                        AccountID = x.Key,
-                        WaterSupplyByWaterType = new Dictionary<int, decimal>(
-                            x.GroupBy(z => z.WaterTypeID)
-                                .Select(y =>
-                                    new KeyValuePair<int, decimal>(y.Key,
-                                        y.Sum(x => x.TransactionAmount))))
-                    })
-                    .ToList();
-            }
 
-            return new List<LandownerWaterSupplyBreakdownDto>();
+            var waterTypes = WaterType.GetWaterTypes(dbContext);
+            var landownerWaterSupplyBreakdownForYear = new List<LandownerWaterSupplyBreakdownDto>();
+            
+            foreach (var accountIDGroup in accountParcelWaterYearOwnershipsByYear.GroupBy(x => x.AccountID))
+            {
+                var parcelIDsForAccount = accountIDGroup.Select(x => x.ParcelID).ToList();
+                var landownerWaterSupplyBreakdownDto = new LandownerWaterSupplyBreakdownDto()
+                {
+                    AccountID = accountIDGroup.Key,
+                    WaterSupplyByWaterType = waterTypes.ToDictionary(x => x.WaterTypeID, x => 0m)
+                };
+                var accountWaterSupply = parcelWaterSupply.Where(x => parcelIDsForAccount.Contains(x.ParcelID))
+                    .GroupBy(x => x.WaterTypeID)
+                    .Select(x => new
+                    {
+                        WaterTypeID = x.Key,
+                        TransactionAmount = x.Sum(y => y.TransactionAmount)
+                    });
+                foreach (var supplySum in accountWaterSupply)
+                {
+                    if (supplySum.WaterTypeID.HasValue)
+                    {
+                        landownerWaterSupplyBreakdownDto.WaterSupplyByWaterType[supplySum.WaterTypeID.Value] += supplySum.TransactionAmount;
+                    }
+                }
+                landownerWaterSupplyBreakdownForYear.Add(landownerWaterSupplyBreakdownDto);
+            }
+            
+            return landownerWaterSupplyBreakdownForYear;
         }
 
         public static List<ParcelLedgerDto> ListByAccountIDForAllWaterYears(RioDbContext dbContext, int accountID)

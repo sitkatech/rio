@@ -425,16 +425,21 @@ namespace Rio.API.Controllers
 
             var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
-            var landownerUsageReportDtosWithWaterSupplyByWaterType = landownerUsageReportDtos.Join(
-                landownerWaterSupplyBreakdownForYear, x => x.AccountID, y => y.AccountID,
-                (x, y) =>
+            var landownerUsageReportDtosWithWaterSupplyBreakdown = landownerUsageReportDtos.GroupJoin(
+                landownerWaterSupplyBreakdownForYear, x => x.AccountID, y => y.AccountID, 
+                (x, y) => new
                 {
-                    x.WaterSupplyByWaterType = y.WaterSupplyByWaterType;
-                    return x;
+                    landownerUsageReportDtos = x, 
+                    landownerWaterSupplyBreakdown = y
+                })
+                .SelectMany(z => z.landownerWaterSupplyBreakdown.DefaultIfEmpty(), 
+                    (z, y) =>
+                {
+                    z.landownerUsageReportDtos.WaterSupplyByWaterType = y?.WaterSupplyByWaterType;
+                    return z.landownerUsageReportDtos;
                 });
 
-
-            return Ok(landownerUsageReportDtosWithWaterSupplyByWaterType);
+            return Ok(landownerUsageReportDtosWithWaterSupplyBreakdown);
         }
 
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)

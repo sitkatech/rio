@@ -132,9 +132,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             sortable: true,
             filter: true,
             width: 130,
-            valueGetter: function (params) {
-              return params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0;
-            }
+            valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0) : 0
           })
         });
 
@@ -350,7 +348,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
         },
         filterParams: {
-          // provide comparator function
           comparator: function (filterLocalDate, cellValue) {
             var dateAsString = cellValue;
             if (dateAsString == null) return -1;
@@ -498,14 +495,32 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
-      { headerName: 'Total Supply (ac-ft)', field: 'TotalSupply', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
+      { headerName: 'Total Supply (ac-ft)', sortable: true, filter: true, width: 150, 
+        valueGetter: params => params.data.TotalSupply ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+      },
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
-      { headerName: 'Precipitation', field: 'Precipitation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
-      { headerName: 'Purchased (ac-ft)', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-0"); }, sortable: true, filter: true, width: 140 },
-      { headerName: 'Sold (ac-ft)', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-0"); }, sortable: true, filter: true, width: 100 },
-      { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-      { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 180 },
+      { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: true, width: 170, 
+        valueGetter: params => params.data.Precipition ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
+      },
+      { headerName: 'Purchased (ac-ft)', field: 'Purchased', sortable: true, filter: true, width: 140, 
+        valueGetter: params => params.data.Purchased ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
+      },
+      { headerName: 'Sold (ac-ft)', field: 'Sold', sortable: true, filter: true, width: 100, 
+        valueGetter: params => params.data.Sold ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+      },
+      { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', sortable: true, filter: true, width: 150, 
+        valueGetter: params => params.data.UsageToDate ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+      },
+      { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', sortable: true, filter: true, width: 180, 
+        valueGetter: params => params.data.CurrentAvailable ?? 0.0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+      },
       { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 },
       {
         headerName: 'Most Recent Trade', valueGetter: function (params: any) {
@@ -608,7 +623,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getAnnualWaterSupplyByWaterType(waterType: WaterTypeDto): number {
-    return this.getTotalWaterSupplyByWaterType(this.landownerUsageReport, waterType);
+    var result = 0;
+    if (this.landownerUsageReport) {
+      result = this.landownerUsageReport.reduce(function (a, b) {
+        return (a + (b.WaterSupplyByWaterType ? (b.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0));
+      }, 0);
+    }
+    return this.getResultInUnitsShown(result);
   }
 
   public getPrecipWaterSupply(): number {
@@ -624,24 +645,15 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getSumOfLandownerUsageReportValuesByField(field: string, skipConvertToUnitsShown?: boolean): number {
+    
     var result = 0;
-    if (this.landownerUsageReport.length > 0) {
+    if (this.landownerUsageReport) {
       result = this.landownerUsageReport.reduce(function (a, b) {
         return (a + b[field]);
       }, 0);
     }
     if (skipConvertToUnitsShown) {
       return result;
-    }
-    return this.getResultInUnitsShown(result);
-  }
-
-  public getTotalWaterSupplyByWaterType(landownerUsageReport: Array<LandownerUsageReportDto>, waterType: WaterTypeDto): number{
-    var result = 0;
-    if (landownerUsageReport.length > 0){
-      result = landownerUsageReport.reduce(function(a,b) {
-        return (a + (b.WaterSupplyByWaterType ? b.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0 : 0))
-      }, 0);
     }
     return this.getResultInUnitsShown(result);
   }
