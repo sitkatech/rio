@@ -15,7 +15,7 @@ $theme-colors: (
         "button-border-and-background": #196004,
         "button-hover": #0EF16D,
         "button-toggle-hover": #4f6349,
-        "header-background": #194939,
+        "header-background": #fff,
         "select": #1F4D3D,
         "select-and-nav-hover": #0EF16D,
         "select-and-nav-dropdown-hover": #E5FAF1,
@@ -43,30 +43,42 @@ $success: #00cc00;
 $warning: #ffff9f;
 
 $account-dropdown-text: #fff;
-$breadcrumb-background-color: #fff;
-$breadcrumb-border-color: #e9eeef;
+// $breadcrumb-background-color: #fff;
+$breadcrumb-background-color: #002d62;
+$breadcrumb-border-color: #e9eeef; // change
 $breadcrumb-border-style: solid;
-$breadcrumb-item-color: #474D52;
-$breadcrumb-item-active-color: #474D52;
+// $breadcrumb-item-color: #474D52;
+$breadcrumb-item-color: #fff;
+// $breadcrumb-item-active-color: #474D52;
+$breadcrumb-item-active-color: #fff;
 $breadcrumb-empty-display-type: none;
 $breadcrumb-empty-display-height: 0px;
-$button-border-and-background: #196004;
-$button-hover: #0EF16D;
-$button-toggle-hover: #4f6349;
+//$button-border-and-background: #196004;
+$button-border-and-background: #002d62;
+//$button-hover: #0EF16D;
+$button-hover: #2ea3f2;
+//$button-toggle-hover: #4f6349;
+$button-toggle-hover: #404e74;
 $grid-accent-color: #0077f9;
 $grid-font-family: 'Tahoma';
 $grid-font-header-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
-$grid-header-background: #194939;
-$grid-hover-color: cornsilk;
-$footer: #5e7f74;  
-$header-background: #194939;
-$header-nav-link: #fff;         
+//$grid-header-background: #194939;
+$grid-header-background: #002d62;
+$grid-hover-color: cornsilk; // change
+//$footer: #5e7f74;
+$footer: #c9cacb;
+//$header-background: #194939;
+$header-background: #fff;
+//$header-nav-link: #fff;         
+$header-nav-link: #002d62;         
 $header-nav-link-font-weight: inherit;
 $h4-styled: #194349;
-$select: #1F4D3D;
+// $select: #1F4D3D;
+$select: #002d62;
 $select-selected-text: #fff;
-$select-and-nav-dropdown-hover: #E5FAF1;
-$select-and-nav-hover:#0EF16D;
+$select-and-nav-dropdown-hover: #f2f2f2;
+//$select-and-nav-hover:#0EF16D;
+$select-and-nav-hover:#888;
 $switch-account-icon-padding:2px;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
@@ -75,4 +87,21 @@ $font-family-sans-serif: 'Tahoma', sans-serif, 'Helvetica Neue', sans-serif;
 $font-size: 16px;
 $base-text: #000000;
 
+// $card-cap-bg: #dfdfdf;
 $card-cap-bg: #dfdfdf;
+
+// to change:
+// #196004 -> button-border-and-background
+// #0EF16D -> button-hover, select-and-nav-hover
+// #4f6349 -> button-toggle-hover
+// #194939 -> header-background, grid-header-background
+// #1F4D3D -> select
+// #5e7f74 -> footer
+
+// new colors:
+//  -> button-border-and-background
+//  -> button-hover, select-and-nav-hover
+//  -> button-toggle-hover
+//  -> header-background, grid-header-background
+//  -> select
+// #c9cacb -> footer
