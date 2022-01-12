@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { UserService } from './user/user.service';
 import { Observable, race, Subject } from 'rxjs';
-import { filter, first } from 'rxjs/operators';
+import { filter, finalize, first } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { RoleEnum } from '../shared/models/enums/role.enum';
@@ -23,6 +23,7 @@ export class AuthenticationService {
 
   private _currentUserSetSubject = new Subject<UserDto>();
   private currentUserSetObservable = this._currentUserSetSubject.asObservable();
+  private attemptingToCreateUser: boolean;
 
 
   constructor(private router: Router,
@@ -37,6 +38,15 @@ export class AuthenticationService {
     this.oauthService.events
       .pipe(filter(e => ['token_received'].includes(e.type)))
       .subscribe(e => this.oauthService.loadUserProfile());
+
+    this.oauthService.events
+      .pipe(filter(e => ['invalid_nonce_in_state'].includes(e.type)))
+      .subscribe(e => {
+        //During user creation our nonce can get into an invalid state, but just signing in again mitigates the issue
+        if (this.router.url.includes("signin-oidc")) {
+          this.oauthService.initCodeFlow();
+        }
+      });
 
     this.oauthService.events
       .pipe(filter(e => ['token_refresh_error'].includes(e.type)))
@@ -61,7 +71,7 @@ export class AuthenticationService {
     this.oauthService.setupAutomaticSilentRefresh();
   }
 
-  public initialLoginSequence() : Promise<void> {
+  public initialLoginSequence(): Promise<void> {
     return this.oauthService.loadDiscoveryDocument()
       .then(() => this.oauthService.tryLogin())
       .then(() => {
@@ -69,7 +79,7 @@ export class AuthenticationService {
           return Promise.resolve();
         }
         return this.oauthService.silentRefresh().then(() => Promise.resolve());
-      }).catch(() => {});
+      }).catch(() => { });
   }
 
   public checkAuthentication() {
@@ -80,11 +90,11 @@ export class AuthenticationService {
     }
   }
 
-  public getUser(claims:any) {
+  public getUser(claims: any) {
     var globalID = claims["sub"];
 
     this.userService.getUserFromGlobalID(globalID).subscribe(
-      result => { this.updateUser(result);},
+      result => { this.updateUser(result); },
       error => { this.onGetUserError(error, claims) }
     );
   }
@@ -93,19 +103,25 @@ export class AuthenticationService {
     if (error.status !== 404) {
       this.alertService.pushAlert(new Alert("There was an error logging into the application.", AlertContext.Danger));
       this.router.navigate(['/']);
-    } else {
+    }
+
+    if (!this.attemptingToCreateUser) {
+      this.attemptingToCreateUser = true;
       this.alertService.clearAlerts();
       const newUser = new UserCreateDto({
         FirstName: claims["given_name"],
         LastName: claims["family_name"],
         Email: claims["email"],
+        RoleID: RoleEnum.Unassigned,
         LoginName: claims["login_name"],
         UserGuid: claims["sub"],
       });
 
-      this.userService.createNewUser(newUser).subscribe(user => {
+      this.userService.createNewUser(newUser).pipe(
+        finalize(() => this.attemptingToCreateUser = false)
+      ).subscribe(user => {
         this.updateUser(user);
-      })
+      });
     }
   }
 
