@@ -384,7 +384,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getAnnualWaterSupply(year: number, skipConvertToUnitsShown?: boolean): number {
     let parcelLedgers = this.getWaterSupplyForWaterYear(year);
-    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown) ?? 0;
   }
 
   public getWaterSupplyByWaterType(waterType: WaterTypeDto): number{

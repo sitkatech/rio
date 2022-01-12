@@ -149,12 +149,9 @@
                     class="fas fa-question-circle small ml-1"></i></a>
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
-                <span *ngIf="getWaterUsageToDate() as waterUsageToDate else noWaterUsage">
-                  {{waterUsageToDate | number: '1.1-1'}} {{unitsShown}}
+                <span>
+                  {{getWaterUsageToDate() ?? 0 | number: '1.1-1'}} {{unitsShown}}
                 </span>
-                <ng-template #noWaterUsage>
-                  <span class="systemText">Not available</span>
-                </ng-template>
               </td>
             </tr>
             <tr>
