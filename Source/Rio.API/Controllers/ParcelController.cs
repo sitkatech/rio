@@ -8,7 +8,6 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -30,31 +29,21 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
+        [HttpGet("parcels/getParcelsWithWaterSupplyAndUsage/{year}")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYear([FromRoute] int year)
+        public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            var parcelAllocationBreakdownForYear = ParcelLedgers.GetParcelAllocationBreakdownForYearAsDto(_dbContext, year);
-            var parcelDtosWithAllocation = parcelDtos
-                .GroupJoin(
-                    parcelAllocationBreakdownForYear,
-                    x => x.ParcelID,
-                    y => y.ParcelID,
-                    (x, y) => new
-                    {
-                        ParcelAllocationAndUsage = x,
-                        ParcelAllocationBreakdown = y
-                    })
-                .SelectMany(
-                    parcelAllocationUsageAndBreakdown =>
-                        parcelAllocationUsageAndBreakdown.ParcelAllocationBreakdown.DefaultIfEmpty(),
-                    (x, y) =>
-                    {
-                        x.ParcelAllocationAndUsage.Allocations = y?.Allocations;
-                        return x.ParcelAllocationAndUsage;
-                    });
-            return Ok(parcelDtosWithAllocation);
+            var parcelWaterSupplyAndUsageDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year).ToList();
+            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year);
+            
+            foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
+            {
+                var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
+                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            }
+
+            return Ok(parcelWaterSupplyAndUsageDtos);
         }
 
         [HttpGet("parcels/inactive")]

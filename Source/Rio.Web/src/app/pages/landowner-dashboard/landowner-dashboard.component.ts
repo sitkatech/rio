@@ -9,7 +9,7 @@ import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
 import { PostingService } from 'src/app/services/posting.service';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
 import { AccountService } from 'src/app/services/account/account.service';
 import { environment } from 'src/environments/environment';
@@ -73,10 +73,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   private postingStatusIDs: PostingStatusEnum[];
 
   private waterUsageChartData: { Year: number, ChartData: MultiSeriesEntry[] };
-  private waterUsageOverview: WaterAllocationOverviewDto;
+  private waterUsageOverview: WaterSupplyOverviewDto;
   private historicCumulativeWaterUsage: MultiSeriesEntry;
-  private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
-  private allocationChartRange: number[];
+  private annualWaterSupplyChartData: { Year: number, ChartData: MultiSeriesEntry }[];
+  private waterSupplyChartRange: number[];
   public historicAverageAnnualUsage: string | number;
   public parcelLedgers: Array<ParcelLedgerDto>;
   public parcelLedgersForWaterYear: Array<ParcelLedgerDto>;
@@ -132,7 +132,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private accountService: AccountService,
     private waterYearService: WaterYearService,
-    private utilityFunctionsService: UtilityFunctionsService
+    private utilityFunctionsService: UtilityFunctionsService,
+    private datePipe: DatePipe
   ) {
   }
 
@@ -244,7 +245,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       Year: this.waterYearToDisplay.Year,
       AnnualUsage: this.createWaterUsagesForYear(this.waterYearToDisplay.Year)
     };
-    // user will have neither allocation nor usage to chart if they have no parcels in this year.
+    // user will have neither water supply nor usage to chart if they have no parcels in this year.
     if (this.parcels && this.parcels.length > 0) {
       this.initializeCharts();
     }
@@ -381,23 +382,23 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.parcelLedgers.filter(x => x.WaterYear == year);
   }
 
-  public getAnnualAllocation(year: number, skipConvertToUnitsShown?: boolean): number {
-    let parcelLedgers = this.getAllocationsForWaterYear(year);
-    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown);
+  public getAnnualWaterSupply(year: number, skipConvertToUnitsShown?: boolean): number {
+    let parcelLedgers = this.getWaterSupplyForWaterYear(year);
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers, skipConvertToUnitsShown) ?? 0;
   }
 
-  public getAllocationByWaterType(waterType: WaterTypeDto): number{
-    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(p => p.WaterType?.WaterTypeID === waterType.WaterTypeID);
+  public getWaterSupplyByWaterType(waterType: WaterTypeDto): number{
+    let parcelLedgers = this.getWaterSupplyForWaterYear(this.waterYearToDisplay.Year).filter(p => p.WaterType?.WaterTypeID === waterType.WaterTypeID);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
   }
 
-  public getPrecipSupply(): number {
-    let parcelLedgers = this.getAllocationsForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
+  public getPrecipWaterSupply(): number {
+    let parcelLedgers = this.getWaterSupplyForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
   }
 
-  public getAllocationForParcelAndYear(parcelID: number, year: number): string {
-    var parcelLedgersForYear = this.getAllocationsForWaterYear(year);
+  public getTotalWaterSupplyForParcelAndYear(parcelID: number, year: number): string {
+    var parcelLedgersForYear = this.getWaterSupplyForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
       var parcelLedgersForYearAndParcel = parcelLedgersForYear.filter(p => p.Parcel.ParcelID == parcelID)
   
@@ -407,7 +408,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return "-";
   }
 
-  public getAllocationsForWaterYear(year: number): Array<ParcelLedgerDto> {
+  public getWaterSupplyForWaterYear(year: number): Array<ParcelLedgerDto> {
     let parcelLedgers = this.getParcelLedgersForWaterYear(year).filter(p => 
       p.TransactionType.TransactionTypeID === TransactionTypeEnum.Supply && 
       (p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Manual ||
@@ -417,22 +418,26 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTradeSalesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount < 0);
+    return this.getParcelLedgersForWaterYear(year).filter(x => 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade && 
+      x.TransactionAmount < 0);
   }
 
   public getTradePurchasesForWaterYear(year?: number) {
-    return this.getParcelLedgersForWaterYear(year).filter(x => x.ParcelLedgerEntrySourceType === ParcelLedgerEntrySourceTypeEnum.Trade && x.TransactionAmount > 0);
+    return this.getParcelLedgersForWaterYear(year).filter(x => 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade && 
+      x.TransactionAmount > 0);
   }
 
   public isWaterTransferPending(waterTransfer: WaterTransferDetailedDto) {
     return !waterTransfer.BuyerRegistration.IsRegistered || !waterTransfer.SellerRegistration.IsRegistered;
   }
 
-  public getPurchasedAcreFeet(year?: number): number {
+  public getPurchasedWaterSupply(year?: number): number {
     return this.getTotalTransactionAmountForParcelLedgers(this.getTradePurchasesForWaterYear(year)) ?? 0;
   }
 
-  public getSoldAcreFeet(year?: number, skipConvertToUnitsShown?: boolean): number {
+  public getSoldWaterSupply(year?: number, skipConvertToUnitsShown?: boolean): number {
     return this.getTotalTransactionAmountForParcelLedgers(this.getTradeSalesForWaterYear(year), skipConvertToUnitsShown) ?? 0;
   }
 
@@ -450,7 +455,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalSupply(): number {
-    return this.getAnnualAllocation(this.waterYearToDisplay.Year) + this.getPurchasedAcreFeet() + this.getSoldAcreFeet();
+    return this.getAnnualWaterSupply(this.waterYearToDisplay.Year) + this.getPurchasedWaterSupply() + this.getSoldWaterSupply();
   }
 
   public getCurrentAvailableWater(): number {
@@ -466,10 +471,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getEstimatedAvailableSupply(): number {
-    let annualAllocation = this.getAnnualAllocation(this.waterYearToDisplay.Year);
+    let annualWaterSupply = this.getAnnualWaterSupply(this.waterYearToDisplay.Year);
     let estimatedAvailableSupply = this.getWaterUsageToDate();
-    if (annualAllocation !== null && estimatedAvailableSupply !== null) {
-      return annualAllocation - estimatedAvailableSupply;
+    if (annualWaterSupply !== null && estimatedAvailableSupply !== null) {
+      return annualWaterSupply - estimatedAvailableSupply;
     }
     return null;
   }
@@ -509,7 +514,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     ];
 
     this.defaultColDef = {
-      sortable: true, filter: true
+      sortable: true, 
+      filter: true, 
+      resizable: true
     }
   }
 
@@ -522,21 +529,33 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
     return (cellDate < filterDate) ? -1 : 1;
   }
-  
-  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-    let datePipe = new DatePipe('en-US');
-    
-    return {
-      headerName: headerName, valueGetter: function (params: any) {
-        return datePipe.transform(params.data[fieldName], dateFormat);
-      },
-      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
-      filterParams: {
-        filterOptions: ['inRange'],
-        comparator: this.dateFilterComparator
-      }
-    };
-  }
+
+  private dateSortComparer (id1: any, id2: any) {
+    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
+    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
+    if (date1 < date2) {
+      return -1;
+    }
+    return (date1 > date2)  ?  1 : 0;
+}
+
+private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+  const _datePipe = this.datePipe;
+  return {
+    headerName: headerName, valueGetter: function (params: any) {
+      return _datePipe.transform(params.data[fieldName], dateFormat);
+    },
+    comparator: this.dateSortComparer,
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      filterOptions: ['inRange'],
+      comparator: this.dateFilterComparator
+    }, 
+    width: 110,
+    resizable: true,
+    sortable: true
+  };
+}
 
   public onGridReady(params: any) {
     this.columnApi = params.columnApi;
@@ -569,25 +588,25 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    const allocationLabel = environment.allowTrading ? "Annual Supply (Allocation +/- Trades)" : "Annual Supply"
+    const waterSupplyLabel = environment.allowTrading ? "Annual Supply (Water Supply +/- Trades)" : "Annual Supply"
     
-    this.annualAllocationChartData = this.waterYears.map(x => {
-      const allocation = this.getAnnualAllocation(x.Year, true);
-      const sold = this.getSoldAcreFeet(x.Year, true);
-      const purchased = this.getPurchasedAcreFeet(x.Year);
+    this.annualWaterSupplyChartData = this.waterYears.map(x => {
+      const waterSupply = this.getAnnualWaterSupply(x.Year, true);
+      const sold = this.getSoldWaterSupply(x.Year, true);
+      const purchased = this.getPurchasedWaterSupply(x.Year);
 
-      values.push(allocation + purchased - sold);      
+      values.push(waterSupply + purchased - sold);      
 
       return {
         Year: x.Year,
         ChartData: {
-          name: allocationLabel,
-          series: this.months.map(y => { return this.createSeriesEntry(y, allocation + purchased - sold) })
+          name: waterSupplyLabel,
+          series: this.months.map(y => { return this.createSeriesEntry(y, waterSupply + purchased - sold) })
         }
       }
     });
 
-    this.allocationChartRange = [0, 1.2 * Math.max(...values)];
+    this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
     this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
@@ -631,7 +650,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private createParcelUsageOverviewChartData(): WaterAllocationOverviewDto {
+  private createParcelUsageOverviewChartData(): WaterSupplyOverviewDto {
     let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
     
     // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
@@ -735,13 +754,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return currentYearData ? currentYearData.CumulativeWaterUsage : this.emptyCumulativeWaterUsage;
   }
 
-  public getAnnualAllocationSeries(): MultiSeriesEntry {
-    if (!this.annualAllocationChartData) {
+  public getAnnualWaterSupplySeries(): MultiSeriesEntry {
+    if (!this.annualWaterSupplyChartData) {
       return null;
     }
 
-    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay.Year);
-    return annualAllocation ? annualAllocation.ChartData : null;
+    const annualWaterSupply = this.annualWaterSupplyChartData.find(x => x.Year == this.waterYearToDisplay.Year);
+    return annualWaterSupply ? annualWaterSupply.ChartData : null;
   }
 
   public allowTrading(): boolean {

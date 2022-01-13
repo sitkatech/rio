@@ -17,7 +17,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
+import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
@@ -42,7 +42,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
-  public parcelAllocationAndUsagesByYear: ParcelAllocationAndUsageDto[];
+  public parcelWaterSupplyAndUsagesByYear: ParcelWaterSupplyAndUsageDto[];
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
   public gridOptions: GridOptions;
@@ -67,10 +67,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
       forkJoin(
         this.waterTypeService.getWaterTypes(),
-        this.parcelService.getParcelAllocationAndUsagesByYear(new Date().getFullYear())
-      ).subscribe(([waterTypes, parcelAllocationAndUsagesByYear]) => {
+        this.parcelService.getParcelWaterSupplyAndUsagesByYear(new Date().getFullYear())
+      ).subscribe(([waterTypes, parcelWaterSupplyAndUsagesByYear]) => {
         this.waterTypes = waterTypes;
-        this.parcelAllocationAndUsagesByYear = parcelAllocationAndUsagesByYear;
+        this.parcelWaterSupplyAndUsagesByYear = parcelWaterSupplyAndUsagesByYear;
 
         this.insertWaterTypeColDefs();
       });
@@ -97,7 +97,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         headerName: 'APN', 
         valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
-        filterValueGetter: function (params) { return params.data.ParcelNumber; },  
+        filterValueGetter: params => params.data.ParcelNumber,  
       },
       {
         headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
@@ -107,11 +107,11 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         headerName: 'Account', 
         valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
-        filterValueGetter: function (params) { return params.data.LandOwner.AccountDisplayName; }, 
+        filterValueGetter: params => params.data.LandOwner.AccountDisplayName, 
       },
       { 
-        headerName: 'Total Allocation', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => this.numberColumnValueGetter(params.data.Allocation)
+        headerName: 'Total Supply', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => this.numberColumnValueGetter(params.data.TotalSupply)
       }
     ];
 
@@ -126,18 +126,18 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       colDefsWithWaterTypes.push(
         {
           headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-          valueGetter: params => this.numberColumnValueGetter(params.data.Allocations[waterType.WaterTypeID])
+          valueGetter: params => params.data.WaterSupplyByWaterType ? this.numberColumnValueGetter(params.data.WaterSupplyByWaterType[waterType.WaterTypeID]) : 0.0
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
 
-    this.parcelSelectGrid.api.setRowData(this.parcelAllocationAndUsagesByYear);
+    this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
 
   private numberColumnValueGetter(value: number): number {
-    return (value === null || value === undefined) ? 0 : parseFloat(value.toFixed(1));
+    return (value === null || value === undefined) ? 0.0 : parseFloat(value.toFixed(1));
   }
     
   private clearErrorAlerts() {

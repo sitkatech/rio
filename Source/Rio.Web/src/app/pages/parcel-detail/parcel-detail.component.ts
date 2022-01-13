@@ -33,7 +33,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
   public parcelLedgers: Array<ParcelLedgerDto>;
-  public allocationParcelLedgers: Array<ParcelLedgerDto>;
+  public waterSupplyParcelLedgers: Array<ParcelLedgerDto>;
   public usageParcelLedgers: Array<ParcelLedgerDto>;
   public months: number[];
   public parcelOwnershipHistory: ParcelOwnershipDto[];
@@ -56,6 +56,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
+    private datePipe: DatePipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -81,9 +82,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           
           this.parcelLedgers = parcelLedgers;
           this.rowData = parcelLedgers;
-          this.allocationParcelLedgers = parcelLedgers.filter(x => 
-            x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
-            x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID == ParcelLedgerEntrySourceTypeEnum.Manual);
+          this.waterSupplyParcelLedgers = this.getWaterSupplyParcelLedgers(parcelLedgers);
           this.usageParcelLedgers = parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
@@ -103,7 +102,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
-        headerName: 'Supply Type', valueGetter: function (params: any) {
+        headerName: 'Water Type', valueGetter: function (params: any) {
           return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
         }
       },
@@ -132,26 +131,38 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     const filterDate = Date.parse(filterLocalDateAtMidnight);
     const cellDate = Date.parse(cellValue);
 
-    if (cellDate === filterDate) {
+    if (cellDate == filterDate) {
       return 0;
     }
     return (cellDate < filterDate) ? -1 : 1;
   }
-  
-  private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-    let datePipe = new DatePipe('en-US');
-    
-    return {
-      headerName: headerName, valueGetter: function (params: any) {
-        return datePipe.transform(params.data[fieldName], dateFormat);
-      },
-      comparator: this.dateFilterComparator, sortable: true, filter: 'agDateColumnFilter',
-      filterParams: {
-        filterOptions: ['inRange'],
-        comparator: this.dateFilterComparator
-      }
-    };
-  }
+
+  private dateSortComparer (id1: any, id2: any) {
+    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
+    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
+    if (date1 < date2) {
+      return -1;
+    }
+    return (date1 > date2)  ?  1 : 0;
+}
+
+private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+  const _datePipe = this.datePipe;
+  return {
+    headerName: headerName, valueGetter: function (params: any) {
+      return _datePipe.transform(params.data[fieldName], dateFormat);
+    },
+    comparator: this.dateSortComparer,
+    filter: 'agDateColumnFilter',
+    filterParams: {
+      filterOptions: ['inRange'],
+      comparator: this.dateFilterComparator
+    }, 
+    width: 110,
+    resizable: true,
+    sortable: true
+  };
+}
 
   public exportParcelLedgerGridToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.parcelLedgerGrid, 'parcelLedgerfor' + this.parcel.ParcelNumber + '.csv', null);
@@ -172,31 +183,61 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
   }
+
+  public getWaterSupplyParcelLedgers(parcelLedgersForWaterYear: Array<ParcelLedgerDto>): Array<ParcelLedgerDto> {
+    const supplyEntrySourceTypeIDs = [ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS, ParcelLedgerEntrySourceTypeEnum.Trade];
+    return parcelLedgersForWaterYear.filter(x => 
+      x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
+      supplyEntrySourceTypeIDs.indexOf(x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID) > -1
+    );
+  }
   
-  public getTotalAllocationForYear(year: number): string {
-    var parcelLedgerForYear = this.allocationParcelLedgers.filter(x => x.WaterYear === year);
+  public getTotalWaterSupplyForYear(year: number): string {
+    var parcelLedgerForYear = this.waterSupplyParcelLedgers.filter(x => x.WaterYear === year);
     if (parcelLedgerForYear.length === 0) {
       return "-";
     }
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgerForYear).toFixed(1);
   }
 
-  public getAllocationForYearByType(waterType: WaterTypeDto, year: number): string {
-    var parcelLedgers = this.allocationParcelLedgers.filter(x => x.WaterYear === year && x.WaterType.WaterTypeID === waterType.WaterTypeID);
+  public getWaterSupplyForYearByType(waterType: WaterTypeDto, year: number): string {
+    var parcelLedgers = this.waterSupplyParcelLedgers.filter(x => x.WaterYear === year && x.WaterType != null && x.WaterType.WaterTypeID === waterType.WaterTypeID);
     if (parcelLedgers.length === 0) {
       return "-";
     }
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
   }
 
-  public getPrecipSupplyForYear(year: number): string {
+  public getPrecipWaterSupplyForYear(year: number): string {
     var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
       x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
+    
+      if (parcelLedgers.length === 0) {
+      return "-";
+    }
+    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
+  }
+
+  public getPurchasedWaterSupplyForYear(year: number): string {
+    var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade &&
+      x.TransactionAmount > 0);
+    
     if (parcelLedgers.length === 0) {
       return "-";
     }
-
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
+  }
+
+  public getSoldWaterSupplyForYear(year: number): string {
+    var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
+      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade &&
+      x.TransactionAmount < 0);
+    
+    if (parcelLedgers.length === 0) {
+      return "-";
+    }
+    return Math.abs(this.getTotalTransactionAmountForParcelLedgers(parcelLedgers)).toFixed(1);
   }
 
   public getConsumptionForYear(year: number): string {

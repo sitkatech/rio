@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
+using Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV;
 
 namespace Rio.API.Controllers
 {

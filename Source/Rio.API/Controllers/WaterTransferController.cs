@@ -203,13 +203,13 @@ namespace Rio.API.Controllers
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
             var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
-            var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water allocation has been updated.
+            var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water supply has been updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x=>x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water supply, which has been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
@@ -236,13 +236,13 @@ namespace Rio.API.Controllers
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
             var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
-            var messageBody = $@"This transaction has been canceled, and your annual water allocation will not be updated.
+            var messageBody = $@"This transaction has been canceled, and your annual water supply will not be updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water supply, which has not been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);

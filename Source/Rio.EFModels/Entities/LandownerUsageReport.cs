@@ -16,7 +16,6 @@ namespace Rio.EFModels.Entities
         public string AccountName { get; set; }
         public int AccountNumber { get; set; }
         public double? AcresManaged { get; set; }
-        public decimal? Allocation { get; set; }
         public decimal? Precipitation { get; set; }
         public decimal? Purchased { get; set; }
         public decimal? Sold { get; set; }
@@ -38,7 +37,6 @@ namespace Rio.EFModels.Entities
                 AccountName = x.AccountName,
                 AccountNumber = x.AccountNumber,
                 AcresManaged = x.AcresManaged,
-                Allocation = x.Allocation,
                 Precipitation = x.Precipitation,
                 Purchased = x.Purchased,
                 Sold = x.Sold,

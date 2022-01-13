@@ -109,9 +109,26 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-        { headerName: 'Precipitation', field: 'Precipitation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
-        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
+        { headerName: 'Total Supply', field: 'TotalSupply', sortable: true, filter: true, width: 150,
+          valueGetter: params => params.data.TotalSupply ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
+        { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: true, width: 130,
+          valueGetter: params => params.data.Precipitation ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
+        { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: true, width: 130, 
+          valueGetter: params => params.data.Purchased ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
+        { headerName: 'Sold', field: 'Sold', sortable: true, filter: true, width: 130,
+          valueGetter: params => params.data.Sold ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
+        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: true, width: 130,
+          valueGetter: params => params.data.UsageToDate ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
       ];
 
       this.gridOptions = <GridOptions>{};
@@ -133,7 +150,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
             filter: true,
             width: 130,
             valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[waterType.WaterTypeID] ?? 0.0 : 0.0;
+              return params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0) : 0.0;
             }
           })
         });
@@ -148,7 +165,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin([
-          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+          this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year),
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
           this.rowData = parcelsWithWaterUsage;
@@ -173,7 +190,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     if (!this.waterYearToDisplay) {
       return;
     }
-    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
+    this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.rowData = result;
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);
