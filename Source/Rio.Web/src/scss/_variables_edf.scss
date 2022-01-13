@@ -12,7 +12,8 @@ $theme-colors: (
         "h4-styled": #194349,
         "footer": #44697D,
         "button-border-and-background": #253D86,
-        "button-hover": #C8DA2C ,
+        "button-hover-text": #C8DA2C,
+        "button-hover-background": #253D86,
         "button-toggle-hover": #44697D,
         "header-background": #fff,
         "select": #253D86,
@@ -50,7 +51,8 @@ $breadcrumb-item-active-color: #fff;
 $breadcrumb-empty-display-type: flex;
 $breadcrumb-empty-display-height: 50px;
 $button-border-and-background: #253D86;
-$button-hover: #C8DA2C ;
+$button-hover-text: #C8DA2C;
+$button-hover-background: #253D86;
 $button-toggle-hover: #44697D;
 $grid-accent-color: #44697D;
 $grid-font-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';

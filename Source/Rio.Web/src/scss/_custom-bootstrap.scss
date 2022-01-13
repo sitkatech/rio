@@ -137,7 +137,9 @@ a:hover {
 }
 
 .btn-rio:hover {
-  color:$button-hover;
+  background-color: $button-hover-background;
+  border-color: $button-hover-background;
+  color: $button-hover-text;
 }
 
 .btn-toggle {
