@@ -9,8 +9,7 @@ export class WaterUsageDto {
     }
 }
 
-
-export class WaterAllocationOverviewDto {
+export class WaterSupplyOverviewDto {
     Current: {
         Year: number,
         CumulativeWaterUsage: SeriesEntry[]

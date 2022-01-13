@@ -11,9 +11,9 @@
   <app-alert-display></app-alert-display>
   <ngb-alert *ngIf="!loadingActiveAccount && parcelsToBeReconciled?.length > 0" [type]="'info'" [dismissible]="false">
     <span>
-      Parcel(s) associated with this account are not receiving water allocation and usage data 
+      Parcel(s) associated with this account are not receiving water supply and usage data 
       because the Parcel Number had duplicate ownership information in the most recent parcel update. 
-      Please contact the platform administrator to determine how usage and allocation for these APN(s) 
+      Please contact the platform administrator to determine how water supply and usage for these APN(s) 
       should be assigned: {{getParcelNumbersForParcelsToBeReconciled()}}
     </span>
 </ngb-alert>
@@ -101,7 +101,7 @@
                 </a>
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
-                {{getAnnualAllocation(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
+                {{getAnnualWaterSupply(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
               </td>
             </tr>
             <ng-container *ngIf="showSupplyDetails">
@@ -113,7 +113,7 @@
                       class="fas fa-question-circle small"></i></a>
                 </td>
                 <td class="text-sm-right">
-                  {{getAllocationByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
+                  {{getWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <tr>
@@ -121,7 +121,7 @@
                   Precipitation
                 </th>
                 <td class="text-sm-right">
-                  {{getPrecipSupply() | number: '1.1-1'}} {{unitsShown}}
+                  {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr> 
               <tr>
@@ -129,7 +129,7 @@
                   Purchased
                 </th>
                 <td class="text-sm-right">
-                  {{getPurchasedAcreFeet() | number: '1.1-1'}} {{unitsShown}}
+                  {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
               <tr>
@@ -137,7 +137,7 @@
                   Sold
                 </th>
                 <td class="text-sm-right">
-                  {{getSoldAcreFeet() | number: '1.1-1'}} {{unitsShown}}
+                  {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
             </ng-container>
@@ -149,12 +149,9 @@
                     class="fas fa-question-circle small ml-1"></i></a>
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
-                <span *ngIf="getWaterUsageToDate() as waterUsageToDate else noWaterUsage">
-                  {{waterUsageToDate | number: '1.1-1'}} {{unitsShown}}
+                <span>
+                  {{getWaterUsageToDate() ?? 0 | number: '1.1-1'}} {{unitsShown}}
                 </span>
-                <ng-template #noWaterUsage>
-                  <span class="systemText">Not available</span>
-                </ng-template>
               </td>
             </tr>
             <tr>
@@ -208,11 +205,11 @@
       <div class="col-sm-12 col-lg-7 mt-4 mt-lg-0">
         <div class="row">
           <div class="col-sm-12">
-            <div *ngIf="userHasParcels() && annualAllocationChartData && waterUsageOverview">
-              <rio-landowner-water-allocation-chart [annualAllocationSeries]="getAnnualAllocationSeries()"
-                [yDomain]="allocationChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
+            <div *ngIf="userHasParcels() && annualWaterSupplyChartData && waterUsageOverview">
+              <rio-landowner-water-supply-chart [annualWaterSupplySeries]="getAnnualWaterSupplySeries()"
+                [yDomain]="waterSupplyChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
-              </rio-landowner-water-allocation-chart>
+              </rio-landowner-water-supply-chart>
             </div>
           </div>
         </div>
@@ -550,9 +547,8 @@
                     <p class="ml-3"><strong>Area (ac)
                       </strong>{{highlightedParcelDto.ParcelAreaInAcres | number: "1.1-1"}}
                     </p>
-                    <p class="ml-3"><strong>Allocation (ac-ft)
-                      </strong>{{getAllocationForParcelAndYear(highlightedParcelDto.ParcelID,
-                      waterYearToDisplay?.Year)}}
+                    <p class="ml-3"><strong>Total Supply (ac-ft)
+                      </strong>{{getTotalWaterSupplyForParcelAndYear(highlightedParcelDto.ParcelID, waterYearToDisplay?.Year)}}
                     </p>
                     <p class="ml-3"><strong>Total Usage (ac-ft)
                       </strong>{{getTotalWaterUsageForParcel(highlightedParcelDto.ParcelNumber) | number: "1.1-1"}}

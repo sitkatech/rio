@@ -421,20 +421,18 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
         {
-            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
+            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year).ToList();
 
-            var landownerAllocationBreakdownForYear = ParcelLedgers.GetLandownerAllocationBreakdownForYear(_dbContext, year);
+            var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
-            var landownerUsageReportDtosWithAllocation = landownerUsageReportDtos.Join(
-                landownerAllocationBreakdownForYear, x => x.AccountID, y => y.AccountID,
-                (x, y) =>
-                {
-                    x.Allocations = y.Allocations;
-                    return x;
-                });
+            foreach (var landownerUsageReportDto in landownerUsageReportDtos)
+            {
+                var accountWaterSupplyBreakdown = landownerWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.AccountID == landownerUsageReportDto.AccountID);
+                landownerUsageReportDto.WaterSupplyByWaterType = accountWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            } 
 
-
-            return Ok(landownerUsageReportDtosWithAllocation);
+            return Ok(landownerUsageReportDtos);
         }
 
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)
@@ -446,7 +444,7 @@ namespace Rio.API.Controllers
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
+            messageBody += $"You can view parcels associated with these accounts and the water supply and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
 
             var mailTo = updatedUser;
             var mailMessage = new MailMessage

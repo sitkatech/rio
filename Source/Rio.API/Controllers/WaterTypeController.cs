@@ -12,12 +12,11 @@ using Rio.Models.DataTransferObjects;
 namespace Rio.API.Controllers
 {
     [ApiController]
-    public class ParcelAllocationController : SitkaController<ParcelAllocationController>
+    public class WaterTypeController : SitkaController<WaterTypeController>
     {
-        public ParcelAllocationController(RioDbContext dbContext, ILogger<ParcelAllocationController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
+        public WaterTypeController(RioDbContext dbContext, ILogger<WaterTypeController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
         }
-
 
         [HttpGet("/water-types/")]
         [LoggedInUnclassifiedFeature]
@@ -48,7 +47,7 @@ namespace Rio.API.Controllers
             
             var existingWaterTypes = _dbContext.WaterTypes.ToList();
             
-            // blast parcel allocations/history for deleted types
+            // blast ledger records for deleted water types
             var deletedWaterTypeIDs = existingWaterTypes.Select(x => x.WaterTypeID).Where(x =>
                 !waterTypeDtos.Select(y => y.WaterTypeID).Contains(x)).ToList();
             _dbContext.ParcelLedgers.RemoveRange(_dbContext.ParcelLedgers.Where(x=> x.WaterTypeID.HasValue && deletedWaterTypeIDs.Contains(x.WaterTypeID.Value)));

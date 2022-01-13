@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { BoundingBoxDto } from 'src/app/shared/generated/model/bounding-box-dto';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/generated/model/parcel-allocation-and-usage-dto';
+import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 import { ParcelChangeOwnerDto } from 'src/app/shared/generated/model/parcel-change-owner-dto';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
@@ -55,8 +55,8 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
-    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
+  getParcelWaterSupplyAndUsagesByYear(year: number): Observable<Array<ParcelWaterSupplyAndUsageDto>> {
+    let route = `/parcels/getParcelsWithWaterSupplyAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
 

@@ -15,7 +15,6 @@ export class LandownerUsageReportDto {
     AccountName?: string;
     AccountNumber?: number;
     AcresManaged?: number;
-    Allocation?: number;
     Precipitation?: number;
     Purchased?: number;
     Sold?: number;
@@ -25,7 +24,7 @@ export class LandownerUsageReportDto {
     NumberOfPostings?: number;
     NumberOfTrades?: number;
     MostRecentTradeNumber?: string;
-    Allocations?: { [key: string]: number; };
+    WaterSupplyByWaterType?: { [key: string]: number; };
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

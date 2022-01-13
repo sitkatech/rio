@@ -19,12 +19,10 @@ model/offer-status-dto.ts
 model/offer-upsert-dto.ts
 model/open-et-sync-history-dto.ts
 model/open-et-sync-result-type-dto.ts
-model/parcel-allocation-and-usage-dto.ts
 model/parcel-change-owner-dto.ts
 model/parcel-dto.ts
 model/parcel-id-list-dto.ts
 model/parcel-layer-update-dto.ts
-model/parcel-ledger-create-csv-upload-dto.ts
 model/parcel-ledger-create-dto.ts
 model/parcel-ledger-dto.ts
 model/parcel-ledger-entry-source-type-dto.ts
@@ -33,6 +31,7 @@ model/parcel-required-column-and-mapping-dto.ts
 model/parcel-simple-dto.ts
 model/parcel-status-dto.ts
 model/parcel-update-expected-results-dto.ts
+model/parcel-water-supply-and-usage-dto.ts
 model/posting-detailed-dto.ts
 model/posting-dto.ts
 model/posting-status-dto.ts
