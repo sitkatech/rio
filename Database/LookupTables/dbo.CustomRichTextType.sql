@@ -24,7 +24,8 @@ USING (VALUES
 (22, 'AccountReconciliationReport', 'Account Reconciliation Report'),
 (23, 'ParcelLedgerCreate', 'Create New Transaction'),
 (24, 'ParcelLedgerBulkCreate', 'Create Bulk Transaction'),
-(25, 'ParcelLedgerCreateFromSpreadsheet', 'Create Transaction From Spreadsheet Upload')
+(25, 'ParcelLedgerCreateFromSpreadsheet', 'Create Transaction From Spreadsheet Upload'),
+(26, 'WebsiteFooter', 'Website Footer')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID
