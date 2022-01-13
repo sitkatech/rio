@@ -33,27 +33,17 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
-            var parcelDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year);
+            var parcelWaterSupplyAndUsageDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year).ToList();
             var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year);
-            var parcelDtosWithWaterSupply = parcelDtos
-                .GroupJoin(
-                    parcelWaterSupplyBreakdownForYear,
-                    x => x.ParcelID,
-                    y => y.ParcelID,
-                    (x, y) => new
-                    {
-                        ParcelWaterSupplyAndUsage = x,
-                        ParcelWaterSupplyBreakdown = y
-                    })
-                .SelectMany(
-                    parcelWaterSupplyAndUsageWithBreakdown =>
-                        parcelWaterSupplyAndUsageWithBreakdown.ParcelWaterSupplyBreakdown.DefaultIfEmpty(),
-                    (x, y) =>
-                    {
-                        x.ParcelWaterSupplyAndUsage.WaterSupplyByWaterType = y?.WaterSupplyByWaterType;
-                        return x.ParcelWaterSupplyAndUsage;
-                    });
-            return Ok(parcelDtosWithWaterSupply);
+            
+            foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
+            {
+                var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
+                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            }
+
+            return Ok(parcelWaterSupplyAndUsageDtos);
         }
 
         [HttpGet("parcels/inactive")]

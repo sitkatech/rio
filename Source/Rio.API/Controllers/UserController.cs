@@ -421,25 +421,18 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
         {
-            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
+            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year).ToList();
 
             var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
-            var landownerUsageReportDtosWithWaterSupplyBreakdown = landownerUsageReportDtos.GroupJoin(
-                landownerWaterSupplyBreakdownForYear, x => x.AccountID, y => y.AccountID, 
-                (x, y) => new
-                {
-                    landownerUsageReportDtos = x, 
-                    landownerWaterSupplyBreakdown = y
-                })
-                .SelectMany(z => z.landownerWaterSupplyBreakdown.DefaultIfEmpty(), 
-                    (z, y) =>
-                {
-                    z.landownerUsageReportDtos.WaterSupplyByWaterType = y?.WaterSupplyByWaterType;
-                    return z.landownerUsageReportDtos;
-                });
+            foreach (var landownerUsageReportDto in landownerUsageReportDtos)
+            {
+                var accountWaterSupplyBreakdown = landownerWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.AccountID == landownerUsageReportDto.AccountID);
+                landownerUsageReportDto.WaterSupplyByWaterType = accountWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            } 
 
-            return Ok(landownerUsageReportDtosWithWaterSupplyBreakdown);
+            return Ok(landownerUsageReportDtos);
         }
 
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)
