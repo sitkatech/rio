@@ -14,6 +14,7 @@ import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -35,7 +36,8 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public mapHeight: string = "500px"
   public columnDefs: Array<ColDef>;
   public waterTypes: WaterTypeDto[];
-  private waterTypeColumnDefInsertIndex = 4;
+  private waterTypeColumnDefsInsertIndex = 4;
+  private tradeColumnDefsInsertIndex = 5;
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -117,19 +119,26 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           valueGetter: params => params.data.Precipitation ?? 0.0,
           valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
         },
-        { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: true, width: 130, 
+        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: true, width: 130,
+          valueGetter: params => params.data.UsageToDate ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        },
+      ];
+
+      if (this.allowTrading()) {
+        const tradeColDefs: Array<ColDef> = [
+          { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: true, width: 130, 
           valueGetter: params => params.data.Purchased ?? 0.0,
           valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
         },
         { headerName: 'Sold', field: 'Sold', sortable: true, filter: true, width: 130,
           valueGetter: params => params.data.Sold ?? 0.0,
           valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
-        },
-        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: true, width: 130,
-          valueGetter: params => params.data.UsageToDate ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
-        },
-      ];
+        }
+        ];
+
+        this.columnDefs.splice(this.tradeColumnDefsInsertIndex, 0, ...tradeColDefs);
+      }
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
@@ -155,7 +164,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           })
         });
 
-        this.columnDefs.splice(this.waterTypeColumnDefInsertIndex, 0, ...waterTypeColDefs)
+        this.columnDefs.splice(this.waterTypeColumnDefsInsertIndex, 0, ...waterTypeColDefs)
 
         this.columnDefs.forEach(x => {
           x.resizable = true;
@@ -184,6 +193,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     
     
     this.cdr.detach();
+  }
+
+  private allowTrading(): boolean {
+    return environment.allowTrading;
   }
 
   public updateGridData() {

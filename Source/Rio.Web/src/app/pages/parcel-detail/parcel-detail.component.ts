@@ -18,6 +18,7 @@ import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-typ
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -178,6 +179,10 @@ private createDateColumnDef(headerName: string, fieldName: string, dateFormat: s
     
     
     this.cdr.detach();
+  }
+
+  public allowTrading(): boolean {
+    return environment.allowTrading;
   }
 
   public getSelectedParcelIDs(): Array<number> {
