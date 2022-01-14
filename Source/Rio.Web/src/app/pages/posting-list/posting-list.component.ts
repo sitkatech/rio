@@ -35,6 +35,7 @@ export class PostingListComponent implements OnInit, OnDestroy {
       this.postingsGrid?.api.showLoadingOverlay();
       this.postingService.getPostings().subscribe(result => {
         this.postings = result;
+        this.postingsGrid.api.sizeColumnsToFit();
         this.postingsGrid.api.hideOverlay();
       });
 

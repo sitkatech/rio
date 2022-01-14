@@ -60,7 +60,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public displayPostingsGrid: boolean = false;
   public waterTypes: WaterTypeDto[];
   public waterTypesBatched: WaterTypeDto[][];
-  private waterTypeColDefInsertIndex: number;
+  private waterTypeColDefsInsertIndex: number;
+  private tradeColDefsInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   public waterSupplyLabel: string = "Annual Water Supply";
   postingActivity: PostingDetailedDto[];
@@ -136,7 +137,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           })
         });
 
-        this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
+        this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
 
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
@@ -470,7 +471,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     let _decimalPipe = this.decimalPipe;
 
     // N.B.: After the WaterTypes are retrieved, their column defs will be built and inserted at this index...
-    this.waterTypeColDefInsertIndex = 3;
+    this.waterTypeColDefsInsertIndex = 3;
+    this.tradeColDefsInsertIndex = 4;
 
     this.landownerUsageReportGridColumnDefs = [
       {
@@ -505,14 +507,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         valueGetter: params => params.data.Precipition ?? 0.0,
         valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
       },
-      { headerName: 'Purchased (ac-ft)', field: 'Purchased', sortable: true, filter: true, width: 140, 
-        valueGetter: params => params.data.Purchased ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
-      },
-      { headerName: 'Sold (ac-ft)', field: 'Sold', sortable: true, filter: true, width: 100, 
-        valueGetter: params => params.data.Sold ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
-      },
       { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', sortable: true, filter: true, width: 150, 
         valueGetter: params => params.data.UsageToDate ?? 0.0,
         valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
@@ -521,31 +515,49 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         valueGetter: params => params.data.CurrentAvailable ?? 0.0,
         valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
       },
-      { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 },
-      {
-        headerName: 'Most Recent Trade', valueGetter: function (params: any) {
-          return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
-        }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/trades/" },
-        filterValueGetter: function (params: any) {
-          return params.data.LinkValue;
-        },
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 < link2) {
-            return -1;
-          }
-          if (link1 > link2) {
-            return 1;
-          }
-          return 0;
-        },
-        sortable: true, filter: true, width: 160
-      },
-      { headerName: '# of Trades', field: 'NumberOfTrades', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
-      { headerName: '# of Postings', field: 'NumberOfPostings', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+      { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 }
     ];
+
+    // insert trading-related colDefs if trading is enabled
+    if (this.allowTrading()) {
+      this.landownerUsageReportGridColumnDefs.push(
+        { headerName: '# of Trades', field: 'NumberOfTrades', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+        { headerName: '# of Postings', field: 'NumberOfPostings', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+        {
+          headerName: 'Most Recent Trade', valueGetter: function (params: any) {
+            return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/trades/" },
+          filterValueGetter: function (params: any) {
+            return params.data.LinkValue;
+          },
+          comparator: function (id1: any, id2: any) {
+            let link1 = id1.LinkDisplay;
+            let link2 = id2.LinkDisplay;
+            if (link1 < link2) {
+              return -1;
+            }
+            if (link1 > link2) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true, width: 160
+        }
+      );
+
+      const purchasedSoldColDefs: Array<ColDef> = [
+        { headerName: 'Purchased (ac-ft)', field: 'Purchased', sortable: true, filter: true, width: 140, 
+          valueGetter: params => params.data.Purchased ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
+        },
+        { headerName: 'Sold (ac-ft)', field: 'Sold', sortable: true, filter: true, width: 100, 
+          valueGetter: params => params.data.Sold ?? 0.0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+        }
+      ];
+      this.landownerUsageReportGridColumnDefs.splice(this.tradeColDefsInsertIndex, 0, ...purchasedSoldColDefs);
+    }
   }
 
   public updateAnnualData() {
@@ -566,11 +578,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }
       this.landOwnerUsageReportGrid.api.setRowData(landownerUsageReport);
       this.landOwnerUsageReportGrid.api.hideOverlay();
-    });
-    this.getTradesAndPostingsForYear();
-    this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
-      this.waterUsageOverview = waterUsageOverview;
-      this.initializeCharts(this.waterUsageOverview);
+      this.getTradesAndPostingsForYear();
+      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
+        this.waterUsageOverview = waterUsageOverview;
+        this.initializeCharts(this.waterUsageOverview);
+      });
     });
   }
 

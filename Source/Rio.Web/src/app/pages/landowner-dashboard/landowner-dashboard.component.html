@@ -119,27 +119,38 @@
               <tr>
                 <th class="text-sm-right font-weight-normal">
                   Precipitation
+                  <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                    ngbTooltip="Learn about Precipitation"><i
+                      class="fas fa-question-circle small"></i></a>
                 </th>
                 <td class="text-sm-right">
                   {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr> 
-              <tr>
-                <th class="text-sm-right font-weight-normal">
-                  Purchased
-                </th>
-                <td class="text-sm-right">
-                  {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-                </td>
-              </tr>
-              <tr>
-                <th class="text-sm-right font-weight-normal">
-                  Sold
-                </th>
-                <td class="text-sm-right">
-                  {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-                </td>
-              </tr>
+              <ng-container *ngIf="allowTrading()">
+                <tr>
+                  <th class="text-sm-right font-weight-normal">
+                    Purchased
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                      ngbTooltip="Learn about Purchased Water"><i
+                        class="fas fa-question-circle small"></i></a>
+                  </th>
+                  <td class="text-sm-right">
+                    {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                  </td>
+                </tr>
+                <tr>
+                  <th class="text-sm-right font-weight-normal">
+                    Sold
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                      ngbTooltip="Learn about Sold Water"><i
+                        class="fas fa-question-circle small"></i></a>
+                  </th>
+                  <td class="text-sm-right">
+                    {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                  </td>
+                </tr>
+              </ng-container>
             </ng-container>
             <tr>
               <th class="text-sm-left pb-3">
