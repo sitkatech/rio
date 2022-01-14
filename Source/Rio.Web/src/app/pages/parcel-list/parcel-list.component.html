@@ -81,8 +81,8 @@
                     <div class="float-right">
                         <rio-water-year-select *ngIf="waterYears" class="d-inline-block" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                             (selectedYearChange)="updateGridData()"></rio-water-year-select>
-                            <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
-                                        ngbTooltip="Download list of Parcels"><i class="fas fa-download"></i></a>
+                            <a class="btn btn-secondary btn-sm ml-3" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
+                                ngbTooltip="Download list of Parcels"><i class="fas fa-download"></i></a>
                     </div>
                     <div class="mt-2">
                         Parcel List
