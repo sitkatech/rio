@@ -4696,6 +4696,11 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          },
+          "TransactionDepth": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
           }
         },
         "additionalProperties": false

@@ -488,28 +488,29 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       { 
         headerName: 'APN', field: 'Parcel.ParcelNumber', valueGetter: function (params: any) {
           return { LinkValue: params.data.Parcel.ParcelID, LinkDisplay: params.data.Parcel.ParcelNumber }
-        }, filterValueGetter: function (params: any) {
-          return params.data.Parcel.ParcelNumber;
-        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' }
+        }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' },
+        filterValueGetter: params => params.data.Parcel.ParcelNumber
       },
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
       {
-        headerName: 'Supply Type', valueGetter: function (params: any) {
-          return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
-        }
+        headerName: 'Supply Type',
+        valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-'
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
       { 
-        headerName: 'Quantity (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: function (params: any) { return parseFloat(params.data.TransactionAmount.toFixed(2)); }, 
+        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => parseFloat(params.data.TransactionAmount.toFixed(2)), 
+      },
+      { 
+        headerName: 'Transaction Depth (ac-ft / ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => parseFloat(params.data.TransactionDepth.toFixed(6)), 
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', sortable: false,
-        valueGetter: function (params: any) {
-          return params.data.UserComment ?? '-';
-        }
+        valueGetter: params => params.data.UserComment ?? '-'
       }
     ];
 
@@ -703,6 +704,7 @@ private createDateColumnDef(headerName: string, fieldName: string, dateFormat: s
     }
   }
 
+  // TODO: this function assumes we're sorting by Effective Date, but we're now sorting by Transaction Date instead
   private createParcelLedgersBalance(): Map<number, number> {
     const map = new Map();
     let currentBalance = this.parcelLedgersForWaterYear.reduce((a, b) => {

@@ -29,6 +29,7 @@ export class ParcelLedgerDto {
     ParcelLedgerEntrySourceType?: ParcelLedgerEntrySourceTypeDto;
     readonly WaterYear?: number;
     readonly WaterMonth?: number;
+    readonly TransactionDepth?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
