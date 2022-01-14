@@ -578,11 +578,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }
       this.landOwnerUsageReportGrid.api.setRowData(landownerUsageReport);
       this.landOwnerUsageReportGrid.api.hideOverlay();
-    });
-    this.getTradesAndPostingsForYear();
-    this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
-      this.waterUsageOverview = waterUsageOverview;
-      this.initializeCharts(this.waterUsageOverview);
+      this.getTradesAndPostingsForYear();
+      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
+        this.waterUsageOverview = waterUsageOverview;
+        this.initializeCharts(this.waterUsageOverview);
+      });
     });
   }
 
