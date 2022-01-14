@@ -20,6 +20,20 @@
                     <dt id="waterType{{waterType.WaterTypeID}}">{{waterType.WaterTypeName}}</dt>
                     <dd class="p-2">{{waterType.WaterTypeDefinition}}</dd>
                 </ng-container>
+                <dt>Precipitation</dt>
+                <dd class="p-2">
+                    <rio-custom-rich-text [customRichTextTypeID]="precipCustomRichTextTypeID"></rio-custom-rich-text>
+                </dd>
+                <ng-container *ngIf="allowTrading()">
+                    <dt>Purchased</dt>
+                    <dd class="p-2">
+                        <rio-custom-rich-text [customRichTextTypeID]="purchasedCustomRichTextTypeID"></rio-custom-rich-text>
+                    </dd>
+                    <dt>Sold</dt>
+                    <dd class="p-2">
+                        <rio-custom-rich-text [customRichTextTypeID]="soldCustomRichTextTypeID"></rio-custom-rich-text>
+                    </dd>
+                </ng-container>
             </dl>
         </div>
     </div>

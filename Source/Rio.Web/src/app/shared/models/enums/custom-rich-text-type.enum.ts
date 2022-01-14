@@ -24,5 +24,8 @@ export enum CustomRichTextType {
   ParcelLedgerCreate = 23,
   ParcelLedgerBulkCreate = 24,
   ParcelLedgerCreateFromSpreadsheet = 25,
-  WebsiteFooter = 26
+  WebsiteFooter = 26,
+  PrecipitationDescription = 27,
+  PurchasedDescription = 28,
+  SoldDescription = 29
 }
