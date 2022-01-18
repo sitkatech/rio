@@ -4,6 +4,6 @@
     {
         public int WaterYear => EffectiveDate.Year;
         public int WaterMonth => EffectiveDate.Month;
-        public decimal TransactionDepth => TransactionAmount / Parcel.ParcelAreaInSquareFeet;
+        public decimal TransactionDepth => TransactionAmount/(decimal)Parcel.ParcelAreaInAcres;
     }
 }
