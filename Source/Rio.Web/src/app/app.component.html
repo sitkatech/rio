@@ -3,40 +3,8 @@
     <router-outlet></router-outlet>
 </div>
 <footer class="footer mt-2">
-    <div class="container">
-        <br>
-        <div class="row">
-            <div class="col no-gutters text-center mt-2 mb-2">
-                <span class="helper"></span>
-                <a href="https://www.rrbwsd.com/" alt="Rosedale-Rio Bravo Water Storage District" target="_blank">
-                    <img src="assets/main/logos/rrbwsd_logo.png" style="height: 85px;">
-                </a>
-            </div>
-            <div class="col no-gutters text-center mt-2 mb-2">
-                <span class="helper"></span>
-                <a href="https://www.edf.org/" alt="Environmental Defense Fund" target="_blank">
-                    <img src="assets/main/logos/edf-logo-white.png" style="height: 70px;">
-                </a>
-            </div>
-            <div class="col no-gutters text-center mt-2 mb-2">
-                <span class="helper"></span>
-                <a href="https://www.openetdata.org/" alt="OpenET" target="_blank">
-                    <img src="assets/main/logos/logo-openet-white.png" style="height: 30px;">
-                </a>
-            </div>
-            <div class="col no-gutters text-center mt-2 mb-2">
-                <span class="helper"></span>
-                <a href="https://sitkatech.com/" alt="Sitka Technology Group" target="_blank">
-                    <img src="assets/main/logos/logo_Sitka_white.png" style="height: 70px;">
-                </a>
-            </div>
-            <div class="col no-gutters text-center mt-2 mb-2">
-                <span class="helper"></span>
-                <a href="http://www.waterexchange.com/" alt="WestWater Research" target="_blank">
-                    <img src="assets/main/logos/westwater_research_logo_hires.png" style="height: 70px;">
-                </a>
-            </div>               
-        </div>
+    <div class="container border-none">
+        <rio-custom-rich-text [customRichTextTypeID]="customRichTextTypeID"></rio-custom-rich-text>
         <div class="row mt-3">
             <div class="col-12 text-center">
                 <p>

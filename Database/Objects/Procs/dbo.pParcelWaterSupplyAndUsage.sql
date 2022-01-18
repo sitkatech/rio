@@ -26,7 +26,7 @@ begin
 			abs(isnull(sum(case when pl.ParcelLedgerEntrySourceTypeID = 4 and pl.TransactionAmount < 0 then pl.TransactionAmount else 0 end), 0)) as Sold,
 			abs(sum(case when pl.TransactionTypeID = 2 then pl.TransactionAmount else 0 end)) as UsageToDate
 		from dbo.ParcelLedger pl 
-		where year(pl.TransactionDate) = @year
+		where year(pl.EffectiveDate) = @year
 		group by pl.ParcelID
 	) pal on p.ParcelID = pal.ParcelID
 
