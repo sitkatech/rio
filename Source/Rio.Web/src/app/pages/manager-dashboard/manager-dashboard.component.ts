@@ -142,14 +142,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
         });
-
-        // unlike in ParcelListComponent, the grid is not initialized until the following subscription resolves, because its container element is conditioned on parcels
-        // so, we don't need to manually reset the column defs as we did in that case.
-
-        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
-          this.parcels = parcels;
-          this.updateAnnualData();
-        });
+        
+        this.updateAnnualData();
       });     
     });    
   }
@@ -503,8 +497,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
-      { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: true, width: 170, 
-        valueGetter: params => params.data.Precipition ?? 0.0,
+      { headerName: 'Precipitation', sortable: true, filter: true, width: 170, 
+        valueGetter: params => params.data.Precipitation ?? 0.0,
         valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
       },
       { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', sortable: true, filter: true, width: 150, 
@@ -565,9 +559,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     {
       return;
     }
-    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
+    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels => {
       this.parcels = parcels;
-    })
+    });
     if (this.landOwnerUsageReportGrid) {
       this.landOwnerUsageReportGrid?.api.showLoadingOverlay();
     }
