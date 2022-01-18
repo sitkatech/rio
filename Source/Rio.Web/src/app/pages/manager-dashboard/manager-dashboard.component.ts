@@ -142,14 +142,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
         });
-
-        // unlike in ParcelListComponent, the grid is not initialized until the following subscription resolves, because its container element is conditioned on parcels
-        // so, we don't need to manually reset the column defs as we did in that case.
-
+        
         this.updateAnnualData();
-        // this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
-        //   this.parcels = parcels;
-        // });
       });     
     });    
   }
