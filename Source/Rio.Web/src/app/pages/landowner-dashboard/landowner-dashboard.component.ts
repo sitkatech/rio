@@ -708,7 +708,6 @@ private createDateColumnDef(headerName: string, fieldName: string, dateFormat: s
     }
   }
 
-  // TODO: this function assumes we're sorting by Effective Date, but we're now sorting by Transaction Date instead
   private createParcelLedgersBalance(): Map<number, number> {
     const map = new Map();
     let currentBalance = this.parcelLedgersForWaterYear.reduce((a, b) => {
