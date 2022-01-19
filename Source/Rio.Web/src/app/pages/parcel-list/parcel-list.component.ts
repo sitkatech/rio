@@ -111,29 +111,34 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Total Supply', field: 'TotalSupply', sortable: true, filter: true, width: 150,
-          valueGetter: params => params.data.TotalSupply ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        { headerName: 'Total Supply', field: 'TotalSupply', sortable: true, filter: 'agNumberColumnFilter', width: 150,
+          valueGetter: params => params.data.TotalSupply ?? 0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalSupply, "1.2-2"))
         },
-        { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: true, width: 130,
-          valueGetter: params => params.data.Precipitation ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: 'agNumberColumnFilter', width: 130,
+          valueGetter: params => params.data.Precipitation ?? 0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Precipitation, "1.2-2"))
         },
-        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: true, width: 130,
-          valueGetter: params => params.data.UsageToDate ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: 'agNumberColumnFilter', width: 130,
+          valueGetter: params => params.data.UsageToDate ?? 0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalUsage, "1.2-2"))
         },
       ];
 
       if (this.allowTrading()) {
         const tradeColDefs: Array<ColDef> = [
-          { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: true, width: 130, 
+          { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: 'agNumberColumnFilter', width: 130, 
           valueGetter: params => params.data.Purchased ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Purchased, "1.2-2"))
         },
-        { headerName: 'Sold', field: 'Sold', sortable: true, filter: true, width: 130,
+        { headerName: 'Sold', field: 'Sold', sortable: true, filter: 'agNumberColumnFilter', width: 130,
           valueGetter: params => params.data.Sold ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Sold, "1.2-2"))
         }
         ];
 
@@ -153,15 +158,12 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         var waterTypeColDefs: Array<ColDef> = [];
         this.waterTypes.forEach(waterType => {
           waterTypeColDefs.push({
-            headerName: waterType.WaterTypeName,
-            valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
-            sortable: true,
-            filter: true,
-            width: 130,
-            valueGetter: function (params) {
-              return params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0) : 0.0;
-            }
-          })
+            headerName: waterType.WaterTypeName, sortable: true, filter: 'agNumberColumnFilter', width: 130,
+            valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0,
+            valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+            filterValueGetter: params => params.data.WaterSupplyByWaterType && params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?
+              parseFloat(_decimalPipe.transform(params.data.WaterSupplyByWaterType[waterType.WaterTypeID], '1.2-2')) : 0
+          });
         });
 
         this.columnDefs.splice(this.waterTypeColumnDefsInsertIndex, 0, ...waterTypeColDefs)

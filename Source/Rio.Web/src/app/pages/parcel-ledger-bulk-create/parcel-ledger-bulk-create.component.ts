@@ -18,6 +18,7 @@ import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
@@ -56,6 +57,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     private parcelService: ParcelService,
     private parcelLedgerService: ParcelLedgerService,
     private waterTypeService: WaterTypeService,
+    private decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
@@ -91,6 +93,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   private initializeParcelSelectGrid() {
+    const _decimalPipe = this.decimalPipe;
     this.columnDefs = [
       { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true },
       { 
@@ -101,7 +104,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       },
       {
         headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => this.numberColumnValueGetter(params.data.ParcelAreaInAcres)
+        valueGetter: params => params.data.ParcelAreaInAcres ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.1-1'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1'))
       },
       { 
         headerName: 'Account', 
@@ -111,7 +116,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
       },
       { 
         headerName: 'Total Supply', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => this.numberColumnValueGetter(params.data.TotalSupply)
+        valueGetter: params => params.data.TotalSupply ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalSupply, '1.2-2'))
       }
     ];
 
@@ -121,12 +128,16 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
   private insertWaterTypeColDefs() {
     let colDefsWithWaterTypes = this.columnDefs;
-    
+    const _decimalPipe = this.decimalPipe;
+
     this.waterTypes.forEach(waterType => {
       colDefsWithWaterTypes.push(
         {
           headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-          valueGetter: params => params.data.WaterSupplyByWaterType ? this.numberColumnValueGetter(params.data.WaterSupplyByWaterType[waterType.WaterTypeID]) : 0.0
+          valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0,
+          valueFormatter: params =>  _decimalPipe.transform(params.value, '1.2-2'),
+          filterValueGetter: params => params.data.WaterSupplyByWaterType && params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?
+            parseFloat(_decimalPipe.transform(params.data.WaterSupplyByWaterType[waterType.WaterTypeID], '1.2-2')) : 0
         }
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
@@ -134,10 +145,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
     this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
-  }
-
-  private numberColumnValueGetter(value: number): number {
-    return (value === null || value === undefined) ? 0.0 : parseFloat(value.toFixed(1));
   }
     
   private clearErrorAlerts() {
