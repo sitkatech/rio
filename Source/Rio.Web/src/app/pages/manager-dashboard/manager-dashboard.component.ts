@@ -299,8 +299,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Type', field: 'PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
       { headerName: '# of Offers', field: 'NumberOfOffers', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
       { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
-      { headerName: 'Initial Quantity (ac-ft)', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
-      { headerName: 'Available Quantity (ac-ft)', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 180 },
+      this.utilityFunctionsService.createDecimalColumnDef('Initial Quantity (ac-ft)', 'Quantity', 160, 0),
+      this.utilityFunctionsService.createDecimalColumnDef('Available Quantity (ac-ft)', 'AvailableQuantity', 180, 0),
     ];
   }
 
@@ -331,41 +331,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 140
       },
-      {
-        headerName: 'Date', field: 'OfferDate', valueFormatter: function (params) {
-          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
-        },
-        filterValueGetter: function (params: any) {
-          return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
-        },
-        filterParams: {
-          comparator: function (filterLocalDate, cellValue) {
-            var dateAsString = cellValue;
-            if (dateAsString == null) return -1;
-            var cellDate = Date.parse(dateAsString);
-            const filterLocalDateAtMidnight = filterLocalDate.getTime();
-            if (filterLocalDateAtMidnight == cellDate) {
-              return 0;
-            }
-            if (cellDate < filterLocalDateAtMidnight) {
-              return -1;
-            }
-            if (cellDate > filterLocalDateAtMidnight) {
-              return 1;
-            }
-          }
-        },
-        comparator: function (id1: any, id2: any) {
-          if (id1.value < id2.value) {
-            return -1;
-          }
-          if (id1.value > id2.value) {
-            return 1;
-          }
-          return 0;
-        },
-        sortable: true, filter: 'agDateColumnFilter', width: 140
-      },
+      this.utilityFunctionsService.createDateColumnDef('Date', 'OfferDate', 'M/d/yyyy, h:mm a', 140),
       {
         headerName: 'Status',
         valueGetter: function (params) {
@@ -426,7 +392,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 155
       },
-      { headerName: 'Quantity (ac-ft)', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },
+      this.utilityFunctionsService.createDecimalColumnDef('Quantity (ac-ft)', 'Quantity', 140, 0),
       { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {

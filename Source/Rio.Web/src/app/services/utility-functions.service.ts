@@ -69,9 +69,9 @@ export class UtilityFunctionsService {
     return (date1 > date2)  ?  1 : 0;
   }
 
-  public createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
+  public createDateColumnDef(headerName: string, fieldName: string, dateFormat: string, width?: number): ColDef {
     const _datePipe = this.datePipe;
-    return {
+    var dateColDef: ColDef = {
       headerName: headerName, valueGetter: function (params: any) {
         return _datePipe.transform(params.data[fieldName], dateFormat);
       },
@@ -85,6 +85,11 @@ export class UtilityFunctionsService {
       resizable: true,
       sortable: true
     };
+    if (width) {
+      dateColDef.width = width;
+    }
+
+    return dateColDef;
   }
 
   public exportGridToCsv(grid: AgGridAngular, fileName: string, columnKeys: Array<string>) {
