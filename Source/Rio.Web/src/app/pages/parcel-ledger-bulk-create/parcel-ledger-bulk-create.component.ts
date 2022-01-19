@@ -104,12 +104,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,  
       },
-      {
-        headerName: 'Area (acres)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => params.data.ParcelAreaInAcres ?? 0,
-        valueFormatter: params => _decimalPipe.transform(params.value, '1.1-1'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ParcelAreaInAcres, '1.1-1'))
-      },
+      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres'),
       { 
         headerName: 'Account', 
         valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
