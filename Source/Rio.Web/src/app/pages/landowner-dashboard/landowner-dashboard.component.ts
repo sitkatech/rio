@@ -32,7 +32,7 @@ import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-t
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 import { ColDef, ColumnApi, GridApi } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerEntrySourceTypeDto } from 'src/app/shared/generated/model/parcel-ledger-entry-source-type-dto';
@@ -133,7 +133,8 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private waterYearService: WaterYearService,
     private utilityFunctionsService: UtilityFunctionsService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private decimalPipe: DecimalPipe
   ) {
   }
 
@@ -484,32 +485,36 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private createActivityDetailGridColDefs() {
+    const _decimalPipe = this.decimalPipe;
     this.activityDetailGridColDefs = [
       { 
         headerName: 'APN', field: 'Parcel.ParcelNumber', valueGetter: function (params: any) {
           return { LinkValue: params.data.Parcel.ParcelID, LinkDisplay: params.data.Parcel.ParcelNumber }
-        }, filterValueGetter: function (params: any) {
-          return params.data.Parcel.ParcelNumber;
-        }, cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' }
+        }, 
+        cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' },
+        filterValueGetter: params => params.data.Parcel.ParcelNumber
       },
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
       {
-        headerName: 'Supply Type', valueGetter: function (params: any) {
-          return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
-        }
+        headerName: 'Supply Type',
+        valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-'
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
       { 
-        headerName: 'Quantity (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: function (params: any) { return parseFloat(params.data.TransactionAmount.toFixed(2)); }, 
+        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => _decimalPipe.transform(params.data.TransactionAmount, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2'))
+      },
+      { 
+        headerName: 'Transaction Depth (ac-ft / ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => _decimalPipe.transform(params.data.TransactionDepth, '1.2-2'), 
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionDepth, '1.2-2'))
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', sortable: false,
-        valueGetter: function (params: any) {
-          return params.data.UserComment ?? '-';
-        }
+        valueGetter: params => params.data.UserComment ?? '-'
       }
     ];
 

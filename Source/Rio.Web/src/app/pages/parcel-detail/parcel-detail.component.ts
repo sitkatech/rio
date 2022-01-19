@@ -13,7 +13,7 @@ import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
@@ -57,7 +57,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -96,8 +97,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeLedgerGrid() {
-    // NOTE: using this date-time formatter gives the local date and time,
-    // so the numbers will not match the database, which is in UTC datetime stamps
+    const _decimalPipe = this.decimalPipe;
     this.parcelLedgerGridColumnDefs = [
       this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
@@ -109,14 +109,19 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
       { 
-        headerName: 'Transaction Amount', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: function (params: any) { return parseFloat(params.data.TransactionAmount.toFixed(2)); }, 
+        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => _decimalPipe.transform(params.data.TransactionAmount, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2'))
+      },
+      { 
+        headerName: 'Transaction Depth (ac-ft / ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
+        valueGetter: params => _decimalPipe.transform(params.data.TransactionDepth, '1.2-2'), 
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionDepth, '1.2-2'))
       },
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
-      { headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
-        valueGetter: function (params: any) {
-          return params.data.UserComment ?? '-';
-        }
+      { 
+        headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
+        valueGetter: params => params.data.UserComment ?? '-'
       }
     ];
 
