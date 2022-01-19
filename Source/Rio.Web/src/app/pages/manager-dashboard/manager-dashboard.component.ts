@@ -128,12 +128,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         // define column defs for water types
         this.waterTypes.forEach(waterType => {
           newLandownerUsageReportGridColumnDefs.push({
-            headerName: waterType.WaterTypeName,
-            valueFormatter: function (params) { return decimalPipe.transform(params.value, "1.1-1"); },
-            sortable: true,
-            filter: true,
-            width: 130,
-            valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0.0) : 0
+            headerName: waterType.WaterTypeName, sortable: true, filter: 'agNumberColumnFilter', width: 130,
+            valueGetter: params => params.data.WaterSupplyByWaterType ? params.data.WaterSupplyByWaterType[waterType.WaterTypeID] : 0,
+            valueFormatter: params => decimalPipe.transform(params.value, "1.2-2"),
+            filterValueGetter: params => params.data.WaterSupplyByWaterType ? 
+              parseFloat(decimalPipe.transform(params.data.WaterSupplyByWaterType[waterType.WaterTypeID], '1.2-2')) : 0
           })
         });
 
@@ -491,32 +490,43 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
-      { headerName: 'Total Supply (ac-ft)', sortable: true, filter: true, width: 150, 
-        valueGetter: params => params.data.TotalSupply ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1"),
+      { headerName: 'Total Supply (ac-ft)', sortable: true, filter: 'agNumberColumnFilter', width: 150, 
+        valueGetter: params => params.data.TotalSupply ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalSupply, "1.2-2"))
       },
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
-      { headerName: 'Precipitation', sortable: true, filter: true, width: 170, 
-        valueGetter: params => params.data.Precipitation ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
+      { headerName: 'Precipitation', sortable: true, filter: 'agNumberColumnFilter', width: 170, 
+        valueGetter: params => params.data.Precipitation ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+        filterValueGetter: params => params.data.Precipitation ? parseFloat(_decimalPipe.transform(params.data.Precipitation, "1.2-2")) : 0
+
       },
-      { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', sortable: true, filter: true, width: 150, 
-        valueGetter: params => params.data.UsageToDate ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+      { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', sortable: true, filter: 'agNumberColumnFilter', width: 150, 
+        valueGetter: params => params.data.UsageToDate ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+        filterValueGetter: params => params.data.UsageToDate ? parseFloat(_decimalPipe.transform(params.data.UsageToDate, "1.2-2")) : 0
+
       },
-      { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', sortable: true, filter: true, width: 180, 
-        valueGetter: params => params.data.CurrentAvailable ?? 0.0,
-        valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+      { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', sortable: true, filter: 'agNumberColumnFilter', width: 180, 
+        valueGetter: params => params.data.CurrentAvailable ?? 0,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+        filterValueGetter: params => params.data.CurrentAvailable ? parseFloat(_decimalPipe.transform(params.data.CurrentAvailable, "1.2-2")) : parseFloat('0')
+
       },
-      { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 }
+      {
+        headerName: 'Acres Managed', field: 'AcresManaged', sortable: true, filter: 'agNumberColumnFilter', width: 140,
+        valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.AcresManaged, "1.2-2"))
+      }
     ];
 
     // insert trading-related colDefs if trading is enabled
     if (this.allowTrading()) {
       this.landownerUsageReportGridColumnDefs.push(
-        { headerName: '# of Trades', field: 'NumberOfTrades', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
-        { headerName: '# of Postings', field: 'NumberOfPostings', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+        { headerName: '# of Trades', field: 'NumberOfTrades', sortable: true, filter: 'agNumberColumnFilter', width: 120 },
+        { headerName: '# of Postings', field: 'NumberOfPostings', sortable: true, filter: 'agNumberColumnFilter', width: 120 },
         {
           headerName: 'Most Recent Trade', valueGetter: function (params: any) {
             return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
@@ -541,13 +551,17 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       );
 
       const purchasedSoldColDefs: Array<ColDef> = [
-        { headerName: 'Purchased (ac-ft)', field: 'Purchased', sortable: true, filter: true, width: 140, 
-          valueGetter: params => params.data.Purchased ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1")
+        { 
+          headerName: 'Purchased (ac-ft)', field: 'Purchased', sortable: true, filter: 'agNumberColumnFilter', width: 140, 
+          valueGetter: params => params.data.Purchased ?? 0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => params.data.Purchased ? parseFloat(_decimalPipe.transform(params.data.Purchased, "1.2-2")) : 0
         },
-        { headerName: 'Sold (ac-ft)', field: 'Sold', sortable: true, filter: true, width: 100, 
-          valueGetter: params => params.data.Sold ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.1-1") 
+        { 
+          headerName: 'Sold (ac-ft)', field: 'Sold', sortable: true, filter: 'agNumberColumnFilter', width: 140, 
+          valueGetter: params => params.data.Sold ?? 0,
+          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
+          filterValueGetter: params => params.data.Sold ? parseFloat(_decimalPipe.transform(params.data.Sold, "1.2-2")) : 0
         }
       ];
       this.landownerUsageReportGridColumnDefs.splice(this.tradeColDefsInsertIndex, 0, ...purchasedSoldColDefs);
