@@ -13,7 +13,6 @@ import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { ColDef } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe, DecimalPipe } from '@angular/common';
 import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
@@ -57,8 +56,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
-    private datePipe: DatePipe,
-    private decimalPipe: DecimalPipe
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -97,10 +94,9 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   initializeLedgerGrid() {
-    const _decimalPipe = this.decimalPipe;
     this.parcelLedgerGridColumnDefs = [
-      this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
+      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      this.utilityFunctionsService.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
       {
         headerName: 'Water Type', valueGetter: function (params: any) {
@@ -108,16 +104,8 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         }
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
-      { 
-        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => _decimalPipe.transform(params.data.TransactionAmount, '1.2-2'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2'))
-      },
-      { 
-        headerName: 'Transaction Depth (ac-ft / ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => _decimalPipe.transform(params.data.TransactionDepth, '1.2-2'), 
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionDepth, '1.2-2'))
-      },
+      this.utilityFunctionsService.createDecimalColumnDef('Transaction Volume (ac-ft)', 'TransactionAmount'),
+      this.utilityFunctionsService.createDecimalColumnDef('Transaction Depth (ac-ft / ac)', 'TransactionDepth'),
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { 
         headerName: 'Comment', field: 'UserComment', filter: false, sortable: false,
@@ -132,43 +120,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     };
 
   }
-  
-  private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
-    const filterDate = Date.parse(filterLocalDateAtMidnight);
-    const cellDate = Date.parse(cellValue);
-
-    if (cellDate == filterDate) {
-      return 0;
-    }
-    return (cellDate < filterDate) ? -1 : 1;
-  }
-
-  private dateSortComparer (id1: any, id2: any) {
-    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
-    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
-    if (date1 < date2) {
-      return -1;
-    }
-    return (date1 > date2)  ?  1 : 0;
-}
-
-private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-  const _datePipe = this.datePipe;
-  return {
-    headerName: headerName, valueGetter: function (params: any) {
-      return _datePipe.transform(params.data[fieldName], dateFormat);
-    },
-    comparator: this.dateSortComparer,
-    filter: 'agDateColumnFilter',
-    filterParams: {
-      filterOptions: ['inRange'],
-      comparator: this.dateFilterComparator
-    }, 
-    width: 110,
-    resizable: true,
-    sortable: true
-  };
-}
 
   public exportParcelLedgerGridToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.parcelLedgerGrid, 'parcelLedgerfor' + this.parcel.ParcelNumber + '.csv', null);
