@@ -32,10 +32,8 @@ import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-t
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 import { ColDef, ColumnApi, GridApi } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
-import { DatePipe, DecimalPipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { ParcelLedgerEntrySourceTypeDto } from 'src/app/shared/generated/model/parcel-ledger-entry-source-type-dto';
 
 @Component({
   selector: 'rio-landowner-dashboard',
@@ -133,8 +131,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private waterYearService: WaterYearService,
     private utilityFunctionsService: UtilityFunctionsService,
-    private datePipe: DatePipe,
-    private decimalPipe: DecimalPipe
   ) {
   }
 
@@ -485,7 +481,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private createActivityDetailGridColDefs() {
-    const _decimalPipe = this.decimalPipe;
     this.activityDetailGridColDefs = [
       { 
         headerName: 'APN', field: 'Parcel.ParcelNumber', valueGetter: function (params: any) {
@@ -494,24 +489,16 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { 'inRouterLink': '/parcels/' },
         filterValueGetter: params => params.data.Parcel.ParcelNumber
       },
-      this.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
-      this.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
+      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      this.utilityFunctionsService.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
       {
         headerName: 'Supply Type',
         valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-'
       },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
-      { 
-        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => _decimalPipe.transform(params.data.TransactionAmount, '1.2-2'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2'))
-      },
-      { 
-        headerName: 'Transaction Depth (ac-ft / ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => _decimalPipe.transform(params.data.TransactionDepth, '1.2-2'), 
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TransactionDepth, '1.2-2'))
-      },
+      this.utilityFunctionsService.createDecimalColumnDef('Transaction Volume (ac-ft)', 'TransactionAmount'),
+      this.utilityFunctionsService.createDecimalColumnDef('Transaction Depth (ac-ft / ac)', 'TransactionDepth'),
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },
       { headerName: 'Comment', field: 'UserComment', sortable: false,
         valueGetter: params => params.data.UserComment ?? '-'
@@ -519,48 +506,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     ];
 
     this.defaultColDef = {
-      sortable: true, 
-      filter: true, 
-      resizable: true
+      sortable: true, filter: true, resizable: true
     }
   }
-
-  private dateFilterComparator(filterLocalDateAtMidnight, cellValue) {
-    const filterDate = Date.parse(filterLocalDateAtMidnight);
-    const cellDate = Date.parse(cellValue);
-
-    if (cellDate == filterDate) {
-      return 0;
-    }
-    return (cellDate < filterDate) ? -1 : 1;
-  }
-
-  private dateSortComparer (id1: any, id2: any) {
-    const date1 = id1 ? Date.parse(id1) : Date.parse("1/1/1900");
-    const date2 = id2 ? Date.parse(id2) : Date.parse("1/1/1900");
-    if (date1 < date2) {
-      return -1;
-    }
-    return (date1 > date2)  ?  1 : 0;
-}
-
-private createDateColumnDef(headerName: string, fieldName: string, dateFormat: string): ColDef {
-  const _datePipe = this.datePipe;
-  return {
-    headerName: headerName, valueGetter: function (params: any) {
-      return _datePipe.transform(params.data[fieldName], dateFormat);
-    },
-    comparator: this.dateSortComparer,
-    filter: 'agDateColumnFilter',
-    filterParams: {
-      filterOptions: ['inRange'],
-      comparator: this.dateFilterComparator
-    }, 
-    width: 110,
-    resizable: true,
-    sortable: true
-  };
-}
 
   public onGridReady(params: any) {
     this.columnApi = params.columnApi;

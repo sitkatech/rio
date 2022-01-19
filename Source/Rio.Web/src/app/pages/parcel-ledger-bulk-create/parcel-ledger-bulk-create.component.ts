@@ -19,6 +19,7 @@ import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-typ
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 import { DecimalPipe } from '@angular/common';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
@@ -57,6 +58,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     private parcelService: ParcelService,
     private parcelLedgerService: ParcelLedgerService,
     private waterTypeService: WaterTypeService,
+    private utilityFunctionsService: UtilityFunctionsService,
     private decimalPipe: DecimalPipe
   ) { }
 
@@ -114,12 +116,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: params => params.data.LandOwner.AccountDisplayName, 
       },
-      { 
-        headerName: 'Total Supply', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-        valueGetter: params => params.data.TotalSupply ?? 0,
-        valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalSupply, '1.2-2'))
-      }
+      this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply')
     ];
 
     this.defaultColDef = { sortable: true, filter: true }
@@ -131,14 +128,9 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     const _decimalPipe = this.decimalPipe;
 
     this.waterTypes.forEach(waterType => {
+      const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
       colDefsWithWaterTypes.push(
-        {
-          headerName: waterType.WaterTypeName, filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right'},
-          valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0,
-          valueFormatter: params =>  _decimalPipe.transform(params.value, '1.2-2'),
-          filterValueGetter: params => params.data.WaterSupplyByWaterType && params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?
-            parseFloat(_decimalPipe.transform(params.data.WaterSupplyByWaterType[waterType.WaterTypeID], '1.2-2')) : 0
-        }
+        this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName)
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });

@@ -111,37 +111,16 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Total Supply', field: 'TotalSupply', sortable: true, filter: 'agNumberColumnFilter', width: 150,
-          valueGetter: params => params.data.TotalSupply ?? 0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalSupply, "1.2-2"))
-        },
-        { headerName: 'Precipitation', field: 'Precipitation', sortable: true, filter: 'agNumberColumnFilter', width: 130,
-          valueGetter: params => params.data.Precipitation ?? 0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Precipitation, "1.2-2"))
-        },
-        { headerName: 'Total Usage', field: 'UsageToDate', sortable: true, filter: 'agNumberColumnFilter', width: 130,
-          valueGetter: params => params.data.UsageToDate ?? 0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.TotalUsage, "1.2-2"))
-        },
+        this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 150),
+        this.utilityFunctionsService.createDecimalColumnDef('Precipitation', 'Precipitation', 130),
+        this.utilityFunctionsService.createDecimalColumnDef('Total Usage', 'UsageToDate', 130)
       ];
 
       if (this.allowTrading()) {
         const tradeColDefs: Array<ColDef> = [
-          { headerName: 'Purchased', field: 'Purchased', sortable: true, filter: 'agNumberColumnFilter', width: 130, 
-          valueGetter: params => params.data.Purchased ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Purchased, "1.2-2"))
-        },
-        { headerName: 'Sold', field: 'Sold', sortable: true, filter: 'agNumberColumnFilter', width: 130,
-          valueGetter: params => params.data.Sold ?? 0.0,
-          valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-          filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.Sold, "1.2-2"))
-        }
+          this.utilityFunctionsService.createDecimalColumnDef('Purchased', 'Purchased', 130),
+          this.utilityFunctionsService.createDecimalColumnDef('Sold', 'Sold', 130),
         ];
-
         this.columnDefs.splice(this.tradeColumnDefsInsertIndex, 0, ...tradeColDefs);
       }
 
@@ -157,13 +136,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         // finish setting up the column defs based on existing waterTypes before loading data.
         var waterTypeColDefs: Array<ColDef> = [];
         this.waterTypes.forEach(waterType => {
-          waterTypeColDefs.push({
-            headerName: waterType.WaterTypeName, sortable: true, filter: 'agNumberColumnFilter', width: 130,
-            valueGetter: params => params.data.WaterSupplyByWaterType ? (params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0,
-            valueFormatter: params => _decimalPipe.transform(params.value, "1.2-2"),
-            filterValueGetter: params => params.data.WaterSupplyByWaterType && params.data.WaterSupplyByWaterType[waterType.WaterTypeID] ?
-              parseFloat(_decimalPipe.transform(params.data.WaterSupplyByWaterType[waterType.WaterTypeID], '1.2-2')) : 0
-          });
+          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+          waterTypeColDefs.push(
+            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130),
+          );
         });
 
         this.columnDefs.splice(this.waterTypeColumnDefsInsertIndex, 0, ...waterTypeColDefs)
