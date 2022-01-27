@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-sm-8 text-right">
                         <button type="submit" class="btn btn-rio"
-                            [disabled]="newPostingForm.form.invalid || !isOfferFormValid() || isLoadingSubmit">
+                            [disabled]="isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Save
                         </button>
