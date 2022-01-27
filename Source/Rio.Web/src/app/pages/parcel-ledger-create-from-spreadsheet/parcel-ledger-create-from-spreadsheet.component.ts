@@ -83,9 +83,37 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
   }
 
+  private validateEffectiveDateAndWaterTypeID() {
+    var formValid = true;
+    if (!this.effectiveDate) {
+      this.alertService.pushAlert(new Alert('EffectiveDate: The Effective Date field is required', AlertContext.Danger));
+      formValid = false;
+    } else {
+    // accepts yyyy-mm-dd or yyyy-m-d date format
+      const dateFormatRegex = new RegExp(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/);
+      const inputtedDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
+
+      if (dateFormatRegex.test(inputtedDateString)) {
+        this.alertService.pushAlert(new Alert("Effective Date must be entered in YYYY-MM-DD format.", AlertContext.Danger));
+        formValid = false;      
+      }
+    }
+    if (!this.waterTypeID) {
+      this.alertService.pushAlert(new Alert('SupplyType: The Supply Type field is required.', AlertContext.Danger));
+      formValid = false;
+    }
+    return formValid;
+  }
+
   public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { 
     this.isLoadingSubmit = true;
     this.clearErrorAlerts();
+
+    if (!this.validateEffectiveDateAndWaterTypeID()) {
+      this.isLoadingSubmit = false;
+      window.scroll(0,0);
+      return;
+    }
 
     const _datePipe = this.datePipe;
     const effectiveDateAsString = _datePipe.transform(this.effectiveDate, 'MM/dd/yyyy');
@@ -101,14 +129,18 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
       },
       error => {
         this.isLoadingSubmit = false;
-        this.inputtedFile = null;
-        (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
-
+        if (error.error.errors && error.error.errors.UploadedFile) {
+          this.inputtedFile = null;
+          (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
+          this.alertService.pushAlert(new Alert(error.error.errors.UploadedFile, AlertContext.Danger));
+        }
         if (error.error.UploadedFile) {
-          this.alertService.pushAlert(new Alert(error.error.UploadedFile));
+          this.inputtedFile = null;
+          (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
+          this.alertService.pushAlert(new Alert(error.error.UploadedFile, AlertContext.Danger));
         }
         if (error.error.EffectiveDate) {
-          this.alertService.pushAlert(new Alert(error.error.EffectiveDate));
+          this.alertService.pushAlert(new Alert(error.error.EffectiveDate, AlertContext.Danger));
         }
         window.scroll(0,0);
         this.cdr.detectChanges();

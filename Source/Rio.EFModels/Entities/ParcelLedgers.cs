@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV;
-using Rio.Models.DataTransferObjects.ParcelLedgerCreateDto;
-using Rio.Models.DataTransferObjects.ParcelWaterSupplyBreakdownDto;
-using Rio.Models.DataTransferObjects.LandownerWaterSupplyBreakdownDto;
+using Rio.Models.DataTransferObjects.ParcelAllocation;
 
 namespace Rio.EFModels.Entities
 {
@@ -137,10 +134,10 @@ namespace Rio.EFModels.Entities
                 {
                         ParcelID = parcel.ParcelID,
                         TransactionDate = DateTime.UtcNow,
-                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
-                        TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                        EffectiveDate = parcelLedgerCreateDto.EffectiveDate.Value.AddHours(8),
+                        TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID.Value,
                         ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
-                        TransactionAmount = parcelLedgerCreateDto.TransactionAmount,
+                        TransactionAmount = parcelLedgerCreateDto.TransactionAmount.Value,
                         WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                         TransactionDescription =
                             $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water {(parcelLedgerCreateDto.WaterTypeID.HasValue ? "supply" : "usage")} has been applied to this water account.",
@@ -163,10 +160,10 @@ namespace Rio.EFModels.Entities
                 {
                     ParcelID = parcel.ParcelID,
                     TransactionDate = DateTime.UtcNow,
-                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate.AddHours(8),
-                    TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID,
+                    EffectiveDate = parcelLedgerCreateDto.EffectiveDate.Value.AddHours(8),
+                    TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID.Value,
                     ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
-                    TransactionAmount = parcelLedgerCreateDto.TransactionAmount * (decimal) parcel.ParcelAreaInAcres,
+                    TransactionAmount = parcelLedgerCreateDto.TransactionAmount.Value * (decimal) parcel.ParcelAreaInAcres,
                     WaterTypeID = parcelLedgerCreateDto.WaterTypeID,
                     TransactionDescription =
                         $"A manual {(parcelLedgerCreateDto.TransactionAmount < 0 ? "withdrawal from" : "deposit to")} water supply has been applied to this water account.",

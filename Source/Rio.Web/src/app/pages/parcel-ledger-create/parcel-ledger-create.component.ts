@@ -70,8 +70,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -87,9 +85,23 @@ export class ParcelLedgerCreateComponent implements OnInit {
     return this.model.TransactionTypeID != TransactionTypeEnum.Supply;
   }
 
+  private validateEffectiveDate() {
+    // accepts yyyy-mm-dd or yyyy-m-d date format
+    const dateFormatRegex = new RegExp(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/);
+    const inputtedDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
+    return dateFormatRegex.test(inputtedDateString);
+  }
+
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
     this.clearErrorAlerts();
+
+    if (!this.validateEffectiveDate()) {
+      this.alertService.pushAlert(new Alert("Effective Date must be entered in YYYY-MM-DD format.", AlertContext.Danger));
+      this.isLoadingSubmit = false;
+      window.scroll(0,0);
+      return;
+    }
 
     this.model.ParcelNumbers = [];
     this.model.ParcelNumbers.push(this.selectedParcelNumber);
@@ -110,6 +122,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
         }
       },
         error => {
+          console.log(error);
           this.isLoadingSubmit = false;
           window.scroll(0,0);
           this.cdr.detectChanges();
