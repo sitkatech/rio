@@ -33,7 +33,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public selectedParcelNumber: string;
   public isLoadingSubmit: boolean = false;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
-  private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   public transactionTypeEnum = TransactionTypeEnum;
 
@@ -73,21 +72,13 @@ export class ParcelLedgerCreateComponent implements OnInit {
     this.cdr.detach();
   }
 
-  private clearErrorAlerts() {
-    if (!this.alertsCountOnLoad) {
-      this.alertsCountOnLoad = this.alertService.getAlerts().length;
-    }
-
-    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
-  }
-
   public isUsageAdjustment(): boolean {
     return this.model.TransactionTypeID != TransactionTypeEnum.Supply;
   }
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.clearErrorAlerts();
+    this.alertService.clearAlerts();
 
     this.model.ParcelNumbers = [];
     this.model.ParcelNumbers.push(this.selectedParcelNumber);

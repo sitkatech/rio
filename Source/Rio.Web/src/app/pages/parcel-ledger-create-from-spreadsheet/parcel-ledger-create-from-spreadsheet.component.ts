@@ -26,7 +26,6 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   public richTextTypeID = CustomRichTextType.ParcelLedgerCreateFromSpreadsheet;
   public waterTypes: WaterTypeDto[];
   public isLoadingSubmit: boolean = false;
-  private alertsCountOnLoad: number;
  
   public inputtedFile: any;
   public effectiveDate: Date;
@@ -75,14 +74,6 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.document.getElementById("CSV-upload").click();
   }
 
-  private clearErrorAlerts() {
-    if (!this.alertsCountOnLoad) {
-      this.alertsCountOnLoad = this.alertService.getAlerts().length;
-    }
-
-    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
-  }
-
   private validateEffectiveDateAndWaterTypeID() {
     var formValid = true;
     if (!this.effectiveDate) {
@@ -98,7 +89,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
 
   public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { 
     this.isLoadingSubmit = true;
-    this.clearErrorAlerts();
+    this.alertService.clearAlerts();
 
     if (!this.validateEffectiveDateAndWaterTypeID()) {
       this.isLoadingSubmit = false;

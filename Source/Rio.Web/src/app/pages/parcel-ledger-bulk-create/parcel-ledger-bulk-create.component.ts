@@ -41,7 +41,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public isLoadingSubmit: boolean = false;
 
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
-  private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
   public parcelWaterSupplyAndUsagesByYear: ParcelWaterSupplyAndUsageDto[];
@@ -84,8 +83,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -133,14 +130,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
-    
-  private clearErrorAlerts() {
-    if (!this.alertsCountOnLoad) {
-      this.alertsCountOnLoad = this.alertService.getAlerts().length;
-    }
-
-    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
-  }
 
   public onParcelSelectionChange(e: RowSelectedEvent) {
     const parcelNumber = e.data.ParcelNumber;
@@ -157,7 +146,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.clearErrorAlerts();
+    this.alertService.clearAlerts();
     
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
     this.model.EffectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
