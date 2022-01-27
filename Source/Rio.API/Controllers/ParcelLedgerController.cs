@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
@@ -33,19 +34,22 @@ namespace Rio.API.Controllers
             var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]); 
             if (parcelDto == null)
             {
-                var errorMessage = parcelLedgerCreateDto.ParcelNumbers[0] != null ? 
-                    $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN." : "The Parcel APN field is required.";
-                ModelState.AddModelError("ParcelNumber", errorMessage);
-                return BadRequest(ModelState);
+                if (parcelLedgerCreateDto.ParcelNumbers[0] == null)
+                {
+                    ModelState.AddModelError("ParcelNumber", "The Parcel APN field is required.");
+                }
+                else
+                {
+                    ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
+                }
             }
 
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Supply && parcelLedgerCreateDto.WaterTypeID == null)
             {
                 ModelState.AddModelError("SupplyType", "The Supply Type field is required for transactions adjusting water supply.");
-                return BadRequest(ModelState);
             }
 
-            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value);
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value, parcelLedgerCreateDto.EffectiveDateString);
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
                 // flip TransactionAmount sign for usage adjustment; usage is negative in the ledger, but a user-inputted positive value should increase usage sum (and vice versa)
@@ -66,7 +70,12 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value);
+            if (parcelLedgerCreateDto.WaterTypeID == null)
+            {
+                ModelState.AddModelError("SupplyType", "The Supply Type field is required.");
+                return BadRequest(ModelState);
+            }
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value, parcelLedgerCreateDto.EffectiveDateString);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -86,7 +95,7 @@ namespace Rio.API.Controllers
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
 
-            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate);
+            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.EffectiveDateString);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -205,8 +214,18 @@ namespace Rio.API.Controllers
             return true;
         }
 
-        private void ValidateEffectiveDate(DateTime effectiveDate)
+        private void ValidateEffectiveDate(DateTime effectiveDate, string? effectiveDateString)
         {
+            if (effectiveDateString != null)
+            {
+                var dateFormatRegex = new Regex(@"^\d{4}\-\d{2}\-\d{2}$");
+                if (!dateFormatRegex.IsMatch(effectiveDateString))
+                {
+                    ModelState.AddModelError("EffectiveDate", "Effective Date must be entered in YYYY-MM-DD format.");
+                    return;
+                }
+            }
+
             var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();
             if (effectiveDate.Year < earliestWaterYear.Year)
             {

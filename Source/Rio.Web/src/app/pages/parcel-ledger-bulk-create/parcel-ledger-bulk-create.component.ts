@@ -155,25 +155,12 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.noParcelsSelected = this.model.ParcelNumbers.length === 0;
   }
 
-  private validateEffectiveDate() {
-    // accepts yyyy-mm-dd or yyyy-m-d date format
-    const dateFormatRegex = new RegExp(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/);
-    const inputtedDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
-    return dateFormatRegex.test(inputtedDateString);
-  }
-
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
     this.clearErrorAlerts();
-
-    if (!this.validateEffectiveDate()) {
-      this.alertService.pushAlert(new Alert("Effective Date must be entered in YYYY-MM-DD format.", AlertContext.Danger));
-      this.isLoadingSubmit = false;
-      window.scroll(0,0);
-      return;
-    }
     
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
+    this.model.EffectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
 
     this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {

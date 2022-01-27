@@ -88,15 +88,6 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     if (!this.effectiveDate) {
       this.alertService.pushAlert(new Alert('EffectiveDate: The Effective Date field is required', AlertContext.Danger));
       formValid = false;
-    } else {
-    // accepts yyyy-mm-dd or yyyy-m-d date format
-      const dateFormatRegex = new RegExp(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/);
-      const inputtedDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
-
-      if (dateFormatRegex.test(inputtedDateString)) {
-        this.alertService.pushAlert(new Alert("Effective Date must be entered in YYYY-MM-DD format.", AlertContext.Danger));
-        formValid = false;      
-      }
     }
     if (!this.waterTypeID) {
       this.alertService.pushAlert(new Alert('SupplyType: The Supply Type field is required.', AlertContext.Danger));
@@ -116,9 +107,9 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     }
 
     const _datePipe = this.datePipe;
-    const effectiveDateAsString = _datePipe.transform(this.effectiveDate, 'MM/dd/yyyy');
+    const effectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
 
-    this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, effectiveDateAsString, this.waterTypeID)
+    this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, effectiveDateString, this.waterTypeID)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         createTransactionFromSpreadsheetForm.reset();

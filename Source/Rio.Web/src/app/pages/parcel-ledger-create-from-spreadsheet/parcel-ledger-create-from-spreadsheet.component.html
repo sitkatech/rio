@@ -43,7 +43,8 @@
           </div>
           <div class="col-sm-5">
             <div class="input-group">
-              <input class="form-control" placeholder="yyyy-mm-dd" name="dp" ngbDatepicker #d="ngbDatepicker" [(ngModel)]="effectiveDate" required>
+              <input class="form-control" placeholder="yyyy-mm-dd" name="dp" id="effective-date"
+                ngbDatepicker #d="ngbDatepicker" [(ngModel)]="effectiveDate" required>
               <div class="input-group-append">
                 <button class="btn btn-secondary far fa-calendar" (click)="d.toggle()" type="button"></button>
               </div>

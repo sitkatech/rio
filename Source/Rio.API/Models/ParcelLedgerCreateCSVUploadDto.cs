@@ -10,6 +10,7 @@ namespace Rio.API.Models
         public IFormFile UploadedFile { get; set; }
         [Required]
         public DateTime EffectiveDate { get; set; }
+        public String EffectiveDateString { get; set; }
         [Required]
         public int WaterTypeID { get; set; }
     }

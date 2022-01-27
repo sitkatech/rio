@@ -2082,6 +2082,9 @@
                     "type": "string",
                     "format": "date-time"
                   },
+                  "EffectiveDateString": {
+                    "type": "string"
+                  },
                   "WaterTypeID": {
                     "type": "integer",
                     "format": "int32"
@@ -2093,6 +2096,9 @@
                   "style": "form"
                 },
                 "EffectiveDate": {
+                  "style": "form"
+                },
+                "EffectiveDateString": {
                   "style": "form"
                 },
                 "WaterTypeID": {
@@ -4625,6 +4631,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "EffectiveDateString": {
+            "type": "string",
+            "nullable": true
+          },
           "TransactionTypeID": {
             "type": "integer",
             "format": "int32"
@@ -5078,7 +5088,6 @@
         "required": [
           "CreateAccountID",
           "CreateUserID",
-          "PostingTypeID",
           "Price",
           "Quantity"
         ],
@@ -5086,7 +5095,8 @@
         "properties": {
           "PostingTypeID": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "Quantity": {
             "maximum": 100000000,

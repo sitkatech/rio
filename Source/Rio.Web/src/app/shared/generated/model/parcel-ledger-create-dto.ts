@@ -13,6 +13,7 @@
 export class ParcelLedgerCreateDto { 
     ParcelNumbers: Array<string>;
     EffectiveDate: string;
+    EffectiveDateString?: string;
     TransactionTypeID: number;
     WaterTypeID?: number;
     TransactionAmount: number;
