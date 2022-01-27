@@ -98,7 +98,7 @@
                                     </a>
                                 </div>
                             </li>
-                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && !isUnassigned() && allowTrading()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     Trade
