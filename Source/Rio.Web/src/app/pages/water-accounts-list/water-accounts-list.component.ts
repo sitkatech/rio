@@ -38,10 +38,14 @@ export class WaterAccountsListComponent implements OnInit {
     this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.loadingAccounts = true;
-      this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
-        this.currentUserAccounts = userAccounts;
-        this.loadingAccounts = false;
-      });
+      this.updateCurrentUserAccounts();
+    });
+  }
+
+  public updateCurrentUserAccounts() {
+    this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
+      this.currentUserAccounts = userAccounts;
+      this.loadingAccounts = false;
     });
   }
 
@@ -63,6 +67,7 @@ export class WaterAccountsListComponent implements OnInit {
       this.authenticationService.refreshUserInfo(this.currentUser);
       this.alertService.pushAlert(new Alert(`Account #${this.accountToRemove.AccountNumber} (${this.accountToRemove.AccountName}) successfully removed from accounts you manage.`, AlertContext.Success));
       this.accountToRemove = null;
+      this.updateCurrentUserAccounts();
     })
   }
 }
