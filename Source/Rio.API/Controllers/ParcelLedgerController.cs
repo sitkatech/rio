@@ -29,10 +29,10 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            var parcelNumber = parcelLedgerCreateDto.ParcelNumbers.Single();
+            var parcelNumber = parcelLedgerCreateDto.ParcelNumbers?.Single();
             if (string.IsNullOrWhiteSpace(parcelNumber))
             {
-                ModelState.AddModelError("ParcelNumber", "The Parcel APN field is required.");
+                ModelState.AddModelError("ParcelNumber", "Please enter a valid Parcel APN.");
             }
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Supply && parcelLedgerCreateDto.WaterTypeID == null)
             {
@@ -44,10 +44,10 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]);
+            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelNumber);
             if (parcelDto == null)
             {
-                ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
+                ModelState.AddModelError("ParcelNumber", $"{parcelNumber} is not a valid Parcel APN.");
             }
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {

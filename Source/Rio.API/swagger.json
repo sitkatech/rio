@@ -5078,6 +5078,7 @@
         "required": [
           "CreateAccountID",
           "CreateUserID",
+          "PostingTypeID",
           "Price",
           "Quantity"
         ],
@@ -5085,8 +5086,7 @@
         "properties": {
           "PostingTypeID": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "format": "int32"
           },
           "Quantity": {
             "maximum": 100000000,
