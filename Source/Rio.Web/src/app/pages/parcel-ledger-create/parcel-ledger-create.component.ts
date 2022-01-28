@@ -16,12 +16,13 @@ import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
   templateUrl: './parcel-ledger-create.component.html',
   styleUrls: ['./parcel-ledger-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 })
 export class ParcelLedgerCreateComponent implements OnInit {
 
@@ -82,7 +83,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
     this.model.ParcelNumbers = [];
     this.model.ParcelNumbers.push(this.selectedParcelNumber);
-    this.model.EffectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
 
     this.parcelLedgerService.newTransaction(this.model)
       .subscribe(() => {

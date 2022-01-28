@@ -31,25 +31,26 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
-            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]); 
-            if (parcelDto == null)
+            var parcelNumber = parcelLedgerCreateDto.ParcelNumbers.Single();
+            if (string.IsNullOrWhiteSpace(parcelNumber))
             {
-                if (parcelLedgerCreateDto.ParcelNumbers[0] == null)
-                {
-                    ModelState.AddModelError("ParcelNumber", "The Parcel APN field is required.");
-                }
-                else
-                {
-                    ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
-                }
+                ModelState.AddModelError("ParcelNumber", "The Parcel APN field is required.");
             }
-
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Supply && parcelLedgerCreateDto.WaterTypeID == null)
             {
                 ModelState.AddModelError("SupplyType", "The Supply Type field is required for transactions adjusting water supply.");
             }
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value, parcelLedgerCreateDto.EffectiveDateString);
+            var parcelDto = Parcel.GetByParcelNumberAsDto(_dbContext, parcelLedgerCreateDto.ParcelNumbers[0]);
+            if (parcelDto == null)
+            {
+                ModelState.AddModelError("ParcelNumber", $"{parcelLedgerCreateDto.ParcelNumbers[0]} is not a valid Parcel APN.");
+            }
             if (parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Usage)
             {
                 // flip TransactionAmount sign for usage adjustment; usage is negative in the ledger, but a user-inputted positive value should increase usage sum (and vice versa)
@@ -75,7 +76,7 @@ namespace Rio.API.Controllers
                 ModelState.AddModelError("SupplyType", "The Supply Type field is required.");
                 return BadRequest(ModelState);
             }
-            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate.Value, parcelLedgerCreateDto.EffectiveDateString);
+            ValidateEffectiveDate(parcelLedgerCreateDto.EffectiveDate);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -95,7 +96,7 @@ namespace Rio.API.Controllers
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
 
-            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.EffectiveDateString);
+            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -111,7 +112,8 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, parcelLedgerCreateCSVUploadDto.EffectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
+            var effectiveDate = DateTime.Parse(parcelLedgerCreateCSVUploadDto.EffectiveDate);
+            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, effectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
             return Ok(postingCount);
         }
 
@@ -214,41 +216,40 @@ namespace Rio.API.Controllers
             return true;
         }
 
-        private void ValidateEffectiveDate(DateTime effectiveDate, string? effectiveDateString)
+        private void ValidateEffectiveDate(string effectiveDate)
         {
-            if (effectiveDateString != null)
+            var dateFormatRegex = new Regex(@"^\d{4}\-\d{1,2}\-\d{1,2}$");
+            if (!dateFormatRegex.IsMatch(effectiveDate))
             {
-                var dateFormatRegex = new Regex(@"^\d{4}\-\d{2}\-\d{2}$");
-                if (!dateFormatRegex.IsMatch(effectiveDateString))
-                {
-                    ModelState.AddModelError("EffectiveDate", "Effective Date must be entered in YYYY-MM-DD format.");
-                    return;
-                }
+                ModelState.AddModelError("EffectiveDate", "Effective Date must be entered in YYYY-MM-DD format.");
+                return;
             }
 
+            var effectiveDateAsDateTime = DateTime.Parse(effectiveDate);
+
             var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();
-            if (effectiveDate.Year < earliestWaterYear.Year)
+            if (effectiveDateAsDateTime.Year < earliestWaterYear.Year)
             {
-                ModelState.AddModelError("EffectiveDate", 
-                    $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
+                ModelState.AddModelError("EffectiveDate", $"Transactions for dates before 1/1/{earliestWaterYear.Year} are not allowed");
             }
 
             var currentDate = DateTime.UtcNow;
-            if (DateTime.Compare(effectiveDate, currentDate) > 0)
+            if (DateTime.Compare(effectiveDateAsDateTime, currentDate) > 0)
             {
                 ModelState.AddModelError("EffectiveDate", "Transactions for future dates are not allowed.");
             }
         }
 
         private void ValidateUsageAmount(ParcelLedgerCreateDto parcelLedgerCreateDto)
-        { 
+        {
+            var effectiveDate = DateTime.Parse(parcelLedgerCreateDto.EffectiveDate);
             if (parcelLedgerCreateDto.TransactionAmount > 0)
             {
-                var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, parcelLedgerCreateDto.EffectiveDate.Value.Year, parcelLedgerCreateDto.EffectiveDate.Value.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
+                var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, effectiveDate.Year, effectiveDate.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
                 if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                 {
                     ModelState.AddModelError("TransactionAmount", 
-                        $"Parcel usage for {parcelLedgerCreateDto.EffectiveDate.Value.Month}/{parcelLedgerCreateDto.EffectiveDate.Value.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Usage correction quantity cannot exceed total usage for month.");
+                        $"Parcel usage for {effectiveDate.Month}/{effectiveDate.Year} is currently {Math.Round(monthlyUsageSum, 2)}. Usage correction quantity cannot exceed total usage for month.");
                 }
             }
         }

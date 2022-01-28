@@ -10,8 +10,7 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         public List<string> ParcelNumbers { get; set; }
         [Display(Name = "Effective Date")]
         [Required]
-        public DateTime? EffectiveDate { get; set; }
-        public string EffectiveDateString { get; set; }
+        public string? EffectiveDate { get; set; }
         [Display(Name = "Water Budget Category")]
         [Required]
         public int? TransactionTypeID { get; set; }

@@ -10,14 +10,15 @@ import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { NgbDateAdapter, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 
 
 @Component({
   selector: 'rio-parcel-ledger-create-from-spreadsheet',
   templateUrl: './parcel-ledger-create-from-spreadsheet.component.html',
   styleUrls: ['./parcel-ledger-create-from-spreadsheet.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 })
 export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
 
@@ -28,7 +29,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   public isLoadingSubmit: boolean = false;
  
   public inputtedFile: any;
-  public effectiveDate: Date;
+  public effectiveDate: string;
   public waterTypeID: number;
 
   constructor(
@@ -38,7 +39,6 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private alertService: AlertService,
     private router: Router,
-    private datePipe: DatePipe,
     @Inject(DOCUMENT) private document: Document
   ) { }
 
@@ -97,10 +97,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
       return;
     }
 
-    const _datePipe = this.datePipe;
-    const effectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
-
-    this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, effectiveDateString, this.waterTypeID)
+    this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, this.effectiveDate, this.waterTypeID)
       .subscribe(response => {
         this.isLoadingSubmit = false;
         createTransactionFromSpreadsheetForm.reset();

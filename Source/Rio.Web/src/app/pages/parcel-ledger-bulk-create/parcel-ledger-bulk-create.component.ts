@@ -20,12 +20,13 @@ import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootst
 import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 import { DecimalPipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
   templateUrl: './parcel-ledger-bulk-create.component.html',
   styleUrls: ['./parcel-ledger-bulk-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 
 })
 export class ParcelLedgerBulkCreateComponent implements OnInit {
@@ -149,7 +150,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.alertService.clearAlerts();
     
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
-    this.model.EffectiveDateString = (<HTMLInputElement> document.getElementById("effective-date")).value;
 
     this.parcelLedgerService.newBulkTransaction(this.model)
       .subscribe(response => {

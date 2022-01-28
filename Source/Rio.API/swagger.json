@@ -2079,10 +2079,6 @@
                     "format": "binary"
                   },
                   "EffectiveDate": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "EffectiveDateString": {
                     "type": "string"
                   },
                   "WaterTypeID": {
@@ -2096,9 +2092,6 @@
                   "style": "form"
                 },
                 "EffectiveDate": {
-                  "style": "form"
-                },
-                "EffectiveDateString": {
                   "style": "form"
                 },
                 "WaterTypeID": {
@@ -4628,12 +4621,7 @@
             }
           },
           "EffectiveDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "EffectiveDateString": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "TransactionTypeID": {
             "type": "integer",
