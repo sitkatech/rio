@@ -6,7 +6,7 @@ namespace Rio.Models.DataTransferObjects
     public class ParcelLedgerCreateDto
     {
         [Required] 
-        public List<string> ParcelNumbers { get; set; }
+        public List<string>? ParcelNumbers { get; set; }
         [Display(Name = "Effective Date")]
         [Required]
         [RegularExpression(@"^\d{4}\-\d{1,2}\-\d{1,2}$", 

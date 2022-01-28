@@ -5,6 +5,7 @@ namespace Rio.Models.DataTransferObjects.Posting
     public class PostingUpsertDto
     {
         [Display(Name = "Type")]
+        [Required]
         public int? PostingTypeID { get; set; }
         [Required]
         [Range(1, 100000000)]

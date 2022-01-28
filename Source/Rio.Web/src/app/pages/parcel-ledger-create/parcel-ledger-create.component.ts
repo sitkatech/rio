@@ -81,8 +81,10 @@ export class ParcelLedgerCreateComponent implements OnInit {
     this.isLoadingSubmit = true;
     this.alertService.clearAlerts();
 
-    this.model.ParcelNumbers = [];
-    this.model.ParcelNumbers.push(this.selectedParcelNumber);
+    if (this.selectedParcelNumber && this.selectedParcelNumber != "") {
+      this.model.ParcelNumbers = [];
+      this.model.ParcelNumbers.push(this.selectedParcelNumber);
+    }
 
     this.parcelLedgerService.newTransaction(this.model)
       .subscribe(() => {
