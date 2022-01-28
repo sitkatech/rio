@@ -5,6 +5,7 @@ namespace Rio.Models.DataTransferObjects
 {
     public class ParcelLedgerCreateDto
     {
+        [Display(Name = "Parcel APN")]
         [Required] 
         public List<string>? ParcelNumbers { get; set; }
         [Display(Name = "Effective Date")]
