@@ -81,8 +81,8 @@
         </div>
         <div class="col-sm-5">
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" 
-              [(ngModel)]="model.EffectiveDate" ngbDatepicker #d="ngbDatepicker" required>
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp"
+              [(ngModel)]="model.EffectiveDate" ngbDatepicker #d="ngbDatepicker" required >
             <div class="input-group-append">
               <button class="btn btn-secondary far fa-calendar" (click)="d.toggle()" type="button"></button>
             </div>
@@ -109,7 +109,7 @@
         </div>
         <div class="col-sm-8 text-right">
           <button type="submit" class="btn btn-rio"
-          [disabled]="createTransactionForm.form.invalid || isLoadingSubmit">
+          [disabled]=" isLoadingSubmit">
             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
             Save
           </button>

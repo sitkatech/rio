@@ -16,12 +16,13 @@ import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
   templateUrl: './parcel-ledger-create.component.html',
   styleUrls: ['./parcel-ledger-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 })
 export class ParcelLedgerCreateComponent implements OnInit {
 
@@ -33,7 +34,6 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public selectedParcelNumber: string;
   public isLoadingSubmit: boolean = false;
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
-  private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   public transactionTypeEnum = TransactionTypeEnum;
 
@@ -70,17 +70,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
-  }
-
-  private clearErrorAlerts() {
-    if (!this.alertsCountOnLoad) {
-      this.alertsCountOnLoad = this.alertService.getAlerts().length;
-    }
-
-    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
   }
 
   public isUsageAdjustment(): boolean {
@@ -89,7 +79,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.clearErrorAlerts();
+    this.alertService.clearAlerts();
 
     this.model.ParcelNumbers = [];
     this.model.ParcelNumbers.push(this.selectedParcelNumber);

@@ -20,12 +20,13 @@ import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootst
 import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 import { DecimalPipe } from '@angular/common';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 
 @Component({
   selector: 'rio-parcel-ledger-bulk-create',
   templateUrl: './parcel-ledger-bulk-create.component.html',
   styleUrls: ['./parcel-ledger-bulk-create.component.scss'],
-  providers: [{provide: NgbDateAdapter, useClass: NgbDateNativeUTCAdapter}]
+  providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 
 })
 export class ParcelLedgerBulkCreateComponent implements OnInit {
@@ -41,7 +42,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public isLoadingSubmit: boolean = false;
 
   public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
-  private alertsCountOnLoad: number;
   public searchFailed : boolean = false;
   
   public parcelWaterSupplyAndUsagesByYear: ParcelWaterSupplyAndUsageDto[];
@@ -84,8 +84,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -133,14 +131,6 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
     this.columnApi.autoSizeAllColumns();
   }
-    
-  private clearErrorAlerts() {
-    if (!this.alertsCountOnLoad) {
-      this.alertsCountOnLoad = this.alertService.getAlerts().length;
-    }
-
-    this.alertService.removeAlertsSubset(this.alertsCountOnLoad, this.alertService.getAlerts().length - this.alertsCountOnLoad);
-  }
 
   public onParcelSelectionChange(e: RowSelectedEvent) {
     const parcelNumber = e.data.ParcelNumber;
@@ -157,8 +147,8 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
 
   public onSubmit(createTransactionForm: HTMLFormElement): void {
     this.isLoadingSubmit = true;
-    this.clearErrorAlerts();
-
+    this.alertService.clearAlerts();
+    
     this.model.TransactionTypeID = TransactionTypeEnum.Supply;
 
     this.parcelLedgerService.newBulkTransaction(this.model)

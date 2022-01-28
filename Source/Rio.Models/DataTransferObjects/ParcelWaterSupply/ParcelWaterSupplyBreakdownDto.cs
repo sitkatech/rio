@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Rio.Models.DataTransferObjects.ParcelWaterSupplyBreakdownDto
+namespace Rio.Models.DataTransferObjects.ParcelWaterSupply
 {
     public class ParcelWaterSupplyBreakdownDto
     {

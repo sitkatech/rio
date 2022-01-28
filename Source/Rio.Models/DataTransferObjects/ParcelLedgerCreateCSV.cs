@@ -1,4 +1,4 @@
-﻿namespace Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV
+﻿namespace Rio.Models.DataTransferObjects
 {
     public class ParcelLedgerCreateCSV
     {

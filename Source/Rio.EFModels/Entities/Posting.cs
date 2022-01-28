@@ -13,14 +13,14 @@ namespace Rio.EFModels.Entities
         {
             var posting = new Posting
             {
-                PostingTypeID = postingUpsertDto.PostingTypeID, 
+                PostingTypeID = postingUpsertDto.PostingTypeID.Value, 
                 PostingDescription = postingUpsertDto.PostingDescription,
-                CreateAccountID = postingUpsertDto.CreateAccountID,
+                CreateAccountID = postingUpsertDto.CreateAccountID.Value,
                 CreateUserID = postingUpsertDto.CreateUserID,
                 PostingDate = DateTime.UtcNow,
-                Price = postingUpsertDto.Price,
-                Quantity = postingUpsertDto.Quantity,
-                AvailableQuantity = postingUpsertDto.Quantity,
+                Price = postingUpsertDto.Price.Value,
+                Quantity = postingUpsertDto.Quantity.Value,
+                AvailableQuantity = postingUpsertDto.Quantity.Value,
                 PostingStatusID = (int) PostingStatusEnum.Open
             };
 

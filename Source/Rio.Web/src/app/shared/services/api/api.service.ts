@@ -123,7 +123,6 @@ export class ApiService {
         if (clearBusyGlobally) {
             this.busyService.setBusy(false);
         }
-
         if (!supressErrorMessage) {
             if (error && (error.status === 401)) {
                 this.alertService.pushAlert(new Alert("Access token expired..."));
@@ -137,10 +136,17 @@ export class ApiService {
             } else if (error.error && error.status === 404) {
                 // let the caller handle not found appropriate to whatever it was doing
             } else if (error.error && !(error.error instanceof ProgressEvent)) {
-                for (const key of Object.keys(error.error)) {
-                    // FIXME: will break if errror.error[key] is not a string[]
-                    const newLocal = new Alert((error.error[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","));
-                    this.alertService.pushAlert(newLocal);
+                if (error.error.errors) {
+                    for (const key of Object.keys(error.error.errors)) {
+                        const newLocal = new Alert((error.error.errors[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","), AlertContext.Danger);
+                        this.alertService.pushAlert(newLocal);
+                    }
+                } else {
+                    for (const key of Object.keys(error.error)) {
+                        // FIXME: will break if errror.error[key] is not a string[]
+                        const newLocal = new Alert((error.error[key] as string[]).map((fe: string) => { return key + ": " + fe; }).join(","), AlertContext.Danger);
+                        this.alertService.pushAlert(newLocal);
+                    }
                 }
             } else {
                 this.alertService.pushAlert(new Alert("Oops! Something went wrong and we couldn't complete the action..."));
