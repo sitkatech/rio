@@ -2079,6 +2079,7 @@
                     "format": "binary"
                   },
                   "EffectiveDate": {
+                    "pattern": "^\\d{4}\\-\\d{1,2}\\-\\d{1,2}$",
                     "type": "string"
                   },
                   "WaterTypeID": {
@@ -4621,6 +4622,7 @@
             }
           },
           "EffectiveDate": {
+            "pattern": "^\\d{4}\\-\\d{1,2}\\-\\d{1,2}$",
             "type": "string"
           },
           "TransactionTypeID": {

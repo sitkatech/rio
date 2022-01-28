@@ -10,6 +10,8 @@ namespace Rio.Models.DataTransferObjects.ParcelAllocation
         public List<string> ParcelNumbers { get; set; }
         [Display(Name = "Effective Date")]
         [Required]
+        [RegularExpression(@"^\d{4}\-\d{1,2}\-\d{1,2}$", 
+            ErrorMessage = "Effective Date must be entered in YYYY-MM-DD format.")]
         public string? EffectiveDate { get; set; }
         [Display(Name = "Water Budget Category")]
         [Required]

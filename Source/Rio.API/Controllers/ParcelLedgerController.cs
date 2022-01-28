@@ -113,7 +113,7 @@ namespace Rio.API.Controllers
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
             var effectiveDate = DateTime.Parse(parcelLedgerCreateCSVUploadDto.EffectiveDate);
-            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, effectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID, userDto.UserID);
+            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, effectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID.Value, userDto.UserID);
             return Ok(postingCount);
         }
 
@@ -218,13 +218,6 @@ namespace Rio.API.Controllers
 
         private void ValidateEffectiveDate(string effectiveDate)
         {
-            var dateFormatRegex = new Regex(@"^\d{4}\-\d{1,2}\-\d{1,2}$");
-            if (!dateFormatRegex.IsMatch(effectiveDate))
-            {
-                ModelState.AddModelError("EffectiveDate", "Effective Date must be entered in YYYY-MM-DD format.");
-                return;
-            }
-
             var effectiveDateAsDateTime = DateTime.Parse(effectiveDate);
 
             var earliestWaterYear = WaterYear.List(_dbContext).OrderBy(x => x.Year).First();

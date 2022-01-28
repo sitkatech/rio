@@ -9,8 +9,11 @@ namespace Rio.API.Models
         [Required]
         public IFormFile UploadedFile { get; set; }
         [Required]
-        public string EffectiveDate { get; set; }
+        [RegularExpression(@"^\d{4}\-\d{1,2}\-\d{1,2}$",
+            ErrorMessage = "Effective Date must be entered in YYYY-MM-DD format.")]
+        public string? EffectiveDate { get; set; }
+        [Display(Name = "Supply Type")]
         [Required]
-        public int WaterTypeID { get; set; }
+        public int? WaterTypeID { get; set; }
     }
 }

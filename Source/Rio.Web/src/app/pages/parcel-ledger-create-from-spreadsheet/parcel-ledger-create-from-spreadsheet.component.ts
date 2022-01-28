@@ -12,6 +12,7 @@ import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
+import { ApiService } from 'src/app/shared/services';
 
 
 @Component({
@@ -29,8 +30,8 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   public isLoadingSubmit: boolean = false;
  
   public inputtedFile: any;
-  public effectiveDate: string;
-  public waterTypeID: number;
+  public effectiveDate = '';
+  public waterTypeID = '';
 
   constructor(
     private waterTypeService: WaterTypeService,
@@ -39,6 +40,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private alertService: AlertService,
     private router: Router,
+    private apiService: ApiService,
     @Inject(DOCUMENT) private document: Document
   ) { }
 
@@ -74,28 +76,9 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
     this.document.getElementById("CSV-upload").click();
   }
 
-  private validateEffectiveDateAndWaterTypeID() {
-    var formValid = true;
-    if (!this.effectiveDate) {
-      this.alertService.pushAlert(new Alert('EffectiveDate: The Effective Date field is required', AlertContext.Danger));
-      formValid = false;
-    }
-    if (!this.waterTypeID) {
-      this.alertService.pushAlert(new Alert('SupplyType: The Supply Type field is required.', AlertContext.Danger));
-      formValid = false;
-    }
-    return formValid;
-  }
-
   public onSubmit(createTransactionFromSpreadsheetForm: HTMLFormElement) { 
     this.isLoadingSubmit = true;
     this.alertService.clearAlerts();
-
-    if (!this.validateEffectiveDateAndWaterTypeID()) {
-      this.isLoadingSubmit = false;
-      window.scroll(0,0);
-      return;
-    }
 
     this.parcelLedgerService.newCSVUploadTransaction(this.inputtedFile, this.effectiveDate, this.waterTypeID)
       .subscribe(response => {
@@ -108,19 +91,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
       },
       error => {
         this.isLoadingSubmit = false;
-        if (error.error.errors && error.error.errors.UploadedFile) {
-          this.inputtedFile = null;
-          (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
-          this.alertService.pushAlert(new Alert(error.error.errors.UploadedFile, AlertContext.Danger));
-        }
-        if (error.error.UploadedFile) {
-          this.inputtedFile = null;
-          (<HTMLInputElement>this.document.getElementById("CSV-upload")).value = null;
-          this.alertService.pushAlert(new Alert(error.error.UploadedFile, AlertContext.Danger));
-        }
-        if (error.error.EffectiveDate) {
-          this.alertService.pushAlert(new Alert(error.error.EffectiveDate, AlertContext.Danger));
-        }
+        this.apiService.sendErrorToHandleError(error);
         window.scroll(0,0);
         this.cdr.detectChanges();
       });
