@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.LandownerWaterSupplyBreakdownDto;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
-using Rio.Models.DataTransferObjects.ParcelLedgerCreateCSV;
-using Rio.Models.DataTransferObjects.ParcelWaterSupplyBreakdownDto;
+using Rio.Models.DataTransferObjects.ParcelWaterSupply;
 
 namespace Rio.EFModels.Entities
 {

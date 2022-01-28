@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Rio.Models.DataTransferObjects.ParcelAllocation
+namespace Rio.Models.DataTransferObjects
 {
     public class ParcelLedgerCreateDto
     {
