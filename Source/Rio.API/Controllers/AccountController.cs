@@ -220,11 +220,9 @@ namespace Rio.API.Controllers
                 GetHistoricWaterUsageOverview(cumulativeWaterUsageByYearDtos.SelectMany(x => x.CumulativeWaterUsage).ToList());
 
             // chart data can't have null values, so null cumulativewaterusage values are set to 0 after calculating historic usage (which relies on null values to know which months to exclude from calculation)
-            foreach (var cumulativeWaterUsageByMonthDto in cumulativeWaterUsageByYearDtos
-                .SelectMany(x => x.CumulativeWaterUsage).Where(y => y.CumulativeWaterUsageInAcreFeet == null))
-            {
-                cumulativeWaterUsageByMonthDto.CumulativeWaterUsageInAcreFeet = 0;
-            }
+            cumulativeWaterUsageByYearDtos.SelectMany(x => x.CumulativeWaterUsage)
+                .Where(y => y.CumulativeWaterUsageInAcreFeet == null).AsParallel()
+                .ForAll(x => x.CumulativeWaterUsageInAcreFeet = 0);
 
             var waterUsageOverviewDto = new WaterUsageOverviewDto
             {
@@ -242,30 +240,26 @@ namespace Rio.API.Controllers
                     Month = x.Key, 
                     CumulativeWaterUsageInAcreFeet = Math.Round(x.Where(y => y.CumulativeWaterUsageInAcreFeet.HasValue)
                         .Average(y => y.CumulativeWaterUsageInAcreFeet.Value), 1)
-                });
+                }).ToList();
 
-            return monthlyWaterUsageOverviewDtos.ToList();
+            return monthlyWaterUsageOverviewDtos;
         }
 
         private static List<CumulativeWaterUsageByMonthDto> GetCurrentWaterUsageOverview(IGrouping<int, ParcelLedger> parcelLedgers)
         {
-            var parcelLedgersGroupedByMonth = parcelLedgers.GroupBy(x => x.WaterMonth).ToList();
-            var monthlyWaterUsageOverviewDtos = new List<CumulativeWaterUsageByMonthDto>();
-
             decimal cumulativeTotal = 0;
-
-            for (var i = 1; i < 13; i++)
+            var parcelLedgersGroupedByMonth = parcelLedgers.GroupBy(x => x.WaterMonth).ToList();
+            var monthlyWaterUsageOverviewDtos = Enumerable.Range(1, 12).Select(i =>
             {
                 var grouping = parcelLedgersGroupedByMonth.SingleOrDefault(x => x.Key == i);
                 cumulativeTotal += grouping?.Sum(x => x.TransactionAmount) ?? 0;
-                var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto()
+                var monthlyWaterUsageOverviewDto = new CumulativeWaterUsageByMonthDto
                 {
                     Month = ((DateUtilities.Month)i).ShortMonthName(),
                     CumulativeWaterUsageInAcreFeet = grouping == null ? null : Math.Abs(cumulativeTotal)
                 };
-
-                monthlyWaterUsageOverviewDtos.Add(monthlyWaterUsageOverviewDto);
-            }
+                return monthlyWaterUsageOverviewDto;
+            }).ToList();
 
             return monthlyWaterUsageOverviewDtos;
         }
