@@ -54,7 +54,8 @@ namespace Rio.EFModels.Entities
 
         public static IQueryable<ParcelLedger> GetUsagesByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
         {
-            return GetParcelLedgersImpl(dbContext).Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Usage);
+            return dbContext.ParcelLedgers
+                .AsNoTracking().Where(x =>  parcelIDs.Contains(x.ParcelID) && x.TransactionTypeID == (int) TransactionTypeEnum.Usage);
         }
 
         public static List<LandownerWaterSupplyBreakdownDto> GetLandownerWaterSupplyBreakdownForYear(RioDbContext dbContext, int year)
