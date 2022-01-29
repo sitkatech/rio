@@ -1,17 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostingService } from 'src/app/services/posting.service';
-import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { PostingTypeService } from 'src/app/services/posting-type.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { isNullOrUndefined } from 'util';
-import { UserDto } from 'src/app/shared/models';
-import { PostingUpsertDto } from 'src/app/shared/models/posting/posting-upsert-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { UserService } from 'src/app/services/user/user.service';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { PostingTypeDto } from 'src/app/shared/generated/model/posting-type-dto';
+import { PostingUpsertDto } from 'src/app/shared/generated/model/posting-upsert-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-posting-new',
@@ -19,7 +18,7 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./posting-new.component.scss']
 })
 export class PostingNewComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public postingTypes: Array<PostingTypeDto>;
@@ -39,7 +38,7 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       if (this.currentUserAccounts?.length == 1) {
@@ -53,8 +52,8 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -78,13 +77,10 @@ export class PostingNewComponent implements OnInit, OnDestroy {
   }
 
   public getTotalPrice(): number {
-    if (isNullOrUndefined(this.model.Price) || isNullOrUndefined(this.model.Quantity)) {
+    if (this.model.Price === null || this.model.Price === undefined || 
+      this.model.Quantity === null || this.model.Quantity === undefined) {
       return null;
     }
     return this.model.Price * this.model.Quantity;
-  }
-
-  public isOfferFormValid(): boolean {
-    return this.model.Price > 0 && this.model.Quantity > 0 && this.model.PostingTypeID > 0;
   }
 }

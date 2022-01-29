@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountEditUsersDto } from "src/app/shared/models/account/account-edit-users-dto";
-import { AccountUpdateDto } from 'src/app/shared/models/account/account-update-dto';
-import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Environment } from 'ag-grid-community';
-import { environment } from 'src/environments/environment';
-import { ParcelSimpleDto } from 'src/app/shared/models/parcel/parcel-simple-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { HttpClient } from '@angular/common/http';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountEditUsersDto } from 'src/app/shared/generated/model/account-edit-users-dto';
+import { AccountUpdateDto } from 'src/app/shared/generated/model/account-update-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -56,40 +52,16 @@ export class AccountService {
     return this.apiService.putToApi(route, model);
   }
 
-  getWaterTransfersByAccountID(accountID: number): Observable<Array<WaterTransferDto>> {
-      let route = `/accounts/${accountID}/water-transfers`;
-      return this.apiService.getFromApi(route);
+  getParcelLedgersByAccountID(accountID: number): Observable<Array<ParcelLedgerDto>> {
+    let route = `/accounts/${accountID}/parcel-ledgers`;
+    return this.apiService.getFromApi(route);
   }
 
-  getWaterUsageByAccountID(accountID: number, year: number): Observable<WaterUsageDto> {
-      let route = `/accounts/${accountID}/water-usage/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-  
-  getParcelWaterUsageByAccountID(accountID: number, year: number): Observable<ParcelMonthlyEvapotranspirationDto[]> {
-      let route = `/accounts/${accountID}/parcel-water-usage/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-  
-  getWaterUsageOverviewByAccountID(accountID: number, year: number): Observable<WaterAllocationOverviewDto> {
-      let route = `/accounts/${accountID}/water-usage-overview/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-
-  getWaterUsageOverview(year: number): Observable<WaterAllocationOverviewDto> {
+  getWaterUsageOverview(year: number): Observable<WaterSupplyOverviewDto> {
     let route = `/accounts/water-usage-overview/${year}`;
       return this.apiService.getFromApi(route);
   }
 
-  getParcelsAllocationsByAccountID(accountID: number, year: number): Observable<Array<ParcelAllocationDto>> {
-      let route = `/accounts/${accountID}/getParcelsAllocations/${year}`;
-      return this.apiService.getFromApi(route);
-  }
-
-  saveParcelMonthlyEvapotranspirationOverrideValues(accountID: number, year: number, model: Array<ParcelMonthlyEvapotranspirationDto>) : Observable<any> {
-      let route = `/accounts/${accountID}/${year}/saveParcelMonthlyEvapotranspirationOverrideValues`;
-      return this.apiService.putToApi(route, model);
-  }
 
   getParcelsInAccountReconciliationByAccountID(accountID:number): Observable<Array<ParcelSimpleDto>> {
     let route = `/accounts/${accountID}/account-reconciliation-parcels`;

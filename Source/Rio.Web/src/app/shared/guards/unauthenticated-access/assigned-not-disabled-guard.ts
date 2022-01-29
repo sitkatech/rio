@@ -22,7 +22,7 @@ export class AssignedNotDisabledGuard implements CanActivate {
       }
     }
 
-    return this.authenticationService.currentUserSetObservable
+    return this.authenticationService.getCurrentUser()
       .pipe(
         map(x => {
           if (!this.authenticationService.isUserUnassigned(x) && !this.authenticationService.isUserRoleDisabled(x)) {

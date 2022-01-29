@@ -7,7 +7,7 @@ export enum CustomRichTextType {
   PlatformOverview = 6,
   MeasuringWaterUse = 7,
   ConfigureWaterTypes = 8,
-  SetWaterAllocation = 9,
+  CreateWaterTransactions = 9,
   TrainingVideos = 10,
   CreateUserProfile = 11,
   CreateUserProfileStepOne = 12,
@@ -20,5 +20,12 @@ export enum CustomRichTextType {
   OpenETIntegration = 19,
   ParcelUpdateLayer = 20,
   InactiveParcelList = 21,
-  AccountReconciliationReport = 22
+  AccountReconciliationReport = 22,
+  ParcelLedgerCreate = 23,
+  ParcelLedgerBulkCreate = 24,
+  ParcelLedgerCreateFromSpreadsheet = 25,
+  WebsiteFooter = 26,
+  PrecipitationDescription = 27,
+  PurchasedDescription = 28,
+  SoldDescription = 29
 }

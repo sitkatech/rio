@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { PostingDto } from '../shared/models/posting/posting-dto';
-import { TradeDto } from '../shared/models/offer/trade-dto';
-import { PostingDetailedDto } from '../shared/models/posting/posting-detailed-dto';
+import { PostingDetailedDto } from '../shared/generated/model/posting-detailed-dto';
+import { PostingDto } from '../shared/generated/model/posting-dto';
+import { TradeDto } from '../shared/generated/model/trade-dto';
 
 @Injectable({
     providedIn: 'root'

@@ -1,19 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
+import { WaterTypeService } from 'src/app/services/water-type.service';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -25,7 +22,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
 
   public richTextTypeID: number = CustomRichTextType.InactiveParcelList;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public waterYears: Array<WaterYearDto>;
@@ -58,12 +55,12 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private decimalPipe: DecimalPipe,
     private datePipe: DatePipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
 
       let _datePipe = this.datePipe;
       this.columnDefs = [
@@ -127,7 +124,7 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.parcelsGrid.api.showLoadingOverlay();
+      this.parcelsGrid?.api.showLoadingOverlay();
 
       this.parcelService.getInactiveParcels().subscribe((parcels) => {
         this.rowData = parcels;
@@ -144,8 +141,8 @@ export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

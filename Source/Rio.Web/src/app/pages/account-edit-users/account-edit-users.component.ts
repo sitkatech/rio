@@ -2,16 +2,15 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AccountService } from 'src/app/services/account/account.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountEditUsersDto } from "src/app/shared/models/account/account-edit-users-dto";
 import { forkJoin } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
-import { UserSimpleDto } from 'src/app/shared/models/user/user-simple-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
-import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountEditUsersDto } from 'src/app/shared/generated/model/account-edit-users-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserSimpleDto } from 'src/app/shared/generated/model/user-simple-dto';
 
 @Component({
   selector: 'rio-account-edit-users',
@@ -19,7 +18,7 @@ import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
   styleUrls: ['./account-edit-users.component.scss']
 })
 export class AccountEditUsersComponent implements OnInit, OnDestroy {
-  public watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public accountID: number;
   public account: AccountDto;
@@ -51,7 +50,7 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allUsers = new Array<UserDto>();
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.accountID = parseInt(this.route.snapshot.paramMap.get("id"));
 
@@ -69,8 +68,8 @@ export class AccountEditUsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -42,15 +43,17 @@ namespace Rio.API.Services
 
         private bool RasterUpdatedSinceMinimumLastUpdatedDate(int month, int year, OpenETSyncHistoryDto newSyncHistory)
         {
+            var openETRequestURL = _rioConfiguration.OpenETRasterMetadataRoute;
             var top = _rioConfiguration.OpenETRasterMetadataBoundingBoxTop;
             var bottom = _rioConfiguration.OpenETRasterMetadataBoundingBoxBottom;
             var left = _rioConfiguration.OpenETRasterMetadataBoundingBoxLeft;
             var right = _rioConfiguration.OpenETRasterMetadataBoundingBoxRight;
-            var openETRequestURL = $"{_rioConfiguration.OpenETRasterMetadataRoute}?geometry={left},{top},{right},{top},{right},{bottom},{left},{bottom}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&ref_et_source=cimis&provisional=true";
+            var geometryArray = new[] {left, top, right, top, right, bottom, left, bottom};
+            var argumentsObject = new OpenETRasterMetadataPostRequestBody("ensemble", "et", year, month, "cimis", true, geometryArray, "monthly");
 
             try
             {
-                var response = _httpClient.GetAsync(openETRequestURL).Result;
+                var response = _httpClient.PostAsync(_rioConfiguration.OpenETRasterMetadataRoute, new StringContent(JsonConvert.SerializeObject(argumentsObject), Encoding.UTF8, "application/json")).Result;
 
                 var body = response.Content.ReadAsStringAsync().Result;
 
@@ -239,7 +242,7 @@ namespace Rio.API.Services
                 };
             }
 
-            var openETRequestURL = $"{_rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={_rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=english&output_date_format=standard&ref_et_source=cimis&filename_suffix={_rioConfiguration.LeadOrganizationShortName + "_" + month + "_" + year + "_public"}&include_columns={_rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true";
+            var openETRequestURL = $"{_rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={_rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=english&output_date_format=standard&ref_et_source=cimis&filename_suffix={_rioConfiguration.LeadOrganizationShortName + "_" + month + "_" + year + "_public"}&include_columns={_rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true&interval=monthly";
 
             try
             {
@@ -305,6 +308,9 @@ namespace Rio.API.Services
             OpenETSyncHistory.UpdateOpenETSyncEntityByID(rioDbContext, syncHistory.OpenETSyncHistoryID, resultType, resultType == OpenETSyncResultTypeEnum.Failed ? errorMessage : null);
         }
 
+        /// <summary>
+        /// Check if OpenET has created data for a particular Year and Month sync that has been triggered and update our ParcelLedger with the updated data
+        /// </summary>
         public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport,
             HttpClient httpClient)
         {
@@ -520,5 +526,36 @@ namespace Rio.API.Services
             : base(message, inner)
         {
         }
+    }
+
+    public class OpenETRasterMetadataPostRequestBody
+    {
+        public OpenETRasterMetadataPostRequestBody(string model, string variable, int year, int month, string refETSource, bool provisional, string[] geometry, string interval)
+        {
+            Model = model;
+            Variable = variable;
+            StartDate = $"{new DateTime(year, month, 1):yyyy-MM-dd}";
+            EndDate = $"{new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}";
+            RefETSource = refETSource;
+            Provisional = provisional;
+            Geometry = geometry;
+            Interval = interval;
+        }
+        [JsonProperty("interval")]
+        public string Interval { get; set; }
+        [JsonProperty("geometry")]
+        public string[] Geometry { get; set; }
+        [JsonProperty("provisional")]
+        public bool Provisional { get; set; }
+        [JsonProperty("ref_et_source")]
+        public string RefETSource { get; set; }
+        [JsonProperty("end_date")]
+        public string EndDate { get; set; }
+        [JsonProperty("start_date")]
+        public string StartDate { get; set; }
+        [JsonProperty("variable")]
+        public string Variable { get; set; }
+        [JsonProperty("model")]
+        public string Model { get; set; }
     }
 }

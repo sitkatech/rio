@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ParcelUpdateLayerComponent } from './parcel-update-layer.component';
 
@@ -6,7 +6,7 @@ describe('ParcelUpdateLayerComponent', () => {
   let component: ParcelUpdateLayerComponent;
   let fixture: ComponentFixture<ParcelUpdateLayerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ParcelUpdateLayerComponent ]
     })

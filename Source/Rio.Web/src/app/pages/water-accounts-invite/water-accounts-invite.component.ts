@@ -2,12 +2,12 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserPartnerInviteDto } from 'src/app/shared/generated/model/user-partner-invite-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { UserPartnerInviteDto } from 'src/app/shared/models/user/user-partner-invite-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 
@@ -19,7 +19,7 @@ import { environment } from 'src/environments/environment';
 export class WaterAccountsInviteComponent implements OnInit {
   public introRichText: number = CustomRichTextType.WaterAccountsInvite;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public model: UserPartnerInviteDto;
@@ -38,7 +38,7 @@ export class WaterAccountsInviteComponent implements OnInit {
 
   ngOnInit(): void {
     this.model = new UserPartnerInviteDto();
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.loadingAccounts = true;
       this.userService.listAccountsByUserID(currentUser.UserID).subscribe(accounts => {
@@ -49,8 +49,8 @@ export class WaterAccountsInviteComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

@@ -16,7 +16,6 @@ import { PostingListComponent } from './pages/posting-list/posting-list.componen
 import { PostingDetailComponent } from './pages/posting-detail/posting-detail.component';
 import { PostingNewComponent } from './pages/posting-new/posting-new.component';
 import { ParcelDetailComponent } from './pages/parcel-detail/parcel-detail.component';
-import { ParcelEditAllocationComponent } from './pages/parcel-edit-allocation/parcel-edit-allocation.component';
 import { LandownerDashboardComponent } from './pages/landowner-dashboard/landowner-dashboard.component';
 import { TradeDetailComponent } from './pages/trade-detail/trade-detail.component';
 import { RegisterTransferComponent } from './pages/register-transfer/register-transfer.component';
@@ -24,10 +23,9 @@ import { ParcelListComponent } from './pages/parcel-list/parcel-list.component';
 import { PostingDeleteComponent } from './pages/posting-delete/posting-delete.component';
 import { LoginCallbackComponent } from './pages/login-callback/login-callback.component';
 import { HelpComponent } from './pages/help/help.component';
-import { SetWaterAllocationComponent } from './pages/set-water-allocation/set-water-allocation.component';
+import { CreateWaterTransactionsComponent } from './pages/create-water-transactions/create-water-transactions.component';
 import { GlossaryComponent } from './pages/glossary/glossary.component';
 import { ParcelChangeOwnerComponent } from './pages/parcel-change-owner/parcel-change-owner.component';
-import { ParcelOverrideEtDataComponent } from './pages/parcel-override-et-data/parcel-override-et-data.component';
 import { AccountListComponent } from './pages/account-list/account-list.component';
 import { AccountDetailComponent } from './pages/account-detail/account-detail.component';
 import { AccountEditComponent } from './pages/account-edit/account-edit.component';
@@ -45,7 +43,6 @@ import { WaterTradingScenarioComponent } from './pages/water-trading-scenario/wa
 import { GETIntegrationEnabledGuard } from './shared/guards/unauthenticated-access/GET-integration-enabled-guard';
 import { ManagerOrDemoUserOnlyGuard } from './shared/guards/unauthenticated-access/manager-or-demouser-only-guard';
 import { RolesAndPermissionsComponent } from './pages/roles-and-permissions/roles-and-permissions.component';
-import { ParcelAllocationTypeEditComponent } from './pages/parcel-allocation-type-edit/parcel-allocation-type-edit.component';
 import { TrainingVideosComponent } from './pages/training-videos/training-videos.component';
 import { CreateUserProfileComponent } from './pages/create-user-profile/create-user-profile.component';
 import { WaterAccountsAddComponent } from './pages/water-accounts-add/water-accounts-add.component';
@@ -56,6 +53,10 @@ import { OpenetSyncWaterYearMonthStatusListComponent } from './pages/openet-sync
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
 import { AccountReconciliationComponent } from './pages/account-reconciliation/account-reconciliation.component';
+import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
+import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
+import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
+import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -66,13 +67,16 @@ const routes: Routes = [
   { path: "postings/:postingID", component: PostingDetailComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
   { path: "delete-posting/:postingID", component: PostingDeleteComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
   { path: "market-metrics", component: MarketMetricsHomeComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-allocation-types/edit", component: ParcelAllocationTypeEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
+  { path: "water-types/edit", component: WaterTypeEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "parcels", component: ParcelListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/inactive", component: ParcelListInactiveComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcels/set-water-allocation", component: SetWaterAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcels/create-water-transactions", component: CreateWaterTransactionsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id", component: ParcelDetailComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcels/:id/edit-annual-allocation", component: ParcelEditAllocationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcels/:id/change-owner", component: ParcelChangeOwnerComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcels/:id/parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-create-from-spreadsheet", component: ParcelLedgerCreateFromSpreadsheetComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
@@ -84,7 +88,6 @@ const routes: Routes = [
   { path: "accounts/:id/edit-users", component: AccountEditUsersComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "new-account", component: AccountNewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "landowner-dashboard/:accountNumber", component: LandownerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, AssignedNotDisabledGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-override-et-data/:accountID/:waterYear", component: ParcelOverrideEtDataComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "manager-dashboard", component: ManagerDashboardComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user/:userID", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "invite-user", component: UserInviteComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
@@ -98,7 +101,6 @@ const routes: Routes = [
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "create-user-profile", component: CreateUserProfileComponent },
   { path: "training-videos", component: TrainingVideosComponent},
-  { path: "", component: HomeIndexComponent},
   { path: "disclaimer", component: DisclaimerComponent },
   { path: "disclaimer/:forced", component: DisclaimerComponent },
   { path: "help", component: HelpComponent },
@@ -107,16 +109,17 @@ const routes: Routes = [
   { path: "measuring-water-use-with-openet", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "roles-and-permissions", component: RolesAndPermissionsComponent },
-  { path: "signin-oidc", component: LoginCallbackComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },
   { path: "not-found", component: NotFoundComponent },
   { path: 'subscription-insufficient', component: SubscriptionInsufficientComponent },
   { path: 'unauthenticated', component: UnauthenticatedComponent },
+  { path: "signin-oidc", component: LoginCallbackComponent },
+  { path: "", component: HomeIndexComponent},
   { path: '**', component: NotFoundComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

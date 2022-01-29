@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
     selector: 'template-user-detail',
@@ -15,7 +15,7 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+    
     private currentUser: UserDto;
 
     public user: UserDto;
@@ -35,14 +35,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+        this.authenticationService.getCurrentUser().subscribe(currentUser => {
             this.currentUser = currentUser;
             const id = parseInt(this.route.snapshot.paramMap.get("id"));
             if (id) {
-                forkJoin(
-                    this.userService.getUserFromUserID(id),
+                forkJoin([this.userService.getUserFromUserID(id),
                     this.parcelService.getParcelsByUserID(id, new Date().getFullYear()),
-                    this.userService.listAccountsByUserID(id)
+                    this.userService.listAccountsByUserID(id)]
                 ).subscribe(([user, parcels, accounts]) => {
                     this.user = user instanceof Array
                         ? null
@@ -56,8 +55,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.watchUserChangeSubscription.unsubscribe();
-        this.authenticationService.dispose();
+        
+        
         this.cdr.detach();
     }
 

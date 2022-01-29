@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { BoundingBoxDto } from 'src/app/shared/models/bounding-box-dto';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
-import { ParcelAllocationUpsertDto } from 'src/app/shared/models/parcel/parcel-allocation-upsert-dto.';
-import { ParcelOwnershipDto } from 'src/app/shared/models/parcel/parcel-ownership-dto';
-import { ParcelChangeOwnerDto } from 'src/app/shared/models/parcel/parcel-change-owner-dto';
-import { ParcelAllocationHistoryDto } from 'src/app/shared/models/parcel/parcel-allocation-history-dto';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { ParcelLayerUpdateDto } from 'src/app/pages/parcel-update-layer/parcel-update-layer.component';
-import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
-import { ParcelWithStatusDto } from 'src/app/shared/models/parcel/parcel-with-status-dto';
+import { BoundingBoxDto } from 'src/app/shared/generated/model/bounding-box-dto';
+import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
+import { ParcelChangeOwnerDto } from 'src/app/shared/generated/model/parcel-change-owner-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { ParcelLedgerDto } from 'src/app/shared/generated/model/parcel-ledger-dto';
+import { ParcelOwnershipDto } from 'src/app/shared/generated/model/parcel-ownership-dto';
+import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
+import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
+import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +24,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsByUserID(userID: number, year: number): Observable<ParcelDto[]> {
+  getParcelsByUserID(userID: number, year: number): Observable<ParcelSimpleDto[]> {
     let route = `/users/${userID}/parcels/${year}`;
     return this.apiService.getFromApi(route);
   }
@@ -38,54 +34,20 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  searchParcelNumber(parcelNumber: string): Observable<string> {
+    let route = `/parcels/search/${parcelNumber}`;
+    return this.apiService.getFromApi(route);
+  }
+
+  getParcelLedgerEntriesByParcelID(parcelID: number): Observable<Array<ParcelLedgerDto>> {
+    let route = `parcels/${parcelID}/getLedgerEntries`;
+    return this.apiService.getFromApi(route);
+  }
+
   getBoundingBoxByParcelIDs(parcelIDs: Array<number>): Observable<BoundingBoxDto> {
     let route = `/parcels/getBoundingBox`;
     let parcelIDListDto = { parcelIDs: parcelIDs };
     return this.apiService.postToApi(route, parcelIDListDto);
-  }
-
-  mergeParcelAllocations(parcelID: number, model: ParcelAllocationDto[]): Observable<any> {
-    let route = `parcels/${parcelID}/mergeParcelAllocations`;
-    return this.apiService.postToApi(route, model);
-  }
-
-  bulkSetAnnualAllocations(model: ParcelAllocationUpsertDto, userID: number): Observable<any[]> {
-    let route = `/parcels/${userID}/bulkSetAnnualParcelAllocation`;
-    return this.apiService.postToApi(route, model);
-  }
-
-  bulkSetAnnualAllocationsFileUpload(file: any, waterYear: number, allocationTypeID: number): Observable<any> {
-    const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/parcels/${waterYear}/${allocationTypeID}/bulkSetAnnualParcelAllocationFileUpload`;
-    var result = this.httpClient.post<any>(
-      route,
-      file, // Send the File Blob as the POST body.
-      {
-        // NOTE: Because we are posting a Blob (File is a specialized Blob
-        // object) as the POST body, we have to include the Content-Type
-        // header. If we don't, the server will try to parse the body as
-        // plain text.
-        headers: {
-          "Content-Type": "application/vnd.ms-excel"
-        },
-        params: {
-          clientFilename: file.name,
-          mimeType: "application/vnd.ms-excel"
-        }
-      }
-    );
-
-    return result;
-  }
-
-  getParcelAllocations(parcelID: number): Observable<Array<ParcelAllocationDto>> {
-    let route = `/parcels/${parcelID}/getAllocations`;
-    return this.apiService.getFromApi(route);
-  }
-
-  getWaterUsage(parcelID: number): Observable<Array<ParcelMonthlyEvapotranspirationDto>> {
-    let route = `/parcels/${parcelID}/getWaterUsage`;
-    return this.apiService.getFromApi(route);
   }
 
   getParcelsWithLandOwners(year: number): Observable<Array<ParcelDto>> {
@@ -93,18 +55,13 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelAllocationAndUsagesByYear(year: number): Observable<Array<ParcelAllocationAndUsageDto>> {
-    let route = `/parcels/getParcelsWithAllocationAndUsage/${year}`;
+  getParcelWaterSupplyAndUsagesByYear(year: number): Observable<Array<ParcelWaterSupplyAndUsageDto>> {
+    let route = `/parcels/getParcelsWithWaterSupplyAndUsage/${year}`;
     return this.apiService.getFromApi(route);
   }
 
   getParcelOwnershipHistory(parcelID: number): Observable<Array<ParcelOwnershipDto>> {
     let route = `/parcels/${parcelID}/getOwnershipHistory`
-    return this.apiService.getFromApi(route);
-  }
-
-  getParcelAllocationHistory(): Observable<Array<ParcelAllocationHistoryDto>> {
-    let route = `/parcels/getParcelAllocationHistory`
     return this.apiService.getFromApi(route);
   }
 
@@ -117,8 +74,8 @@ export class ParcelService {
     // we need to do it this way because the apiService.postToApi does a json.stringify, which won't work for input type="file"
     let formData = new FormData();
     formData.append("InputFile", gdbInputFile);
-    const apiHostName = environment.apiHostName;
-    const route = `https://${apiHostName}/parcels/uploadGDB`;
+    const programApiRoute = environment.mainAppApiUrl;
+    const route = `${programApiRoute}/parcels/uploadGDB`;
     var result = this.httpClient.post<any>(
       route,
       formData

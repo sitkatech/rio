@@ -10,72 +10,105 @@ namespace Rio.EFModels.Entities
 {
     public partial class Parcel
     {
-        public static IEnumerable<ParcelDto> ListParcelsWithLandOwners(RioDbContext dbContext, int year)
+        public static IEnumerable<ParcelDto> ListForWaterYearAsDto(RioDbContext dbContext, int year)
         {
-            var parcels = dbContext.AccountParcelWaterYears
-                .Include(x => x.Parcel)
-                .Include(x => x.Account)
-                .Include(x => x.WaterYear)
-                .Where(x => x.WaterYear.Year == year)
+            var parcels = AccountParcelWaterYearOwnershipsByYear(dbContext, year)
                 .Select(x => x.Parcel.AsDto()).AsEnumerable();
 
             return parcels;
         }
 
+        public static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnerships(RioDbContext dbContext)
+        {
+            return AccountParcelWaterYearOwnershipsImpl(dbContext);
+        }
+
         public static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnershipsByYear(RioDbContext dbContext, int year)
         {
+            return AccountParcelWaterYearOwnershipsImpl(dbContext).Where(x => x.WaterYear.Year == year);
+        }
+
+        private static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnershipsImpl(RioDbContext dbContext)
+        {
             return dbContext.AccountParcelWaterYears
-                .Include(x => x.Parcel)
-                .Include(x => x.Account)
+                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
+                .Include(x => x.Account).ThenInclude(x => x.AccountStatus)
                 .Include(x => x.WaterYear)
-                .AsNoTracking().Where(x => x.WaterYear.Year == year);
+                .AsNoTracking();
         }
 
-        public static IEnumerable<ParcelDto> ListByAccountIDAndYear(RioDbContext dbContext, int accountID, int year)
+        public static IQueryable<AccountParcelWaterYear> ListByAccountIDsAndYear(RioDbContext dbContext, List<int> accountIDs, int year)
         {
-            var parcelDtos = dbContext.AccountParcelWaterYears
-                .Include(x => x.Parcel)
-                .Include(x => x.Account)
-                .Include(x => x.WaterYear)
-                .Where(x => x.WaterYear.Year == year && x.Account.AccountID == accountID)
-                .Select(x => x.Parcel.AsDto()).AsEnumerable();
-
-            return parcelDtos;
-
+            return AccountParcelWaterYearOwnershipsImpl(dbContext).Where(x => x.WaterYear.Year == year && accountIDs.Contains(x.AccountID));
         }
 
-        public static IEnumerable<ParcelDto> ListByAccountIDsAndYear(RioDbContext dbContext, List<int> accountIDs, int year)
+
+        public static List<ParcelDto> ListByAccountIDAndYearAsDto(RioDbContext dbContext, int accountID, int year)
         {
-            var parcelDtos = dbContext.AccountParcelWaterYears
-                .Include(x => x.Parcel)
-                .Include(x => x.Account)
-                .Include(x => x.WaterYear)
-                .Where(x => x.WaterYear.Year == year && accountIDs.Contains(x.AccountID))
-                .Select(x => x.Parcel.AsDto()).AsEnumerable();
-
+            var parcelDtos = ListByAccountIDsAndYear(dbContext, new List<int> { accountID }, year)
+                .Select(x => x.Parcel.AsDto()).ToList();
             return parcelDtos;
-
         }
 
-        public static IEnumerable<ParcelDto> ListByUserID(RioDbContext dbContext, int userID, int year)
+        public static List<ParcelSimpleDto> ListByAccountIDsAndYearAsSimpleDto(RioDbContext dbContext, List<int> accountIDs, int year)
+        {
+            var parcelDtos = ListByAccountIDsAndYear(dbContext, accountIDs, year)
+                .Select(x => x.Parcel.AsSimpleDto()).ToList();
+            return parcelDtos;
+        }
+        
+        public static List<ParcelSimpleDto> ListByUserID(RioDbContext dbContext, int userID, int year)
         {
             var user = dbContext.Users.Include(x => x.AccountUsers).Single(x => x.UserID == userID);
             var accountIDs = user.AccountUsers.Select(x => x.AccountID).ToList();
             
-            return ListByAccountIDsAndYear(dbContext, accountIDs, year);
+            return ListByAccountIDsAndYearAsSimpleDto(dbContext, accountIDs, year);
         }
 
-        public static ParcelDto GetByParcelID(RioDbContext dbContext, int parcelID)
+        public static ParcelDto GetByIDAsDto(RioDbContext dbContext, int parcelID)
         {
-            var parcel = dbContext.Parcels
-                .Include(x => x.AccountParcelWaterYears)
-                .ThenInclude(x => x.Account)
-                .Include(x => x.AccountParcelWaterYears)
-                .ThenInclude(x => x.WaterYear)
-                .AsNoTracking()
+            var parcel = GetParcelImpl(dbContext)
                 .SingleOrDefault(x => x.ParcelID == parcelID);
 
             return parcel?.AsDto();
+        }
+
+        public static List<Parcel> ListByParcelNumbers(RioDbContext dbContext, List<string> parcelNumbers)
+        {
+            return GetParcelImpl(dbContext)
+                .Where(x => parcelNumbers.Contains(x.ParcelNumber))
+                .ToList();
+        }
+
+        private static IQueryable<Parcel> GetParcelImpl(RioDbContext dbContext)
+        {
+            return dbContext.Parcels
+                .Include(x => x.ParcelStatus)
+                .Include(x => x.AccountParcelWaterYears)
+                .ThenInclude(x => x.Account)
+                .ThenInclude(x => x.AccountStatus)
+                .Include(x => x.AccountParcelWaterYears)
+                .ThenInclude(x => x.WaterYear)
+                .AsNoTracking();
+        }
+
+        public static ParcelDto GetByParcelNumberAsDto(RioDbContext dbContext, string parcelNumber)
+        {
+            var parcel = GetParcelImpl(dbContext)
+                .SingleOrDefault(x => x.ParcelNumber == parcelNumber);
+
+            return parcel?.AsDto();
+        }
+
+        public static List<string> SearchParcelNumber(RioDbContext dbContext, string parcelNumber)
+        {
+            var parcelNumbers = dbContext.Parcels
+                .AsNoTracking()
+                .Where(x => x.ParcelNumber.Contains(parcelNumber))
+                .Select(x => x.ParcelNumber)
+                .ToList();
+
+            return parcelNumbers;
         }
 
         public static BoundingBoxDto GetBoundingBoxByParcelIDs(RioDbContext dbContext, List<int> parcelIDs)
@@ -102,9 +135,10 @@ namespace Rio.EFModels.Entities
         {
             return Regex.IsMatch(parcelNumber, regexPattern);
         }
-        public static IEnumerable<ParcelDto> GetInactiveParcels(RioDbContext dbContext)
+
+        public static IEnumerable<ParcelDto> ListInactiveAsDto(RioDbContext dbContext)
         {
-            return dbContext.Parcels
+            return GetParcelImpl(dbContext)
                 .Where(x => x.ParcelStatusID == (int) ParcelStatusEnum.Inactive)
                 .Select(x => x.AsDto());
         }

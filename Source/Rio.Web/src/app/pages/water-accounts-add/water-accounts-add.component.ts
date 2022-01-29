@@ -3,15 +3,14 @@ import { Router } from '@angular/router';
 import { AccountService } from 'src/app/services/account/account.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
-import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
-import { UserUpdateDto } from 'src/app/shared/models/user/user-update-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 
@@ -22,7 +21,7 @@ import { environment } from 'src/environments/environment';
 })
 export class WaterAccountsAddComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
 
   public verificationKeyToSearchFor: string;
@@ -54,7 +53,7 @@ export class WaterAccountsAddComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       
       this.userService.listAccountsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
@@ -64,8 +63,8 @@ export class WaterAccountsAddComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

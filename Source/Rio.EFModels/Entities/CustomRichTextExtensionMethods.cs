@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Rio.Models.DataTransferObjects;
+﻿using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
-    public static class CustomRichTextExtensionMethods
+    public static partial class CustomRichTextExtensionMethods
     {
-        public static CustomRichTextDto AsDto(this CustomRichText customRichText)
+        static partial void DoCustomMappings(CustomRichText customRichText, CustomRichTextDto customRichTextDto)
         {
-            return new CustomRichTextDto
-            {
-                CustomRichTextContent = customRichText.CustomRichTextContent,
-                IsEmptyContent = string.IsNullOrWhiteSpace(customRichText.CustomRichTextContent)
-            };
+            customRichTextDto.IsEmptyContent = string.IsNullOrWhiteSpace(customRichText.CustomRichTextContent);
         }
     }
 }

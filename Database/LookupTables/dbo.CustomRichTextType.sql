@@ -8,7 +8,7 @@ USING (VALUES
 (6, 'PlatformOverview', 'Platform Overview'),
 (7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET'),
 (8, 'ConfigureWaterTypes', 'Configure Water Types'),
-(9, 'SetWaterAllocation', 'SetWaterAllocation'),
+(9, 'CreateWaterTransactions', 'Create Water Transactions'),
 (10, 'TrainingVideos', 'Training Videos'),
 (11, 'CreateUserProfile', 'Create User Profile'),
 (12, 'CreateUserProfileStepOne', 'Create User Profile Step One'),
@@ -21,7 +21,14 @@ USING (VALUES
 (19, 'OpenETIntegration', 'OpenET Integration'),
 (20, 'ParcelUpdateLayer', 'Parcel Update Layer'),
 (21, 'InactiveParcelList', 'Inactive Parcel List'),
-(22, 'AccountReconciliationReport', 'Account Reconciliation Report')
+(22, 'AccountReconciliationReport', 'Account Reconciliation Report'),
+(23, 'ParcelLedgerCreate', 'Create New Transaction'),
+(24, 'ParcelLedgerBulkCreate', 'Create Bulk Transaction'),
+(25, 'ParcelLedgerCreateFromSpreadsheet', 'Create Transaction From Spreadsheet Upload'),
+(26, 'WebsiteFooter', 'Website Footer'),
+(27, 'PrecipitationDescription', 'Precipitation Description'),
+(28, 'PurchasedDescription', 'Purchased Water Description'),
+(29, 'SoldDescription', 'Sold Water Description')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

@@ -1,7 +1,4 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
-import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
-import { OfferDto } from 'src/app/shared/models/offer/offer-dto';
-import { OfferUpsertDto } from 'src/app/shared/models/offer/offer-upsert-dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OfferService } from 'src/app/services/offer.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -12,15 +9,18 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { TradeService } from 'src/app/services/trade.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
-import { PostingTypeDto } from 'src/app/shared/models/posting/posting-type-dto';
 import { TradeStatusEnum } from 'src/app/shared/models/enums/trade-status-enum';
-import { UserDto } from 'src/app/shared/models';
-import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/models/water-transfer-registration-simple-dto';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { WaterTransferRegistrationStatusEnum } from 'src/app/shared/models/enums/water-transfer-registration-status-enum';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { OfferDto } from 'src/app/shared/generated/model/offer-dto';
+import { OfferUpsertDto } from 'src/app/shared/generated/model/offer-upsert-dto';
+import { PostingTypeDto } from 'src/app/shared/generated/model/posting-type-dto';
+import { TradeDto } from 'src/app/shared/generated/model/trade-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTransferRegistrationSimpleDto } from 'src/app/shared/generated/model/water-transfer-registration-simple-dto';
 
 @Component({
   selector: 'rio-trade-detail',
@@ -28,7 +28,7 @@ import { AccountDto } from 'src/app/shared/models/account/account-dto';
   styleUrls: ['./trade-detail.component.scss']
 })
 export class TradeDetailComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public trade: TradeDto;
@@ -69,7 +69,7 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const tradeNumber = this.route.snapshot.paramMap.get("tradeNumber");
@@ -97,8 +97,8 @@ export class TradeDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

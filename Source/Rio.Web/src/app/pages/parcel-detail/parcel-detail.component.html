@@ -74,10 +74,10 @@
       <div class="card">
         <div class="card-header">
           <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right"
-            routerLink="/parcels/{{parcel.ParcelID}}/edit-annual-allocation">
-            <span class="fas fa-edit"></span> Edit Allocation
+            routerLink="/parcels/{{parcel.ParcelID}}/parcel-ledger-create">
+            <span class="fas fa-edit"></span> Create New Transaction
           </a>
-          Water Allocation and Usage
+          Water Supply and Usage
         </div>
         <div class="card-body">
           <p>All data is in units of acre-feet</p>
@@ -86,48 +86,51 @@
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th style="text-align: right;" *ngFor="let parcelAllocationType of parcelAllocationTypes">{{parcelAllocationType.ParcelAllocationTypeName}}</th>
-                  <!-- <th style="text-align: right">Native Yield</th>
-                  <th style="text-align: right">Project Water</th>
-                  <th style="text-align: right">Stored Water</th>
-                  <th style="text-align: right">Reconciliation</th> -->
-                  <th style="text-align: right">Total Allocation</th>
-                  <th style="text-align: right">Total Usage</th>
-                  <th style="text-align: right">Jan</th>
-                  <th style="text-align: right">Feb</th>
-                  <th style="text-align: right">Mar</th>
-                  <th style="text-align: right">Apr</th>
-                  <th style="text-align: right">May</th>
-                  <th style="text-align: right">Jun</th>
-                  <th style="text-align: right">Jul</th>
-                  <th style="text-align: right">Aug</th>
-                  <th style="text-align: right">Sep</th>
-                  <th style="text-align: right">Oct</th>
-                  <th style="text-align: right">Nov</th>
-                  <th style="text-align: right">Dec</th>
+                  <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
+                  <th class="text-right">Precipitation</th>
+                  <th *ngIf="allowTrading()" class="text-right">Purchased</th>
+                  <th *ngIf="allowTrading()" class="text-right">Sold</th>
+                  <th class="text-right">Total Supply</th>
+                  <th class="text-right">Total Usage</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear.Year}}</td>
-                  <td *ngFor="let parcelAllocationType of parcelAllocationTypes">{{getAllocationForYearByType(parcelAllocationType, waterYear.Year)}}</td>
-                  <!-- <td style="text-align: right">
-                    {{getNativeYieldForYear(waterYear)}}</td>
-                  <td style="text-align: right">
-                    {{getProjectWaterForYear(waterYear)}}</td>
-                  <td style="text-align: right">
-                    {{getStoredWaterForYear(waterYear)}}</td>
-                  <td style="text-align: right">
-                    {{getReconciliationForYear(waterYear)}}</td> -->
-                  <td style="text-align: right">
-                    {{getTotalAllocationForYear(waterYear.Year)}}</td>
-                  <td style="text-align: right">{{getConsumptionForYear(waterYear.Year)}}</td>
-                  <td style="text-align: right" *ngFor="let month of months">
-                    {{getConsumptionForYearAndMonth(waterYear.Year, month)}}</td>
+                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
+                  <td class="text-right">{{getPrecipWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td *ngIf="allowTrading()" class="text-right">{{getPurchasedWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td *ngIf="allowTrading()" class="text-right">{{getSoldWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td class="text-right">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>
                 </tr>
               </tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col">
+              <span class="align-middle">Parcel Ledger Activity</span>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportParcelLedgerGridToCsv()" placement="top"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive">
+          <p>All transaction data is in units of acre-feet</p>
+          <ag-grid-angular #parcelLedgerGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
+            [columnDefs]="parcelLedgerGridColumnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
+            [rowData]="rowData" (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
         </div>
       </div>
     </div>

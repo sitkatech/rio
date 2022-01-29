@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Rio.Models.DataTransferObjects.WaterTransfer;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
@@ -14,10 +14,10 @@ namespace Rio.EFModels.Entities
                 .AsNoTracking();
         }
 
-        public static IEnumerable<WaterTransferRegistrationSimpleDto> GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
+        public static List<WaterTransferRegistrationSimpleDto> GetByWaterTransferID(RioDbContext dbContext, int waterTransferID)
         {
             var waterTransferRegistrations = GetWaterTransferRegistrationsImpl(dbContext).Where(x => x.WaterTransferID == waterTransferID);
-            return waterTransferRegistrations.Select(x => x.AsSimpleDto()).AsEnumerable();
+            return waterTransferRegistrations.Select(x => x.AsSimpleDto()).ToList();
         }
 
         public bool IsPending =>

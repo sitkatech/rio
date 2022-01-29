@@ -16,14 +16,16 @@ export class CookieStorageService extends OAuthStorage {
   }
 
   removeItem(key: string): void {
-    return this.cookieService.delete(key);
+    return this.cookieService.delete(key, '/');
   }
 
   removeAll(): void {
-    return this.cookieService.deleteAll();
+    return this.cookieService.deleteAll('/');
   }
 
   setItem(key: string, data: string): void {
-    return this.cookieService.set(key, data);
+    // Explicitly setting the path because sometimes the cookie service was setting it automatically based on the current route, resulting in multiple cookies of the same name.
+    // If you need set a cookie in another way, you may need another method
+    return this.cookieService.set(key, data, { path: '/' });
   }
 }

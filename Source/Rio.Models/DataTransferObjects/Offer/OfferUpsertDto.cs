@@ -14,5 +14,6 @@ namespace Rio.Models.DataTransferObjects.Offer
         public string OfferNotes { get; set; }
         public int OfferStatusID { get; set; }
         public int CreateAccountID { get; set; }
+        public int? OfferID { get; set; }
     }
 }

@@ -1,19 +1,20 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { DecimalPipe } from '@angular/common';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { GridOptions } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
+import { ColDef } from 'ag-grid-community';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
+import { WaterTypeService } from 'src/app/services/water-type.service';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-parcel-list',
@@ -25,7 +26,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   public richTextTypeID: number = CustomRichTextType.ParcelList;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public waterYears: Array<WaterYearDto>;
@@ -33,8 +34,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public gridOptions: GridOptions;
   public rowData = [];
   public mapHeight: string = "500px"
-  public columnDefs: any;
-  public parcelAllocationTypes: ParcelAllocationTypeDto[];
+  public columnDefs: Array<ColDef>;
+  public waterTypes: WaterTypeDto[];
+  private waterTypeColumnDefsInsertIndex = 4;
+  private tradeColumnDefsInsertIndex = 5;
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -59,13 +62,11 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
-
-
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       let _decimalPipe = this.decimalPipe;
       this.columnDefs = [
         {
@@ -110,32 +111,38 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           },
           sortable: true, filter: true, width: 170
         },
-        { headerName: 'Usage', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 130 },
-        { headerName: 'Total Allocation', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
+        this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 150),
+        this.utilityFunctionsService.createDecimalColumnDef('Precipitation', 'Precipitation', 130),
+        this.utilityFunctionsService.createDecimalColumnDef('Total Usage', 'UsageToDate', 130)
       ];
+
+      if (this.allowTrading()) {
+        const tradeColDefs: Array<ColDef> = [
+          this.utilityFunctionsService.createDecimalColumnDef('Purchased', 'Purchased', 130),
+          this.utilityFunctionsService.createDecimalColumnDef('Sold', 'Sold', 130),
+        ];
+        this.columnDefs.splice(this.tradeColumnDefsInsertIndex, 0, ...tradeColDefs);
+      }
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.parcelsGrid.api.showLoadingOverlay();
+      this.parcelsGrid?.api.showLoadingOverlay();
       forkJoin([this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ]).subscribe(([defaultYear, parcelAllocationTypes]) => {
+        this.waterTypeService.getWaterTypes()
+      ]).subscribe(([defaultYear, waterTypes]) => {
         this.waterYearToDisplay = defaultYear;
-        this.parcelAllocationTypes = parcelAllocationTypes;
+        this.waterTypes = waterTypes;
 
-        // finish setting up the column defs based on existing parcelAllocationTypes before loading data.
-        this.parcelAllocationTypes.forEach(parcelAllocationType => {
-          this.columnDefs.push({
-            headerName: parcelAllocationType.ParcelAllocationTypeName,
-            valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); },
-            sortable: true,
-            filter: true,
-            width: 130,
-            valueGetter: function (params) {
-              return params.data.Allocations ? params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0 : 0.0;
-            }
-          })
+        // finish setting up the column defs based on existing waterTypes before loading data.
+        var waterTypeColDefs: Array<ColDef> = [];
+        this.waterTypes.forEach(waterType => {
+          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+          waterTypeColDefs.push(
+            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130),
+          );
         });
+
+        this.columnDefs.splice(this.waterTypeColumnDefsInsertIndex, 0, ...waterTypeColDefs)
 
         this.columnDefs.forEach(x => {
           x.resizable = true;
@@ -145,11 +152,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
         forkJoin([
-          this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
+          this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year),
           this.waterYearService.getWaterYears()
         ]).subscribe(([parcelsWithWaterUsage, waterYears]) => {
-          debugger;
-          this.rowData = parcelsWithWaterUsage
+          this.rowData = parcelsWithWaterUsage;
           this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
           this.parcelsGrid.api.hideOverlay();
           this.loadingParcels = false;
@@ -162,16 +168,20 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
+  }
+
+  private allowTrading(): boolean {
+    return environment.allowTrading;
   }
 
   public updateGridData() {
     if (!this.waterYearToDisplay) {
       return;
     }
-    this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
+    this.parcelService.getParcelWaterSupplyAndUsagesByYear(this.waterYearToDisplay.Year).subscribe(result => {
       this.rowData = result;
       this.selectedParcelIDs = this.rowData.map(x => x.ParcelID);
       this.parcelsGrid.api.setRowData(this.rowData);

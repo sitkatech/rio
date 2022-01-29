@@ -15,7 +15,6 @@ li.list-group-item.parcel-map.selected {
 li.list-group-item.header {
     cursor:pointer;
     background-color: #dfdfdf;
-    border-bottom: solid 2px $button-border-and-background !important;
     color: #000;
     border-top:0;
 }
@@ -29,4 +28,33 @@ li.list-group-item.header:hover {
 li.list-group-item.header.selected {
     background-color:  $button-border-and-background;
     color: #EEE;
+}
+
+#activity-summary .label {
+    display: block;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+#activity-summary .card-body {
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.h3 {
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+#page-controls-bar {
+    background-color: $secondary;
+    border-bottom: solid 2px $button-border-and-background;
+}
+
+#page-controls-bar a {
+    color: #000;
+}
+
+#page-controls-bar i {
+    color: #222;
 }

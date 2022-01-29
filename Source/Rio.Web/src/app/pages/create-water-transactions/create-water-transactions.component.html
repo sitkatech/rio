@@ -1,0 +1,50 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/manager-dashboard">Manager Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Create Water Transactions
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <div class="row">
+        <div class="col-9">
+            <h2>
+                Create Water Transactions
+            </h2>
+        </div>
+    </div>
+    <app-alert-display></app-alert-display>
+    <div class="row mt-2">
+        <div class="col">
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 m-auto">
+            <div class="row">
+                <div class="col-sm-4">
+                    <button routerLink="/parcel-ledger-create" class="btn btn-rio w-100 p-2 m-4">
+                        Create Single Transaction
+                    </button>
+                </div>
+                <div class="col-sm-4">
+                    <button routerLink="/parcel-ledger-bulk-create" class="btn btn-rio w-100 p-2 m-4">
+                        Create Bulk Transaction
+                    </button>
+                </div>
+                <div class="col-sm-4">
+                    <button routerLink="/parcel-ledger-create-from-spreadsheet" class="btn btn-rio w-100 p-2 m-4">
+                        Upload Spreadsheet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

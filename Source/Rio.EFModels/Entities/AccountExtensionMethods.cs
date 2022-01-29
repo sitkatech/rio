@@ -1,46 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using Rio.Models.DataTransferObjects.Account;
 using System.Linq;
-using Rio.Models.DataTransferObjects.User;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
-    public static class AccountExtensionMethods
+    public static partial class AccountExtensionMethods
     {
-        public static AccountSimpleDto AsSimpleDto(this Account account)
+        static partial void DoCustomMappings(Account account, AccountDto accountDto)
         {
-            return new AccountSimpleDto()
-            {
-                AccountID = account.AccountID,
-                AccountNumber = account.AccountNumber,
-                AccountName = account.AccountName,
-                AccountVerificationKey = account.AccountVerificationKey,
-                Notes = account.Notes,
-                AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
-                ShortAccountDisplayName = $"#{account.AccountName} ({account.AccountNumber})"
-            };
+            var userSimpleDtos = account.AccountUsers.Select(x => x.User.AsSimpleDto()).ToList();
+            accountDto.Users = userSimpleDtos;
+            accountDto.NumberOfUsers = userSimpleDtos.Count;
+            accountDto.AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})";
+            accountDto.ShortAccountDisplayName = $"{account.AccountName} (#{account.AccountNumber})";
+            accountDto.NumberOfParcels = account.AccountParcelWaterYears.Count(x => x.WaterYear.Year == DateTime.Now.Year);
         }
-        public static AccountDto AsDto(this Account account)
+
+        static partial void DoCustomSimpleDtoMappings(Account account, AccountSimpleDto accountSimpleDto)
         {
-            var userSimpleDtos = account.AccountUsers.Select(x=>x.User.AsSimpleDto()).ToList();
-            return new AccountDto()
-            {
-                AccountID = account.AccountID,
-                AccountNumber = account.AccountNumber,
-                AccountName = account.AccountName,
-                CreateDate = account.CreateDate,
-                InactivateDate = account.InactivateDate,
-                Notes = account.Notes,
-                AccountVerificationKey = account.AccountVerificationKey,
-                AccountVerificationKeyLastUseDate = account.AccountVerificationKeyLastUseDate,
-                Users = userSimpleDtos,
-                NumberOfUsers = userSimpleDtos.Count,
-                AccountStatus = account.AccountStatus.AsDto(),
-                AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})",
-                ShortAccountDisplayName = $"{account.AccountName} (#{account.AccountNumber})",
-                NumberOfParcels = account.AccountParcelWaterYears.Count(x => x.WaterYear.Year == DateTime.Now.Year)
-            };
+            accountSimpleDto.AccountDisplayName = $"{account.AccountName} (Account #{account.AccountNumber})";
+            accountSimpleDto.ShortAccountDisplayName = $"#{account.AccountName} ({account.AccountNumber})";
         }
 
         public static AccountIncludeParcelsDto AsAccountWithParcelsDto(this Account account)

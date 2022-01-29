@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using NetTopologySuite.Utilities;
 using static Hangfire.JobCancellationToken;
 
 namespace Rio.API
@@ -17,7 +16,7 @@ namespace Rio.API
 
             AddRecurringJob<CimisPrecipJob>(CimisPrecipJob.JobName, x => x.RunJob(Null), MakeDailyUtcCronJobStringFromLocalTime(1, 30), recurringJobIds);
             AddRecurringJob<OpenETTriggerBucketRefreshJob>(OpenETTriggerBucketRefreshJob.JobName, x => x.RunJob(Null), MakeDailyUtcCronJobStringFromLocalTime(2, 00), recurringJobIds);
-            AddRecurringJob<OpenETRetrieveFromBucketJob>(OpenETRetrieveFromBucketJob.JobName, x => x.RunJob(Null) , "*/1 * * * *", recurringJobIds);
+            AddRecurringJob<OpenETRetrieveFromBucketJob>(OpenETRetrieveFromBucketJob.JobName, x => x.RunJob(Null) , Cron.Hourly(), recurringJobIds);
 
             // Remove any jobs we haven't explicitly scheduled
             RemoveExtraneousJobs(recurringJobIds);
@@ -26,7 +25,7 @@ namespace Rio.API
         private static void AddRecurringJob<T>(string jobName, Expression<Action<T>> methodCallExpression,
             string cronExpression, ICollection<string> recurringJobIds)
         {
-            RecurringJob.AddOrUpdate<T>(jobName, methodCallExpression, cronExpression);
+            RecurringJob.AddOrUpdate(jobName, methodCallExpression, cronExpression);
             recurringJobIds.Add(jobName);
         }
 

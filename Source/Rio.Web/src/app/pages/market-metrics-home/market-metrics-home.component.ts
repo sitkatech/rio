@@ -1,12 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
 import { forkJoin } from 'rxjs';
 import { MarketMetricsService } from 'src/app/services/market-metrics.service';
-import { MarketMetricsDto } from 'src/app/shared/models/market-metrics-dto';
 import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
-import { TradeActivityByMonthDto } from 'src/app/shared/models/trade-activity-by-month-dto';
-import { ColorHelper } from '@swimlane/ngx-charts';
+import { Color, ColorHelper, ScaleType } from '@swimlane/ngx-charts';
+import { MarketMetricsDto } from 'src/app/shared/generated/model/market-metrics-dto';
+import { TradeActivityByMonthDto } from 'src/app/shared/generated/model/trade-activity-by-month-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'template-market-metrics-home',
@@ -14,13 +14,13 @@ import { ColorHelper } from '@swimlane/ngx-charts';
   styleUrls: ['./market-metrics-home.component.scss']
 })
 export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   marketMetrics: MarketMetricsDto;
   tradeActivityByMonth: TradeActivityByMonthDto[];
   tradeVolumeByMonthSeries: { name: string; value: number; }[];
-  colorScheme: { domain: string[]; };
-  volumeTradedColorScheme: { domain: string[]; };
+  colorScheme: Color = { name: "offerColors", domain: ['#636363', '#ff1100', '#37be23'], selectable: true, group: ScaleType.Ordinal};
+  volumeTradedColorScheme: Color = { name: "volumeColors", domain: ['#0f77d2'] , selectable: true, group: ScaleType.Ordinal};
   offerHistorySeries: { name: string; series: { name: string; value: number; }[] }[];
   public lineSeriesColors: ColorHelper;
   
@@ -35,7 +35,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
 ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       forkJoin(this.marketMetricsService.getMarketMetrics(), this.marketMetricsService.getMonthlyTradeActivity()).subscribe(([marketMetrics, tradeActivityByMonth]) => {
         this.marketMetrics = marketMetrics;
@@ -54,20 +54,14 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
           return { name: this.datePipe.transform(x.GroupingDate, "MMM yyyy"), value: x.MaximumPrice }
         })});
 
-        this.colorScheme = {
-          domain: ['#636363', '#ff1100', '#37be23'] 
-        };
-        this.volumeTradedColorScheme = {
-          domain: ['#0f77d2'] 
-        };
-        this.lineSeriesColors = new ColorHelper(this.colorScheme, 'ordinal', this.priceLineSeries);
+        this.lineSeriesColors = new ColorHelper(this.colorScheme, ScaleType.Ordinal, this.priceLineSeries);
       });
     });
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -94,7 +88,7 @@ export class MarketMetricsHomeComponent implements OnInit, OnDestroy {
   {
     if(this.marketMetrics.MostRecentWaterTransfer)
     {
-      return this.decimalPipe.transform(this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(this.marketMetrics.MostRecentWaterTransfer.UnitPrice, "USD") + " per ac-ft";
+      return this.decimalPipe.transform(this.marketMetrics.MostRecentWaterTransfer.AcreFeetTransferred, "1.1-1") + " ac-ft at " + this.currencyPipe.transform(this.marketMetrics.MostRecentWaterTransfer.Offer.Price, "USD") + " per ac-ft";
     }
     return "-";
   }

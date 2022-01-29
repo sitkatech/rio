@@ -15,7 +15,7 @@
 <div class="container mt-sm-4" *ngIf="postingTypes && currentUserAccounts?.length > 0">
     <h2>New Posting</h2>
     <p class="lead">
-        Create a new offer to either buy or sell an allocation.
+        Create a new offer to either buy or sell water supply.
     </p>
     <app-alert-display></app-alert-display>
     <form (ngSubmit)="onSubmit(newPostingForm)" #newPostingForm="ngForm">
@@ -28,7 +28,7 @@
                     <div class="col-sm-8">
                         <span *ngIf="currentUserAccounts.length == 1">{{currentUserAccounts[0].AccountName}}</span>
                         <select *ngIf="currentUserAccounts.length > 1" name="CreateAccountID" class="form-control" [(ngModel)]="model.CreateAccountID" required>
-                            <option [ngValue]="undefined" disabled>Select an Account</option>
+                            <option [ngValue]="undefined" disabled hidden>Select an Account</option>
                             <option *ngFor="let account of currentUserAccounts" [ngValue]="account.AccountID">
                                 {{account.AccountName}}
                             </option>
@@ -41,7 +41,7 @@
                     </div>
                     <div class="col-sm-8">
                         <select name="PostingTypeID" class="form-control" [(ngModel)]="model.PostingTypeID" required>
-                            <option value=""></option>
+                            <option value="" disabled hidden></option>
                             <option *ngFor="let postingType of postingTypes" [value]="postingType.PostingTypeID">
                                 {{postingType.PostingTypeDisplayName}}
                             </option>
@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-sm-8 text-right">
                         <button type="submit" class="btn btn-rio"
-                            [disabled]="newPostingForm.form.invalid || !isOfferFormValid() || isLoadingSubmit">
+                            [disabled]="isLoadingSubmit">
                             <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                             Save
                         </button>

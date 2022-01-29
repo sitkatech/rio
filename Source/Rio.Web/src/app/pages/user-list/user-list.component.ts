@@ -1,17 +1,15 @@
 import { Component, OnInit, ViewChildren, QueryList, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ColDef } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
-import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { DecimalPipe } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
-import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
+import { UserDetailedDto } from 'src/app/shared/generated/model/user-detailed-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 declare var $:any;
 
@@ -24,7 +22,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   @ViewChild('usersGrid') usersGrid: AgGridAngular;
   @ViewChild('unassignedUsersGrid') unassignedUsersGrid: AgGridAngular;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public rowData = [];
@@ -37,9 +35,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   constructor(private cdr: ChangeDetectorRef, private authenticationService: AuthenticationService, private utilityFunctionsService: UtilityFunctionsService, private userService: UserService, private decimalPipe: DecimalPipe) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.usersGrid.api.showLoadingOverlay();
+      this.usersGrid?.api.showLoadingOverlay();
       this.userService.getUsers().subscribe(users => {
         this.rowData = users.filter(x => x.RoleID !== RoleEnum.Disabled);
         this.users = users;
@@ -131,8 +129,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

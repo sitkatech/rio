@@ -8,7 +8,7 @@ namespace Rio.EFModels.Entities
 {
     public partial class WaterTransferRegistrationParcel
     {
-        public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public static IEnumerable<WaterTransferRegistrationParcelDto> SaveParcels(RioDbContext dbContext, int waterTransferID, WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
             // get the registration record
             var waterTransferRegistration = dbContext.WaterTransferRegistrations.Single(x =>
@@ -64,12 +64,21 @@ namespace Rio.EFModels.Entities
         private static IQueryable<WaterTransferRegistrationParcel> GetWaterTransferRegistrationParcelsImpl(RioDbContext dbContext)
         {
             return dbContext.WaterTransferRegistrationParcels
-                .Include(x => x.WaterTransferRegistration)
-                .Include(x => x.Parcel)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.TradeStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.OfferStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude((x => x.AccountStatus))
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferRegistrationStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferType)
+                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
                 .AsNoTracking();
         }
 
-        public static List<ErrorMessage> ValidateParcels(List<WaterTransferRegistrationParcelDto> waterTransferParcelDtos, WaterTransferDto waterTransferDto)
+        public static List<ErrorMessage> ValidateParcels(List<WaterTransferRegistrationParcelUpsertDto> waterTransferRegistrationParcelUpsertDtos, WaterTransferDetailedDto waterTransferDto)
         {
             var result = new List<ErrorMessage>();
 

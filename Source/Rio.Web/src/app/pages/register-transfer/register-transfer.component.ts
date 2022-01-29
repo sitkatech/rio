@@ -1,21 +1,21 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterTransferRegistrationDto } from 'src/app/shared/models/water-transfer-registration-dto';
 import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelPickerComponent } from 'src/app/shared/components/parcel-picker/parcel-picker.component';
-import { WaterTransferRegistrationParcelDto } from 'src/app/shared/models/water-transfer-registration-parcel-dto';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
 import { TradeService } from 'src/app/services/trade.service';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTransferRegistrationParcelUpsertDto } from 'src/app/shared/generated/model/water-transfer-registration-parcel-upsert-dto';
+import { WaterTransferDetailedDto } from 'src/app/shared/generated/model/water-transfer-detailed-dto';
+import { WaterTransferRegistrationUpsertDto } from 'src/app/shared/generated/model/water-transfer-registration-upsert-dto';
 
 
 @Component({
@@ -24,13 +24,13 @@ import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-d
   styleUrls: ['./register-transfer.component.scss']
 })
 export class RegisterTransferComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
-  public waterTransfer: WaterTransferDto;
+  public waterTransfer: WaterTransferDetailedDto;
   public isRegisteringTransfer: boolean = false;
   public registerAction: string;
   public isLoadingSubmit: boolean = false;
-  public selectedParcels: Array<WaterTransferRegistrationParcelDto> = [];
+  public selectedParcels: Array<WaterTransferRegistrationParcelUpsertDto> = [];
   public visibleParcels: Array<ParcelDto> = [];
   public waterTransferType: WaterTransferTypeEnum;
   public haveParcelsBeenIdentified: boolean = false;
@@ -57,7 +57,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.currentUserAccounts = this.authenticationService.getAvailableAccounts();
       const waterTransferID = parseInt(this.route.snapshot.paramMap.get("waterTransferID"));
@@ -74,8 +74,8 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -88,7 +88,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       .subscribe(([waterTransfer, visibleParcels, selectedParcels]) => {
         this.waterTransfer = waterTransfer instanceof Array
           ? null
-          : waterTransfer as WaterTransferDto;
+          : waterTransfer as WaterTransferDetailedDto;
 
         if (this.waterTransfer.BuyerRegistration.Account.AccountID != this.accountID && this.waterTransfer.SellerRegistration.Account.AccountID != this.accountID) {
           this.router.navigate(["/"]).then(() => {
@@ -108,7 +108,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
       });
   }
 
-  public getTotalPrice(waterTransfer: WaterTransferDto): number {
+  public getTotalPrice(waterTransfer: WaterTransferDetailedDto): number {
     return waterTransfer.UnitPrice * waterTransfer.AcreFeetTransferred;
   }
 
@@ -150,7 +150,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public submitRegistration(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferRegistrationDto();
+    let model = new WaterTransferRegistrationUpsertDto();
     model.UserID = this.currentUser.UserID;
     model.WaterTransferTypeID = this.waterTransferType;
     this.waterTransferService.registerTransfer(this.waterTransfer.WaterTransferID, model)
@@ -171,11 +171,11 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public onSubmitParcels(): void {
     this.parcelPicker.isLoadingSubmit = true;
-    const waterTransferRegistrationDto = new WaterTransferRegistrationDto();
+    const waterTransferRegistrationDto = new WaterTransferRegistrationUpsertDto();
     waterTransferRegistrationDto.WaterTransferTypeID = this.waterTransferType;
     waterTransferRegistrationDto.UserID = this.currentUser.UserID;
     let waterTransferRegistrationParcels = this.parcelPicker.selectedParcels.map(p => {
-      let waterTransferParcelDto = new WaterTransferRegistrationParcelDto();
+      let waterTransferParcelDto = new WaterTransferRegistrationParcelUpsertDto();
       waterTransferParcelDto.ParcelID = p.ParcelID;
       waterTransferParcelDto.AcreFeetTransferred = Math.round(p.AcreFeetTransferred);
       return waterTransferParcelDto;
@@ -200,7 +200,7 @@ export class RegisterTransferComponent implements OnInit, OnDestroy {
 
   public cancelTrade(): void {
     this.isLoadingSubmit = true;
-    let model = new WaterTransferRegistrationDto();
+    let model = new WaterTransferRegistrationUpsertDto();
     model.UserID = this.currentUser.UserID;
     model.WaterTransferTypeID = this.waterTransferType;
     this.waterTransferService.cancelTrade(this.waterTransfer.WaterTransferID, model)

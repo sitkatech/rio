@@ -1,7 +1,4 @@
-﻿using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.WaterTransfer;
-using System;
-using Rio.Models.DataTransferObjects.User;
+﻿using System;
 
 namespace Rio.Models.DataTransferObjects.Offer
 {

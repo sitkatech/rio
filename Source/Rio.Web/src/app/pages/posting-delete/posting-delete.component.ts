@@ -1,17 +1,15 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
-import { PostingDto } from 'src/app/shared/models/posting/posting-dto';
-import { OfferDto } from 'src/app/shared/models/offer/offer-dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostingService } from 'src/app/services/posting.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { forkJoin } from 'rxjs';
 import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
-import { PostingUpdateStatusDto } from 'src/app/shared/models/posting/posting-update-status-dto';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
-import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
+import { PostingDto } from 'src/app/shared/generated/model/posting-dto';
+import { TradeDto } from 'src/app/shared/generated/model/trade-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-posting-delete',
@@ -19,7 +17,7 @@ import { TradeDto } from 'src/app/shared/models/offer/trade-dto';
   styleUrls: ['./posting-delete.component.scss']
 })
 export class PostingDeleteComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public posting: PostingDto;
@@ -40,7 +38,7 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-      this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+      this.authenticationService.getCurrentUser().subscribe(currentUser => {
           this.currentUser = currentUser;
           const postingID = parseInt(this.route.snapshot.paramMap.get("postingID"));
           if (postingID) {
@@ -59,8 +57,8 @@ export class PostingDeleteComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-      this.watchUserChangeSubscription.unsubscribe();
-      this.authenticationService.dispose();
+      
+      
       this.cdr.detach();
   }
 

@@ -6,7 +6,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
-import { UserDto } from 'src/app/shared/models';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
@@ -20,7 +20,7 @@ export class AccountReconciliationComponent implements OnInit {
 
   public richTextTypeID: number = CustomRichTextType.AccountReconciliationReport;
 
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
   public gridOptions: GridOptions;
   public rowData = [];
@@ -51,7 +51,7 @@ export class AccountReconciliationComponent implements OnInit {
     private accountReconciliationService: AccountReconciliationService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
 
       this.columnDefs = [
         {
@@ -127,7 +127,7 @@ export class AccountReconciliationComponent implements OnInit {
 
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
-      this.accountReconciliationGrid.api.showLoadingOverlay();
+      this.accountReconciliationGrid?.api.showLoadingOverlay();
 
       this.accountReconciliationService.getAccountsToBeReconciled().subscribe((parcels) => {
         this.rowData = parcels;
@@ -144,8 +144,8 @@ export class AccountReconciliationComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

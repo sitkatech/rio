@@ -22,6 +22,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<AccountReconciliation> AccountReconciliations { get; set; }
         public virtual DbSet<AccountStatus> AccountStatuses { get; set; }
         public virtual DbSet<AccountUser> AccountUsers { get; set; }
+        public virtual DbSet<CimisPrecipitationDatum> CimisPrecipitationData { get; set; }
         public virtual DbSet<CustomRichText> CustomRichTexts { get; set; }
         public virtual DbSet<CustomRichTextType> CustomRichTextTypes { get; set; }
         public virtual DbSet<DatabaseMigration> DatabaseMigrations { get; set; }
@@ -35,11 +36,9 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<OpenETSyncHistory> OpenETSyncHistories { get; set; }
         public virtual DbSet<OpenETSyncResultType> OpenETSyncResultTypes { get; set; }
         public virtual DbSet<Parcel> Parcels { get; set; }
-        public virtual DbSet<ParcelAllocation> ParcelAllocations { get; set; }
-        public virtual DbSet<ParcelAllocationHistory> ParcelAllocationHistories { get; set; }
-        public virtual DbSet<ParcelAllocationType> ParcelAllocationTypes { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
-        public virtual DbSet<ParcelMonthlyEvapotranspiration> ParcelMonthlyEvapotranspirations { get; set; }
+        public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
+        public virtual DbSet<ParcelLedgerEntrySourceType> ParcelLedgerEntrySourceTypes { get; set; }
         public virtual DbSet<ParcelStatus> ParcelStatuses { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
@@ -50,6 +49,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasins { get; set; }
         public virtual DbSet<Trade> Trades { get; set; }
         public virtual DbSet<TradeStatus> TradeStatuses { get; set; }
+        public virtual DbSet<TransactionType> TransactionTypes { get; set; }
         public virtual DbSet<UploadedGdb> UploadedGdbs { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWells { get; set; }
@@ -58,6 +58,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
         public virtual DbSet<WaterTransferRegistrationStatus> WaterTransferRegistrationStatuses { get; set; }
         public virtual DbSet<WaterTransferType> WaterTransferTypes { get; set; }
+        public virtual DbSet<WaterType> WaterTypes { get; set; }
         public virtual DbSet<WaterYear> WaterYears { get; set; }
         public virtual DbSet<WaterYearMonth> WaterYearMonths { get; set; }
         public virtual DbSet<Well> Wells { get; set; }
@@ -317,43 +318,6 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<ParcelAllocation>(entity =>
-            {
-                entity.HasOne(d => d.ParcelAllocationType)
-                    .WithMany(p => p.ParcelAllocations)
-                    .HasForeignKey(d => d.ParcelAllocationTypeID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelAllocations)
-                    .HasForeignKey(d => d.ParcelID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelAllocationHistory>(entity =>
-            {
-                entity.HasOne(d => d.ParcelAllocationType)
-                    .WithMany(p => p.ParcelAllocationHistories)
-                    .HasForeignKey(d => d.ParcelAllocationTypeID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.ParcelAllocationHistories)
-                    .HasForeignKey(d => d.UserID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelAllocationType>(entity =>
-            {
-                entity.HasIndex(e => e.IsSourcedFromApi, "CK_ParcelAllocationType_AtMostOne_IsSourcedFromApi_True")
-                    .IsUnique()
-                    .HasFilter("([IsSourcedFromApi]=(1))");
-
-                entity.Property(e => e.ParcelAllocationTypeDefinition).IsUnicode(false);
-
-                entity.Property(e => e.ParcelAllocationTypeName).IsUnicode(false);
-            });
-
             modelBuilder.Entity<ParcelLayerGDBCommonMappingToParcelStagingColumn>(entity =>
             {
                 entity.HasKey(e => e.ParcelLayerGDBCommonMappingToParcelColumnID)
@@ -364,12 +328,35 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ParcelNumber).IsUnicode(false);
             });
 
-            modelBuilder.Entity<ParcelMonthlyEvapotranspiration>(entity =>
+            modelBuilder.Entity<ParcelLedger>(entity =>
             {
+                entity.Property(e => e.TransactionDescription).IsUnicode(false);
+
+                entity.Property(e => e.UserComment).IsUnicode(false);
+
                 entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelMonthlyEvapotranspirations)
+                    .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.ParcelLedgerEntrySourceType)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.ParcelLedgerEntrySourceTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.TransactionType)
+                    .WithMany(p => p.ParcelLedgers)
+                    .HasForeignKey(d => d.TransactionTypeID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelLedgerEntrySourceType>(entity =>
+            {
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeDisplayName).IsUnicode(false);
+
+                entity.Property(e => e.ParcelLedgerEntrySourceTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<ParcelStatus>(entity =>
@@ -491,6 +478,13 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.TradeStatusName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<TransactionType>(entity =>
+            {
+                entity.Property(e => e.TransactionTypeID).ValueGeneratedNever();
+
+                entity.Property(e => e.TransactionTypeName).IsUnicode(false);
+            });
+
             modelBuilder.Entity<UploadedGdb>(entity =>
             {
                 entity.Property(e => e.UploadedGdbID).ValueGeneratedNever();
@@ -589,6 +583,17 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.WaterTransferTypeDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.WaterTransferTypeName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<WaterType>(entity =>
+            {
+                entity.HasIndex(e => e.IsSourcedFromApi, "CK_WaterType_AtMostOne_IsSourcedFromApi_True")
+                    .IsUnique()
+                    .HasFilter("([IsSourcedFromApi]=(1))");
+
+                entity.Property(e => e.WaterTypeDefinition).IsUnicode(false);
+
+                entity.Property(e => e.WaterTypeName).IsUnicode(false);
             });
 
             modelBuilder.Entity<WaterYearMonth>(entity =>

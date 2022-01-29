@@ -13,13 +13,13 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
   }
 
   canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    next: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if(!this.authenticationService.isCurrentUserNullOrUndefined()) {
         if (!this.authenticationService.hasCurrentUserAcknowledgedDisclaimer()) {
           this.router.navigate(["/disclaimer/true"], {
             queryParams: {
-              return: state.url
+              route: next.routeConfig.path,
+              queryParams : JSON.stringify(next.queryParams)
             }
           });
           return false;
@@ -28,8 +28,8 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
           return true;
         }
       }
-      
-      return this.authenticationService.currentUserSetObservable
+
+      return this.authenticationService.getCurrentUser()
       .pipe(
         map(x => {
           if (x.DisclaimerAcknowledgedDate != null) {
@@ -37,7 +37,8 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
           } else {
             this.router.navigate(["/disclaimer/true"], {
               queryParams: {
-                return: state.url
+                route: next.routeConfig.path,
+                queryParams : JSON.stringify(next.queryParams)
               }
             });
             return false;
@@ -45,5 +46,5 @@ export class AcknowledgedDisclaimerGuard implements CanActivate {
         })
       );
   }
-  
+
 }

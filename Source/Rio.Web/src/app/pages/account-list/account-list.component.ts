@@ -1,16 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
 import { AccountService } from 'src/app/services/account/account.service';
 import { ColDef } from 'ag-grid-community';
-import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { AccountStatusEnum } from 'src/app/shared/models/enums/account-status-enum';
 import { DatePipe } from '@angular/common';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+
 @Component({
   selector: 'rio-account-list',
   templateUrl: './account-list.component.html',
@@ -18,7 +18,7 @@ import { DatePipe } from '@angular/common';
 })
 export class AccountListComponent implements OnInit, OnDestroy {
   @ViewChild("accountsGrid") accountsGrid: AgGridAngular;
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public accounts: Array<AccountDto>
@@ -35,9 +35,9 @@ export class AccountListComponent implements OnInit, OnDestroy {
     private utilityFunctionsService: UtilityFunctionsService) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.accountsGrid.api.showLoadingOverlay();
+      this.accountsGrid?.api.showLoadingOverlay();
       this.accountService.listAllAccounts().subscribe(accounts => {
         this.accounts = accounts;
         this.rowData = accounts.filter(x => x.AccountStatus.AccountStatusID === AccountStatusEnum.Active);
@@ -224,8 +224,8 @@ export class AccountListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

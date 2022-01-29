@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from 'src/app/shared/models';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 
 @Component({
@@ -10,7 +10,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
 })
 export class CreateUserProfileComponent implements OnInit {
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   
   public introRichText : number = CustomRichTextType.CreateUserProfile;

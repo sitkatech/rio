@@ -38,3 +38,4 @@ services:
       - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
       - Ogr2OgrExecutable=${Ogr2OgrExecutable}
       - OgrInfoExecutable=${OgrInfoExecutable}
+      - CimisApiUrl=${CimisApiUrl}

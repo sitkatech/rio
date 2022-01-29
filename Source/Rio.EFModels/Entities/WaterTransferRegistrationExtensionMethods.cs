@@ -1,32 +1,24 @@
-﻿using Rio.Models.DataTransferObjects.WaterTransfer;
-using System.Linq;
+﻿using System.Linq;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
-    public static class WaterTransferRegistrationExtensionMethods
+    public static partial class WaterTransferRegistrationExtensionMethods
     {
-        public static WaterTransferRegistrationDto AsDto(this WaterTransferRegistration waterTransferRegistration)
+        static partial void DoCustomMappings(WaterTransferRegistration waterTransferRegistration,
+            WaterTransferRegistrationDto waterTransferRegistrationDto)
         {
-            return new WaterTransferRegistrationDto
-            {
-                AccountID = waterTransferRegistration.AccountID,
-                WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
-                StatusDate = waterTransferRegistration.StatusDate
-            };
+            waterTransferRegistrationDto.IsRegistered = waterTransferRegistration.IsRegistered;
+            waterTransferRegistrationDto.IsCanceled = waterTransferRegistration.IsCanceled;
+            waterTransferRegistrationDto.IsPending = waterTransferRegistration.IsPending;
         }
-
-        public static WaterTransferRegistrationSimpleDto AsSimpleDto(this WaterTransferRegistration waterTransferRegistration)
+        static partial void DoCustomSimpleDtoMappings(WaterTransferRegistration waterTransferRegistration,
+            WaterTransferRegistrationSimpleDto waterTransferRegistrationSimpleDto)
         {
-            return new WaterTransferRegistrationSimpleDto
-            {
-                Account = waterTransferRegistration.Account.AsDto(),
-                WaterTransferTypeID = waterTransferRegistration.WaterTransferTypeID,
-                WaterTransferRegistrationStatusID = waterTransferRegistration.WaterTransferRegistrationStatusID,
-                StatusDate = waterTransferRegistration.StatusDate,
-                IsRegistered = waterTransferRegistration.IsRegistered,
-                IsCanceled = waterTransferRegistration.IsCanceled,
-                IsPending = waterTransferRegistration.IsPending
-            };
+            waterTransferRegistrationSimpleDto.IsRegistered = waterTransferRegistration.IsRegistered;
+            waterTransferRegistrationSimpleDto.IsCanceled = waterTransferRegistration.IsCanceled;
+            waterTransferRegistrationSimpleDto.IsPending = waterTransferRegistration.IsPending;
+            waterTransferRegistrationSimpleDto.Account = waterTransferRegistration.Account.AsSimpleDto();
         }
 
         public static WaterTransferRegistration GetWaterTransferRegistrationByWaterTransferType(this WaterTransfer waterTransfer, WaterTransferTypeEnum waterTransferTypeEnum)

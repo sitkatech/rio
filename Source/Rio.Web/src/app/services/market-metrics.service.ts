@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { MarketMetricsDto } from '../shared/models/market-metrics-dto';
-import { TradeActivityByMonthDto } from '../shared/models/trade-activity-by-month-dto';
+import { MarketMetricsDto } from '../shared/generated/model/market-metrics-dto';
+import { TradeActivityByMonthDto } from '../shared/generated/model/trade-activity-by-month-dto';
 
 @Injectable({
     providedIn: 'root'

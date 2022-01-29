@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { CustomRichTextService } from '../../services/custom-rich-text.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from '../../models';
-import { CustomRichTextDto } from '../../models/custom-rich-text-dto';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { AlertContext } from '../../models/enums/alert-context.enum';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { environment } from 'src/environments/environment';
 import { DomSanitizer,  SafeHtml } from '@angular/platform-browser'
+import { CustomRichTextDto } from '../../generated/model/custom-rich-text-dto';
+import { UserDto } from '../../generated/model/user-dto';
 
 @Component({
   selector: 'rio-custom-rich-text',
@@ -21,7 +21,7 @@ export class CustomRichTextComponent implements OnInit {
   public isLoading: boolean = true;
   public isEditing: boolean = false;
   public isEmptyContent: boolean = false;
-  public watchUserChangeSubscription: any;
+  
   public Editor = ClassicEditor;
   public editedContent: string;
   public editor;
@@ -39,7 +39,7 @@ export class CustomRichTextComponent implements OnInit {
     private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
     });
     //window.Editor = this.Editor;
@@ -58,12 +58,10 @@ export class CustomRichTextComponent implements OnInit {
     const customRichTextService = this.customRichTextService
     this.editor = editor;
 
-    console.log(this.Editor.builtinPlugins.map( plugin => plugin.pluginName ));
-
     editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
       // disable the editor until the image comes back
       editor.isReadOnly = true;
-      return new CkEditorUploadAdapter(loader, customRichTextService, environment.apiHostName, editor);
+      return new CkEditorUploadAdapter(loader, customRichTextService, environment.mainAppApiUrl, editor);
     };
   }
 
@@ -83,7 +81,6 @@ export class CustomRichTextComponent implements OnInit {
     this.isEditing = false;
     this.isLoading = true;
     const updateDto = new CustomRichTextDto({ CustomRichTextContent: this.editedContent });
-    console.log(updateDto);
     this.customRichTextService.updateCustomRichText(this.customRichTextTypeID, updateDto).subscribe(x => {
       this.customRichTextContent = this.sanitizer.bypassSecurityTrustHtml(x.CustomRichTextContent);
       this.editedContent = x.CustomRichTextContent
@@ -122,7 +119,7 @@ class CkEditorUploadAdapter {
 
     return this.loader.file.then(file => new Promise((resolve, reject) => {
       service.uploadFile(file).subscribe(x => {
-        const imageUrl = `https://${this.apiUrl}${x.imageUrl}`;
+        const imageUrl = `${this.apiUrl}${x.imageUrl}`;
         editor.isReadOnly = false;
 
         resolve({

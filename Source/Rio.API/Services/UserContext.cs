@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.User;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Services
 {

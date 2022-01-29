@@ -19,7 +19,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("/account-reconciliations")]
         [ManagerDashboardFeature]
-        public ActionResult<List<AccountReconciliationDto>> ListAllAccounts()
+        public ActionResult<List<AccountReconciliationCustomDto>> ListAllAccounts()
         {
             var accountReconciliationDtos = AccountReconciliation.List(_dbContext);
             return accountReconciliationDtos;

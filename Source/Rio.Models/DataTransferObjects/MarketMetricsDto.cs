@@ -1,7 +1,4 @@
-﻿using Rio.Models.DataTransferObjects.Offer;
-using Rio.Models.DataTransferObjects.WaterTransfer;
-
-namespace Rio.Models.DataTransferObjects
+﻿namespace Rio.Models.DataTransferObjects
 {
     public class MarketMetricsDto
     {

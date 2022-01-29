@@ -1,31 +1,23 @@
 ﻿using System;
 using CsvHelper;
-using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
-using Rio.API.Util;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.BulkSetAllocationCSV;
 using Rio.Models.DataTransferObjects.Parcel;
-using Rio.Models.DataTransferObjects.ParcelAllocation;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rio.API.GeoSpatial;
-using Rio.Models.DataTransferObjects.User;
-using static System.String;
-using MissingFieldException = CsvHelper.MissingFieldException;
 
 namespace Rio.API.Controllers
 {
@@ -37,38 +29,28 @@ namespace Rio.API.Controllers
         }
 
 
-        [HttpGet("parcels/getParcelsWithAllocationAndUsage/{year}")]
+        [HttpGet("parcels/getParcelsWithWaterSupplyAndUsage/{year}")]
         [ManagerDashboardFeature]
-        public ActionResult<IEnumerable<ParcelAllocationAndUsageDto>> GetParcelsWithAllocationAndUsageByYear([FromRoute] int year)
+        public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
-            var parcelDtos = ParcelAllocationAndUsage.GetByYear(_dbContext, year);
-            var parcelAllocationBreakdownForYear = ParcelAllocation.GetParcelAllocationBreakdownForYear(_dbContext, year);
-            var parcelDtosWithAllocation = parcelDtos
-                .GroupJoin(
-                    parcelAllocationBreakdownForYear,
-                    x => x.ParcelID,
-                    y => y.ParcelID,
-                    (x, y) => new
-                    {
-                        ParcelAllocationAndUsage = x,
-                        ParcelAllocationBreakdown = y
-                    })
-                .SelectMany(
-                    parcelAllocationUsageAndBreakdown =>
-                        parcelAllocationUsageAndBreakdown.ParcelAllocationBreakdown.DefaultIfEmpty(),
-                    (x, y) =>
-                    {
-                        x.ParcelAllocationAndUsage.Allocations = y?.Allocations;
-                        return x.ParcelAllocationAndUsage;
-                    });
-            return Ok(parcelDtosWithAllocation);
+            var parcelWaterSupplyAndUsageDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year).ToList();
+            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year);
+            
+            foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
+            {
+                var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
+                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            }
+
+            return Ok(parcelWaterSupplyAndUsageDtos);
         }
 
         [HttpGet("parcels/inactive")]
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetInactiveParcels()
         {
-            var parcelDtos = Parcel.GetInactiveParcels(_dbContext);
+            var parcelDtos = Parcel.ListInactiveAsDto(_dbContext);
             return Ok(parcelDtos);
         }
 
@@ -95,129 +77,24 @@ namespace Rio.API.Controllers
                 }
             }
 
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
-        [HttpGet("parcels/{parcelID}/getAllocations")]
+        [HttpGet("parcels/search/{parcelNumber}")]
         [ParcelViewFeature]
-        public ActionResult<List<ParcelAllocationDto>> GetAllocations([FromRoute] int parcelID)
+        public ActionResult<List<string>> SearchByParcelNumber([FromRoute] string parcelNumber)
         {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelAllocationDtos = ParcelAllocation.ListByParcelID(_dbContext, parcelID);
-            return Ok(parcelAllocationDtos);
+            var parcelNumbers = Parcel.SearchParcelNumber(_dbContext, parcelNumber);
+            return Ok(parcelNumbers);
         }
 
-        [HttpGet("parcels/{parcelID}/getWaterUsage")]
+        [HttpGet("parcels/{parcelID}/getLedgerEntries")]
         [ParcelViewFeature]
-        public ActionResult<ParcelAllocationAndConsumptionDto> GetAllocationAndConsumption([FromRoute] int parcelID)
+        public ActionResult<List<ParcelLedgerDto>> GetAllLedgerEntriesByParcelID([FromRoute] int parcelID)
         {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
-            if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var parcelMonthlyEvapotranspirationDtos = ParcelMonthlyEvapotranspiration.ListByParcelID(_dbContext, parcelID);
-            return Ok(parcelMonthlyEvapotranspirationDtos);
-        }
-        
-        [HttpPost("parcels/{parcelID}/mergeParcelAllocations")]
-        [ParcelManageFeature]
-        public IActionResult MergeParcelAllocations([FromRoute] int parcelID,
-            [FromBody] List<ParcelAllocationDto> parcelAllocationDtos)
-        {
-            var parcel = _dbContext.Parcels.Include(x => x.ParcelAllocations)
-                .SingleOrDefault(x => x.ParcelID == parcelID);
-
-            if (ThrowNotFound(parcel, "Parcel", parcelID, out var actionResult))
-            {
-                return actionResult;
-            }
-
-            var updatedParcelAllocations = parcelAllocationDtos.Select(x => new ParcelAllocation()
-            {
-                ParcelID = x.ParcelID,
-                ParcelAllocationTypeID = x.ParcelAllocationTypeID,
-                WaterYear = x.WaterYear,
-                AcreFeetAllocated = x.AcreFeetAllocated,
-                ParcelAllocationID = x.ParcelAllocationID
-            }).ToList();
-
-            // add new PAs before the merge.
-            var newParcelAllocations = updatedParcelAllocations.Where(x => x.ParcelAllocationID == 0);
-            _dbContext.ParcelAllocations.AddRange(newParcelAllocations);
-            _dbContext.SaveChanges();
-
-            var existingParcelAllocations = parcel.ParcelAllocations;
-            var allInDatabase = _dbContext.ParcelAllocations;
-
-            existingParcelAllocations.Merge(updatedParcelAllocations, allInDatabase,
-                (x, y) => x.ParcelAllocationTypeID == y.ParcelAllocationTypeID && x.ParcelID == y.ParcelID && x.WaterYear == y.WaterYear,
-                (x, y) => x.AcreFeetAllocated = y.AcreFeetAllocated
-                );
-
-            _dbContext.SaveChanges();
-
-            return Ok();
-
-        }
-
-        [HttpPost("parcels/{userID}/bulkSetAnnualParcelAllocation")]
-        [ParcelManageFeature]
-        public ActionResult BulkSetAnnualParcelAllocation([FromRoute] int userID, [FromBody] ParcelAllocationUpsertDto parcelAllocationUpsertDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var numberOfParcels = ParcelAllocation.BulkSetAllocation(_dbContext, parcelAllocationUpsertDto);
-            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext, userID, parcelAllocationUpsertDto, null);
-
-            return Ok(numberOfParcels);
-        }
-
-        [HttpPost("parcels/{waterYear}/{parcelAllocationTypeID}/bulkSetAnnualParcelAllocationFileUpload")]
-        public async Task<ActionResult> BulkSetAnnualParcelAllocationFileUpload([FromRoute] int waterYear,
-            [FromRoute] int parcelAllocationTypeID)
-        {
-            var fileResource = await HttpUtilities.MakeFileResourceFromHttpRequest(Request, _dbContext, HttpContext);
-            var parcelAllocationTypeDisplayName =
-                _dbContext.ParcelAllocationTypes.Single(x => x.ParcelAllocationTypeID == parcelAllocationTypeID).ParcelAllocationTypeName;
-
-            if (!ParseBulkSetAllocationUpload(fileResource, parcelAllocationTypeDisplayName, out var records, out var badRequestFromUpload))
-            {
-                return badRequestFromUpload;
-            }
-
-            if (!ValidateBulkSetAllocationUpload(records, parcelAllocationTypeDisplayName, out var badRequestFromValidation))
-            {
-                return badRequestFromValidation;
-            }
-
-            _dbContext.FileResources.Add(fileResource);
-            _dbContext.SaveChanges();
-
-            ParcelAllocation.BulkSetAllocation(_dbContext, records, waterYear, parcelAllocationTypeID);
-
-            ParcelAllocationHistory.CreateParcelAllocationHistoryEntity(_dbContext,
-                UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID, fileResource.FileResourceID, waterYear,
-                parcelAllocationTypeID, null);
-
-            return Ok();
-        }
-
-        [HttpGet("parcels/getParcelAllocationHistory")]
-        [ManagerDashboardFeature]
-        public ActionResult<List<ParcelAllocationHistoryDto>> GetParcelAllocationHistory()
-        {
-            return Ok(ParcelAllocationHistory.GetParcelAllocationHistoryDtos(_dbContext).ToList().OrderByDescending(x => x.Date));
+            var parcelLedgerDtos = ParcelLedgers.ListByParcelIDAsDto(_dbContext, parcelID);
+            return Ok(parcelLedgerDtos);
         }
 
         [HttpPost("parcels/getBoundingBox")]
@@ -238,7 +115,7 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<IEnumerable<ParcelDto>> GetParcelsWithLandOwners([FromRoute] int year)
         {
-            var parcelDtos = Parcel.ListParcelsWithLandOwners(_dbContext, year);
+            var parcelDtos = Parcel.ListForWaterYearAsDto(_dbContext, year);
             return Ok(parcelDtos);
         }
 
@@ -255,7 +132,7 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public ActionResult<IEnumerable<ParcelOwnershipDto>> ChangeOwner([FromRoute] int parcelID, [FromBody] ParcelChangeOwnerDto parcelChangeOwnerDto)
         {
-            var parcelDto = Parcel.GetByParcelID(_dbContext, parcelID);
+            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
             if (ThrowNotFound(parcelDto, "Parcel", parcelID, out var actionResult))
             {
                 return actionResult;
@@ -278,118 +155,6 @@ namespace Rio.API.Controllers
             AccountReconciliation.DeleteByParcelID(_dbContext, parcelID);
 
             return Ok();
-        }
-
-        private bool ParseBulkSetAllocationUpload(FileResource fileResource, string parcelTypeDisplayName, out List<BulkSetAllocationCSV> records, out ActionResult badRequest)
-        {
-            try
-            {
-                using var memoryStream = new MemoryStream(fileResource.FileResourceData);
-                using var reader = new StreamReader(memoryStream);
-                using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-                csvReader.Configuration.RegisterClassMap(new BulkSetAllocationCSVMap(_dbContext,
-                    parcelTypeDisplayName));
-                csvReader.Read();
-                csvReader.ReadHeader();
-                var headerNamesDuplicated =
-                    csvReader.Context.HeaderRecord.Where(x => !String.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
-                if (headerNamesDuplicated.Any())
-                {
-                    badRequest = BadRequest(new
-                    {
-                        validationMessage =
-                            $"The following header names appear more than once: {Join(", ", headerNamesDuplicated.OrderBy(x => x.Key).Select(x => x.Key))}"
-                    });
-                    records = null;
-                    return false;
-                }
-
-                records = csvReader.GetRecords<BulkSetAllocationCSV>().ToList();
-            }
-            catch (HeaderValidationException e)
-            {
-                var headerMessage = e.Message.Split('.')[0];
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
-                });
-                records = null;
-                return false;
-            }
-            catch (MissingFieldException e)
-            {
-                var headerMessage = e.Message.Split('.')[0];
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"{headerMessage}. Please check that the column name is not missing or misspelled."
-                });
-                records = null;
-                return false;
-            }
-            catch
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                       "There was an error parsing the CSV. Please ensure the file was formatted correctly."
-                });
-                records = null;
-                return false;
-            }
-
-            badRequest = null;
-            return true;
-        }
-
-        private bool ValidateBulkSetAllocationUpload(List<BulkSetAllocationCSV> records, string parcelAllocationTypeDisplayName, out ActionResult badRequest)
-        {
-            // no duplicate apns permitted
-            var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
-                .Select(x => x.Key).ToList();
-
-            if (duplicateAPNs.Any())
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        "The upload contained multiples rows with these APNs: " +
-                        Join(", ", duplicateAPNs)
-                });
-                return false;
-            }
-
-            // all parcel numbers must match
-            var allParcelNumbers = _dbContext.Parcels.Select(y => y.ParcelNumber);
-            var unmatchedRecords = records.Where(x => !allParcelNumbers.Contains(x.APN)).ToList();
-
-            if (unmatchedRecords.Any())
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        "The upload contained these APNs which did not match any record in the system: " +
-                        Join(", ", unmatchedRecords.Select(x => x.APN))
-                });
-                return false;
-            }
-
-            // no null allocation amounts
-            var nullAllocationQuantities = records.Where(x => x.AllocationQuantity == null).ToList();
-            if (nullAllocationQuantities.Any())
-            {
-                badRequest = BadRequest(new
-                {
-                    validationMessage =
-                        $"The following APNs had no {parcelAllocationTypeDisplayName} Quantity entered: " +
-                        Join(", ", nullAllocationQuantities.Select(x => x.APN))
-                });
-                return false;
-            }
-
-            badRequest = null;
-            return true;
         }
 
         [HttpGet("/parcels/parcelGDBCommonMappingToParcelStagingColumn")]
@@ -546,7 +311,7 @@ namespace Rio.API.Controllers
 
                     var accountNamesToInactivate = currentDifferencesForAccounts
                         .Where(x => (x.AccountAlreadyExists.Value &&
-                                     !IsNullOrEmpty(x.ExistingParcels) && IsNullOrEmpty(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && IsNullOrEmpty(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
+                                     !string.IsNullOrWhiteSpace(x.ExistingParcels) && string.IsNullOrWhiteSpace(x.UpdatedParcels)) || (!x.AccountAlreadyExists.Value && string.IsNullOrWhiteSpace(x.UpdatedParcels))).Select(x => x.AccountName).ToList();
                     Account.BulkInactivate(_dbContext, _dbContext.Accounts
                         .Where(x => accountNamesToInactivate.Contains(x.AccountName))
                         .ToList());
@@ -613,34 +378,5 @@ The updated Parcel data should be sent to the OpenET team, so that any new or mo
             smtpClient.Send(mailMessage);
         }
 
-    }
-
-    public class ParcelLayerUpdateDto
-    {
-        public string ParcelLayerNameInGDB { get; set; }
-        public int UploadedGDBID { get; set; }
-        public List<ParcelRequiredColumnAndMappingDto> ColumnMappings { get; set; }
-        public int YearChangesToTakeEffect { get; set; }
-    }
-
-    public class ParcelRequiredColumnAndMappingDto
-    {
-        public string RequiredColumnName { get; set; }
-        public string MappedColumnName { get; set; }
-    }
-
-    public sealed class BulkSetAllocationCSVMap : ClassMap<BulkSetAllocationCSV>
-    {
-        public BulkSetAllocationCSVMap()
-        {
-            Map(m => m.APN).Name("APN");
-            Map(m => m.AllocationQuantity).Name("Allocation Quantity");
-        }
-
-        public BulkSetAllocationCSVMap(RioDbContext dbContext, string parcelAllocationTypeDisplayName)
-        {
-            Map(m => m.APN).Name("APN");
-            Map(m => m.AllocationQuantity).Name(parcelAllocationTypeDisplayName + " Quantity");
-        }
     }
 }

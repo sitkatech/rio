@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Posting;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {

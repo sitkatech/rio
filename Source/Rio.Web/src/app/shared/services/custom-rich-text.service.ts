@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '.';
 import { Observable } from 'rxjs';
-import { CustomRichTextDto } from '../models/custom-rich-text-dto';
 import { HttpClient } from '@angular/common/http';
+import { CustomRichTextDto } from '../generated/model/custom-rich-text-dto';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -21,8 +21,8 @@ export class CustomRichTextService {
   }
 
   uploadFile(file: any): Observable<any> {
-    const apiHostName = environment.apiHostName
-    const route = `https://${apiHostName}/FileResource/CkEditorUpload`;
+    const programApiRoute = environment.mainAppApiUrl
+    const route = `${programApiRoute}/FileResource/CkEditorUpload`;
     var result = this.httpClient.post<any>(
       route,
       file, // Send the File Blob as the POST body.

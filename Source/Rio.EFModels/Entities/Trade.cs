@@ -3,6 +3,7 @@ using Rio.Models.DataTransferObjects.Offer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities
 {
@@ -64,11 +65,14 @@ namespace Rio.EFModels.Entities
         {
             return dbContext.Trades
                 .Include(x => x.Offers).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.Offers).ThenInclude(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
-                .Include(x => x.Offers).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
+                .Include(x => x.Offers).ThenInclude(x => x.WaterTransfers)
+                .ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Offers).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User).ThenInclude(x => x.Role)
                 .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
                 .AsNoTracking();
         }
 

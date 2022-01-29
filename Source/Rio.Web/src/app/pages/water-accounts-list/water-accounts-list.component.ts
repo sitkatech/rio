@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { UserDto } from 'src/app/shared/models';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountIncludeParcelsDto } from 'src/app/shared/generated/model/account-include-parcels-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
   selector: 'rio-water-accounts-list',
@@ -17,7 +16,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
   styleUrls: ['./water-accounts-list.component.scss']
 })
 export class WaterAccountsListComponent implements OnInit {
-  public watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
   public currentPage: number =  1;
 
@@ -36,13 +35,17 @@ export class WaterAccountsListComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.loadingAccounts = true;
-      this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
-        this.currentUserAccounts = userAccounts;
-        this.loadingAccounts = false;
-      });
+      this.updateCurrentUserAccounts();
+    });
+  }
+
+  public updateCurrentUserAccounts() {
+    this.userService.listAccountsIncludeParcelsByUserID(this.currentUser.UserID).subscribe(userAccounts => {
+      this.currentUserAccounts = userAccounts;
+      this.loadingAccounts = false;
     });
   }
 
@@ -64,6 +67,7 @@ export class WaterAccountsListComponent implements OnInit {
       this.authenticationService.refreshUserInfo(this.currentUser);
       this.alertService.pushAlert(new Alert(`Account #${this.accountToRemove.AccountNumber} (${this.accountToRemove.AccountName}) successfully removed from accounts you manage.`, AlertContext.Success));
       this.accountToRemove = null;
+      this.updateCurrentUserAccounts();
     })
   }
 }

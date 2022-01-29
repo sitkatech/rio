@@ -2,16 +2,16 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserDto } from 'src/app/shared/models/user/user-dto';
 import { forkJoin } from 'rxjs';
 import { AccountService } from 'src/app/services/account/account.service';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
-import { AccountDto } from 'src/app/shared/models/account/account-dto';
-import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
 import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { AccountDto } from 'src/app/shared/generated/model/account-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
 
 @Component({
   selector: 'rio-user-edit-accounts',
@@ -51,7 +51,7 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.allAccounts = new Array<AccountDto>();
-    this.watchAccountChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.watchAccountChangeSubscription = this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
 
       this.userID = parseInt(this.route.snapshot.paramMap.get("id"));
@@ -64,7 +64,6 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
         this.user = user;
         if (user.Role.RoleID == RoleEnum.Admin){
-          debugger;
           this.alertService.pushAlert(new Alert("Oops! Looks like you typed or copied and pasted a URL that doesn't quite work. That feature may have been removed or disabled."));
           this.router.navigate(["/"]);
         }
@@ -78,7 +77,7 @@ export class UserEditAccountsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.watchAccountChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
     this.cdr.detach();
   }
 

@@ -1,16 +1,15 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
-import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoleService } from 'src/app/services/role/role.service';
-import { UserDto } from 'src/app/shared/models';
-import { RoleDto } from 'src/app/shared/models/role/role-dto';
 import { forkJoin } from 'rxjs';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { UserUpdateDto } from 'src/app/shared/models/user/user-update-dto';
+import { RoleDto } from 'src/app/shared/generated/model/role-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserUpsertDto } from 'src/app/shared/generated/model/user-upsert-dto';
 
 
 @Component({
@@ -20,12 +19,12 @@ import { UserUpdateDto } from 'src/app/shared/models/user/user-update-dto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserEditComponent implements OnInit, OnDestroy {
-  private watchUserChangeSubscription: any;
+  
   private currentUser: UserDto;
 
   public userID: number;
   public user: UserDto;
-  public model: UserUpdateDto;
+  public model: UserUpsertDto;
   public roles: Array<RoleDto>;
   public isLoadingSubmit: boolean = false;
 
@@ -41,7 +40,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
 
       if (!this.authenticationService.isUserAnAdministrator(this.currentUser)) {
@@ -68,7 +67,7 @@ export class UserEditComponent implements OnInit, OnDestroy {
           return 0;
         });
 
-        this.model = new UserUpdateDto();
+        this.model = new UserUpsertDto();
         this.model.RoleID = user.Role.RoleID;
         this.model.ReceiveSupportEmails = user.ReceiveSupportEmails;
 
@@ -78,8 +77,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 

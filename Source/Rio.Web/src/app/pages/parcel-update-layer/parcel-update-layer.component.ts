@@ -8,13 +8,13 @@ import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { UserDto } from 'src/app/shared/models';
+import { ParcelLayerUpdateDto } from 'src/app/shared/generated/model/parcel-layer-update-dto';
+import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/parcel-update-expected-results-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
-import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/models/parcel-update-expected-results-dto';
-import { WaterYearDto } from 'src/app/shared/models/water-year-dto';
 import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
@@ -26,7 +26,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 export class ParcelUpdateLayerComponent implements OnInit {
 
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
-  private watchUserChangeSubscription: any;
+  
   public modalReference: NgbModalRef;
   public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
 
@@ -69,7 +69,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       forkJoin([
       this.parcelService.getParcelGDBCommonMappingToParcelStagingColumn(),
       this.waterYearService.getWaterYearForCurrentYearAndVariableYearsBack(1)]).subscribe(([model, waterYears]) => {
@@ -97,8 +97,8 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -256,15 +256,3 @@ export class ParcelRequiredColumnAndMappingDto {
     Object.assign(this, obj);
   }
 }
-
-export class ParcelLayerUpdateDto {
-  ParcelLayerNameInGDB: string;
-  UploadedGDBID: number;
-  ColumnMappings: Array<ParcelRequiredColumnAndMappingDto>;
-  YearChangesToTakeEffect: number;
-
-  constructor(obj?: any) {
-    Object.assign(this, obj);
-  }
-}
-

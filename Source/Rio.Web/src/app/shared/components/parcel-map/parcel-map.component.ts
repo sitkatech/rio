@@ -17,11 +17,10 @@ import {
 } from 'leaflet';
 import '../../../../../node_modules/leaflet.fullscreen/Control.FullScreen.js';
 import '../../../../../node_modules/leaflet-loading/src/Control.Loading.js';
-import { forkJoin } from 'rxjs';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { BoundingBoxDto } from '../../models/bounding-box-dto';
 import { ParcelDetailPopupComponent } from '../parcel-detail-popup/parcel-detail-popup.component';
 import { CustomCompileService } from '../../services/custom-compile.service';
+import { BoundingBoxDto } from '../../generated/model/bounding-box-dto';
 
 @Component({
     selector: 'parcel-map',

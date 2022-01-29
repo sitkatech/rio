@@ -1,7 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
-import { ParcelDto } from 'src/app/shared/models/parcel/parcel-dto';
-import { UserDto } from 'src/app/shared/models';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
 import { ColDef } from 'ag-grid-community';
@@ -14,23 +12,24 @@ import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-en
 import { UserService } from 'src/app/services/user/user.service';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { ParcelAllocationAndUsageDto } from 'src/app/shared/models/parcel/parcel-allocation-and-usage-dto';
 import { environment } from 'src/environments/environment';
-import { ParcelAllocationTypeDto } from 'src/app/shared/models/parcel-allocation-type-dto';
 import { forkJoin } from 'rxjs';
-import { ParcelAllocationTypeService } from 'src/app/services/parcel-allocation-type.service';
-import { TradeWithMostRecentOfferDto } from 'src/app/shared/models/offer/trade-with-most-recent-offer-dto';
-import { PostingDetailedDto } from 'src/app/shared/models/posting/posting-detailed-dto';
 import { MultiSeriesEntry, SeriesEntry } from 'src/app/shared/models/series-entry';
 import { AccountService } from 'src/app/services/account/account.service';
-import { WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
+import { WaterSupplyOverviewDto } from 'src/app/shared/models/water-usage-dto';
 import { WaterYearService } from 'src/app/services/water-year.service';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
-import { ParcelStatusEnum } from 'src/app/shared/models/enums/parcel-status-enum';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { WaterTypeService } from 'src/app/services/water-type.service';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { PostingDetailedDto } from 'src/app/shared/generated/model/posting-detailed-dto';
+import { TradeWithMostRecentOfferDto } from 'src/app/shared/generated/model/trade-with-most-recent-offer-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
+import { LandownerUsageReportDto } from 'src/app/shared/generated/model/landowner-usage-report-dto';
 
 @Component({
   selector: 'rio-manager-dashboard',
@@ -44,11 +43,11 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public modalReference: NgbModalRef;
 
 
-  private watchUserChangeSubscription: any;
+  
   public currentUser: UserDto;
 
   public parcels: Array<ParcelDto>;
-  public parcelAllocationAndUsages: Array<ParcelAllocationAndUsageDto>;
+  public landownerUsageReport: Array<LandownerUsageReportDto>;
 
   public tradesGridColumnDefs: ColDef[];
   public postingsGridColumnDefs: ColDef[];
@@ -59,11 +58,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public unitsShown: string = "ac-ft";
   public displayTradeGrid: boolean = false;
   public displayPostingsGrid: boolean = false;
-  public parcelAllocationTypes: ParcelAllocationTypeDto[];
-  public parcelAllocationTypesBatched: ParcelAllocationTypeDto[][];
-  private allocationColumnDefInsertIndex: number;
+  public waterTypes: WaterTypeDto[];
+  public waterTypesBatched: WaterTypeDto[][];
+  private waterTypeColDefsInsertIndex: number;
+  private tradeColDefsInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
-  public allocationLabel: string = "Annual Supply";
+  public waterSupplyLabel: string = "Annual Water Supply";
   postingActivity: PostingDetailedDto[];
 
   public months = ["Jan",
@@ -80,14 +80,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         "Dec"];
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return { name: y, value: 0 } });
-  private annualAllocationChartData: { Year: number, ChartData: MultiSeriesEntry }[];
+  private annualWaterSupplyChartData: { Year: number, ChartData: MultiSeriesEntry }[];
 
   public selectedParcelsLayerName: string = "<img src='./assets/main/images/parcel_blue.png' style='height:16px; margin-bottom:3px'> Account Parcels";
-  public waterUsageOverview: WaterAllocationOverviewDto;
-  public allocationChartRange: number[];
+  public waterUsageOverview: WaterSupplyOverviewDto;
+  public waterSupplyChartRange: number[];
   public historicCumulativeWaterUsage: MultiSeriesEntry;
   public historicAverageAnnualUsage: number;
-  public loadingParcelAllocationsAndUsages: boolean = false;
 
   public isPerformingAction: boolean = false;
 
@@ -98,7 +97,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
     private postingService: PostingService,
-    private parcelAllocationTypeService: ParcelAllocationTypeService,
+    private waterTypeService: WaterTypeService,
     private userService: UserService,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
@@ -109,7 +108,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     ) { }
 
   ngOnInit() {
-    this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+    this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.initializeTradeActivityGrid();
       this.initializePostingActivityGrid();
@@ -117,49 +116,37 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
       forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
         this.waterYearService.getWaterYears(),
-        this.parcelAllocationTypeService.getParcelAllocationTypes()
-      ).subscribe(([defaultYear, waterYears, parcelAllocationTypes]) => {
+        this.waterTypeService.getWaterTypes()
+      ).subscribe(([defaultYear, waterYears, waterTypes]) => {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
-        this.parcelAllocationTypes = parcelAllocationTypes;
-        this.parcelAllocationTypesBatched = this.getParcelAllocationTypesBatched();
+        this.waterTypes = waterTypes;
+        this.waterTypesBatched = this.getWaterTypesBatched();
 
         let decimalPipe = this.decimalPipe;
         const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
-        // define column defs for allocation types
-        this.parcelAllocationTypes.forEach(parcelAllocationType => {
-            newLandownerUsageReportGridColumnDefs.push({
-            headerName: parcelAllocationType.ParcelAllocationTypeName,
-            valueFormatter: function (params) { return decimalPipe.transform(params.value, "1.1-1"); },
-            sortable: true,
-            filter: true,
-            width: 130,
-            valueGetter: function (params) {
-              return params.data.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0.0;
-            }
-          })
+        // define column defs for water types
+        this.waterTypes.forEach(waterType => {
+          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+          newLandownerUsageReportGridColumnDefs.push(
+            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130)
+          )
         });
 
-        this.landownerUsageReportGridColumnDefs.splice(this.allocationColumnDefInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
+        this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
 
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
         });
-
-        // unlike in ParcelListComponent, the grid is not initialized until the following subscription resolves, because its container element is conditioned on parcels
-        // so, we don't need to manually reset the column defs as we did in that case.
-
-        this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
-          this.parcels = parcels;
-          this.updateAnnualData();
-        });
+        
+        this.updateAnnualData();
       });     
     });    
   }
 
   ngOnDestroy() {
-    this.watchUserChangeSubscription.unsubscribe();
-    this.authenticationService.dispose();
+    
+    
     this.cdr.detach();
   }
 
@@ -167,7 +154,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     return this.parcels !== undefined ? this.parcels.map(p => p.ParcelID) : [];
   }
 
-  initializeCharts(waterUsageOverview: WaterAllocationOverviewDto) {
+  initializeCharts(waterUsageOverview: WaterSupplyOverviewDto) {
     let values = [];
     for (const series of waterUsageOverview.Current) {
       for (const entry of series.CumulativeWaterUsage) {
@@ -175,32 +162,31 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }
     }
     
-    this.annualAllocationChartData = this.waterYears.map(x => {
-      const allocation = this.getAnnualAllocation(true);
-      values.push(allocation);
+    this.annualWaterSupplyChartData = this.waterYears.map(x => {
+      const waterSupply = this.getAnnualWaterSupply(true);
+      values.push(waterSupply);
 
       return {
         Year: x.Year,
         ChartData: {
-          name: this.allocationLabel,
-          series: this.months.map(y => { return { name: y, value: allocation } })
+          name: this.waterSupplyLabel,
+          series: this.months.map(y => { return { name: y, value: waterSupply } })
         }
       }
     });
 
-    this.allocationChartRange = [0, 1.2 * Math.max(...values)];
-    this.waterUsageOverview = waterUsageOverview;
+    this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
     this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
   }
 
-  public getAnnualAllocationSeries(): MultiSeriesEntry {
-    if (!this.annualAllocationChartData) {
+  public getAnnualWaterSupplySeries(): MultiSeriesEntry {
+    if (!this.annualWaterSupplyChartData) {
       return null;
     }
 
-    const annualAllocation = this.annualAllocationChartData.find(x => x.Year == this.waterYearToDisplay.Year);
-    return annualAllocation ? annualAllocation.ChartData : null;
+    const annualWaterSupply = this.annualWaterSupplyChartData.find(x => x.Year == this.waterYearToDisplay.Year);
+    return annualWaterSupply ? annualWaterSupply.ChartData : null;
   }
 
   public getCumulativeWaterUsageForWaterYear(): SeriesEntry[] {
@@ -313,8 +299,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       { headerName: 'Type', field: 'PostingTypeDisplayName', sortable: true, filter: true, width: 100 },
       { headerName: '# of Offers', field: 'NumberOfOffers', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
       { headerName: 'Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
-      { headerName: 'Initial Quantity (ac-ft)', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 160 },
-      { headerName: 'Available Quantity (ac-ft)', field: 'AvailableQuantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 180 },
+      this.utilityFunctionsService.createDecimalColumnDef('Initial Quantity (ac-ft)', 'Quantity', 160, 0),
+      this.utilityFunctionsService.createDecimalColumnDef('Available Quantity (ac-ft)', 'AvailableQuantity', 180, 0),
     ];
   }
 
@@ -345,42 +331,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 140
       },
-      {
-        headerName: 'Date', field: 'OfferDate', valueFormatter: function (params) {
-          return _datePipe.transform(params.value, "M/d/yyyy, h:mm a")
-        },
-        filterValueGetter: function (params: any) {
-          return _datePipe.transform(params.data.OfferDate, "M/d/yyyy");
-        },
-        filterParams: {
-          // provide comparator function
-          comparator: function (filterLocalDate, cellValue) {
-            var dateAsString = cellValue;
-            if (dateAsString == null) return -1;
-            var cellDate = Date.parse(dateAsString);
-            const filterLocalDateAtMidnight = filterLocalDate.getTime();
-            if (filterLocalDateAtMidnight == cellDate) {
-              return 0;
-            }
-            if (cellDate < filterLocalDateAtMidnight) {
-              return -1;
-            }
-            if (cellDate > filterLocalDateAtMidnight) {
-              return 1;
-            }
-          }
-        },
-        comparator: function (id1: any, id2: any) {
-          if (id1.value < id2.value) {
-            return -1;
-          }
-          if (id1.value > id2.value) {
-            return 1;
-          }
-          return 0;
-        },
-        sortable: true, filter: 'agDateColumnFilter', width: 140
-      },
+      this.utilityFunctionsService.createDateColumnDef('Date', 'OfferDate', 'M/d/yyyy, h:mm a', 140),
       {
         headerName: 'Status',
         valueGetter: function (params) {
@@ -401,9 +352,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Buyer Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Buyer.AccountID, LinkDisplay: params.data.Buyer.ShortAccountDisplayName };
+          return { LinkValue: params.data.Buyer.AccountNumber, LinkDisplay: params.data.Buyer.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/accounts/" },
+        cellRendererParams: { inRouterLink: "/landowner-dashboard/" },
         filterValueGetter: function (params: any) {
           return params.data.Buyer.ShortAccountDisplayName;
         },
@@ -422,9 +373,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       },
       {
         headerName: 'Seller Account', valueGetter: function (params: any) {
-          return { LinkValue: params.data.Seller.AccountID, LinkDisplay: params.data.Seller.ShortAccountDisplayName };
+          return { LinkValue: params.data.Seller.AccountNumber, LinkDisplay: params.data.Seller.ShortAccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/accounts/" },
+        cellRendererParams: { inRouterLink: "/landowner-dashboard/" },
         filterValueGetter: function (params: any) {
           return params.data.Seller.ShortAccountDisplayName;
         },
@@ -441,7 +392,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         },
         sortable: true, filter: true, width: 155
       },
-      { headerName: 'Quantity (ac-ft)', field: 'Quantity', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },
+      this.utilityFunctionsService.createDecimalColumnDef('Quantity (ac-ft)', 'Quantity', 140, 0),
       { headerName: 'Unit Price', field: 'Price', valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 100 },
       { headerName: 'Total Price', valueGetter: function (params) { return params.data.Price * params.data.Quantity; }, valueFormatter: function (params) { return _currencyPipe.transform(params.value, "USD"); }, sortable: true, filter: true, width: 130 },
       {
@@ -475,8 +426,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   private initializeLandownerUsageReportGrid(): void {
     let _decimalPipe = this.decimalPipe;
 
-    // N.B.: After the ParcelAllocationTypes are retrieved, their column defs will be built and inserted at this index...
-    this.allocationColumnDefInsertIndex = 3;
+    // N.B.: After the WaterTypes are retrieved, their column defs will be built and inserted at this index...
+    this.waterTypeColDefsInsertIndex = 3;
+    this.tradeColDefsInsertIndex = 4;
 
     this.landownerUsageReportGridColumnDefs = [
       {
@@ -501,39 +453,49 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
-      { headerName: 'Total Allocation (ac-ft)', field: 'Allocation', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 170 },
-      // N.B.: The columns for individual allocation types will be inserted here via a splice after the ParcelAllocationTypes are retrieved.
-      // 
-      { headerName: 'Purchased (ac-ft)', field: 'Purchased', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 140 },
-      { headerName: 'Sold (ac-ft)', field: 'Sold', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 100 },
-      { headerName: 'Total Supply (ac-ft)', field: 'TotalSupply', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-      { headerName: 'Total Usage (ac-ft)', field: 'UsageToDate', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 150 },
-      { headerName: 'Current Available (ac-ft)', field: 'CurrentAvailable', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 180 },
-      { headerName: 'Acres Managed', field: 'AcresManaged', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.1-1"); }, sortable: true, filter: true, width: 140 },
-      {
-        headerName: 'Most Recent Trade', valueGetter: function (params: any) {
-          return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
-        }, cellRendererFramework: LinkRendererComponent,
-        cellRendererParams: { inRouterLink: "/trades/" },
-        filterValueGetter: function (params: any) {
-          return params.data.LinkValue;
-        },
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 < link2) {
-            return -1;
-          }
-          if (link1 > link2) {
-            return 1;
-          }
-          return 0;
-        },
-        sortable: true, filter: true, width: 160
-      },
-      { headerName: '# of Trades', field: 'NumberOfTrades', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
-      { headerName: '# of Postings', field: 'NumberOfPostings', valueFormatter: function (params) { return _decimalPipe.transform(params.value, "1.0-0"); }, sortable: true, filter: true, width: 120 },
+      this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150),
+      // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
+      //
+      this.utilityFunctionsService.createDecimalColumnDef('Precipitation', 'Precipitation', 170),
+      this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
+      this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180),
+      this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
     ];
+
+    // insert trading-related colDefs if trading is enabled
+    if (this.allowTrading()) {
+      this.landownerUsageReportGridColumnDefs.push(
+        this.utilityFunctionsService.createDecimalColumnDef('# of Trades', 'NumberOfTrades', 120, 0),
+        this.utilityFunctionsService.createDecimalColumnDef('# of Postings', 'NumberOfPostings', 120, 0),
+        {
+          headerName: 'Most Recent Trade', valueGetter: function (params: any) {
+            return { LinkValue: params.data.MostRecentTradeNumber, LinkDisplay: params.data.MostRecentTradeNumber };
+          }, cellRendererFramework: LinkRendererComponent,
+          cellRendererParams: { inRouterLink: "/trades/" },
+          filterValueGetter: function (params: any) {
+            return params.data.LinkValue;
+          },
+          comparator: function (id1: any, id2: any) {
+            let link1 = id1.LinkDisplay;
+            let link2 = id2.LinkDisplay;
+            if (link1 < link2) {
+              return -1;
+            }
+            if (link1 > link2) {
+              return 1;
+            }
+            return 0;
+          },
+          sortable: true, filter: true, width: 160
+        }
+      );
+
+      const purchasedSoldColDefs: Array<ColDef> = [
+        this.utilityFunctionsService.createDecimalColumnDef('Purchased (ac-ft)', 'Purchased', 140),
+        this.utilityFunctionsService.createDecimalColumnDef('Sold (ac-ft)', 'Sold', 140)
+      ];
+      this.landownerUsageReportGridColumnDefs.splice(this.tradeColDefsInsertIndex, 0, ...purchasedSoldColDefs);
+    }
   }
 
   public updateAnnualData() {
@@ -541,32 +503,24 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     {
       return;
     }
-    
-    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels=>{
+    this.parcelService.getParcelsWithLandOwners(this.waterYearToDisplay.Year).subscribe(parcels => {
       this.parcels = parcels;
-    })
+    });
     if (this.landOwnerUsageReportGrid) {
-      this.landOwnerUsageReportGrid.api.showLoadingOverlay();
+      this.landOwnerUsageReportGrid?.api.showLoadingOverlay();
     }
-    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(result => {
+    this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(landownerUsageReport => {
+      this.landownerUsageReport = landownerUsageReport;
       if (!this.landOwnerUsageReportGrid) {
         return;
       }
-      
-      this.landOwnerUsageReportGrid.api.setRowData(result);
+      this.landOwnerUsageReportGrid.api.setRowData(landownerUsageReport);
       this.landOwnerUsageReportGrid.api.hideOverlay();
-    });
-    this.getTradesAndPostingsForYear();
-    this.loadingParcelAllocationsAndUsages = true;
-    forkJoin([
-      this.parcelService.getParcelAllocationAndUsagesByYear(this.waterYearToDisplay.Year),
-      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year)
-    ])
-    .subscribe(([result, waterUsageOverview]) => {
-      this.parcelAllocationAndUsages = result;
-      this.waterUsageOverview = waterUsageOverview;
-      this.loadingParcelAllocationsAndUsages = false;
-      this.initializeCharts(this.waterUsageOverview);
+      this.getTradesAndPostingsForYear();
+      this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
+        this.waterUsageOverview = waterUsageOverview;
+        this.initializeCharts(this.waterUsageOverview);
+      });
     });
   }
 
@@ -584,7 +538,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public exportLandOwnerUsageReportToCsv() {
-    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay + '.csv', null);
+    this.utilityFunctionsService.exportGridToCsv(this.landOwnerUsageReportGrid, 'landOwnerReportFor' + this.waterYearToDisplay.Year + '.csv', null);
   }
 
   public exportTradeActivityToCsv() {
@@ -610,60 +564,46 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.unitsShown = units;
   }
 
-  public getAnnualAllocation(skipConvertToUnitsShown?: boolean): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "Allocation", skipConvertToUnitsShown);
+  public getAnnualWaterSupply(skipConvertToUnitsShown?: boolean): number {
+    return this.getSumOfLandownerUsageReportValuesByField("TotalSupply", skipConvertToUnitsShown);
   }
 
   public getAnnualUsage(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "UsageToDate");
+    return this.getSumOfLandownerUsageReportValuesByField("UsageToDate");
   }
 
-  public getAnnualAllocationByAllocationType(parcelAllocationType: ParcelAllocationTypeDto): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocatedByAllocationType(parcelAllocations, parcelAllocationType);
-  }
-
-  public getAnnualProjectWater(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "ProjectWater");
-  }
-
-  public getAnnualReconciliation(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "Reconciliation");
-  }
-
-  public getAnnualNativeYield(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "NativeYield");
-  }
-
-  public getAnnualStoredWater(): number {
-    let parcelAllocations = this.parcelAllocationAndUsages;
-    return this.getTotalAcreFeetAllocated(parcelAllocations, "StoredWater");
-  }
-
-  public getTotalAcreFeetAllocated(parcelAllocations : Array<ParcelAllocationAndUsageDto>, field: string, skipConvertToUnitsShown?: boolean): number {
+  public getAnnualWaterSupplyByWaterType(waterType: WaterTypeDto): number {
     var result = 0;
-    if (parcelAllocations.length > 0) {
-      result = parcelAllocations.reduce(function (a, b) {
+    if (this.landownerUsageReport) {
+      result = this.landownerUsageReport.reduce(function (a, b) {
+        return (a + (b.WaterSupplyByWaterType ? (b.WaterSupplyByWaterType[waterType.WaterTypeID] ?? 0) : 0));
+      }, 0);
+    }
+    return this.getResultInUnitsShown(result);
+  }
+
+  public getPrecipWaterSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Precipitation");
+  }
+
+  public getPurchasedWaterSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Purchased");
+  }
+
+  public getSoldWaterSupply(): number {
+    return this.getSumOfLandownerUsageReportValuesByField("Sold");
+  }
+
+  public getSumOfLandownerUsageReportValuesByField(field: string, skipConvertToUnitsShown?: boolean): number {
+    
+    var result = 0;
+    if (this.landownerUsageReport) {
+      result = this.landownerUsageReport.reduce(function (a, b) {
         return (a + b[field]);
       }, 0);
     }
     if (skipConvertToUnitsShown) {
       return result;
-    }
-    return this.getResultInUnitsShown(result);
-  }
-
-  public getTotalAcreFeetAllocatedByAllocationType(parcelAllocations: Array<ParcelAllocationAndUsageDto>, parcelAllocationType: ParcelAllocationTypeDto): number{
-    var result = 0;
-    if (parcelAllocations.length > 0){
-      result = parcelAllocations.reduce(function(a,b) {
-        return (a + (b.Allocations ? b.Allocations[parcelAllocationType.ParcelAllocationTypeID] ?? 0 : 0))
-      }, 0);
     }
     return this.getResultInUnitsShown(result);
   }
@@ -679,19 +619,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public getTotalAPNAcreage(): number {
-    if (this.parcelAllocationAndUsages.length > 0) {
-      let result = this.parcelAllocationAndUsages.reduce(function (a, b) {
-        return (a + b.ParcelAreaInAcres);
-      }, 0);
-      return result;
-    }
-    return 0;
+    return this.getSumOfLandownerUsageReportValuesByField("AcresManaged", true);
   }
 
-  // batch the parcel allocation types into twos for the district wide statistics panel
-  public getParcelAllocationTypesBatched(): ParcelAllocationTypeDto[][]{
+  // batch the water types into twos for the district wide statistics panel
+  public getWaterTypesBatched(): WaterTypeDto[][]{
     const batched = [];
-    let copy = [...this.parcelAllocationTypes];
+    let copy = [...this.waterTypes];
     const batches = Math.ceil(copy.length / 2);
     
     for (let i = 0; i< batches; i++){

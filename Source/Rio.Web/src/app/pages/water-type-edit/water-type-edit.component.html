@@ -1,0 +1,91 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/manager-dashboard">Manager Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Configure Water Types
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4">
+    <div class="row">
+        <div class="col">
+            <h2>
+                Configure Water Types
+            </h2>
+        </div>
+    </div>
+    <app-alert-display></app-alert-display>
+    <div class="row mt-2">
+        <div class="col">
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+        </div>
+    </div>
+    <form (ngSubmit)="onSubmit(editWaterTypesForm)" #editWaterTypesForm="ngForm" class="mt-4">
+        <ng-container *ngFor="let waterType of waterTypes; let i = index; let last = last;">
+            <div class="row pt-2 pb-4">
+                <div class="col-sm-1 text-center">
+                    <i class="fas fa-trash deleteWaterType mt-4" title="Delete water type" (click)="deleteWaterType(waterType)"></i>
+                </div>
+                <div class="col-sm-10">
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <label class="font-weight-bold">Name</label>
+                            <input type="text" class="form-control" [(ngModel)]="waterType.WaterTypeName" name="WaterTypeName[{{i}}]" required />
+                        </div>
+                        <div class="col-sm-3">
+                            <label class="font-weight-bold">Sort Order</label>
+                            <input type="number" step="1" class="form-control" [(ngModel)]="waterType.SortOrder" name="WaterTypeSortOrder[{{i}}]" required />
+                        </div>
+                        <div class="col-sm-12 mt-3">
+                            <label class="font-weight-bold">Description</label>
+                            <textarea class="form-control" rows="4" [(ngModel)]="waterType.WaterTypeDefinition" name="WaterTypeDefinition[{{i}}]"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr *ngIf="!last">
+        </ng-container>
+        <div class="row mt-5 mb-5">
+            <div class="col-sm">
+                <button type="button" class="btn btn-rio" (click)="addWaterType()">Add Water Type</button>
+            </div>
+            <div class="col-sm text-right">
+                <button type="submit" class="btn btn-rio" [disabled]="!editWaterTypesForm.form.valid || isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Save
+                </button>
+                <button type="button" class="btn btn-secondary ml-2" (click)="resetWaterTypes()">Reset</button>
+                <a class="btn btn-secondary ml-2" routerLink="/manager-dashboard">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #deleteWarningModalContent let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="deleteWarningModalTitle">Warning</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            You are about to modify the Water Types.
+            Any water transactions associated with a deleted Water Type will be permanently removed from the platform.
+            Any Water Types that are added will need to have their water supply set via one of the Create Water Transactions forms.
+            These actions are permanent.
+        </p>
+        <p>Are you sure you wish to proceed?</p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-rio btn-sm" (click)="submitImpl()">
+                Continue</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>

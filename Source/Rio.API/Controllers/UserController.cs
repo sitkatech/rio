@@ -6,7 +6,6 @@ using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Parcel;
 using Rio.Models.DataTransferObjects.User;
 using System;
 using System.Collections.Generic;
@@ -307,7 +306,7 @@ namespace Rio.API.Controllers
 
         [HttpPut("/user/add-accounts-via-verification-key")]
         [UserViewFeature]
-        public ActionResult<UserDto> AddAccountsForCurrentUserUsingAccountVerificationKeys([FromBody] UserEditAcountsDto userEditAccountsDto)
+        public ActionResult<UserDto> AddAccountsForCurrentUserUsingAccountVerificationKeys([FromBody] UserEditAccountsDto userEditAccountsDto)
         {
             var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
@@ -368,7 +367,7 @@ namespace Rio.API.Controllers
 
         [HttpPut("/users/{userID}/edit-accounts")]
         [UserManageFeature]
-        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAcountsDto userEditAccountsDto)
+        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAccountsDto userEditAccountsDto)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
 
@@ -407,7 +406,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("users/{userID}/parcels/{year}")]
         [UserViewFeature]
-        public ActionResult<List<ParcelDto>> ListParcelsByAccountID([FromRoute] int userID, [FromRoute] int year)
+        public ActionResult<List<ParcelSimpleDto>> ListParcelsByAccountID([FromRoute] int userID, [FromRoute] int year)
         {
             var parcelDtos = Parcel.ListByUserID(_dbContext, userID, year);
             if (parcelDtos == null)
@@ -422,20 +421,18 @@ namespace Rio.API.Controllers
         [ManagerDashboardFeature]
         public ActionResult<List<LandownerUsageReportDto>> GetLandOwnerUsageReport([FromRoute] int year)
         {
-            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year);
+            var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year).ToList();
 
-            var landownerAllocationBreakdownForYear = ParcelAllocation.GetLandownerAllocationBreakdownForYear(_dbContext, year);
+            var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
-            var landownerUsageReportDtosWithAllocation = landownerUsageReportDtos.Join(
-                landownerAllocationBreakdownForYear, x => x.AccountID, y => y.AccountID,
-                (x, y) =>
-                {
-                    x.Allocations = y.Allocations;
-                    return x;
-                });
+            foreach (var landownerUsageReportDto in landownerUsageReportDtos)
+            {
+                var accountWaterSupplyBreakdown = landownerWaterSupplyBreakdownForYear
+                    .SingleOrDefault(x => x.AccountID == landownerUsageReportDto.AccountID);
+                landownerUsageReportDto.WaterSupplyByWaterType = accountWaterSupplyBreakdown?.WaterSupplyByWaterType;
+            } 
 
-
-            return Ok(landownerUsageReportDtosWithAllocation);
+            return Ok(landownerUsageReportDtos);
         }
 
         private List<MailMessage> GenerateAddedAccountsEmail(string rioUrl, UserDto updatedUser, IEnumerable<AccountDto> addedAccounts)
@@ -447,7 +444,7 @@ namespace Rio.API.Controllers
                 messageBody += $"{account.AccountDisplayName} <br/><br/>";
             }
 
-            messageBody += $"You can view parcels associated with these accounts and the water allocation and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
+            messageBody += $"You can view parcels associated with these accounts and the water supply and usage of those parcels by going to your <a href='{rioUrl}/water-accounts'>Water Accounts List</a> and navigating to the appropriate account.";
 
             var mailTo = updatedUser;
             var mailMessage = new MailMessage

@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Account;
 using Rio.Models.DataTransferObjects.WaterTransfer;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {
@@ -23,9 +24,9 @@ namespace Rio.API.Controllers
 
         [HttpGet("water-transfers/{waterTransferID}")]
         [OfferManageFeature]
-        public ActionResult<WaterTransferDto> GetByWaterTransferID([FromRoute] int waterTransferID)
+        public ActionResult<WaterTransferDetailedDto> GetByWaterTransferID([FromRoute] int waterTransferID)
         {
-            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            var waterTransferDto = WaterTransfer.GetByWaterTransferIDAsWaterTransferDetailedDto(_dbContext, waterTransferID);
             return RequireNotNullThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID);
         }
 
@@ -44,14 +45,14 @@ namespace Rio.API.Controllers
 
         [HttpPost("water-transfers/{waterTransferID}/register")]
         [OfferManageFeature]
-        public ActionResult<WaterTransferDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public ActionResult<WaterTransferDetailedDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationUpsertDto)
         {
             if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
 
-            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            var waterTransferDto = WaterTransfer.GetByWaterTransferIDAsWaterTransferDetailedDto(_dbContext, waterTransferID);
             if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
             {
                 return actionResult;
@@ -59,7 +60,7 @@ namespace Rio.API.Controllers
 
             var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
 
-            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationDto, waterTransferDto, currentUser);
+            var validationMessages = WaterTransfer.ValidateConfirmTransfer(waterTransferRegistrationUpsertDto, waterTransferDto, currentUser);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
             
             if (!ModelState.IsValid)
@@ -67,9 +68,16 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationDto, WaterTransferRegistrationStatusEnum.Registered);
+            waterTransferDto = WaterTransfer.ChangeWaterRegistrationStatus(_dbContext, waterTransferID, waterTransferRegistrationUpsertDto, WaterTransferRegistrationStatusEnum.Registered);
             if (waterTransferDto.BuyerRegistration.IsRegistered && waterTransferDto.SellerRegistration.IsRegistered)
             {
+                // create a parcel ledger entry since the water transfer has been confirmed by both parties
+                var tradePurchaseParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, true, waterTransferDto.BuyerRegistration);
+                var tradeSaleParcelLedgers = CreateParcelLedgersFromWaterTransferRegistration(waterTransferDto, false, waterTransferDto.SellerRegistration);
+                _dbContext.ParcelLedgers.AddRange(tradePurchaseParcelLedgers);
+                _dbContext.ParcelLedgers.AddRange(tradeSaleParcelLedgers);
+                _dbContext.SaveChanges();
+
                 var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
                 var mailMessages = GenerateConfirmTransferEmail(_rioConfiguration.WEB_URL, waterTransferDto, smtpClient);
                 foreach (var mailMessage in mailMessages)
@@ -81,16 +89,36 @@ namespace Rio.API.Controllers
             return Ok(waterTransferDto);
         }
 
+        private IEnumerable<ParcelLedger> CreateParcelLedgersFromWaterTransferRegistration(WaterTransferDetailedDto waterTransferDto, bool isPurchase, WaterTransferRegistrationDto waterTransferRegistrationSimpleDto)
+        {
+            var waterTransferRegistrationParcelDtos =
+                WaterTransferRegistrationParcel.ListByWaterTransferRegistrationID(_dbContext,
+                    waterTransferRegistrationSimpleDto.WaterTransferRegistrationID);
+            var parcelLedgers = waterTransferRegistrationParcelDtos.Select(waterTransferRegistrationParcelDto =>
+                    new ParcelLedger
+                    {
+                        ParcelID = waterTransferRegistrationParcelDto.Parcel.ParcelID,
+                        TransactionAmount = isPurchase ? waterTransferRegistrationParcelDto.AcreFeetTransferred : -waterTransferRegistrationParcelDto.AcreFeetTransferred,
+                        TransactionTypeID = (int) TransactionTypeEnum.Supply,
+                        ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Trade,
+                        TransactionDate = DateTime.UtcNow,
+                        EffectiveDate = waterTransferDto.TransferDate,
+                        TransactionDescription = $"Water from Trade {waterTransferDto.TradeNumber} has been {(isPurchase ? "deposited into" : "withdrawn from")} this water account"
+                    })
+                .ToList();
+            return parcelLedgers;
+        }
+
         [HttpPost("/water-transfers/{waterTransferID}/cancel")]
         [OfferManageFeature]
-        public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
             if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
 
-            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
+            var waterTransferDto = WaterTransfer.GetByWaterTransferIDAsWaterTransferDetailedDto(_dbContext, waterTransferID);
             if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
             {
                 return actionResult;
@@ -122,7 +150,7 @@ namespace Rio.API.Controllers
 
         [HttpGet("water-transfers/{waterTransferID}/parcels/{userID}")]
         [OfferManageFeature]
-        public ActionResult<List<WaterTransferRegistrationParcelDto>> GetParcelsForWaterTransferID([FromRoute] int waterTransferID, [FromRoute] int userID)
+        public ActionResult<List<WaterTransferRegistrationParcelUpsertDto>> GetParcelsForWaterTransferID([FromRoute] int waterTransferID, [FromRoute] int userID)
         {
             var waterTransferRegistrationParcelDtos = WaterTransferRegistrationParcel.ListByWaterTransferIDAndAccountID(_dbContext, waterTransferID, userID);
             if (waterTransferRegistrationParcelDtos == null)
@@ -135,19 +163,19 @@ namespace Rio.API.Controllers
 
         [HttpPost("water-transfers/{waterTransferID}/selectParcels")]
         [OfferManageFeature]
-        public ActionResult<List<WaterTransferDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationDto waterTransferRegistrationDto)
+        public ActionResult<List<WaterTransferDetailedDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
             if (!_rioConfiguration.ALLOW_TRADING)
             {
                 return BadRequest();
             }
 
-            var waterTransferDto = WaterTransfer.GetByWaterTransferID(_dbContext, waterTransferID);
-            if (ThrowNotFound(waterTransferDto, "Water Transfer", waterTransferID, out var actionResult))
+            var waterTransferDetailedDto = WaterTransfer.GetByWaterTransferIDAsWaterTransferDetailedDto(_dbContext, waterTransferID);
+            if (ThrowNotFound(waterTransferDetailedDto, "Water Transfer", waterTransferID, out var actionResult))
             {
                 return actionResult;
             }
-            var validationMessages = WaterTransferRegistrationParcel.ValidateParcels(waterTransferRegistrationDto.WaterTransferRegistrationParcels, waterTransferDto);
+            var validationMessages = WaterTransferRegistrationParcel.ValidateParcels(waterTransferRegistrationDto.WaterTransferRegistrationParcels, waterTransferDetailedDto);
             validationMessages.ForEach(vm => {ModelState.AddModelError(vm.Type, vm.Message);});
 
             if (!ModelState.IsValid)
@@ -168,20 +196,20 @@ namespace Rio.API.Controllers
             smtpClient.Send(mailMessage);
         }
 
-        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDto waterTransfer,
+        private static List<MailMessage> GenerateConfirmTransferEmail(string rioUrl, WaterTransferDetailedDto waterTransfer,
             SitkaSmtpClientService smtpClient)
         {
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
             var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
-            var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water allocation has been updated.
+            var messageBody = $@"The buyer and seller have both registered this transaction, and your annual water supply has been updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x=>x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water supply, which has been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);
@@ -201,20 +229,20 @@ namespace Rio.API.Controllers
             }
             return mailMessages;
         }
-        private static List<MailMessage> GenerateCancelTransferEmail(string rioUrl, WaterTransferDto waterTransfer,
+        private static List<MailMessage> GenerateCancelTransferEmail(string rioUrl, WaterTransferDetailedDto waterTransfer,
             SitkaSmtpClientService smtpClient)
         {
             var receivingAccount = waterTransfer.BuyerRegistration.Account;
             var transferringAccount = waterTransfer.SellerRegistration.Account;
             var mailMessages = new List<MailMessage>();
             var stringToReplace = "REPLACE_WITH_ACCOUNT_NUMBER";
-            var messageBody = $@"This transaction has been canceled, and your annual water allocation will not be updated.
+            var messageBody = $@"This transaction has been canceled, and your annual water supply will not be updated.
 <ul>
     <li><strong>Buyer:</strong> {receivingAccount.AccountName} ({string.Join(", ", receivingAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Seller:</strong> {transferringAccount.AccountName} ({string.Join(", ", transferringAccount.Users.Select(x => x.Email))})</li>
     <li><strong>Quantity:</strong> {waterTransfer.AcreFeetTransferred} acre-feet</li>
 </ul>
-<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water allocation, which has not been updated to reflect this trade.
+<a href=""{rioUrl}/landowner-dashboard/{stringToReplace}"">View your Landowner Dashboard</a> to see your current water supply, which has not been updated to reflect this trade.
 <br /><br />
 {smtpClient.GetDefaultEmailSignature()}";
             var mailTos = new List<AccountDto> { receivingAccount, transferringAccount }.SelectMany(x=>x.Users);

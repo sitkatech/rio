@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { UserDto } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { WaterTransferDto } from 'src/app/shared/models/water-transfer-dto';
-import { WaterUsageDto, WaterAllocationOverviewDto } from 'src/app/shared/models/water-usage-dto';
-import { MultiSeriesEntry, SeriesEntry } from "src/app/shared/models/series-entry";
-import { ParcelAllocationDto } from 'src/app/shared/models/parcel/parcel-allocation-dto';
-import { ParcelMonthlyEvapotranspirationDto } from 'src/app/shared/models/parcel/parcel-monthly-evapotranspiration-dto';
-import { AccountSimpleDto } from 'src/app/shared/models/account/account-simple-dto';
-import { UserCreateDto } from 'src/app/shared/models/user/user-create-dto';
-import { UnassignedUserReportDto } from 'src/app/shared/models/user/unassigned-user-report-dto';
-import { UserDetailedDto } from 'src/app/shared/models/user/user-detailed-dto';
-import { UserEditAccountsDto } from 'src/app/shared/models/user/user-edit-accounts-dto';
-import { AccountIncludeParcelsDto } from 'src/app/shared/models/account/account-include-parcels-dto';
-import { UserPartnerInviteDto } from 'src/app/shared/models/user/user-partner-invite-dto';
+import { AccountIncludeParcelsDto } from 'src/app/shared/generated/model/account-include-parcels-dto';
+import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
+import { LandownerUsageReportDto } from 'src/app/shared/generated/model/landowner-usage-report-dto';
+import { UnassignedUserReportDto } from 'src/app/shared/generated/model/unassigned-user-report-dto';
+import { UserCreateDto } from 'src/app/shared/generated/model/user-create-dto';
+import { UserDetailedDto } from 'src/app/shared/generated/model/user-detailed-dto';
+import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { UserPartnerInviteDto } from 'src/app/shared/generated/model/user-partner-invite-dto';
+import { UserUpsertDto } from 'src/app/shared/generated/model/user-upsert-dto';
+import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -66,9 +63,9 @@ export class UserService {
         return this.apiService.getFromApi(route);
     }
 
-    updateUser(userID: number, userUpdateDto: any): Observable<UserDto> {
+    updateUser(userID: number, userUpsertDto: UserUpsertDto): Observable<UserDto> {
         let route = `/users/${userID}`;
-        return this.apiService.putToApi(route, userUpdateDto);
+        return this.apiService.putToApi(route, userUpsertDto);
     }
 
     addAccountsToCurrentUser(userEditAccountsDto: UserEditAccountsDto) {
@@ -86,7 +83,7 @@ export class UserService {
         return this.apiService.deleteToApi(route);
     }
 
-    getLandownerUsageReportByYear(year: number): Observable<UserDto[]> {
+    getLandownerUsageReportByYear(year: number): Observable<LandownerUsageReportDto[]> {
         let route = `/landowner-usage-report/${year}`;
         return this.apiService.getFromApi(route);
     }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
-import { OfferDto } from '../shared/models/offer/offer-dto';
-import { OfferUpsertDto } from '../shared/models/offer/offer-upsert-dto';
+import { OfferDto } from '../shared/generated/model/offer-dto';
+import { OfferUpsertDto } from '../shared/generated/model/offer-upsert-dto';
 
 @Injectable({
     providedIn: 'root'

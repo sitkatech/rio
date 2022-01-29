@@ -81,6 +81,13 @@ namespace Rio.API
             services.Configure<RioConfiguration>(Configuration);
             var rioConfiguration = Configuration.Get<RioConfiguration>();
 
+            services.AddHttpClient<CimisService>(c =>
+            {
+                c.BaseAddress = new Uri(rioConfiguration.CimisApiUrl);
+                c.Timeout = TimeSpan.FromMinutes(60);
+            });
+
+
             var keystoneHost = rioConfiguration.KEYSTONE_HOST;
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -155,6 +162,17 @@ namespace Rio.API
                 }));
 
             services.AddControllers();
+
+
+            #region Swagger
+            // Base swagger services
+            services.AddSwaggerGen(options =>
+            {
+                // extra options here if you wanted
+            });
+            services.AddSwaggerGenNewtonsoftSupport();
+            #endregion
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -187,6 +205,18 @@ namespace Rio.API
             app.UseAuthorization();
 
             app.Use(TelemetryHelper.PostBodyTelemetryMiddleware);
+
+            #region Swagger
+            // Register swagger middleware and enable the swagger UI which will be 
+            // accessible at https://<apihostname>/swagger
+            // NOTE: There is no auth on these endpoints out of the box.
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "V1");
+            });
+            #endregion
+
 
             app.UseEndpoints(endpoints =>
             {

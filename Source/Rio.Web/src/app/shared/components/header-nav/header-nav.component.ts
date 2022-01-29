@@ -1,19 +1,18 @@
 import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { CookieStorageService } from '../../services/cookies/cookie-storage.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDto } from '../../models';
-import { TradeWithMostRecentOfferDto } from '../../models/offer/trade-with-most-recent-offer-dto';
 import { TradeService } from 'src/app/services/trade.service';
 import { OfferStatusEnum } from '../../models/enums/offer-status-enum';
 import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
-import { AccountSimpleDto } from '../../models/account/account-simple-dto';
 import { UserService } from 'src/app/services/user/user.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';
 import { environment } from 'src/environments/environment';
 import { AlertContext } from '../../models/enums/alert-context.enum';
-import { AccountDto } from '../../models/account/account-dto';
 import { Router } from '@angular/router';
+import { AccountSimpleDto } from '../../generated/model/account-simple-dto';
+import { TradeWithMostRecentOfferDto } from '../../generated/model/trade-with-most-recent-offer-dto';
+import { UserDto } from '../../generated/model/user-dto';
 
 @Component({
     selector: 'header-nav',
@@ -22,7 +21,7 @@ import { Router } from '@angular/router';
 })
 
 export class HeaderNavComponent implements OnInit, OnDestroy {
-    private watchUserChangeSubscription: any;
+    
     private currentUser: UserDto;
     public trades: Array<TradeWithMostRecentOfferDto>;
 
@@ -45,7 +44,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.watchUserChangeSubscription = this.authenticationService.currentUserSetObservable.subscribe(currentUser => {
+        this.authenticationService.getCurrentUser().subscribe(currentUser => {
             this.currentUser = currentUser;
 
             if (currentUser && this.authenticationService.isCurrentUserALandOwnerOrDemoUser() && environment.allowTrading) {
@@ -71,8 +70,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.watchUserChangeSubscription.unsubscribe();
-        this.authenticationService.dispose();
+        
+        
         this.cdr.detach();
     }
 
@@ -110,6 +109,7 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public login(): void {
+        this.authenticationService.setAuthRedirectUrl(this.router.url);
         this.authenticationService.login();
     }
 

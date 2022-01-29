@@ -1,6 +1,6 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer } from 'leaflet';
-import { BoundingBoxDto } from '../../models/bounding-box-dto';
+import { BoundingBoxDto } from '../../generated/model/bounding-box-dto';
 import { CustomCompileService } from '../../services/custom-compile.service';
 import { WfsService } from "../../services/wfs.service";
 

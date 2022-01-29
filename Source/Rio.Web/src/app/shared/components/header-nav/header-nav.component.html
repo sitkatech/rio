@@ -80,10 +80,10 @@
                                         View all Parcels
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <a *ngIf="isAdministrator()" routerLink="/parcels/set-water-allocation" class="dropdown-item">
-                                        Set Water Allocation
+                                    <a *ngIf="isAdministrator()" routerLink="/parcels/create-water-transactions" class="dropdown-item">
+                                        Create Water Transactions
                                     </a>
-                                    <a *ngIf="isAdministrator()" routerLink="/parcel-allocation-types/edit" class="dropdown-item">
+                                    <a *ngIf="isAdministrator()" routerLink="/water-types/edit" class="dropdown-item">
                                         Configure Water Types
                                     </a>
                                     <a *ngIf="isAdministratorOrDemoUser()" routerLink="/openet-integration" class="dropdown-item">
@@ -98,7 +98,7 @@
                                     </a>
                                 </div>
                             </li>
-                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && allowTrading()">
+                            <li class="nav-item dropdown" routerLinkActive="active" *ngIf="isAuthenticated() && !isUnassigned() && allowTrading()">
                                 <a href="#" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">
                                     Trade

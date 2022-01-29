@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FontAwesomeIconLinkRendererComponent } from './fontawesome-icon-link-renderer.component';
 
@@ -6,7 +6,7 @@ describe('LandownerDashboardLinkRendererComponent', () => {
   let component: FontAwesomeIconLinkRendererComponent;
   let fixture: ComponentFixture<FontAwesomeIconLinkRendererComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FontAwesomeIconLinkRendererComponent ]
     })

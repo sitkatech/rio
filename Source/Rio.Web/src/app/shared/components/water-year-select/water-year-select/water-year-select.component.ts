@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-import { WaterYearDto } from "src/app/shared/models/water-year-dto";
+import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 
 declare var $: any
 

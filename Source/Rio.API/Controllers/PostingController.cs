@@ -3,10 +3,10 @@ using Microsoft.Extensions.Logging;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects.Offer;
 using Rio.Models.DataTransferObjects.Posting;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Controllers
 {

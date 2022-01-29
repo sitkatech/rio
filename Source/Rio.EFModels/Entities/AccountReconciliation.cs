@@ -1,23 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
-using Rio.Models.DataTransferObjects.Account;
-using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
 {
     public partial class AccountReconciliation
     {
-        public static List<AccountReconciliationDto> List(RioDbContext dbContext)
+        public static List<AccountReconciliationCustomDto> List(RioDbContext dbContext)
         {
             return dbContext.AccountReconciliations
                 .Include(x => x.Parcel)
                 .Include(x => x.Account)
                 .ToList()
                 .GroupBy(x => x.ParcelID)
-                .Select(x => new AccountReconciliationDto()
+                .Select(x => new AccountReconciliationCustomDto()
                 {
                     Parcel = x.First().Parcel.AsSimpleDto(),
                     LastKnownOwner = vParcelOwnership.GetLastOwnerOfParcelByParcelID(dbContext, x.Key),
