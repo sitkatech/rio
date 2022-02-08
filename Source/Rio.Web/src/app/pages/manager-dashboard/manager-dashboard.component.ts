@@ -456,7 +456,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150),
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
-      this.utilityFunctionsService.createDecimalColumnDef('Precipitation', 'Precipitation', 170),
       this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
       this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180),
       this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
@@ -580,10 +579,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }, 0);
     }
     return this.getResultInUnitsShown(result);
-  }
-
-  public getPrecipWaterSupply(): number {
-    return this.getSumOfLandownerUsageReportValuesByField("Precipitation");
   }
 
   public getPurchasedWaterSupply(): number {

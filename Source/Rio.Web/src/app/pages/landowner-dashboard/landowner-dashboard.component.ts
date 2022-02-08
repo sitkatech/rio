@@ -389,11 +389,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
   }
 
-  public getPrecipWaterSupply(): number {
-    let parcelLedgers = this.getWaterSupplyForWaterYear(this.waterYearToDisplay.Year).filter(pa => pa.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
-    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers) ?? 0;
-  }
-
   public getTotalWaterSupplyForParcelAndYear(parcelID: number, year: number): string {
     var parcelLedgersForYear = this.getWaterSupplyForWaterYear(year);
     if (parcelLedgersForYear.length > 0) {
