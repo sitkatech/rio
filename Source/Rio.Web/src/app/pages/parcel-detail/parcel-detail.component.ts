@@ -169,16 +169,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
   }
 
-  public getPrecipWaterSupplyForYear(year: number): string {
-    var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
-      x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS);
-    
-      if (parcelLedgers.length === 0) {
-      return "-";
-    }
-    return this.getTotalTransactionAmountForParcelLedgers(parcelLedgers).toFixed(1);
-  }
-
   public getPurchasedWaterSupplyForYear(year: number): string {
     var parcelLedgers = this.parcelLedgers.filter(x => x.WaterYear === year && 
       x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Trade &&

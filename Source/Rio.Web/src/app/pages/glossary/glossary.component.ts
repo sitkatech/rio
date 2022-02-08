@@ -11,7 +11,6 @@ import { environment } from 'src/environments/environment';
 })
 export class GlossaryComponent implements OnInit {
   waterTypes: WaterTypeDto[];
-  public precipCustomRichTextTypeID = CustomRichTextType.PrecipitationDescription;
   public purchasedCustomRichTextTypeID = CustomRichTextType.PurchasedDescription;
   public soldCustomRichTextTypeID = CustomRichTextType.SoldDescription;
 
