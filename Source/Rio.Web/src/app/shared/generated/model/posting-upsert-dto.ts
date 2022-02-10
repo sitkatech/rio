@@ -11,7 +11,7 @@
  */
 
 export class PostingUpsertDto { 
-    PostingTypeID?: number;
+    PostingTypeID: number;
     Quantity: number;
     Price: number;
     PostingDescription?: string;

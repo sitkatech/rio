@@ -17,7 +17,7 @@ begin
 	drop table if exists #npl
 	drop table if exists #existingParcelLedgerPrecipData
 
-	select p.ParcelID, p.ParcelAreaInAcres, et.DateMeasured as EffectiveDate, Round(p.ParcelAreaInAcres * et.Precipitation, 4) as TransactionAmount
+	select p.ParcelID, p.ParcelAreaInAcres, et.DateMeasured as EffectiveDate, Round(p.ParcelAreaInAcres * et.Precipitation / 12.0, 4) as TransactionAmount
 	into #npl
 	from dbo.Parcel p
 	cross join dbo.CimisPrecipitationDatum et

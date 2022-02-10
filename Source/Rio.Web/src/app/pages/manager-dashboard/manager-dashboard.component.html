@@ -68,15 +68,7 @@
                   {{getAnnualWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
-            </ng-container>
-            <tr>
-              <th class="text-sm-right font-weight-normal">
-                Precipitation
-              </th>
-              <td class="text-sm-right">
-                {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr> 
+            </ng-container> 
             <ng-container *ngIf="allowTrading()">
               <tr>
                 <th class="text-sm-right font-weight-normal">
