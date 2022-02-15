@@ -216,16 +216,16 @@
       </div>
       <div class="col-sm-12 mt-5 pt-4 mb-5">
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-md-6">
             <div class="h3">Account Activity</div>
           </div>
-          <div class="col-sm-6 text-sm-right mb-2">
+          <div class="col-md-6 text-md-right mb-2">
             <div class="btn-group btn-group-toggle">
-              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': !displayAccountActivityDetailed }">
-                <input type="radio" name="activity-view" id="summary" [(ngModel)]="displayAccountActivityDetailed" [value]="false"> Summary
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:180px;" [ngClass]="{ 'active': !displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="summary" [(ngModel)]="displayAccountActivityDetailed" [value]="false">Recent Transactions
               </label>
-              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': displayAccountActivityDetailed }">
-                <input type="radio" name="activity-view" id="detailed" [(ngModel)]="displayAccountActivityDetailed" [value]="true"> Detail
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:180px;" [ngClass]="{ 'active': displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="detailed" [(ngModel)]="displayAccountActivityDetailed" [value]="true">All Transaction Details
               </label>
             </div>
           </div>
