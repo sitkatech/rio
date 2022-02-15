@@ -18,6 +18,7 @@ namespace Rio.EFModels.Entities
             AccountParcelWaterYears = new HashSet<AccountParcelWaterYear>();
             AccountReconciliations = new HashSet<AccountReconciliation>();
             ParcelLedgers = new HashSet<ParcelLedger>();
+            ParcelTags = new HashSet<ParcelTag>();
             WaterTransferRegistrationParcels = new HashSet<WaterTransferRegistrationParcel>();
         }
 
@@ -44,6 +45,8 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<AccountReconciliation> AccountReconciliations { get; set; }
         [InverseProperty(nameof(ParcelLedger.Parcel))]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
+        [InverseProperty(nameof(ParcelTag.Parcel))]
+        public virtual ICollection<ParcelTag> ParcelTags { get; set; }
         [InverseProperty(nameof(WaterTransferRegistrationParcel.Parcel))]
         public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
     }

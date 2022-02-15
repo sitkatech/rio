@@ -40,6 +40,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
         public virtual DbSet<ParcelLedgerEntrySourceType> ParcelLedgerEntrySourceTypes { get; set; }
         public virtual DbSet<ParcelStatus> ParcelStatuses { get; set; }
+        public virtual DbSet<ParcelTag> ParcelTags { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
         public virtual DbSet<PostingStatus> PostingStatuses { get; set; }
@@ -47,6 +48,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocations { get; set; }
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasins { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<Trade> Trades { get; set; }
         public virtual DbSet<TradeStatus> TradeStatuses { get; set; }
         public virtual DbSet<TransactionType> TransactionTypes { get; set; }
@@ -368,6 +370,19 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ParcelStatusName).IsUnicode(false);
             });
 
+            modelBuilder.Entity<ParcelTag>(entity =>
+            {
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelTags)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.Tag)
+                    .WithMany(p => p.ParcelTags)
+                    .HasForeignKey(d => d.TagID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<ParcelUpdateStaging>(entity =>
             {
                 entity.Property(e => e.OwnerName).IsUnicode(false);
@@ -446,6 +461,13 @@ namespace Rio.EFModels.Entities
                 entity.Property(e => e.ScenarioRechargeBasinDisplayName).IsUnicode(false);
 
                 entity.Property(e => e.ScenarioRechargeBasinName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.Property(e => e.TagDescription).IsUnicode(false);
+
+                entity.Property(e => e.TagName).IsUnicode(false);
             });
 
             modelBuilder.Entity<Trade>(entity =>

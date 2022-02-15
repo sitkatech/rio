@@ -1492,6 +1492,46 @@
         }
       }
     },
+    "/parcels/{parcelID}/getParcelWithTags": {
+      "get": {
+        "tags": [
+          "Parcel"
+        ],
+        "parameters": [
+          {
+            "name": "parcelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/parcels/search/{parcelNumber}": {
       "get": {
         "tags": [
@@ -4563,6 +4603,13 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4902,6 +4949,13 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
+          },
+          "Tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5137,6 +5191,24 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TagDto": {
+        "type": "object",
+        "properties": {
+          "TagID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TagName": {
+            "type": "string",
+            "nullable": true
+          },
+          "TagDescription": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

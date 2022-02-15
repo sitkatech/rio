@@ -34,6 +34,11 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  getParcelByParcelIDWithTags(parcelID: number): Observable<ParcelDto> {
+    let route = `/parcels/${parcelID}/getParcelWithTags`;
+    return this.apiService.getFromApi(route);
+  }
+
   searchParcelNumber(parcelNumber: string): Observable<string> {
     let route = `/parcels/search/${parcelNumber}`;
     return this.apiService.getFromApi(route);
@@ -55,6 +60,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
+  // TODO: needs to get Parcel with Tags
   getParcelWaterSupplyAndUsagesByYear(year: number): Observable<Array<ParcelWaterSupplyAndUsageDto>> {
     let route = `/parcels/getParcelsWithWaterSupplyAndUsage/${year}`;
     return this.apiService.getFromApi(route);
