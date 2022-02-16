@@ -80,6 +80,7 @@ import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.
 import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
 import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { TagListComponent } from './pages/tag-list/tag-list.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -145,7 +146,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     AccountReconciliationComponent,
     ParcelLedgerCreateComponent,
     ParcelLedgerBulkCreateComponent,
-    ParcelLedgerCreateFromSpreadsheetComponent
+    ParcelLedgerCreateFromSpreadsheetComponent,
+    TagListComponent
   ],
   imports: [
     AppRoutingModule,

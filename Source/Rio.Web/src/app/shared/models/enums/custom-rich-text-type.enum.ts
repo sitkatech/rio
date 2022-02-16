@@ -27,5 +27,6 @@ export enum CustomRichTextType {
   WebsiteFooter = 26,
   PrecipitationDescription = 27,
   PurchasedDescription = 28,
-  SoldDescription = 29
+  SoldDescription = 29,
+  TagList = 30
 }

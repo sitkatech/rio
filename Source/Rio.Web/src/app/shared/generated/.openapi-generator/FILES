@@ -39,6 +39,7 @@ model/posting-type-dto.ts
 model/posting-update-status-dto.ts
 model/posting-upsert-dto.ts
 model/role-dto.ts
+model/tag-dto.ts
 model/trade-activity-by-month-dto.ts
 model/trade-dto.ts
 model/trade-status-dto.ts

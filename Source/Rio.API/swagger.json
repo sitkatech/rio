@@ -2501,6 +2501,44 @@
         }
       }
     },
+    "/tags": {
+      "get": {
+        "tags": [
+          "Tag"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users/invite": {
       "post": {
         "tags": [
@@ -5208,6 +5246,11 @@
           },
           "TagDescription": {
             "type": "string",
+            "nullable": true
+          },
+          "TaggedParcelsCount": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

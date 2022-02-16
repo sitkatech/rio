@@ -28,7 +28,8 @@ USING (VALUES
 (26, 'WebsiteFooter', 'Website Footer'),
 (27, 'PrecipitationDescription', 'Precipitation Description'),
 (28, 'PurchasedDescription', 'Purchased Water Description'),
-(29, 'SoldDescription', 'Sold Water Description')
+(29, 'SoldDescription', 'Sold Water Description'),
+(30, 'TagList', 'Tag List')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

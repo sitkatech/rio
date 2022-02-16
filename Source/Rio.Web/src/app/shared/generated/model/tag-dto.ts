@@ -10,13 +10,11 @@
  * Do not edit the class manually.
  */
 
-export class PostingUpsertDto { 
-    PostingTypeID: number;
-    Quantity: number;
-    Price: number;
-    PostingDescription?: string;
-    CreateAccountID: number;
-    CreateUserID: number;
+export class TagDto { 
+    TagID?: number;
+    TagName?: string;
+    TagDescription?: string;
+    TaggedParcelsCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
