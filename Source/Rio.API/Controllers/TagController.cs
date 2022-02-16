@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,6 +24,20 @@ namespace Rio.API.Controllers
         {
             var tagDtos = Tags.ListAsDto(_dbContext);
             return Ok(tagDtos);
+        }
+
+        [HttpDelete("tags/{tagID}")]
+        [ManagerDashboardFeature]
+        public ActionResult DeleteByID([FromRoute] int tagID)
+        {
+            var tag = _dbContext.Tags.SingleOrDefault(x => x.TagID == tagID);
+            if (tag == null)
+            {
+                return BadRequest();
+            }
+
+            Tags.Delete(_dbContext, tag);
+            return Ok();
         }
     }
 }

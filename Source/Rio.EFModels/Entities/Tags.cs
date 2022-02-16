@@ -30,5 +30,14 @@ namespace Rio.EFModels.Entities
             var tagDtos = parcelTags.Select(x => x.Tag.AsDto()).ToList();
             return tagDtos;
         }
+
+        public static void Delete(RioDbContext dbContext, Tag tag)
+        {
+            var parcelTagsToRemove = dbContext.ParcelTags.Where(x => x.TagID == tag.TagID);
+            dbContext.ParcelTags.RemoveRange(parcelTagsToRemove);
+
+            dbContext.Tags.Remove(tag);
+            dbContext.SaveChanges();
+        }
     }
 }

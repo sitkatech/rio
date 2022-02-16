@@ -15,4 +15,9 @@ export class TagService {
     let route = `/tags`;
     return this.apiService.getFromApi(route);
   }
+
+  deleteTag(tagID) {
+    let route = `tags/${tagID}`;
+    return this.apiService.deleteToApi(route);
+  }
 }

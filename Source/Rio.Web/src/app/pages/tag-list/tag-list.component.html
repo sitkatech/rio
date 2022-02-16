@@ -22,9 +22,30 @@
     </div>
     <div class="row mt-3">
         <div class="col-sm-12">
-            <ag-grid-angular #tagsGrid style="width: 100%; height: 800px;" class="ag-theme-balham"
-                [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+            <ag-grid-angular #tagsGrid style="width: 100%; height: 800px;" class="ag-theme-balham"[columnDefs]="columnDefs" 
+                (cellClicked)="onCellClicked($event)" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
             </ag-grid-angular>
         </div>
     </div>
 </div>
+<ng-template #deleteTagModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="deleteTagModalTitle">Warning</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>
+            You are about to delete the {{tagToDelete.TagName}} tag. Deleting this tag will automatically remove it from all currently tagged parcels.<br><br>
+            Are you sure you wish to proceed?
+        </p>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" (click)="deleteTag()">
+                <span *ngIf="isLoadingDelete" class="fa fa-spinner loading-spinner"></span>
+                Delete
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>
