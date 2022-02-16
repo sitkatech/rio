@@ -57,6 +57,7 @@ import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { TagListComponent } from './pages/tag-list/tag-list.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -77,6 +78,7 @@ const routes: Routes = [
   { path: "parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-create-from-spreadsheet", component: ParcelLedgerCreateFromSpreadsheetComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "tags", component: TagListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users", component: UserListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
