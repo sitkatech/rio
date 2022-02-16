@@ -26,6 +26,14 @@ namespace Rio.API.Controllers
             return Ok(tagDtos);
         }
 
+        [HttpGet("tags/{tagID}")]
+        [ParcelViewFeature]
+        public ActionResult<List<TagDto>> GetByIDAsDto([FromRoute] int tagID)
+        {
+            var tagDto = Tags.GetByIDAsDto(_dbContext, tagID);
+            return Ok(tagDto);
+        }
+
         [HttpDelete("tags/{tagID}")]
         [ManagerDashboardFeature]
         public ActionResult DeleteByID([FromRoute] int tagID)

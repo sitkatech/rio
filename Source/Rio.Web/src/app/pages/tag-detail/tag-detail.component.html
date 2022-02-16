@@ -1,0 +1,38 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb" *ngIf="tag">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/tags">Tags</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{tag.TagName}}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4" *ngIf="tag">
+    <app-alert-display></app-alert-display>
+    <h2 class="d-inline-block">
+        {{tag.TagName}}
+    </h2>
+    <div class="row mt-2">
+        <div class="col-md-4">
+            <div class="card" *ngIf="tag.TagDescription">
+                <div class="card-header">Description</div>
+                <div class="card-body">{{tag.TagDescription}}</div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Tagged Parcel Index</div>
+                <div class="card-body">
+                    <ag-grid-angular #taggedParcelsIndexGrid style="width: 100%; height: 500px;" class="ag-theme-balham"
+                        [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+                    </ag-grid-angular>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

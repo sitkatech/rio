@@ -16,8 +16,13 @@ export class TagService {
     return this.apiService.getFromApi(route);
   }
 
+  getTagByID(tagID: number): Observable<TagDto> {
+    let route = `/tags/${tagID}`;
+    return this.apiService.getFromApi(route);
+  }
+
   deleteTag(tagID) {
-    let route = `tags/${tagID}`;
+    let route = `/tags/${tagID}`;
     return this.apiService.deleteToApi(route);
   }
 }

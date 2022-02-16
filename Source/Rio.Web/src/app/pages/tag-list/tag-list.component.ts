@@ -12,6 +12,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
+import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 
 @Component({
   selector: 'rio-tag-list',
@@ -62,14 +63,25 @@ export class TagListComponent implements OnInit {
   private createTagsGridColumnDefs() {
     this.columnDefs = [
       {
+        headerName: 'Tag Name', 
+        valueGetter: function (params: any) {
+          return { LinkValue: params.data.TagID, LinkDisplay: params.data.TagName };
+        }, cellRendererFramework: LinkRendererComponent,
+        cellRendererParams: { inRouterLink: "/tags/" },
+        filterValueGetter: params => params.data.TagName
+      },
+      { headerName: 'Tag Description', field: 'TagDescription', sortable: true, filter: true, resizable: true, width: 550 },
+      this.utilityFunctionsService.createDecimalColumnDef('Tagged Parcels Count', 'TaggedParcelsCount', 180, 0)
+    ];
+
+    if (this.authenticationService.isUserAnAdministrator) {
+      const deleteTagColDef: ColDef = {
         cellRendererFramework: FontAwesomeIconLinkRendererComponent,
         cellRendererParams: { isSpan: true, fontawesomeIconName: 'trash', cssClasses: 'text-primary'},
         width: 40, resizable: true
-      },
-      { headerName: 'Tag Name', field: 'TagName', sortable: true, filter: true, resizable: true, width: 280 },
-      { headerName: 'Tag Description', field: 'TagDescription', sortable: true, filter: true, resizable: true, width: 450 },
-      this.utilityFunctionsService.createDecimalColumnDef('Tagged Parcels Count', 'TaggedParcelsCount', 180, 0)
-    ]
+      };
+      this.columnDefs.splice(0, 0, deleteTagColDef);
+    }
   }
 
   private updateGridData() {

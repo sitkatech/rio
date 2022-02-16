@@ -68,18 +68,12 @@ namespace Rio.API.Controllers
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
-        [HttpGet("parcels/{parcelID}/getParcelWithTags")]
+        [HttpGet("parcels/{tagID}/listByTagID")]
         [ParcelViewFeature]
-        public ActionResult<ParcelDto> GetByParcelIDWithTags([FromRoute] int parcelID)
+        public ActionResult<List<ParcelSimpleDto>> ListByTagID([FromRoute] int tagID)
         {
-            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            if (!UserCanAccessParcel(_dbContext, currentUser, parcelID))
-            {
-                return Forbid();
-            }
-            
-            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
-            return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
+            var parcelSimpleDtos = Parcel.ListByTagIDAsSimpleDto(_dbContext, tagID);
+            return Ok(parcelSimpleDtos);
         }
 
         private static bool UserCanAccessParcel(RioDbContext dbContext, UserDto user, int parcelID)

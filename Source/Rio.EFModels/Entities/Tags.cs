@@ -21,6 +21,12 @@ namespace Rio.EFModels.Entities
             return tagDtos;
         }
 
+        public static TagDto GetByIDAsDto(RioDbContext dbContext, int tagID)
+        {
+            var tag = dbContext.Tags.SingleOrDefault(x => x.TagID == tagID);
+            return tag?.AsDto();
+        }
+
         public static List<TagDto> ListByParcelIDAsDto(RioDbContext dbContext, int parcelID)
         {
             var parcelTags = dbContext.ParcelTags
