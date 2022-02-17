@@ -13,12 +13,19 @@
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
     <div class="row">
-        <div class="col">
+        <div class="col-auto">
             <h2 class="d-inline-block">Tags</h2>
             <div class="mt-2">
-                <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
             </div>
         </div>
+        <div class="col-auto ml-auto">
+            <span class="btn btn-rio" (click)="createTag()"><i class="fas fa-plus mr-1"></i>Add New Tag</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+        </div>        
     </div>
     <div class="row mt-3">
         <div class="col-sm-12">
@@ -46,6 +53,44 @@
                 Delete
             </button>
             <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #createTagModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="createTagModalTitle">Create Tag</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="tagModel">
+            <div class="row mb-2">
+                <div class="col-md-4 text-md-right">
+                    <label class="form-control-label required">Name</label>
+                </div>
+                <div class="col-md-8 text-md-right">
+                    <input type="text" class="form-control" name="tag-name" [(ngModel)]="tagModel.TagName" />
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-4 text-md-right">
+                    <label class="form-control-label">Description</label>
+                </div>
+                <div class="col-md-8 text-md-right">
+                    <textarea class="form-control" name="tag-description" [(ngModel)]="tagModel.TagDescription"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="mr-3">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <button type="button" class="btn btn-rio" (click)="onSubmit()">
+                <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                Save
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="modal.close('Cancel click')">Cancel</button>
         </div>
     </div>
 </ng-template>

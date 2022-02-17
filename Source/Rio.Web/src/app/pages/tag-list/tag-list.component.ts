@@ -22,6 +22,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 export class TagListComponent implements OnInit {
   @ViewChild('tagsGrid') tagsGrid: AgGridAngular;
   @ViewChild('deleteTagModal') deleteTagModal
+  @ViewChild('createTagModal') createTagModal
 
 
   private watchAccountChangeSubscription: any;
@@ -33,7 +34,9 @@ export class TagListComponent implements OnInit {
   private modalReference: NgbModalRef;
   private deleteColumnID = 0;
   private tagToDelete: TagDto;
+  public tagModel: TagDto;
   public isLoadingDelete = false;
+  public isLoadingSubmit = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -122,6 +125,26 @@ export class TagListComponent implements OnInit {
       this.isLoadingDelete = false;
       window.scroll(0,0);
       this.cdr.detectChanges();
+    });
+  }
+
+  public createTag() {
+    this.tagModel = new TagDto();
+    this.launchModal(this.createTagModal, 'createTagModalTitle');
+  }
+
+  public onSubmit() {
+    this.isLoadingSubmit = true;
+    this.alertService.clearAlerts();
+    
+    this.tagService.createTag(this.tagModel).subscribe(() => {
+      this.isLoadingSubmit = false;
+      this.modalReference.close();
+      this.alertService.pushAlert(new Alert(`${this.tagModel.TagName} tag was successfully created.`, AlertContext.Success, true));
+      this.updateGridData();
+    }, error => {
+      this.isLoadingSubmit = false;
+      this.modalReference.close();
     });
   }
 }

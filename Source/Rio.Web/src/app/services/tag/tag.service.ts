@@ -26,6 +26,11 @@ export class TagService {
     return this.apiService.getFromApi(route);
   }
 
+  createTag(tagDto: TagDto) {
+    let route = `/tags/create`;
+    return this.apiService.postToApi(route, tagDto);
+  }
+
   updateTag(tagDto: TagDto): Observable<TagDto> {
     let route = `/tags/update`;
     return this.apiService.putToApi(route, tagDto);

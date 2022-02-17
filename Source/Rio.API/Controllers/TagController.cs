@@ -42,6 +42,19 @@ namespace Rio.API.Controllers
             return Ok(tagDtos);
         }
 
+        [HttpPost("tags/create")]
+        [ManagerDashboardFeature]
+        public ActionResult CreateTag([FromBody] TagDto tagDto)
+        {
+            if (!validateTagName(tagDto))
+            {
+                return BadRequest(ModelState);
+            }
+
+            Tags.Create(_dbContext, tagDto);
+            return Ok();
+        }
+
         [HttpPut("tags/update")]
         [ManagerDashboardFeature]
         public ActionResult<TagDto> UpdateTag([FromBody] TagDto tagDto)
