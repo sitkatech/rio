@@ -22,8 +22,13 @@ export class TagService {
   }
 
   getTagsByParcelID(parcelID: number): Observable<Array<TagDto>> {
-    let route = `tags/listByParcelID/${parcelID}`;
+    let route = `/tags/listByParcelID/${parcelID}`;
     return this.apiService.getFromApi(route);
+  }
+
+  updateTag(tagDto: TagDto): Observable<TagDto> {
+    let route = `/tags/update`;
+    return this.apiService.putToApi(route, tagDto);
   }
 
   deleteTag(tagID: number) {

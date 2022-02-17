@@ -9,9 +9,11 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
-import { ParcelSimpleDto } from 'src/app/shared/generated/model/parcel-simple-dto';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
+import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'rio-tag-detail',
@@ -20,20 +22,28 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 })
 export class TagDetailComponent implements OnInit, OnDestroy {
   @ViewChild('taggedParcelsIndexGrid') taggedParcelsIndexGrid: AgGridAngular;
+  @ViewChild('editTagBasicsModal') editTagBasicsModal
 
   private watchAccountChangeSubscription: any;
   private currentUser: UserDto;
 
   public tag: TagDto;
   public columnDefs: Array<ColDef>;
-  public taggedParcels: Array<ParcelSimpleDto>;
+  public taggedParcels: Array<ParcelDto>;
+  private modalReference: NgbModalRef;
+  public tagModel: TagDto;
+  public isEditingTagBasics = false;
+  public isLoadingSubmit = false;
 
   constructor(
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private tagService: TagService,
-    private parcelService: ParcelService
+    private parcelService: ParcelService,
+    private utilityFunctionsService: UtilityFunctionsService,
+    private modalService: NgbModal,
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -68,8 +78,48 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,
-        sortable: true, filter: true, width: 100
+        sortable: true, filter: true, width: 120
+      },
+      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120, 0),
+      {
+        headerName: 'Account', valueGetter: function (params: any) {
+          return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
+        }, cellRendererFramework: LinkRendererComponent,
+        cellRendererParams: { inRouterLink: "/accounts/" },
+        filterValueGetter: params => (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null,
+        sortable: true, filter: true, width: 310
       },
     ]
+  }
+
+  private launchModal(modalContent: any, modalTitle: string): void {
+    this.modalReference = this.modalService.open(
+      modalContent, 
+      { ariaLabelledBy: modalTitle, beforeDismiss: () => this.checkIsLoadingSubmit(), backdrop: 'static', keyboard: false 
+    });
+  }
+
+  private checkIsLoadingSubmit() {
+    return this.isLoadingSubmit;
+  }
+
+  public editTagBasics() {
+    this.tagModel = Object.assign({}, this.tag);
+    this.launchModal(this.editTagBasicsModal, 'editTagBasicsModalTitle');
+  }
+
+  public onSubmit() {
+    this.isLoadingSubmit = true;
+    this.alertService.clearAlerts();
+    
+    this.tagService.updateTag(this.tagModel).subscribe(updatedTag => {
+      this.isLoadingSubmit = false;
+      this.modalReference.close();
+      this.tag = updatedTag;
+      this.alertService.pushAlert(new Alert(`${this.tag.TagName} tag was successfully updated.`, AlertContext.Success, true));
+    }, error => {
+      this.isLoadingSubmit = false;
+      this.modalReference.close();
+    });
   }
 }

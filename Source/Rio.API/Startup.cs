@@ -81,12 +81,6 @@ namespace Rio.API
             services.Configure<RioConfiguration>(Configuration);
             var rioConfiguration = Configuration.Get<RioConfiguration>();
 
-            services.AddHttpClient<CimisService>(c =>
-            {
-                c.BaseAddress = new Uri(rioConfiguration.CimisApiUrl);
-                c.Timeout = TimeSpan.FromMinutes(60);
-            });
-
 
             var keystoneHost = rioConfiguration.KEYSTONE_HOST;
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
@@ -143,7 +137,6 @@ namespace Rio.API
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
             services.AddScoped<IOpenETService, OpenETService>();
-            services.AddScoped<ICimisPrecipJob, CimisPrecipJob>();
             services.AddScoped<IOpenETRetrieveFromBucketJob, OpenETRetrieveFromBucketJob>();
             services.AddScoped<IOpenETTriggerBucketRefreshJob, OpenETTriggerBucketRefreshJob>();
 

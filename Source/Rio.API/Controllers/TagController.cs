@@ -42,6 +42,44 @@ namespace Rio.API.Controllers
             return Ok(tagDtos);
         }
 
+        [HttpPut("tags/update")]
+        [ManagerDashboardFeature]
+        public ActionResult<TagDto> UpdateTag([FromBody] TagDto tagDto)
+        {
+            if (!validateTagName(tagDto))
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tag = _dbContext.Tags.SingleOrDefault(x => x.TagID == tagDto.TagID);
+            if (tag == null)
+            {
+                return BadRequest();
+            }
+
+            var updatedTag = Tags.Update(_dbContext, tag, tagDto);
+            return Ok(updatedTag.AsDto());
+        }
+
+        private bool validateTagName(TagDto tagDto)
+        {
+            var isValid = true;
+            if (string.IsNullOrWhiteSpace(tagDto.TagName))
+            {
+                ModelState.AddModelError("Tag", "Whitespace cannot be used as a tag.");
+                isValid = false;
+            }
+
+            var tagNameConflict = _dbContext.Tags.Where(x => x.TagName == tagDto.TagName && x.TagID != tagDto.TagID);
+            if (tagNameConflict.Any())
+            {
+                ModelState.AddModelError("Tag", $"{tagDto.TagName} tag already exists.");
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
         [HttpDelete("tags/{tagID}")]
         [ManagerDashboardFeature]
         public ActionResult DeleteByID([FromRoute] int tagID)

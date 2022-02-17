@@ -72,10 +72,10 @@ namespace Rio.API.Controllers
 
         [HttpGet("parcels/{tagID}/listByTagID")]
         [ManagerDashboardFeature]
-        public ActionResult<List<ParcelSimpleDto>> ListByTagID([FromRoute] int tagID)
+        public ActionResult<List<ParcelDto>> ListByTagID([FromRoute] int tagID)
         {
-            var parcelSimpleDtos = Parcel.ListByTagIDAsSimpleDto(_dbContext, tagID);
-            return Ok(parcelSimpleDtos);
+            var parcelDtos = Parcel.ListByTagIDAsDto(_dbContext, tagID);
+            return Ok(parcelDtos);
         }
 
         private static bool UserCanAccessParcel(RioDbContext dbContext, UserDto user, int parcelID)

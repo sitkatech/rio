@@ -34,7 +34,7 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getParcelsByTagID(tagID: number): Observable<Array<ParcelSimpleDto>> {
+  getParcelsByTagID(tagID: number): Observable<Array<ParcelDto>> {
     let route = `/parcels/${tagID}/listByTagID`;
     return this.apiService.getFromApi(route);
   }

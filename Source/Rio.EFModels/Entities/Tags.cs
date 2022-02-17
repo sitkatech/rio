@@ -94,6 +94,17 @@ namespace Rio.EFModels.Entities
             return GetByID(dbContext, tag.TagID);
         }
 
+        public static Tag Update(RioDbContext dbContext, Tag tag, TagDto tagDto)
+        {
+            tag.TagName = tagDto.TagName;
+            tag.TagDescription = tagDto.TagDescription;
+
+            dbContext.SaveChanges();
+            dbContext.Entry(tag).Reload();
+
+            return GetByID(dbContext, tag.TagID);
+        }
+
         public static void Delete(RioDbContext dbContext, Tag tag)
         {
             var parcelTagsToRemove = dbContext.ParcelTags.Where(x => x.TagID == tag.TagID);

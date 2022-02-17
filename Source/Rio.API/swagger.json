@@ -1516,7 +1516,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelSimpleDto"
+                    "$ref": "#/components/schemas/ParcelDto"
                   }
                 }
               },
@@ -1524,7 +1524,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelSimpleDto"
+                    "$ref": "#/components/schemas/ParcelDto"
                   }
                 }
               },
@@ -1532,7 +1532,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParcelSimpleDto"
+                    "$ref": "#/components/schemas/ParcelDto"
                   }
                 }
               }
@@ -2660,6 +2660,59 @@
                   "items": {
                     "$ref": "#/components/schemas/TagDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tags/update": {
+      "put": {
+        "tags": [
+          "Tag"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagDto"
                 }
               }
             }
