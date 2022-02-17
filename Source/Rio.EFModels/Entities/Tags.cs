@@ -51,15 +51,14 @@ namespace Rio.EFModels.Entities
 
         public static int BulkTagParcelsByIDAndParcelIDs(RioDbContext dbContext, int tagID, List<int> parcelIDs)
         {
-            var parcels = Parcel.ListByIDs(dbContext, parcelIDs);
             int taggedCount = 0;
 
-            foreach (var parcel in parcels)
+            foreach (var parcelID in parcelIDs)
             {
                 var parcelTag = new ParcelTag()
                 {
                     TagID = tagID,
-                    ParcelID = parcel.ParcelID
+                    ParcelID = parcelID
                 };
                 dbContext.ParcelTags.Add(parcelTag);
                 taggedCount++;

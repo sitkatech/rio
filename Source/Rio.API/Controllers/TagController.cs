@@ -87,7 +87,37 @@ namespace Rio.API.Controllers
                 }
             }
 
-            Tags.TagParcelByIDAndParcelID(_dbContext, tag.TagID, parcelID);
+            Tags.TagParcelByIDAndParcelID(_dbContext, tag.TagID, parcel);
+
+            return Ok();
+        }
+
+        [HttpPost("tags/bulkTagParcels")]
+        [ManagerDashboardFeature]
+        public ActionResult BulkTagParcelsByParcelIDs([FromForm] List<int> parcelIDs, [FromForm] TagDto tagDto)
+        {
+            if (string.IsNullOrWhiteSpace(tagDto.TagName))
+            {
+                ModelState.AddModelError("Tag", "Whitespace cannot be used as a tag.");
+                return BadRequest(ModelState);
+            }
+
+            var parcels = Parcel.ListByIDs(_dbContext, parcelIDs);
+
+            var tag = _dbContext.Tags.SingleOrDefault(x => x.TagName == tagDto.TagName);
+            if (tag == null)
+            {
+                tag = Tags.Create(_dbContext, tagDto);
+            }
+            else
+            {
+                // remove any parcels from list that don't exist in db, or are already associated with this tag
+                var taggedParcelIDs = _dbContext.ParcelTags.Where(x => x.TagID == tag.TagID)
+                    .Select(x => x.ParcelID).ToList();
+                parcels = parcels.Where(x => !taggedParcelIDs.Contains(x.ParcelID)).ToList();
+            }
+
+            Tags.BulkTagParcelsByIDAndParcelIDs(_dbContext, tag.TagID, parcels.Select(x => x.ParcelID).ToList());
 
             return Ok();
         }
