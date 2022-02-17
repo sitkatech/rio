@@ -60,7 +60,6 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  // TODO: needs to get Parcel with Tags
   getParcelWaterSupplyAndUsagesByYear(year: number): Observable<Array<ParcelWaterSupplyAndUsageDto>> {
     let route = `/parcels/getParcelsWithWaterSupplyAndUsage/${year}`;
     return this.apiService.getFromApi(route);

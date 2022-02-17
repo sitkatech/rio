@@ -41,6 +41,8 @@ namespace Rio.API.Controllers
                 var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
                     .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
                 parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
+
+                parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = Tags.GetByParcelIDAsCommaSeparatedString(_dbContext, parcelWaterSupplyAndUsageDto.ParcelID);
             }
 
             return Ok(parcelWaterSupplyAndUsageDtos);

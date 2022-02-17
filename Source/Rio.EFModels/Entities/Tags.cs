@@ -44,6 +44,17 @@ namespace Rio.EFModels.Entities
             return tagDtos;
         }
 
+        public static string GetByParcelIDAsCommaSeparatedString(RioDbContext dbContext, int parcelID)
+        {
+            var tagNames = dbContext.ParcelTags
+                .Include(x => x.Tag)
+                .Where(x => x.ParcelID == parcelID)
+                .OrderBy(x => x.Tag.TagName)
+                .Select(x => x.Tag.TagName);
+
+            return string.Join(", ", tagNames);
+        }
+
         public static void TagParcelByIDAndParcelID(RioDbContext dbContext, int tagID, int parcelID)
         {
             BulkTagParcelsByIDAndParcelIDs(dbContext, tagID, new List<int>() {parcelID});

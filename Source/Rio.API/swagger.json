@@ -2714,6 +2714,67 @@
         }
       }
     },
+    "/tags/bulkTagParcels": {
+      "post": {
+        "tags": [
+          "Tag"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "parcelIDs": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "TagID": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "TagName": {
+                    "type": "string"
+                  },
+                  "TagDescription": {
+                    "type": "string"
+                  },
+                  "TaggedParcelsCount": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "parcelIDs": {
+                  "style": "form"
+                },
+                "TagID": {
+                  "style": "form"
+                },
+                "TagName": {
+                  "style": "form"
+                },
+                "TagDescription": {
+                  "style": "form"
+                },
+                "TaggedParcelsCount": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/tags/{tagID}/removeTagFromParcel/{parcelID}": {
       "delete": {
         "tags": [
@@ -4848,6 +4909,10 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
+          },
+          "TagsAsCommaSeparatedString": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5187,6 +5252,10 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
+          },
+          "TagsAsCommaSeparatedString": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -87,7 +87,7 @@ namespace Rio.API.Controllers
                 }
             }
 
-            Tags.TagParcelByIDAndParcelID(_dbContext, tag.TagID, parcel);
+            Tags.TagParcelByIDAndParcelID(_dbContext, tag.TagID, parcelID);
 
             return Ok();
         }

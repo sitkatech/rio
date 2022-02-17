@@ -26,6 +26,7 @@ export class ParcelWaterSupplyAndUsageDto {
     ParcelStatus?: ParcelStatusDto;
     InactivateDate?: string;
     LandOwner?: AccountDto;
+    TagsAsCommaSeparatedString?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
