@@ -21,9 +21,14 @@ namespace Rio.EFModels.Entities
             return tagDtos;
         }
 
+        public static Tag GetByID(RioDbContext dbContext, int tagID)
+        {
+            return dbContext.Tags.SingleOrDefault(x => x.TagID == tagID);
+        }
+
         public static TagDto GetByIDAsDto(RioDbContext dbContext, int tagID)
         {
-            var tag = dbContext.Tags.SingleOrDefault(x => x.TagID == tagID);
+            var tag = GetByID(dbContext, tagID);
             return tag?.AsDto();
         }
 
@@ -37,6 +42,46 @@ namespace Rio.EFModels.Entities
                 .ToList();
 
             return tagDtos;
+        }
+
+        public static void TagParcelByIDAndParcelID(RioDbContext dbContext, int tagID, int parcelID)
+        {
+            BulkTagParcelsByIDAndParcelIDs(dbContext, tagID, new List<int>() {parcelID});
+        }
+
+        public static int BulkTagParcelsByIDAndParcelIDs(RioDbContext dbContext, int tagID, List<int> parcelIDs)
+        {
+            var parcels = Parcel.ListByIDs(dbContext, parcelIDs);
+            int taggedCount = 0;
+
+            foreach (var parcel in parcels)
+            {
+                var parcelTag = new ParcelTag()
+                {
+                    TagID = tagID,
+                    ParcelID = parcel.ParcelID
+                };
+                dbContext.ParcelTags.Add(parcelTag);
+                taggedCount++;
+            }
+            dbContext.SaveChanges();
+
+            return taggedCount;
+        }
+
+        public static Tag Create(RioDbContext dbContext, TagDto tagDto)
+        {
+            var tag = new Tag()
+            {
+                TagName = tagDto.TagName,
+                TagDescription = tagDto.TagDescription
+            };
+
+            dbContext.Add(tag);
+            dbContext.SaveChanges();
+            dbContext.Entry(tag).Reload();
+
+            return GetByID(dbContext, tag.TagID);
         }
 
         public static void Delete(RioDbContext dbContext, Tag tag)

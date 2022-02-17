@@ -21,8 +21,23 @@ export class TagService {
     return this.apiService.getFromApi(route);
   }
 
-  deleteTag(tagID) {
+  getTagsByParcelID(parcelID: number): Observable<Array<TagDto>> {
+    let route = `tags/listByParcelID/${parcelID}`;
+    return this.apiService.getFromApi(route);
+  }
+
+  deleteTag(tagID: number) {
     let route = `/tags/${tagID}`;
+    return this.apiService.deleteToApi(route);
+  }
+
+  tagParcel(parcelID: number, tagDto: TagDto) {
+    let route = `tags/tagParcel/${parcelID}`;
+    return this.apiService.postToApi(route, tagDto);
+  }
+
+  removeTagFromParcel(tagID: number, parcelID: number) {
+    let route = `tags/${tagID}/removeTagFromParcel/${parcelID}`;
     return this.apiService.deleteToApi(route);
   }
 }

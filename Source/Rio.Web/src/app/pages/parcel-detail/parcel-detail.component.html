@@ -61,14 +61,17 @@
               Tags
             </div>
             <div class="card-body">
-              <span *ngFor="let tag of parcel.Tags" class="btn btn-secondary m-1">
+              <span *ngFor="let tag of tags" class="btn btn-secondary m-1">
                 <a href="/tags/{{tag.TagID}}" class="text-dark">{{tag.TagName}}</a>
                 <span class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
               </span>
               <div class="input-group m-1">
-                <input type="text" class="form-control"/>
+                <input type="text" class="form-control" [(ngModel)]="tagInput" placeholder="Add a Tag"/>
                 <div class="input-group-append">
-                  <span class="btn btn-secondary"><i class="fas fa-plus"></i></span>
+                  <span class="btn btn-secondary" (click)="addTag()" [disabled]="isTaggingParcel">
+                    <i class="fas fa-plus" *ngIf="!isTaggingParcel"></i>
+                    <i *ngIf="isTaggingParcel" class="fa fa-spinner loading-spinner"></i>
+                  </span>
                 </div>
               </div>
             </div>

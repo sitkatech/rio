@@ -68,52 +68,8 @@ namespace Rio.API.Controllers
             return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
         }
 
-        [HttpGet("parcels/{parcelID}/getWithTags")]
-        [ParcelViewFeature]
-        public ActionResult<ParcelDto> GetWithTagsByParcelID([FromRoute] int parcelID)
-        {
-            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            if (!UserCanAccessParcel(_dbContext, currentUser, parcelID))
-            {
-                return Forbid();
-            }
-
-            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
-            parcelDto.Tags = Tags.ListByParcelIDAsDto(_dbContext, parcelID);
-
-            return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
-        }
-
-        [HttpDelete("parcels/{parcelID}/removeTag/{tagID}")]
-        [ManagerDashboardFeature]
-        public ActionResult RemoveTag([FromRoute] int parcelID, [FromRoute] int tagID)
-        {
-            var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            if (!UserCanAccessParcel(_dbContext, currentUser, parcelID))
-            {
-                return Forbid();
-            }
-
-            var tag = _dbContext.Tags.SingleOrDefault(x => x.TagID == tagID);
-            if (tag == null)
-            {
-                return BadRequest();
-            }
-
-            var parcelTagToDelete = _dbContext.ParcelTags.FirstOrDefault(x => x.ParcelID == parcelID && x.TagID == tagID);
-            if (parcelTagToDelete == null)
-            {
-                return BadRequest();
-            }
-
-            _dbContext.ParcelTags.Remove(parcelTagToDelete);
-            _dbContext.SaveChanges();
-            
-            return Ok();
-        }
-
         [HttpGet("parcels/{tagID}/listByTagID")]
-        [ParcelViewFeature]
+        [ManagerDashboardFeature]
         public ActionResult<List<ParcelSimpleDto>> ListByTagID([FromRoute] int tagID)
         {
             var parcelSimpleDtos = Parcel.ListByTagIDAsSimpleDto(_dbContext, tagID);

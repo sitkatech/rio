@@ -1492,78 +1492,6 @@
         }
       }
     },
-    "/parcels/{parcelID}/getWithTags": {
-      "get": {
-        "tags": [
-          "Parcel"
-        ],
-        "parameters": [
-          {
-            "name": "parcelID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ParcelDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/parcels/{parcelID}/removeTag/{tagID}": {
-      "delete": {
-        "tags": [
-          "Parcel"
-        ],
-        "parameters": [
-          {
-            "name": "parcelID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "tagID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/parcels/{tagID}/listByTagID": {
       "get": {
         "tags": [
@@ -2675,6 +2603,134 @@
         "parameters": [
           {
             "name": "tagID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tags/listByParcelID/{parcelID}": {
+      "get": {
+        "tags": [
+          "Tag"
+        ],
+        "parameters": [
+          {
+            "name": "parcelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tags/tagParcel/{parcelID}": {
+      "post": {
+        "tags": [
+          "Tag"
+        ],
+        "parameters": [
+          {
+            "name": "parcelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/tags/{tagID}/removeTagFromParcel/{parcelID}": {
+      "delete": {
+        "tags": [
+          "Tag"
+        ],
+        "parameters": [
+          {
+            "name": "tagID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "parcelID",
             "in": "path",
             "required": true,
             "schema": {
@@ -4792,13 +4848,6 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
-          },
-          "Tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TagDto"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -5138,13 +5187,6 @@
           },
           "LandOwner": {
             "$ref": "#/components/schemas/AccountDto"
-          },
-          "Tags": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TagDto"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false

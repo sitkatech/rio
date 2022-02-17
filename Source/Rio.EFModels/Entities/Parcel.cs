@@ -73,6 +73,13 @@ namespace Rio.EFModels.Entities
             return parcel?.AsDto();
         }
 
+        public static List<Parcel> ListByIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            return GetParcelImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID))
+                .ToList();
+        }
+
         public static List<Parcel> ListByParcelNumbers(RioDbContext dbContext, List<string> parcelNumbers)
         {
             return GetParcelImpl(dbContext)
