@@ -1492,6 +1492,46 @@
         }
       }
     },
+    "/parcels/{parcelID}/getWithTags": {
+      "get": {
+        "tags": [
+          "Parcel"
+        ],
+        "parameters": [
+          {
+            "name": "parcelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/parcels/{tagID}/listByTagID": {
       "get": {
         "tags": [

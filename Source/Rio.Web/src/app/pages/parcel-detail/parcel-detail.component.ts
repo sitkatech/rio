@@ -69,7 +69,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       this.initializeLedgerGrid();
       if (id) {
         forkJoin(
-          this.parcelService.getParcelByParcelID(id),
+          this.parcelService.getParcelWithTagsByParcelID(id),
           this.parcelService.getParcelLedgerEntriesByParcelID(id),
           this.parcelService.getParcelOwnershipHistory(id),
           this.waterYearService.getWaterYears(),
