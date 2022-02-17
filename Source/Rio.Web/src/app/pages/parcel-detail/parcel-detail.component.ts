@@ -18,6 +18,7 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 import { environment } from 'src/environments/environment';
+import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -132,8 +133,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -143,6 +142,16 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
+  }
+
+  public removeTag(tag: TagDto) {
+    const tagIndex = this.parcel.Tags.indexOf(tag);
+
+    this.parcelService.removeTagFromParcel(this.parcel.ParcelID, tag.TagID).subscribe(() => {
+      this.parcel.Tags.splice(tagIndex, 1);
+    }, error => {
+      window.scroll(0, 0);
+    });
   }
 
   public getWaterSupplyParcelLedgers(parcelLedgersForWaterYear: Array<ParcelLedgerDto>): Array<ParcelLedgerDto> {

@@ -1532,6 +1532,38 @@
         }
       }
     },
+    "/parcels/{parcelID}/removeTag/{tagID}": {
+      "delete": {
+        "tags": [
+          "Parcel"
+        ],
+        "parameters": [
+          {
+            "name": "parcelID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tagID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/parcels/{tagID}/listByTagID": {
       "get": {
         "tags": [

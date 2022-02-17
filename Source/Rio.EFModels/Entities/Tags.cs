@@ -29,11 +29,13 @@ namespace Rio.EFModels.Entities
 
         public static List<TagDto> ListByParcelIDAsDto(RioDbContext dbContext, int parcelID)
         {
-            var parcelTags = dbContext.ParcelTags
+            var tagDtos = dbContext.ParcelTags
                 .Include(x => x.Tag)
-                .Where(x => x.ParcelID == parcelID);
+                .Where(x => x.ParcelID == parcelID)
+                .OrderBy(x => x.Tag.TagName)
+                .Select(x => x.Tag.AsDto())
+                .ToList();
 
-            var tagDtos = parcelTags.Select(x => x.Tag.AsDto()).ToList();
             return tagDtos;
         }
 

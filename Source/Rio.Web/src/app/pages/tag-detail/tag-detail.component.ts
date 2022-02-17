@@ -45,7 +45,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         this.tag = tag;
 
         this.createTaggedParcelsIndexGridColumnDefs();
-        this.parcelService.getByTagID(tag.TagID).subscribe(taggedParcels => {
+        this.parcelService.getParcelsByTagID(tag.TagID).subscribe(taggedParcels => {
           this.taggedParcels = taggedParcels;
           this.taggedParcelsIndexGrid.api.setRowData(taggedParcels);
         });

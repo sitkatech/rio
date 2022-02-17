@@ -63,7 +63,7 @@
             <div class="card-body">
               <span *ngFor="let tag of parcel.Tags" class="btn btn-secondary m-1">
                 <a href="/tags/{{tag.TagID}}" class="text-dark">{{tag.TagName}}</a>
-                <span class="fas fa-times ml-2"></span>
+                <span class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
               </span>
               <div class="input-group m-1">
                 <input type="text" class="form-control"/>

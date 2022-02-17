@@ -39,9 +39,14 @@ export class ParcelService {
     return this.apiService.getFromApi(route);
   }
 
-  getByTagID(tagID: number): Observable<Array<ParcelSimpleDto>> {
+  getParcelsByTagID(tagID: number): Observable<Array<ParcelSimpleDto>> {
     let route = `/parcels/${tagID}/listByTagID`;
     return this.apiService.getFromApi(route);
+  }
+
+  removeTagFromParcel(parcelID: number, tagID: number) {
+    let route = `parcels/${parcelID}/removeTag/${tagID}`;
+    return this.apiService.deleteToApi(route);
   }
 
   searchParcelNumber(parcelNumber: string): Observable<string> {
