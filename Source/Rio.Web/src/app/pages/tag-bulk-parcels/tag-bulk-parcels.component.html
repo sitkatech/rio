@@ -18,7 +18,9 @@
             </div>
         </div>
         <div class="col-auto ml-auto">
-            <span class="btn btn-rio mr-2 mb-2" (click)="tagSelectedParcels()"><i class="fas fa-plus mr-1"></i>Tag Selected Parcels</span>
+            <button class="btn btn-rio mr-2 mb-2" (click)="tagSelectedParcels()" [disabled]="noParcelsSelected">
+                <i class="fas fa-plus mr-1"></i>Tag Selected Parcels
+            </button>
         </div>
     </div>
     <div class="row mt-2">
@@ -42,7 +44,7 @@
                 <div class="card-body">
             <ag-grid-angular #bulkTagParcelsGrid style="width: 100%; height: 800px;" class="ag-theme-balham"
                 [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
-                rowSelection="multiple">
+                rowSelection="multiple" (selectionChanged)="onSelectionChanged()">
             </ag-grid-angular>
         </div>
     </div>

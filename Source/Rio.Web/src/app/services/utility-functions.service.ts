@@ -123,4 +123,11 @@ export class UtilityFunctionsService {
     }
     grid.api.exportDataAsCsv(params);
   }
+
+  public linkRendererComparator(id1: any, id2: any) {
+    if (id1.LinkDisplay == id2.LinkDisplay) {
+      return 0;
+    }
+    return id1.LinkDisplay > id2.LinkDisplay ? 1 : -1;
+  }
 }

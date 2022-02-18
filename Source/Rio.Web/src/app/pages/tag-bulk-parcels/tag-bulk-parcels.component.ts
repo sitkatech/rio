@@ -40,7 +40,7 @@ export class TagBulkParcelsComponent implements OnInit {
   public tagModel: TagDto;
   public parcelsToTag: Array<ParcelWaterSupplyAndUsageDto>;
   public isLoadingSubmit = false;
-
+  public noParcelsSelected = true;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -86,6 +86,7 @@ export class TagBulkParcelsComponent implements OnInit {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 100
       },
       this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120, 0),
@@ -95,6 +96,7 @@ export class TagBulkParcelsComponent implements OnInit {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: params =>(params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null,
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 170
       },
       { headerName: 'Tags', field: 'TagsAsCommaSeparatedString', filter: true, sortable: true, resizable: true },
@@ -113,6 +115,10 @@ export class TagBulkParcelsComponent implements OnInit {
       this.parcelWaterSupplyAndUsages = parcelWaterSupplyAndUsages;
       this.bulkTagParcelsGrid.api.setRowData(parcelWaterSupplyAndUsages);
     });
+  }
+
+  public onSelectionChanged() {
+    this.noParcelsSelected = this.bulkTagParcelsGrid.api.getSelectedRows().length == 0;
   }
 
   private launchModal(modalContent: any, modalTitle: string): void {
@@ -140,10 +146,10 @@ export class TagBulkParcelsComponent implements OnInit {
     tagBulkSetUpsertDto.TagDto = this.tagModel;
     tagBulkSetUpsertDto.parcelIDs = this.parcelsToTag.map(x => x.ParcelID);
     
-    this.tagService.bulkTagParcel(tagBulkSetUpsertDto).subscribe(() => {
+    this.tagService.bulkTagParcel(tagBulkSetUpsertDto).subscribe(result => {
       this.isLoadingSubmit = false;
       this.modalReference.close();
-      this.alertService.pushAlert(new Alert(`${this.tagModel.TagName} tag was successfully created.`, AlertContext.Success, true));
+      this.alertService.pushAlert(new Alert(`${result} parcels successfully tagged`, AlertContext.Success, true));
       this.updateGridData();
     }, error => {
       this.isLoadingSubmit = false;

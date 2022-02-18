@@ -56,7 +56,9 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         this.createTaggedParcelsIndexGridColumnDefs();
         this.parcelService.getParcelsByTagID(tag.TagID).subscribe(taggedParcels => {
           this.taggedParcels = taggedParcels;
+
           this.taggedParcelsIndexGrid.api.setRowData(taggedParcels);
+          this.taggedParcelsIndexGrid.api.sizeColumnsToFit();
         });
       });
 
@@ -77,15 +79,17 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 120
       },
-      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120, 0),
+      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120, 1),
       {
         headerName: 'Account', valueGetter: function (params: any) {
           return { LinkValue: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner === null ? "" : params.data.LandOwner.AccountDisplayName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
-        filterValueGetter: params => (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null,
+        filterValueGetter: params => params.data.LandOwner ? params.data.LandOwner.AccountDisplayName : null,
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 310
       },
     ]
@@ -93,6 +97,10 @@ export class TagDetailComponent implements OnInit, OnDestroy {
 
   public isAdmin(): boolean {
     return this.authenticationService.isCurrentUserAnAdministrator();
+  }
+
+  public exportToCsv() {
+    this.utilityFunctionsService.exportGridToCsv(this.taggedParcelsIndexGrid, `${this.tag.TagName}-tagged-parcels.csv`, null);
   }
 
   private launchModal(modalContent: any, modalTitle: string): void {
