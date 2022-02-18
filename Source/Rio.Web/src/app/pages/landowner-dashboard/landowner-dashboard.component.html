@@ -116,17 +116,6 @@
                   {{getWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
-              <tr>
-                <th class="text-sm-right font-weight-normal">
-                  Precipitation
-                  <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                    ngbTooltip="Learn about Precipitation"><i
-                      class="fas fa-question-circle small"></i></a>
-                </th>
-                <td class="text-sm-right">
-                  {{getPrecipWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-                </td>
-              </tr> 
               <ng-container *ngIf="allowTrading()">
                 <tr>
                   <th class="text-sm-right font-weight-normal">
@@ -227,16 +216,16 @@
       </div>
       <div class="col-sm-12 mt-5 pt-4 mb-5">
         <div class="row">
-          <div class="col-sm-6">
+          <div class="col-md-6">
             <div class="h3">Account Activity</div>
           </div>
-          <div class="col-sm-6 text-sm-right mb-2">
+          <div class="col-md-6 text-md-right mb-2">
             <div class="btn-group btn-group-toggle">
-              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': !displayAccountActivityDetailed }">
-                <input type="radio" name="activity-view" id="summary" [(ngModel)]="displayAccountActivityDetailed" [value]="false"> Summary
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:180px;" [ngClass]="{ 'active': !displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="summary" [(ngModel)]="displayAccountActivityDetailed" [value]="false">Recent Transactions
               </label>
-              <label class="btn btn-toggle btn-sm btn-rio border" style="width:130px;" [ngClass]="{ 'active': displayAccountActivityDetailed }">
-                <input type="radio" name="activity-view" id="detailed" [(ngModel)]="displayAccountActivityDetailed" [value]="true"> Detail
+              <label class="btn btn-toggle btn-sm btn-rio border" style="width:180px;" [ngClass]="{ 'active': displayAccountActivityDetailed }">
+                <input type="radio" name="activity-view" id="detailed" [(ngModel)]="displayAccountActivityDetailed" [value]="true">All Transaction Details
               </label>
             </div>
           </div>
@@ -285,7 +274,7 @@
                         </div>
                         <div class="col-lg-3 col-md-6">
                           <span class="label">Balance</span>
-                          {{parcelLedgersBalance.get(parcelLedger.ParcelLedgerID) | number: '1.2-2'}} {{unitsShown}}
+                          {{getResultInUnitsShown(parcelLedgersBalance.get(parcelLedger.ParcelLedgerID)) | number: '1.2-2'}} {{unitsShown}}
                         </div>
                       </div>
                     </div>

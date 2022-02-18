@@ -14,7 +14,6 @@ import { ParcelStatusDto } from '././parcel-status-dto';
 
 export class ParcelWaterSupplyAndUsageDto { 
     TotalSupply?: number;
-    Precipitation?: number;
     Purchased?: number;
     Sold?: number;
     UsageToDate?: number;

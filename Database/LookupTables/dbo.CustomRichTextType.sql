@@ -26,7 +26,6 @@ USING (VALUES
 (24, 'ParcelLedgerBulkCreate', 'Create Bulk Transaction'),
 (25, 'ParcelLedgerCreateFromSpreadsheet', 'Create Transaction From Spreadsheet Upload'),
 (26, 'WebsiteFooter', 'Website Footer'),
-(27, 'PrecipitationDescription', 'Precipitation Description'),
 (28, 'PurchasedDescription', 'Purchased Water Description'),
 (29, 'SoldDescription', 'Sold Water Description'),
 (30, 'TagList', 'Tag List')

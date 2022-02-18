@@ -5262,11 +5262,6 @@
             "format": "double",
             "nullable": true
           },
-          "Precipitation": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
           "Purchased": {
             "type": "number",
             "format": "double",

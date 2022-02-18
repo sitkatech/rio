@@ -18,7 +18,6 @@ namespace Rio.EFModels.Entities
         public string ParcelNumber { get; set; }
         public double ParcelAreaInAcres { get; set; }
         public decimal? TotalSupply { get; set; }
-        public decimal? Precipitation { get; set; }
         public decimal? Purchased { get; set; }
         public decimal? Sold { get; set; }
         public decimal? UsageToDate { get; set; }
@@ -39,7 +38,6 @@ namespace Rio.EFModels.Entities
                     ParcelNumber = parcel.ParcelNumber,
                     ParcelAreaInAcres = parcel.ParcelAreaInAcres,
                     TotalSupply = parcel.TotalSupply,
-                    Precipitation = parcel.Precipitation,
                     Purchased = parcel.Purchased,
                     Sold = parcel.Sold,
                     UsageToDate = parcel.UsageToDate

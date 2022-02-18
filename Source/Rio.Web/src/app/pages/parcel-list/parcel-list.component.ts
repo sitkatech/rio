@@ -113,7 +113,6 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           sortable: true, filter: true, width: 170
         },
         this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 150),
-        this.utilityFunctionsService.createDecimalColumnDef('Precipitation', 'Precipitation', 130),
         this.utilityFunctionsService.createDecimalColumnDef('Total Usage', 'UsageToDate', 130)
       ];
 

@@ -113,7 +113,6 @@
                 <tr>
                   <th>Year</th>
                   <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
-                  <th class="text-right">Precipitation</th>
                   <th *ngIf="allowTrading()" class="text-right">Purchased</th>
                   <th *ngIf="allowTrading()" class="text-right">Sold</th>
                   <th class="text-right">Total Supply</th>
@@ -124,7 +123,6 @@
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear.Year}}</td>
                   <td class="text-right" *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
-                  <td class="text-right">{{getPrecipWaterSupplyForYear(waterYear.Year)}}</td>
                   <td *ngIf="allowTrading()" class="text-right">{{getPurchasedWaterSupplyForYear(waterYear.Year)}}</td>
                   <td *ngIf="allowTrading()" class="text-right">{{getSoldWaterSupplyForYear(waterYear.Year)}}</td>
                   <td class="text-right">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
