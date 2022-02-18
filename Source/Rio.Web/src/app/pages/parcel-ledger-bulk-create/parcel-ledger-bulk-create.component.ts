@@ -48,6 +48,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public columnDefs: ColDef[];
   public defaultColDef: ColDef;
   public gridOptions: GridOptions;
+  private tagsColDefInsertIndex = 4;
   
   constructor(
     private route: ActivatedRoute,
@@ -95,24 +96,29 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   private initializeParcelSelectGrid() {
     const _decimalPipe = this.decimalPipe;
     this.columnDefs = [
-      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true },
+      { filter: false, sortable: false, checkboxSelection: true, headerCheckboxSelection: true, headerCheckboxSelectionFilteredOnly: true, width: 40 },
       { 
-        headerName: 'APN', 
+        headerName: 'APN', width: 140,
         valueGetter: function (params: any) { return { LinkValue: params.data.ParcelID, LinkDisplay: params.data.ParcelNumber }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,  
       },
-      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres'),
+      this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120),
       { 
-        headerName: 'Account', 
+        headerName: 'Account', width: 240,
         valueGetter: function (params: any) { return { LinkValue: params.data.LandOwner.AccountID, LinkDisplay: params.data.LandOwner.AccountDisplayName }; }, 
         cellRendererFramework: LinkRendererComponent, cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: params => params.data.LandOwner.AccountDisplayName, 
       },
-      this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply')
+      this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 120)
     ];
 
-    this.defaultColDef = { sortable: true, filter: true }
+    if (this.authenticationService.isCurrentUserAnAdministrator()) {
+      const tagsColDef: ColDef =  { headerName: 'Tags', field: 'TagsAsCommaSeparatedString', width: 200 };
+      this.columnDefs.splice(this.tagsColDefInsertIndex, 0, tagsColDef);
+    }
+
+    this.defaultColDef = { sortable: true, filter: true, resizable: true }
     this.gridOptions = { rowSelection: 'multiple', onRowSelected: (event: RowSelectedEvent) => this.onParcelSelectionChange(event) }
   }
 
@@ -123,13 +129,12 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.waterTypes.forEach(waterType => {
       const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
       colDefsWithWaterTypes.push(
-        this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName)
+        this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 120)
       );
       this.gridApi.setColumnDefs(colDefsWithWaterTypes);
     });
 
     this.parcelSelectGrid.api.setRowData(this.parcelWaterSupplyAndUsagesByYear);
-    this.columnApi.autoSizeAllColumns();
   }
 
   public onParcelSelectionChange(e: RowSelectedEvent) {

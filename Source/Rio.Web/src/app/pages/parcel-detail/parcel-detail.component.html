@@ -19,35 +19,61 @@
   <app-alert-display></app-alert-display>
   <div class="row mt-4">
     <div class="col-sm-12 col-md-4">
-      <div class="card">
-        <div class="card-header">
-          Basics
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              Basics
+            </div>
+            <div class="card-body">
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12">APN</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  {{parcel.ParcelNumber}}
+                </dd>
+              </dl>
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12">Area</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  {{parcel.ParcelAreaInAcres | number: '1.1-1'}} acres
+                </dd>
+              </dl>
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12"><span *ngIf="isLandowner()">Water </span>Account</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  <a *ngIf="(isAdministrator() || isDemoUser()) && getCurrentOwner() && getCurrentOwner().Account"
+                    routerLink="/accounts/{{getCurrentOwner().Account.AccountID}}">{{getCurrentOwner().Account.AccountName}}</a>
+                  <span *ngIf="isLandowner() && getCurrentOwner() && getCurrentOwner().Account">{{getCurrentOwner().Account.AccountName}}</span>
+                  <em *ngIf="!getCurrentOwner() || !getCurrentOwner().Account">Inactive</em>
+                </dd>
+              </dl>
+              <div class="row" *ngIf="showGoToDashboardButton()">
+                <div class="col-sm-12 text-center">
+                  <a class="btn btn-rio" routerLink="/landowner-dashboard/{{getCurrentOwnerAccountNumber()}}" >Go to Dashboard</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <dl class="row">
-            <dt class="text-sm-right col-sm-5 col-xs-12">APN</dt>
-            <dd class="col-sm-7 col-xs-12">
-              {{parcel.ParcelNumber}}
-            </dd>
-          </dl>
-          <dl class="row">
-            <dt class="text-sm-right col-sm-5 col-xs-12">Area</dt>
-            <dd class="col-sm-7 col-xs-12">
-              {{parcel.ParcelAreaInAcres | number: '1.1-1'}} acres
-            </dd>
-          </dl>
-          <dl class="row">
-            <dt class="text-sm-right col-sm-5 col-xs-12"><span *ngIf="isLandowner()">Water </span>Account</dt>
-            <dd class="col-sm-7 col-xs-12">
-              <a *ngIf="(isAdministrator() || isDemoUser()) && getCurrentOwner() && getCurrentOwner().Account"
-                routerLink="/accounts/{{getCurrentOwner().Account.AccountID}}">{{getCurrentOwner().Account.AccountName}}</a>
-              <span *ngIf="isLandowner() && getCurrentOwner() && getCurrentOwner().Account">{{getCurrentOwner().Account.AccountName}}</span>
-              <em *ngIf="!getCurrentOwner() || !getCurrentOwner().Account">Inactive</em>
-            </dd>
-          </dl>
-          <div class="row" *ngIf="showGoToDashboardButton()">
-            <div class="col-sm-12 text-center">
-              <a class="btn btn-rio" routerLink="/landowner-dashboard/{{getCurrentOwnerAccountNumber()}}" >Go to Dashboard</a>
+        <div class="col-12 mt-4 mb-md-0 mb-4" *ngIf="isAdministrator()">
+          <div class="card">
+            <div class="card-header">
+              Tags
+            </div>
+            <div class="card-body">
+              <span *ngFor="let tag of tags" class="btn btn-secondary m-1">
+                <a href="/tags/{{tag.TagID}}" class="text-dark">{{tag.TagName}}</a>
+                <span class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
+              </span>
+              <div class="input-group m-1">
+                <input type="text" class="form-control" [(ngModel)]="tagInput" placeholder="Add a Tag"/>
+                <div class="input-group-append">
+                  <span class="btn btn-secondary" (click)="addTag()" [disabled]="isTaggingParcel">
+                    <i class="fas fa-plus" *ngIf="!isTaggingParcel"></i>
+                    <i *ngIf="isTaggingParcel" class="fa fa-spinner loading-spinner"></i>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

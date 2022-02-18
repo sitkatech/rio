@@ -73,6 +73,13 @@ namespace Rio.EFModels.Entities
             return parcel?.AsDto();
         }
 
+        public static List<Parcel> ListByIDs(RioDbContext dbContext, List<int> parcelIDs)
+        {
+            return GetParcelImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID))
+                .ToList();
+        }
+
         public static List<Parcel> ListByParcelNumbers(RioDbContext dbContext, List<string> parcelNumbers)
         {
             return GetParcelImpl(dbContext)
@@ -98,6 +105,17 @@ namespace Rio.EFModels.Entities
                 .SingleOrDefault(x => x.ParcelNumber == parcelNumber);
 
             return parcel?.AsDto();
+        }
+
+        public static List<ParcelDto> ListByTagIDAsDto(RioDbContext dbContext, int tagID)
+        {
+            var parcelIDs = dbContext.ParcelTags.Where(x => x.TagID == tagID).Select(x => x.ParcelID).ToList();
+            var parcelDtos = GetParcelImpl(dbContext)
+                .Where(x => parcelIDs.Contains(x.ParcelID))
+                .Select(x => x.AsDto())
+                .ToList();
+
+            return parcelDtos;
         }
 
         public static List<string> SearchParcelNumber(RioDbContext dbContext, string parcelNumber)

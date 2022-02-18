@@ -41,6 +41,8 @@ namespace Rio.API.Controllers
                 var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
                     .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
                 parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
+
+                parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = Tags.GetByParcelIDAsCommaSeparatedString(_dbContext, parcelWaterSupplyAndUsageDto.ParcelID);
             }
 
             return Ok(parcelWaterSupplyAndUsageDtos);
@@ -59,26 +61,43 @@ namespace Rio.API.Controllers
         public ActionResult<ParcelDto> GetByParcelID([FromRoute] int parcelID)
         {
             var currentUser = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-
-            if (currentUser == null)
+            if (!UserCanAccessParcel(_dbContext, currentUser, parcelID))
             {
                 return Forbid();
             }
 
-            if (currentUser != null && 
-                currentUser.Role.RoleID == (int)RoleEnum.LandOwner)
+            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
+            return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
+        }
+
+        [HttpGet("parcels/{tagID}/listByTagID")]
+        [ManagerDashboardFeature]
+        public ActionResult<List<ParcelDto>> ListByTagID([FromRoute] int tagID)
+        {
+            var parcelDtos = Parcel.ListByTagIDAsDto(_dbContext, tagID);
+            return Ok(parcelDtos);
+        }
+
+        private static bool UserCanAccessParcel(RioDbContext dbContext, UserDto user, int parcelID)
+        {
+            if (user == null)
             {
-                var currentYear = WaterYear.GetDefaultYearToDisplay(_dbContext);
-                var parcelsForUser = Parcel.ListByUserID(_dbContext, currentUser.UserID, currentYear.Year);
+                return false;
+            }
+
+            if (user != null &&
+                user.Role.RoleID == (int)RoleEnum.LandOwner)
+            {
+                var currentYear = WaterYear.GetDefaultYearToDisplay(dbContext);
+                var parcelsForUser = Parcel.ListByUserID(dbContext, user.UserID, currentYear.Year);
 
                 if (!parcelsForUser.Any() || parcelsForUser.All(x => x.ParcelID != parcelID))
                 {
-                    return Forbid();
+                    return false;
                 }
             }
 
-            var parcelDto = Parcel.GetByIDAsDto(_dbContext, parcelID);
-            return RequireNotNullThrowNotFound(parcelDto, "Parcel", parcelID);
+            return true;
         }
 
         [HttpGet("parcels/search/{parcelNumber}")]

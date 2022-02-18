@@ -37,6 +37,8 @@ export * from '././posting-type-dto';
 export * from '././posting-update-status-dto';
 export * from '././posting-upsert-dto';
 export * from '././role-dto';
+export * from '././tag-bulk-set-upsert-dto';
+export * from '././tag-dto';
 export * from '././trade-activity-by-month-dto';
 export * from '././trade-dto';
 export * from '././trade-status-dto';
