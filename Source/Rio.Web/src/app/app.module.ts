@@ -83,6 +83,7 @@ import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledge
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
+import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -151,7 +152,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     ParcelLedgerCreateFromSpreadsheetComponent,
     TagListComponent,
     TagDetailComponent,
-    TagBulkParcelsComponent
+    TagBulkParcelsComponent,
+    ParcelLedgerTransactionHistoryComponent
   ],
   imports: [
     AppRoutingModule,
