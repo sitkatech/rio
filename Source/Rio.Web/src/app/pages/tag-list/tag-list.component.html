@@ -20,7 +20,7 @@
         </div>
         <div *ngIf="isAdmin()" class="col-auto ml-auto">
             <span class="btn btn-rio mr-2 mb-2" (click)="createTag()"><i class="fas fa-plus mr-1"></i>Add New Tag</span>
-            <a routerLink="bulk-tag-parcels" class="btn btn-secondary mr-2 mb-2">Bulk Tag Parcels</a>
+            <a routerLink="bulk-tag-parcels" class="btn btn-rio mr-2 mb-2"><i class="fas fa-plus mr-1"></i>Bulk Tag Parcels</a>
             <a class="btn btn-secondary mb-2" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
                 ngbTooltip="Download Tags Grid as CSV"><i class="fas fa-download"></i></a>
         </div>
@@ -33,7 +33,8 @@
     <div class="row mt-2">
         <div class="col-sm-12">
             <ag-grid-angular #tagsGrid style="width: 100%; height: 800px;" class="ag-theme-balham"[columnDefs]="columnDefs" 
-                (cellClicked)="onCellClicked($event)" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+                [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true" 
+                (cellClicked)="onCellClicked($event)">
             </ag-grid-angular>
         </div>
     </div>

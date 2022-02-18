@@ -29,6 +29,7 @@ export class TagListComponent implements OnInit {
   private currentUser: UserDto;
 
   public columnDefs: Array<ColDef>;
+  public defaultColDef: ColDef;
   public tags: Array<TagDto>;
   public richTextTypeID = CustomRichTextType.TagList;
   private modalReference: NgbModalRef;
@@ -67,26 +68,28 @@ export class TagListComponent implements OnInit {
   private createTagsGridColumnDefs() {
     this.columnDefs = [
       {
-        headerName: 'Tag Name', 
+        headerName: 'Tag Name', width: 120,
         valueGetter: function (params: any) {
           return { LinkValue: params.data.TagID, LinkDisplay: params.data.TagName };
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/tags/" },
         filterValueGetter: params => params.data.TagName
       },
-      { headerName: 'Tag Description', field: 'TagDescription', sortable: true, filter: true, resizable: true, width: 550 },
-      this.utilityFunctionsService.createDecimalColumnDef('Tagged Parcels Count', 'TaggedParcelsCount', 180, 0)
+      { headerName: 'Tag Description', field: 'TagDescription' },
+      this.utilityFunctionsService.createDecimalColumnDef('Tagged Parcels Count', 'TaggedParcelsCount', 80, 0)
     ];
 
     if (this.isAdmin()) {
       const deleteTagColDef: ColDef = {
         cellRendererFramework: FontAwesomeIconLinkRendererComponent,
         cellRendererParams: { isSpan: true, fontawesomeIconName: 'trash', cssClasses: 'text-primary'},
-        width: 40, resizable: true
+        width: 40, sortable: false, filter: false, resizable: false, suppressSizeToFit: true
       };
       this.columnDefs.splice(0, 0, deleteTagColDef);
       this.isDisplayingDeleteColumn = true;
     }
+
+    this.defaultColDef = { filter: true, sortable: true, resizable: true }
   }
 
   public isAdmin(): boolean {
@@ -98,6 +101,7 @@ export class TagListComponent implements OnInit {
       
       this.tags = tags;
       this.tagsGrid.api.setRowData(tags);
+      this.tagsGrid.api.sizeColumnsToFit();
     });
   }
 

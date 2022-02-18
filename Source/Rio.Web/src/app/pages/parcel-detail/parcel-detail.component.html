@@ -55,7 +55,7 @@
             </div>
           </div>
         </div>
-        <div class="col-12 mt-4 mb-md-0 mb-4" *ngIf="isAdministrator()">
+        <div class="col-12 mt-4 mb-md-0 mb-4">
           <div class="card">
             <div class="card-header">
               Tags
@@ -63,9 +63,9 @@
             <div class="card-body">
               <span *ngFor="let tag of tags" class="btn btn-secondary m-1">
                 <a href="/tags/{{tag.TagID}}" class="text-dark">{{tag.TagName}}</a>
-                <span class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
+                <span *ngIf="isAdministrator()" class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
               </span>
-              <div class="input-group m-1">
+              <div *ngIf="isAdministrator()" class="input-group m-1">
                 <input type="text" class="form-control" [(ngModel)]="tagInput" placeholder="Add a Tag"/>
                 <div class="input-group-append">
                   <span class="btn btn-secondary" (click)="addTag()" [disabled]="isTaggingParcel">

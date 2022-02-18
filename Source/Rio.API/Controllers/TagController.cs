@@ -145,7 +145,7 @@ namespace Rio.API.Controllers
 
         [HttpPost("tags/bulkTagParcels")]
         [ManagerDashboardFeature]
-        public ActionResult BulkTagParcelsByParcelIDs([FromBody] TagBulkSetUpsertDto tagBulkSetUpsertDto)
+        public ActionResult<int> BulkTagParcelsByParcelIDs([FromBody] TagBulkSetUpsertDto tagBulkSetUpsertDto)
         {
             var tagDto = tagBulkSetUpsertDto.TagDto;
             var parcelIDs = tagBulkSetUpsertDto.parcelIDs;
@@ -171,9 +171,9 @@ namespace Rio.API.Controllers
                 parcels = parcels.Where(x => !taggedParcelIDs.Contains(x.ParcelID)).ToList();
             }
 
-            Tags.BulkTagParcelsByIDAndParcelIDs(_dbContext, tag.TagID, parcels.Select(x => x.ParcelID).ToList());
+            var taggedCount = Tags.BulkTagParcelsByIDAndParcelIDs(_dbContext, tag.TagID, parcels.Select(x => x.ParcelID).ToList());
 
-            return Ok();
+            return Ok(taggedCount);
         }
 
         [HttpDelete("tags/{tagID}/removeTagFromParcel/{parcelID}")]
