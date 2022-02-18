@@ -79,12 +79,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/parcels/" },
         filterValueGetter: params => params.data.ParcelNumber,
-        comparator: function (id1: any, id2: any) {
-          if (id1.LinkDisplay == id2.LinkDisplay) {
-            return 0;
-          }
-          return id1.LinkDisplay > id2.LinkDisplay ? 1 : -1;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 120
       },
       this.utilityFunctionsService.createDecimalColumnDef('Area (acres)', 'ParcelAreaInAcres', 120, 1),
@@ -94,14 +89,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         }, cellRendererFramework: LinkRendererComponent,
         cellRendererParams: { inRouterLink: "/accounts/" },
         filterValueGetter: params => params.data.LandOwner ? params.data.LandOwner.AccountDisplayName : null,
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 == link2) {
-            return 0;
-          }
-          return link1 < link2 ? 1 : -1;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 310
       },
     ]
