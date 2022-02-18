@@ -1,0 +1,104 @@
+<div class="breadcrumb-container">
+    <div class="container">
+        <nav aria-label="breadcrumb" *ngIf="tag">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/tags">Tags</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{tag.TagName}}
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-sm-4" *ngIf="tag">
+    <app-alert-display></app-alert-display>
+    <h2 class="d-inline-block">
+        {{tag.TagName}}
+    </h2>
+    <div class="row mt-2">
+        <div class="col-xl-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-auto mt-1">
+                            Basics
+                        </div>
+                        <div *ngIf="isAdmin()" class="col-auto ml-auto">
+                            <span class="btn btn-sm btn-secondary" (click)="editTagBasics()" ngbTooltip="Edit Basics" placement="top">
+                                <i class="fas fa-edit"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-3 mb-1 font-weight-bold text-xl-left text-md-right">
+                            Tag Name
+                        </div>
+                        <div class="col-xl-12 col-md-9">
+                            {{tag.TagName}}
+                        </div>
+                    </div>
+                    <div class="row mt-4" *ngIf="tag.TagDescription">
+                        <div class="col-xl-12 col-md-3 mb-1 font-weight-bold text-xl-left text-md-right">
+                            Tag Description
+                        </div>
+                        <div class="col-xl-12 col-md-9">
+                            {{tag.TagDescription}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-header">Tagged Parcel Index</div>
+                <div class="card-body">
+                    <ag-grid-angular #taggedParcelsIndexGrid style="width: 100%; height: 500px;" class="ag-theme-balham"
+                        [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+                    </ag-grid-angular>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #editTagBasicsModal let-modal>
+    <div class="modal-header bg-secondary">
+        <h5 class="modal-title" id="editTagBasicsModalTitle">Edit Basics</h5>
+        <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="tagModel">
+            <div class="row mb-3">
+                <div class="col-md-4 text-md-right">
+                    <label class="form-control-label required">Name</label>
+                </div>
+                <div class="col-md-8 text-md-right">
+                    <input type="text" class="form-control" name="tag-name" [(ngModel)]="tagModel.TagName" />
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4 text-md-right">
+                    <label class="form-control-label">Description</label>
+                </div>
+                <div class="col-md-8 text-md-right">
+                    <textarea class="form-control" name="tag-description" [(ngModel)]="tagModel.TagDescription"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="mr-3">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+            <button type="button" class="btn btn-rio" (click)="onSubmit()">
+                <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                Save
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="modal.close('Cancel click')">Cancel</button>
+        </div>
+    </div>
+</ng-template>

@@ -9,18 +9,11 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { AccountDto } from '././account-dto';
-import { ParcelStatusDto } from '././parcel-status-dto';
+import { TagDto } from '././tag-dto';
 
-export class ParcelDto { 
-    ParcelID?: number;
-    ParcelNumber?: string;
-    ParcelAreaInSquareFeet?: number;
-    ParcelAreaInAcres?: number;
-    ParcelStatus?: ParcelStatusDto;
-    InactivateDate?: string;
-    LandOwner?: AccountDto;
-    TagsAsCommaSeparatedString?: string;
+export class TagBulkSetUpsertDto { 
+    TagDto?: TagDto;
+    parcelIDs?: Array<number>;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

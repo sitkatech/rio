@@ -36,6 +36,7 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public mapHeight: string = "500px"
   public columnDefs: Array<ColDef>;
   public waterTypes: WaterTypeDto[];
+  private tagsColumnDefInsertIndex = 3;
   private waterTypeColumnDefsInsertIndex = 4;
   private tradeColumnDefsInsertIndex = 5;
 
@@ -123,6 +124,11 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.columnDefs.splice(this.tradeColumnDefsInsertIndex, 0, ...tradeColDefs);
       }
 
+      if (this.isAdministrator) {
+        const tagsColDef: ColDef = { headerName: 'Tags', field: 'TagsAsCommaSeparatedString', filter: true, sortable: true, resizable: true };
+        this.columnDefs.splice(this.tagsColumnDefInsertIndex, 0, tagsColDef);
+      }
+
       this.gridOptions = <GridOptions>{};
       this.currentUser = currentUser;
       this.parcelsGrid?.api.showLoadingOverlay();
@@ -170,6 +176,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
     
     
     this.cdr.detach();
+  }
+
+  public isAdministrator(): boolean {
+    return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
   private allowTrading(): boolean {

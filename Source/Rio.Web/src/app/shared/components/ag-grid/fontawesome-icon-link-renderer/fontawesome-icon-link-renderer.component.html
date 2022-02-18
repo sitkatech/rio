@@ -1,1 +1,6 @@
-<a [routerLink]="[params.inRouterLink, params.value]" *ngIf="params"><span class="fas fa-{{params.fontawesomeIconName}}"></span></a>
+<ng-container *ngIf="params">
+    <span *ngIf="params.isSpan; else iconWithLink" class="fas fa-{{params.fontawesomeIconName}}" [ngClass]="params.cssClasses" style="cursor:pointer"></span>
+    <ng-template #iconWithLink>
+        <a [routerLink]="[params.inRouterLink, params.value]" style="cursor:pointer"><span class="fas fa-{{params.fontawesomeIconName}}" [ngClass]="params.cssClasses" ></span></a>
+    </ng-template>
+</ng-container>

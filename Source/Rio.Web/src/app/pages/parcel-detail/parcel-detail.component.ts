@@ -18,6 +18,8 @@ import { UtilityFunctionsService } from 'src/app/services/utility-functions.serv
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/parcel-ledger-entry-source-type-enum';
 import { environment } from 'src/environments/environment';
+import { TagDto } from 'src/app/shared/generated/model/tag-dto';
+import { TagService } from 'src/app/services/tag/tag.service';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -32,11 +34,14 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public waterYears: Array<WaterYearDto>;
   public parcel: ParcelDto;
+  public tags: Array<TagDto>;
   public parcelLedgers: Array<ParcelLedgerDto>;
   public waterSupplyParcelLedgers: Array<ParcelLedgerDto>;
   public usageParcelLedgers: Array<ParcelLedgerDto>;
   public months: number[];
   public parcelOwnershipHistory: ParcelOwnershipDto[];
+  public tagInput: string;
+  public isTaggingParcel = false;
 
   public today: Date = new Date();
   public waterTypes: WaterTypeDto[];
@@ -56,6 +61,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     private waterTypeService: WaterTypeService,
     private cdr: ChangeDetectorRef,
     private utilityFunctionsService: UtilityFunctionsService,
+    private tagService: TagService
   ) {
     // force route reload whenever params change;
     this.router.routeReuseStrategy.shouldReuseRoute = () => false;
@@ -72,9 +78,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.parcelService.getParcelByParcelID(id),
           this.parcelService.getParcelLedgerEntriesByParcelID(id),
           this.parcelService.getParcelOwnershipHistory(id),
+          this.tagService.getTagsByParcelID(id),
           this.waterYearService.getWaterYears(),
           this.waterTypeService.getWaterTypes()
-        ).subscribe(([parcel, parcelLedgers, parcelOwnershipHistory, waterYears, waterTypes]) => {
+        ).subscribe(([parcel, parcelLedgers, parcelOwnershipHistory, tags, waterYears, waterTypes]) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
@@ -86,6 +93,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
           this.waterYears = waterYears;
           this.parcelOwnershipHistory = parcelOwnershipHistory;
           this.waterTypes = waterTypes;
+          this.tags = tags;
         });
       }
       this.months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -132,8 +140,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -143,6 +149,39 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public getSelectedParcelIDs(): Array<number> {
     return this.parcel !== undefined ? [this.parcel.ParcelID] : [];
+  }
+
+  public updateTags() {
+    this.tagService.getTagsByParcelID(this.parcel.ParcelID).subscribe(tags => {
+      this.tags = tags;
+    });
+  }
+
+  public addTag() {
+    if (!this.tagInput) {
+      return;
+    }
+    this.isTaggingParcel = true;
+    var newTagDto = new TagDto();
+    newTagDto.TagName = this.tagInput;
+
+    this.tagService.tagParcel(this.parcel.ParcelID, newTagDto).subscribe(() => {
+      this.isTaggingParcel = false;
+      this.updateTags();
+      this.tagInput = '';
+    }, error => {
+      this.isTaggingParcel = false;
+      this.tagInput = '';
+      window.scroll(0, 0);
+    });
+  }
+
+  public removeTag(tag: TagDto) {
+    this.tagService.removeTagFromParcel(tag.TagID, this.parcel.ParcelID).subscribe(() => {
+      this.updateTags();
+    }, error => {
+      window.scroll(0, 0);
+    });
   }
 
   public getWaterSupplyParcelLedgers(parcelLedgersForWaterYear: Array<ParcelLedgerDto>): Array<ParcelLedgerDto> {
