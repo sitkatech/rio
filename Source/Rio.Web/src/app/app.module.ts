@@ -82,6 +82,7 @@ import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-crea
 import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
+import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -149,7 +150,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     ParcelLedgerBulkCreateComponent,
     ParcelLedgerCreateFromSpreadsheetComponent,
     TagListComponent,
-    TagDetailComponent
+    TagDetailComponent,
+    TagBulkParcelsComponent
   ],
   imports: [
     AppRoutingModule,

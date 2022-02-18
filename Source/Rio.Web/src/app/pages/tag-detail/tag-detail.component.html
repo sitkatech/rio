@@ -19,13 +19,13 @@
     </h2>
     <div class="row mt-2">
         <div class="col-xl-4 mb-4">
-            <div class="card" *ngIf="tag.TagDescription">
+            <div class="card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-auto mt-1">
                             Basics
                         </div>
-                        <div *ngIf="!isEditingTagBasics" class="col-auto ml-auto">
+                        <div *ngIf="isAdmin()" class="col-auto ml-auto">
                             <span class="btn btn-sm btn-secondary" (click)="editTagBasics()" ngbTooltip="Edit Basics" placement="top">
                                 <i class="fas fa-edit"></i>
                             </span>
@@ -41,7 +41,7 @@
                             {{tag.TagName}}
                         </div>
                     </div>
-                    <div class="row mt-4">
+                    <div class="row mt-4" *ngIf="tag.TagDescription">
                         <div class="col-xl-12 col-md-3 mb-1 font-weight-bold text-xl-left text-md-right">
                             Tag Description
                         </div>
@@ -65,7 +65,7 @@
     </div>
 </div>
 <ng-template #editTagBasicsModal let-modal>
-    <div class="modal-header">
+    <div class="modal-header bg-secondary">
         <h5 class="modal-title" id="editTagBasicsModalTitle">Edit Basics</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
             <span aria-hidden="true">&times;</span>
@@ -73,7 +73,7 @@
     </div>
     <div class="modal-body">
         <div *ngIf="tagModel">
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-md-4 text-md-right">
                     <label class="form-control-label required">Name</label>
                 </div>
@@ -81,7 +81,7 @@
                     <input type="text" class="form-control" name="tag-name" [(ngModel)]="tagModel.TagName" />
                 </div>
             </div>
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-md-4 text-md-right">
                     <label class="form-control-label">Description</label>
                 </div>

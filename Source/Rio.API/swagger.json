@@ -2810,49 +2810,24 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json-patch+json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "parcelIDs": {
-                    "type": "array",
-                    "items": {
-                      "type": "integer",
-                      "format": "int32"
-                    }
-                  },
-                  "TagID": {
-                    "type": "integer",
-                    "format": "int32"
-                  },
-                  "TagName": {
-                    "type": "string"
-                  },
-                  "TagDescription": {
-                    "type": "string"
-                  },
-                  "TaggedParcelsCount": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
-                }
-              },
-              "encoding": {
-                "parcelIDs": {
-                  "style": "form"
-                },
-                "TagID": {
-                  "style": "form"
-                },
-                "TagName": {
-                  "style": "form"
-                },
-                "TagDescription": {
-                  "style": "form"
-                },
-                "TaggedParcelsCount": {
-                  "style": "form"
-                }
+                "$ref": "#/components/schemas/TagBulkSetUpsertDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagBulkSetUpsertDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagBulkSetUpsertDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagBulkSetUpsertDto"
               }
             }
           }
@@ -5580,6 +5555,23 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TagBulkSetUpsertDto": {
+        "type": "object",
+        "properties": {
+          "TagDto": {
+            "$ref": "#/components/schemas/TagDto"
+          },
+          "parcelIDs": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

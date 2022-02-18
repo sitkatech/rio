@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Rio.Models.DataTransferObjects
+﻿namespace Rio.Models.DataTransferObjects
 {
     public partial class ParcelDto
     {

@@ -37,6 +37,7 @@ export class TagListComponent implements OnInit {
   public tagModel: TagDto;
   public isLoadingDelete = false;
   public isLoadingSubmit = false;
+  private isDisplayingDeleteColumn = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -77,21 +78,36 @@ export class TagListComponent implements OnInit {
       this.utilityFunctionsService.createDecimalColumnDef('Tagged Parcels Count', 'TaggedParcelsCount', 180, 0)
     ];
 
-    if (this.authenticationService.isUserAnAdministrator) {
+    if (this.isAdmin()) {
       const deleteTagColDef: ColDef = {
         cellRendererFramework: FontAwesomeIconLinkRendererComponent,
         cellRendererParams: { isSpan: true, fontawesomeIconName: 'trash', cssClasses: 'text-primary'},
         width: 40, resizable: true
       };
       this.columnDefs.splice(0, 0, deleteTagColDef);
+      this.isDisplayingDeleteColumn = true;
     }
+  }
+
+  public isAdmin(): boolean {
+    return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
   private updateGridData() {
     this.tagService.getAllTags().subscribe(tags => {
+      
       this.tags = tags;
       this.tagsGrid.api.setRowData(tags);
     });
+  }
+
+  public exportToCsv() {
+    var columnIDs = this.tagsGrid.columnApi.getAllGridColumns().map(x => x.getId());
+    if (this.isDisplayingDeleteColumn) {
+      columnIDs = columnIDs.slice(1);
+    }
+
+    this.utilityFunctionsService.exportGridToCsv(this.tagsGrid, 'tags.csv', columnIDs);
   }
 
   public onCellClicked(event: any): void {
@@ -104,25 +120,25 @@ export class TagListComponent implements OnInit {
   private launchModal(modalContent: any, modalTitle: string): void {
     this.modalReference = this.modalService.open(
       modalContent, 
-      { ariaLabelledBy: modalTitle, beforeDismiss: () => this.checkIfDeleting(), backdrop: 'static', keyboard: false 
+      { ariaLabelledBy: modalTitle, beforeDismiss: () => this.checkIfSubmitting(), backdrop: 'static', keyboard: false 
     });
   }
 
-  private checkIfDeleting(): boolean {
-    return this.isLoadingDelete;
+  public checkIfSubmitting(): boolean {
+    return this.isLoadingSubmit;
   }
 
   public deleteTag() { 
-    this.isLoadingDelete = true;
+    this.isLoadingSubmit = true;
 
     this.tagService.deleteTag(this.tagToDelete.TagID).subscribe(() => {
-      this.isLoadingDelete = false;
+      this.isLoadingSubmit = false;
       this.modalReference.close();
 
       this.alertService.pushAlert(new Alert(`${this.tagToDelete.TagName} tag was successfully deleted.`, AlertContext.Success, true));
       this.updateGridData();
     }, error => {
-      this.isLoadingDelete = false;
+      this.isLoadingSubmit = false;
       window.scroll(0,0);
       this.cdr.detectChanges();
     });

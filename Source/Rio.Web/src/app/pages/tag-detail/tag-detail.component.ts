@@ -32,7 +32,6 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   public taggedParcels: Array<ParcelDto>;
   private modalReference: NgbModalRef;
   public tagModel: TagDto;
-  public isEditingTagBasics = false;
   public isLoadingSubmit = false;
 
   constructor(
@@ -90,6 +89,10 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 310
       },
     ]
+  }
+
+  public isAdmin(): boolean {
+    return this.authenticationService.isCurrentUserAnAdministrator();
   }
 
   private launchModal(modalContent: any, modalTitle: string): void {

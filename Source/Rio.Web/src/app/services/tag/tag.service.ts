@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/shared/services';
 import { Observable } from 'rxjs';
 import { TagDto } from 'src/app/shared/generated/model/tag-dto';
+import { TagBulkSetUpsertDto } from 'src/app/shared/generated/model/tag-bulk-set-upsert-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +45,11 @@ export class TagService {
   tagParcel(parcelID: number, tagDto: TagDto) {
     let route = `tags/tagParcel/${parcelID}`;
     return this.apiService.postToApi(route, tagDto);
+  }
+
+  bulkTagParcel(tagBulkSetUpsertDto: TagBulkSetUpsertDto): Observable<number> {
+    let route = `tags/bulkTagParcels`;
+    return this.apiService.postToApi(route, tagBulkSetUpsertDto);
   }
 
   removeTagFromParcel(tagID: number, parcelID: number) {

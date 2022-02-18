@@ -18,16 +18,19 @@
             <div class="mt-2">
             </div>
         </div>
-        <div class="col-auto ml-auto">
-            <span class="btn btn-rio" (click)="createTag()"><i class="fas fa-plus mr-1"></i>Add New Tag</span>
+        <div *ngIf="isAdmin()" class="col-auto ml-auto">
+            <span class="btn btn-rio mr-2 mb-2" (click)="createTag()"><i class="fas fa-plus mr-1"></i>Add New Tag</span>
+            <a routerLink="bulk-tag-parcels" class="btn btn-secondary mr-2 mb-2">Bulk Tag Parcels</a>
+            <a class="btn btn-secondary mb-2" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
+                ngbTooltip="Download Tags Grid as CSV"><i class="fas fa-download"></i></a>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-2">
         <div class="col">
             <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
         </div>        
     </div>
-    <div class="row mt-3">
+    <div class="row mt-2">
         <div class="col-sm-12">
             <ag-grid-angular #tagsGrid style="width: 100%; height: 800px;" class="ag-theme-balham"[columnDefs]="columnDefs" 
                 (cellClicked)="onCellClicked($event)" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
@@ -36,7 +39,7 @@
     </div>
 </div>
 <ng-template #deleteTagModal let-modal>
-    <div class="modal-header">
+    <div class="modal-header bg-secondary">
         <h5 class="modal-title" id="deleteTagModalTitle">Warning</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
             <span aria-hidden="true">&times;</span>
@@ -48,24 +51,24 @@
             Are you sure you wish to proceed?
         </p>
         <div class="modal-footer">
-            <button type="button" class="btn btn-danger btn-sm" (click)="deleteTag()">
-                <span *ngIf="isLoadingDelete" class="fa fa-spinner loading-spinner"></span>
+            <button type="button" class="btn btn-danger" (click)="deleteTag()">
+                <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
                 Delete
             </button>
-            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
+            <button type="button" class="btn btn-secondary" (click)="modal.close('Cancel click')">Cancel</button>
         </div>
     </div>
 </ng-template>
 <ng-template #createTagModal let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="createTagModalTitle">Create Tag</h5>
+    <div class="modal-header bg-secondary">
+        <h5 class="modal-title" id="createTagModalTitle">Add New Tag</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.close('Cross click')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
         <div *ngIf="tagModel">
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-md-4 text-md-right">
                     <label class="form-control-label required">Name</label>
                 </div>
@@ -73,7 +76,7 @@
                     <input type="text" class="form-control" name="tag-name" [(ngModel)]="tagModel.TagName" />
                 </div>
             </div>
-            <div class="row mb-2">
+            <div class="row mb-3">
                 <div class="col-md-4 text-md-right">
                     <label class="form-control-label">Description</label>
                 </div>

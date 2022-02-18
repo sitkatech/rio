@@ -145,8 +145,11 @@ namespace Rio.API.Controllers
 
         [HttpPost("tags/bulkTagParcels")]
         [ManagerDashboardFeature]
-        public ActionResult BulkTagParcelsByParcelIDs([FromForm] List<int> parcelIDs, [FromForm] TagDto tagDto)
+        public ActionResult BulkTagParcelsByParcelIDs([FromBody] TagBulkSetUpsertDto tagBulkSetUpsertDto)
         {
+            var tagDto = tagBulkSetUpsertDto.TagDto;
+            var parcelIDs = tagBulkSetUpsertDto.parcelIDs;
+
             if (string.IsNullOrWhiteSpace(tagDto.TagName))
             {
                 ModelState.AddModelError("Tag", "Whitespace cannot be used as a tag.");
