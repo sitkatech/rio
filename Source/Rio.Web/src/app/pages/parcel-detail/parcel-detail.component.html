@@ -140,17 +140,24 @@
       <div class="card">
         <div class="card-header">
           <div class="row">
-            <div class="col">
+            <div class="col-auto">
               <span class="align-middle">Parcel Ledger Activity</span>
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportParcelLedgerGridToCsv()" placement="top"
-                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i>
-              </a>
+            </div>
+            <div class="col-auto ml-auto">
             </div>
           </div>
         </div>
         <div class="card-body table-responsive">
-          <p>All transaction data is in units of acre-feet</p>
+          <div class="row">
+            <div class="col-auto">
+              <p>All transaction data is in units of acre-feet.</p>
+            </div>
+            <div class="col-auto ml-auto">
+              <rio-clear-grid-filters-button [grid]="parcelLedgerGrid" class="mr-2"></rio-clear-grid-filters-button>
+              <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportParcelLedgerGridToCsv()" placement="bottom"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+            </div>
+          </div>
           <ag-grid-angular #parcelLedgerGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
             [columnDefs]="parcelLedgerGridColumnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
             [rowData]="rowData" (gridReady)="onGridReady($event)">

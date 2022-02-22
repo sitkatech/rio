@@ -53,13 +53,13 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
 
   public createTransactionHistoryGridColumnDefs() {
     this.columnDefs = [
-      // Transaction Entry Date
-      // Transaction Effective Date
-      { headerName: "Created By" },
-      { headerName: "Supply Type" },
-      // Quantity (ac-ft / ac)
-      { headerName: "Spreadsheet Data Source" },
-      // Number of Parcels Affected
+      this.utilityFunctionsService.createDateColumnDef('Transaction Entry Date', 'TransactionDate', 'short'),
+      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
+      { headerName: 'Created By', field: 'CreateUserFullName' },
+      { headerName: 'Supply Type', field: 'WaterTypeName' },
+      this.utilityFunctionsService.createDecimalColumnDef('Quantity (ac-ft/ac)', 'Quantity'),
+      { headerName: "Spreadsheet Data Source", field: 'UploadedFileName'},
+      this.utilityFunctionsService.createDecimalColumnDef('Number of Parcels Affected', 'ParcelsAffectedCount', 120, 0)
     ];
 
     this.defaultColDef = { sortable: true, filter: true, resizable: true };

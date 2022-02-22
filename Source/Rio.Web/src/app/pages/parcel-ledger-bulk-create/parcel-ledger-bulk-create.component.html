@@ -23,6 +23,11 @@
     <div class="card card-body mt-2 mb-4">
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
+    <div class="row mb-2">
+        <div class="col-auto ml-auto">
+            <rio-clear-grid-filters-button [grid]="parcelSelectGrid"></rio-clear-grid-filters-button>
+        </div>
+    </div>
     <ag-grid-angular #parcelSelectGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
             [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" (gridReady)="onGridReady($event)" 
             [gridOptions]="gridOptions" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">

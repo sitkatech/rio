@@ -81,14 +81,20 @@
                     <div class="float-right">
                         <rio-water-year-select *ngIf="waterYears" class="d-inline-block" [waterYears]="waterYears" [(selectedYear)]="waterYearToDisplay"
                             (selectedYearChange)="updateGridData()"></rio-water-year-select>
-                            <a class="btn btn-secondary btn-sm ml-3" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
-                                ngbTooltip="Download list of Parcels"><i class="fas fa-download"></i></a>
+                           
                     </div>
                     <div class="mt-2">
                         Parcel List
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-auto ml-auto">
+                            <rio-clear-grid-filters-button [grid]="parcelsGrid" classList="mr-2"></rio-clear-grid-filters-button>
+                            <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
+                            ngbTooltip="Download list of Parcels"><i class="fas fa-download"></i></a>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <ag-grid-angular #parcelsGrid style="width: 100%; height: 800px;" class="ag-theme-balham" [rowData]="rowData"
                             [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" [suppressMenuHide]="true" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">

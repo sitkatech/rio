@@ -14,41 +14,46 @@
   <app-alert-display></app-alert-display>
   <ng-template [ngIf]="isAdministrator()">
     <h2 class="d-inline-block">Unassigned Users</h2>
-    <p class="lead" *ngIf="users && unassignedUsers.length">
+    <p *ngIf="users && unassignedUsers.length">
       This is a list of all users who are awaiting account configuration. Assign the user a role and billing account(s).
       If the account was created in error, set their Role to “Disabled” to remove them from this list.
     </p>
-    <p class="lead" *ngIf="users && !unassignedUsers.length">
+    <p *ngIf="users && !unassignedUsers.length">
       Congratulations! All users have been assigned a role.
     </p>
     <br *ngIf="!users">
     <a routerLink="/roles-and-permissions" routerLinkActive=true target="_blank">Learn more about Roles and Permissions</a>
-    <div class="container mt-sm-4" *ngIf="users && unassignedUsers.length">
-      <div class="table-responsive">
-        <ag-grid-angular #unassignedUsersGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
-          [rowData]="unassignedUsers" [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
-        </ag-grid-angular>
+    <div *ngIf="users && unassignedUsers.length">
+      <div class="row mb-2">
+        &nbsp;
+        <div class="col-auto ml-auto">
+            <rio-clear-grid-filters-button [grid]="unassignedUsersGrid"></rio-clear-grid-filters-button>
+        </div>
       </div>
+      <ag-grid-angular #unassignedUsersGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
+        [rowData]="unassignedUsers" [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+      </ag-grid-angular>
     </div>
   </ng-template>
   <div class="mt-4">
     <div class="float-right">
-      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mr-3" routerLink="/invite-user">Invite User</a>
-      <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
-        ngbTooltip="Download list of Users"><i class="fas fa-download"></i></a>
+      <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm mr-3 mt-2" routerLink="/invite-user">Invite User</a>
     </div>
     <h2 class="d-inline-block">All Users</h2>
-    <p class="lead">
-      A list of users is shown in the grid below.
-    </p>
-    <div class="float-right">
-      <label class="switch mr-1" style="top: 5px;">
-        <input type="checkbox" (change)="toggleUserStatusShown()" />
-        <div class="slider round">
-          <span class="off">Active</span>
-          <span class="on">All</span>
-        </div>
-      </label>
+    <p>A list of users is shown in the grid below.</p>
+    <div class="row mb-2">
+      <div class="col-auto ml-auto">
+        <label class="switch" style="top: 7px;">
+          <input type="checkbox" (change)="toggleUserStatusShown()" />
+          <div class="slider round">
+            <span class="off">Active</span>
+            <span class="on">All</span>
+          </div>
+        </label>
+        <a class="btn btn-secondary btn-sm ml-2" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
+          ngbTooltip="Download list of Users"><i class="fas fa-download"></i></a>
+        <rio-clear-grid-filters-button [grid]="usersGrid" classList="ml-2"></rio-clear-grid-filters-button>
+      </div>
     </div>
   </div>
   <div class="table-responsive">

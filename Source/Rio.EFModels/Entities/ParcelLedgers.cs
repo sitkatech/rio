@@ -152,6 +152,7 @@ namespace Rio.EFModels.Entities
         {
             int createdCount = 0;
             var parcels = Parcel.ListByParcelNumbers(dbContext, parcelLedgerCreateDto.ParcelNumbers);
+            var transactionDate = DateTime.UtcNow;
             var effectiveDate = DateTime.Parse(parcelLedgerCreateDto.EffectiveDate).AddHours(8);
 
             foreach (var parcel in parcels)
@@ -159,7 +160,7 @@ namespace Rio.EFModels.Entities
                 var parcelLedger = new ParcelLedger()
                 {
                     ParcelID = parcel.ParcelID,
-                    TransactionDate = DateTime.UtcNow,
+                    TransactionDate = transactionDate,
                     EffectiveDate = effectiveDate,
                     TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID.Value,
                     ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
@@ -186,11 +187,12 @@ namespace Rio.EFModels.Entities
 
             foreach (var record in records)
             {
+                var transactionDate = DateTime.UtcNow;
                 var parcel = parcels.SingleOrDefault(x => x.ParcelNumber == record.APN);
                 var parcelLedger = new ParcelLedger()
                 {
                     ParcelID = parcel.ParcelID,
-                    TransactionDate = DateTime.UtcNow,
+                    TransactionDate = transactionDate,
                     EffectiveDate = effectiveDate.AddHours(8),
                     TransactionTypeID = (int)TransactionTypeEnum.Supply,
                     ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
