@@ -24,9 +24,14 @@
         <div class="col-sm-12" style="overflow-y: auto;">
                 <div class="card">
                     <div class="card-header">
-                            Parcels to be Reconciled
+                        Parcels to be Reconciled
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto ml-auto mb-2">
+                                <rio-clear-grid-filters-button [grid]="accountReconciliationGrid"></rio-clear-grid-filters-button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <ag-grid-angular #accountReconciliationGrid style="width: 100%" [style.height]="mapHeight" class="ag-theme-balham" [rowData]="rowData"
                                 [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" [suppressMenuHide]="true" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">

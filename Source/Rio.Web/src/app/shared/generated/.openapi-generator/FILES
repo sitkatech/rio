@@ -45,6 +45,7 @@ model/trade-activity-by-month-dto.ts
 model/trade-dto.ts
 model/trade-status-dto.ts
 model/trade-with-most-recent-offer-dto.ts
+model/transaction-history-dto.ts
 model/transaction-type-dto.ts
 model/unassigned-user-report-dto.ts
 model/user-create-dto.ts

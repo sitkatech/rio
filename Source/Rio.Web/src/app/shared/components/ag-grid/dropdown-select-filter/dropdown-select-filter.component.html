@@ -1,0 +1,14 @@
+<div class="p-2">
+    <div>
+        <input type="radio" name="select-all" id="select" class="d-none" [checked]="state.selectAll" (change)="onSelectAll()">
+        <label for="select" class="btn btn-sm rounded-left border-right" [ngClass]="state.selectAll ? 'btn-secondary' : 'btn-rio'">Select All</label>
+        <input type="radio" name="select-all" id="deselect" class="d-none" [checked]="state.deselectAll" (change)="onDeselectAll()">
+        <label for="deselect" class="btn btn-sm rounded-right" [ngClass]="state.deselectAll ? 'btn-secondary' : 'btn-rio'">Deselect All</label>
+    </div>
+    <div class="pt-2 pl-2 border border-secondary">
+        <div *ngFor="let element of getDropdownValues()">
+            <input type="checkbox" name="{{element}}" [(ngModel)]="state[element]" (ngModelChange)="updateFilter()" checked>
+            <label for="{{element}}" class="ml-2">{{element}}</label>
+        </div>
+    </div>
+</div>

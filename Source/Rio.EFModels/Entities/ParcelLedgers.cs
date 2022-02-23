@@ -16,6 +16,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.WaterType)
                 .Include(x => x.ParcelLedgerEntrySourceType)
                 .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
+                .Include(x => x.User)
                 .AsNoTracking();
         }
 
@@ -127,6 +128,39 @@ namespace Rio.EFModels.Entities
             return parcelLedger?.AsDto();
         }
 
+        public static List<TransactionHistoryDto> ListTransactionHistoryAsDto(RioDbContext dbContext)
+        {
+            var parcelLedgerTransactionGroups = GetParcelLedgersImpl(dbContext).AsEnumerable()
+                .Where(x => x.TransactionTypeID == (int)TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.Manual)
+                .GroupBy(x => x.TransactionDate)
+                .OrderByDescending(x => x.Key);
+            
+            var transactionHistoryDtos = new List<TransactionHistoryDto>();
+            
+            foreach (var transactionGroup in parcelLedgerTransactionGroups)
+            {
+                if (transactionGroup.Count() < 2)
+                {
+                    continue;
+                }
+
+                var parcelLedger = transactionGroup.First();
+
+                transactionHistoryDtos.Add( new TransactionHistoryDto()
+                {
+                    TransactionDate = transactionGroup.Key,
+                    EffectiveDate = parcelLedger.EffectiveDate,
+                    CreateUserFullName = $"{parcelLedger.User?.FirstName} {parcelLedger.User?.LastName}",
+                    WaterTypeName = parcelLedger.WaterType.WaterTypeName,
+                    AffectedParcelsCount = transactionGroup.Count(),
+                    TransactionAmount = parcelLedger.UploadedFileName == null ? parcelLedger.TransactionAmount : null,
+                    UploadedFileName = parcelLedger.UploadedFileName
+                });
+            }
+
+            return transactionHistoryDtos;
+        }
+
         public static void CreateNew(RioDbContext dbContext, ParcelDto parcel, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)
         {
             var parcelLedger = new ParcelLedger()
@@ -152,6 +186,7 @@ namespace Rio.EFModels.Entities
         {
             int createdCount = 0;
             var parcels = Parcel.ListByParcelNumbers(dbContext, parcelLedgerCreateDto.ParcelNumbers);
+            var transactionDate = DateTime.UtcNow;
             var effectiveDate = DateTime.Parse(parcelLedgerCreateDto.EffectiveDate).AddHours(8);
 
             foreach (var parcel in parcels)
@@ -159,7 +194,7 @@ namespace Rio.EFModels.Entities
                 var parcelLedger = new ParcelLedger()
                 {
                     ParcelID = parcel.ParcelID,
-                    TransactionDate = DateTime.UtcNow,
+                    TransactionDate = transactionDate,
                     EffectiveDate = effectiveDate,
                     TransactionTypeID = parcelLedgerCreateDto.TransactionTypeID.Value,
                     ParcelLedgerEntrySourceTypeID = (int) ParcelLedgerEntrySourceTypeEnum.Manual,
@@ -186,11 +221,12 @@ namespace Rio.EFModels.Entities
 
             foreach (var record in records)
             {
+                var transactionDate = DateTime.UtcNow;
                 var parcel = parcels.SingleOrDefault(x => x.ParcelNumber == record.APN);
                 var parcelLedger = new ParcelLedger()
                 {
                     ParcelID = parcel.ParcelID,
-                    TransactionDate = DateTime.UtcNow,
+                    TransactionDate = transactionDate,
                     EffectiveDate = effectiveDate.AddHours(8),
                     TransactionTypeID = (int)TransactionTypeEnum.Supply,
                     ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
@@ -198,7 +234,8 @@ namespace Rio.EFModels.Entities
                     WaterTypeID = waterTypeID,
                     TransactionDescription =
                         $"Transaction recorded via spreadsheet upload: {uploadedFileName}",
-                    UserID = userID
+                    UserID = userID,
+                    UploadedFileName = uploadedFileName
                 };
                 dbContext.ParcelLedgers.Add(parcelLedger);
                 createdCount++;

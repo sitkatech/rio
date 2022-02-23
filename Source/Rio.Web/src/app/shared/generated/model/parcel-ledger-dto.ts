@@ -27,6 +27,7 @@ export class ParcelLedgerDto {
     User?: UserDto;
     UserComment?: string;
     ParcelLedgerEntrySourceType?: ParcelLedgerEntrySourceTypeDto;
+    UploadedFileName?: string;
     readonly WaterYear?: number;
     readonly WaterMonth?: number;
     readonly TransactionDepth?: number;

@@ -82,10 +82,16 @@
                                     <a routerLink="/tags" class="dropdown-item">
                                         View all Tags
                                     </a>
+                                    <ng-container *ngIf="isAdministrator()">
+                                        <div  class="dropdown-divider"></div>
+                                        <a *ngIf="isAdministrator()" routerLink="/parcels/create-water-transactions" class="dropdown-item">
+                                            Create Water Transactions
+                                        </a>
+                                        <a *ngIf="isAdministrator()" routerLink="/parcel-ledger-transaction-history" class="dropdown-item">
+                                            Transaction History
+                                        </a>
+                                    </ng-container>
                                     <div class="dropdown-divider"></div>
-                                    <a *ngIf="isAdministrator()" routerLink="/parcels/create-water-transactions" class="dropdown-item">
-                                        Create Water Transactions
-                                    </a>
                                     <a *ngIf="isAdministrator()" routerLink="/water-types/edit" class="dropdown-item">
                                         Configure Water Types
                                     </a>

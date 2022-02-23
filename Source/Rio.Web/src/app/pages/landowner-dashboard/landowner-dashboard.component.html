@@ -295,11 +295,14 @@
         <ng-template #accountActivityDetailed>
           <div class="card">
             <div class="card-body">
-              <div class="col-sm-12 text-right mb-2">
-                <a class="btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportActivityDetailGridToCsv()" placement="top"
-                ngbTooltip="Download Account Activity Report"><i class="fas fa-download"></i>
-              </a>
+              <div class="row mb-2">
+                <div class="col-auto ml-auto">
+                  <rio-clear-grid-filters-button [grid]="activityDetailGrid" classList="mr-2"></rio-clear-grid-filters-button>
+                  <a class="btn btn-secondary btn-sm" style="cursor: pointer;"
+                    (click)="exportActivityDetailGridToCsv()" placement="top"
+                    ngbTooltip="Download Account Activity Report"><i class="fas fa-download"></i>
+                  </a>
+                </div>
               </div>
               <ag-grid-angular #activityDetailGrid class="ag-theme-balham" style="width: 100%; height: 700px;"
                 [columnDefs]="activityDetailGridColDefs" [defaultColDef]="defaultColDef" (gridReady)="onGridReady($event)"

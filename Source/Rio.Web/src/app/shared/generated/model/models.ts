@@ -43,6 +43,7 @@ export * from '././trade-activity-by-month-dto';
 export * from '././trade-dto';
 export * from '././trade-status-dto';
 export * from '././trade-with-most-recent-offer-dto';
+export * from '././transaction-history-dto';
 export * from '././transaction-type-dto';
 export * from '././unassigned-user-report-dto';
 export * from '././user-create-dto';

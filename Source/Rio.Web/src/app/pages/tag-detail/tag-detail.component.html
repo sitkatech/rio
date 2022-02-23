@@ -55,17 +55,16 @@
         <div class="col-xl-8">
             <div class="card">
                 <div class="card-header">
-                    <div class="row">
-                        <div class="col-auto mt-1">
-                            Tagged Parcel Index
-                        </div>
+                    Tagged Parcel Index
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
                         <div class="col-auto ml-auto">
+                            <rio-clear-grid-filters-button [grid]="bulkTagParcelsGrid" classList="mr-2"></rio-clear-grid-filters-button>
                             <a class="btn btn-sm btn-secondary small" style="cursor: pointer;" (click)="exportToCsv()" placement="top"
                                 ngbTooltip="Download Parcel Index Grid as CSV"><i class="fas fa-download"></i></a>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
                     <ag-grid-angular #taggedParcelsIndexGrid style="width: 100%; height: 500px;" class="ag-theme-balham"
                         [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
                     </ag-grid-angular>

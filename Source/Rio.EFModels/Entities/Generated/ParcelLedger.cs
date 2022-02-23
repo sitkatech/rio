@@ -28,6 +28,8 @@ namespace Rio.EFModels.Entities
         public int? UserID { get; set; }
         public string UserComment { get; set; }
         public int ParcelLedgerEntrySourceTypeID { get; set; }
+        [StringLength(100)]
+        public string UploadedFileName { get; set; }
 
         [ForeignKey(nameof(ParcelID))]
         [InverseProperty("ParcelLedgers")]

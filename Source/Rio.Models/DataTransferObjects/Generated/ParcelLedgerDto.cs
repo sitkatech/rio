@@ -20,6 +20,7 @@ namespace Rio.Models.DataTransferObjects
         public UserDto User { get; set; }
         public string UserComment { get; set; }
         public ParcelLedgerEntrySourceTypeDto ParcelLedgerEntrySourceType { get; set; }
+        public string UploadedFileName { get; set; }
     }
 
     public partial class ParcelLedgerSimpleDto
@@ -35,6 +36,7 @@ namespace Rio.Models.DataTransferObjects
         public int? UserID { get; set; }
         public string UserComment { get; set; }
         public int ParcelLedgerEntrySourceTypeID { get; set; }
+        public string UploadedFileName { get; set; }
     }
 
 }
