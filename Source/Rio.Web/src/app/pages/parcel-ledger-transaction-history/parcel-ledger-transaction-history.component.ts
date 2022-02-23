@@ -13,6 +13,8 @@ import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'rio-parcel-ledger-transaction-history',
@@ -33,7 +35,8 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private utilityFunctionsService: UtilityFunctionsService,
-    private alertService: AlertService
+    private parcelLedgerService: ParcelLedgerService,
+    private decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +44,10 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
       this.currentUser = currentUser;
       
       this.createTransactionHistoryGridColumnDefs();
+
+      this.parcelLedgerService.getAllTransactionHistory().subscribe(transactionHistory => {
+        this.transactionHistoryGrid.api.setRowData(transactionHistory);
+      });
       
       this.cdr.detectChanges();
     });
@@ -52,14 +59,21 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
   }
 
   public createTransactionHistoryGridColumnDefs() {
+    const _decimalPipe = this.decimalPipe;
+
     this.columnDefs = [
-      this.utilityFunctionsService.createDateColumnDef('Transaction Entry Date', 'TransactionDate', 'short'),
-      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
-      { headerName: 'Created By', field: 'CreateUserFullName' },
-      { headerName: 'Supply Type', field: 'WaterTypeName' },
-      this.utilityFunctionsService.createDecimalColumnDef('Quantity (ac-ft/ac)', 'Quantity'),
-      { headerName: "Spreadsheet Data Source", field: 'UploadedFileName'},
-      this.utilityFunctionsService.createDecimalColumnDef('Number of Parcels Affected', 'ParcelsAffectedCount', 120, 0)
+      this.utilityFunctionsService.createDateColumnDef('Transaction Entry Date', 'TransactionDate', 'short', 180),
+      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy', 180),
+      { headerName: 'Created By', field: 'CreateUserFullName', width: 180 },
+      { headerName: 'Supply Type', field: 'WaterTypeName', width: 180 },
+      this.utilityFunctionsService.createDecimalColumnDef('Number of Parcels Affected', 'AffectedParcelsCount', 200, 0),
+      {
+        headerName: 'Quantity (ac-ft/ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' }, sortable: true, resizable: true,
+        valueGetter: params => params.data.TransactionAmount,
+        valueFormatter: params => params.data.TransactionAmount ? _decimalPipe.transform(params.value, '1.2-2') : '-',
+        filterValueGetter: params => params.data.TransactionAmount ? parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2')) : '-'
+      },
+      { headerName: "Spreadsheet Data Source", field: 'UploadedFileName'}
     ];
 
     this.defaultColDef = { sortable: true, filter: true, resizable: true };
@@ -68,5 +82,4 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
   public exportToCsv() {
     this.utilityFunctionsService.exportGridToCsv(this.transactionHistoryGrid, 'transaction-history.csv', null);
   }
-
 }

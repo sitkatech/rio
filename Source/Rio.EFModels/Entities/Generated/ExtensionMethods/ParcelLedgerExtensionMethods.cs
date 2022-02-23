@@ -23,7 +23,8 @@ namespace Rio.EFModels.Entities
                 TransactionDescription = parcelLedger.TransactionDescription,
                 User = parcelLedger.User?.AsDto(),
                 UserComment = parcelLedger.UserComment,
-                ParcelLedgerEntrySourceType = parcelLedger.ParcelLedgerEntrySourceType.AsDto()
+                ParcelLedgerEntrySourceType = parcelLedger.ParcelLedgerEntrySourceType.AsDto(),
+                UploadedFileName = parcelLedger.UploadedFileName
             };
             DoCustomMappings(parcelLedger, parcelLedgerDto);
             return parcelLedgerDto;
@@ -45,7 +46,8 @@ namespace Rio.EFModels.Entities
                 TransactionDescription = parcelLedger.TransactionDescription,
                 UserID = parcelLedger.UserID,
                 UserComment = parcelLedger.UserComment,
-                ParcelLedgerEntrySourceTypeID = parcelLedger.ParcelLedgerEntrySourceTypeID
+                ParcelLedgerEntrySourceTypeID = parcelLedger.ParcelLedgerEntrySourceTypeID,
+                UploadedFileName = parcelLedger.UploadedFileName
             };
             DoCustomSimpleDtoMappings(parcelLedger, parcelLedgerSimpleDto);
             return parcelLedgerSimpleDto;
