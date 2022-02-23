@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-edf-geoserver.fullname" . }}-qa-configmap
+data:
+  ENABLE_JSONP: "true"
+  CATALINA_OPTS: "-DALLOW_ENV_PARAMETRIZATION=true"
+  STABLE_EXTENSIONS: "sqlserver-plugin"
+  GEOSERVER_ADMIN_USER: "geomaster"
+  GEOSERVER_ADMIN_PASSWORD_SECRET: "/app/secrets/geoserverAdminPassword"
+  GEOSERVER_SQL_SERVER_PASSWORD_SECRET: "/app/secrets/geoserverSqlServerPassword"
+  GEOSERVER_CONFIG_DIRECTORY: "/app/config"

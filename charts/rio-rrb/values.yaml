@@ -1,0 +1,175 @@
+global:
+  env:
+    name: "qa"
+    dbServer: "rio-rrb-db-server.database.windows.net"
+    databaseName: "Rio-RRBDB"
+    sqlUsername: "SqlAdministrator"
+    appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
+  domains:
+    api: "api-rio-rrb.aks-qa.sitkatech.com"
+    web: "web-rio-rrb.aks-qa.sitkatech.com"
+    geoserver: "geoserver-rio-rrb.aks-qa.sitkatech.com"
+  secrets:
+    geoserverSqlServerPassword: "passwordhere"
+    geoserverAdminPassword: "geomaster"
+    geoserverAzureStorageAccountName: "rio-rrbapplicationgrsqa"
+    geoserverAzureStorageAccountKey:  "longkeyreplacedhere"
+    apiSqlPassword: "passwordhere"
+    sendGridApiKey: "sendgridapikeyhere"
+
+
+rio-rrb-api:
+  replicaCount: 1
+  image:
+    repository: sitkacontainers.azurecr.io/rio-rrb/api
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
+    - name: sitka-docker-acr
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio-rrb
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  # nodeSelector: 
+  #   agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+  
+
+rio-rrb-web:
+  replicaCount: 1
+  image:
+    repository: sitkacontainers.azurecr.io/rio-rrb/web
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
+    - name: sitka-docker-acr
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio-rrb
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  # nodeSelector: 
+  #   agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+
+rio-rrb-geoserver:
+  replicaCount: 1
+  image:
+    repository: kartoza/geoserver
+    pullPolicy: Always
+    tag: "2.16.2"
+    # Overrides the image tag whose default is the chart appVersion.
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio-rrb
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  # nodeSelector: 
+  #   agentpool: appnodepool
+  tolerations: []
+  affinity: {}

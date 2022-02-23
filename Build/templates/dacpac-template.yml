@@ -1,0 +1,27 @@
+
+
+parameters:
+  name: ''
+  solutionFile: ''
+  additionalArgs: ''
+  publishPath: ''
+  artifactName: ''
+
+
+jobs:
+- job: ${{ parameters.name }}DacPac
+  displayName: '${{ parameters.name }} DacPac' 
+  dependsOn: []
+  pool:
+    vmImage: 'windows-latest'
+    demands: msbuild
+  steps:
+  - task: MSBuild@1
+    displayName: 'Build ${{ parameters.name }} DacPac with MSBuild'
+    inputs:
+      solution: ${{ parameters.solutionFIle }}      
+      msbuildArguments: '/t:build /p:CmdLineInMemoryStorage=True ${{ parameters.additionalArgs}}'
+
+  - publish: '${{ parameters.publishPath }}'
+    artifact: '${{ parameters.artifactName }}'
+

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rio-rrb-web.fullname" . }}
+  labels:
+    {{- include "rio-rrb-web.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      #nodePort: 30081
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "rio-rrb-web.selectorLabels" . | nindent 4 }}

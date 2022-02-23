@@ -27,3 +27,4 @@ Rio.Web/src/assets/config.rio.json
 Rio.Web/openapitools.json
 Rio.Web/package-lock.json
 Rio.Web/wwwroot/
+/Build/*.ini

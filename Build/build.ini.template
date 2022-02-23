@@ -1,0 +1,11 @@
+[Database]
+Server=.\
+DatabaseName=
+DatabaseProjectPath=..\Rio.Database\Rio.Database.sqlproj
+DatabaseProjectDacPacLocation=..\Rio.Database\bin\Debug\Rio.Database.dacpac
+PublishXmlFile=..\Rio.Database\Rio.Database.publish.xml
+
+
+[Azure]
+BackupConnectionString=
+ContainerName=prod-backup
