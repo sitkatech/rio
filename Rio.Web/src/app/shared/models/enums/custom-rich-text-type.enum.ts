@@ -28,5 +28,6 @@ export enum CustomRichTextType {
   PurchasedDescription = 28,
   SoldDescription = 29,
   TagList = 30,
-  BulkTagParcels = 31
+  BulkTagParcels = 31,
+  TransactionHistory = 32
 }

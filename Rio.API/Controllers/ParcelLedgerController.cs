@@ -25,6 +25,15 @@ namespace Rio.API.Controllers
         {
         }
 
+        [HttpGet("parcel-ledgers/transaction-history")]
+        [ParcelViewFeature]
+        public ActionResult<List<TransactionHistoryDto>> ListTransactionHistory()
+        {
+            var transactionHistoryDtos = ParcelLedgers.ListTransactionHistoryAsDto(_dbContext);
+
+            return Ok(transactionHistoryDtos);
+        }
+
         [HttpPost("parcel-ledgers/new")]
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)

@@ -156,14 +156,20 @@
           <div class="row">
             <div class="col">
               <span class="align-middle">Account Usage Report</span>
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportLandOwnerUsageReportToCsv()" placement="top"
-                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+              
                 <a class="float-right btn-rio btn btn-sm mr-2" routerLink="/accounts">View All Accounts</a>
             </div>
           </div>
         </div>
         <div class="card-body table-responsive" *ngIf="parcels">
+          <div class="row mb-2">
+            <div class="col-auto ml-auto">
+              <rio-clear-grid-filters-button [grid]="landOwnerUsageReportGrid" classList="mr-2"></rio-clear-grid-filters-button>
+              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
+                (click)="exportLandOwnerUsageReportToCsv()" placement="bottom"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+            </div>
+          </div>
           <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
             [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
           </ag-grid-angular>
@@ -179,25 +185,34 @@
       <div class="card">
         <div class="card-header">
           <div class="row">
-            <div class="col-sm-7">
+            <div class="col-auto">
               Trade Activity
             </div>
-            <div class="col-sm-5">
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportTradeActivityToCsv()"><i class="fas fa-download"></i></a>
+            <div class="col-auto ml-auto">
+              <button *ngIf="isAdministrator() && displayTradeGrid" class="btn btn-sm btn-rio" (click)="launchModal(deleteAllTradeActivityModalContent)" [disabled]="isPerformingAction">
+                <span *ngIf="isPerformingAction" class="fa fa-spinner loading-spinner"></span>Delete All Trade Activity
+              </button>
+              
             </div>
           </div>
         </div>
         <div class="card-body table-responsive" *ngIf="tradeActivity">
-          <button *ngIf="isAdministrator() && displayTradeGrid" class="btn btn-sm btn-rio mb-1" (click)="launchModal(deleteAllTradeActivityModalContent)" [disabled]="isPerformingAction">
-            <span *ngIf="isPerformingAction" class="fa fa-spinner loading-spinner"></span>Delete All Trade Activity</button>
-          <div *ngIf="!displayTradeGrid">
+          <ng-container *ngIf="displayTradeGrid; else noTradeActivityToDisplay">
+            <div class="row mb-2">
+              <div class="col-auto ml-auto">
+                <rio-clear-grid-filters-button [grid]="tradeActivityGrid" classList="mr-2"></rio-clear-grid-filters-button>
+                <a class="btn btn-secondary btn-sm" style="cursor: pointer;" placement="bottom" ngbTooltip="Download Trade Activity"
+                  (click)="exportTradeActivityToCsv()"><i class="fas fa-download"></i></a>
+              </div>
+            </div>
+            <ag-grid-angular #tradeActivityGrid style="width: 100%; height: 300px;"
+              class="ag-theme-balham" [columnDefs]="tradesGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+            </ag-grid-angular>
+          </ng-container>
+          <ng-template #noTradeActivityToDisplay>
             No trade activity to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
             Dashboard to view postings for other years.
-          </div>
-          <ag-grid-angular #tradeActivityGrid *ngIf="displayTradeGrid" style="width: 100%; height: 300px;"
-            class="ag-theme-balham" [columnDefs]="tradesGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
-          </ag-grid-angular>
+          </ng-template>
         </div>
         <div class="card-body text-center" *ngIf="!tradeActivity">
           <i class="fa fa-spinner loading-spinner"></i>
@@ -209,25 +224,26 @@
     <div class="col-sm-12">
       <div class="card">
         <div class="card-header">
-          <div class="row">
-            <div class="col-sm-7">
-              Postings
-            </div>
-            <div class="col-sm-5">
-              <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;"
-                (click)="exportPostingsToCsv()"><i class="fas fa-download"></i></a>
-            </div>
-          </div>
+          Postings
         </div>
         <div class="card-body table-responsive" *ngIf="postingActivity">
-          <div *ngIf="!displayPostingsGrid">
-            No postings to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
-            Dashboard to view postings for other years.
-          </div>
-          <ag-grid-angular *ngIf="displayPostingsGrid" #postingsGrid style="width: 100%; height: 300px;"
+          <ng-container *ngIf="displayPostingsGrid; else noPostingsToDisplay">
+            <div class="row mb-2">
+              <div class="col-auto ml-auto">
+                <rio-clear-grid-filters-button [grid]="postingsGrid" classList="mr-2"></rio-clear-grid-filters-button>
+                <a class="float-right btn btn-secondary btn-sm" style="cursor: pointer;" placement="bottom" ngbTooltip="Download Postings"
+                  (click)="exportPostingsToCsv()"><i class="fas fa-download"></i></a>
+              </div>
+            </div>
+            <ag-grid-angular #postingsGrid style="width: 100%; height: 300px;"
             class="ag-theme-balham" [columnDefs]="postingsGridColumnDefs" [pagination]="true"
             [paginationPageSize]="100" [suppressMenuHide]="true">
           </ag-grid-angular>
+          </ng-container>
+          <ng-template #noPostingsToDisplay>
+            No postings to display for {{waterYearToDisplay.Year}}. Change the viewing year at the top of the Manager
+            Dashboard to view postings for other years.
+          </ng-template>
         </div>
         <div class="card-body text-center" *ngIf="!postingActivity">
           <i class="fa fa-spinner loading-spinner"></i>

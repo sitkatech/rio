@@ -20,6 +20,7 @@ import { ParcelLedgerEntrySourceTypeEnum } from 'src/app/shared/models/enums/par
 import { environment } from 'src/environments/environment';
 import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 import { TagService } from 'src/app/services/tag/tag.service';
+import { DropdownSelectFilterComponent } from 'src/app/shared/components/ag-grid/dropdown-select-filter/dropdown-select-filter.component';
 
 @Component({
   selector: 'template-parcel-detail',
@@ -105,13 +106,18 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
     this.parcelLedgerGridColumnDefs = [
       this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       this.utilityFunctionsService.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
-      { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName' },
-      {
-        headerName: 'Water Type', valueGetter: function (params: any) {
-          return params.data.WaterType ? params.data.WaterType.WaterTypeName : '-';
-        }
+      { 
+        headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName',
+        filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'TransactionType.TransactionTypeName' }
       },
-      { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' },
+      {
+        headerName: 'Water Type', valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-',
+        filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'WaterType' }
+      },
+      { 
+        headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName',
+        filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' }
+      },
       this.utilityFunctionsService.createDecimalColumnDef('Transaction Volume (ac-ft)', 'TransactionAmount'),
       this.utilityFunctionsService.createDecimalColumnDef('Transaction Depth (ac-ft / ac)', 'TransactionDepth'),
       { headerName: 'Transaction Description', field: 'TransactionDescription', sortable: false },

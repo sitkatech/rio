@@ -27,6 +27,11 @@
                             Parcel List
                     </div>
                     <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-auto ml-auto">
+                                <rio-clear-grid-filters-button [grid]="parcelsGrid" classList="mr-2"></rio-clear-grid-filters-button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <ag-grid-angular #parcelsGrid style="width: 100%" [style.height]="mapHeight" class="ag-theme-balham" [rowData]="rowData"
                                 [columnDefs]="columnDefs" [pagination]="true" [paginationPageSize]="100" [rowSelection]="'single'" [suppressMenuHide]="true" (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged($event)" (filterChanged)="selectHighlightedParcelIDRowNode()">

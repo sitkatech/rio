@@ -29,7 +29,8 @@ USING (VALUES
 (28, 'PurchasedDescription', 'Purchased Water Description'),
 (29, 'SoldDescription', 'Sold Water Description'),
 (30, 'TagList', 'Tag List'),
-(31, 'BulkTagParcels', 'Bulk Tag Parcels')
+(31, 'BulkTagParcels', 'Bulk Tag Parcels'),
+(32, 'TransactionHistory', 'Transaction History')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID
