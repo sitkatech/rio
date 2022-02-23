@@ -1,9 +1,0 @@
-.vs
-bin
-obj
-*.dbmdl
-*.jfm
-
-*.env
-*.user
-Rio.Web/wwwroot/

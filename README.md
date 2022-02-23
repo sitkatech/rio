@@ -27,13 +27,13 @@ Please contact support@sitkatech.com with any questions about this project.
 
 1. Clone the git repository to your development machine
 2. Create an empty database called RioDB and create a user for it. Give the user the owner role.
-3. Copy [repo root dir]\Source\docker-compose\.env.template to [repo root dir]\Source\docker-compose\.env
+3. Copy [repo root dir]\docker-compose\.env.template to [repo root dir]\docker-compose\.env
 4. Update the values in the new .env file
 5. Add an entry to your hosts file pointing RIO_WEB_URL from the .env file to 127.0.0.1
 6. Open the solution in VS19 and set docker-compose as the startup project
 7. Press the green "play" triangle to start the API server
 
 ## Rio Set-up (Web)
-1. Open the rio-web-workspace in VSC ([repo root dir]\Source\Rio.Web)
+1. Open the rio-web-workspace in VSC ([repo root dir]\Rio.Web)
 2. Open the VSC terminal and run npm install, then npm build, then npm start.
 3. Press F5 to open the web app in Google Chrome. You will be able to debug JavaScript directly in VSC.
