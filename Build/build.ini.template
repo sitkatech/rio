@@ -7,7 +7,12 @@ PublishXmlFile=..\Rio.Database\Rio.Database.publish.xml
 ApiModelsPath=..\Rio.Models\DataTransferObjects\Generated
 ApiEFModelsPath=..\Rio.EFModels\Entities\Generated
 ApiEFModelExtensionMethodsPath=..\Rio.EFModels\Entities\Generated\ExtensionMethods
-ApiEFModelsDbContextPath=..\Rio.EFModels\Entities\Generated\RioDbContext.cs
+ApiEFModelsProject=Rio.EFModels
+ApiEFModelsDbContextName=RioDbContext
+ApiEFModelsNamespace=Rio.EFModels.Entities
+ApiModelsNamespace=Rio.Models.DataTransferObjects
+EFPocoGeneratorExePath=C:\git\sitkatech\efcorepocogenerator\EFCorePOCOGenerator\bin\Debug\net5.0\EFCorePOCOGenerator.exe
+TableExcludeList=DatabaseMigration
 
 [Azure]
 BackupConnectionString=
