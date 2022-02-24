@@ -1,18 +1,18 @@
 global:
   env:
     name: "qa"
-    dbServer: "rio-rrb-db-server.database.windows.net"
-    databaseName: "Rio-RRBDB"
-    sqlUsername: "SqlAdministrator"
+    dbServer: "databaseserver"
+    databaseName: "databasename"
+    sqlUsername: "sqlUsername"
     appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
   domains:
-    api: "api-rio-rrb.aks-qa.sitkatech.com"
-    web: "web-rio-rrb.aks-qa.sitkatech.com"
-    geoserver: "geoserver-rio-rrb.aks-qa.sitkatech.com"
+    api: "apiUrl"
+    web: "webUrl"
+    geoserver: "geoserverUrl"
   secrets:
     geoserverSqlServerPassword: "passwordhere"
     geoserverAdminPassword: "geomaster"
-    geoserverAzureStorageAccountName: "rio-rrbapplicationgrsqa"
+    geoserverAzureStorageAccountName: "storageAccountName"
     geoserverAzureStorageAccountKey:  "longkeyreplacedhere"
     apiSqlPassword: "passwordhere"
     sendGridApiKey: "sendgridapikeyhere"

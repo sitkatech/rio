@@ -4,7 +4,10 @@ DatabaseName=
 DatabaseProjectPath=..\Rio.Database\Rio.Database.sqlproj
 DatabaseProjectDacPacLocation=..\Rio.Database\bin\Debug\Rio.Database.dacpac
 PublishXmlFile=..\Rio.Database\Rio.Database.publish.xml
-
+ApiModelsPath=..\Rio.Models\DataTransferObjects\Generated
+ApiEFModelsPath=..\Rio.EFModels\Entities\Generated
+ApiEFModelExtensionMethodsPath=..\Rio.EFModels\Entities\Generated\ExtensionMethods
+ApiEFModelsDbContextPath=..\Rio.EFModels\Entities\Generated\RioDbContext.cs
 
 [Azure]
 BackupConnectionString=
