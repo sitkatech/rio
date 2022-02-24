@@ -169,7 +169,7 @@ stages:
     
     - task: CopyFiles@2
       inputs:
-        sourceFolder: 'charts/rio-$(tenantName)'
+        sourceFolder: 'charts/$(tenantName)'
         contents: '**'
         targetFolder: $(Build.ArtifactStagingDirectory)/chart
       condition: and(succeeded(), eq(variables['deploy'], 'true'))
@@ -459,7 +459,7 @@ stages:
               command: login
 
           - task: HelmDeploy@0
-            displayName: 'helm upgrade rio-$(tenantName)'
+            displayName: 'helm upgrade $(tenantName)'
             inputs:
               connectionType: Azure Resource Manager
               azureSubscription: '$(azureSubscription)'
@@ -468,7 +468,7 @@ stages:
               command: upgrade
               chartType: FilePath
               chartPath: '$(Pipeline.Workspace)/ChartArtifacts/chart'
-              releaseName: 'rio-$(tenantName)'              
+              releaseName: '$(tenantName)'
               overrideValues: 'global.env.appInsightsInstrumentationKey="$(INSTRUMENTATION_KEY)",global.domains.api="$(domainApi)",global.domains.web="$(domainWeb)",global.domains.geoserver="$(domainGeoserver)",global.env.name="$(Environment)",global.secrets.geoserverSqlServerPassword="$(GeoserverSqlServerPassword)",global.secrets.geoserverAdminPassword="$(GeoserverAdminPassword)",global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)",global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)",global.env.dbServer=$(dbServer),global.env.databaseName=$(databaseName),global.env.sqlUsername=$(sqlUsername),global.secrets.apiSqlPassword=$(sqlPassword),global.secrets.sendGridApiKey="$(SendGridApiKey)"'
               force: false
                       
