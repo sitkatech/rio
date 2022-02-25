@@ -131,9 +131,9 @@ namespace Rio.EFModels.Entities
         public static List<TransactionHistoryDto> ListTransactionHistoryAsDto(RioDbContext dbContext)
         {
             var parcelLedgerTransactionGroups = GetParcelLedgersImpl(dbContext).AsEnumerable()
-                .Where(x => x.TransactionTypeID == (int)TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.Manual)
-                .GroupBy(x => new {x.EffectiveDate, x.WaterTypeID})
-                .OrderByDescending(x => x.Key.EffectiveDate);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply &&
+                            x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual)
+                .GroupBy(x => new {x.EffectiveDate, x.WaterTypeID});
             
             var transactionHistoryDtos = new List<TransactionHistoryDto>();
             
@@ -145,6 +145,8 @@ namespace Rio.EFModels.Entities
                 }
 
                 var parcelLedger = transactionGroup.First();
+                var totalTransactionAreaInAcres = transactionGroup.Select(x => x.Parcel.ParcelAreaInAcres)
+                    .Aggregate((x, y) => x + y);
 
                 var transactionHistoryDto = new TransactionHistoryDto()
                 {
@@ -153,14 +155,13 @@ namespace Rio.EFModels.Entities
                     CreateUserFullName = $"{parcelLedger.User?.FirstName} {parcelLedger.User?.LastName}",
                     WaterTypeName = parcelLedger.WaterType.WaterTypeName,
                     AffectedParcelsCount = transactionGroup.Count(),
+                    AffectedAcresCount = (decimal)totalTransactionAreaInAcres,
                     UploadedFileName = parcelLedger.UploadedFileName
                 };
 
                 if (parcelLedger.UploadedFileName == null)
                 {
                     var totalTransactionAmount = transactionGroup.Select(x => x.TransactionAmount).Sum();
-                    var totalTransactionAreaInAcres = transactionGroup.Select(x => x.Parcel.ParcelAreaInAcres)
-                        .Aggregate((x, y) => x + y);
 
                     transactionHistoryDto.TransactionDepth = totalTransactionAmount / (decimal)totalTransactionAreaInAcres;
                     transactionHistoryDto.TransactionVolume = totalTransactionAmount;
@@ -169,7 +170,8 @@ namespace Rio.EFModels.Entities
                 transactionHistoryDtos.Add(transactionHistoryDto);
             }
 
-            return transactionHistoryDtos;
+            return transactionHistoryDtos.OrderByDescending(x => x.EffectiveDate)
+                .ThenByDescending(x => x.TransactionDate).ToList();
         }
 
         public static void CreateNew(RioDbContext dbContext, ParcelDto parcel, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)

@@ -12,5 +12,6 @@ namespace Rio.Models.DataTransferObjects
         public decimal? TransactionDepth { get; set; }
         public string UploadedFileName { get; set; }
         public int AffectedParcelsCount { get; set; }
+        public decimal AffectedAcresCount { get; set; }
     } 
 }

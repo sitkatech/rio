@@ -19,6 +19,7 @@ export class TransactionHistoryDto {
     TransactionDepth?: number;
     UploadedFileName?: string;
     AffectedParcelsCount?: number;
+    AffectedAcresCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }
