@@ -48,7 +48,7 @@ from
 			select apwy.AccountID, apwy.ParcelID
 			from dbo.AccountParcelWaterYear apwy
 			join dbo.WaterYear wy on wy.WaterYearID = apwy.WaterYearID
-			where wy.[year] = @year
+			where wy.[Year] = @year
 		) up on acc.AccountID = up.AccountID
 		join dbo.Parcel p on up.ParcelID = p.ParcelID
 		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.EffectiveDate) = @year
