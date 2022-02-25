@@ -21,7 +21,7 @@ global:
 rio-edf-api:
   replicaCount: 1
   image:
-    repository: sitkacontainers.azurecr.io/rio-edf/api
+    repository: sitkacontainers.azurecr.io/rio/api
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
   imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
@@ -74,7 +74,7 @@ rio-edf-api:
 rio-edf-web:
   replicaCount: 1
   image:
-    repository: sitkacontainers.azurecr.io/rio-edf/web
+    repository: sitkacontainers.azurecr.io/rio/web
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
   imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
