@@ -15,7 +15,8 @@ export class TransactionHistoryDto {
     EffectiveDate?: string;
     CreateUserFullName?: string;
     WaterTypeName?: string;
-    TransactionAmount?: number;
+    TransactionVolume?: number;
+    TransactionDepth?: number;
     UploadedFileName?: string;
     AffectedParcelsCount?: number;
     constructor(obj?: any) {

@@ -1,8 +1,8 @@
 {
   "name": "rio-web",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "config": {
-    "template_dir": "../../Build/typescript-angular",
+    "template_dir": "../Build/typescript-angular",
     "output_dir": "src/app/shared/generated",
     "swagger_json_path": "../Rio.API/swagger.json"
   },
