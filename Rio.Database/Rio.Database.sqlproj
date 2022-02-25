@@ -85,6 +85,15 @@
     <None Include="Scripts\LookupTables\dbo.Role.sql" />
     <None Include="Scripts\LookupTables\dbo.CustomRichTextType.sql" />
     <None Include="Scripts\LookupTables\dbo.FileResourceMimeType.sql" />
+    <None Include="Scripts\LookupTables\dbo.AccountStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.OfferStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.OpenETSyncResultType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ParcelStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.PostingStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.PostingType.sql" />
+    <None Include="Scripts\LookupTables\dbo.TradeStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.WaterTransferRegistrationStatus.sql" />
+    <None Include="Scripts\LookupTables\dbo.WaterTransferType.sql" />
     <Build Include="dbo\Tables\Account.sql" />
     <Build Include="dbo\Tables\AccountParcelWaterYear.sql" />
     <Build Include="dbo\Tables\AccountReconciliation.sql" />
@@ -143,15 +152,6 @@
     <Build Include="dbo\Procs\pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry.sql" />
     <Build Include="dbo\Procs\pUpdateParcelMonthlyEvapotranspirationWithETData.sql" />
     <Build Include="dbo\Procs\pUpdateParcelUpdateStagingGeometryFromParcelGeometryText.sql" />
-    <Build Include="Scripts\LookupTables\dbo.AccountStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.OfferStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.OpenETSyncResultType.sql" />
-    <Build Include="Scripts\LookupTables\dbo.ParcelStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.PostingStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.PostingType.sql" />
-    <Build Include="Scripts\LookupTables\dbo.TradeStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.WaterTransferRegistrationStatus.sql" />
-    <Build Include="Scripts\LookupTables\dbo.WaterTransferType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />
