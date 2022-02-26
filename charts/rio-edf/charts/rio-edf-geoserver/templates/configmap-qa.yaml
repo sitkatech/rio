@@ -10,3 +10,5 @@ data:
   GEOSERVER_ADMIN_PASSWORD_SECRET: "/app/secrets/geoserverAdminPassword"
   GEOSERVER_SQL_SERVER_PASSWORD_SECRET: "/app/secrets/geoserverSqlServerPassword"
   GEOSERVER_CONFIG_DIRECTORY: "/app/config"
+  INITIAL_MEMORY: "1G"
+  MAXIMUM_MEMORY: "2G"
