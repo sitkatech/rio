@@ -1,7 +1,9 @@
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +34,21 @@ namespace Rio.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+             // Adding response compression which greatly reduces size of static content delivery.
+            // https://docs.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-5.0
+            services.AddResponseCompression(options =>
+            {
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                // Appending any extra MIME types to compress.
+                // Default list is here: https://docs.microsoft.com/en-us/aspnet/core/performance/response-compression?view=aspnetcore-5.0#mime-types-1
+                // NOTE: It's not recommended to compress images or other binary files
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+                {
+                    "image/svg+xml"
+                });
+                options.EnableForHttps = true; 
+            });        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +80,7 @@ namespace Rio.Web
                 }
             });
 
+            app.UseResponseCompression();
             app.UseDefaultFiles();
             app.UseStaticFiles();
         }
