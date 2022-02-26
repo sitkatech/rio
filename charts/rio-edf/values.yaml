@@ -16,7 +16,8 @@ global:
     geoserverAzureStorageAccountKey:  "longkeyreplacedhere"
     apiSqlPassword: "passwordhere"
     sendGridApiKey: "sendgridapikeyhere"
-
+    hangfireUserName: "hangfireUserName"
+    hangfirePassword: "passwordhere"
 
 rio-edf-api:
   replicaCount: 1
