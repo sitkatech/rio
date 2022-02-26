@@ -20,7 +20,7 @@ jobs:
     name: export
     displayName: 'Export Production DB'
     inputs:
-      azureSubscription: 'AzureServiceConnection' #Should be Prod Service Connection
+      azureSubscription: '$(azureServiceConnection)' #Should be Prod Service Connection
       ServerName: '$(serverName)'
       DatabaseName: '$(databaseName)'
       SqlUsername: '$(sqlAdministrator)'
@@ -34,7 +34,7 @@ jobs:
     displayName: 'Copy BacPac to QA Blob storage'
     inputs:
       SourcePath: '$(export.SqlDeploymentOutputFile)'
-      azureSubscription: 'AzureServiceConnection' #Should be QA Service Connection
+      azureSubscription: '$(azureServiceConnection)' #Should be QA Service Connection
       Destination: 'AzureBlob'
       storage: '$(storageAccountName)'
       ContainerName: 'prod-backup'
