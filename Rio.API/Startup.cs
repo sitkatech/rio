@@ -166,6 +166,7 @@ namespace Rio.API
             services.AddSwaggerGenNewtonsoftSupport();
             #endregion
 
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -214,6 +215,7 @@ namespace Rio.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/");
             });
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions()
