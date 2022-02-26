@@ -84,9 +84,9 @@ stages:
     steps:
     - checkout: self
     - task: CmdLine@2
-      displayName: Overwrite SCSS variables for {tenantName}
+      displayName: Overwrite SCSS variables for $(tenantName)
       inputs:
-        script: cp Rio.Web/src/scss/_variables_{tenantName}.scss Rio.Web/src/scss/_variables.scss
+        script: cp Rio.Web/src/scss/_variables_$(tenantName).scss Rio.Web/src/scss/_variables.scss
     - task: DockerCompose@0
       displayName: Build Web services
       inputs:
