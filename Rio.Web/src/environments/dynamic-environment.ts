@@ -25,10 +25,6 @@ export class DynamicEnvironment {
         return window.config.mainAppApiUrl;
     }
 
-    public get createAccountUrl() {
-        return window.config.createAccountUrl;
-    }
-
     public get createAccountRedirectUrl() {
         return window.config.createAccountRedirectUrl;
     }
@@ -99,10 +95,6 @@ export class DynamicEnvironment {
 
     public get navThemeColor() {
         return window.config.navThemeColor;
-    }
-
-    public get applicationType() {
-        return window.config.applicationType;
     }
 
     public get applicationInternalName() {

@@ -3,7 +3,6 @@
     "staging": [TODO],
     "dev": [TODO],
     "mainAppApiUrl": [TODO],
-    "createAccountUrl": [TODO],
     "createAccountRedirectUrl": [TODO],
     "allowTrading": [TODO],
     "allowOpenETSync": [TODO],
@@ -19,7 +18,6 @@
     "leadOrganizationLongName": [TODO], 
     "leadOrganizationHomeUrl": [TODO],
     "leadOrganizationLogoFilename": [TODO],
-    "applicationType" : [TODO],
 
     "contactInfoPhone":[TODO],
     "contactInfoEmail":[TODO],

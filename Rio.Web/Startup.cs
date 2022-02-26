@@ -108,7 +108,6 @@ namespace Rio.Web
             ContactInfoMailingAddress = configuration["ContactInfoMailingAddress"];
             ContactInfoPhysicalAddress = configuration["ContactInfoPhysicalAddress"];
             NavThemeColor = configuration["NavThemeColor"];
-            ApplicationType = configuration["ApplicationType"];
             ApplicationInternalName = configuration["ApplicationInternalName"];
             AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
             AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
@@ -152,8 +151,6 @@ namespace Rio.Web
         public string ContactInfoPhysicalAddress { get; set;}
         [JsonProperty("navThemeColor")]
         public string NavThemeColor { get; set;}
-        [JsonProperty("applicationType")]
-        public string ApplicationType { get; set;}
         [JsonProperty("applicationInternalName")]
         public string ApplicationInternalName { get; set;}
         [JsonProperty("appInsightsInstrumentationKey")]
