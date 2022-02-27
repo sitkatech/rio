@@ -152,6 +152,7 @@
     <Build Include="dbo\Procs\pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry.sql" />
     <Build Include="dbo\Procs\pUpdateParcelMonthlyEvapotranspirationWithETData.sql" />
     <Build Include="dbo\Procs\pUpdateParcelUpdateStagingGeometryFromParcelGeometryText.sql" />
+    <None Include="Scripts\PreReleaseScripts\Remove Unused CustomRichText.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />
