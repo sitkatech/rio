@@ -650,7 +650,7 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<spatial_ref_sy>(entity =>
             {
                 entity.HasKey(e => e.srid)
-                    .HasName("PK__spatial___36B11BD5C7360E61");
+                    .HasName("PK_spatial_ref_sys_srid");
 
                 entity.Property(e => e.srid).ValueGeneratedNever();
 
