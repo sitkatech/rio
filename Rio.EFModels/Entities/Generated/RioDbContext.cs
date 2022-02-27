@@ -78,15 +78,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<vPostingDetailed> vPostingDetaileds { get; set; }
         public virtual DbSet<vUserDetailed> vUserDetaileds { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
@@ -188,7 +179,13 @@ namespace Rio.EFModels.Entities
                 entity.HasKey(e => e.DatabaseMigrationNumber)
                     .HasName("PK_DatabaseMigration_DatabaseMigrationNumber");
 
-                entity.Property(e => e.DatabaseMigrationNumber).ValueGeneratedNever();
+                entity.Property(e => e.DateMigrated).HasDefaultValueSql("(getutcdate())");
+
+                entity.Property(e => e.MigrationAuthorName).IsUnicode(false);
+
+                entity.Property(e => e.MigrationReason).IsUnicode(false);
+
+                entity.Property(e => e.ReleaseScriptFileName).IsUnicode(false);
             });
 
             modelBuilder.Entity<DisadvantagedCommunity>(entity =>
@@ -610,10 +607,6 @@ namespace Rio.EFModels.Entities
 
             modelBuilder.Entity<WaterType>(entity =>
             {
-                entity.HasIndex(e => e.IsSourcedFromApi, "CK_WaterType_AtMostOne_IsSourcedFromApi_True")
-                    .IsUnique()
-                    .HasFilter("([IsSourcedFromApi]=(1))");
-
                 entity.Property(e => e.WaterTypeDefinition).IsUnicode(false);
 
                 entity.Property(e => e.WaterTypeName).IsUnicode(false);
@@ -657,7 +650,7 @@ namespace Rio.EFModels.Entities
             modelBuilder.Entity<spatial_ref_sy>(entity =>
             {
                 entity.HasKey(e => e.srid)
-                    .HasName("PK__spatial___36B11BD545349F5B");
+                    .HasName("PK__spatial___36B11BD5C7360E61");
 
                 entity.Property(e => e.srid).ValueGeneratedNever();
 

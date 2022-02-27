@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Rio.EFModels.Entities
 {
     [Table("TransactionType")]
+    [Index(nameof(TransactionTypeName), Name = "AK_TransactionType_TransactionTypeName", IsUnique = true)]
     public partial class TransactionType
     {
         public TransactionType()
