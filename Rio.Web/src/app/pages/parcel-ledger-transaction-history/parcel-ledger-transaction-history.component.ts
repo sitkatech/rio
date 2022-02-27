@@ -62,18 +62,25 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
     const _decimalPipe = this.decimalPipe;
 
     this.columnDefs = [
-      this.utilityFunctionsService.createDateColumnDef('Transaction Entry Date', 'TransactionDate', 'short', 180),
-      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy', 180),
-      { headerName: 'Created By', field: 'CreateUserFullName', width: 180 },
-      { headerName: 'Supply Type', field: 'WaterTypeName', width: 180 },
-      this.utilityFunctionsService.createDecimalColumnDef('Number of Parcels Affected', 'AffectedParcelsCount', 200, 0),
+      this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy', 140),
+      this.utilityFunctionsService.createDateColumnDef('Transaction Date', 'TransactionDate', 'short', 140),
+      { headerName: 'Created By', field: 'CreateUserFullName', width: 140 },
+      { headerName: 'Supply Type', field: 'WaterTypeName', width: 140 },
+      this.utilityFunctionsService.createDecimalColumnDef('Total Parcels Affected', 'AffectedParcelsCount', 160, 0),
+      this.utilityFunctionsService.createDecimalColumnDef('Total Acres Affected', 'AffectedAcresCount', 160, 1),
       {
-        headerName: 'Quantity (ac-ft/ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' }, sortable: true, resizable: true,
-        valueGetter: params => params.data.TransactionAmount,
-        valueFormatter: params => params.data.TransactionAmount ? _decimalPipe.transform(params.value, '1.2-2') : '-',
-        filterValueGetter: params => params.data.TransactionAmount ? parseFloat(_decimalPipe.transform(params.data.TransactionAmount, '1.2-2')) : '-'
+        headerName: 'Transaction Depth (ac-ft/ac)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' }, sortable: true, resizable: true, width: 200,
+        valueGetter: params => params.data.TransactionDepth,
+        valueFormatter: params => params.data.TransactionDepth ? _decimalPipe.transform(params.value, '1.2-2') : '-',
+        filterValueGetter: params => params.data.TransactionDepth ? parseFloat(_decimalPipe.transform(params.data.TransactionDepth, '1.2-2')) : '-'
       },
-      { headerName: "Spreadsheet Data Source", field: 'UploadedFileName'}
+      {
+        headerName: 'Transaction Volume (ac-ft)', filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' }, sortable: true, resizable: true, width: 200,
+        valueGetter: params => params.data.TransactionVolume,
+        valueFormatter: params => params.data.TransactionVolume ? _decimalPipe.transform(params.value, '1.2-2') : '-',
+        filterValueGetter: params => params.data.TransactionVolume ? parseFloat(_decimalPipe.transform(params.data.TransactionVolume, '1.2-2')) : '-'
+      },
+      { headerName: "Spreadsheet Data Source", valueGetter: params => params.data.UploadedFileName ?? '-'}
     ];
 
     this.defaultColDef = { sortable: true, filter: true, resizable: true };

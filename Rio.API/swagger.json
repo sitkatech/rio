@@ -5816,7 +5816,12 @@
             "type": "string",
             "nullable": true
           },
-          "TransactionAmount": {
+          "TransactionVolume": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TransactionDepth": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -5828,6 +5833,10 @@
           "AffectedParcelsCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "AffectedAcresCount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

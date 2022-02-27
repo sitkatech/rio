@@ -131,9 +131,9 @@ namespace Rio.EFModels.Entities
         public static List<TransactionHistoryDto> ListTransactionHistoryAsDto(RioDbContext dbContext)
         {
             var parcelLedgerTransactionGroups = GetParcelLedgersImpl(dbContext).AsEnumerable()
-                .Where(x => x.TransactionTypeID == (int)TransactionTypeEnum.Supply && x.ParcelLedgerEntrySourceTypeID == (int)ParcelLedgerEntrySourceTypeEnum.Manual)
-                .GroupBy(x => x.TransactionDate)
-                .OrderByDescending(x => x.Key);
+                .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply &&
+                            x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual)
+                .GroupBy(x => new {x.EffectiveDate, x.WaterTypeID});
             
             var transactionHistoryDtos = new List<TransactionHistoryDto>();
             
@@ -145,20 +145,33 @@ namespace Rio.EFModels.Entities
                 }
 
                 var parcelLedger = transactionGroup.First();
+                var totalTransactionAreaInAcres = transactionGroup.Select(x => x.Parcel.ParcelAreaInAcres)
+                    .Aggregate((x, y) => x + y);
 
-                transactionHistoryDtos.Add( new TransactionHistoryDto()
+                var transactionHistoryDto = new TransactionHistoryDto()
                 {
-                    TransactionDate = transactionGroup.Key,
-                    EffectiveDate = parcelLedger.EffectiveDate,
+                    TransactionDate = parcelLedger.TransactionDate,
+                    EffectiveDate = transactionGroup.Key.EffectiveDate,
                     CreateUserFullName = $"{parcelLedger.User?.FirstName} {parcelLedger.User?.LastName}",
                     WaterTypeName = parcelLedger.WaterType.WaterTypeName,
                     AffectedParcelsCount = transactionGroup.Count(),
-                    TransactionAmount = parcelLedger.UploadedFileName == null ? parcelLedger.TransactionAmount : null,
+                    AffectedAcresCount = (decimal)totalTransactionAreaInAcres,
                     UploadedFileName = parcelLedger.UploadedFileName
-                });
+                };
+
+                if (parcelLedger.UploadedFileName == null)
+                {
+                    var totalTransactionAmount = transactionGroup.Select(x => x.TransactionAmount).Sum();
+
+                    transactionHistoryDto.TransactionDepth = totalTransactionAmount / (decimal)totalTransactionAreaInAcres;
+                    transactionHistoryDto.TransactionVolume = totalTransactionAmount;
+                }
+
+                transactionHistoryDtos.Add(transactionHistoryDto);
             }
 
-            return transactionHistoryDtos;
+            return transactionHistoryDtos.OrderByDescending(x => x.EffectiveDate)
+                .ThenByDescending(x => x.TransactionDate).ToList();
         }
 
         public static void CreateNew(RioDbContext dbContext, ParcelDto parcel, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)

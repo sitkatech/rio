@@ -15,9 +15,11 @@ export class TransactionHistoryDto {
     EffectiveDate?: string;
     CreateUserFullName?: string;
     WaterTypeName?: string;
-    TransactionAmount?: number;
+    TransactionVolume?: number;
+    TransactionDepth?: number;
     UploadedFileName?: string;
     AffectedParcelsCount?: number;
+    AffectedAcresCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

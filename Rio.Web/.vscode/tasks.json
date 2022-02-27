@@ -39,6 +39,13 @@
             "problemMatcher": [
                 "$tsc"
             ]
+        },
+        {
+            "type": "npm",
+            "script": "gen-model",
+            "problemMatcher": [],
+            "label": "npm: gen-model",
+            "detail": "node src/scripts/clean-model.js %npm_package_config_output_dir% && npx @openapitools/openapi-generator-cli generate --additional-properties=modelPropertyNaming=original --additional-properties=fileNaming=kebab-case -i %npm_package_config_swagger_json_path%  -g typescript-angular -o %npm_package_config_output_dir% -t %npm_package_config_template_dir%"
         }
     ]
 }
