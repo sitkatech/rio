@@ -2,6 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseName>Rio-EDFDB</TargetDatabaseName>
     <DeployScriptFileName>Rio.Database.sql</DeployScriptFileName>
     <TargetConnectionString>Data Source=.;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</TargetConnectionString>
     <BlockOnPossibleDataLoss>False</BlockOnPossibleDataLoss>
@@ -15,4 +16,4 @@
     <DoNotDropUsers>True</DoNotDropUsers>
     <ProfileVersionNumber>1</ProfileVersionNumber>
   </PropertyGroup>
-</Project>t>
+</Project>
