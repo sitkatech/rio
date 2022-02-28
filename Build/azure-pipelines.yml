@@ -319,7 +319,7 @@ stages:
               SqlInline: |
                 if exists (select * from sys.databases where name = '$(databaseName)_qa')
                 begin
-                  drop database $(databaseName)_qa
+                  drop database [$(databaseName)_qa]
                 end            
                 
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
@@ -371,11 +371,11 @@ stages:
               SqlPassword: '$(sqlPassword)'
               deployType: InlineSqlTask
               SqlInline: |
-                ALTER DATABASE $(databaseName) MODIFY NAME = $(databaseName)_qa                
+                ALTER DATABASE [$(databaseName)] MODIFY NAME = [$(databaseName)_qa]
                 GO                
-                ALTER DATABASE $(databaseName)_prod MODIFY NAME = $(databaseName)                
+                ALTER DATABASE [$(databaseName)_prod] MODIFY NAME = [$(databaseName)]                
                 GO
-                drop database $(databaseName)_qa
+                drop database [$(databaseName)_qa]
               
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
 
