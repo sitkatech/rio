@@ -31,7 +31,7 @@ spec:
         projected:
           sources:
           - configMap:
-              name: {{ include "rio-edf-geoserver.fullname" . }}-environment-properties-{{ .Values.global.env.name }}-configmap
+              name: {{ include "rio-edf-geoserver.fullname" . }}-environment-properties-configmap
       - name: secrets
         secret:
           secretName: rio-edf-geoserver-secrets
@@ -80,7 +80,7 @@ spec:
             
           envFrom:
           - configMapRef:
-              name: {{ include "rio-edf-geoserver.fullname" . }}-{{ .Values.global.env.name }}-configmap
+              name: {{ include "rio-edf-geoserver.fullname" . }}-configmap
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

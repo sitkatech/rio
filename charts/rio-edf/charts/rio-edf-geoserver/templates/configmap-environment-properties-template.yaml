@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-edf-geoserver.fullname" . }}-environment-properties-prod-configmap
+  name: {{ include "rio-edf-geoserver.fullname" . }}-environment-properties-configmap
 data:
   geoserver-environment.properties.template: |
     datastore-host = {{ .Values.global.env.dbServer }}
