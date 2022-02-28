@@ -4,7 +4,7 @@ metadata:
   name: {{ include "rio-edf-geoserver.fullname" . }}-environment-properties-qa-configmap
 data:
   geoserver-environment.properties.template: |
-    datastore-host = rio-edf-db-server.database.windows.net
-    datastore-database = Rio-EDFDB
-    datastore-user = SqlAdministrator
+    datastore-host = {{ .Values.global.env.dbServer }}
+    datastore-database = {{ .Values.global.env.databaseName }}
+    datastore-user = {{ .Values.global.env.sqlUsername }}
     datastore-password = /app/secrets/geoserverSqlServerPassword
