@@ -12,8 +12,14 @@ set -o errexit # Exit immediately if any commands return non-zero exit code
 # 04/06/20 MF & JVV - In local environment on first load sometimes we get "cannot create regular file", sleep before copying seems to help
 sleep 5 
 
-# copy the template file for replacement 
-cp -f "${GEOSERVER_DATA_DIR}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
+if [ ${GEOSERVER_CONFIG_DIRECTORY} ]; 
+then
+    # copy the template file for replacement 
+    cp -f "${GEOSERVER_CONFIG_DIRECTORY}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
+else
+    # copy the template file for replacement 
+    cp -f "${GEOSERVER_DATA_DIR}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
+fi;
 
 FIND="${GEOSERVER_SQL_SERVER_PASSWORD_SECRET}"
 REPLACE=$(cat "${GEOSERVER_SQL_SERVER_PASSWORD_SECRET}")
