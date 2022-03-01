@@ -16,7 +16,7 @@ namespace Rio.EFModels.Entities
                 .Include(x => x.WaterType)
                 .Include(x => x.ParcelLedgerEntrySourceType)
                 .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
-                .Include(x => x.User)
+                .Include(x => x.User).ThenInclude(x => x.Role)
                 .AsNoTracking();
         }
 
@@ -133,7 +133,7 @@ namespace Rio.EFModels.Entities
             var parcelLedgerTransactionGroups = GetParcelLedgersImpl(dbContext).AsEnumerable()
                 .Where(x => x.TransactionTypeID == (int) TransactionTypeEnum.Supply &&
                             x.ParcelLedgerEntrySourceTypeID == (int) ParcelLedgerEntrySourceTypeEnum.Manual)
-                .GroupBy(x => new {x.EffectiveDate, x.WaterTypeID});
+                .GroupBy(x => new {x.EffectiveDate, x.WaterTypeID, x.UploadedFileName});
             
             var transactionHistoryDtos = new List<TransactionHistoryDto>();
             
@@ -156,7 +156,7 @@ namespace Rio.EFModels.Entities
                     WaterTypeName = parcelLedger.WaterType.WaterTypeName,
                     AffectedParcelsCount = transactionGroup.Count(),
                     AffectedAcresCount = (decimal)totalTransactionAreaInAcres,
-                    UploadedFileName = parcelLedger.UploadedFileName
+                    UploadedFileName = transactionGroup.Key.UploadedFileName
                 };
 
                 if (parcelLedger.UploadedFileName == null)
