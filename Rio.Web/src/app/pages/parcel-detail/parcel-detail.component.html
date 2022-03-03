@@ -1,0 +1,208 @@
+<div class="breadcrumb-container">
+  <div class="container">
+    <nav aria-label="breadcrumb" *ngIf="parcel">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+          <a routerLink="/parcels">Parcels</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{parcel.ParcelNumber}}
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+<div class="container mt-sm-4" *ngIf="parcel">
+  <h2 class="d-inline-block">
+    {{parcel.ParcelNumber}}
+  </h2>
+  <app-alert-display></app-alert-display>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              Basics
+            </div>
+            <div class="card-body">
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12">APN</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  {{parcel.ParcelNumber}}
+                </dd>
+              </dl>
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12">Area</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  {{parcel.ParcelAreaInAcres | number: '1.1-1'}} acres
+                </dd>
+              </dl>
+              <dl class="row">
+                <dt class="text-sm-right col-sm-5 col-xs-12"><span *ngIf="isLandowner()">Water </span>Account</dt>
+                <dd class="col-sm-7 col-xs-12">
+                  <a *ngIf="(isAdministrator() || isDemoUser()) && getCurrentOwner() && getCurrentOwner().Account"
+                    routerLink="/accounts/{{getCurrentOwner().Account.AccountID}}">{{getCurrentOwner().Account.AccountName}}</a>
+                  <span *ngIf="isLandowner() && getCurrentOwner() && getCurrentOwner().Account">{{getCurrentOwner().Account.AccountName}}</span>
+                  <em *ngIf="!getCurrentOwner() || !getCurrentOwner().Account">Inactive</em>
+                </dd>
+              </dl>
+              <div class="row" *ngIf="showGoToDashboardButton()">
+                <div class="col-sm-12 text-center">
+                  <a class="btn btn-rio" routerLink="/landowner-dashboard/{{getCurrentOwnerAccountNumber()}}" >Go to Dashboard</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mt-4 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header">
+              Tags
+            </div>
+            <div class="card-body">
+              <span *ngFor="let tag of tags" class="btn btn-secondary m-1">
+                <a href="/tags/{{tag.TagID}}" class="text-dark">{{tag.TagName}}</a>
+                <span *ngIf="isAdministrator()" class="fas fa-times ml-2" (click)="removeTag(tag)"></span>
+              </span>
+              <div *ngIf="isAdministrator()" class="input-group m-1">
+                <input type="text" class="form-control" [(ngModel)]="tagInput" placeholder="Add a Tag"/>
+                <div class="input-group-append">
+                  <span class="btn btn-secondary" (click)="addTag()" [disabled]="isTaggingParcel">
+                    <i class="fas fa-plus" *ngIf="!isTaggingParcel"></i>
+                    <i *ngIf="isTaggingParcel" class="fa fa-spinner loading-spinner"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8">
+      <div class="card">
+        <div class="card-header">
+          Location
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-12" *ngIf="parcel">
+              <parcel-map mapID="parcelsMapForParcel" [selectedParcelIDs]="getSelectedParcelIDs()" [disableDefaultClick]="true" mapHeight="500px">
+              </parcel-map>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <a *ngIf="isAdministrator()" class="btn btn-rio btn-sm float-right"
+            routerLink="/parcels/{{parcel.ParcelID}}/parcel-ledger-create">
+            <span class="fas fa-edit"></span> Create New Transaction
+          </a>
+          Water Supply and Usage
+        </div>
+        <div class="card-body">
+          <p>All data is in units of acre-feet</p>
+          <div class="table-responsive">
+            <table class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
+                  <th *ngIf="allowTrading()" class="text-right">Purchased</th>
+                  <th *ngIf="allowTrading()" class="text-right">Sold</th>
+                  <th class="text-right">Total Supply</th>
+                  <th class="text-right">Total Usage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let waterYear of waterYears">
+                  <td>{{waterYear.Year}}</td>
+                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
+                  <td *ngIf="allowTrading()" class="text-right">{{getPurchasedWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td *ngIf="allowTrading()" class="text-right">{{getSoldWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td class="text-right">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-auto">
+              <span class="align-middle">Parcel Ledger Activity</span>
+            </div>
+            <div class="col-auto ml-auto">
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive">
+          <div class="row">
+            <div class="col-auto">
+              <p>All transaction data is in units of acre-feet.</p>
+            </div>
+            <div class="col-auto ml-auto">
+              <rio-clear-grid-filters-button [grid]="parcelLedgerGrid" class="mr-2"></rio-clear-grid-filters-button>
+              <a class="btn btn-secondary btn-sm" style="cursor: pointer;" (click)="exportParcelLedgerGridToCsv()" placement="bottom"
+                ngbTooltip="Download Account Usage Report"><i class="fas fa-download"></i></a>
+            </div>
+          </div>
+          <ag-grid-angular #parcelLedgerGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
+            [columnDefs]="parcelLedgerGridColumnDefs" [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
+            [rowData]="rowData" (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="isAdministrator() || isDemoUser()">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <a *ngIf="isAdministrator() && isActive()" class="btn btn-rio btn-sm float-right" routerLink="/parcels/{{parcel.ParcelID}}/change-owner">
+            <span class="fas fa-edit"></span> Change Parcel Owner
+          </a>
+
+
+          Parcel Ownership History
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-condensed">
+              <thead>
+                <tr>
+                  <th>Water Year</th>
+                  <th>Account Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let parcelOwnershipRecord of parcelOwnershipHistory">
+                  
+                  <td>
+                    {{parcelOwnershipRecord.WaterYear.Year}}
+                  </td>
+
+                  <td>
+                    <a *ngIf="parcelOwnershipRecord.Account" routerLink="/accounts/{{parcelOwnershipRecord.Account.AccountID}}">{{parcelOwnershipRecord.Account.AccountName}}</a>
+                    <em *ngIf="!parcelOwnershipRecord.Account">Inactive</em>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

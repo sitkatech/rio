@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Rio.Web.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "isBackground": true
+        },
+        {
+            "type": "npm",
+            "script": "e2e",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "build-qa",
+            "problemMatcher": [
+                "$tsc"
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "gen-model",
+            "problemMatcher": [],
+            "label": "npm: gen-model",
+            "detail": "node src/scripts/clean-model.js %npm_package_config_output_dir% && npx @openapitools/openapi-generator-cli generate --additional-properties=modelPropertyNaming=original --additional-properties=fileNaming=kebab-case -i %npm_package_config_swagger_json_path%  -g typescript-angular -o %npm_package_config_output_dir% -t %npm_package_config_template_dir%"
+        }
+    ]
+}

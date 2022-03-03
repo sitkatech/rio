@@ -1,0 +1,1 @@
+delete from dbo.CustomRichText where CustomRichTextTypeID = 27

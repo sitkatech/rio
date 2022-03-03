@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[ParcelLedger](
 	[UserID] [int] NULL,
 	[UserComment] [varchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	[ParcelLedgerEntrySourceTypeID] [int] NOT NULL,
+	[UploadedFileName] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
  CONSTRAINT [PK_ParcelLedger_ParcelLedgerID] PRIMARY KEY CLUSTERED 
 (
 	[ParcelLedgerID] ASC

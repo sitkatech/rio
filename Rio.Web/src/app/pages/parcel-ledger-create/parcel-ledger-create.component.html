@@ -1,0 +1,123 @@
+<div class="breadcrumb-container">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/manager-dashboard">Manager Dashboard</a>
+          </li>
+          <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            Create New Transaction
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+  <div class="container mt-sm-4">
+    <app-alert-display></app-alert-display>
+    <h2 class="d-inline-block">
+      Create New Transaction
+    </h2>
+    <div class="card card-body mt-2 mb-5">
+      <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+    </div>
+    <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="model">
+      <div class="row">
+        <div class="col-sm-3 control-label text-sm-right">
+          <label>Parcel APN</label>
+        </div>
+        <div class="col-sm-5">
+          <input id="typeahead-http" type="text" class="form-control" name="parcel-number" placeholder="Begin typing to search Parcel APNs"
+            [(ngModel)]="selectedParcelNumber" [ngbTypeahead]="search" [ngClass]="selectedParcelNumber ? 'font-weight-bold' : 'font-weight-light'"/>
+          <small class="form-text text-muted font-italic" *ngIf="searchFailed">Suggestions could not be loaded.</small>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-3 control-label text-sm-right">
+          <label class="required">Water Budget Category</label>
+        </div>
+        <div class="col-sm-5">
+          <input type="radio" id="supply" name="adjustment-type" class="mr-2" required 
+            [value]="transactionTypeEnum.Supply" [(ngModel)]="model.TransactionTypeID">
+          <label for="supply" class="mr-4">Supply</label>
+          <input type="radio" id="usage" name="adjustment-type" class="mr-2" 
+            [value]="transactionTypeEnum.Usage" [(ngModel)]="model.TransactionTypeID">
+          <label for="usage">Usage</label>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-3 control-label text-sm-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
+          <label class="required">Supply Type</label>
+        </div>
+        <div class="col-sm-5">
+          <select name="water-type" class="form-control" 
+            [disabled]="isUsageAdjustment()" [(ngModel)]="model.WaterTypeID">
+            <option disabled selected hidden></option>
+            <option *ngFor="let waterType of waterTypes" [value]="waterType.WaterTypeID">
+              {{waterType.WaterTypeName}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-3 control-label text-sm-right">
+            <label class="required">Quantity</label>
+        </div>
+        <div class="col-sm-5">
+          <div class="input-group">
+            <input type="number" class="form-control" name="Quantity" step="1" required
+              [(ngModel)]="model.TransactionAmount"/>
+            <div class="input-group-append">
+              <span class="input-group-text"> ac-ft</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-3 control-label text-sm-right">
+          <label class="required">Effective Date</label>
+        </div>
+        <div class="col-sm-5">
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp"
+              [(ngModel)]="model.EffectiveDate" ngbDatepicker #d="ngbDatepicker" required >
+            <div class="input-group-append">
+              <button class="btn btn-secondary far fa-calendar" (click)="d.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="float-left"><i class="fas fa-info-circle p-2" aria-hidden="true"></i></div>
+          <div class="font-italic font-weight-light">Water usage corrections are typically applied effective the last day of the month.</div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-sm-3 control-label text-sm-right">
+            <label>Comment</label>
+        </div>
+        <div class="col-sm-5">
+            <textarea class="form-control" name="comment" style="height: 150px" placeholder=""
+              [(ngModel)]="model.UserComment">
+            </textarea>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-2">
+          <i class="fas fa-bolt"></i> Required field
+        </div>
+        <div class="col-sm-8 text-right">
+          <button type="submit" class="btn btn-rio"
+          [disabled]=" isLoadingSubmit">
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Save
+          </button>
+          <a *ngIf="!parcelFromRoute; else redirectToParcelDetail" class="btn btn-secondary ml-1" routerLink="/parcels/create-water-transactions">Cancel</a>
+          <ng-template #redirectToParcelDetail>
+            <a class="btn btn-secondary ml-1" *ngIf="parcel" routerLink="/parcels/{{parcel.ParcelID}}">Cancel</a>
+          </ng-template>
+        </div>
+      </div>
+    </form>
+  </div>
