@@ -66,8 +66,8 @@ rio-edf-api:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  # nodeSelector: 
-  #   agentpool: appnodepool
+  nodeSelector: 
+    agentpool: appnodepool
   tolerations: []
   affinity: {}
   
@@ -119,8 +119,8 @@ rio-edf-web:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  # nodeSelector: 
-  #   agentpool: appnodepool
+  nodeSelector: 
+    agentpool: appnodepool
   tolerations: []
   affinity: {}
 
@@ -170,7 +170,7 @@ rio-edf-geoserver:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  # nodeSelector: 
-  #   agentpool: appnodepool
+  nodeSelector: 
+    agentpool: appnodepool
   tolerations: []
   affinity: {}
