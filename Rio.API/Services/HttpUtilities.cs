@@ -16,7 +16,7 @@ namespace Rio.API.Services
             var userDto = UserContext.GetUserFromHttpContext(rioDbContext, httpContext);
             var queryCollection = httpRequest.Query;
 
-            var fileResourceMimeType = FileResourceMimeType.GetFileResourceMimeTypeByContentTypeName(rioDbContext,
+            var fileResourceMimeType = FileResourceMimeTypes.GetFileResourceMimeTypeByContentTypeName(rioDbContext,
                 queryCollection["mimeType"].ToString());
 
             var clientFilename = queryCollection["clientFilename"].ToString();
@@ -46,7 +46,7 @@ namespace Rio.API.Services
 
             var userDto = UserContext.GetUserFromHttpContext(rioDbContext, httpContext);
 
-            var fileResourceMimeType = FileResourceMimeType.GetFileResourceMimeTypeByContentTypeName(rioDbContext,
+            var fileResourceMimeType = FileResourceMimeTypes.GetFileResourceMimeTypeByContentTypeName(rioDbContext,
                 inputFile.ContentType);
 
             var clientFilename = inputFile.FileName;

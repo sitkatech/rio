@@ -7,7 +7,7 @@ import { AccountService } from 'src/app/services/account/account.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
-import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/generated/enum/role-enum';
 import { AccountDto } from 'src/app/shared/generated/model/account-dto';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';

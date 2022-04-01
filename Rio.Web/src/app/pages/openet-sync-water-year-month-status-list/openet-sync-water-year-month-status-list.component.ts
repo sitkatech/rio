@@ -6,12 +6,12 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { OpenETService } from 'src/app/services/openet.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 import { WaterYearMonthService } from 'src/app/services/water-year-month.service';
 import { finalize } from 'rxjs/operators';
-import { OpenETSyncResultTypeEnum } from 'src/app/shared/models/enums/open-et-sync-result-type-enum';
+import { OpenETSyncResultTypeEnum } from 'src/app/shared/generated/enum/open-e-t-sync-result-type-enum';
 import { OpenETSyncHistoryDto } from 'src/app/shared/generated/model/open-et-sync-history-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterYearMonthDto } from 'src/app/shared/generated/model/water-year-month-dto';
@@ -24,7 +24,7 @@ import { WaterYearMonthDto } from 'src/app/shared/generated/model/water-year-mon
 export class OpenetSyncWaterYearMonthStatusListComponent implements OnInit {
   
   public currentUser: UserDto;
-  public richTextTypeID: number = CustomRichTextType.OpenETIntegration;
+  public richTextTypeID: number = CustomRichTextTypeEnum.OpenETIntegration;
   public modalReference: NgbModalRef;
 
   public waterYearMonthDtos: Array<WaterYearMonthDto>;

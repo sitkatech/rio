@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
@@ -24,7 +24,7 @@ import { environment } from 'src/environments/environment';
 export class ParcelListComponent implements OnInit, OnDestroy {
   @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
 
-  public richTextTypeID: number = CustomRichTextType.ParcelList;
+  public richTextTypeID: number = CustomRichTextTypeEnum.ParcelList;
 
   
   private currentUser: UserDto;

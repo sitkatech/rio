@@ -12,11 +12,9 @@ namespace Rio.EFModels.Entities
         private static IQueryable<ParcelLedger> GetParcelLedgersImpl(RioDbContext dbContext)
         {
             return dbContext.ParcelLedgers
-                .Include(x => x.TransactionType)
                 .Include(x => x.WaterType)
-                .Include(x => x.ParcelLedgerEntrySourceType)
-                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
-                .Include(x => x.User).ThenInclude(x => x.Role)
+                .Include(x => x.Parcel)
+                .Include(x => x.User)
                 .AsNoTracking();
         }
 

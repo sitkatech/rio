@@ -152,11 +152,15 @@
     <Build Include="dbo\Procs\dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry.sql" />
     <Build Include="dbo\Procs\dbo.pUpdateParcelMonthlyEvapotranspirationWithETData.sql" />
     <Build Include="dbo\Procs\dbo.pUpdateParcelUpdateStagingGeometryFromParcelGeometryText.sql" />
+    <None Include="Scripts\LookupTables\dbo.TransactionType.sql" />
+    <None Include="Scripts\LookupTables\dbo.ParcelLedgerEntrySourceType.sql" />
+    <None Include="Scripts\PreReleaseScripts\002- Inserting values to TransactionType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />
     <None Include="Scripts\PreReleaseScripts\README.md" />
     <None Include="Scripts\ReleaseScripts\README.md" />
+    <None Include="Scripts\PreReleaseScripts\001- Making TransactionType a lookup table.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

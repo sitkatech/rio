@@ -64,15 +64,11 @@ namespace Rio.EFModels.Entities
         public static IQueryable<Trade> GetTradeWithOfferDetailsImpl(RioDbContext dbContext)
         {
             return dbContext.Trades
-                .Include(x => x.Offers).ThenInclude(x => x.OfferStatus)
                 .Include(x => x.Offers).ThenInclude(x => x.WaterTransfers)
-                .ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.Offers).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User).ThenInclude(x => x.Role)
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
+                .ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
+                .Include(x => x.Offers).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
+                .Include(x => x.CreateAccount)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
                 .AsNoTracking();
         }
 
@@ -96,12 +92,8 @@ namespace Rio.EFModels.Entities
         private static IQueryable<Trade> GetTradeImpl(RioDbContext dbContext)
         {
             return dbContext.Trades
-                .Include(x => x.TradeStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUsers).ThenInclude(x=>x.User)
-                .Include(x=>x.CreateAccount.AccountStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount.AccountStatus)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.Posting).ThenInclude(x => x.PostingStatus)
+                .Include(x => x.CreateAccount).ThenInclude(x => x.AccountUsers).ThenInclude(x => x.User)
+                .Include(x => x.Posting).ThenInclude(x => x.CreateAccount)
                 .AsNoTracking();
         }
 

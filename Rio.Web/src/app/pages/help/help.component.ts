@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 @Component({
   selector: 'rio-help',
@@ -8,7 +8,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
   styleUrls: ['./help.component.scss']
 })
 export class HelpComponent implements OnInit {
-  public richTextTypeID: number = CustomRichTextType.Contact;
+  public richTextTypeID: number = CustomRichTextTypeEnum.Contact;
 
   constructor() { }
 

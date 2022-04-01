@@ -7,7 +7,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { WaterYearService } from 'src/app/services/water-year.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
@@ -20,7 +20,7 @@ import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 export class ParcelListInactiveComponent implements OnInit, OnDestroy {
   @ViewChild('parcelsGrid') parcelsGrid: AgGridAngular;
 
-  public richTextTypeID: number = CustomRichTextType.InactiveParcelList;
+  public richTextTypeID: number = CustomRichTextTypeEnum.InactiveParcelList;
 
   
   private currentUser: UserDto;

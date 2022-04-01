@@ -49,9 +49,6 @@ namespace Rio.EFModels.Entities
         [StringLength(100)]
         public string Company { get; set; }
 
-        [ForeignKey(nameof(RoleID))]
-        [InverseProperty("Users")]
-        public virtual Role Role { get; set; }
         [InverseProperty(nameof(AccountUser.User))]
         public virtual ICollection<AccountUser> AccountUsers { get; set; }
         [InverseProperty(nameof(FileResource.CreateUser))]

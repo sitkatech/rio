@@ -31,8 +31,5 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(CreateUserID))]
         [InverseProperty(nameof(User.FileResources))]
         public virtual User CreateUser { get; set; }
-        [ForeignKey(nameof(FileResourceMimeTypeID))]
-        [InverseProperty("FileResources")]
-        public virtual FileResourceMimeType FileResourceMimeType { get; set; }
     }
 }

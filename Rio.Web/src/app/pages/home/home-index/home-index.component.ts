@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/generated/enum/role-enum';
 import { environment } from 'src/environments/environment';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { ApplicationInternalNameEnum } from 'src/app/shared/models/enums/application-internal-name.enum';
 import { AccountSimpleDto } from 'src/app/shared/generated/model/account-simple-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class HomeIndexComponent implements OnInit, OnDestroy {
     public watchUserChangeSubscription: any;
     public currentUser: UserDto;
-    public homepageRichTextTypeID: number = CustomRichTextType.HomePage;
+    public homepageRichTextTypeID: number = CustomRichTextTypeEnum.HomePage;
     public applicationInternalName: string = environment.applicationInternalName;
     public ApplicationInternalNameEnum = ApplicationInternalNameEnum;
     public currentUserAccounts: AccountSimpleDto[];

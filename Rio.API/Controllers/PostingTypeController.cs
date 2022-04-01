@@ -19,7 +19,7 @@ namespace Rio.API.Controllers
         [HttpGet("postingTypes")]
         public ActionResult<IEnumerable<PostingTypeDto>> Get()
         {
-            var postingTypeDtos = PostingType.List(_dbContext);
+            var postingTypeDtos = PostingType.AllAsDto;
             return Ok(postingTypeDtos);
         }
     }

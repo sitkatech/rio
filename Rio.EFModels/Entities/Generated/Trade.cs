@@ -32,9 +32,6 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(PostingID))]
         [InverseProperty("Trades")]
         public virtual Posting Posting { get; set; }
-        [ForeignKey(nameof(TradeStatusID))]
-        [InverseProperty("Trades")]
-        public virtual TradeStatus TradeStatus { get; set; }
         [InverseProperty(nameof(Offer.Trade))]
         public virtual ICollection<Offer> Offers { get; set; }
     }

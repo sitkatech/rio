@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 @Component({
   selector: 'rio-water-use-measurement',
@@ -7,7 +7,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
   styleUrls: ['./measuring-water-use-with-openet.component.scss']
 })
 export class WaterUseMeasurementComponent implements OnInit {
-  public richTextTypeID : number = CustomRichTextType.MeasuringWaterUse;
+  public richTextTypeID : number = CustomRichTextTypeEnum.MeasuringWaterUse;
   constructor() { }
 
   ngOnInit() {

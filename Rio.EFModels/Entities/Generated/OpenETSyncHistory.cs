@@ -23,9 +23,6 @@ namespace Rio.EFModels.Entities
         public string GoogleBucketFileRetrievalURL { get; set; }
         public string ErrorMessage { get; set; }
 
-        [ForeignKey(nameof(OpenETSyncResultTypeID))]
-        [InverseProperty("OpenETSyncHistories")]
-        public virtual OpenETSyncResultType OpenETSyncResultType { get; set; }
         [ForeignKey(nameof(WaterYearMonthID))]
         [InverseProperty("OpenETSyncHistories")]
         public virtual WaterYearMonth WaterYearMonth { get; set; }

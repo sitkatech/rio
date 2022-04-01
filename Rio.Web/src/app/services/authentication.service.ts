@@ -5,7 +5,7 @@ import { Observable, race, Subject } from 'rxjs';
 import { filter, finalize, first } from 'rxjs/operators';
 import { CookieStorageService } from '../shared/services/cookies/cookie-storage.service';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
-import { RoleEnum } from '../shared/models/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/generated/enum/role-enum';
 import { AlertService } from '../shared/services/alert.service';
 import { Alert } from '../shared/models/alert';
 import { AlertContext } from '../shared/models/enums/alert-context.enum';
@@ -13,7 +13,6 @@ import { environment } from 'src/environments/environment';
 import { AccountSimpleDto } from '../shared/generated/model/account-simple-dto';
 import { UserCreateDto } from '../shared/generated/model/user-create-dto';
 import { UserDto } from '../shared/generated/model/user-dto';
-import { UserDetailedDto } from '../shared/generated/model/user-detailed-dto';
 
 @Injectable({
   providedIn: 'root'

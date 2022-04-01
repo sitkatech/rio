@@ -10,7 +10,7 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 
@@ -31,7 +31,7 @@ export class TagListComponent implements OnInit {
   public columnDefs: Array<ColDef>;
   public defaultColDef: ColDef;
   public tags: Array<TagDto>;
-  public richTextTypeID = CustomRichTextType.TagList;
+  public richTextTypeID = CustomRichTextTypeEnum.TagList;
   private modalReference: NgbModalRef;
   private deleteColumnID = 0;
   private tagToDelete: TagDto;

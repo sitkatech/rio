@@ -7,7 +7,7 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 
 @Component({
@@ -21,7 +21,7 @@ export class WaterTypeEditComponent implements OnInit, OnDestroy {
   waterTypes: WaterTypeDto[] = [];
   isLoadingSubmit: boolean = false;
   modalReference: NgbModalRef;
-  richTextTypeID: number = CustomRichTextType.ConfigureWaterTypes;
+  richTextTypeID: number = CustomRichTextTypeEnum.ConfigureWaterTypes;
   @ViewChild("deleteWarningModalContent") deleteWarningModalContent
 
   WaterTypeApplicationTypeEnum = WaterTypeApplicationTypeEnum;

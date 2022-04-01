@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 @Component({
   selector: 'rio-general-faq',
@@ -7,7 +7,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
   styleUrls: ['./general-faq.component.scss']
 })
 export class GeneralFaqComponent implements OnInit {
-  public richTextTypeID: number = CustomRichTextType.FrequentlyAskedQuestions;
+  public richTextTypeID: number = CustomRichTextTypeEnum.FrequentlyAskedQuestions;
   
   constructor() { }
 

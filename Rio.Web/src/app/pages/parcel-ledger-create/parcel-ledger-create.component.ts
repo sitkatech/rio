@@ -8,9 +8,9 @@ import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { TransactionTypeEnum } from 'src/app/shared/generated/enum/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { debounceTime, distinctUntilChanged, tap, switchMap, catchError } from 'rxjs/operators';
 import { ParcelDto } from 'src/app/shared/generated/model/parcel-dto';
 import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
@@ -33,7 +33,7 @@ export class ParcelLedgerCreateComponent implements OnInit {
   public model: ParcelLedgerCreateDto;
   public selectedParcelNumber: string;
   public isLoadingSubmit: boolean = false;
-  public richTextTypeID: number = CustomRichTextType.ParcelLedgerCreate;
+  public richTextTypeID: number = CustomRichTextTypeEnum.ParcelLedgerCreate;
   public searchFailed : boolean = false;
   public transactionTypeEnum = TransactionTypeEnum;
 

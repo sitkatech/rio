@@ -60,14 +60,10 @@ namespace Rio.EFModels.Entities
         private static IQueryable<Offer> GetOffersImpl(RioDbContext dbContext)
         {
             return dbContext.Offers
-                .Include(x => x.OfferStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.TradeStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Trade).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.CreateAccount)
+                .Include(x => x.WaterTransfers).ThenInclude(x => x.WaterTransferRegistrations).ThenInclude(x => x.Account)
                 .AsNoTracking();
         }
 
@@ -81,20 +77,9 @@ namespace Rio.EFModels.Entities
         {
             var offer = dbContext.Offers
                 .Include(x => x.CreateAccount)
-                .Include(x => x.OfferStatus)
                 .Include(x => x.WaterTransfers)
-                .Include(x => x.Trade)
-                .ThenInclude(x => x.CreateAccount)
-                .Include(x => x.Trade)
-                .ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
-                .Include(x => x.Trade)
-                .ThenInclude(x => x.TradeStatus)
-                .Include(x => x.Trade)
-                .ThenInclude(x => x.Posting)
-                .ThenInclude(x => x.PostingType)
-                .Include(x => x.Trade)
-                .ThenInclude(x => x.Posting)
-                .ThenInclude(x => x.PostingStatus)
+                .Include(x => x.Trade).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
                 .AsNoTracking()
                 .Where(x => !x.WaterTransfers.Any() && x.OfferStatusID != (int) OfferStatusEnum.Rejected && x.OfferStatusID != (int) OfferStatusEnum.Rescinded &&
                             (x.Trade.Posting.PostingStatusID == (int) postingTypeEnum &&

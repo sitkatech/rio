@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { forkJoin } from 'rxjs';
 import { WaterTransferService } from 'src/app/services/water-transfer.service';
-import { WaterTransferTypeEnum } from 'src/app/shared/models/enums/water-transfer-type-enum';
+import { WaterTransferTypeEnum } from 'src/app/shared/generated/enum/water-transfer-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';

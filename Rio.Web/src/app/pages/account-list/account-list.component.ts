@@ -6,7 +6,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { AccountStatusEnum } from 'src/app/shared/models/enums/account-status-enum';
+import { AccountStatusEnum } from 'src/app/shared/generated/enum/account-status-enum';
 import { DatePipe } from '@angular/common';
 import { AccountDto } from 'src/app/shared/generated/model/account-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';

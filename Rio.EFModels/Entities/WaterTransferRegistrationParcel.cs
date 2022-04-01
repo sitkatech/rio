@@ -64,17 +64,11 @@ namespace Rio.EFModels.Entities
         private static IQueryable<WaterTransferRegistrationParcel> GetWaterTransferRegistrationParcelsImpl(RioDbContext dbContext)
         {
             return dbContext.WaterTransferRegistrationParcels
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.PostingType)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.TradeStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.CreateAccount).ThenInclude(x => x.AccountStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.OfferStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.CreateAccount).ThenInclude((x => x.AccountStatus))
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferRegistrationStatus)
-                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransferType)
-                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.Account)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.Posting).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.Trade).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.WaterTransferRegistration).ThenInclude(x => x.WaterTransfer).ThenInclude(x => x.Offer).ThenInclude(x => x.CreateAccount)
+                .Include(x => x.Parcel)
                 .AsNoTracking();
         }
 

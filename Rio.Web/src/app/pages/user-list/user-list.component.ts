@@ -6,7 +6,7 @@ import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-re
 import { DecimalPipe } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { RoleEnum } from 'src/app/shared/generated/enum/role-enum';
 import { MultiLinkRendererComponent } from 'src/app/shared/components/ag-grid/multi-link-renderer/multi-link-renderer.component';
 import { UserDetailedDto } from 'src/app/shared/generated/model/user-detailed-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';

@@ -5851,6 +5851,10 @@
           "TransactionTypeName": {
             "type": "string",
             "nullable": true
+          },
+          "TransactionTypeDisplayName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -13,7 +13,7 @@ import { ParcelUpdateExpectedResultsDto } from 'src/app/shared/generated/model/p
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
@@ -28,7 +28,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
   
   public modalReference: NgbModalRef;
-  public richTextTypeID: number = CustomRichTextType.ParcelUpdateLayer;
+  public richTextTypeID: number = CustomRichTextTypeEnum.ParcelUpdateLayer;
 
 
   public isLoadingSubmit: boolean;

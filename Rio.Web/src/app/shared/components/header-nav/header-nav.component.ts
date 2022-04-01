@@ -2,8 +2,8 @@ import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStra
 import { CookieStorageService } from '../../services/cookies/cookie-storage.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { TradeService } from 'src/app/services/trade.service';
-import { OfferStatusEnum } from '../../models/enums/offer-status-enum';
-import { PostingTypeEnum } from '../../models/enums/posting-type-enum';
+import { OfferStatusEnum } from 'src/app/shared/generated/enum/offer-status-enum';
+import { PostingTypeEnum } from 'src/app/shared/generated/enum/posting-type-enum';
 import { UserService } from 'src/app/services/user/user.service';
 import { AlertService } from '../../services/alert.service';
 import { Alert } from '../../models/alert';

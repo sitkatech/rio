@@ -27,7 +27,7 @@ namespace Rio.API.Controllers
         [UserManageFeature]
         public IActionResult Get()
         {
-            var accountStatusDtos = AccountStatus.List(_dbContext);
+            var accountStatusDtos = AccountStatus.AllAsDto;
             return Ok(accountStatusDtos);
         }
 
@@ -85,7 +85,7 @@ namespace Rio.API.Controllers
                 return actionResult;
             }
 
-            var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
+            var accountStatus = AccountStatus.AllAsDtoLookupDictionary[accountUpdateDto.AccountStatusID];
             if (ThrowNotFound(accountStatus, "Account Status", accountUpdateDto.AccountStatusID, out var actionResult2))
             {
                 return actionResult2;
@@ -100,7 +100,7 @@ namespace Rio.API.Controllers
         public ActionResult<AccountDto> CreateAccount([FromBody] AccountUpdateDto accountUpdateDto)
         {
 
-            var accountStatus = AccountStatus.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
+            var accountStatus = AccountStatuses.GetByAccountStatusID(_dbContext, accountUpdateDto.AccountStatusID);
             if (ThrowNotFound(accountStatus, "Account Status", accountUpdateDto.AccountStatusID, out var actionResult))
             {
                 return actionResult;

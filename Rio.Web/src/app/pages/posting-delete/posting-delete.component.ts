@@ -4,7 +4,7 @@ import { PostingService } from 'src/app/services/posting.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { forkJoin } from 'rxjs';
-import { PostingStatusEnum } from 'src/app/shared/models/enums/posting-status-enum';
+import { PostingStatusEnum } from 'src/app/shared/generated/enum/posting-status-enum';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { Alert } from 'src/app/shared/models/alert';
 import { PostingDto } from 'src/app/shared/generated/model/posting-dto';
