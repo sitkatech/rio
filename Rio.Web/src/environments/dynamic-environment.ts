@@ -77,22 +77,6 @@ export class DynamicEnvironment {
         return window.config.enabledGETIntegration;
     }
 
-    public get contactInfoPhone() {
-        return window.config.contactInfoPhone;
-    }
-
-    public get contactInfoEmail() {
-        return window.config.contactInfoEmail;
-    }
-
-    public get contactInfoMailingAddress() {
-        return window.config.contactInfoMailingAddress;
-    }
-
-    public get contactInfoPhysicalAddress() {
-        return window.config.contactInfoPhysicalAddress;
-    }
-
     public get navThemeColor() {
         return window.config.navThemeColor;
     }

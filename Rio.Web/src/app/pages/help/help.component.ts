@@ -14,25 +14,4 @@ export class HelpComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  public getLeadOrganizationLongName() : string {
-    return environment.leadOrganizationLongName;
-  }
-
-  public getContactInfoPhone() : string {
-    return environment.contactInfoPhone;
-  }
-
-  public getContactInfoEmail() {
-      return environment.contactInfoEmail;
-  }
-
-  public getContactInfoMailingAddress() {
-      return environment.contactInfoMailingAddress;
-  }
-
-  public getContactInfoPhysicalAddress() {
-      return environment.contactInfoPhysicalAddress;
-  }
-
 }
