@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "rio-api.fullname" . }}-prod-configmap
 data:
-  SECRET_PATH: "/app/secrets/rio-api-secrets"
+  SECRET_PATH: "/app/secrets/rioApiSecrets"
   DOCKER_BUILD_SOURCE: "."
   ASPNETCORE_ENVIRONMENT: "Production"
   KEYSTONE_HOST: "https://identity.sitkatech.com"
