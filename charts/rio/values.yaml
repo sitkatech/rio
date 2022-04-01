@@ -24,6 +24,7 @@ global:
     allowTrading: "true"
     geoserverInitialMemory: "1G"
     geoserverMaximumMemory: "2G"
+    keystoneClientID: "Rio-EDF"
   domains:
     api: "apiUrl"
     web: "webUrl"
