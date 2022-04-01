@@ -1,0 +1,81 @@
+$footer-height: 60px;
+
+$theme-colors: (
+        "primary": #253D86,     
+        "secondary": #c4c4c4,   
+        "info": #029EDA,        
+        "light": #f5f5f5,       
+        "muted": #dee2e6,       
+        "danger": #DF1D37,
+        "success": #00985F,
+        "warning": #EBB700,
+        "h4-styled": #194349,
+        "footer": #44697D,
+        "footer-text": #fff,
+        "button-border-and-background": #253D86,
+        "button-hover-text": #C8DA2C,
+        "button-hover-background": #253D86,
+        "button-toggle-hover": #44697D,
+        "header-background": #fff,
+        "select": #253D86,
+        "select-and-nav-hover": #1D5D43,
+        "select-and-nav-dropdown-hover": rgba(29,92,66,0.3),
+        "header-nav-link": #253D86,
+        "grid-header-background": #253D86,
+        "grid-accent-color": #44697D,
+        "grid-hover-color":  rgba(199, 153, 0, 0.3),
+        "account-dropdown-text": #253D86,
+        "header-gradient-start": transparent,
+        "header-gradient-end": transparent,
+        "breadcrumb-background-color": #253D86,
+        "breadcrumb-border-color": transparent,
+        "breadcrumb-item-active-color": #fff,
+        "select-selected-text": #fff
+);
+
+// this looks redundant, but we need to make the override in both ways
+$primary: #253D86;
+$secondary: #c4c4c4;
+$info: #029EDA;
+$light: #f5f5f5;
+$muted: #dee2e6;
+$danger: #DF1D37;
+$success: #00985F;
+$warning: #EBB700;
+
+$account-dropdown-text: #253D86;
+$breadcrumb-background-color: #253D86;
+$breadcrumb-border-color: transparent;
+$breadcrumb-border-style: none;
+$breadcrumb-item-color: #fff;
+$breadcrumb-item-active-color: #fff;
+$breadcrumb-empty-display-type: flex;
+$breadcrumb-empty-display-height: 50px;
+$button-border-and-background: #253D86;
+$button-hover-text: #C8DA2C;
+$button-hover-background: #253D86;
+$button-toggle-hover: #44697D;
+$grid-accent-color: #44697D;
+$grid-font-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$grid-font-header-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$grid-header-background: #253D86;
+$grid-hover-color:  rgba(199, 153, 0, 0.3);
+$footer: #44697D;
+$footer-text: #fff;
+$header-background: #fff;
+$header-nav-link: #253D86;
+$header-nav-link-font-weight: bold;
+$h4-styled: #194349;
+$select: #253D86;
+$select-selected-text: #fff;
+$select-and-nav-dropdown-hover: rgba(29,92,66,0.3);
+$select-and-nav-hover: #1D5D43;
+$switch-account-icon-padding: 3px;
+$text-muted: darken(#d3d3d3, 15%);
+$text-warning: darken($warning, 20%);
+
+$font-family-sans-serif: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$font-size: 16px;
+$base-text: #4A3C31;
+
+$card-cap-bg: #dfdfdf;
