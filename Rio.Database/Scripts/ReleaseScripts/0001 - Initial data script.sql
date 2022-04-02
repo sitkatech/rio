@@ -10,14 +10,14 @@ BEGIN
     set @dateToUse = getdate()
 
     set identity_insert dbo.[User] on
-    insert into dbo.[User](UserID, UserGuid, FirstName, LastName, Email, Phone, RoleID, CreateDate, UpdateDate, LastActivityDate, DisclaimerAcknowledgedDate, IsActive, ReceiveSupportEmails, LoginName, Company)
+    insert into dbo.[User](UserID, UserGuid, FirstName, LastName, Email, Phone, RoleID, CreateDate, UpdateDate, LastActivityDate, DisclaimerAcknowledgedDate, ReceiveSupportEmails, LoginName, Company)
     values
-    (1, 'CD3DAB18-4242-4FE9-AB10-874CA43AAEE2', 'Ray', 'Lee', 'rlee@esassoc.com', '(503) 808-1223', 1, @dateToUse, null, @dateToUse, null, 1, 0, 'ray@sitkatech.com', 'ESA Sitka'),
-    (2, '2F783A30-36E1-4B0C-A1B6-AA4AFE68DDB3', 'John', 'Burns', 'john.burns@esassoc.com', '(503) 808-1245', 1, @dateToUse, null, @dateToUse, null,  1, 1, 'john.burns@sitkatech.com', 'ESA Sitka'),
-    (3, 'BACFE929-7BB5-4AD4-B93A-8BC56AACC49B', 'Kathleen', 'Elmquist', 'kelmquist@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 1, 'kathleen.elmquist', 'ESA Sitka'),
-    (4, '6C42B796-747F-4418-932E-7C622B66E2AE', 'Mack', 'Peters', 'mpeters@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 1, 'mack.peters', 'ESA Sitka'),
-    (5, '2A85BC3C-DFBE-4AA3-B445-3797AEEB6DF6', 'Jamie', 'Quishenberry', 'jquishenberry@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 1, 'jamieq', 'ESA Sitka'),
-	(6, '4E26A624-9DEF-44C7-A102-43F7B77C0B72', 'Andy', 'Schultheiss', 'aschultheiss@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 1, 'andy.schultheiss', 'ESA Sitka')
+    (1, 'CD3DAB18-4242-4FE9-AB10-874CA43AAEE2', 'Ray', 'Lee', 'rlee@esassoc.com', '(503) 808-1223', 1, @dateToUse, null, @dateToUse, null, 0, 'ray@sitkatech.com', 'ESA Sitka'),
+    (2, '2F783A30-36E1-4B0C-A1B6-AA4AFE68DDB3', 'John', 'Burns', 'john.burns@esassoc.com', '(503) 808-1245', 1, @dateToUse, null, @dateToUse, null,  1, 'john.burns@sitkatech.com', 'ESA Sitka'),
+    (3, 'BACFE929-7BB5-4AD4-B93A-8BC56AACC49B', 'Kathleen', 'Elmquist', 'kelmquist@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 'kathleen.elmquist', 'ESA Sitka'),
+    (4, '6C42B796-747F-4418-932E-7C622B66E2AE', 'Mack', 'Peters', 'mpeters@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 'mack.peters', 'ESA Sitka'),
+    (5, '2A85BC3C-DFBE-4AA3-B445-3797AEEB6DF6', 'Jamie', 'Quishenberry', 'jquishenberry@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 'jamieq', 'ESA Sitka'),
+	(6, '4E26A624-9DEF-44C7-A102-43F7B77C0B72', 'Andy', 'Schultheiss', 'aschultheiss@esassoc.com', null, 1, @dateToUse, null, @dateToUse, null,  1, 'andy.schultheiss', 'ESA Sitka')
 
     set identity_insert dbo.[User] off
 
