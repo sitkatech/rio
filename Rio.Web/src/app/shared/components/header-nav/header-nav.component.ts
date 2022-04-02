@@ -206,4 +206,8 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     public getNavThemeColor(): string {
         return environment.navThemeColor;
     }
+    
+  public openETSyncEnabled() {
+    return environment.allowOpenETSync;
+  }
 }
