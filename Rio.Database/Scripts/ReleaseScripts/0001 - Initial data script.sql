@@ -21,6 +21,8 @@ BEGIN
 
     set identity_insert dbo.[User] off
 
+    set identity_insert dbo.CustomRichText on
+
 INSERT [dbo].[CustomRichText] ([CustomRichTextID], [CustomRichTextTypeID], [CustomRichTextContent]) VALUES 
 (1, 1, N'<p>Welcome to the <a href="https://www.edf.org/">Environmental Defense Fund</a> demonstration Water Accounting and Trading Platform. The platform is designed to meet these objectives:</p><ul><li>Facilitate effective accounting and management of available water resources, enabling water managers and landowners to make informed water supply and land use decisions.<br>&nbsp;</li><li>Advance well-designed water trading programs to help water agencies achieve groundwater sustainability goals and minimize economic costs to the community.<br>&nbsp;</li><li>Evaluate management actions to ensure community and environmental protections and identify opportunities to generate multiple benefits (i.e. benefits to water quality, habitat).</li></ul><p>In addition to exploring this demo site, you can learn more about the Rosedale–Rio Bravo Water Accounting and Trading Platform Pilot Project by visiting our story map at <a href="https://www.edf.org/waterplatformstory"><strong>www.edf.org/waterplatformstory</strong></a>.&nbsp;</p><p>&nbsp;</p><figure class="image"><img src="https://rio-edf-api.yachats.sitkatech.com/FileResource/e004bbc4-7555-49b4-8b9b-c37f537f5a0e"></figure><p>&nbsp;</p>'),
 (2, 2, N'<p>For more information please contact the<a href="https://www.edf.org/"> Environmental Defense Fund:</a></p><p><strong>Phone:</strong></p><p>415-293-6088</p><p><strong>Email:</strong></p><p><a href="mailto:cbabbitt@edf.org">cbabbitt@edf.org</a></p>'),
@@ -54,6 +56,7 @@ INSERT [dbo].[CustomRichText] ([CustomRichTextID], [CustomRichTextTypeID], [Cust
 (31, 31, N'Default Intro text'),
 (32, 32, N'Default Intro text')
 
+    set identity_insert dbo.CustomRichText off
 
     INSERT INTO dbo.DatabaseMigration(MigrationAuthorName, ReleaseScriptFileName, MigrationReason)
     SELECT 'Ray Lee', @MigrationName, 'Add initial data to the system.'
