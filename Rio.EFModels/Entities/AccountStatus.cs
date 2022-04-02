@@ -1,27 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
-    public partial class AccountStatus
+    public static class AccountStatuses
     {
 
         public static object List(RioDbContext dbContext)
         {
-            var roles = dbContext.AccountStatuses
-                .AsNoTracking()
-                .Select(x => x.AsDto());
-
-            return roles;
+            return AccountStatus.AllAsDto;
         }
 
         public static object GetByAccountStatusID(RioDbContext dbContext, int accountStatusID)
         {
-            var accountStatus = dbContext.AccountStatuses
-                .AsNoTracking()
-                .FirstOrDefault(x => x.AccountStatusID == accountStatusID);
-
-            return accountStatus?.AsDto();
+            return AccountStatus.AllAsDtoLookupDictionary[accountStatusID];
         }
     }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
 import { AuthenticationService } from 'src/app/services/authentication.service'
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
@@ -16,7 +16,7 @@ export class DisclaimerComponent implements OnInit {
   private currentUser : UserDto;
   private forced : boolean = true;
   private returnRoute : string = '';
-  public richTextTypeID: number = CustomRichTextType.Disclaimer;
+  public richTextTypeID: number = CustomRichTextTypeEnum.Disclaimer;
   returnQueryParams: any;
 
   constructor(

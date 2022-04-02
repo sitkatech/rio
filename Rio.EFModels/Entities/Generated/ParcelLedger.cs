@@ -34,12 +34,6 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(ParcelID))]
         [InverseProperty("ParcelLedgers")]
         public virtual Parcel Parcel { get; set; }
-        [ForeignKey(nameof(ParcelLedgerEntrySourceTypeID))]
-        [InverseProperty("ParcelLedgers")]
-        public virtual ParcelLedgerEntrySourceType ParcelLedgerEntrySourceType { get; set; }
-        [ForeignKey(nameof(TransactionTypeID))]
-        [InverseProperty("ParcelLedgers")]
-        public virtual TransactionType TransactionType { get; set; }
         [ForeignKey(nameof(UserID))]
         [InverseProperty("ParcelLedgers")]
         public virtual User User { get; set; }

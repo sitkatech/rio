@@ -7,7 +7,7 @@ import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
 import { ParcelService } from 'src/app/services/parcel/parcel.service';
 import { WaterTypeService } from 'src/app/services/water-type.service';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-ledger-create-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
@@ -15,7 +15,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridOptions, RowSelectedEvent } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
-import { TransactionTypeEnum } from 'src/app/shared/models/enums/transaction-type-enum';
+import { TransactionTypeEnum } from 'src/app/shared/generated/enum/transaction-type-enum';
 import { NgbDateAdapter, NgbDateNativeUTCAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { ParcelWaterSupplyAndUsageDto } from 'src/app/shared/generated/model/parcel-water-supply-and-usage-dto';
 import { DecimalPipe } from '@angular/common';
@@ -41,7 +41,7 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
   public noParcelsSelected: boolean = true;
   public isLoadingSubmit: boolean = false;
 
-  public richTextTypeID: number = CustomRichTextType.ParcelLedgerBulkCreate;
+  public richTextTypeID: number = CustomRichTextTypeEnum.ParcelLedgerBulkCreate;
   public searchFailed : boolean = false;
   
   public parcelWaterSupplyAndUsagesByYear: ParcelWaterSupplyAndUsageDto[];

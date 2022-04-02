@@ -13,6 +13,7 @@
 export class TransactionTypeDto { 
     TransactionTypeID?: number;
     TransactionTypeName?: string;
+    TransactionTypeDisplayName?: string;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

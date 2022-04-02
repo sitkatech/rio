@@ -1,0 +1,196 @@
+global:
+  env:
+    name: "qa"
+    dbServer: "databaseserver"
+    databaseName: "databasename"
+    sqlUsername: "sqlUsername"
+    appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
+    tenantName: "EDF"
+    platformLongName: "Environmental Defense Fund Water Accounting and Trading Platform"
+    platformShortName: "Water Accounting and Trading Platform"
+    leadOrganizationLongName: "Environmental Defense Fund"
+    leadOrganizationShortName: "EDF"
+    leadOrganizationHomeUrl: "https://edf.org"
+    leadOrganizationEmail: "cbabbitt@edf.org"
+    leadOrganizationLogoFilename: "edf-full-logo.jpg"
+    faviconFilename: "edf_favicon.ico"
+    allowOpenETSync: "true"
+    openETRasterMetadataBoundingBoxLeft: "-119.11015104115182"
+    openETRasterMetadataBoundingBoxRight: "-119.45272037350193"
+    openETRasterMetadataBoundingBoxTop: "35.27608156273151"
+    openETRasterMetadataBoundingBoxBottom: "35.442022035628575"
+    openETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "ParcelNumb"
+    enabledGETIntegration: "false"
+    allowTrading: "true"
+    geoserverInitialMemory: "1G"
+    geoserverMaximumMemory: "2G"
+    keystoneClientID: "Rio-EDF"
+  domains:
+    api: "apiUrl"
+    web: "webUrl"
+    geoserver: "geoserverUrl"
+  secrets:
+    geoserverSqlServerPassword: "passwordhere"
+    geoserverAdminPassword: "geomaster"
+    geoserverAzureStorageAccountName: "storageAccountName"
+    geoserverAzureStorageAccountKey:  "longkeyreplacedhere"
+    apiSqlPassword: "passwordhere"
+    sendGridApiKey: "sendgridapikeyhere"
+    hangfireUserName: "hangfireUserName"
+    hangfirePassword: "passwordhere"
+
+rio-api:
+  replicaCount: 1
+  image:
+    repository: sitkacontainers.azurecr.io/rio/api
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
+    - name: sitka-docker-acr
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  nodeSelector: 
+    agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+  
+
+rio-web:
+  replicaCount: 1
+  image:
+    repository: sitkacontainers.azurecr.io/rio/web
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
+    - name: sitka-docker-acr
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  nodeSelector: 
+    agentpool: appnodepool
+  tolerations: []
+  affinity: {}
+
+rio-geoserver:
+  replicaCount: 1
+  image:
+    repository: kartoza/geoserver
+    pullPolicy: Always
+    tag: "2.16.2"
+    # Overrides the image tag whose default is the chart appVersion.
+  nameOverride: ""
+  fullnameOverride: ""
+  namespace: rio
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+  podAnnotations: {}
+  podSecurityContext: {}
+    # fsGroup: 2000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      kubernetes.io/ingress.class: azure/application-gateway
+      cert-manager.io/cluster-issuer: letsencrypt
+      acme.cert-manager.io/http01-edit-in-place: "true"
+      appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      cert-manager.io/issue-temporary-certificate: "true"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  nodeSelector: 
+    agentpool: appnodepool
+  tolerations: []
+  affinity: {}

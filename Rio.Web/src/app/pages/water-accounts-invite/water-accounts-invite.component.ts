@@ -7,7 +7,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { UserPartnerInviteDto } from 'src/app/shared/generated/model/user-partner-invite-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 
@@ -17,7 +17,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./water-accounts-invite.component.scss']
 })
 export class WaterAccountsInviteComponent implements OnInit {
-  public introRichText: number = CustomRichTextType.WaterAccountsInvite;
+  public introRichText: number = CustomRichTextTypeEnum.WaterAccountsInvite;
 
   
   private currentUser: UserDto;

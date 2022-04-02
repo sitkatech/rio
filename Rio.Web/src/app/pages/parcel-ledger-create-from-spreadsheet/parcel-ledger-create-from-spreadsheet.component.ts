@@ -9,7 +9,7 @@ import { Alert } from 'src/app/shared/models/alert';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 import { ApiService } from 'src/app/shared/services';
@@ -25,7 +25,7 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
 
   
   private currentUser: UserDto;
-  public richTextTypeID = CustomRichTextType.ParcelLedgerCreateFromSpreadsheet;
+  public richTextTypeID = CustomRichTextTypeEnum.ParcelLedgerCreateFromSpreadsheet;
   public waterTypes: WaterTypeDto[];
   public isLoadingSubmit: boolean = false;
  

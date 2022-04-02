@@ -36,9 +36,6 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? InactivateDate { get; set; }
 
-        [ForeignKey(nameof(ParcelStatusID))]
-        [InverseProperty("Parcels")]
-        public virtual ParcelStatus ParcelStatus { get; set; }
         [InverseProperty(nameof(AccountParcelWaterYear.Parcel))]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
         [InverseProperty(nameof(AccountReconciliation.Parcel))]

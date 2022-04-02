@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { PostingService } from 'src/app/services/posting.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { PostingTypeEnum } from 'src/app/shared/models/enums/posting-type-enum';
+import { PostingTypeEnum } from 'src/app/shared/generated/enum/posting-type-enum';
 import { ColDef } from 'ag-grid-community';
 import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
 import { DatePipe, CurrencyPipe, DecimalPipe } from '@angular/common';

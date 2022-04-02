@@ -31,7 +31,7 @@ namespace Rio.API.Controllers
         {
             if (inviteDto.RoleID.HasValue)
             {
-                var role = Role.GetByRoleID(_dbContext, inviteDto.RoleID.Value);
+                var role = Role.AllLookupDictionary[inviteDto.RoleID.Value];
                 if (role == null)
                 {
                     return NotFound($"Could not find a Role with the ID {inviteDto.RoleID}");
@@ -281,7 +281,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var role = Role.GetByRoleID(_dbContext, userUpsertDto.RoleID.GetValueOrDefault());
+            var role = Role.AllLookupDictionary[userUpsertDto.RoleID.GetValueOrDefault()];
             if (role == null)
             {
                 return NotFound($"Could not find a System Role with the ID {userUpsertDto.RoleID}");

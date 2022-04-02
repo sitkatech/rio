@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WaterTypeService } from 'src/app/services/water-type.service';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,8 +11,8 @@ import { environment } from 'src/environments/environment';
 })
 export class GlossaryComponent implements OnInit {
   waterTypes: WaterTypeDto[];
-  public purchasedCustomRichTextTypeID = CustomRichTextType.PurchasedDescription;
-  public soldCustomRichTextTypeID = CustomRichTextType.SoldDescription;
+  public purchasedCustomRichTextTypeID = CustomRichTextTypeEnum.PurchasedDescription;
+  public soldCustomRichTextTypeID = CustomRichTextTypeEnum.SoldDescription;
 
   constructor(
     private waterTypeService: WaterTypeService

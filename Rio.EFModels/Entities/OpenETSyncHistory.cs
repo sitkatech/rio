@@ -30,7 +30,6 @@ namespace Rio.EFModels.Entities
         public static OpenETSyncHistoryDto GetByOpenETSyncHistoryID(RioDbContext dbContext, int openETSyncHistoryID)
         {
             return dbContext.OpenETSyncHistories
-                .Include(x=>x.OpenETSyncResultType)
                 .Include(x => x.WaterYearMonth)
                 .ThenInclude(x => x.WaterYear)
                 .SingleOrDefault(x => x.OpenETSyncHistoryID == openETSyncHistoryID).AsDto();
@@ -72,7 +71,6 @@ namespace Rio.EFModels.Entities
         public static List<OpenETSyncHistoryDto> List(RioDbContext dbContext)
         {
             return dbContext.OpenETSyncHistories
-                .Include(x => x.OpenETSyncResultType)
                 .Include(x => x.WaterYearMonth)
                 .ThenInclude(x => x.WaterYear)
                 .OrderByDescending(x => x.CreateDate).Select(x => x.AsDto()).ToList();

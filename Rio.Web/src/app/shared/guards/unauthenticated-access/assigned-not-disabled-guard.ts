@@ -4,7 +4,7 @@ import { map } from "rxjs/operators";
 import { Injectable } from '@angular/core';
 import { AlertService } from '../../services/alert.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { RoleEnum } from '../../models/enums/role.enum';
+
 @Injectable({
   providedIn: 'root'
 })

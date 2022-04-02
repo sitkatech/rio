@@ -31,8 +31,8 @@ namespace Rio.EFModels.Entities
         private static IQueryable<AccountParcelWaterYear> AccountParcelWaterYearOwnershipsImpl(RioDbContext dbContext)
         {
             return dbContext.AccountParcelWaterYears
-                .Include(x => x.Parcel).ThenInclude(x => x.ParcelStatus)
-                .Include(x => x.Account).ThenInclude(x => x.AccountStatus)
+                .Include(x => x.Parcel)
+                .Include(x => x.Account)
                 .Include(x => x.WaterYear)
                 .AsNoTracking();
         }
@@ -90,12 +90,8 @@ namespace Rio.EFModels.Entities
         private static IQueryable<Parcel> GetParcelImpl(RioDbContext dbContext)
         {
             return dbContext.Parcels
-                .Include(x => x.ParcelStatus)
-                .Include(x => x.AccountParcelWaterYears)
-                .ThenInclude(x => x.Account)
-                .ThenInclude(x => x.AccountStatus)
-                .Include(x => x.AccountParcelWaterYears)
-                .ThenInclude(x => x.WaterYear)
+                .Include(x => x.AccountParcelWaterYears).ThenInclude(x => x.Account)
+                .Include(x => x.AccountParcelWaterYears).ThenInclude(x => x.WaterYear)
                 .AsNoTracking();
         }
 

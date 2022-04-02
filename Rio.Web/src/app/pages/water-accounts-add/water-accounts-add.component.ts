@@ -9,8 +9,8 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { RoleEnum } from 'src/app/shared/models/enums/role.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
+import { RoleEnum } from 'src/app/shared/generated/enum/role-enum';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { environment } from 'src/environments/environment';
 
@@ -37,8 +37,8 @@ export class WaterAccountsAddComponent implements OnInit {
   
   public confirmedFullNameForRegistration: string;
 
-  public introRichText: number = CustomRichTextType.WaterAccountsAdd;
-  public legalText: number = CustomRichTextType.WaterAccountsAddLegalText;
+  public introRichText: number = CustomRichTextTypeEnum.WaterAccountsAdd;
+  public legalText: number = CustomRichTextTypeEnum.WaterAccountsAddLegalText;
 
   isLoadingSubmit: boolean;
   updatingUserRole: boolean;

@@ -15,9 +15,5 @@ namespace Rio.EFModels.Entities
         public int CustomRichTextID { get; set; }
         public int CustomRichTextTypeID { get; set; }
         public string CustomRichTextContent { get; set; }
-
-        [ForeignKey(nameof(CustomRichTextTypeID))]
-        [InverseProperty("CustomRichTexts")]
-        public virtual CustomRichTextType CustomRichTextType { get; set; }
     }
 }

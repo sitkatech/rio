@@ -3,16 +3,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
-import { TagService } from 'src/app/services/tag/tag.service';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { Alert } from 'src/app/shared/models/alert';
-import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
-import { NgbModalRef, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
-import { FontAwesomeIconLinkRendererComponent } from 'src/app/shared/components/ag-grid/fontawesome-icon-link-renderer/fontawesome-icon-link-renderer.component';
-import { LinkRendererComponent } from 'src/app/shared/components/ag-grid/link-renderer/link-renderer.component';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { ParcelLedgerService } from 'src/app/services/parcel-ledger.service';
 import { DecimalPipe } from '@angular/common';
 
@@ -29,7 +21,7 @@ export class ParcelLedgerTransactionHistoryComponent implements OnInit {
 
   public columnDefs: Array<ColDef>;
   public defaultColDef: ColDef;
-  public richTextTypeID = CustomRichTextType.TransactionHistory;
+  public richTextTypeID = CustomRichTextTypeEnum.TransactionHistory;
 
   constructor(
     private cdr: ChangeDetectorRef,

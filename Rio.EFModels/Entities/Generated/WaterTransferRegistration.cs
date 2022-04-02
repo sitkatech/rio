@@ -31,12 +31,6 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(WaterTransferID))]
         [InverseProperty("WaterTransferRegistrations")]
         public virtual WaterTransfer WaterTransfer { get; set; }
-        [ForeignKey(nameof(WaterTransferRegistrationStatusID))]
-        [InverseProperty("WaterTransferRegistrations")]
-        public virtual WaterTransferRegistrationStatus WaterTransferRegistrationStatus { get; set; }
-        [ForeignKey(nameof(WaterTransferTypeID))]
-        [InverseProperty("WaterTransferRegistrations")]
-        public virtual WaterTransferType WaterTransferType { get; set; }
         [InverseProperty(nameof(WaterTransferRegistrationParcel.WaterTransferRegistration))]
         public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
     }

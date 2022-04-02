@@ -55,10 +55,10 @@ namespace Rio.EFModels.Entities
         private static IQueryable<Posting> GetPostingImpl(RioDbContext dbContext)
         {
             return dbContext.Postings
-                .Include(x => x.PostingType)
-                .Include(x => x.PostingStatus)
-                .Include(x => x.CreateAccount).ThenInclude(x=>x.AccountUsers).ThenInclude(x=>x.User)
-                .Include(x=>x.CreateAccount.AccountStatus).AsNoTracking();
+                .Include(x => x.CreateAccount)
+                .ThenInclude(x => x.AccountUsers)
+                .ThenInclude(x => x.User)
+                .AsNoTracking();
         }
 
         public static IEnumerable<PostingDto> ListByAccountID(RioDbContext dbContext, int accountID)
@@ -96,7 +96,7 @@ namespace Rio.EFModels.Entities
 
         public static int CalculateAcreFeetOfAcceptedTrades(RioDbContext dbContext, int postingID)
         {
-            var acceptedTrades = Rio.EFModels.Entities.Trade.GetTradeWithOfferDetailsImpl(dbContext)
+            var acceptedTrades = Trade.GetTradeWithOfferDetailsImpl(dbContext)
                 .Where(x => x.PostingID == postingID && x.TradeStatusID == (int) TradeStatusEnum.Accepted)
                 .OrderByDescending(x => x.TradeDate)
                 .Select(x => x.AsTradeWithMostRecentOfferDto())

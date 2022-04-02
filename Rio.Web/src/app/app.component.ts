@@ -7,7 +7,7 @@ import { BusyService } from './shared/services';
 import { AuthenticationService } from './services/authentication.service';
 import { Title } from '@angular/platform-browser';
 import { DOCUMENT } from '@angular/common';
-import { CustomRichTextType } from './shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 declare var require: any
 
@@ -19,7 +19,7 @@ declare var require: any
 export class AppComponent {
 
     userClaimsUpsertStarted = false;
-    customRichTextTypeID = CustomRichTextType.WebsiteFooter;
+    customRichTextTypeID = CustomRichTextTypeEnum.WebsiteFooter;
 
     constructor(
         private router: Router,

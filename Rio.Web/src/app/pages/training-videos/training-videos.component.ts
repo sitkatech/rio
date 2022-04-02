@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 @Component({
   selector: 'rio-training-videos',
@@ -7,7 +7,7 @@ import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text
   styleUrls: ['./training-videos.component.scss']
 })
 export class TrainingVideosComponent implements OnInit {
-  public richTextTypeID: number = CustomRichTextType.TrainingVideos;
+  public richTextTypeID: number = CustomRichTextTypeEnum.TrainingVideos;
   
   constructor() { }
 

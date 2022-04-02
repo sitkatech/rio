@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace Rio.EFModels.Entities
 {
-    public partial class FileResourceMimeType
+    public static class FileResourceMimeTypes
     {
         public static FileResourceMimeType GetFileResourceMimeTypeByContentTypeName(RioDbContext dbContext, string contentTypeName)
         {
-            return dbContext.FileResourceMimeTypes.Single(x => x.FileResourceMimeTypeContentTypeName == contentTypeName);
+            return FileResourceMimeType.All.Single(x => x.FileResourceMimeTypeContentTypeName == contentTypeName);
         }
     }
 }

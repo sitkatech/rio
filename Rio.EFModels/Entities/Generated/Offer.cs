@@ -32,9 +32,6 @@ namespace Rio.EFModels.Entities
         [ForeignKey(nameof(CreateAccountID))]
         [InverseProperty(nameof(Account.Offers))]
         public virtual Account CreateAccount { get; set; }
-        [ForeignKey(nameof(OfferStatusID))]
-        [InverseProperty("Offers")]
-        public virtual OfferStatus OfferStatus { get; set; }
         [ForeignKey(nameof(TradeID))]
         [InverseProperty("Offers")]
         public virtual Trade Trade { get; set; }

@@ -18,6 +18,8 @@ GO
 GO
 :r ".\dbo.OpenETSyncResultType.sql"
 GO
+:r ".\dbo.ParcelLedgerEntrySourceType.sql"
+GO
 :r ".\dbo.ParcelStatus.sql"
 GO
 :r ".\dbo.PostingStatus.sql"
@@ -27,6 +29,8 @@ GO
 :r ".\dbo.Role.sql"
 GO
 :r ".\dbo.TradeStatus.sql"
+GO
+:r ".\dbo.TransactionType.sql"
 GO
 :r ".\dbo.WaterTransferRegistrationStatus.sql"
 GO

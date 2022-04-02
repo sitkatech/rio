@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 
 @Component({
@@ -11,7 +11,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 export class CreateWaterTransactionsComponent implements OnInit, OnDestroy {
   
   private currentUser: UserDto;
-  public richTextTypeID: number = CustomRichTextType.CreateWaterTransactions;
+  public richTextTypeID: number = CustomRichTextTypeEnum.CreateWaterTransactions;
 
   constructor(
     private cdr: ChangeDetectorRef,

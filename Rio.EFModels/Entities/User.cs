@@ -129,7 +129,6 @@ namespace Rio.EFModels.Entities
         private static IQueryable<User> GetUserImpl(RioDbContext dbContext)
         {
             return dbContext.Users
-                .Include(x => x.Role)
                 .AsNoTracking();
         }
 
@@ -146,9 +145,7 @@ namespace Rio.EFModels.Entities
                 return null;
             }
 
-            var user = dbContext.Users
-                .Include(x => x.Role)
-                .Single(x => x.UserID == userID);
+            var user = dbContext.Users.Single(x => x.UserID == userID);
 
             if (user.RoleID != (int)RoleEnum.Admin && userEditDto.RoleID == (int)RoleEnum.Admin)
             {

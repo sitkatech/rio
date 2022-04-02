@@ -17,7 +17,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterYearDto } from 'src/app/shared/generated/model/water-year-dto';
 import { TagDto } from 'src/app/shared/generated/model/tag-dto';
 import { TagBulkSetUpsertDto } from 'src/app/shared/generated/model/tag-bulk-set-upsert-dto';
-import { CustomRichTextType } from 'src/app/shared/models/enums/custom-rich-text-type.enum';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 
 @Component({
   selector: 'rio-tag-bulk-parcels',
@@ -31,7 +31,7 @@ export class TagBulkParcelsComponent implements OnInit {
   private watchAccountChangeSubscription: any;
   private currentUser: UserDto;
 
-  public customRichTextTypeID = CustomRichTextType.BulkTagParcels;
+  public customRichTextTypeID = CustomRichTextTypeEnum.BulkTagParcels;
   public parcelWaterSupplyAndUsages: Array<ParcelWaterSupplyAndUsageDto>;
   public waterYearToDisplay: WaterYearDto;
   public waterYears: Array<WaterYearDto>;
