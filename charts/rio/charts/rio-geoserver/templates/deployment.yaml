@@ -34,7 +34,7 @@ spec:
               name: {{ include "rio-geoserver.fullname" . }}-environment-properties-configmap
       - name: secrets
         secret:
-          secretName: rio-geoserver-secrets
+          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-secrets
           items:
           - key: geoserverSqlServerPassword
             path: geoserverSqlServerPassword

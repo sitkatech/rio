@@ -24,7 +24,7 @@ spec:
       volumes:
       - name: secrets
         secret:
-          secretName: rio-api-secrets
+          secretName: rio-{{ .Values.global.env.tenantName }}-api-secrets
       # - name: certs
       #   hostPath:
       #     # directory location on host
