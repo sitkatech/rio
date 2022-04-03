@@ -24,7 +24,7 @@ spec:
       volumes:
       - name: geoserver-data
         azureFile: 
-          secretName: rio-geoserver-volume-secret
+          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-volume-secret
           shareName: geoserver
           readOnly: false
       - name: config
