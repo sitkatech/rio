@@ -5871,45 +5871,37 @@
       },
       "UserCreateDto": {
         "required": [
-          "ReceiveSupportEmails",
-          "RoleID"
+          "Email",
+          "FirstName",
+          "LastName",
+          "LoginName",
+          "UserGuid"
         ],
         "type": "object",
         "properties": {
+          "FirstName": {
+            "type": "string"
+          },
+          "LastName": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string"
+          },
           "LoginName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "UserGuid": {
             "type": "string",
             "format": "uuid"
           },
-          "FirstName": {
-            "type": "string",
-            "nullable": true
-          },
-          "LastName": {
-            "type": "string",
-            "nullable": true
-          },
           "OrganizationName": {
-            "type": "string",
-            "nullable": true
-          },
-          "Email": {
             "type": "string",
             "nullable": true
           },
           "PhoneNumber": {
             "type": "string",
             "nullable": true
-          },
-          "RoleID": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ReceiveSupportEmails": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -154,10 +154,22 @@ namespace Rio.API.Controllers
 
         [HttpPost("users")]
         [LoggedInUnclassifiedFeature]
-        public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userUpsertDto)
+        public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
-            var user = EFModels.Entities.User.CreateNewUser(_dbContext, userUpsertDto, userUpsertDto.LoginName,
-                userUpsertDto.UserGuid);
+            // Validate request body; all fields required in Dto except Org Name and Phone
+            if (userCreateDto == null)
+            {
+                return BadRequest();
+            }
+
+            var validationMessages = EFModels.Entities.User.ValidateCreateUnassignedUser(_dbContext, userCreateDto);
+            validationMessages.ForEach(vm => { ModelState.AddModelError(vm.Type, vm.Message); });
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = EFModels.Entities.User.CreateUnassignedUser(_dbContext, userCreateDto);
 
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.WEB_URL, user, _dbContext, smtpClient);
