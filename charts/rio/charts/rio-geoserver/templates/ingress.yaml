@@ -27,7 +27,7 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   tls:
-    - secretName: rio-geoserver-tls
+    - secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-tls
       hosts:
         - {{ .Values.global.domains.geoserver }}
   rules:

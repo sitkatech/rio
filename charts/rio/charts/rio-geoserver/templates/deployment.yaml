@@ -24,7 +24,7 @@ spec:
       volumes:
       - name: geoserver-data
         azureFile: 
-          secretName: rio-geoserver-volume-secret
+          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-volume-secret
           shareName: geoserver
           readOnly: false
       - name: config
@@ -34,7 +34,7 @@ spec:
               name: {{ include "rio-geoserver.fullname" . }}-environment-properties-configmap
       - name: secrets
         secret:
-          secretName: rio-geoserver-secrets
+          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-secrets
           items:
           - key: geoserverSqlServerPassword
             path: geoserverSqlServerPassword

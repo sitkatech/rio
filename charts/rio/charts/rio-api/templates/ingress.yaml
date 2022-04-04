@@ -27,7 +27,7 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   tls:
-    - secretName: rio-api-tls
+    - secretName: rio-{{ .Values.global.env.tenantName }}-api-tls
       hosts:
         - {{ .Values.global.domains.api }}
   rules:
