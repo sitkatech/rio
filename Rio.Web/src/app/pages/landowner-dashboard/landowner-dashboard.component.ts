@@ -403,8 +403,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public getWaterSupplyForWaterYear(year: number): Array<ParcelLedgerDto> {
     let parcelLedgers = this.getParcelLedgersForWaterYear(year).filter(p => 
       p.TransactionType.TransactionTypeID === TransactionTypeEnum.Supply && 
-      (p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Manual ||
-      p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.CIMIS)
+      (p.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID === ParcelLedgerEntrySourceTypeEnum.Manual)
     );
     return parcelLedgers;
   }
