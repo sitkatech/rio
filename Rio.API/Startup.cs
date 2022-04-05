@@ -24,6 +24,7 @@ using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Logging;
 using Rio.API.Services.Telemetry;
+using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
 using ILogger = Serilog.ILogger;
@@ -120,7 +121,9 @@ namespace Rio.API
 
             services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost));
 
-            services.AddSingleton(x => new SitkaSmtpClientService(rioConfiguration));
+            services.AddSendGrid(options => { options.ApiKey = rioConfiguration.SendGridApiKey; });
+
+            services.AddSingleton<SitkaSmtpClientService>();
 
             services.AddHttpClient("OpenETClient", c =>
             {

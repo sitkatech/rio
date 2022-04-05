@@ -7,8 +7,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - KEYSTONE_HOST=${KEYSTONE_HOST}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
+      - SendgridApiKey=${SendgridApiKey}
       - SITKA_EMAIL_REDIRECT=${SITKA_EMAIL_REDIRECT}
       - WEB_URL=${WEB_URL}
       - SECRET_PATH=${SECRET_PATH}

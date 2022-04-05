@@ -35,5 +35,6 @@
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }
         public string Ogr2OgrExecutable { get; set; }
         public string OgrInfoExecutable { get; set; }
+        public string SendGridApiKey { get; set; }
     }
 }
