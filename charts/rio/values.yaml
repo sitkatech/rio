@@ -25,6 +25,8 @@ global:
     geoserverInitialMemory: "1G"
     geoserverMaximumMemory: "2G"
     keystoneClientID: "Rio-EDF"
+    validParcelNumberRegexPattern: "^[0-9]{3}-[0-9]{3}-[0-9]{3}$$"
+    validParcelNumberPatternAsStringForDisplay: "###-###-###"
   domains:
     api: "apiUrl"
     web: "webUrl"
