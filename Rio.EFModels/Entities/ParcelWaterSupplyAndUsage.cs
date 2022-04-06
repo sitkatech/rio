@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Rio.Models.DataTransferObjects;
@@ -8,7 +7,7 @@ using Rio.Models.DataTransferObjects.Parcel;
 
 namespace Rio.EFModels.Entities
 {
-    public partial class ParcelWaterSupplyAndUsage
+    public class ParcelWaterSupplyAndUsage
     {
         public ParcelWaterSupplyAndUsage()
         {

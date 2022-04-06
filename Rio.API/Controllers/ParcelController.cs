@@ -34,15 +34,15 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
             var parcelWaterSupplyAndUsageDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year).ToList();
-            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year);
-            
+            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year).ToDictionary(x => x.ParcelID, x => x.WaterSupplyByWaterType);
+            var tagNames = _dbContext.ParcelTags
+                .Include(x => x.Tag)
+                .ToList().ToDictionary(x => x.ParcelID, x => string.Join(", ", x.Tag.TagName));
+
             foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
             {
-                var parcelWaterSupplyBreakdown = parcelWaterSupplyBreakdownForYear
-                    .SingleOrDefault(x => x.ParcelID == parcelWaterSupplyAndUsageDto.ParcelID);
-                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdown?.WaterSupplyByWaterType;
-
-                parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = Tags.GetByParcelIDAsCommaSeparatedString(_dbContext, parcelWaterSupplyAndUsageDto.ParcelID);
+                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdownForYear.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? parcelWaterSupplyBreakdownForYear[parcelWaterSupplyAndUsageDto.ParcelID] : null;
+                parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = tagNames.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? tagNames[parcelWaterSupplyAndUsageDto.ParcelID] : null;
             }
 
             return Ok(parcelWaterSupplyAndUsageDtos);
