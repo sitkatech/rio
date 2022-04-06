@@ -27,7 +27,7 @@ namespace Rio.EFModels.Entities
 
         private static IQueryable<ParcelLedger> GetSupplyImpl(RioDbContext dbContext)
         {
-            return GetSupplyByParcelLedgerEntrySourceType(dbContext, new List<ParcelLedgerEntrySourceTypeEnum>{ ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS });
+            return GetSupplyByParcelLedgerEntrySourceType(dbContext, new List<ParcelLedgerEntrySourceTypeEnum>{ ParcelLedgerEntrySourceTypeEnum.Manual });
         }
 
         public static List<ParcelWaterSupplyBreakdownDto> GetParcelWaterSupplyBreakdownForYearAsDto(RioDbContext dbContext, int year)

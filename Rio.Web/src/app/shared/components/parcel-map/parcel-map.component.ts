@@ -133,10 +133,10 @@ export class ParcelMapComponent implements OnInit, AfterViewInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -119.11015104115182;
-        this.boundingBox.Bottom = 35.442022035628575;
-        this.boundingBox.Right = -119.45272037350193;
-        this.boundingBox.Top = 35.27608156273151;
+        this.boundingBox.Left = environment.parcelBoundingBoxLeft;
+        this.boundingBox.Bottom = environment.parcelBoundingBoxBottom;
+        this.boundingBox.Right = environment.parcelBoundingBoxRight;
+        this.boundingBox.Top = environment.parcelBoundingBoxTop;
 
         this.tileLayers = Object.assign({}, {
             "Aerial": tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {

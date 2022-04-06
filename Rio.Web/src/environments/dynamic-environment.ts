@@ -92,4 +92,20 @@ export class DynamicEnvironment {
     public get appInsightsInstrumentationKey() {
         return window.config.appInsightsInstrumentationKey;
     }
+
+    public get parcelBoundingBoxLeft() {
+        return window.config.parcelBoundingBoxLeft;
+    }
+
+    public get parcelBoundingBoxRight() {
+        return window.config.parcelBoundingBoxRight;
+    }
+
+    public get parcelBoundingBoxTop() {
+        return window.config.parcelBoundingBoxTop;
+    }
+
+    public get parcelBoundingBoxBottom() {
+        return window.config.parcelBoundingBoxBottom;
+    }
 }

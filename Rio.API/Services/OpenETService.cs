@@ -44,10 +44,10 @@ namespace Rio.API.Services
         private bool RasterUpdatedSinceMinimumLastUpdatedDate(int month, int year, OpenETSyncHistoryDto newSyncHistory)
         {
             var openETRequestURL = _rioConfiguration.OpenETRasterMetadataRoute;
-            var top = _rioConfiguration.OpenETRasterMetadataBoundingBoxTop;
-            var bottom = _rioConfiguration.OpenETRasterMetadataBoundingBoxBottom;
-            var left = _rioConfiguration.OpenETRasterMetadataBoundingBoxLeft;
-            var right = _rioConfiguration.OpenETRasterMetadataBoundingBoxRight;
+            var top = _rioConfiguration.ParcelBoundingBoxTop;
+            var bottom = _rioConfiguration.ParcelBoundingBoxBottom;
+            var left = _rioConfiguration.ParcelBoundingBoxLeft;
+            var right = _rioConfiguration.ParcelBoundingBoxRight;
             var geometryArray = new[] {left, top, right, top, right, bottom, left, bottom};
             var argumentsObject = new OpenETRasterMetadataPostRequestBody("ensemble", "et", year, month, "cimis", true, geometryArray, "monthly");
 

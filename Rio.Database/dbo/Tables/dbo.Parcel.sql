@@ -8,3 +8,7 @@ CREATE TABLE [dbo].[Parcel](
 	[InactivateDate] [datetime] NULL,
 	CONSTRAINT [CK_ParcelStatus_ActiveXorInactiveAndInactivateDate] CHECK  (([ParcelStatusID]=(1) OR [ParcelStatusID]=(2) AND [InactivateDate] IS NOT NULL))
 )
+GO
+
+CREATE SPATIAL INDEX SPATIAL_Parcel_ParcelGeometry ON dbo.Parcel (ParcelGeometry)
+USING  GEOMETRY_AUTO_GRID WITH (BOUNDING_BOX =(-125, 31, -113, 45), CELLS_PER_OBJECT = 8)

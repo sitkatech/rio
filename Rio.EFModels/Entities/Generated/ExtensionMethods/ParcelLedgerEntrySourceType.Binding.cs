@@ -17,7 +17,6 @@ namespace Rio.EFModels.Entities
     {
         public static readonly ParcelLedgerEntrySourceTypeManual Manual = Rio.EFModels.Entities.ParcelLedgerEntrySourceTypeManual.Instance;
         public static readonly ParcelLedgerEntrySourceTypeOpenET OpenET = Rio.EFModels.Entities.ParcelLedgerEntrySourceTypeOpenET.Instance;
-        public static readonly ParcelLedgerEntrySourceTypeCIMIS CIMIS = Rio.EFModels.Entities.ParcelLedgerEntrySourceTypeCIMIS.Instance;
         public static readonly ParcelLedgerEntrySourceTypeTrade Trade = Rio.EFModels.Entities.ParcelLedgerEntrySourceTypeTrade.Instance;
 
         public static readonly List<ParcelLedgerEntrySourceType> All;
@@ -30,8 +29,8 @@ namespace Rio.EFModels.Entities
         /// </summary>
         static ParcelLedgerEntrySourceType()
         {
-            All = new List<ParcelLedgerEntrySourceType> { Manual, OpenET, CIMIS, Trade };
-            AllAsDto = new List<ParcelLedgerEntrySourceTypeDto> { Manual.AsDto(), OpenET.AsDto(), CIMIS.AsDto(), Trade.AsDto() };
+            All = new List<ParcelLedgerEntrySourceType> { Manual, OpenET, Trade };
+            AllAsDto = new List<ParcelLedgerEntrySourceTypeDto> { Manual.AsDto(), OpenET.AsDto(), Trade.AsDto() };
             AllLookupDictionary = new ReadOnlyDictionary<int, ParcelLedgerEntrySourceType>(All.ToDictionary(x => x.ParcelLedgerEntrySourceTypeID));
             AllAsDtoLookupDictionary = new ReadOnlyDictionary<int, ParcelLedgerEntrySourceTypeDto>(AllAsDto.ToDictionary(x => x.ParcelLedgerEntrySourceTypeID));
         }
@@ -102,8 +101,6 @@ namespace Rio.EFModels.Entities
         {
             switch (enumValue)
             {
-                case ParcelLedgerEntrySourceTypeEnum.CIMIS:
-                    return CIMIS;
                 case ParcelLedgerEntrySourceTypeEnum.Manual:
                     return Manual;
                 case ParcelLedgerEntrySourceTypeEnum.OpenET:
@@ -120,8 +117,7 @@ namespace Rio.EFModels.Entities
     {
         Manual = 1,
         OpenET = 2,
-        CIMIS = 3,
-        Trade = 4
+        Trade = 3
     }
 
     public partial class ParcelLedgerEntrySourceTypeManual : ParcelLedgerEntrySourceType
@@ -136,15 +132,9 @@ namespace Rio.EFModels.Entities
         public static readonly ParcelLedgerEntrySourceTypeOpenET Instance = new ParcelLedgerEntrySourceTypeOpenET(2, @"OpenET", @"OpenET");
     }
 
-    public partial class ParcelLedgerEntrySourceTypeCIMIS : ParcelLedgerEntrySourceType
-    {
-        private ParcelLedgerEntrySourceTypeCIMIS(int parcelLedgerEntrySourceTypeID, string parcelLedgerEntrySourceTypeName, string parcelLedgerEntrySourceTypeDisplayName) : base(parcelLedgerEntrySourceTypeID, parcelLedgerEntrySourceTypeName, parcelLedgerEntrySourceTypeDisplayName) {}
-        public static readonly ParcelLedgerEntrySourceTypeCIMIS Instance = new ParcelLedgerEntrySourceTypeCIMIS(3, @"CIMIS", @"CIMIS");
-    }
-
     public partial class ParcelLedgerEntrySourceTypeTrade : ParcelLedgerEntrySourceType
     {
         private ParcelLedgerEntrySourceTypeTrade(int parcelLedgerEntrySourceTypeID, string parcelLedgerEntrySourceTypeName, string parcelLedgerEntrySourceTypeDisplayName) : base(parcelLedgerEntrySourceTypeID, parcelLedgerEntrySourceTypeName, parcelLedgerEntrySourceTypeDisplayName) {}
-        public static readonly ParcelLedgerEntrySourceTypeTrade Instance = new ParcelLedgerEntrySourceTypeTrade(4, @"Trade", @"Trade");
+        public static readonly ParcelLedgerEntrySourceTypeTrade Instance = new ParcelLedgerEntrySourceTypeTrade(3, @"Trade", @"Trade");
     }
 }

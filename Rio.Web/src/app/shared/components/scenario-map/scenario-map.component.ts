@@ -1,5 +1,6 @@
 import { AfterViewInit, ApplicationRef, ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Control, FitBoundsOptions, LeafletEvent, map, Map, MapOptions, tileLayer } from 'leaflet';
+import { environment } from 'src/environments/environment';
 import { BoundingBoxDto } from '../../generated/model/bounding-box-dto';
 import { CustomCompileService } from '../../services/custom-compile.service';
 import { WfsService } from "../../services/wfs.service";
@@ -51,10 +52,10 @@ export class ScenarioMapComponent implements OnInit, AfterViewInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -119.11015104115182;
-        this.boundingBox.Bottom = 35.442022035628575;
-        this.boundingBox.Right = -119.45272037350193;
-        this.boundingBox.Top = 35.27608156273151;
+        this.boundingBox.Left = environment.parcelBoundingBoxLeft;
+        this.boundingBox.Bottom = environment.parcelBoundingBoxBottom;
+        this.boundingBox.Right = environment.parcelBoundingBoxRight;
+        this.boundingBox.Top = environment.parcelBoundingBoxTop;
 
         this.tileLayers = Object.assign({}, {
             "Aerial": tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {

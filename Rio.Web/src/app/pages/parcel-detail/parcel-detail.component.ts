@@ -191,7 +191,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   }
 
   public getWaterSupplyParcelLedgers(parcelLedgersForWaterYear: Array<ParcelLedgerDto>): Array<ParcelLedgerDto> {
-    const supplyEntrySourceTypeIDs = [ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.CIMIS, ParcelLedgerEntrySourceTypeEnum.Trade];
+    const supplyEntrySourceTypeIDs = [ParcelLedgerEntrySourceTypeEnum.Manual, ParcelLedgerEntrySourceTypeEnum.Trade];
     return parcelLedgersForWaterYear.filter(x => 
       x.TransactionType.TransactionTypeID == TransactionTypeEnum.Supply && 
       supplyEntrySourceTypeIDs.indexOf(x.ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeID) > -1
