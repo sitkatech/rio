@@ -107,6 +107,10 @@ namespace Rio.Web
             ApplicationInternalName = configuration["ApplicationInternalName"];
             AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
             AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
+            ParcelBoundingBoxLeft =  configuration["ParcelBoundingBoxRight"];
+            ParcelBoundingBoxRight =  configuration["ParcelBoundingBoxRight"];
+            ParcelBoundingBoxTop =  configuration["ParcelBoundingBoxRight"];
+            ParcelBoundingBoxBottom =  configuration["ParcelBoundingBoxRight"];
         }
 
         [JsonProperty("mainAppApiUrl")]
@@ -143,6 +147,14 @@ namespace Rio.Web
         public string ApplicationInternalName { get; set;}
         [JsonProperty("appInsightsInstrumentationKey")]
         public string AppInsightsInstrumentationKey {get; set;}
+        [JsonProperty("parcelBoundingBoxLeft")]
+        public string ParcelBoundingBoxLeft {get; set;}
+        [JsonProperty("parcelBoundingBoxRight")]
+        public string ParcelBoundingBoxRight {get; set;}
+        [JsonProperty("parcelBoundingBoxTop")]
+        public string ParcelBoundingBoxTop {get; set;}
+        [JsonProperty("parcelBoundingBoxBottom")]
+        public string ParcelBoundingBoxBottom {get; set;}
     }
 
     public class KeystoneAuthConfigurationDto

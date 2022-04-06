@@ -33,3 +33,8 @@ data:
   EnabledGETIntegration: "{{ .Values.global.env.enabledGETIntegration }}"
   NavThemeColor: "light"
   ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "{{ .Values.global.env.parcelBoundingBoxLeft }}"
+  ParcelBoundingBoxRight: "{{ .Values.global.env.parcelBoundingBoxRight }}"
+  ParcelBoundingBoxTop: "{{ .Values.global.env.parcelBoundingBoxTop }}"
+  ParcelBoundingBoxBottom: "{{ .Values.global.env.parcelBoundingBoxBottom }}"
+  

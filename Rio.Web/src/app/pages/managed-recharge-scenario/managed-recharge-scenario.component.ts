@@ -52,10 +52,10 @@ export class ManagedRechargeScenarioComponent implements OnInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        this.boundingBox.Left = -119.45228576660158;
-        this.boundingBox.Bottom = 35.237207054596404;
-        this.boundingBox.Right = -119.11033630371095;
-        this.boundingBox.Top = 35.46122923189147;
+        this.boundingBox.Left = environment.parcelBoundingBoxLeft;
+        this.boundingBox.Bottom = environment.parcelBoundingBoxBottom;
+        this.boundingBox.Right = environment.parcelBoundingBoxRight;
+        this.boundingBox.Top = environment.parcelBoundingBoxTop;
 
         const getTileLayers = () => {
             let tileLayer = {};
