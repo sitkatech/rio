@@ -1,5 +1,5 @@
 Param(
-  [Parameter (Mandatory = $true)]
+  [Parameter (Mandatory = $false)]
   [string] $iniFile = ".\build.ini",
   [Parameter (Mandatory = $true)]
   [string] $tenantIniFile

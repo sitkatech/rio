@@ -1,7 +1,12 @@
+Param(
+  [Parameter (Mandatory = $false)]
+  [string] $iniFile = ".\build.ini",
+  [Parameter (Mandatory = $true)]
+  [string] $tenantIniFile
+)
 
+"Restore DB"
+& "$PSScriptRoot\DatabaseRestore.ps1" -iniFile $iniFile -tenantIniFile $tenantIniFile 
 
-"Restore EDF"
-& "$PSScriptRoot\DatabaseRestore.ps1"  -iniFile "./build.ini"
-
-"Build EDF"
-& "$PSScriptRoot\DatabaseBuild.ps1" -iniFile "./build.ini"
+"Build DB"
+& "$PSScriptRoot\DatabaseBuild.ps1" -iniFile $iniFile -tenantIniFile $tenantIniFile 
