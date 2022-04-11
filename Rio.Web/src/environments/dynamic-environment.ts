@@ -108,4 +108,8 @@ export class DynamicEnvironment {
     public get parcelBoundingBoxBottom() {
         return window.config.parcelBoundingBoxBottom;
     }
+
+    public get homepageBannerFilename() {
+        return window.config.homepageBannerFilename;
+    }
 }

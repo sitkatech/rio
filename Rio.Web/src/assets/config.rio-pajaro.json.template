@@ -1,0 +1,46 @@
+{
+  "production": false,
+  "staging": false,
+  "dev": true,
+  "mainAppApiUrl": "https://host.docker.internal:8789",
+  "createAccountRedirectUrl": "http://host.docker.internal:8787/create-user-callback",
+  "allowTrading": true,
+  "allowOpenETSync": false,
+  "applicationInternalName": "RioPajaro",
+
+  "geoserverMapServiceUrl": "http://localhost:8780/geoserver/Rio",
+
+  "platformLongName": "Pajaro Valley Water Accounting Platform Pilot",
+  "platformShortName": "Water Accounting Platform Pilot",
+  "leadOrganizationShortName": "PV Water", 
+  "leadOrganizationLongName": "Pajaro Valley Water Management Agency", 
+  "leadOrganizationHomeUrl": "https://www.pvwater.org/",
+  "leadOrganizationLogoFilename": "pvwater-logo-white.png",
+  "applicationType": "platform",
+
+
+  "contactInfoPhone":"1 (831) 722-9292",
+  "contactInfoEmail":"info@pvwater.org",
+  "contactInfoMailingAddress": "36 Brennan Street, Watsonville, CA 95076",
+  "contactInfoPhysicalAddress": "36 Brennan Street, Watsonville, CA 95076",
+
+  "faviconFilename": "favicon.ico",
+  "homepageBannerFilename": "/assets/main/pvwater_home_image.png",
+  "enabledGETIntegration": false,
+  "navThemeColor": "light",
+
+  "keystoneAuthConfiguration": {
+    "clientId": "Rio",
+    "issuer": "https://host.docker.internal:7112",
+    "responseType": "code",
+    "disablePKCE": false,
+    "redirectUriRelative": "/",
+    "scope": "openid profile offline_access keystone",
+    "sessionChecksEnabled": false,
+    "logoutUrl": "https://host.docker.internal:7112/account/logout",
+    "postLogoutRedirectUri": "/",
+    "waitForTokenInMsec": 500
+  },
+
+  "appInsightsInstrumentationKey":null
+}
