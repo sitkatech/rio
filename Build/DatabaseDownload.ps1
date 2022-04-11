@@ -1,12 +1,14 @@
 
 Param(
-   [Parameter (Mandatory = $false)]
-   [string] $iniFile = ".\build.ini"
+  [Parameter (Mandatory = $false)]
+  [string] $iniFile = ".\build.ini",
+  [Parameter (Mandatory = $true)]
+  [string] $tenantIniFile
 )
 
 Import-Module .\Get-Config.psm1
 
-$config = Get-Config -iniFile $iniFile
+$config = Get-Config -iniFile $iniFile -tenantIniFile $tenantIniFile
 
 $backupConnectionString = $config.BackupConnectionString
 

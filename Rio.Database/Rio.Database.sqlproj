@@ -160,6 +160,7 @@
     <None Include="Rio.Database.publish.xml" />
     <None Include="Scripts\PreReleaseScripts\README.md" />
     <None Include="Scripts\ReleaseScripts\README.md" />
+    <None Include="Rio-Miugsa.Database.publish.xml" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />
