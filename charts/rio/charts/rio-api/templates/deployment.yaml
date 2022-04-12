@@ -63,6 +63,8 @@ spec:
           envFrom:
           - configMapRef:
               name: {{ include "rio-api.fullname" . }}-{{ .Values.global.env.name }}-configmap
+          - configMapRef:
+              name: {{ include "rio-api.fullname" . }}-{{ .Values.global.env.tenantName }}-configmap
           volumeMounts:
           - name: secrets
             mountPath: /app/secrets
