@@ -101,6 +101,7 @@ namespace Rio.Web
             LeadOrganizationLongName = configuration["LeadOrganizationLongName"];
             LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
             FaviconFilename = configuration["FaviconFilename"];
+            HomepageBannerFilename = configuration["homepageBannerFilename"];
             LeadOrganizationLogoFilename = configuration["LeadOrganizationLogoFilename"];
             EnabledGETIntegration = bool.Parse(configuration["EnabledGETIntegration"]);
             NavThemeColor = configuration["NavThemeColor"];
@@ -137,6 +138,8 @@ namespace Rio.Web
         public string LeadOrganizationHomeUrl { get; set; }
         [JsonProperty("faviconFilename")]
         public string FaviconFilename {get; set;}
+        [JsonProperty("homepageBannerFilename")]
+        public string HomepageBannerFilename {get; set;}
         [JsonProperty("leadOrganizationLogoFilename")]
         public string LeadOrganizationLogoFilename { get; set;}
         [JsonProperty("enabledGETIntegration")]
