@@ -18,11 +18,7 @@
   "leadOrganizationLogoFilename": "pvwater-logo-white.png",
   "applicationType": "platform",
 
-
-  "contactInfoPhone":"1 (831) 722-9292",
   "contactInfoEmail":"info@pvwater.org",
-  "contactInfoMailingAddress": "36 Brennan Street, Watsonville, CA 95076",
-  "contactInfoPhysicalAddress": "36 Brennan Street, Watsonville, CA 95076",
 
   "faviconFilename": "favicon.ico",
   "homepageBannerFilename": "/assets/main/pvwater_home_image.png",
