@@ -48,49 +48,51 @@
         </div>
         <div class="card-body" style="position:relative" *ngIf="landownerUsageReport">
           <table class="table table-sm table-borderless">
-            <tr>
-              <th class="text-sm-left">
-                Total Supply
-              </th>
-              <td class="text-sm-right font-weight-bold">
-                {{getAnnualWaterSupply(false) | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr>
-            <ng-container *ngFor="let batch of waterTypesBatched">
-              <tr *ngFor="let waterType of batch">
-                <td class="text-sm-right">
-                  {{waterType.WaterTypeName}}
-                  <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                      ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
-                        class="fas fa-question-circle small"></i></a>
-                </td>
-                <td class="text-sm-right">
-                  {{getAnnualWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
-                </td>
-              </tr>
-            </ng-container> 
-            <ng-container *ngIf="allowTrading()">
+            <ng-container *ngIf="includeWaterSupply()">
               <tr>
-                <th class="text-sm-right font-weight-normal">
-                  Purchased
+                <th class="text-sm-left">
+                  Total Supply
                 </th>
-                <td class="text-sm-right">
-                  {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                <td class="text-sm-right font-weight-bold">
+                  {{getAnnualWaterSupply(false) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
-              <tr>
-                <th class="text-sm-right font-weight-normal">
-                  Sold
-                </th>
-                <td class="text-sm-right">
-                  {{getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <hr class="mt-3" />
-                </td>
-              </tr>
+              <ng-container *ngFor="let batch of waterTypesBatched">
+                <tr *ngFor="let waterType of batch">
+                  <td class="text-sm-right">
+                    {{waterType.WaterTypeName}}
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                        ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
+                          class="fas fa-question-circle small"></i></a>
+                  </td>
+                  <td class="text-sm-right">
+                    {{getAnnualWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
+                  </td>
+                </tr>
+              </ng-container> 
+              <ng-container *ngIf="allowTrading()">
+                <tr>
+                  <th class="text-sm-right font-weight-normal">
+                    Purchased
+                  </th>
+                  <td class="text-sm-right">
+                    {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                  </td>
+                </tr>
+                <tr>
+                  <th class="text-sm-right font-weight-normal">
+                    Sold
+                  </th>
+                  <td class="text-sm-right">
+                    {{getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <hr class="mt-3" />
+                  </td>
+                </tr>
+              </ng-container>
             </ng-container>
             <tr>
               <th class="text-sm-left">
@@ -128,22 +130,24 @@
         <div class="col-sm-12">
           <div class="card">
             <div class="card-header">
-              {{waterYearToDisplay?.Year}} District Supply and Usage
+              {{waterYearToDisplay?.Year}} District {{includeWaterSupply() ? 'Supply and' : ''}} Usage
               <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer" placement="top"
                 ngbTooltip="Learn how water usage is measured" onmouseenter="$(this).tooltip('show')"><i
                   class="fas fa-question-circle small"></i>
               </a>
             </div>
-            <div class="card-body" style="position:relative" *ngIf="annualWaterSupplyChartData && waterUsageOverview">
+            <div class="card-body" style="position:relative" *ngIf="waterUsageOverview && historicAverageAnnualUsage; else chartLoading">
               <rio-landowner-water-supply-chart [waterSupplyLabel]="waterSupplyLabel"
                 [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="waterSupplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-supply-chart> 
             </div>
-            <div class="card-body text-center" *ngIf="!annualWaterSupplyChartData || !waterUsageOverview">
-              <i class="fa fa-spinner loading-spinner"></i>
-            </div>
+            <ng-template #chartLoading>
+              <div class="card-body text-center">
+                <i class="fa fa-spinner loading-spinner"></i>
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>

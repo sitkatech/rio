@@ -60,11 +60,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public displayPostingsGrid: boolean = false;
   public waterTypes: WaterTypeDto[];
   public waterTypesBatched: WaterTypeDto[][];
-  private waterTypeColDefsInsertIndex: number;
-  private tradeColDefsInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   public waterSupplyLabel: string = "Annual Water Supply";
   postingActivity: PostingDetailedDto[];
+
+  private waterSupplyColDefInsertIndex = 2;
+  private waterTypeColDefsInsertIndex = 3;
+  private tradeAndCurrentAvailableColDefsInsertIndex = 4;
 
   public months = ["Jan",
         "Feb",
@@ -114,26 +116,16 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
 
-      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.waterYearService.getWaterYears(),
-        this.waterTypeService.getWaterTypes()
-      ).subscribe(([defaultYear, waterYears, waterTypes]) => {
+      forkJoin({
+        defaultYear: this.waterYearService.getDefaultWaterYearToDisplay(),
+        waterYears: this.waterYearService.getWaterYears()
+      }).subscribe(({defaultYear, waterYears}) => {
         this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
-        this.waterTypes = waterTypes;
-        this.waterTypesBatched = this.getWaterTypesBatched();
 
-        let decimalPipe = this.decimalPipe;
-        const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
-        // define column defs for water types
-        this.waterTypes.forEach(waterType => {
-          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
-          newLandownerUsageReportGridColumnDefs.push(
-            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130)
-          )
-        });
-
-        this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
+        if (this.includeWaterSupply()) {
+          this.getWaterTypes();
+        }
 
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
@@ -162,18 +154,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }
     }
     
-    this.annualWaterSupplyChartData = this.waterYears.map(x => {
-      const waterSupply = this.getAnnualWaterSupply(true);
-      values.push(waterSupply);
+    if (this.includeWaterSupply()) {
+      this.annualWaterSupplyChartData = this.waterYears.map(x => {
+        const waterSupply = this.getAnnualWaterSupply(true);
+        values.push(waterSupply);
 
-      return {
-        Year: x.Year,
-        ChartData: {
-          name: this.waterSupplyLabel,
-          series: this.months.map(y => { return { name: y, value: waterSupply } })
+        return {
+          Year: x.Year,
+          ChartData: {
+            name: this.waterSupplyLabel,
+            series: this.months.map(y => { return { name: y, value: waterSupply } })
+          }
         }
-      }
-    });
+      });
+    }
 
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
@@ -423,12 +417,27 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  private getWaterTypes(): void {
+    this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
+      this.waterTypes = waterTypes;
+      this.waterTypesBatched = this.getWaterTypesBatched();
+
+      // define column defs for water types
+      const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
+
+      this.waterTypes.forEach(waterType => {
+        const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+        newLandownerUsageReportGridColumnDefs.push(
+          this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130)
+        )
+      });
+  
+      this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
+    });
+  }
+
   private initializeLandownerUsageReportGrid(): void {
     let _decimalPipe = this.decimalPipe;
-
-    // N.B.: After the WaterTypes are retrieved, their column defs will be built and inserted at this index...
-    this.waterTypeColDefsInsertIndex = 3;
-    this.tradeColDefsInsertIndex = 4;
 
     this.landownerUsageReportGridColumnDefs = [
       {
@@ -453,13 +462,21 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
-      this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150),
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
       this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
-      this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180),
       this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
     ];
+
+    // insert Total Supply and Current Available colDefs if supply is included
+    if (this.includeWaterSupply()) {
+      var waterSupplyColDef = this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150);
+      var currentAvailableColDef = this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180);
+
+
+      this.landownerUsageReportGridColumnDefs.splice(this.waterSupplyColDefInsertIndex, 0, waterSupplyColDef);
+      this.landownerUsageReportGridColumnDefs.splice(this.tradeAndCurrentAvailableColDefsInsertIndex, 0, currentAvailableColDef);
+    }
 
     // insert trading-related colDefs if trading is enabled
     if (this.allowTrading()) {
@@ -493,7 +510,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.utilityFunctionsService.createDecimalColumnDef('Purchased (ac-ft)', 'Purchased', 140),
         this.utilityFunctionsService.createDecimalColumnDef('Sold (ac-ft)', 'Sold', 140)
       ];
-      this.landownerUsageReportGridColumnDefs.splice(this.tradeColDefsInsertIndex, 0, ...purchasedSoldColDefs);
+      this.landownerUsageReportGridColumnDefs.splice(this.tradeAndCurrentAvailableColDefsInsertIndex, 0, ...purchasedSoldColDefs);
     }
   }
 
@@ -632,6 +649,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public allowTrading():boolean{
     return environment.allowTrading;
+  }
+
+  public includeWaterSupply():boolean{
+    return environment.includeWaterSupply;
   }
 
   public isAdministrator() : boolean

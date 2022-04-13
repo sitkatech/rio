@@ -33,6 +33,10 @@ export class DynamicEnvironment {
         return window.config.allowTrading;
     }
 
+    public get includeWaterSupply() {
+        return window.config.includeWaterSupply;
+    }
+
     public get keystoneSupportBaseUrl() {
         return window.config.keystoneSupportBaseUrl;
     }

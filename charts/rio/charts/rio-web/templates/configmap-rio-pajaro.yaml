@@ -5,6 +5,7 @@ metadata:
 data:
   AllowTrading: "false"
   AllowOpenETSync: "false"
+  IncludeWaterSupply: "false"
   PlatformLongName: "Pajaro Valley Water Accounting Platform Pilot"
   PlatformShortName: "Water Accounting Platform Pilot"
   LeadOrganizationLongName: "Pajaro Valley Water Management Agency"

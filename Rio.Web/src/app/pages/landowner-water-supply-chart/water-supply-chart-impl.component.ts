@@ -61,7 +61,7 @@ export class WaterSupplyChartImplComponent extends BaseChartComponent {
   @Input() autoScale;
   @Input() historicCumulativeWaterUsageSeries: any;
   @Input() currentCumulativeWaterUsageSeries: any;
-  @Input() annualWaterSupplySeries: any;
+  @Input() annualWaterSupplySeries?: any;
   @Input() yLeftAxisScaleFactor: any;
   @Input() yRightAxisScaleFactor: any;
   @Input() rangeFillOpacity: number;
@@ -144,7 +144,9 @@ export class WaterSupplyChartImplComponent extends BaseChartComponent {
 
     this.yDomainLine = this.getYDomainLine();
     this.combinedSeries = [];
-    this.combinedSeries.push(this.annualWaterSupplySeries);
+    if (this.annualWaterSupplySeries) {
+      this.combinedSeries.push(this.annualWaterSupplySeries);
+    }
     this.combinedSeries.push(this.historicCumulativeWaterUsageSeries);
     this.combinedSeries.push({
       name: "Cumulative Monthly Usage",

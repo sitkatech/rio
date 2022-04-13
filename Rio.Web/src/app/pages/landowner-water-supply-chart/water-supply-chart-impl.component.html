@@ -59,7 +59,7 @@
                 [animations]="animations"
               />
           </svg:g>
-          <svg:g>
+          <svg:g *ngIf="annualWaterSupplySeries">
               <svg:g
                 ngx-charts-line-series
                 [xScale]="xScaleLine"
@@ -101,7 +101,7 @@
                   (deactivate)="onDeactivate($event)"
                 />
             </svg:g>
-            <svg:g>
+            <svg:g *ngIf="annualWaterSupplySeries">
                 <svg:g
                   ngx-charts-circle-series
                   [xScale]="xScaleLine"

@@ -13,6 +13,7 @@ services:
       - SECRET_PATH=${SECRET_PATH}
       - KEYSTONE_REDIRECT_URL=${KEYSTONE_REDIRECT_URL}
       - ALLOW_TRADING=${ALLOW_TRADING}
+      - INCLUDE_WATER_SUPPLY=${INCLUDE_WATER_SUPPLY}
       - PlatformLongName=${PlatformLongName}
       - PlatformShortName=${PlatformShortName}
       - LeadOrganizationLongName=${LeadOrganizationLongName}
