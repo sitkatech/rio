@@ -120,8 +120,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         defaultYear: this.waterYearService.getDefaultWaterYearToDisplay(),
         waterYears: this.waterYearService.getWaterYears()
       }).subscribe(({defaultYear, waterYears}) => {
-        this.waterYearToDisplay = defaultYear;
         this.waterYears = waterYears;
+        // updateAnnualData() automatically called when selectedYearChange event is triggered
+        this.waterYearToDisplay = defaultYear;
 
         if (this.includeWaterSupply()) {
           this.getWaterTypes();
@@ -130,8 +131,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.landownerUsageReportGridColumnDefs.forEach(x => {
           x.resizable = true;
         });
-        
-        this.updateAnnualData();
       });     
     });    
   }
