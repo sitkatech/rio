@@ -91,8 +91,8 @@
                                             Transaction History
                                         </a>
                                     </ng-container>
-                                    <div class="dropdown-divider"></div>
-                                    <a *ngIf="isAdministrator()" routerLink="/water-types/edit" class="dropdown-item">
+                                    <div class="dropdown-divider" *ngIf="isAdministrator() && (includeWaterSupply() || openETSyncEnabled())"></div>
+                                    <a *ngIf="isAdministrator() && includeWaterSupply()" routerLink="/water-types/edit" class="dropdown-item">
                                         Configure Water Types
                                     </a>
                                     <a *ngIf="isAdministratorOrDemoUser() && openETSyncEnabled()" routerLink="/openet-integration" class="dropdown-item">

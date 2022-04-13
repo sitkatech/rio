@@ -24,7 +24,7 @@
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
     <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="model">
-      <div class="row">
+      <div class="row align-items-center">
         <div class="col-sm-3 control-label text-sm-right">
           <label>Parcel APN</label>
         </div>
@@ -34,20 +34,23 @@
           <small class="form-text text-muted font-italic" *ngIf="searchFailed">Suggestions could not be loaded.</small>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center">
         <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Water Budget Category</label>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-5" *ngIf="includeWaterSupply(); else usageStaticDisplay">
           <input type="radio" id="supply" name="adjustment-type" class="mr-2" required 
             [value]="transactionTypeEnum.Supply" [(ngModel)]="model.TransactionTypeID">
-          <label for="supply" class="mr-4">Supply</label>
+          <label for="supply" class="mr-4" [disabled]="!includeWaterSupply()">Supply</label>
           <input type="radio" id="usage" name="adjustment-type" class="mr-2" 
             [value]="transactionTypeEnum.Usage" [(ngModel)]="model.TransactionTypeID">
           <label for="usage">Usage</label>
         </div>
+        <ng-template #usageStaticDisplay>
+          <div class="col-sm-5 font-weight-bold">Usage</div>
+        </ng-template>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center" *ngIf="includeWaterSupply()">
         <div class="col-sm-3 control-label text-sm-right" [ngClass]="{ 'inactive': isUsageAdjustment() }">
           <label class="required">Supply Type</label>
         </div>
@@ -61,7 +64,7 @@
           </select>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center">
         <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Quantity</label>
         </div>
@@ -75,7 +78,7 @@
           </div>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center">
         <div class="col-sm-3 control-label text-sm-right">
           <label class="required">Effective Date</label>
         </div>

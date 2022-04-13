@@ -187,6 +187,10 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return environment.allowTrading;
     }
 
+    public includeWaterSupply():boolean{
+        return environment.includeWaterSupply;
+    }
+
     public platformShortName(): string {
         return environment.platformShortName;
     }

@@ -19,10 +19,13 @@ namespace Rio.API.Controllers
     [ApiController]
     public class ParcelLedgerController : SitkaController<ParcelLedgerController>
     {
+        private readonly bool _includeWaterSupply;
+
         public ParcelLedgerController(RioDbContext dbContext, ILogger<ParcelLedgerController> logger,
             KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger,
             keystoneService, rioConfiguration)
         {
+            _includeWaterSupply = _rioConfiguration.INCLUDE_WATER_SUPPLY;
         }
 
         [HttpGet("parcel-ledgers/transaction-history")]
@@ -38,6 +41,11 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
+            if (!_includeWaterSupply && parcelLedgerCreateDto.TransactionTypeID == (int) TransactionTypeEnum.Supply)
+            {
+                return Forbid();
+            }
+
             var parcelNumber = parcelLedgerCreateDto.ParcelNumbers?.Single();
             if (string.IsNullOrWhiteSpace(parcelNumber))
             {
@@ -78,6 +86,11 @@ namespace Rio.API.Controllers
         [ParcelManageFeature]
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
+            if (!_includeWaterSupply)
+            {
+                return Forbid();
+            }
+
             if (parcelLedgerCreateDto.WaterTypeID == null)
             {
                 ModelState.AddModelError("SupplyType", "The Supply Type field is required.");
@@ -99,6 +112,11 @@ namespace Rio.API.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
         public async Task<IActionResult> NewCSVUpload([FromForm] ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
         {
+            if (!_includeWaterSupply)
+            {
+                return Forbid();
+            }
+
             var fileResource = await HttpUtilities.MakeFileResourceFromIFormFile(parcelLedgerCreateCSVUploadDto.UploadedFile, _dbContext, HttpContext);
             var waterTypeDisplayName =
                 _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
