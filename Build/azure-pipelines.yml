@@ -346,7 +346,7 @@ stages:
               SqlUsername: '$(sqlUsername)'
               SqlPassword: '$(sqlPassword)'
               DacpacFile: '$(Pipeline.Workspace)/Database/Rio.Database.dacpac'
-              AdditionalArguments: '/p:GenerateSmartDefaults=true /p:BlockOnPossibleDataLoss=false /p:CommandTimeout=600 /TargetTimeout:600 /p:DatabaseEdition=$(databaseEdition) /p:DatabaseServiceObjective=$(databaseTier)'
+              AdditionalArguments: '/p:GenerateSmartDefaults=true /p:BlockOnPossibleDataLoss=false /p:DropObjectsNotInSource=true /p:CommandTimeout=600 /TargetTimeout:600 /p:DatabaseEdition=$(databaseEdition) /p:DatabaseServiceObjective=$(databaseTier)'
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
 
           - task: SqlAzureDacpacDeployment@1
@@ -358,7 +358,7 @@ stages:
               SqlUsername: '$(sqlUsername)'
               SqlPassword: '$(sqlPassword)'
               DacpacFile: '$(Pipeline.Workspace)/Database/Rio.Database.dacpac'
-              AdditionalArguments: '/p:GenerateSmartDefaults=true /p:BlockOnPossibleDataLoss=false /p:CommandTimeout=600 /TargetTimeout:600 /p:DatabaseEdition=$(databaseEdition) /p:DatabaseServiceObjective=$(databaseTier)'
+              AdditionalArguments: '/p:GenerateSmartDefaults=true /p:BlockOnPossibleDataLoss=false /p:DropObjectsNotInSource=true /p:CommandTimeout=600 /TargetTimeout:600 /p:DatabaseEdition=$(databaseEdition) /p:DatabaseServiceObjective=$(databaseTier)'
             condition: and(succeeded(), eq(variables['restoreDatabase'], false))
 
           - task: SqlAzureDacpacDeployment@1
