@@ -24,12 +24,19 @@
         <div class="row">
             <div class="col-12">
                 <nav class="navbar navbar-rio navbar-expand-lg navbar-{{getNavThemeColor()}} stroke pl-lg-0 pr-lg-0 pt-lg-0">
-                    <a href="{{leadOrganizationHomeUrl()}}" class="navbar-brand pt-lg-0" target="_blank">
-                        <img src="{{leadOrganizationLogoSrc()}}" class="navbarLogo">
-                    </a>
-                    <a routerLink="/" routerLinkActive="active" class="nav-link platform-title-outer">
-                        {{platformShortName()}}
-                    </a>
+                    <ng-container *ngIf="leadOrganizationLogoSrc(); else displayWithoutOrganizationLogo">
+                        <a href="{{leadOrganizationHomeUrl()}}" class="navbar-brand pt-lg-0" target="_blank">
+                            <img src="{{leadOrganizationLogoSrc()}}" class="navbarLogo">
+                        </a>
+                        <a routerLink="/" routerLinkActive="active" class="nav-link platform-title-outer">
+                            {{platformShortName()}}
+                        </a>
+                    </ng-container>
+                    <ng-template #displayWithoutOrganizationLogo>
+                        <a routerLink="/" routerLinkActive="active" class="nav-link platform-title-outer">
+                            {{platformLongName()}}
+                        </a>
+                    </ng-template>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
