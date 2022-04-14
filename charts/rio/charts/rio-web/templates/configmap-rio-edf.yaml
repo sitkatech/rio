@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-web.fullname" . }}-rio-pajaro-configmap
+  name: {{ include "rio-web.fullname" . }}-rio-edf-configmap
 data:
   AllowTrading: "true"
   AllowOpenETSync: "true"
@@ -16,8 +16,8 @@ data:
   NavThemeColor: "light"
   HomepageBannerFilename: "/assets/main/home_image.jpg"
   ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
-  ParcelBoundingBoxLeft: "-121.860154345934"
-  ParcelBoundingBoxRight: "-121.582306671513"
-  ParcelBoundingBoxTop: "37.0264146984802"
-  ParcelBoundingBoxBottom: "36.817331986845"
+  ParcelBoundingBoxLeft: "-119.45272037350193"
+  ParcelBoundingBoxRight: "-119.11015104115182"
+  ParcelBoundingBoxTop: "35.442022035628575"
+  ParcelBoundingBoxBottom: "35.27608156273151"
   EnabledGETIntegration: "false"
