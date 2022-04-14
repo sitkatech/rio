@@ -36,9 +36,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   public mapHeight: string = "500px"
   public columnDefs: Array<ColDef>;
   public waterTypes: WaterTypeDto[];
-  private tagsColumnDefInsertIndex = 3;
-  private waterTypeColumnDefsInsertIndex = 4;
-  private tradeColumnDefsInsertIndex = 5;
+
+  private tagsColDefInsertIndex = 3;
+  private waterSupplyColDefsInsertIndex = 3;
+  private tradeColDefsInsertIndex = 3;
 
   public gridApi: any;
   public highlightedParcel: any;
@@ -99,34 +100,33 @@ export class ParcelListComponent implements OnInit, OnDestroy {
           filterValueGetter: function (params: any) {
             return (params.data.LandOwner) ? params.data.LandOwner.AccountDisplayName : null;
           },
-          comparator: function (id1: any, id2: any) {
-            let link1 = id1.LinkDisplay;
-            let link2 = id2.LinkDisplay;
-            if (link1 < link2) {
-              return -1;
-            }
-            if (link1 > link2) {
-              return 1;
-            }
-            return 0;
-          },
+          comparator: this.utilityFunctionsService.linkRendererComparator,
           sortable: true, filter: true, width: 170
         },
-        this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 150),
         this.utilityFunctionsService.createDecimalColumnDef('Total Usage', 'UsageToDate', 130)
       ];
+
+      if (this.includeWaterSupply()) {
+        const totalSupplyColDef = this.utilityFunctionsService.createDecimalColumnDef('Total Supply', 'TotalSupply', 150);
+        this.columnDefs.splice(this.waterSupplyColDefsInsertIndex, 0, totalSupplyColDef);
+
+        this.waterSupplyColDefsInsertIndex++;
+        this.tradeColDefsInsertIndex++;
+      }
 
       if (this.allowTrading()) {
         const tradeColDefs: Array<ColDef> = [
           this.utilityFunctionsService.createDecimalColumnDef('Purchased', 'Purchased', 130),
           this.utilityFunctionsService.createDecimalColumnDef('Sold', 'Sold', 130),
         ];
-        this.columnDefs.splice(this.tradeColumnDefsInsertIndex, 0, ...tradeColDefs);
+        this.columnDefs.splice(this.tradeColDefsInsertIndex, 0, ...tradeColDefs);
       }
 
       if (this.isAdministrator) {
         const tagsColDef: ColDef = { headerName: 'Tags', field: 'TagsAsCommaSeparatedString', filter: true, sortable: true, resizable: true };
-        this.columnDefs.splice(this.tagsColumnDefInsertIndex, 0, tagsColDef);
+        this.columnDefs.splice(this.tagsColDefInsertIndex, 0, tagsColDef);
+
+        this.waterSupplyColDefsInsertIndex++;
       }
 
       this.gridOptions = <GridOptions>{};
@@ -138,21 +138,21 @@ export class ParcelListComponent implements OnInit, OnDestroy {
         this.waterYearToDisplay = defaultYear;
         this.waterTypes = waterTypes;
 
-        // finish setting up the column defs based on existing waterTypes before loading data.
-        var waterTypeColDefs: Array<ColDef> = [];
-        this.waterTypes.forEach(waterType => {
-          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
-          waterTypeColDefs.push(
-            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130),
-          );
-        });
-
-        this.columnDefs.splice(this.waterTypeColumnDefsInsertIndex, 0, ...waterTypeColDefs)
+        if (this.includeWaterSupply()) {
+          // finish setting up the column defs based on existing waterTypes before loading data.
+          var waterTypeColDefs: Array<ColDef> = [];
+          this.waterTypes.forEach(waterType => {
+            const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+            waterTypeColDefs.push(
+              this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130),
+            );
+          });
+          this.columnDefs.splice(this.waterSupplyColDefsInsertIndex, 0, ...waterTypeColDefs)
+        }
 
         this.columnDefs.forEach(x => {
           x.resizable = true;
         });
-
         // this is necessary because by the time we enter this subscribe, ngOnInit has concluded and the ag-grid has read its column defs
         this.parcelsGrid.api.setColumnDefs(this.columnDefs);
 
@@ -173,8 +173,6 @@ export class ParcelListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 
@@ -184,6 +182,10 @@ export class ParcelListComponent implements OnInit, OnDestroy {
 
   private allowTrading(): boolean {
     return environment.allowTrading;
+  }
+
+  public includeWaterSupply(): boolean{
+    return environment.includeWaterSupply;
   }
 
   public updateGridData() {

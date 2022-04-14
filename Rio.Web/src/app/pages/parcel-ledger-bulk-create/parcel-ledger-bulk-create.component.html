@@ -33,7 +33,7 @@
             [gridOptions]="gridOptions" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
     </ag-grid-angular>
     <form (ngSubmit)="onSubmit(createTransactionForm)" #createTransactionForm="ngForm" *ngIf="!noParcelsSelected">
-        <div class="row mt-3">
+        <div class="row mt-3 align-items-center">
             <div class="col-sm-3 control-label text-sm-right">
                 <label class="required">Supply Type</label>
             </div>
@@ -46,7 +46,7 @@
                 </select>
             </div>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-3 align-items-center">
             <div class="col-sm-3 control-label text-sm-right">
                 <label class="required">Quantity</label>
             </div>
@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-3 align-items-center">
             <div class="col-sm-3 control-label text-sm-right">
                 <label class="required">Effective Date</label>
             </div>

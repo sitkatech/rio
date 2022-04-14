@@ -175,7 +175,8 @@
             </div>
           </div>
           <ag-grid-angular #landOwnerUsageReportGrid style="width: 100%; height: 300px;" class="ag-theme-balham"
-            [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true">
+            [columnDefs]="landownerUsageReportGridColumnDefs" [pagination]="true" [paginationPageSize]="100" [suppressMenuHide]="true"
+            (gridReady)="onGridReady()">
           </ag-grid-angular>
         </div>
         <div class="card-body text-center" *ngIf="!parcels">
