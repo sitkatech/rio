@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-api.fullname" . }}-rio-pajaro-configmap
+data:
+  ALLOW_TRADING: "true"
+  AllowOpenETSync: "true"
+  INCLUDE_WATER_SUPPLY: "true"
+  PlatformLongName: "EDF Water Accounting and Trading Platform"
+  PlatformShortName: "Water Trading Platform"
+  LeadOrganizationLongName: "Environmental Defense Fund"
+  LeadOrganizationShortName: "EDF"
+  LeadOrganizationHomeUrl: "https://edf.org"
+  LeadOrganizationEmail: "cbabbitt@edf.org"
+  VerificationKeyChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ,0123456789"
+  ValidParcelNumberRegexPattern: "^[0-9]{8,}$"
+  ValidParcelNumberPatternAsStringForDisplay: "of Numbers only (no dashes, minimum of 8 digits)"
+  OpenETAPIBaseUrl: "https://openet.dri.edu"
+  OpenETRasterTimeSeriesMultipolygonRoute: "raster/timeseries/multipolygon"
+  OpenETRasterMetadataRoute: "raster/metadata"
+  OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
+  OpenETRasterExportStatusRoute: "raster/export/status"
+  OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "ParcelNumb"
+  ParcelBoundingBoxLeft: "-121.860154345934"
+  ParcelBoundingBoxRight: "-121.582306671513"
+  ParcelBoundingBoxTop: "37.0264146984802"
+  ParcelBoundingBoxBottom: "36.817331986845"
