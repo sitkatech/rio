@@ -7,7 +7,7 @@ data:
   AllowOpenETSync: "true"
   IncludeWaterSupply: "true"
   PlatformLongName: "Rosedale-Rio Bravo Water Accounting Platform"
-  PlatformShortName: ""Water Accounting Platform"
+  PlatformShortName: "Water Accounting Platform"
   LeadOrganizationLongName: "Rosedale-Rio Bravo Water Storage District"
   LeadOrganizationShortName: "RRB"
   LeadOrganizationHomeUrl: "https://rrbwsd.com"
