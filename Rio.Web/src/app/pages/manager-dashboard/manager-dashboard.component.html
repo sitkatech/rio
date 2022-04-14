@@ -135,7 +135,7 @@
               </a>
             </div>
             <div class="card-body" style="position:relative" >
-              <rio-landowner-water-supply-chart *ngIf="waterUsageOverview?.length > 0; else noChartData"
+              <rio-landowner-water-supply-chart *ngIf="waterUsageOverview && !noChartDataToDisplay; else noChartData"
                 [waterSupplyLabel]="waterSupplyLabel"
                 [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="waterSupplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
