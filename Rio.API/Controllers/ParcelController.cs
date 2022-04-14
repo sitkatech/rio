@@ -1,5 +1,4 @@
 ﻿using System;
-using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,6 @@ using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
 using Rio.Models.DataTransferObjects.Parcel;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
@@ -34,15 +32,23 @@ namespace Rio.API.Controllers
         public ActionResult<IEnumerable<ParcelWaterSupplyAndUsageDto>> GetParcelsWithWaterSupplyAndUsageByYear([FromRoute] int year)
         {
             var parcelWaterSupplyAndUsageDtos = ParcelWaterSupplyAndUsage.GetByYear(_dbContext, year).ToList();
-            var parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year).ToDictionary(x => x.ParcelID, x => x.WaterSupplyByWaterType);
             var tagNames = _dbContext.ParcelTags
                 .Include(x => x.Tag)
                 .ToList().ToDictionary(x => x.ParcelID, x => string.Join(", ", x.Tag.TagName));
 
+             var parcelWaterSupplyBreakdownForYear = new Dictionary<int, Dictionary<int, decimal>>();
+            if (_rioConfiguration.IncludeWaterSupply)
+            {
+                parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year).ToDictionary(x => x.ParcelID, x => x.WaterSupplyByWaterType);
+            }
+
             foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
             {
-                parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdownForYear.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? parcelWaterSupplyBreakdownForYear[parcelWaterSupplyAndUsageDto.ParcelID] : null;
                 parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = tagNames.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? tagNames[parcelWaterSupplyAndUsageDto.ParcelID] : null;
+                if (_rioConfiguration.IncludeWaterSupply)
+                {
+                    parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdownForYear.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? parcelWaterSupplyBreakdownForYear[parcelWaterSupplyAndUsageDto.ParcelID] : null;
+                }
             }
 
             return Ok(parcelWaterSupplyAndUsageDtos);

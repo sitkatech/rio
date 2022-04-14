@@ -1,8 +1,8 @@
 @import "~src/scss/_variables.scss";
 
 .navbarLogo {
-    max-height: 110px;
-    max-width: 350px;
+    max-height: 120px;
+    max-width: 275px;
   }
   
   a.signOut {
@@ -72,11 +72,11 @@
 }
 
   .platform-title-outer {
+    text-align: center;
     word-break: break-word;
-    width:138px;
     @media screen and (min-width: 484px)
     {
-      width:238px;
+      min-width: 160px;
     }
     @media screen and (max-width: 411px)
     {

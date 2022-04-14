@@ -47,7 +47,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<WaterTransferDetailedDto> ConfirmTransfer([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationUpsertDto)
         {
-            if (!_rioConfiguration.ALLOW_TRADING)
+            if (!_rioConfiguration.AllowTrading)
             {
                 return BadRequest();
             }
@@ -113,7 +113,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public IActionResult CancelTrade([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
-            if (!_rioConfiguration.ALLOW_TRADING)
+            if (!_rioConfiguration.AllowTrading)
             {
                 return BadRequest();
             }
@@ -165,7 +165,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public ActionResult<List<WaterTransferDetailedDto>> SelectParcels([FromRoute] int waterTransferID, [FromBody] WaterTransferRegistrationUpsertDto waterTransferRegistrationDto)
         {
-            if (!_rioConfiguration.ALLOW_TRADING)
+            if (!_rioConfiguration.AllowTrading)
             {
                 return BadRequest();
             }

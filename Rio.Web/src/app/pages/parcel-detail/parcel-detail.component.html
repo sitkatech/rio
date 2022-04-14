@@ -1,16 +1,14 @@
 <div class="breadcrumb-container">
-  <div class="container">
-    <nav aria-label="breadcrumb" *ngIf="parcel">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item" aria-current="page">
-          <a routerLink="/parcels">Parcels</a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-          {{parcel.ParcelNumber}}
-        </li>
-      </ol>
-    </nav>
-  </div>
+  <nav aria-label="breadcrumb" *ngIf="parcel">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item" aria-current="page">
+        <a routerLink="/parcels">Parcels</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        {{parcel.ParcelNumber}}
+      </li>
+    </ol>
+  </nav>
 </div>
 <div class="container mt-sm-4" *ngIf="parcel">
   <h2 class="d-inline-block">
@@ -112,21 +110,25 @@
               <thead>
                 <tr>
                   <th>Year</th>
-                  <th style="text-align: right;" *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
-                  <th *ngIf="allowTrading()" class="text-right">Purchased</th>
-                  <th *ngIf="allowTrading()" class="text-right">Sold</th>
-                  <th class="text-right">Total Supply</th>
-                  <th class="text-right">Total Usage</th>
+                  <ng-container *ngIf="includeWaterSupply()">
+                    <th *ngFor="let waterType of waterTypes">{{waterType.WaterTypeName}}</th>
+                  </ng-container>
+                  <th *ngIf="allowTrading()">Purchased</th>
+                  <th *ngIf="allowTrading()">Sold</th>
+                  <th *ngIf="includeWaterSupply()">Total Supply</th>
+                  <th>Total Usage</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let waterYear of waterYears">
                   <td>{{waterYear.Year}}</td>
-                  <td class="text-right" *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
-                  <td *ngIf="allowTrading()" class="text-right">{{getPurchasedWaterSupplyForYear(waterYear.Year)}}</td>
-                  <td *ngIf="allowTrading()" class="text-right">{{getSoldWaterSupplyForYear(waterYear.Year)}}</td>
-                  <td class="text-right">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
-                  <td class="text-right">{{getConsumptionForYear(waterYear.Year)}}</td>
+                  <ng-container *ngIf="includeWaterSupply()">
+                    <td *ngFor="let waterType of waterTypes">{{getWaterSupplyForYearByType(waterType, waterYear.Year)}}</td>
+                  </ng-container>
+                  <td *ngIf="allowTrading()" >{{getPurchasedWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td *ngIf="allowTrading()" >{{getSoldWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td *ngIf="includeWaterSupply()">{{getTotalWaterSupplyForYear(waterYear.Year)}}</td>
+                  <td >{{getConsumptionForYear(waterYear.Year)}}</td>
                 </tr>
               </tbody>
             </table>

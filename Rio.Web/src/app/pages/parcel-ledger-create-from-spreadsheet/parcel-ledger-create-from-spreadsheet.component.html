@@ -1,30 +1,28 @@
 <div class="breadcrumb-container">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/manager-dashboard">Manager Dashboard</a>
-          </li>
-          <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            Upload Spreadsheet
-          </li>
-        </ol>
-      </nav>
-    </div>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+          <a routerLink="/manager-dashboard">Manager Dashboard</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+          <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Upload Spreadsheet
+        </li>
+      </ol>
+    </nav>
   </div>
   <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>
     <h2 class="d-inline-block">
-      Water Supply: Upload Spreadsheet
+      Upload Spreadsheet
     </h2>
     <div class="card card-body mt-2 mb-5">
       <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
     <form (ngSubmit)="onSubmit(createTransactionFromSpreadsheetForm)" #createTransactionFromSpreadsheetForm="ngForm">
-      <div class="row">
+      <div class="row align-items-center">
           <div class="col-sm-3 control-label text-sm-right">
               <label class="required">Supply Type</label>
           </div>
@@ -37,7 +35,7 @@
               </select>
           </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center">
           <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Effective Date</label>
           </div>
@@ -51,7 +49,7 @@
             </div>
           </div>
       </div>
-      <div class="row mt-3">
+      <div class="row mt-3 align-items-center">
         <div class="col-sm-3 control-label text-sm-right">
             <label class="required">Select File</label>
         </div>
