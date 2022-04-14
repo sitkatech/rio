@@ -1,19 +1,17 @@
 <div class="breadcrumb-container">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item" aria-current="page">
-                    <a routerLink="/accounts" *ngIf="currentUserIsADemoUserOrAdministrator() else showUnlinkedAccount">Accounts</a>
-                    <ng-template #showUnlinkedAccount>
-                        <span>Accounts</span>
-                    </ng-template>
-                </li>
-                <li class="breadcrumb-item active" *ngIf="account" aria-current="page">
-                    {{account.AccountDisplayName}}
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">
+                <a routerLink="/accounts" *ngIf="currentUserIsADemoUserOrAdministrator() else showUnlinkedAccount">Accounts</a>
+                <ng-template #showUnlinkedAccount>
+                    <span>Accounts</span>
+                </ng-template>
+            </li>
+            <li class="breadcrumb-item active" *ngIf="account" aria-current="page">
+                {{account.AccountDisplayName}}
+            </li>
+        </ol>
+    </nav>
 </div>
 <div class="container mt-sm-4">
     <app-alert-display></app-alert-display>

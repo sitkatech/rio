@@ -1,21 +1,19 @@
 <div class="breadcrumb-container">
-    <div class="container">
-        <nav aria-label="breadcrumb" *ngIf="account">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a routerLink="/accounts">Accounts</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a routerLink="/accounts/{{account?.AccountID}}">
-                        {{account.AccountName}}
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    Add or Remove Users
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <nav aria-label="breadcrumb" *ngIf="account">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a routerLink="/accounts">Accounts</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a routerLink="/accounts/{{account?.AccountID}}">
+                    {{account.AccountName}}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                Add or Remove Users
+            </li>
+        </ol>
+    </nav>
 </div>
 <div class="container mt-sm-4" *ngIf="account && allUsers">
     <h2 class="d-inline-block">Add or Remove Users</h2>
