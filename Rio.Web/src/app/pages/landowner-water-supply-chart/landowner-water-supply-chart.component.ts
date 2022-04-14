@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./landowner-water-supply-chart.component.scss']
 })
 export class LandownerWaterSupplyChartComponent implements OnInit {
-  @Input() annualWaterSupplySeries: any;
+  @Input() annualWaterSupplySeries?: any;
   @Input() currentCumulativeWaterUsage: any;
   @Input() historicCumulativeWaterUsage: any;
   @Input() waterSupplyLabel: string = environment.allowTrading ? "Annual Water Supply (Water Supply +/- Trades)" : "Annual Supply"
@@ -22,7 +22,8 @@ export class LandownerWaterSupplyChartComponent implements OnInit {
     name: 'coolthree',
     selectable: true,
     group: 'Ordinal',
-    domain: ['#636363', '#ff1100', '#0400d6'] 
+    // gray, blue
+    domain: ['#636363', '#0400d6'] 
   };
 
   comboBarScheme = {
@@ -35,6 +36,12 @@ export class LandownerWaterSupplyChartComponent implements OnInit {
 
   constructor() { }
   ngOnInit() {
-    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)", this.waterSupplyLabel];
+    this.seriesDomain = ["Cumulative Monthly Usage", "Average Usage (All Years)"];
+
+    if (environment.includeWaterSupply) {
+      this.seriesDomain.push(this.waterSupplyLabel);
+      // add red to line chart color scheme if displaying Water Supply line
+      this.lineChartScheme.domain.splice(1, 0, '#ff1100');
+    }
   }
 }

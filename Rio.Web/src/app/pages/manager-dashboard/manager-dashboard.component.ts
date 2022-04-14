@@ -60,11 +60,13 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public displayPostingsGrid: boolean = false;
   public waterTypes: WaterTypeDto[];
   public waterTypesBatched: WaterTypeDto[][];
-  private waterTypeColDefsInsertIndex: number;
-  private tradeColDefsInsertIndex: number;
   public tradeActivity: TradeWithMostRecentOfferDto[];
   public waterSupplyLabel: string = "Annual Water Supply";
   postingActivity: PostingDetailedDto[];
+
+  private waterSupplyColDefsInsertIndex = 2;
+  private currentAvailableColDefInsertIndex = 4;
+  private tradeColDefsInsertIndex = 2;
 
   public months = ["Jan",
         "Feb",
@@ -113,41 +115,34 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.initializeTradeActivityGrid();
       this.initializePostingActivityGrid();
       this.initializeLandownerUsageReportGrid();
+    });
 
-      forkJoin(this.waterYearService.getDefaultWaterYearToDisplay(),
-        this.waterYearService.getWaterYears(),
-        this.waterTypeService.getWaterTypes()
-      ).subscribe(([defaultYear, waterYears, waterTypes]) => {
-        this.waterYearToDisplay = defaultYear;
-        this.waterYears = waterYears;
-        this.waterTypes = waterTypes;
-        this.waterTypesBatched = this.getWaterTypesBatched();
+    forkJoin({
+      defaultYear: this.waterYearService.getDefaultWaterYearToDisplay(),
+      waterYears: this.waterYearService.getWaterYears()
+    }).subscribe(({defaultYear, waterYears}) => {
+      this.waterYears = waterYears;
+      // updateAnnualData() automatically called when selectedYearChange event is triggered, but we have to call it 
+      this.waterYearToDisplay = defaultYear;
 
-        let decimalPipe = this.decimalPipe;
-        const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
-        // define column defs for water types
-        this.waterTypes.forEach(waterType => {
-          const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
-          newLandownerUsageReportGridColumnDefs.push(
-            this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130)
-          )
-        });
-
-        this.landownerUsageReportGridColumnDefs.splice(this.waterTypeColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
-
-        this.landownerUsageReportGridColumnDefs.forEach(x => {
-          x.resizable = true;
-        });
-        
-        this.updateAnnualData();
-      });     
-    });    
+      if (this.includeWaterSupply()) {
+        this.getWaterTypes();
+      }
+      this.landownerUsageReportGridColumnDefs.forEach(x => {
+        x.resizable = true;
+      });
+    });   
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
+  }
+
+  public onGridReady() {
+    if (!this.landownerUsageReport) {
+      return;
+    }
+    this.landOwnerUsageReportGrid.api.setRowData(this.landownerUsageReport);
   }
 
   public getSelectedParcelIDs(): Array<number> {
@@ -162,18 +157,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       }
     }
     
-    this.annualWaterSupplyChartData = this.waterYears.map(x => {
-      const waterSupply = this.getAnnualWaterSupply(true);
-      values.push(waterSupply);
+    if (this.includeWaterSupply()) {
+      this.annualWaterSupplyChartData = this.waterYears.map(x => {
+        const waterSupply = this.getAnnualWaterSupply(true);
+        values.push(waterSupply);
 
-      return {
-        Year: x.Year,
-        ChartData: {
-          name: this.waterSupplyLabel,
-          series: this.months.map(y => { return { name: y, value: waterSupply } })
+        return {
+          Year: x.Year,
+          ChartData: {
+            name: this.waterSupplyLabel,
+            series: this.months.map(y => { return { name: y, value: waterSupply } })
+          }
         }
-      }
-    });
+      });
+    }
 
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
@@ -242,15 +239,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
             }
           }
         },
-        comparator: function (id1: any, id2: any) {
-          if (id1.PostingDate < id2.PostingDate) {
-            return -1;
-          }
-          if (id1.PostingDate > id2.PostingDate) {
-            return 1;
-          }
-          return 0;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: 'agDateColumnFilter', width: 140
       },
       {
@@ -261,17 +250,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         filterValueGetter: function (params: any) {
           return params.data.PostedByFullName !== " " ? params.data.PostedByFullName : 'User Not Found';
         },
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 < link2) {
-            return -1;
-          }
-          if (link1 > link2) {
-            return 1;
-          }
-          return 0;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 155
       },
       {
@@ -282,17 +261,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         filterValueGetter: function (params: any) {
           return params.data.PostedByAccountName !== " " ? params.data.PostedByAccountName : 'Account Not Found';
         },
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 < link2) {
-            return -1;
-          }
-          if (link1 > link2) {
-            return 1;
-          }
-          return 0;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Status', field: 'PostingStatusDisplayName', sortable: true, filter: true, width: 100 },
@@ -423,12 +392,27 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  private getWaterTypes(): void {
+    this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
+      this.waterTypes = waterTypes;
+      this.waterTypesBatched = this.getWaterTypesBatched();
+
+      // define column defs for water types
+      const newLandownerUsageReportGridColumnDefs: ColDef[] = [];
+
+      this.waterTypes.forEach(waterType => {
+        const waterTypeFieldName = 'WaterSupplyByWaterType.' + waterType.WaterTypeID;
+        newLandownerUsageReportGridColumnDefs.push(
+          this.utilityFunctionsService.createDecimalColumnDef(waterType.WaterTypeName, waterTypeFieldName, 130)
+        )
+      });
+  
+      this.landownerUsageReportGridColumnDefs.splice(this.waterSupplyColDefsInsertIndex, 0, ...newLandownerUsageReportGridColumnDefs)
+    });
+  }
+
   private initializeLandownerUsageReportGrid(): void {
     let _decimalPipe = this.decimalPipe;
-
-    // N.B.: After the WaterTypes are retrieved, their column defs will be built and inserted at this index...
-    this.waterTypeColDefsInsertIndex = 3;
-    this.tradeColDefsInsertIndex = 4;
 
     this.landownerUsageReportGridColumnDefs = [
       {
@@ -439,27 +423,28 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         filterValueGetter: function (params: any) {
           return params.data.AccountName;
         },
-        comparator: function (id1: any, id2: any) {
-          let link1 = id1.LinkDisplay;
-          let link2 = id2.LinkDisplay;
-          if (link1 < link2) {
-            return -1;
-          }
-          if (link1 > link2) {
-            return 1;
-          }
-          return 0;
-        },
+        comparator: this.utilityFunctionsService.linkRendererComparator,
         sortable: true, filter: true, width: 155
       },
       { headerName: 'Account Number', field:'AccountNumber', sortable:true, filter: true, width: 155},
-      this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150),
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
       this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
-      this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180),
       this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
     ];
+
+    // insert Total Supply and Current Available colDefs if supply is included
+    if (this.includeWaterSupply()) {
+      var waterSupplyColDef = this.utilityFunctionsService.createDecimalColumnDef('Total Supply (ac-ft)', 'TotalSupply', 150);
+      var currentAvailableColDef = this.utilityFunctionsService.createDecimalColumnDef('Current Available (ac-ft)', 'CurrentAvailable', 180);
+
+
+      this.landownerUsageReportGridColumnDefs.splice(this.waterSupplyColDefsInsertIndex, 0, waterSupplyColDef);
+      this.landownerUsageReportGridColumnDefs.splice(this.currentAvailableColDefInsertIndex, 0, currentAvailableColDef);
+
+      this.waterSupplyColDefsInsertIndex++;
+      this.tradeColDefsInsertIndex++;
+    }
 
     // insert trading-related colDefs if trading is enabled
     if (this.allowTrading()) {
@@ -474,17 +459,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           filterValueGetter: function (params: any) {
             return params.data.LinkValue;
           },
-          comparator: function (id1: any, id2: any) {
-            let link1 = id1.LinkDisplay;
-            let link2 = id2.LinkDisplay;
-            if (link1 < link2) {
-              return -1;
-            }
-            if (link1 > link2) {
-              return 1;
-            }
-            return 0;
-          },
+          comparator: this.utilityFunctionsService.linkRendererComparator,
           sortable: true, filter: true, width: 160
         }
       );
@@ -510,16 +485,15 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
     this.userService.getLandownerUsageReportByYear(this.waterYearToDisplay.Year).subscribe(landownerUsageReport => {
       this.landownerUsageReport = landownerUsageReport;
-      if (!this.landOwnerUsageReportGrid) {
-        return;
-      }
-      this.landOwnerUsageReportGrid.api.setRowData(landownerUsageReport);
-      this.landOwnerUsageReportGrid.api.hideOverlay();
+
       this.getTradesAndPostingsForYear();
       this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
         this.waterUsageOverview = waterUsageOverview;
         this.initializeCharts(this.waterUsageOverview);
       });
+
+      this.landOwnerUsageReportGrid?.api.setRowData(landownerUsageReport);
+      this.landOwnerUsageReportGrid?.api.hideOverlay();
     });
   }
 
@@ -632,6 +606,10 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   public allowTrading():boolean{
     return environment.allowTrading;
+  }
+
+  public includeWaterSupply():boolean{
+    return environment.includeWaterSupply;
   }
 
   public isAdministrator() : boolean

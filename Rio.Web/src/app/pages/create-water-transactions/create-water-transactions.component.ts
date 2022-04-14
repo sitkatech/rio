@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-create-water-transactions',
@@ -24,8 +25,10 @@ export class CreateWaterTransactionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
+  }
+
+  public includeWaterSupply():boolean{
+    return environment.includeWaterSupply;
   }
 }

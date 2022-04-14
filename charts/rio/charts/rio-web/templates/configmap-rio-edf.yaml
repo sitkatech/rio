@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-web.fullname" . }}-rio-pajaro-configmap
+data:
+  AllowTrading: "true"
+  AllowOpenETSync: "true"
+  IncludeWaterSupply: "true"
+  PlatformLongName: "EDF Water Accounting and Trading Platform"
+  PlatformShortName: "Water Trading Platform"
+  LeadOrganizationLongName: "Environmental Defense Fund"
+  LeadOrganizationShortName: "EDF"
+  LeadOrganizationHomeUrl: "https://edf.org"
+  FaviconFilename: "favicon.ico"
+  LeadOrganizationLogoFilename: "edf-transparent-logo.png"
+  NavThemeColor: "light"
+  HomepageBannerFilename: "/assets/main/home_image.jpg"
+  ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "-121.860154345934"
+  ParcelBoundingBoxRight: "-121.582306671513"
+  ParcelBoundingBoxTop: "37.0264146984802"
+  ParcelBoundingBoxBottom: "36.817331986845"
+  EnabledGETIntegration: "false"

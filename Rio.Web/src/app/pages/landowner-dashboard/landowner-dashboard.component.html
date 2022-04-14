@@ -1,11 +1,9 @@
 <div class="breadcrumb-container">
-  <div class="container">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb breadcrumb-empty">
-        <li class="breadcrumb-item active" aria-current="page">Landowner Dashboard</li>
-      </ol>
-    </nav>
-  </div>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-empty">
+      <li class="breadcrumb-item active" aria-current="page">Landowner Dashboard</li>
+    </ol>
+  </nav>
 </div>
 <div class="container">
   <app-alert-display></app-alert-display>
@@ -83,62 +81,64 @@
     <div class="row"
       *ngIf="userHasParcels() && waterUsages && sectionCurrentlyViewing == LandownerDashboardViewEnum.WaterBudget">
       <div class="col-sm-12 mb-3">
-        <div class="h3">Supply and Usage Overview</div>
+        <div class="h3">{{includeWaterSupply() ? 'Supply and' : ''}} Usage Overview</div>
       </div>
       <div class="col-sm-12 col-lg-5 pr-5">
         <div class="table-responsive mt-2">
           <table class="table table-sm table-borderless">
-            <tr>
-              <th class="text-sm-left pb-3">
-                Total Supply
-                <a style="cursor: pointer" class="collapsed ml-1"
-                  (click)="showSupplyDetails = !showSupplyDetails">
-                  <i *ngIf="showSupplyDetails else dontShowSupplyDetails"
-                    class="fas fa-minus text-muted" style="font-size: smaller"></i>
-                  <ng-template #dontShowSupplyDetails>
-                    <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
-                  </ng-template>
-                </a>
-              </th>
-              <td class="text-sm-right font-weight-bold pb-3">
-                {{getAnnualWaterSupply(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr>
-            <ng-container *ngIf="showSupplyDetails">
-              <tr *ngFor="let waterType of waterTypes">
-                <td class="text-sm-right">
-                  {{waterType.WaterTypeName}}
-                  <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                    ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
-                      class="fas fa-question-circle small"></i></a>
-                </td>
-                <td class="text-sm-right">
-                  {{getWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
+            <ng-container *ngIf="includeWaterSupply()">
+              <tr>
+                <th class="text-sm-left pb-3">
+                  Total Supply
+                  <a style="cursor: pointer" class="collapsed ml-1"
+                    (click)="showSupplyDetails = !showSupplyDetails">
+                    <i *ngIf="showSupplyDetails else dontShowSupplyDetails"
+                      class="fas fa-minus text-muted" style="font-size: smaller"></i>
+                    <ng-template #dontShowSupplyDetails>
+                      <i class="fas fa-plus text-muted" style="font-size: smaller"></i>
+                    </ng-template>
+                  </a>
+                </th>
+                <td class="text-sm-right font-weight-bold pb-3">
+                  {{getAnnualWaterSupply(waterYearToDisplay?.Year) | number: '1.1-1'}} {{unitsShown}}
                 </td>
               </tr>
-              <ng-container *ngIf="allowTrading()">
-                <tr>
-                  <th class="text-sm-right font-weight-normal">
-                    Purchased
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                      ngbTooltip="Learn about Purchased Water"><i
-                        class="fas fa-question-circle small"></i></a>
-                  </th>
+              <ng-container *ngIf="showSupplyDetails">
+                <tr *ngFor="let waterType of waterTypes">
                   <td class="text-sm-right">
-                    {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                    {{waterType.WaterTypeName}}
+                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                      ngbTooltip="Learn about {{waterType.WaterTypeName}}"><i
+                        class="fas fa-question-circle small"></i></a>
+                  </td>
+                  <td class="text-sm-right">
+                    {{getWaterSupplyByWaterType(waterType) | number: '1.1-1'}} {{unitsShown}}
                   </td>
                 </tr>
-                <tr>
-                  <th class="text-sm-right font-weight-normal">
-                    Sold
-                    <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
-                      ngbTooltip="Learn about Sold Water"><i
-                        class="fas fa-question-circle small"></i></a>
-                  </th>
-                  <td class="text-sm-right">
-                    {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
-                  </td>
-                </tr>
+                <ng-container *ngIf="allowTrading()">
+                  <tr>
+                    <th class="text-sm-right font-weight-normal">
+                      Purchased
+                      <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                        ngbTooltip="Learn about Purchased Water"><i
+                          class="fas fa-question-circle small"></i></a>
+                    </th>
+                    <td class="text-sm-right">
+                      {{getPurchasedWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="text-sm-right font-weight-normal">
+                      Sold
+                      <a routerLink="/glossary" target="_blank" style="cursor:pointer" placement="top"
+                        ngbTooltip="Learn about Sold Water"><i
+                          class="fas fa-question-circle small"></i></a>
+                    </th>
+                    <td class="text-sm-right">
+                      {{-1 * getSoldWaterSupply() | number: '1.1-1'}} {{unitsShown}}
+                    </td>
+                  </tr>
+                </ng-container>
               </ng-container>
             </ng-container>
             <tr>
@@ -205,7 +205,7 @@
       <div class="col-sm-12 col-lg-7 mt-4 mt-lg-0">
         <div class="row">
           <div class="col-sm-12">
-            <div *ngIf="userHasParcels() && annualWaterSupplyChartData && waterUsageOverview">
+            <div *ngIf="userHasParcels() && waterUsageOverview && historicAverageAnnualUsage">
               <rio-landowner-water-supply-chart [annualWaterSupplySeries]="getAnnualWaterSupplySeries()"
                 [yDomain]="waterSupplyChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
@@ -262,12 +262,14 @@
                           <span class="label">Parcel</span>
                           <a routerLink="/parcels/{{parcelLedger.Parcel.ParcelID}}">{{parcelLedger.Parcel.ParcelNumber}}</a>
                         </div>
-                        <div class="col-lg-3 col-md-6 mb-0 mb-xs-4">
-                          <div *ngIf="parcelLedger.WaterType">
-                            <span class="label">Water Type</span>
-                            {{parcelLedger.WaterType.WaterTypeName}}
+                        <ng-container *ngIf="includeWaterSupply()">
+                          <div class="col-lg-3 col-md-6 mb-0 mb-xs-4">
+                            <div *ngIf="parcelLedger.WaterType">
+                              <span class="label">Water Type</span>
+                              {{parcelLedger.WaterType.WaterTypeName}}
+                            </div>
                           </div>
-                        </div>
+                        </ng-container>
                         <div class="col-lg-3 col-md-6 mb-0 mb-xs-4">
                           <span class="label">Quantity</span>
                           {{getResultInUnitsShown(parcelLedger.TransactionAmount) | number: '1.2-2'}} {{unitsShown}}

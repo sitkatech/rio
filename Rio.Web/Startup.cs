@@ -93,6 +93,7 @@ namespace Rio.Web
             MainAppApiUrl = configuration["MainAppApiUrl"];
             CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
             AllowTrading = bool.Parse(configuration["AllowTrading"]);
+            IncludeWaterSupply = bool.Parse(configuration["IncludeWaterSupply"]);
             GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
             KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
             PlatformLongName = configuration["PlatformLongName"];
@@ -122,6 +123,8 @@ namespace Rio.Web
         public bool AllowTrading { get; set; }
         [JsonProperty("allowOpenETSync")]
         public bool AllowOpenETSync {get; set;}
+        [JsonProperty("includeWaterSupply")]
+        public bool IncludeWaterSupply { get; set; }
         [JsonProperty("geoserverMapServiceUrl")]
         public string GeoserverMapServiceUrl { get; set; }
         [JsonProperty("keystoneAuthConfiguration")]

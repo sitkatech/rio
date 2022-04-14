@@ -17,6 +17,7 @@ import { ParcelLedgerCreateDto } from 'src/app/shared/generated/model/parcel-led
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { WaterTypeDto } from 'src/app/shared/generated/model/water-type-dto';
 import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'rio-parcel-ledger-create',
@@ -50,6 +51,10 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.model = new ParcelLedgerCreateDto();
+
+    if (!this.includeWaterSupply()) {
+      this.model.TransactionTypeID = TransactionTypeEnum.Usage;
+    }
     
     this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
@@ -71,6 +76,10 @@ export class ParcelLedgerCreateComponent implements OnInit {
 
   ngOnDestroy() {
     this.cdr.detach();
+  }
+
+  public includeWaterSupply(): boolean{
+    return environment.includeWaterSupply;
   }
 
   public isUsageAdjustment(): boolean {
