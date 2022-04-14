@@ -1,20 +1,20 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-api.fullname" . }}-rio-miugsa-configmap
+  name: {{ include "rio-api.fullname" . }}-rio-yolo-configmap
 data:
   ALLOW_TRADING: "false"
   AllowOpenETSync: "false"
   IncludeWaterSupply: "true"
-  PlatformLongName: "MIUGSA Water Accounting Platform Pilot"
+  PlatformLongName: "Yolo Water Accounting Platform Pilot"
   PlatformShortName: "Water Accounting Platform Pilot"
-  LeadOrganizationLongName: "Merced Irrigation-Urban Groundwater Sustainability Agency"
-  LeadOrganizationShortName: "MIUGSA"
-  LeadOrganizationHomeUrl: "https://www.miugsa.org/"
-  LeadOrganizationEmail: "contact@miugsa.org"
+  LeadOrganizationLongName: "Yolo County Flood Control & Water Conservation District"
+  LeadOrganizationShortName: "YCFCWCD"
+  LeadOrganizationHomeUrl: "http://ycfcwcd.org/"
+  LeadOrganizationEmail: "info@ycfcwcd.org"
   VerificationKeyChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ,0123456789"
-  ValidParcelNumberRegexPattern: "^[0-9]{8,}$"
-  ValidParcelNumberPatternAsStringForDisplay: "of Numbers only (no dashes, minimum of 8 digits)"
+  ValidParcelNumberRegexPattern: "^[0-9]{3}-[0-9]{3}-[0-9]{3}$$"
+  ValidParcelNumberPatternAsStringForDisplay: "###-###-###"
   OpenETAPIBaseUrl: "https://openet.dri.edu"
   OpenETRasterTimeSeriesMultipolygonRoute: "raster/timeseries/multipolygon"
   OpenETRasterMetadataRoute: "raster/metadata"

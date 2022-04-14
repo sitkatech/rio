@@ -1,81 +1,89 @@
 $footer-height: 60px;
 
 $theme-colors: (
-        "primary": #253D86,     
-        "secondary": #c4c4c4,   
-        "info": #029EDA,        
-        "light": #f5f5f5,       
-        "muted": #dee2e6,       
-        "danger": #DF1D37,
-        "success": #00985F,
-        "warning": #EBB700,
-        "h4-styled": #194349,
-        "footer": #44697D,
-        "footer-text": #fff,
-        "button-border-and-background": #253D86,
-        "button-hover-text": #C8DA2C,
-        "button-hover-background": #253D86,
-        "button-toggle-hover": #44697D,
+        "primary": #114571,     // systemBlue
+        "secondary": #ccc,   // lightGray
+        "info": #228be6,        // brightBlue
+        "light": #f5f5f5,       // offWhite
+        "muted": #dee2e6,       // footerGray
+        "danger": #ff0000,
+        "success": #00cc00,
+        "warning": #ffff9f,
+        "h4-styled": #151e61,
+        "footer": #ccc,
+        "footer-text": #000,
+        "button-border-and-background": #151e61,
+        "button-hover-text": #fff,
+        "button-hover-background": #333c7f, 
+        "button-toggle-hover": #333c7f,
         "header-background": #fff,
-        "select": #253D86,
-        "select-and-nav-hover": #1D5D43,
-        "select-and-nav-dropdown-hover": rgba(29,92,66,0.3),
-        "header-nav-link": #253D86,
-        "grid-header-background": #253D86,
-        "grid-accent-color": #44697D,
-        "grid-hover-color":  rgba(199, 153, 0, 0.3),
-        "account-dropdown-text": #253D86,
+        "select": #151e61,
+        "select-and-nav-hover": #8895ac,
+        "select-and-nav-dropdown-hover": #E5FAF1,
+        "header-nav-link" : #fff,
+        "grid-header-background": #151e61,
+        "grid-accent-color": #333c7f,
+        "grid-hover-color": #f8efdc,
+        "account-dropdown-text": #fff,
         "header-gradient-start": transparent,
         "header-gradient-end": transparent,
-        "breadcrumb-background-color": #253D86,
-        "breadcrumb-border-color": transparent,
+        "breadcrumb-background-color": #010A4D,
+        "breadcrumb-border-color": #e9eeef,
+        "breadcrumb-item-color": #fff,
         "breadcrumb-item-active-color": #fff,
-        "select-selected-text": #fff
+        "select-selected-text":#fff
 );
 
 // this looks redundant, but we need to make the override in both ways
-$primary: #253D86;
-$secondary: #c4c4c4;
-$info: #029EDA;
+$primary: #114571;
+$secondary: #ccc;
+$info: #228be6;
 $light: #f5f5f5;
 $muted: #dee2e6;
-$danger: #DF1D37;
-$success: #00985F;
-$warning: #EBB700;
+$danger: #ff0000;
+$success: #00cc00;
+$warning: #ffff9f;
 
-$account-dropdown-text: #253D86;
-$breadcrumb-background-color: #253D86;
-$breadcrumb-border-color: transparent;
-$breadcrumb-border-style: none;
+$account-dropdown-text: #fff;
+
+$breadcrumb-background-color: #010A4D;
+$breadcrumb-border-color: #e9eeef;
+$breadcrumb-border-style: solid;
 $breadcrumb-item-color: #fff;
 $breadcrumb-item-active-color: #fff;
-$breadcrumb-empty-display-type: flex;
-$breadcrumb-empty-display-height: 50px;
-$button-border-and-background: #253D86;
-$button-hover-text: #C8DA2C;
-$button-hover-background: #253D86;
-$button-toggle-hover: #44697D;
-$grid-accent-color: #44697D;
-$grid-font-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
-$grid-font-header-family: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
-$grid-header-background: #253D86;
-$grid-hover-color:  rgba(199, 153, 0, 0.3);
-$footer: #44697D;
-$footer-text: #fff;
-$header-background: #fff;
-$header-nav-link: #253D86;
-$header-nav-link-font-weight: bold;
-$h4-styled: #194349;
-$select: #253D86;
+$breadcrumb-empty-display-type: none;
+$breadcrumb-empty-display-height: 0px;
+
+$button-border-and-background: #151e61;
+$button-hover-text: #fff;
+$button-hover-background: #333c7f;
+$button-toggle-hover: #333c7f;
+
+$grid-accent-color: #333c7f;
+$grid-font-family: 'Tahoma';
+$grid-font-header-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+$grid-header-background: #151e61;
+$grid-hover-color: #f8efdc;
+
+$footer: #ccc;
+$footer-text: #000;
+
+$header-background: #fff;       
+$header-nav-link: #000;         
+$header-nav-link-font-weight: inherit;
+
+$h4-styled: #151e61;
+
+$select: #151e61;
 $select-selected-text: #fff;
-$select-and-nav-dropdown-hover: rgba(29,92,66,0.3);
-$select-and-nav-hover: #1D5D43;
-$switch-account-icon-padding: 3px;
+$select-and-nav-dropdown-hover: #f2f2f2;
+$select-and-nav-hover:#8895ac;
+$switch-account-icon-padding:2px;
 $text-muted: darken(#d3d3d3, 15%);
 $text-warning: darken($warning, 20%);
 
-$font-family-sans-serif: 'Swiss 721 (Open Type-TT)', 'Utopia', 'Arial', 'Georgia';
+$font-family-sans-serif: 'Tahoma', sans-serif, 'Helvetica Neue', sans-serif;
 $font-size: 16px;
-$base-text: #4A3C31;
+$base-text: #000000;
 
-$card-cap-bg: #dfdfdf;
+$card-cap-bg: #eee;
