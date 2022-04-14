@@ -13,7 +13,7 @@ data:
   LeadOrganizationHomeUrl: "https://www.pvwater.org"
   FaviconFilename: "favicon.ico"
   LeadOrganizationLogoFilename: "pvwater-logo-white.png"
-  NavThemeColor: "light"
+  NavThemeColor: "dark"
   ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
   ParcelBoundingBoxLeft: "-121.860154345934"
   ParcelBoundingBoxRight: "-121.582306671513"
