@@ -9,8 +9,8 @@
         public string SITKA_EMAIL_REDIRECT { get; set; }
         public string WEB_URL { get; set; }
         public string KEYSTONE_REDIRECT_URL { get; set; }
-        public bool ALLOW_TRADING { get; set; }
-        public bool INCLUDE_WATER_SUPPLY { get; set; }
+        public bool AllowTrading { get; set; }
+        public bool IncludeWaterSupply { get; set; }
         public string PlatformLongName { get; set; }
         public string PlatformShortName { get; set; }
         public string LeadOrganizationLongName { get; set; }

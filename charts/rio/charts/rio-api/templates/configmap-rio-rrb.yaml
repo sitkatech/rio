@@ -3,9 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ include "rio-api.fullname" . }}-rio-pajaro-configmap
 data:
-  ALLOW_TRADING: "false"
+  AllowTrading: "false"
   AllowOpenETSync: "true"
-  INCLUDE_WATER_SUPPLY: "true"
+  IncludeWaterSupply: "true"
   PlatformLongName: "Rosedale-Rio Bravo Water Accounting Platform"
   PlatformShortName: ""Water Accounting Platform"
   LeadOrganizationLongName: "Rosedale-Rio Bravo Water Storage District"

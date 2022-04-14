@@ -35,7 +35,7 @@ namespace Rio.API.Controllers
         [OfferManageFeature]
         public IActionResult New([FromRoute] int postingID, [FromBody] OfferUpsertDto offerUpsertDto)
         {
-            if (!_rioConfiguration.ALLOW_TRADING)
+            if (!_rioConfiguration.AllowTrading)
             {
                 return BadRequest();
             }

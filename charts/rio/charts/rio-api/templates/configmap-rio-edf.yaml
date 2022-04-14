@@ -3,9 +3,9 @@ kind: ConfigMap
 metadata:
   name: {{ include "rio-api.fullname" . }}-rio-pajaro-configmap
 data:
-  ALLOW_TRADING: "true"
+  AllowTrading: "true"
   AllowOpenETSync: "true"
-  INCLUDE_WATER_SUPPLY: "true"
+  IncludeWaterSupply: "true"
   PlatformLongName: "EDF Water Accounting and Trading Platform"
   PlatformShortName: "Water Trading Platform"
   LeadOrganizationLongName: "Environmental Defense Fund"

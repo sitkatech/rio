@@ -37,7 +37,7 @@ namespace Rio.API.Controllers
                 .ToList().ToDictionary(x => x.ParcelID, x => string.Join(", ", x.Tag.TagName));
 
              var parcelWaterSupplyBreakdownForYear = new Dictionary<int, Dictionary<int, decimal>>();
-            if (_rioConfiguration.INCLUDE_WATER_SUPPLY)
+            if (_rioConfiguration.IncludeWaterSupply)
             {
                 parcelWaterSupplyBreakdownForYear = ParcelLedgers.GetParcelWaterSupplyBreakdownForYearAsDto(_dbContext, year).ToDictionary(x => x.ParcelID, x => x.WaterSupplyByWaterType);
             }
@@ -45,7 +45,7 @@ namespace Rio.API.Controllers
             foreach (var parcelWaterSupplyAndUsageDto in parcelWaterSupplyAndUsageDtos)
             {
                 parcelWaterSupplyAndUsageDto.TagsAsCommaSeparatedString = tagNames.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? tagNames[parcelWaterSupplyAndUsageDto.ParcelID] : null;
-                if (_rioConfiguration.INCLUDE_WATER_SUPPLY)
+                if (_rioConfiguration.IncludeWaterSupply)
                 {
                     parcelWaterSupplyAndUsageDto.WaterSupplyByWaterType = parcelWaterSupplyBreakdownForYear.ContainsKey(parcelWaterSupplyAndUsageDto.ParcelID) ? parcelWaterSupplyBreakdownForYear[parcelWaterSupplyAndUsageDto.ParcelID] : null;
                 }

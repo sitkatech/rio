@@ -25,7 +25,7 @@ namespace Rio.API.Controllers
             KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger,
             keystoneService, rioConfiguration)
         {
-            _includeWaterSupply = _rioConfiguration.INCLUDE_WATER_SUPPLY;
+            _includeWaterSupply = _rioConfiguration.IncludeWaterSupply;
         }
 
         [HttpGet("parcel-ledgers/transaction-history")]

@@ -12,8 +12,8 @@ services:
       - WEB_URL=${WEB_URL}
       - SECRET_PATH=${SECRET_PATH}
       - KEYSTONE_REDIRECT_URL=${KEYSTONE_REDIRECT_URL}
-      - ALLOW_TRADING=${ALLOW_TRADING}
-      - INCLUDE_WATER_SUPPLY=${INCLUDE_WATER_SUPPLY}
+      - AllowTrading=${AllowTrading}
+      - IncludeWaterSupply=${IncludeWaterSupply}
       - PlatformLongName=${PlatformLongName}
       - PlatformShortName=${PlatformShortName}
       - LeadOrganizationLongName=${LeadOrganizationLongName}
