@@ -24,7 +24,12 @@
   "faviconFilename": "favicon.ico",
   "homepageBannerFilename": "/assets/main/pvwater_home_image.png",
   "enabledGETIntegration": false,
-  "navThemeColor": "light",
+  "navThemeColor": "dark",
+
+  "parcelBoundingBoxLeft": -121.860154345934,
+  "parcelBoundingBoxRight": -121.582306671513,
+  "parcelBoundingBoxTop": 37.0264146984802,
+  "parcelBoundingBoxBottom": 36.817331986845,
 
   "keystoneAuthConfiguration": {
     "clientId": "Rio",
