@@ -564,8 +564,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
     this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x?.name == this.months[11])?.value as number);
-
-    console.log(this.waterUsageOverview, this.historicAverageAnnualUsage)
   }
   
   private createSeriesEntry(name: string, value: number, isEmpty?: boolean): SeriesEntry {

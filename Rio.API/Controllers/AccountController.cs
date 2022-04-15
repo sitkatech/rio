@@ -238,8 +238,7 @@ namespace Rio.API.Controllers
                 .Select(x => new CumulativeWaterUsageByMonthDto
                 {
                     Month = x.Key, 
-                    CumulativeWaterUsageInAcreFeet = Math.Round(x.Where(y => y.CumulativeWaterUsageInAcreFeet.HasValue)
-                        .Average(y => y.CumulativeWaterUsageInAcreFeet.Value), 1)
+                    CumulativeWaterUsageInAcreFeet = Math.Round(x.Average(y => y.CumulativeWaterUsageInAcreFeet).GetValueOrDefault(), 1)
                 }).ToList();
 
             return monthlyWaterUsageOverviewDtos;
