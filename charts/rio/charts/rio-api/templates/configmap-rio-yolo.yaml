@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ include "rio-api.fullname" . }}-rio-yolo-configmap
 data:
-  ALLOW_TRADING: "false"
+  AllowTrading: "false"
   AllowOpenETSync: "false"
   IncludeWaterSupply: "true"
   PlatformLongName: "Yolo Water Accounting Platform Pilot"

@@ -11,7 +11,7 @@ data:
   CreateAccountRedirectUrl: "https://{{ .Values.global.domains.web }}/create-user-callback"
   KeystoneSupportBaseUrl: "https://identity-qa.sitkatech.com/Authentication"
   GeoserverMapServiceUrl: "https://{{ .Values.global.domains.geoserver }}/geoserver/Rio"
-  Keystone_ClientID: "{{ .Values.global.env.keystoneClientID }}"
+  Keystone_ClientID: "{{ .Values.global.env.tenantName }}"
   Keystone_Issuer: "https://identity-qa.sitkatech.com"
   Keystone_RedirectUriRelative: "/signin-oidc"
   Keystone_Scope: "openid profile offline_access keystone"
