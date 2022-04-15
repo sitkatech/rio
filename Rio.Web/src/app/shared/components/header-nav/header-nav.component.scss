@@ -16,6 +16,7 @@
   .navbar.navbar-rio, .top-bar
   {
     background-color: $header-background;
+    min-height: 100px;
   }
 
   .navbar.navbar-rio a.nav-link,

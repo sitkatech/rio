@@ -91,6 +91,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   public historicAverageAnnualUsage: number;
 
   public isPerformingAction: boolean = false;
+  public noChartDataToDisplay: boolean = false;
 
   constructor(private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
@@ -174,7 +175,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+    this.historicAverageAnnualUsage = (waterUsageOverview.Historic?.find(x => x.name == this.months[11])?.value as number);
   }
 
   public getAnnualWaterSupplySeries(): MultiSeriesEntry {
@@ -489,7 +490,12 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.getTradesAndPostingsForYear();
       this.accountService.getWaterUsageOverview(this.waterYearToDisplay.Year).subscribe(waterUsageOverview => {
         this.waterUsageOverview = waterUsageOverview;
-        this.initializeCharts(this.waterUsageOverview);
+
+        if (waterUsageOverview.Current.length > 0 || waterUsageOverview.Historic.length > 0) {
+          this.initializeCharts(this.waterUsageOverview);
+        } else {
+          this.noChartDataToDisplay = true;
+        }
       });
 
       this.landOwnerUsageReportGrid?.api.setRowData(landownerUsageReport);

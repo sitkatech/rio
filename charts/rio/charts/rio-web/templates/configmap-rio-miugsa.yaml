@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-web.fullname" . }}-rio-miugsa-configmap
+data:
+  AllowTrading: "false"
+  AllowOpenETSync: "false"
+  IncludeWaterSupply: "true"
+  PlatformLongName: "MIUGSA Water Accounting Platform Pilot"
+  PlatformShortName: "Water Accounting Platform Pilot"
+  LeadOrganizationLongName: "Merced Irrigation-Urban Groundwater Sustainability Agency"
+  LeadOrganizationShortName: "MIUGSA"
+  LeadOrganizationHomeUrl: "https://www.miugsa.org/"
+  FaviconFilename: "favicon.ico"
+  NavThemeColor: "light"
+  ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "-121.860154345934"
+  ParcelBoundingBoxRight: "-121.582306671513"
+  ParcelBoundingBoxTop: "37.0264146984802"
+  ParcelBoundingBoxBottom: "36.817331986845"
+  EnabledGETIntegration: "false"
+  HomepageBannerFilename: "/assets/main/miugsa_home_image.jpg"

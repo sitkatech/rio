@@ -134,17 +134,23 @@
                   class="fas fa-question-circle small"></i>
               </a>
             </div>
-            <div class="card-body" style="position:relative" *ngIf="waterUsageOverview && historicAverageAnnualUsage; else chartLoading">
-              <rio-landowner-water-supply-chart [waterSupplyLabel]="waterSupplyLabel"
+            <div class="card-body" style="position:relative" >
+              <rio-landowner-water-supply-chart *ngIf="waterUsageOverview && !noChartDataToDisplay; else noChartData"
+                [waterSupplyLabel]="waterSupplyLabel"
                 [annualWaterSupplySeries]="getAnnualWaterSupplySeries()" [yDomain]="waterSupplyChartRange"
                 [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">
               </rio-landowner-water-supply-chart> 
             </div>
-            <ng-template #chartLoading>
-              <div class="card-body text-center">
-                <i class="fa fa-spinner loading-spinner"></i>
-              </div>
+            <ng-template #noChartData>
+              <div *ngIf="noChartDataToDisplay; else chartLoading" class="small text-muted text-center">
+                No Chart Data to Display
+              </div>   
+              <ng-template #chartLoading>
+                <div class="card-body text-center">
+                  <i class="fa fa-spinner loading-spinner"></i>
+                </div>
+              </ng-template>
             </ng-template>
           </div>
         </div>
