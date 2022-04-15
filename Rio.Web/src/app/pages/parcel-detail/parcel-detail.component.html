@@ -101,7 +101,7 @@
             routerLink="/parcels/{{parcel.ParcelID}}/parcel-ledger-create">
             <span class="fas fa-edit"></span> Create New Transaction
           </a>
-          Water Supply and Usage
+          Water {{includeWaterSupply() ? 'Supply and' : ''}} Usage
         </div>
         <div class="card-body">
           <p>All data is in units of acre-feet</p>

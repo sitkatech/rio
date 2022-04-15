@@ -154,14 +154,16 @@
                 </span>
               </td>
             </tr>
-            <tr>
-              <th class="text-sm-left pb-3">
-                Current Available
-              </th>
-              <td class="text-sm-right font-weight-bold pb-3">
-                {{getCurrentAvailableWater() | number: '1.1-1'}} {{unitsShown}}
-              </td>
-            </tr>
+            <ng-container *ngIf="includeWaterSupply()">
+              <tr>
+                <th class="text-sm-left pb-3">
+                  Current Available
+                </th>
+                <td class="text-sm-right font-weight-bold pb-3">
+                  {{getCurrentAvailableWater() | number: '1.1-1'}} {{unitsShown}}
+                </td>
+              </tr>
+            </ng-container>
             <tr>
               <td colspan="2">
                 <hr class="mt-0" />
@@ -205,7 +207,7 @@
       <div class="col-sm-12 col-lg-7 mt-4 mt-lg-0">
         <div class="row">
           <div class="col-sm-12">
-            <div *ngIf="userHasParcels() && waterUsageOverview && historicAverageAnnualUsage">
+            <div *ngIf="userHasParcels() && waterUsageOverview">
               <rio-landowner-water-supply-chart [annualWaterSupplySeries]="getAnnualWaterSupplySeries()"
                 [yDomain]="waterSupplyChartRange" [historicCumulativeWaterUsage]="historicCumulativeWaterUsage"
                 [currentCumulativeWaterUsage]="getCumulativeWaterUsageForWaterYear()">

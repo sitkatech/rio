@@ -563,7 +563,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x?.name == this.months[11])?.value as number);
+
+    console.log(this.waterUsageOverview, this.historicAverageAnnualUsage)
   }
   
   private createSeriesEntry(name: string, value: number, isEmpty?: boolean): SeriesEntry {
@@ -573,6 +575,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private createParcelMonthlyUsageChartData(year: number): MultiSeriesEntry[] {
     const parcelLedgers = this.getParcelLedgerUsageForYear(year);
+    // if (parcelLedgers.length == 0) {
+    //   return;
+    // }
     
     // create sparsly populated matrix of usages by parcel and month
     let usageByParcelAndMonth = {};
@@ -607,6 +612,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private createParcelUsageOverviewChartData(): WaterSupplyOverviewDto {
     let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
+    // if (usageParcelLedgers.length == 0) {
+    //   return;
+    // }
     
     // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
     let usageByYearAndMonth: Object = {};
@@ -652,6 +660,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         }),
       Historic: this.months.map((month, i) => 
       {
+        if (!historicUsageSums[i + 1]) {
+          return this.createSeriesEntry(month, 0, true);
+        }
         const seriesValue = Math.abs(historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']);
         return this.createSeriesEntry(month, seriesValue);
       })

@@ -62,7 +62,7 @@
                         <a *ngIf="isAdministrator()" routerLink="/parcels/create-water-transactions" class="dropdown-item">
                             Create Water Transactions
                         </a>
-                        <a *ngIf="isAdministrator()" routerLink="/parcel-ledger-transaction-history" class="dropdown-item">
+                        <a *ngIf="isAdministrator() && includeWaterSupply()" routerLink="/parcel-ledger-transaction-history" class="dropdown-item">
                             Transaction History
                         </a>
                     </ng-container>

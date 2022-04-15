@@ -82,7 +82,7 @@ const routes: Routes = [
   { path: "parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-create-from-spreadsheet", component: ParcelLedgerCreateFromSpreadsheetComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-ledger-transaction-history", component: ParcelLedgerTransactionHistoryComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-transaction-history", component: ParcelLedgerTransactionHistoryComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags", component: TagListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags/bulk-tag-parcels", component: TagBulkParcelsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags/:id", component: TagDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
