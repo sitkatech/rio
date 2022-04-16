@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-web.fullname" . }}-rio-pajaro-configmap
+data:
+  AllowTrading: "false"
+  AllowOpenETSync: "false"
+  IncludeWaterSupply: "false"
+  PlatformLongName: "Pajaro Valley Water Accounting Platform Pilot"
+  PlatformShortName: "Water Accounting Platform Pilot"
+  LeadOrganizationLongName: "Pajaro Valley Water Management Agency"
+  LeadOrganizationShortName: "PV Water"
+  LeadOrganizationHomeUrl: "https://www.pvwater.org"
+  FaviconFilename: "favicon.ico"
+  LeadOrganizationLogoFilename: "pvwater-logo-white.png"
+  NavThemeColor: "dark"
+  ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "-121.860154345934"
+  ParcelBoundingBoxRight: "-121.582306671513"
+  ParcelBoundingBoxTop: "37.0264146984802"
+  ParcelBoundingBoxBottom: "36.817331986845"
+  EnabledGETIntegration: "false"
+  HomepageBannerFilename: "/assets/main/pvwater_home_image.png"

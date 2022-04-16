@@ -88,6 +88,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   public defaultColDef: ColDef;
   private columnApi: ColumnApi;
   private gridApi: GridApi;
+  private supplyTypeColDefInsertIndex = 4;
 
   public highlightedParcelDto: ParcelDto;
   private _highlightedParcelID: number;
@@ -144,18 +145,19 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
       this.currentDate = (new Date());
 
+      let accountNumber = parseInt(this.route.snapshot.paramMap.get("accountNumber"));
+      if (accountNumber) {
+        this.accountService.getAccountByAccountNumber(accountNumber).subscribe(account => {
+          this.activeAccount = account instanceof Array
+            ? null
+            : account as AccountSimpleDto;
+            this.loadingActiveAccount = false;
+          this.updateAccountData(account);
+        });
+      }
+
       this.waterTypeService.getWaterTypes().subscribe(waterTypes => {
         this.waterTypes = waterTypes;
-        let accountNumber = parseInt(this.route.snapshot.paramMap.get("accountNumber"));
-        if (accountNumber) {
-          this.accountService.getAccountByAccountNumber(accountNumber).subscribe(account => {
-            this.activeAccount = account instanceof Array
-              ? null
-              : account as AccountSimpleDto;
-              this.loadingActiveAccount = false;
-            this.updateAccountData(account);
-          });
-        }
       });
 
       this.createActivityDetailGridColDefs();
@@ -193,13 +195,13 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
   }
 
   public updateAccountData(account: AccountSimpleDto): void {
-    forkJoin(
-      this.postingService.getPostingsByAccountID(account.AccountID),
-      this.tradeService.getTradeActivityByAccountID(account.AccountID),
-      this.waterYearService.getWaterYears(),
-      this.waterYearService.getDefaultWaterYearToDisplay(),
-      this.accountService.getParcelsInAccountReconciliationByAccountID(account.AccountID)
-    ).subscribe(([postings, trades, waterYears, defaultWaterYear, parcelsToBeReconciled]) => {
+    forkJoin({
+      postings: this.postingService.getPostingsByAccountID(account.AccountID),
+      trades: this.tradeService.getTradeActivityByAccountID(account.AccountID),
+      waterYears: this.waterYearService.getWaterYears(),
+      defaultWaterYear: this.waterYearService.getDefaultWaterYearToDisplay(),
+      parcelsToBeReconciled: this.accountService.getParcelsInAccountReconciliationByAccountID(account.AccountID)
+    }).subscribe(({postings, trades, waterYears, defaultWaterYear, parcelsToBeReconciled}) => {
       this.waterYears = waterYears;
       this.waterYearToDisplay = defaultWaterYear;
       this.postings = postings;
@@ -486,10 +488,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       this.utilityFunctionsService.createDateColumnDef('Effective Date', 'EffectiveDate', 'M/d/yyyy'),
       this.utilityFunctionsService.createDateColumnDef('Transaction Date', 'TransactionDate', 'short'),
       { headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName'},
-      {
-        headerName: 'Supply Type',
-        valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-'
-      },
       { headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName'},
       this.utilityFunctionsService.createDecimalColumnDef('Transaction Volume (ac-ft)', 'TransactionAmount'),
       this.utilityFunctionsService.createDecimalColumnDef('Transaction Depth (ac-ft / ac)', 'TransactionDepth'),
@@ -498,6 +496,15 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         valueGetter: params => params.data.UserComment ?? '-'
       }
     ];
+
+    if (this.includeWaterSupply()) {
+      const supplyTypeColDef: ColDef = {
+        headerName: 'Supply Type',
+        valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-'
+      };
+
+      this.activityDetailGridColDefs.splice(this.supplyTypeColDefInsertIndex, 0, supplyTypeColDef);
+    }
 
     this.defaultColDef = {
       sortable: true, filter: true, resizable: true
@@ -536,26 +543,27 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     }
 
     const waterSupplyLabel = environment.allowTrading ? "Annual Supply (Water Supply +/- Trades)" : "Annual Supply"
-    
-    this.annualWaterSupplyChartData = this.waterYears.map(x => {
-      const waterSupply = this.getAnnualWaterSupply(x.Year, true);
-      const sold = this.getSoldWaterSupply(x.Year, true);
-      const purchased = this.getPurchasedWaterSupply(x.Year);
-
-      values.push(waterSupply + purchased - sold);      
-
-      return {
-        Year: x.Year,
-        ChartData: {
-          name: waterSupplyLabel,
-          series: this.months.map(y => { return this.createSeriesEntry(y, waterSupply + purchased - sold) })
+    if (this.includeWaterSupply()) {
+      this.annualWaterSupplyChartData = this.waterYears.map(x => {
+        const waterSupply = this.getAnnualWaterSupply(x.Year, true);
+        const sold = this.getSoldWaterSupply(x.Year, true);
+        const purchased = this.getPurchasedWaterSupply(x.Year);
+  
+        values.push(waterSupply + purchased - sold);      
+  
+        return {
+          Year: x.Year,
+          ChartData: {
+            name: waterSupplyLabel,
+            series: this.months.map(y => { return this.createSeriesEntry(y, waterSupply + purchased - sold) })
+          }
         }
-      }
-    });
-
+      });
+    }
+    
     this.waterSupplyChartRange = [0, 1.2 * Math.max(...values)];
     this.historicCumulativeWaterUsage = new MultiSeriesEntry("Average Consumption (All Years)", this.waterUsageOverview.Historic);
-    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x.name == this.months[11]).value as number);
+    this.historicAverageAnnualUsage = (this.waterUsageOverview.Historic.find(x => x?.name == this.months[11])?.value as number);
   }
   
   private createSeriesEntry(name: string, value: number, isEmpty?: boolean): SeriesEntry {
@@ -565,6 +573,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private createParcelMonthlyUsageChartData(year: number): MultiSeriesEntry[] {
     const parcelLedgers = this.getParcelLedgerUsageForYear(year);
+    // if (parcelLedgers.length == 0) {
+    //   return;
+    // }
     
     // create sparsly populated matrix of usages by parcel and month
     let usageByParcelAndMonth = {};
@@ -599,6 +610,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   private createParcelUsageOverviewChartData(): WaterSupplyOverviewDto {
     let usageParcelLedgers = this.parcelLedgers.filter(x => x.TransactionType.TransactionTypeID == TransactionTypeEnum.Usage);
+    // if (usageParcelLedgers.length == 0) {
+    //   return;
+    // }
     
     // create sparsly populated matrix of usages by year and month, get multiannual monthly usage sums and for determining average monthly usages
     let usageByYearAndMonth: Object = {};
@@ -644,6 +658,9 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
         }),
       Historic: this.months.map((month, i) => 
       {
+        if (!historicUsageSums[i + 1]) {
+          return this.createSeriesEntry(month, 0, true);
+        }
         const seriesValue = Math.abs(historicUsageSums[i + 1]['usageSum'] / historicUsageSums[i + 1]['monthsWithDataCount']);
         return this.createSeriesEntry(month, seriesValue);
       })
@@ -712,6 +729,10 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public allowTrading(): boolean {
     return environment.allowTrading;
+  }
+
+  public includeWaterSupply():boolean{
+    return environment.includeWaterSupply;
   }
 
   public toggleWaterUsageByParcelView(): void {

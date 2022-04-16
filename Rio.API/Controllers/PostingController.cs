@@ -17,7 +17,7 @@ namespace Rio.API.Controllers
 
         public PostingController(RioDbContext dbContext, ILogger<PostingController> logger, KeystoneService keystoneService, IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
         {
-            _allowTrading = _rioConfiguration.ALLOW_TRADING;
+            _allowTrading = _rioConfiguration.AllowTrading;
         }
 
         [HttpPost("/postings/new")]

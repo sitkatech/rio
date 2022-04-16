@@ -50,7 +50,7 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
   public parcelLedgerGridColumnDefs: ColDef[];
   public rowData = [];
   public defaultColDef: ColDef;
-
+  public supplyTypeColDefInsertIndex = 3;
   private gridColumnApi;
 
   constructor(
@@ -75,14 +75,14 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
       const id = parseInt(this.route.snapshot.paramMap.get("id"));
       this.initializeLedgerGrid();
       if (id) {
-        forkJoin(
-          this.parcelService.getParcelByParcelID(id),
-          this.parcelService.getParcelLedgerEntriesByParcelID(id),
-          this.parcelService.getParcelOwnershipHistory(id),
-          this.tagService.getTagsByParcelID(id),
-          this.waterYearService.getWaterYears(),
-          this.waterTypeService.getWaterTypes()
-        ).subscribe(([parcel, parcelLedgers, parcelOwnershipHistory, tags, waterYears, waterTypes]) => {
+        forkJoin({
+          parcel: this.parcelService.getParcelByParcelID(id),
+          parcelLedgers: this.parcelService.getParcelLedgerEntriesByParcelID(id),
+          parcelOwnershipHistory: this.parcelService.getParcelOwnershipHistory(id),
+          tags: this.tagService.getTagsByParcelID(id),
+          waterYears: this.waterYearService.getWaterYears(),
+          waterTypes: this.waterTypeService.getWaterTypes()
+        }).subscribe(({parcel, parcelLedgers, parcelOwnershipHistory, tags, waterYears, waterTypes}) => {
           this.parcel = parcel instanceof Array
             ? null
             : parcel as ParcelDto;
@@ -110,10 +110,6 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         headerName: 'Transaction Type', field: 'TransactionType.TransactionTypeName',
         filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'TransactionType.TransactionTypeName' }
       },
-      {
-        headerName: 'Water Type', valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-',
-        filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'WaterType' }
-      },
       { 
         headerName: 'Source Type', field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName',
         filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'ParcelLedgerEntrySourceType.ParcelLedgerEntrySourceTypeDisplayName' }
@@ -126,6 +122,14 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
         valueGetter: params => params.data.UserComment ?? '-'
       }
     ];
+
+    if (this.includeWaterSupply()) {
+      const waterTypeColDef: ColDef = {
+        headerName: 'Supply Type', valueGetter: params => params.data.WaterType ? params.data.WaterType.WaterTypeName : '-',
+        filterFramework: DropdownSelectFilterComponent, filterParams: { field: 'WaterType' }
+      };
+      this.parcelLedgerGridColumnDefs.splice(this.supplyTypeColDefInsertIndex, 0, waterTypeColDef);
+    }
 
     this.defaultColDef = {
       resizable: true,
@@ -151,6 +155,10 @@ export class ParcelDetailComponent implements OnInit, OnDestroy {
 
   public allowTrading(): boolean {
     return environment.allowTrading;
+  }
+
+  public includeWaterSupply():boolean{
+    return environment.includeWaterSupply;
   }
 
   public getSelectedParcelIDs(): Array<number> {

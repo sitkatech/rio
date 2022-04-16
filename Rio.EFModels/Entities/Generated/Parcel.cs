@@ -11,6 +11,7 @@ namespace Rio.EFModels.Entities
 {
     [Table("Parcel")]
     [Index(nameof(ParcelNumber), Name = "AK_Parcel_ParcelNumber", IsUnique = true)]
+    [Index(nameof(ParcelGeometry), Name = "SPATIAL_Parcel_ParcelGeometry")]
     public partial class Parcel
     {
         public Parcel()

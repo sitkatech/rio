@@ -435,6 +435,11 @@ namespace Rio.API.Controllers
         {
             var landownerUsageReportDtos = LandownerUsageReport.GetByYear(_dbContext, year).ToList();
 
+            if (!_rioConfiguration.IncludeWaterSupply)
+            {
+                return Ok(landownerUsageReportDtos);
+            }
+
             var landownerWaterSupplyBreakdownForYear = ParcelLedgers.GetLandownerWaterSupplyBreakdownForYear(_dbContext, year);
 
             foreach (var landownerUsageReportDto in landownerUsageReportDtos)

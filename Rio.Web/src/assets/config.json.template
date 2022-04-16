@@ -25,6 +25,7 @@
     "contactInfoPhysicalAddress": [TODO],
 
     "faviconFilename": [TODO],
+    "homepageBannerFilename": [TODO],
     "enabledGETIntegration": [TODO],
     "navThemeColor" [TODO] (light or dark),
     "parcelBoundingBoxLeft": [TODO],

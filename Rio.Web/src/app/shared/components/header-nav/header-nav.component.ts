@@ -187,8 +187,16 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
         return environment.allowTrading;
     }
 
+    public includeWaterSupply():boolean{
+        return environment.includeWaterSupply;
+    }
+
     public platformShortName(): string {
         return environment.platformShortName;
+    }
+
+    public platformLongName(): string {
+        return environment.platformLongName;
     }
 
     public leadOrganizationHomeUrl(): string {
@@ -196,6 +204,9 @@ export class HeaderNavComponent implements OnInit, OnDestroy {
     }
 
     public leadOrganizationLogoSrc(): string {
+        if (!environment.leadOrganizationLogoFilename) {
+            return null;
+        }
         return `assets/main/logos/${environment.leadOrganizationLogoFilename}`;
     }
 

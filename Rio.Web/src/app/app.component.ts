@@ -44,7 +44,7 @@ export class AppComponent {
             }
         });
 
-        this.titleService.setTitle(`${environment.leadOrganizationShortName} ${environment.platformShortName}`)
+        this.titleService.setTitle(`${environment.platformLongName}`)
         this.setAppFavicon();
     }
 

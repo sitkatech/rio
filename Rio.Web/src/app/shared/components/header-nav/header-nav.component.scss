@@ -1,7 +1,8 @@
 @import "~src/scss/_variables.scss";
 
 .navbarLogo {
-    height: 45px;
+    max-height: 120px;
+    max-width: 275px;
   }
   
   a.signOut {
@@ -15,6 +16,7 @@
   .navbar.navbar-rio, .top-bar
   {
     background-color: $header-background;
+    min-height: 100px;
   }
 
   .navbar.navbar-rio a.nav-link,
@@ -71,11 +73,11 @@
 }
 
   .platform-title-outer {
+    text-align: center;
     word-break: break-word;
-    width:138px;
     @media screen and (min-width: 484px)
     {
-      width:238px;
+      min-width: 160px;
     }
     @media screen and (max-width: 411px)
     {

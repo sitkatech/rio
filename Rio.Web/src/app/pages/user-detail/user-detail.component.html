@@ -1,17 +1,15 @@
 <div class="breadcrumb-container">
-    <div class="container">
-        <nav aria-label="breadcrumb" *ngIf="user">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item" aria-current="page">
-                    <a routerLink="/users" *ngIf="currentUserIsAdminOrDemoUser()">Users</a>
-                    <span *ngIf="!currentUserIsAdminOrDemoUser()">Users</span>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                    {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
-                </li>
-            </ol>
-        </nav>
-    </div>
+    <nav aria-label="breadcrumb" *ngIf="user">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">
+                <a routerLink="/users" *ngIf="currentUserIsAdminOrDemoUser()">Users</a>
+                <span *ngIf="!currentUserIsAdminOrDemoUser()">Users</span>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                {{user?.FullName ||  ((user?.FirstName || user?.LastName) ? (user?.FirstName + ' ' + user?.LastName) : null)}}
+            </li>
+        </ol>
+    </nav>
 </div>
 <div class="container mt-sm-4" *ngIf="user">
     <div style="margin: 1rem 0 1rem 0;" *ngIf="user.UserGuid === null">

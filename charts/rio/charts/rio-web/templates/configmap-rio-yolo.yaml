@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-web.fullname" . }}-rio-yolo-configmap
+data:
+  AllowTrading: "false"
+  AllowOpenETSync: "false"
+  IncludeWaterSupply: "true"
+  PlatformLongName: "Yolo Water Accounting Platform Pilot"
+  PlatformShortName: "Water Accounting Platform Pilot"
+  LeadOrganizationLongName: "Yolo County Flood Control & Water Conservation District"
+  LeadOrganizationShortName: "YCFCWCD"
+  LeadOrganizationHomeUrl: "http://ycfcwcd.org/"
+  FaviconFilename: "favicon.ico"
+  LeadOrganizationLogoFilename: "ycfcwcd-logo.jpg"
+  NavThemeColor: "light"
+  ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "-122.255216869618"
+  ParcelBoundingBoxRight: "-121.503100773251"
+  ParcelBoundingBoxTop: "38.9258419099484"
+  ParcelBoundingBoxBottom: "38.3132769567598"
+  EnabledGETIntegration: "false"
+  HomepageBannerFilename: "/assets/main/home_image.jpg"

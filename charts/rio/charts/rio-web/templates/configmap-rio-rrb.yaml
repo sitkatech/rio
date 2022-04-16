@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rio-web.fullname" . }}-rio-rrb-configmap
+data:
+  AllowTrading: "false"
+  AllowOpenETSync: "true"
+  IncludeWaterSupply: "true"
+  PlatformLongName: "Rosedale-Rio Bravo Water Accounting Platform"
+  PlatformShortName: "Water Accounting Platform"
+  LeadOrganizationLongName: "Rosedale-Rio Bravo Water Storage District"
+  LeadOrganizationShortName: "RRB"
+  LeadOrganizationHomeUrl: "https://rrbwsd.com"
+  FaviconFilename: "rio_favicon.png"
+  LeadOrganizationLogoFilename: "rrbwsd_logo.png"
+  NavThemeColor: "light"
+  HomepageBannerFilename: "/assets/main/home_image.jpg"
+  ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
+  ParcelBoundingBoxLeft: "-119.45272037350193"
+  ParcelBoundingBoxRight: "-119.11015104115182"
+  ParcelBoundingBoxTop: "35.442022035628575"
+  ParcelBoundingBoxBottom: "35.27608156273151"
+  EnabledGETIntegration: "false"

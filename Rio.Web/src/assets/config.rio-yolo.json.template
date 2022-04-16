@@ -1,0 +1,40 @@
+{
+  "production": false,
+  "staging": false,
+  "dev": true,
+  "mainAppApiUrl": "https://host.docker.internal:8789",
+  "createAccountRedirectUrl": "http://host.docker.internal:8787/create-user-callback",
+  "allowTrading": false,
+  "includeWaterSupply": true,
+  "applicationInternalName": "RioMIUGSA",
+  "geoserverMapServiceUrl": "http://host.docker.internal:8780/geoserver/Rio",
+
+  "platformLongName": "MIUGSA Water Accounting Platform Pilot",
+  "platformShortName": "Water Accounting Platform Pilot",
+  "leadOrganizationShortName": "MIUGSA", 
+  "leadOrganizationLongName": "Merced Irrigation-Urban Groundwater Sustainability Agency", 
+  "leadOrganizationHomeUrl": "https://www.miugsa.org/",
+  "applicationType": "platform",
+
+  "contactInfoEmail":"contact@miugsa.org",
+
+  "faviconFilename": "favicon.ico",
+  "homepageBannerFilename": "/assets/main/miugsa_home_image.jpg",
+  "enabledGETIntegration": false,
+  "navThemeColor": "dark",
+
+  "keystoneAuthConfiguration": {
+    "clientId": "Rio",
+    "issuer": "https://host.docker.internal:7112",
+    "responseType": "code",
+    "disablePKCE": false,
+    "redirectUriRelative": "/",
+    "scope": "openid profile offline_access keystone",
+    "sessionChecksEnabled": false,
+    "logoutUrl": "https://host.docker.internal:7112/account/logout",
+    "postLogoutRedirectUri": "/",
+    "waitForTokenInMsec": 500
+},
+
+"appInsightsInstrumentationKey":null
+}
