@@ -12,7 +12,7 @@ data:
   LeadOrganizationShortName: "YCFCWCD"
   LeadOrganizationHomeUrl: "http://ycfcwcd.org/"
   FaviconFilename: "favicon.ico"
-  LeadOrganizationLogoFilename: "ycfcwcd-logo.jpg"
+  LeadOrganizationLogoFilename: "ycfcwcd-logo.png"
   NavThemeColor: "light"
   ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
   ParcelBoundingBoxLeft: "-122.255216869618"
