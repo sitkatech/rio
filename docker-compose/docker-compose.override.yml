@@ -28,10 +28,10 @@ services:
       - OpenETRasterMetadataRoute=${OpenETRasterMetadataRoute}
       - OpenETAllFilesReadyForExportRoute=${OpenETAllFilesReadyForExportRoute}
       - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
-      - OpenETRasterMetadataBoundingBoxLeft=${OpenETRasterMetadataBoundingBoxLeft}
-      - OpenETRasterMetadataBoundingBoxRight=${OpenETRasterMetadataBoundingBoxRight}
-      - OpenETRasterMetadataBoundingBoxTop=${OpenETRasterMetadataBoundingBoxTop}
-      - OpenETRasterMetadataBoundingBoxBottom=${OpenETRasterMetadataBoundingBoxBottom}
+      - ParcelBoundingBoxLeft=${ParcelBoundingBoxLeft}
+      - ParcelBoundingBoxRight=${ParcelBoundingBoxRight}
+      - ParcelBoundingBoxTop=${ParcelBoundingBoxTop}
+      - ParcelBoundingBoxBottom=${ParcelBoundingBoxBottom}
       - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
       - AllowOpenETSync=${AllowOpenETSync}
       - SupportEmailAddress=${SupportEmailAddress}
