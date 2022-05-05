@@ -16,8 +16,8 @@ data:
   NavThemeColor: "light"
   HomepageBannerFilename: "/assets/main/home_image.jpg"
   ApplicationInternalName: "{{ .Values.global.env.tenantName }}"
-  ParcelBoundingBoxLeft: -119.45272037350193
-  ParcelBoundingBoxRight: -119.11015104115182
-  ParcelBoundingBoxTop: 35.442022035628575
-  ParcelBoundingBoxBottom: 35.27608156273151
+  ParcelBoundingBoxLeft: "-119.45272037350193"
+  ParcelBoundingBoxRight: "-119.11015104115182"
+  ParcelBoundingBoxTop: "35.442022035628575"
+  ParcelBoundingBoxBottom: "35.27608156273151"
   EnabledGETIntegration: "true"
