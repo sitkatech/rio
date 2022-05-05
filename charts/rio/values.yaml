@@ -21,7 +21,6 @@ global:
     apiSqlPassword: "passwordhere"
     sendGridApiKey: "sendgridapikeyhere"
     openETApiKey: "openETApiKeyHere"
-    openETShapefilePath: "openETShapefilePathHere"
     hangfireUserName: "hangfireUserName"
     hangfirePassword: "passwordhere"
 
