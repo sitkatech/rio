@@ -52,10 +52,6 @@ export class ManagedRechargeScenarioComponent implements OnInit {
     public ngOnInit(): void {
         // Default bounding box
         this.boundingBox = new BoundingBoxDto();
-        console.log(environment.parcelBoundingBoxLeft);
-        console.log(environment.parcelBoundingBoxBottom);
-        console.log(environment.parcelBoundingBoxRight);
-        console.log(environment.parcelBoundingBoxTop);
         this.boundingBox.Left = environment.parcelBoundingBoxLeft;
         this.boundingBox.Bottom = environment.parcelBoundingBoxBottom;
         this.boundingBox.Right = environment.parcelBoundingBoxRight;

@@ -109,10 +109,10 @@ namespace Rio.Web
             ApplicationInternalName = configuration["ApplicationInternalName"];
             AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
             AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
-            ParcelBoundingBoxLeft =  double.Parse(configuration["ParcelBoundingBoxRight"]);
+            ParcelBoundingBoxLeft =  double.Parse(configuration["ParcelBoundingBoxLeft"]);
             ParcelBoundingBoxRight =  double.Parse(configuration["ParcelBoundingBoxRight"]);
-            ParcelBoundingBoxTop =  double.Parse(configuration["ParcelBoundingBoxRight"]);
-            ParcelBoundingBoxBottom =  double.Parse(configuration["ParcelBoundingBoxRight"]);
+            ParcelBoundingBoxTop =  double.Parse(configuration["ParcelBoundingBoxTop"]);
+            ParcelBoundingBoxBottom =  double.Parse(configuration["ParcelBoundingBoxBottom"]);
         }
 
         [JsonProperty("mainAppApiUrl")]
