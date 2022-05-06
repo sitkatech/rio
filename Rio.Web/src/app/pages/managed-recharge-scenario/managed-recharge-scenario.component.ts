@@ -132,13 +132,13 @@ export class ManagedRechargeScenarioComponent implements OnInit {
 
     public ngAfterViewInit(): void {
 
-        [{map:this.westScenarioMap, id: this.westMapID, scenario: this.westernScenarioInfo},
-         {map:this.eastScenarioMap, id: this.eastMapID, scenario: this.easternScenarioInfo}].forEach(
-             (x) => {
-                 x.map = this.initializeMap(x.map, x.id);
-                 this.addScenarioToMap(x.map, x.scenario);
-                 this.addLegendToMap(x.map);
-             });
+        [{ map: this.westScenarioMap, id: this.westMapID, scenario: this.westernScenarioInfo },
+        { map: this.eastScenarioMap, id: this.eastMapID, scenario: this.easternScenarioInfo }].forEach(
+            (x) => {
+                x.map = this.initializeMap(x.map, x.id);
+                this.addScenarioToMap(x.map, x.scenario);
+                this.addLegendToMap(x.map);
+            });
     }
 
     public initializeMap(map: L.map, mapID: string): L.map {
@@ -152,7 +152,7 @@ export class ManagedRechargeScenarioComponent implements OnInit {
                 this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/water_trading_scenario_well.png' style='height:16px'> Wells"],
                 this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/scenario_recharge_basin.png' style='height:16px'> Recharge Basins"],
                 this.overlayLayersArray[this.arrayPosition]["<img src='../../../assets/main/images/disadvantaged_community.png' style='height:16px'> Disadvantaged <br/> Communities"]
-                
+
             ]
         } as L.MapOptions;
 
@@ -170,7 +170,7 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         map.fitBounds([[this.boundingBox.Bottom, this.boundingBox.Left], [this.boundingBox.Top, this.boundingBox.Right]], this.defaultFitBoundsOptions);
 
 
-        new L.Control.Layers(this.tileLayersArray[this.arrayPosition], this.overlayLayersArray[this.arrayPosition], {collapsed:false}).addTo(map);
+        new L.Control.Layers(this.tileLayersArray[this.arrayPosition], this.overlayLayersArray[this.arrayPosition], { collapsed: false }).addTo(map);
 
         this.addCloseButton(map);
 
@@ -183,7 +183,7 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         return {
             color: feature.properties.color,
             fillOpacity: 0.6,
-            stroke:false,
+            stroke: false,
             smoothFactor: 0.3
         }
     }
@@ -194,13 +194,13 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         let leafletControlLayersSelector = $(mapContainer.find(".leaflet-control-layers"));
 
         let closeButton = L.DomUtil.create("a", closeButtonClass);
-        closeButton.innerHTML = "Close";       
+        closeButton.innerHTML = "Close";
         leafletControlLayersSelector.append(closeButton);
-       
+
         let toggleSelector = $(mapContainer.find(".leaflet-control-layers-toggle"));
         let closeButtonSelector = $(mapContainer.find(".leaflet-control-layers-close"));
 
-        L.DomEvent.on(closeButton, "click", function(e) {
+        L.DomEvent.on(closeButton, "click", function (e) {
             leafletControlLayersSelector.removeClass("leaflet-control-layers-expanded");
             closeButtonSelector.toggle();
         });
@@ -209,7 +209,7 @@ export class ManagedRechargeScenarioComponent implements OnInit {
             closeButtonSelector.toggle()
         });
 
-        map.closeMapLayersControl = function() {
+        map.closeMapLayersControl = function () {
             leafletControlLayersSelector.removeClass("leaflet-control-layers-expanded");
             closeButtonSelector.toggle();
         }
@@ -217,17 +217,17 @@ export class ManagedRechargeScenarioComponent implements OnInit {
         map.closeMapLayersControl();
     }
 
-    public addScenarioToMap(map: L.map, scenario:any): void {
+    public addScenarioToMap(map: L.map, scenario: any): void {
         let fileOptions = JSON.parse(scenario.FileDetails);
         let features = JSON.parse(fileOptions.ResultSets[0].MapData.MapPoints);
-        let geoJSONLayer = L.geoJSON(features, {style:this.setStyle});
+        let geoJSONLayer = L.geoJSON(features, { style: this.setStyle });
         geoJSONLayer.addTo(map);
     }
 
     public addLegendToMap(map: L.map): void {
-        var legendItems = JSON.parse(this.westernScenarioInfo.FileDetails);  
-        var legend = L.control({position:'bottomleft'});
-        legend.onAdd = function(map: any): any {
+        var legendItems = JSON.parse(this.westernScenarioInfo.FileDetails);
+        var legend = L.control({ position: 'bottomleft' });
+        legend.onAdd = function (map: any): any {
             var div = L.DomUtil.create('div', 'legend');
             div.innerHTML = `<div class='legend-title'>
                                     <div class='legend-label'>

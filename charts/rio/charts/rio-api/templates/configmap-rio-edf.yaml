@@ -20,6 +20,7 @@ data:
   OpenETRasterMetadataRoute: "raster/metadata"
   OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
   OpenETRasterExportStatusRoute: "raster/export/status"
+  OpenETShapefilePath: "users/wicarrara/all_parcels_edf"
   OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "ParcelNumb"
   ParcelBoundingBoxLeft: "-119.45272037350193"
   ParcelBoundingBoxRight: "-119.11015104115182"

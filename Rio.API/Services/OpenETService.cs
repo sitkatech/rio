@@ -348,16 +348,8 @@ namespace Rio.API.Services
 
             try
             {
-                var fileContents = new MemoryStream();
-                using (var gzipStream = new GZipStream(response.Content.ReadAsStreamAsync().Result, CompressionMode.Decompress))
-                {
-                    gzipStream.CopyTo(fileContents);
-                }
-
-                fileContents.Position = 0;
-
                 List<OpenETGoogleBucketResponseEvapotranspirationData> distinctRecords;
-                using (var reader = new StreamReader(fileContents))
+                using (var reader = new StreamReader(response.Content.ReadAsStreamAsync().Result))
                 {
                     var csvr = new CsvReader(reader, CultureInfo.CurrentCulture);
                     var finalizedWaterYearMonths = _rioDbContext.WaterYearMonths
