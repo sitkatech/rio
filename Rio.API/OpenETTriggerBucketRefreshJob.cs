@@ -27,7 +27,12 @@ namespace Rio.API
             _openETService = openETService;
         }
 
-        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Staging, RunEnvironment.Production};
+        //This job should only run on Production. We have a limited quota for requesting data from OpenET,
+        //so we can allow people to do on the fly requests just to show usability but especially when it comes
+        //to the first time a new platform is released we want to rely on backups from Prod rather than have QA
+        //make nightly requests, confirm they are good, and then make Prod do the same thing essentially doubling
+        //our requests
+        public override List<RunEnvironment> RunEnvironments => new() { RunEnvironment.Production};
 
         public const string JobName = "OpenET Trigger Google Bucket Update";
 
