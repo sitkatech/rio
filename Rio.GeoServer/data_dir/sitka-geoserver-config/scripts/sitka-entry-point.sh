@@ -12,14 +12,8 @@ set -o errexit # Exit immediately if any commands return non-zero exit code
 # 04/06/20 MF & JVV - In local environment on first load sometimes we get "cannot create regular file", sleep before copying seems to help
 sleep 5 
 
-if [ ${GEOSERVER_CONFIG_DIRECTORY} ]; 
-then
-    # copy the template file for replacement 
-    cp -f "${GEOSERVER_CONFIG_DIRECTORY}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
-else
-    # copy the template file for replacement 
-    cp -f "${GEOSERVER_DATA_DIR}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
-fi;
+# copy the template file for replacement 
+cp -f "${GEOSERVER_CONFIG_DIRECTORY}/geoserver-environment.properties.template" "${GEOSERVER_DATA_DIR}/geoserver-environment.properties"
 
 FIND="${GEOSERVER_SQL_SERVER_PASSWORD_SECRET}"
 REPLACE=$(cat "${GEOSERVER_SQL_SERVER_PASSWORD_SECRET}")
@@ -31,7 +25,7 @@ sed -i "s|${FIND}|${REPLACE//&/\\&}|g" ${GEOSERVER_DATA_DIR}/geoserver-environme
 ##### BEGIN sitka-update-passwords.sh #####
 if [ ${GEOSERVER_ADMIN_PASSWORD_SECRET} ]; then
     chmod +x "${GEOSERVER_DATA_DIR}/sitka-geoserver-config/scripts/sitka-update-passwords.sh"
-	"${GEOSERVER_DATA_DIR}/sitka-geoserver-config/scripts/sitka-update-passwords.sh"
+    "${GEOSERVER_DATA_DIR}/sitka-geoserver-config/scripts/sitka-update-passwords.sh"
 fi;
 ##### END sitka-update-passwords.sh #####
 
