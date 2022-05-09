@@ -31,7 +31,7 @@ spec:
         projected:
           sources:
           - configMap:
-              name: {{ include "rio-geoserver.fullname" . }}-environment-properties-configmap
+              name: {{ include "rio-geoserver.fullname" . }}-{{ .Values.global.env.tenantName }}-environment-properties-configmap
       - name: secrets
         secret:
           secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-secrets
