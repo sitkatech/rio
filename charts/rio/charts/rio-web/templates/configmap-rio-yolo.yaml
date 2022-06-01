@@ -4,7 +4,7 @@ metadata:
   name: {{ include "rio-web.fullname" . }}-rio-yolo-configmap
 data:
   AllowTrading: "false"
-  AllowOpenETSync: "false"
+  AllowOpenETSync: "true"
   IncludeWaterSupply: "true"
   PlatformLongName: "Yolo Water Accounting Platform Pilot"
   PlatformShortName: "Water Accounting Platform Pilot"
@@ -20,4 +20,4 @@ data:
   ParcelBoundingBoxTop: "38.9258419099484"
   ParcelBoundingBoxBottom: "38.3132769567598"
   EnabledGETIntegration: "false"
-  HomepageBannerFilename: "/assets/main/home_image.jpg"
+  HomepageBannerFilename: "/assets/main/yolo_home_image.jpg"
