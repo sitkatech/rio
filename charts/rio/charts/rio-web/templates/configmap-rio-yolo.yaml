@@ -4,7 +4,7 @@ metadata:
   name: {{ include "rio-web.fullname" . }}-rio-yolo-configmap
 data:
   AllowTrading: "false"
-  AllowOpenETSync: "false"
+  AllowOpenETSync: "true"
   IncludeWaterSupply: "true"
   PlatformLongName: "Yolo Water Accounting Platform Pilot"
   PlatformShortName: "Water Accounting Platform Pilot"

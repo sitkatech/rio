@@ -4,7 +4,7 @@ metadata:
   name: {{ include "rio-api.fullname" . }}-rio-yolo-configmap
 data:
   AllowTrading: "false"
-  AllowOpenETSync: "false"
+  AllowOpenETSync: "true"
   IncludeWaterSupply: "true"
   PlatformLongName: "Yolo Water Accounting Platform Pilot"
   PlatformShortName: "Water Accounting Platform Pilot"
@@ -20,7 +20,8 @@ data:
   OpenETRasterMetadataRoute: "raster/metadata"
   OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
   OpenETRasterExportStatusRoute: "raster/export/status"
-  OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "ParcelNumb"
+  OpenETShapefilePath: "users/esa-sitka/Yolo_Parcels_2022-05-04"
+  OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "APN_D"
   ParcelBoundingBoxLeft: "-122.255216869618"
   ParcelBoundingBoxRight: "-121.503100773251"
   ParcelBoundingBoxTop: "38.9258419099484"
