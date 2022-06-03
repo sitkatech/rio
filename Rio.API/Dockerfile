@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
 WORKDIR /src
 
 COPY ./Rio.Models ./Rio.Models
@@ -7,10 +7,9 @@ COPY ./Rio.API ./Rio.API
 
 RUN dotnet publish ./Rio.API/Rio.API.csproj -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
-COPY --from=build /app /app
-RUN ls -la
+COPY --from=build-env /app /app
 EXPOSE 80
 
 # install GDAL

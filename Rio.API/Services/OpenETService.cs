@@ -356,7 +356,7 @@ namespace Rio.API.Services
                         .Where(x => x.FinalizeDate.HasValue)
                         .Select(x => new DateTime(x.WaterYear.Year, x.Month, 1))
                         .ToList();
-                    csvr.Configuration.RegisterClassMap(
+                    csvr.Context.RegisterClassMap(
                         new OpenETCSVFormatMap(_rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier));
                     //Sometimes the results will produce exact duplicates, so we need to filter those out
                     //Also one final check to make sure we don't get any finalized dates

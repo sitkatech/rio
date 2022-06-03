@@ -149,11 +149,11 @@ namespace Rio.API.Controllers
                 using var memoryStream = new MemoryStream(fileResource.FileResourceData);
                 using var reader = new StreamReader(memoryStream);
                 using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
-                csvReader.Configuration.RegisterClassMap(new ParcelLedgerCreateCSVMap(_dbContext, waterTypeDisplayName));
+                csvReader.Context.RegisterClassMap(new ParcelLedgerCreateCSVMap(_dbContext, waterTypeDisplayName));
                 csvReader.Read();
                 csvReader.ReadHeader();
                 var headerNamesDuplicated =
-                    csvReader.Context.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
+                    csvReader.HeaderRecord.Where(x => !string.IsNullOrWhiteSpace(x)).GroupBy(x => x).Where(x => x.Count() > 1).ToList();
                 if (headerNamesDuplicated.Any())
                 {
                     var singularOrPluralName = (headerNamesDuplicated.Count > 1 ? "names appear" : "name appears");
