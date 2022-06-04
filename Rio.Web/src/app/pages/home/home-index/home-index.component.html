@@ -14,7 +14,7 @@
 </div>
 
 <div class="container mt-4">
-    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName == ApplicationInternalNameEnum.Rio" [type]="'danger'" [dismissible]="false">
+    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName == ApplicationInternalNameEnum.RRB" [type]="'danger'" [dismissible]="false">
         <span>
             Welcome {{currentUser.FullName}}. You have successfully logged in to the {{platformLongName()}},
             but your
@@ -23,7 +23,7 @@
         </span>
     </ngb-alert>
 
-    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName != ApplicationInternalNameEnum.Rio" [type]="'info'" [dismissible]="false">
+    <ngb-alert *ngIf="userIsUnassigned() && applicationInternalName != ApplicationInternalNameEnum.RRB" [type]="'info'" [dismissible]="false">
         <span>
             Welcome {{currentUser.FullName}}. You have successfully logged in to the {{platformLongName()}},
             but your

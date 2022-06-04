@@ -4779,7 +4779,8 @@
             "type": "object",
             "additionalProperties": {
               "type": "number",
-              "format": "double"
+              "format": "double",
+              "nullable": true
             },
             "nullable": true
           }
@@ -5343,7 +5344,8 @@
             "type": "object",
             "additionalProperties": {
               "type": "number",
-              "format": "double"
+              "format": "double",
+              "nullable": true
             },
             "nullable": true
           },
