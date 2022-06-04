@@ -1,4 +1,3 @@
 export enum ApplicationInternalNameEnum {
-    Rio = "Rio",
-    RioEDF = "RioEDF"
+    RRB = "rio-rrb"
 }
