@@ -20,7 +20,7 @@ data:
   OpenETRasterMetadataRoute: "raster/metadata"
   OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
   OpenETRasterExportStatusRoute: "raster/export/status"
-  OpenETShapefilePath: "users/wicarrara/RRBWSD_2020_parcels"
+  OpenETShapefilePath: "users/esa-sitka/RRB_Parcels_2022-06-07"
   OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "APN_LABEL"
   ParcelBoundingBoxLeft: "-119.45272037350193"
   ParcelBoundingBoxRight: "-119.11015104115182"
