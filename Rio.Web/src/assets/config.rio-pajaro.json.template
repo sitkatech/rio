@@ -4,10 +4,11 @@
   "dev": true,
   "mainAppApiUrl": "https://host.docker.internal:8789",
   "createAccountRedirectUrl": "http://host.docker.internal:8787/create-user-callback",
-  "allowTrading": true,
-  "allowOpenETSync": false,
+  "allowTrading": false,
+  "allowOpenETSync": true,
+  "enabledGETIntegration": false,
   "includeWaterSupply": false,
-  "applicationInternalName": "RioPajaro",
+  "applicationInternalName": "rio-pajaro",
 
   "geoserverMapServiceUrl": "http://localhost:8780/geoserver/Rio",
 
@@ -17,13 +18,11 @@
   "leadOrganizationLongName": "Pajaro Valley Water Management Agency", 
   "leadOrganizationHomeUrl": "https://www.pvwater.org/",
   "leadOrganizationLogoFilename": "pvwater-logo-white.png",
-  "applicationType": "platform",
 
   "contactInfoEmail":"info@pvwater.org",
 
   "faviconFilename": "favicon.ico",
   "homepageBannerFilename": "/assets/main/pvwater_home_image.png",
-  "enabledGETIntegration": false,
   "navThemeColor": "dark",
 
   "parcelBoundingBoxLeft": -121.860154345934,
@@ -32,7 +31,7 @@
   "parcelBoundingBoxBottom": 36.817331986845,
 
   "keystoneAuthConfiguration": {
-    "clientId": "Rio",
+    "clientId": "rio-pajaro",
     "issuer": "https://host.docker.internal:7112",
     "responseType": "code",
     "disablePKCE": false,

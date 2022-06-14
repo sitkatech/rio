@@ -1,48 +1,47 @@
 {
-    "production": [TODO],
-    "staging": [TODO],
-    "dev": [TODO],
-    "mainAppApiUrl": [TODO],
-    "createAccountRedirectUrl": [TODO],
-    "allowTrading": [TODO],
-    "allowOpenETSync": [TODO],
-    "applicationInternalName": [TODO],
-  
-    "keystoneSupportBaseUrl": [TODO],
+  "production": [TODO],
+  "staging": [TODO],
+  "dev": [TODO],
+  "mainAppApiUrl": [TODO],
+  "createAccountRedirectUrl": [TODO],
+  "allowTrading": [TODO],
+  "allowOpenETSync": [TODO],
+  "includeWaterSupply": [TODO],
+  "enabledGETIntegration": [TODO],
+  "applicationInternalName": [TODO],
 
-    "geoserverMapServiceUrl": [TODO],
+  "geoserverMapServiceUrl": [TODO],
 
-    "platformLongName": [TODO],
-    "platformShortName": [TODO],
-    "leadOrganizationShortName": [TODO], 
-    "leadOrganizationLongName": [TODO], 
-    "leadOrganizationHomeUrl": [TODO],
-    "leadOrganizationLogoFilename": [TODO],
+  "platformLongName": [TODO],
+  "platformShortName": [TODO],
+  "leadOrganizationShortName": [TODO], 
+  "leadOrganizationLongName": [TODO], 
+  "leadOrganizationHomeUrl": [TODO],
+  "leadOrganizationLogoFilename": [TODO],
 
-    "contactInfoPhone":[TODO],
-    "contactInfoEmail":[TODO],
-    "contactInfoMailingAddress": [TODO],
-    "contactInfoPhysicalAddress": [TODO],
+  "contactInfoEmail":[TODO],
 
-    "faviconFilename": [TODO],
-    "homepageBannerFilename": [TODO],
-    "enabledGETIntegration": [TODO],
-    "navThemeColor" [TODO] (light or dark),
-    "parcelBoundingBoxLeft": [TODO],
-    "parcelBoundingBoxRight": [TODO],
-    "parcelBoundingBoxTop": [TODO],
-    "parcelBoundingBoxBottom": [TODO],
-  
-    "keystoneAuthConfiguration": {
-      "clientId": [TODO],
-      "issuer": [TODO],
-      "redirectUriRelative": [TODO],
-      "scope": [TODO],
-      "sessionChecksEnabled": [TODO],
-      "logoutUrl": [TODO],
-      "postLogoutRedirectUri": [TODO],
-      "waitForTokenInMsec": [TODO]
-    }
+  "faviconFilename": [TODO],
+  "homepageBannerFilename": [TODO],
+  "navThemeColor" [TODO] (light or dark),
 
-    "appInsightsInstrumentationKey": [TODO]
+  "parcelBoundingBoxLeft": [TODO],
+  "parcelBoundingBoxRight": [TODO],
+  "parcelBoundingBoxTop": [TODO],
+  "parcelBoundingBoxBottom": [TODO],
+
+  "keystoneAuthConfiguration": {
+    "clientId": [TODO],
+    "issuer": [TODO],
+    "responseType": "code",
+    "disablePKCE": false,
+    "redirectUriRelative": [TODO],
+    "scope": [TODO],
+    "sessionChecksEnabled": [TODO],
+    "logoutUrl": [TODO],
+    "postLogoutRedirectUri": [TODO],
+    "waitForTokenInMsec": [TODO]
   }
+
+  "appInsightsInstrumentationKey": [TODO]
+}

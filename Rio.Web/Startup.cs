@@ -90,114 +90,81 @@ namespace Rio.Web
     {
         public ConfigDto(IConfiguration configuration)
         {
-            MainAppApiUrl = configuration["MainAppApiUrl"];
-            CreateAccountRedirectUrl = configuration["CreateAccountRedirectUrl"];
-            AllowTrading = bool.Parse(configuration["AllowTrading"]);
-            IncludeWaterSupply = bool.Parse(configuration["IncludeWaterSupply"]);
-            GeoserverMapServiceUrl = configuration["GeoserverMapServiceUrl"];
-            KeystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
-            PlatformLongName = configuration["PlatformLongName"];
-            PlatformShortName = configuration["PlatformShortName"];
-            LeadOrganizationShortName = configuration["LeadOrganizationShortName"];
-            LeadOrganizationLongName = configuration["LeadOrganizationLongName"];
-            LeadOrganizationHomeUrl = configuration["LeadOrganizationHomeUrl"];
-            FaviconFilename = configuration["FaviconFilename"];
-            HomepageBannerFilename = configuration["homepageBannerFilename"];
-            LeadOrganizationLogoFilename = configuration["LeadOrganizationLogoFilename"];
-            EnabledGETIntegration = bool.Parse(configuration["EnabledGETIntegration"]);
-            NavThemeColor = configuration["NavThemeColor"];
-            ApplicationInternalName = configuration["ApplicationInternalName"];
-            AllowOpenETSync = bool.Parse(configuration["AllowOpenETSync"]);
-            AppInsightsInstrumentationKey =  configuration["AppInsightsInstrumentationKey"];
-            ParcelBoundingBoxLeft =  double.Parse(configuration["ParcelBoundingBoxLeft"]);
-            ParcelBoundingBoxRight =  double.Parse(configuration["ParcelBoundingBoxRight"]);
-            ParcelBoundingBoxTop =  double.Parse(configuration["ParcelBoundingBoxTop"]);
-            ParcelBoundingBoxBottom =  double.Parse(configuration["ParcelBoundingBoxBottom"]);
+            mainAppApiUrl = configuration["mainAppApiUrl"];
+            createAccountRedirectUrl = configuration["createAccountRedirectUrl"];
+            allowTrading = bool.Parse(configuration["allowTrading"]);
+            includeWaterSupply = bool.Parse(configuration["includeWaterSupply"]);
+            geoserverMapServiceUrl = configuration["geoserverMapServiceUrl"];
+            keystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
+            platformLongName = configuration["platformLongName"];
+            platformShortName = configuration["platformShortName"];
+            leadOrganizationShortName = configuration["leadOrganizationShortName"];
+            leadOrganizationLongName = configuration["leadOrganizationLongName"];
+            leadOrganizationHomeUrl = configuration["leadOrganizationHomeUrl"];
+            faviconFilename = configuration["faviconFilename"];
+            homepageBannerFilename = configuration["homepageBannerFilename"];
+            leadOrganizationLogoFilename = configuration["leadOrganizationLogoFilename"];
+            enabledGETIntegration = bool.Parse(configuration["enabledGETIntegration"]);
+            navThemeColor = configuration["navThemeColor"];
+            applicationInternalName = configuration["applicationInternalName"];
+            allowOpenETSync = bool.Parse(configuration["allowOpenETSync"]);
+            appInsightsInstrumentationKey =  configuration["appInsightsInstrumentationKey"];
+            parcelBoundingBoxLeft =  double.Parse(configuration["parcelBoundingBoxLeft"]);
+            parcelBoundingBoxRight =  double.Parse(configuration["parcelBoundingBoxRight"]);
+            parcelBoundingBoxTop =  double.Parse(configuration["parcelBoundingBoxTop"]);
+            parcelBoundingBoxBottom =  double.Parse(configuration["parcelBoundingBoxBottom"]);
         }
 
-        [JsonProperty("mainAppApiUrl")]
-        public string MainAppApiUrl { get; set; }
-        [JsonProperty("createAccountRedirectUrl")]
-        public string CreateAccountRedirectUrl { get; set; }
-        [JsonProperty("allowTrading")]
-        public bool AllowTrading { get; set; }
-        [JsonProperty("allowOpenETSync")]
-        public bool AllowOpenETSync {get; set;}
-        [JsonProperty("includeWaterSupply")]
-        public bool IncludeWaterSupply { get; set; }
-        [JsonProperty("geoserverMapServiceUrl")]
-        public string GeoserverMapServiceUrl { get; set; }
-        [JsonProperty("keystoneAuthConfiguration")]
-        public KeystoneAuthConfigurationDto KeystoneAuthConfiguration { get; set; }
-        [JsonProperty("platformLongName")]
-        public string PlatformLongName { get; set; }
-        [JsonProperty("platformShortName")]
-        public string PlatformShortName { get; set; }
-        [JsonProperty("leadOrganizationShortName")]
-        public string LeadOrganizationShortName { get; set; }
-        [JsonProperty("leadOrganizationLongName")]
-        public string LeadOrganizationLongName { get; set; }
-        [JsonProperty("leadOrganizationHomeUrl")]
-        public string LeadOrganizationHomeUrl { get; set; }
-        [JsonProperty("faviconFilename")]
-        public string FaviconFilename {get; set;}
-        [JsonProperty("homepageBannerFilename")]
-        public string HomepageBannerFilename {get; set;}
-        [JsonProperty("leadOrganizationLogoFilename")]
-        public string LeadOrganizationLogoFilename { get; set;}
-        [JsonProperty("enabledGETIntegration")]
-        public bool EnabledGETIntegration { get; set;}
-        [JsonProperty("navThemeColor")]
-        public string NavThemeColor { get; set;}
-        [JsonProperty("applicationInternalName")]
-        public string ApplicationInternalName { get; set;}
-        [JsonProperty("appInsightsInstrumentationKey")]
-        public string AppInsightsInstrumentationKey {get; set;}
-        [JsonProperty("parcelBoundingBoxLeft")]
-        public double ParcelBoundingBoxLeft {get; set;}
-        [JsonProperty("parcelBoundingBoxRight")]
-        public double ParcelBoundingBoxRight {get; set;}
-        [JsonProperty("parcelBoundingBoxTop")]
-        public double ParcelBoundingBoxTop {get; set;}
-        [JsonProperty("parcelBoundingBoxBottom")]
-        public double ParcelBoundingBoxBottom {get; set;}
+        public string mainAppApiUrl { get; set; }
+        public string createAccountRedirectUrl { get; set; }
+        public bool allowTrading { get; set; }
+        public bool allowOpenETSync {get; set;}
+        public bool includeWaterSupply { get; set; }
+        public string geoserverMapServiceUrl { get; set; }
+        public KeystoneAuthConfigurationDto keystoneAuthConfiguration { get; set; }
+        public string platformLongName { get; set; }
+        public string platformShortName { get; set; }
+        public string leadOrganizationShortName { get; set; }
+        public string leadOrganizationLongName { get; set; }
+        public string leadOrganizationHomeUrl { get; set; }
+        public string faviconFilename {get; set;}
+        public string homepageBannerFilename {get; set;}
+        public string leadOrganizationLogoFilename { get; set;}
+        public bool enabledGETIntegration { get; set;}
+        public string navThemeColor { get; set;}
+        public string applicationInternalName { get; set;}
+        public string appInsightsInstrumentationKey {get; set;}
+        public double parcelBoundingBoxLeft {get; set;}
+        public double parcelBoundingBoxRight {get; set;}
+        public double parcelBoundingBoxTop {get; set;}
+        public double parcelBoundingBoxBottom {get; set;}
     }
 
     public class KeystoneAuthConfigurationDto
     {
         public KeystoneAuthConfigurationDto(IConfiguration configuration)
         {
-            ClientID = configuration["Keystone_ClientID"];
-            Issuer = configuration["Keystone_Issuer"];
-            RedirectUriRelative = configuration["Keystone_RedirectUriRelative"];
-            Scope = configuration["Keystone_Scope"];
-            SessionChecksEnabled = bool.Parse(configuration["Keystone_SessionCheckEnabled"]);
-            LogoutUrl = configuration["Keystone_LogoutUrl"];
-            PostLogoutRedirectUri = configuration["Keystone_PostLogoutRedirectUri"];
-            WaitForTokenInMsec = int.Parse(configuration["Keystone_WaitForTokenInMsec"]);
-            ResponseType = configuration["Keystone_ResponseType"];
-            DisablePKCE = bool.Parse(configuration["Keystone_DisablePKCE"]);
+            clientId = configuration["keystone_clientId"];
+            issuer = configuration["keystone_issuer"];
+            redirectUriRelative = configuration["keystone_redirectUriRelative"];
+            scope = configuration["keystone_scope"];
+            sessionChecksEnabled = bool.Parse(configuration["keystone_sessionCheckEnabled"]);
+            logoutUrl = configuration["keystone_logoutUrl"];
+            postLogoutRedirectUri = configuration["keystone_postLogoutRedirectUri"];
+            waitForTokenInMsec = int.Parse(configuration["keystone_waitForTokenInMsec"]);
+            responseType = configuration["keystone_responseType"];
+            disablePKCE = bool.Parse(configuration["keystone_disablePKCE"]);
         }
 
-        [JsonProperty("clientId")]
-        public string ClientID { get; set; }
-        [JsonProperty("issuer")]
-        public string Issuer { get; set; }
-        [JsonProperty("redirectUriRelative")]
-        public string RedirectUriRelative { get; set; }
-        [JsonProperty("scope")]
-        public string Scope { get; set; }
-        [JsonProperty("sessionChecksEnabled")]
-        public bool SessionChecksEnabled { get; set; }
-        [JsonProperty("logoutUrl")]
-        public string LogoutUrl { get; set; }
-        [JsonProperty("postLogoutRedirectUri")]
-        public string PostLogoutRedirectUri { get; set; }
-        [JsonProperty("waitForTokenInMsec")]
-        public int WaitForTokenInMsec { get; set; }
-        [JsonProperty("responseType")]
-        public string ResponseType {get; set;}
-        [JsonProperty("disablePKCE")]
-        public bool DisablePKCE {get; set;}
+        public string clientId { get; set; }
+        public string issuer { get; set; }
+        public string redirectUriRelative { get; set; }
+        public string scope { get; set; }
+        public bool sessionChecksEnabled { get; set; }
+        public string logoutUrl { get; set; }
+        public string postLogoutRedirectUri { get; set; }
+        public int waitForTokenInMsec { get; set; }
+        public string responseType {get; set;}
+        public bool disablePKCE {get; set;}
     }
 }
