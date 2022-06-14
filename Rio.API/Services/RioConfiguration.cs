@@ -4,8 +4,6 @@
     {
         public string KEYSTONE_HOST { get; set; }
         public string DB_CONNECTION_STRING { get; set; }
-        public string SMTP_HOST { get; set; }
-        public int SMTP_PORT { get; set; }
         public string SITKA_EMAIL_REDIRECT { get; set; }
         public string WEB_URL { get; set; }
         public string KEYSTONE_REDIRECT_URL { get; set; }
@@ -32,7 +30,6 @@
         public string ParcelBoundingBoxBottom { get; set; }
         public string OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier { get; set; }
         public bool AllowOpenETSync { get; set; }
-        public string SupportEmailAddress { get; set; }
         public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }
         public string Ogr2OgrExecutable { get; set; }
         public string OgrInfoExecutable { get; set; }

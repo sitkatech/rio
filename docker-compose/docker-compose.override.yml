@@ -34,7 +34,6 @@ services:
       - ParcelBoundingBoxBottom=${ParcelBoundingBoxBottom}
       - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
       - AllowOpenETSync=${AllowOpenETSync}
-      - SupportEmailAddress=${SupportEmailAddress}
       - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
       - Ogr2OgrExecutable=${Ogr2OgrExecutable}
       - OgrInfoExecutable=${OgrInfoExecutable}
