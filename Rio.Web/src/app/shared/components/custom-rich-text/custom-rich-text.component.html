@@ -18,7 +18,7 @@
         </div>
         <div *ngIf="!showEditButton()" [innerHtml]="customRichTextContent"></div>
     </ng-container>
-    <div *ngIf="isEditing" [ngClass]="{'ckEditorDisabled':isUploadingImage()}">
+    <div style="overflow:auto;" *ngIf="isEditing" [ngClass]="{'ckEditorDisabled':isUploadingImage()}">
         <div *ngIf="isUploadingImage()">
             <em>Please wait while the image is uploaded...</em>
             <span class="mt-1 fa fa-spinner loading-spinner" style="float:right;"></span>
