@@ -8,20 +8,21 @@
   "allowOpenETSync": true,
   "enabledGETIntegration": false,
   "includeWaterSupply": true,
-  "applicationInternalName": "rio-miugsa",
+  "applicationInternalName": "rio-yolo",
 
   "geoserverMapServiceUrl": "http://host.docker.internal:8780/geoserver/Rio",
 
-  "platformLongName": "MIUGSA Water Accounting Platform Pilot",
+  "platformLongName": "Yolo County Accounting Platform Pilot",
   "platformShortName": "Water Accounting Platform Pilot",
-  "leadOrganizationShortName": "MIUGSA", 
-  "leadOrganizationLongName": "Merced Irrigation-Urban Groundwater Sustainability Agency", 
-  "leadOrganizationHomeUrl": "https://www.miugsa.org/",
+  "leadOrganizationShortName": "Yolo County", 
+  "leadOrganizationLongName": "Yolo County", 
+  "leadOrganizationHomeUrl": "http://ycfcwcd.org/",
+  "leadOrganizationLogoFilename": "yolo_home_image.jpg",
 
-  "contactInfoEmail":"contact@miugsa.org",
+
 
   "faviconFilename": "favicon.ico",
-  "homepageBannerFilename": "/assets/main/miugsa_home_image.jpg",
+  "homepageBannerFilename": "/assets/main/yolo_home_image.jpg",
   "navThemeColor": "dark",
 
   "parcelBoundingBoxLeft": "-122.255216869618",
@@ -30,7 +31,7 @@
   "parcelBoundingBoxBottom": "38.3132769567598",
 
   "keystoneAuthConfiguration": {
-    "clientId": "rio-miugsa",
+    "clientId": "rio-yolo",
     "issuer": "https://host.docker.internal:7112",
     "responseType": "code",
     "disablePKCE": false,
