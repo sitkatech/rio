@@ -10,4 +10,6 @@ GO
 
 :r ".\0001 - Initial data script.sql"
 GO
+:r ".\0002 - Add WaterYears 2018-2022 and their corresponding WaterYearMonths.sql"
+GO
 
