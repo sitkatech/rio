@@ -1,2 +1,0 @@
-alter table dbo.Account
-add AccountVerificationKeyLastUseDate datetime null
