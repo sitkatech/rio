@@ -345,6 +345,16 @@ namespace Rio.API.Controllers
                 _dbContext.Database.ExecuteSqlRaw(
                     "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.WaterYearID);
 
+                // get waterYearMonthIDs for all months in selected WaterYear and newer
+                // and remove those OpenETSyncHistories so the system will allow re-syncing for those months for new parcels
+                var waterYearMonthIDsToRemove = WaterYearMonth
+                    .GetWaterYearMonthImpl(_dbContext)
+                    .Where(x => x.WaterYear.Year >= waterYearDto.Year)
+                    .Select(x => x.WaterYearMonthID)
+                    .ToList();
+                _dbContext.OpenETSyncHistories.RemoveRange(
+                    _dbContext.OpenETSyncHistories.Where(x => waterYearMonthIDsToRemove.Contains(x.WaterYearMonthID)));
+
                 WaterYear.UpdateParcelLayerUpdateDateForID(_dbContext, waterYearID);
 
                 dbContextTransaction.Commit();
