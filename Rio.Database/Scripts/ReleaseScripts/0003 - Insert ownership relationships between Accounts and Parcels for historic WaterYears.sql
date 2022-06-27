@@ -10,6 +10,7 @@ BEGIN
 	insert into dbo.AccountParcelWaterYear
 	select apwy.AccountID, apwy.ParcelID, wyti.WaterYearID
 	from dbo.AccountParcelWaterYear apwy
+	join dbo.WaterYear wy on apwy.WaterYearID = wy.WaterYearID
 	cross join
 	(
 		SELECT wy.WaterYearID as WaterYearID
@@ -18,7 +19,6 @@ BEGIN
 		  ON apwy.WaterYearID = wy.WaterYearID
 		WHERE apwy.WaterYearID IS NULL
 	) wyti
-	join dbo.WaterYear wy on apwy.WaterYearID = wy.WaterYearID
 	where wy.[Year] = 2021
 
 
