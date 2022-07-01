@@ -26,7 +26,7 @@ using Microsoft.Extensions.Logging;
 using Rio.API.Services.Telemetry;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Sinks.ApplicationInsights.Sinks.ApplicationInsights.TelemetryConverters;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using ILogger = Serilog.ILogger;
 
 namespace Rio.API

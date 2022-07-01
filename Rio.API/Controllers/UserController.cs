@@ -154,7 +154,7 @@ namespace Rio.API.Controllers
 
         [HttpPost("users")]
         [LoggedInUnclassifiedFeature]
-        public ActionResult<UserDto> CreateUser([FromBody] UserCreateDto userCreateDto)
+        public async Task<ActionResult<UserDto>> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
             // Validate request body; all fields required in Dto except Org Name and Phone
             if (userCreateDto == null)
@@ -175,7 +175,7 @@ namespace Rio.API.Controllers
             var mailMessage = GenerateUserCreatedEmail(_rioConfiguration.WEB_URL, user, _dbContext, smtpClient);
             SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
                         EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-            SendEmailMessage(smtpClient, mailMessage);
+            await SendEmailMessage(smtpClient, mailMessage);
 
             return Ok(user);
         }
@@ -379,7 +379,7 @@ namespace Rio.API.Controllers
 
         [HttpPut("/users/{userID}/edit-accounts")]
         [UserManageFeature]
-        public ActionResult<UserDto> EditAccounts([FromRoute] int userID, [FromBody] UserEditAccountsDto userEditAccountsDto)
+        public async Task<ActionResult<UserDto>> EditAccounts([FromRoute] int userID, [FromBody] UserEditAccountsDto userEditAccountsDto)
         {
             var userDto = EFModels.Entities.User.GetByUserID(_dbContext, userID);
 
@@ -398,13 +398,13 @@ namespace Rio.API.Controllers
 
             if (addedAccounts != null && addedAccounts.Count > 0)
             {
-                SendEmailToLandownerAndAdmins(userDto, addedAccounts);
+                await SendEmailToLandownerAndAdmins(userDto, addedAccounts);
             }
 
             return Ok(userDto);
         }
 
-        private void SendEmailToLandownerAndAdmins(UserDto userDto, List<AccountDto> addedAccounts)
+        private async Task SendEmailToLandownerAndAdmins(UserDto userDto, List<AccountDto> addedAccounts)
         {
             var smtpClient = HttpContext.RequestServices.GetRequiredService<SitkaSmtpClientService>();
             var mailMessages = GenerateAddedAccountsEmail(_rioConfiguration.WEB_URL, userDto, addedAccounts);
@@ -412,7 +412,7 @@ namespace Rio.API.Controllers
             {
                 SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage,
                     EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-                SendEmailMessage(smtpClient, mailMessage);
+                await SendEmailMessage(smtpClient, mailMessage);
             }
         }
 
@@ -492,12 +492,12 @@ As an administrator of the {_rioConfiguration.PlatformShortName}, you can assign
             return mailMessage;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        private async Task SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
             mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
-            smtpClient.Send(mailMessage);
+            await smtpClient.Send(mailMessage);
         }
     }
 }

@@ -288,7 +288,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("/parcels/enactGDBChanges")]
-        public ActionResult EnactGDBChanges([FromBody] int waterYearID)
+        public async Task<ActionResult> EnactGDBChanges([FromBody] int waterYearID)
         {
             var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
             
@@ -370,7 +370,7 @@ namespace Rio.API.Controllers
             var mailMessage = GenerateParcelUpdateCompletedEmail(_rioConfiguration.WEB_URL, waterYearDto, expectedResults, smtpClient);
             SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
                 EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-            SendEmailMessage(smtpClient, mailMessage);
+            await SendEmailMessage(smtpClient, mailMessage);
 
             return Ok();
         }
@@ -405,12 +405,12 @@ The updated Parcel data should be sent to the OpenET team, so that any new or mo
             return mailMessage;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        private async Task SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
             mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
-            smtpClient.Send(mailMessage);
+            await smtpClient.Send(mailMessage);
         }
 
     }
