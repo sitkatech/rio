@@ -17,9 +17,7 @@
   "leadOrganizationShortName": "Yolo County", 
   "leadOrganizationLongName": "Yolo County", 
   "leadOrganizationHomeUrl": "http://ycfcwcd.org/",
-  "leadOrganizationLogoFilename": "yolo_home_image.jpg",
-
-
+  "leadOrganizationLogoFilename": "ycfcwcd-logo.png",
 
   "faviconFilename": "favicon.ico",
   "homepageBannerFilename": "/assets/main/yolo_home_image.jpg",
