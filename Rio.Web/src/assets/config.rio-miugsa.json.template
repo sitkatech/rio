@@ -14,6 +14,7 @@
   "leadOrganizationShortName": "MIUGSA", 
   "leadOrganizationLongName": "Merced Irrigation-Urban Groundwater Sustainability Agency", 
   "leadOrganizationHomeUrl": "https://www.miugsa.org/",
+  "leadOrganizationLogoFilename": "MIUGSA-logo.png",
   "applicationType": "platform",
 
   "contactInfoEmail":"contact@miugsa.org",
@@ -21,7 +22,7 @@
   "faviconFilename": "favicon.ico",
   "homepageBannerFilename": "/assets/main/miugsa_home_image.jpg",
   "enabledGETIntegration": false,
-  "navThemeColor": "dark",
+  "navThemeColor": "light",
 
   "keystoneAuthConfiguration": {
     "clientId": "Rio",

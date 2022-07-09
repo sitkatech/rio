@@ -37,10 +37,6 @@ export class DynamicEnvironment {
         return window.config.includeWaterSupply;
     }
 
-    public get keystoneSupportBaseUrl() {
-        return window.config.keystoneSupportBaseUrl;
-    }
-
     public get geoserverMapServiceUrl() {
         return window.config.geoserverMapServiceUrl;
     }

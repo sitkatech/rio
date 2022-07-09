@@ -1,7 +1,7 @@
 $footer-height: 60px;
 
 $theme-colors: (
-        "primary": #114571,     // systemBlue
+        "primary": #384273,     // systemBlue
         "secondary": #ccc,   // lightGray
         "info": #228be6,        // brightBlue
         "light": #f5f5f5,       // offWhite
@@ -12,22 +12,22 @@ $theme-colors: (
         "h4-styled": #E39B2F,
         "footer": #BFC8D0,
         "footer-text": #000,
-        "button-border-and-background": #114571,
+        "button-border-and-background": #384273,
         "button-hover-text": #fff,
         "button-hover-background": #306490, 
         "button-toggle-hover": #306490,
-        "header-background": #114571,
-        "select": #114571,
+        "header-background": #384273,
+        "select": #384273,
         "select-and-nav-hover": #8895ac,
         "select-and-nav-dropdown-hover": #E5FAF1,
         "header-nav-link" : #fff,
-        "grid-header-background": #114571,
+        "grid-header-background": #384273,
         "grid-accent-color": #0077f9,
         "grid-hover-color": #f8efdc,
         "account-dropdown-text": #fff,
         "header-gradient-start": transparent,
         "header-gradient-end": transparent,
-        "breadcrumb-background-color": #f8efdc,
+        "breadcrumb-background-color": #424c7e,
         "breadcrumb-border-color": #e9eeef,
         "breadcrumb-item-color": #fff,
         "breadcrumb-item-active-color": #fff,
@@ -35,7 +35,7 @@ $theme-colors: (
 );
 
 // this looks redundant, but we need to make the override in both ways
-$primary: #114571;
+$primary: #384273;
 $secondary: #ccc;
 $info: #228be6;
 $light: #f5f5f5;
@@ -46,35 +46,35 @@ $warning: #ffff9f;
 
 $account-dropdown-text: #fff;
 
-$breadcrumb-background-color: #fdf6e6;
+$breadcrumb-background-color: #384273;
 $breadcrumb-border-color: #e9eeef;
 $breadcrumb-border-style: solid;
-$breadcrumb-item-color: #2A4378;
-$breadcrumb-item-active-color: #2A4378;
+$breadcrumb-item-color: #fff;
+$breadcrumb-item-active-color: #fff;
 $breadcrumb-empty-display-type: none;
 $breadcrumb-empty-display-height: 0px;
 
-$button-border-and-background: #114571;
+$button-border-and-background: #384273;
 $button-hover-text: #fff;
-$button-hover-background: #306490;
-$button-toggle-hover: #306490;
+$button-hover-background: #4d5689;
+$button-toggle-hover: #4d5689;
 
 $grid-accent-color: #0077f9;
 $grid-font-family: 'Tahoma';
 $grid-font-header-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
-$grid-header-background: #114571;
+$grid-header-background: #384273;
 $grid-hover-color: #fdf6e6;
 
 $footer: #BFC8D0;
 $footer-text: #000;
 
-$header-background: #114571;       
-$header-nav-link: #fff;         
+$header-background: #fff;       
+$header-nav-link: #384273;         
 $header-nav-link-font-weight: inherit;
 
-$h4-styled: #114571;
+$h4-styled: #384273;
 
-$select: #114571;
+$select: #384273;
 $select-selected-text: #fff;
 $select-and-nav-dropdown-hover: #f2f2f2;
 $select-and-nav-hover:#8895ac;

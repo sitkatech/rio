@@ -288,7 +288,7 @@ namespace Rio.API.Controllers
         }
 
         [HttpPost("/parcels/enactGDBChanges")]
-        public ActionResult EnactGDBChanges([FromBody] int waterYearID)
+        public async Task<ActionResult> EnactGDBChanges([FromBody] int waterYearID)
         {
             var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
             
@@ -345,6 +345,16 @@ namespace Rio.API.Controllers
                 _dbContext.Database.ExecuteSqlRaw(
                     "EXECUTE dbo.pUpdateParcelLayerAddParcelsUpdateAccountParcelAndUpdateParcelGeometry {0}", waterYearDto.WaterYearID);
 
+                // get waterYearMonthIDs for all months in selected WaterYear and newer
+                // and remove those OpenETSyncHistories so the system will allow re-syncing for those months for new parcels
+                var waterYearMonthIDsToRemove = WaterYearMonth
+                    .GetWaterYearMonthImpl(_dbContext)
+                    .Where(x => x.WaterYear.Year >= waterYearDto.Year)
+                    .Select(x => x.WaterYearMonthID)
+                    .ToList();
+                _dbContext.OpenETSyncHistories.RemoveRange(
+                    _dbContext.OpenETSyncHistories.Where(x => waterYearMonthIDsToRemove.Contains(x.WaterYearMonthID)));
+
                 WaterYear.UpdateParcelLayerUpdateDateForID(_dbContext, waterYearID);
 
                 dbContextTransaction.Commit();
@@ -360,7 +370,7 @@ namespace Rio.API.Controllers
             var mailMessage = GenerateParcelUpdateCompletedEmail(_rioConfiguration.WEB_URL, waterYearDto, expectedResults, smtpClient);
             SitkaSmtpClientService.AddCcRecipientsToEmail(mailMessage,
                 EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-            SendEmailMessage(smtpClient, mailMessage);
+            await SendEmailMessage(smtpClient, mailMessage);
 
             return Ok();
         }
@@ -395,12 +405,12 @@ The updated Parcel data should be sent to the OpenET team, so that any new or mo
             return mailMessage;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        private async Task SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
             mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
-            smtpClient.Send(mailMessage);
+            await smtpClient.Send(mailMessage);
         }
 
     }

@@ -155,6 +155,7 @@
     <None Include="Scripts\LookupTables\dbo.TransactionType.sql" />
     <None Include="Scripts\LookupTables\dbo.ParcelLedgerEntrySourceType.sql" />
     <None Include="Scripts\ReleaseScripts\0001 - Initial data script.sql" />
+    <None Include="Scripts\ReleaseScripts\0002 - Add WaterYears 2018-2022 and their corresponding WaterYearMonths.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />

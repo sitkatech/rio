@@ -1,2 +1,0 @@
-alter table dbo.OpenETGoogleBucketResponseEvapotranspirationData
-alter column EvapotranspirationRateInMM decimal(20,4) null

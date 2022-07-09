@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Rio.Models.DataTransferObjects;
@@ -112,7 +113,7 @@ namespace Rio.API.Controllers
 
         [HttpPut("/account/{accountID}/edit-users")]
         [UserManageFeature]
-        public ActionResult<AccountDto> EditUsers([FromRoute] int accountID, [FromBody] AccountEditUsersDto accountEditUsersDto)
+        public async Task<ActionResult<AccountDto>> EditUsers([FromRoute] int accountID, [FromBody] AccountEditUsersDto accountEditUsersDto)
         {
             var accountDto = Account.GetByAccountID(_dbContext, accountID);
             if (ThrowNotFound(accountDto, "Account", accountID, out var actionResult))
@@ -140,7 +141,7 @@ namespace Rio.API.Controllers
             var mailMessages = GenerateAddedUserEmails(_rioConfiguration.WEB_URL, updatedAccount, addedUsers);
             foreach (var mailMessage in mailMessages)
             {
-                SendEmailMessage(smtpClient, mailMessage);
+                await SendEmailMessage(smtpClient, mailMessage);
             }
 
             return Ok(updatedAccount);
@@ -285,13 +286,13 @@ You can view parcels associated with this account and the water supply and usage
             return mailMessages;
         }
 
-        private void SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
+        private async Task SendEmailMessage(SitkaSmtpClientService smtpClient, MailMessage mailMessage)
         {
             mailMessage.IsBodyHtml = true;
             mailMessage.From = smtpClient.GetDefaultEmailFrom();
             mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             SitkaSmtpClientService.AddBccRecipientsToEmail(mailMessage, EFModels.Entities.User.GetEmailAddressesForAdminsThatReceiveSupportEmails(_dbContext));
-            smtpClient.Send(mailMessage);
+            await smtpClient.Send(mailMessage);
         }
 
     }
