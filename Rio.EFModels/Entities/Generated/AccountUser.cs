@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("AccountUser")]
@@ -16,10 +14,10 @@ namespace Rio.EFModels.Entities
         public int UserID { get; set; }
         public int AccountID { get; set; }
 
-        [ForeignKey(nameof(AccountID))]
+        [ForeignKey("AccountID")]
         [InverseProperty("AccountUsers")]
         public virtual Account Account { get; set; }
-        [ForeignKey(nameof(UserID))]
+        [ForeignKey("UserID")]
         [InverseProperty("AccountUsers")]
         public virtual User User { get; set; }
     }

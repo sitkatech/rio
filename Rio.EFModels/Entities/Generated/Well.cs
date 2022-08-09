@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Well")]
@@ -19,13 +17,16 @@ namespace Rio.EFModels.Entities
         public Geometry WellGeometry { get; set; }
         [Required]
         [StringLength(50)]
+        [Unicode(false)]
         public string WellName { get; set; }
         [Required]
         [StringLength(50)]
+        [Unicode(false)]
         public string WellType { get; set; }
         public int WellTypeCode { get; set; }
         [Required]
         [StringLength(50)]
+        [Unicode(false)]
         public string WellTypeCodeName { get; set; }
     }
 }

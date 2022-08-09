@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Tag")]
-    [Index(nameof(TagName), Name = "AK_Tag_TagName", IsUnique = true)]
+    [Index("TagName", Name = "AK_Tag_TagName", IsUnique = true)]
     public partial class Tag
     {
         public Tag()
@@ -21,11 +19,13 @@ namespace Rio.EFModels.Entities
         public int TagID { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string TagName { get; set; }
         [StringLength(500)]
+        [Unicode(false)]
         public string TagDescription { get; set; }
 
-        [InverseProperty(nameof(ParcelTag.Tag))]
+        [InverseProperty("Tag")]
         public virtual ICollection<ParcelTag> ParcelTags { get; set; }
     }
 }

@@ -23,7 +23,9 @@ Using (Values
 --
 (16, 'text/css', 'CSS', 'CSS', null, null),
 -- ZIP
-(17, 'application/x-zip-compressed', 'ZIP', 'ZIP', null, null)
+(17, 'application/x-zip-compressed', 'ZIP', 'ZIP', null, null),
+-- csv
+(18, 'text/csv', 'CSV', 'CSV', null, null)
 )
 As Source (FileResourceMimeTypeID, FileResourceMimeTypeContentTypeName, FileResourceMimeTypeName, FileResourceMimeTypeDisplayName, FileResourceMimeTypeIconSmallFilename, FileResourceMimeTypeIconNormalFilename)
 On Target.FileResourceMimeTypeID = Source.FileResourceMimeTypeID

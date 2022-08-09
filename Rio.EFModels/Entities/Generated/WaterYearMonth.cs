@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("WaterYearMonth")]
-    [Index(nameof(WaterYearID), nameof(Month), Name = "AK_WaterYearMonth_WaterYearID_Month", IsUnique = true)]
+    [Index("WaterYearID", "Month", Name = "AK_WaterYearMonth_WaterYearID_Month", IsUnique = true)]
     public partial class WaterYearMonth
     {
         public WaterYearMonth()
@@ -24,10 +22,10 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? FinalizeDate { get; set; }
 
-        [ForeignKey(nameof(WaterYearID))]
+        [ForeignKey("WaterYearID")]
         [InverseProperty("WaterYearMonths")]
         public virtual WaterYear WaterYear { get; set; }
-        [InverseProperty(nameof(OpenETSyncHistory.WaterYearMonth))]
+        [InverseProperty("WaterYearMonth")]
         public virtual ICollection<OpenETSyncHistory> OpenETSyncHistories { get; set; }
     }
 }

@@ -5,13 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Parcel")]
-    [Index(nameof(ParcelNumber), Name = "AK_Parcel_ParcelNumber", IsUnique = true)]
-    [Index(nameof(ParcelGeometry), Name = "SPATIAL_Parcel_ParcelGeometry")]
+    [Index("ParcelNumber", Name = "AK_Parcel_ParcelNumber", IsUnique = true)]
+    [Index("ParcelGeometry", Name = "SPATIAL_Parcel_ParcelGeometry")]
     public partial class Parcel
     {
         public Parcel()
@@ -27,6 +25,7 @@ namespace Rio.EFModels.Entities
         public int ParcelID { get; set; }
         [Required]
         [StringLength(20)]
+        [Unicode(false)]
         public string ParcelNumber { get; set; }
         [Required]
         [Column(TypeName = "geometry")]
@@ -37,15 +36,15 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? InactivateDate { get; set; }
 
-        [InverseProperty(nameof(AccountParcelWaterYear.Parcel))]
+        [InverseProperty("Parcel")]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
-        [InverseProperty(nameof(AccountReconciliation.Parcel))]
+        [InverseProperty("Parcel")]
         public virtual ICollection<AccountReconciliation> AccountReconciliations { get; set; }
-        [InverseProperty(nameof(ParcelLedger.Parcel))]
+        [InverseProperty("Parcel")]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
-        [InverseProperty(nameof(ParcelTag.Parcel))]
+        [InverseProperty("Parcel")]
         public virtual ICollection<ParcelTag> ParcelTags { get; set; }
-        [InverseProperty(nameof(WaterTransferRegistrationParcel.Parcel))]
+        [InverseProperty("Parcel")]
         public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
     }
 }

@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Keyless]
@@ -17,17 +15,22 @@ namespace Rio.EFModels.Entities
         public int PostingTypeID { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string PostingTypeDisplayName { get; set; }
         public int PostingStatusID { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string PostingStatusDisplayName { get; set; }
         public int? PostedByUserID { get; set; }
         [StringLength(100)]
+        [Unicode(false)]
         public string PostedByFirstName { get; set; }
         [StringLength(100)]
+        [Unicode(false)]
         public string PostedByLastName { get; set; }
         [StringLength(255)]
+        [Unicode(false)]
         public string PostedByEmail { get; set; }
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
@@ -35,6 +38,7 @@ namespace Rio.EFModels.Entities
         public int AvailableQuantity { get; set; }
         public int PostedByAccountID { get; set; }
         [StringLength(255)]
+        [Unicode(false)]
         public string PostedByAccountName { get; set; }
         public int? NumberOfOffers { get; set; }
     }

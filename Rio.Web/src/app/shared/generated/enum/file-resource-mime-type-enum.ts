@@ -19,5 +19,6 @@ export enum FileResourceMimeTypeEnum {
   WordDOC = 14,
   xExcelXLSX = 15,
   CSS = 16,
-  ZIP = 17
+  ZIP = 17,
+  CSV = 18
 }
