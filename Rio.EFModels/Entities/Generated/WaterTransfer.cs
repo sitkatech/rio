@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("WaterTransfer")]
@@ -23,12 +21,13 @@ namespace Rio.EFModels.Entities
         public int AcreFeetTransferred { get; set; }
         public int OfferID { get; set; }
         [StringLength(2000)]
+        [Unicode(false)]
         public string Notes { get; set; }
 
-        [ForeignKey(nameof(OfferID))]
+        [ForeignKey("OfferID")]
         [InverseProperty("WaterTransfers")]
         public virtual Offer Offer { get; set; }
-        [InverseProperty(nameof(WaterTransferRegistration.WaterTransfer))]
+        [InverseProperty("WaterTransfer")]
         public virtual ICollection<WaterTransferRegistration> WaterTransferRegistrations { get; set; }
     }
 }

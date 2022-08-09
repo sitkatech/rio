@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("OpenETSyncHistory")]
@@ -20,10 +18,12 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime UpdateDate { get; set; }
         [StringLength(200)]
+        [Unicode(false)]
         public string GoogleBucketFileRetrievalURL { get; set; }
+        [Unicode(false)]
         public string ErrorMessage { get; set; }
 
-        [ForeignKey(nameof(WaterYearMonthID))]
+        [ForeignKey("WaterYearMonthID")]
         [InverseProperty("OpenETSyncHistories")]
         public virtual WaterYearMonth WaterYearMonth { get; set; }
     }

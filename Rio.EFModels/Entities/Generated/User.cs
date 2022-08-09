@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("User")]
-    [Index(nameof(Email), Name = "AK_User_Email", IsUnique = true)]
+    [Index("Email", Name = "AK_User_Email", IsUnique = true)]
     public partial class User
     {
         public User()
@@ -25,14 +23,18 @@ namespace Rio.EFModels.Entities
         public Guid? UserGuid { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string FirstName { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string LastName { get; set; }
         [Required]
         [StringLength(255)]
+        [Unicode(false)]
         public string Email { get; set; }
         [StringLength(30)]
+        [Unicode(false)]
         public string Phone { get; set; }
         public int RoleID { get; set; }
         [Column(TypeName = "datetime")]
@@ -45,17 +47,19 @@ namespace Rio.EFModels.Entities
         public DateTime? DisclaimerAcknowledgedDate { get; set; }
         public bool ReceiveSupportEmails { get; set; }
         [StringLength(128)]
+        [Unicode(false)]
         public string LoginName { get; set; }
         [StringLength(100)]
+        [Unicode(false)]
         public string Company { get; set; }
 
-        [InverseProperty(nameof(AccountUser.User))]
+        [InverseProperty("User")]
         public virtual ICollection<AccountUser> AccountUsers { get; set; }
-        [InverseProperty(nameof(FileResource.CreateUser))]
+        [InverseProperty("CreateUser")]
         public virtual ICollection<FileResource> FileResources { get; set; }
-        [InverseProperty(nameof(ParcelLedger.User))]
+        [InverseProperty("User")]
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
-        [InverseProperty(nameof(Posting.CreateUser))]
+        [InverseProperty("CreateUser")]
         public virtual ICollection<Posting> Postings { get; set; }
     }
 }

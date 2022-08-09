@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     public partial class OpenETGoogleBucketResponseEvapotranspirationDatum
@@ -14,6 +12,7 @@ namespace Rio.EFModels.Entities
         public int OpenETGoogleBucketResponseEvapotranspirationDataID { get; set; }
         [Required]
         [StringLength(20)]
+        [Unicode(false)]
         public string ParcelNumber { get; set; }
         public int WaterMonth { get; set; }
         public int WaterYear { get; set; }

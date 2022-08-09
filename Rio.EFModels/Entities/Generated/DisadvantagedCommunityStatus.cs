@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("DisadvantagedCommunityStatus")]
-    [Index(nameof(DisadvantagedCommunityStatusName), Name = "AK_DisadvantagedCommunityStatus_DisadvantagedCommunityStatusName", IsUnique = true)]
+    [Index("DisadvantagedCommunityStatusName", Name = "AK_DisadvantagedCommunityStatus_DisadvantagedCommunityStatusName", IsUnique = true)]
     public partial class DisadvantagedCommunityStatus
     {
         public DisadvantagedCommunityStatus()
@@ -21,12 +19,14 @@ namespace Rio.EFModels.Entities
         public int DisadvantagedCommunityStatusID { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string DisadvantagedCommunityStatusName { get; set; }
         [Required]
         [StringLength(10)]
+        [Unicode(false)]
         public string GeoServerLayerColor { get; set; }
 
-        [InverseProperty(nameof(DisadvantagedCommunity.DisadvantagedCommunityStatus))]
+        [InverseProperty("DisadvantagedCommunityStatus")]
         public virtual ICollection<DisadvantagedCommunity> DisadvantagedCommunities { get; set; }
     }
 }

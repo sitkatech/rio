@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("WaterTransferRegistration")]
@@ -25,13 +23,13 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime StatusDate { get; set; }
 
-        [ForeignKey(nameof(AccountID))]
+        [ForeignKey("AccountID")]
         [InverseProperty("WaterTransferRegistrations")]
         public virtual Account Account { get; set; }
-        [ForeignKey(nameof(WaterTransferID))]
+        [ForeignKey("WaterTransferID")]
         [InverseProperty("WaterTransferRegistrations")]
         public virtual WaterTransfer WaterTransfer { get; set; }
-        [InverseProperty(nameof(WaterTransferRegistrationParcel.WaterTransferRegistration))]
+        [InverseProperty("WaterTransferRegistration")]
         public virtual ICollection<WaterTransferRegistrationParcel> WaterTransferRegistrationParcels { get; set; }
     }
 }

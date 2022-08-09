@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("AccountReconciliation")]
@@ -16,10 +14,10 @@ namespace Rio.EFModels.Entities
         public int ParcelID { get; set; }
         public int AccountID { get; set; }
 
-        [ForeignKey(nameof(AccountID))]
+        [ForeignKey("AccountID")]
         [InverseProperty("AccountReconciliations")]
         public virtual Account Account { get; set; }
-        [ForeignKey(nameof(ParcelID))]
+        [ForeignKey("ParcelID")]
         [InverseProperty("AccountReconciliations")]
         public virtual Parcel Parcel { get; set; }
     }

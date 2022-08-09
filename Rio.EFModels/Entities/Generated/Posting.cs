@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Posting")]
@@ -26,18 +24,19 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
         [StringLength(2000)]
+        [Unicode(false)]
         public string PostingDescription { get; set; }
         public int PostingStatusID { get; set; }
         public int AvailableQuantity { get; set; }
         public int? CreateUserID { get; set; }
 
-        [ForeignKey(nameof(CreateAccountID))]
-        [InverseProperty(nameof(Account.Postings))]
+        [ForeignKey("CreateAccountID")]
+        [InverseProperty("Postings")]
         public virtual Account CreateAccount { get; set; }
-        [ForeignKey(nameof(CreateUserID))]
-        [InverseProperty(nameof(User.Postings))]
+        [ForeignKey("CreateUserID")]
+        [InverseProperty("Postings")]
         public virtual User CreateUser { get; set; }
-        [InverseProperty(nameof(Trade.Posting))]
+        [InverseProperty("Posting")]
         public virtual ICollection<Trade> Trades { get; set; }
     }
 }

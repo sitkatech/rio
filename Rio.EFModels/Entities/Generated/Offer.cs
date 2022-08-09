@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Offer")]
@@ -26,16 +24,17 @@ namespace Rio.EFModels.Entities
         public decimal Price { get; set; }
         public int OfferStatusID { get; set; }
         [StringLength(2000)]
+        [Unicode(false)]
         public string OfferNotes { get; set; }
         public int CreateAccountID { get; set; }
 
-        [ForeignKey(nameof(CreateAccountID))]
-        [InverseProperty(nameof(Account.Offers))]
+        [ForeignKey("CreateAccountID")]
+        [InverseProperty("Offers")]
         public virtual Account CreateAccount { get; set; }
-        [ForeignKey(nameof(TradeID))]
+        [ForeignKey("TradeID")]
         [InverseProperty("Offers")]
         public virtual Trade Trade { get; set; }
-        [InverseProperty(nameof(WaterTransfer.Offer))]
+        [InverseProperty("Offer")]
         public virtual ICollection<WaterTransfer> WaterTransfers { get; set; }
     }
 }

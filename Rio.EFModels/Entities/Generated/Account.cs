@@ -4,12 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("Account")]
-    [Index(nameof(AccountNumber), Name = "AK_Account_AccountNumber", IsUnique = true)]
+    [Index("AccountNumber", Name = "AK_Account_AccountNumber", IsUnique = true)]
     public partial class Account
     {
         public Account()
@@ -27,12 +25,15 @@ namespace Rio.EFModels.Entities
         public int AccountID { get; set; }
         public int AccountNumber { get; set; }
         [StringLength(255)]
+        [Unicode(false)]
         public string AccountName { get; set; }
         public int AccountStatusID { get; set; }
+        [Unicode(false)]
         public string Notes { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? UpdateDate { get; set; }
         [StringLength(6)]
+        [Unicode(false)]
         public string AccountVerificationKey { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? AccountVerificationKeyLastUseDate { get; set; }
@@ -41,19 +42,19 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? InactivateDate { get; set; }
 
-        [InverseProperty(nameof(AccountParcelWaterYear.Account))]
+        [InverseProperty("Account")]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
-        [InverseProperty(nameof(AccountReconciliation.Account))]
+        [InverseProperty("Account")]
         public virtual ICollection<AccountReconciliation> AccountReconciliations { get; set; }
-        [InverseProperty(nameof(AccountUser.Account))]
+        [InverseProperty("Account")]
         public virtual ICollection<AccountUser> AccountUsers { get; set; }
-        [InverseProperty(nameof(Offer.CreateAccount))]
+        [InverseProperty("CreateAccount")]
         public virtual ICollection<Offer> Offers { get; set; }
-        [InverseProperty(nameof(Posting.CreateAccount))]
+        [InverseProperty("CreateAccount")]
         public virtual ICollection<Posting> Postings { get; set; }
-        [InverseProperty(nameof(Trade.CreateAccount))]
+        [InverseProperty("CreateAccount")]
         public virtual ICollection<Trade> Trades { get; set; }
-        [InverseProperty(nameof(WaterTransferRegistration.Account))]
+        [InverseProperty("Account")]
         public virtual ICollection<WaterTransferRegistration> WaterTransferRegistrations { get; set; }
     }
 }

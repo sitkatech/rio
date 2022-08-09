@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("WaterTradingScenarioWell")]
@@ -16,6 +14,7 @@ namespace Rio.EFModels.Entities
         public int WaterTradingScenarioWellID { get; set; }
         [Required]
         [StringLength(100)]
+        [Unicode(false)]
         public string WaterTradingScenarioWellCountyName { get; set; }
         [Required]
         [Column(TypeName = "geometry")]

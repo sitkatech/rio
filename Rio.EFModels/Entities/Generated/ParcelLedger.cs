@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
 namespace Rio.EFModels.Entities
 {
     [Table("ParcelLedger")]
@@ -24,20 +22,23 @@ namespace Rio.EFModels.Entities
         public int? WaterTypeID { get; set; }
         [Required]
         [StringLength(200)]
+        [Unicode(false)]
         public string TransactionDescription { get; set; }
         public int? UserID { get; set; }
+        [Unicode(false)]
         public string UserComment { get; set; }
         public int ParcelLedgerEntrySourceTypeID { get; set; }
         [StringLength(100)]
+        [Unicode(false)]
         public string UploadedFileName { get; set; }
 
-        [ForeignKey(nameof(ParcelID))]
+        [ForeignKey("ParcelID")]
         [InverseProperty("ParcelLedgers")]
         public virtual Parcel Parcel { get; set; }
-        [ForeignKey(nameof(UserID))]
+        [ForeignKey("UserID")]
         [InverseProperty("ParcelLedgers")]
         public virtual User User { get; set; }
-        [ForeignKey(nameof(WaterTypeID))]
+        [ForeignKey("WaterTypeID")]
         [InverseProperty("ParcelLedgers")]
         public virtual WaterType WaterType { get; set; }
     }
