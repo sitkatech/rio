@@ -32,6 +32,7 @@ namespace Rio.EFModels.Entities
         public static readonly FileResourceMimeTypexExcelXLSX xExcelXLSX = Rio.EFModels.Entities.FileResourceMimeTypexExcelXLSX.Instance;
         public static readonly FileResourceMimeTypeCSS CSS = Rio.EFModels.Entities.FileResourceMimeTypeCSS.Instance;
         public static readonly FileResourceMimeTypeZIP ZIP = Rio.EFModels.Entities.FileResourceMimeTypeZIP.Instance;
+        public static readonly FileResourceMimeTypeCSV CSV = Rio.EFModels.Entities.FileResourceMimeTypeCSV.Instance;
 
         public static readonly List<FileResourceMimeType> All;
         public static readonly List<FileResourceMimeTypeDto> AllAsDto;
@@ -43,8 +44,8 @@ namespace Rio.EFModels.Entities
         /// </summary>
         static FileResourceMimeType()
         {
-            All = new List<FileResourceMimeType> { PDF, WordDOCX, ExcelXLSX, XPNG, PNG, TIFF, BMP, GIF, JPEG, PJPEG, PowerpointPPTX, PowerpointPPT, ExcelXLS, WordDOC, xExcelXLSX, CSS, ZIP };
-            AllAsDto = new List<FileResourceMimeTypeDto> { PDF.AsDto(), WordDOCX.AsDto(), ExcelXLSX.AsDto(), XPNG.AsDto(), PNG.AsDto(), TIFF.AsDto(), BMP.AsDto(), GIF.AsDto(), JPEG.AsDto(), PJPEG.AsDto(), PowerpointPPTX.AsDto(), PowerpointPPT.AsDto(), ExcelXLS.AsDto(), WordDOC.AsDto(), xExcelXLSX.AsDto(), CSS.AsDto(), ZIP.AsDto() };
+            All = new List<FileResourceMimeType> { PDF, WordDOCX, ExcelXLSX, XPNG, PNG, TIFF, BMP, GIF, JPEG, PJPEG, PowerpointPPTX, PowerpointPPT, ExcelXLS, WordDOC, xExcelXLSX, CSS, ZIP, CSV };
+            AllAsDto = new List<FileResourceMimeTypeDto> { PDF.AsDto(), WordDOCX.AsDto(), ExcelXLSX.AsDto(), XPNG.AsDto(), PNG.AsDto(), TIFF.AsDto(), BMP.AsDto(), GIF.AsDto(), JPEG.AsDto(), PJPEG.AsDto(), PowerpointPPTX.AsDto(), PowerpointPPT.AsDto(), ExcelXLS.AsDto(), WordDOC.AsDto(), xExcelXLSX.AsDto(), CSS.AsDto(), ZIP.AsDto(), CSV.AsDto() };
             AllLookupDictionary = new ReadOnlyDictionary<int, FileResourceMimeType>(All.ToDictionary(x => x.FileResourceMimeTypeID));
             AllAsDtoLookupDictionary = new ReadOnlyDictionary<int, FileResourceMimeTypeDto>(AllAsDto.ToDictionary(x => x.FileResourceMimeTypeID));
         }
@@ -125,6 +126,8 @@ namespace Rio.EFModels.Entities
                     return BMP;
                 case FileResourceMimeTypeEnum.CSS:
                     return CSS;
+                case FileResourceMimeTypeEnum.CSV:
+                    return CSV;
                 case FileResourceMimeTypeEnum.ExcelXLS:
                     return ExcelXLS;
                 case FileResourceMimeTypeEnum.ExcelXLSX:
@@ -179,7 +182,8 @@ namespace Rio.EFModels.Entities
         WordDOC = 14,
         xExcelXLSX = 15,
         CSS = 16,
-        ZIP = 17
+        ZIP = 17,
+        CSV = 18
     }
 
     public partial class FileResourceMimeTypePDF : FileResourceMimeType
@@ -282,5 +286,11 @@ namespace Rio.EFModels.Entities
     {
         private FileResourceMimeTypeZIP(int fileResourceMimeTypeID, string fileResourceMimeTypeName, string fileResourceMimeTypeDisplayName, string fileResourceMimeTypeContentTypeName, string fileResourceMimeTypeIconSmallFilename, string fileResourceMimeTypeIconNormalFilename) : base(fileResourceMimeTypeID, fileResourceMimeTypeName, fileResourceMimeTypeDisplayName, fileResourceMimeTypeContentTypeName, fileResourceMimeTypeIconSmallFilename, fileResourceMimeTypeIconNormalFilename) {}
         public static readonly FileResourceMimeTypeZIP Instance = new FileResourceMimeTypeZIP(17, @"ZIP", @"ZIP", @"application/x-zip-compressed", null, null);
+    }
+
+    public partial class FileResourceMimeTypeCSV : FileResourceMimeType
+    {
+        private FileResourceMimeTypeCSV(int fileResourceMimeTypeID, string fileResourceMimeTypeName, string fileResourceMimeTypeDisplayName, string fileResourceMimeTypeContentTypeName, string fileResourceMimeTypeIconSmallFilename, string fileResourceMimeTypeIconNormalFilename) : base(fileResourceMimeTypeID, fileResourceMimeTypeName, fileResourceMimeTypeDisplayName, fileResourceMimeTypeContentTypeName, fileResourceMimeTypeIconSmallFilename, fileResourceMimeTypeIconNormalFilename) {}
+        public static readonly FileResourceMimeTypeCSV Instance = new FileResourceMimeTypeCSV(18, @"CSV", @"CSV", @"text/csv", null, null);
     }
 }
