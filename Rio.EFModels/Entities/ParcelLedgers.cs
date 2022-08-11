@@ -241,7 +241,7 @@ namespace Rio.EFModels.Entities
                     EffectiveDate = effectiveDate.AddHours(8),
                     TransactionTypeID = (int)TransactionTypeEnum.Supply,
                     ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
-                    TransactionAmount = (decimal)record.Quantity,
+                    TransactionAmount = (decimal)record.Quantity * (decimal)parcel.ParcelAreaInAcres,
                     WaterTypeID = waterTypeID,
                     TransactionDescription =
                         $"Transaction recorded via spreadsheet upload: {uploadedFileName}",
