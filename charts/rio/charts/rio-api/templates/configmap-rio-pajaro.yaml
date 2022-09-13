@@ -20,7 +20,7 @@ data:
   OpenETRasterMetadataRoute: "raster/metadata"
   OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
   OpenETRasterExportStatusRoute: "raster/export/status"
-  OpenETShapefilePath: "users/esa-sitka/Pajaro_Parcels_2022-05-04"
+  OpenETShapefilePath: "users/esa-sitka/Pajaro_Parcels_2022-09-12"
   OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "APN"
   ParcelBoundingBoxLeft: "-121.860154345934"
   ParcelBoundingBoxRight: "-121.582306671513"
