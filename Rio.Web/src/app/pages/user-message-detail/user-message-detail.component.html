@@ -1,10 +1,12 @@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item" aria-current="page">
-            <a routerLink="/user-messages">Messages</a>
-        </li>
-    </ol>
-</nav>
+<div class="breadcrumb-container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page">
+                <a routerLink="/user-messages">Messages</a>
+            </li>
+        </ol>
+    </nav>
+</div>
 <div class="container mt-sm-4" *ngIf="userMessage">
     <app-alert-display></app-alert-display>
     <div class="row mt-4">
