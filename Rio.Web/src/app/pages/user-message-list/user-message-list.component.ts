@@ -32,10 +32,10 @@ export class UserMessageListComponent implements OnInit {
   ngOnInit() {
     this.authenticationService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.userMessagesGrid.api.showLoadingOverlay();
+      this.userMessagesGrid?.api.showLoadingOverlay();
       this.userService.getMessagesForLoggedInUser().subscribe(userMessages => {
         this.rowData = userMessages;
-        this.userMessagesGrid.api.hideOverlay();
+        this.userMessagesGrid?.api.hideOverlay();
         this.userMessages = userMessages;
         this.cdr.detectChanges();
       });
