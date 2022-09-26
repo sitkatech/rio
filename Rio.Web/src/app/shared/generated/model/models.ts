@@ -51,6 +51,8 @@ export * from '././user-detailed-dto';
 export * from '././user-dto';
 export * from '././user-edit-accounts-dto';
 export * from '././user-invite-dto';
+export * from '././user-message-dto';
+export * from '././user-message-simple-dto';
 export * from '././user-partner-invite-dto';
 export * from '././user-simple-dto';
 export * from '././user-upsert-dto';

@@ -1,0 +1,42 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            <a routerLink="/user-messages">Messages</a>
+        </li>
+    </ol>
+</nav>
+<div class="container mt-sm-4" *ngIf="userMessage">
+    <app-alert-display></app-alert-display>
+    <div class="row mt-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Basics
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="text-sm-right col-sm-3 col-xs-12">From</dt>
+                        <dd class="col-sm-9 col-xs-12">
+                            {{userMessage.CreateUser.FullName}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-3 col-xs-12">To</dt>
+                        <dd class="col-sm-9 col-xs-12">
+                            {{userMessage.RecipientUser.FullName}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-3 col-xs-12">Message Created</dt>
+                        <dd class="col-sm-9 col-xs-12">
+                            {{userMessage.CreateDate | date:"short"}}
+                        </dd>
+
+                        <dt class="text-sm-right col-sm-3 col-xs-12">Message</dt>
+                        <dd class="col-sm-9 col-xs-12">
+                            {{userMessage.Message}}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

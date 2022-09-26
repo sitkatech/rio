@@ -3700,6 +3700,120 @@
         }
       }
     },
+    "/users/get-messages-for-logged-in-user": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserMessageDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserMessageDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserMessageDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user-messages/new": {
+      "post": {
+        "tags": [
+          "UserMessage"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMessageSimpleDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMessageSimpleDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMessageSimpleDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserMessageSimpleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/user-messages/{userMessageID}": {
+      "get": {
+        "tags": [
+          "UserMessage"
+        ],
+        "parameters": [
+          {
+            "name": "userMessageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMessageDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMessageDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserMessageDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/water-transfers/{waterTransferID}": {
       "get": {
         "tags": [
@@ -6086,6 +6200,56 @@
           "RoleID": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserMessageDto": {
+        "type": "object",
+        "properties": {
+          "UserMessageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateUser": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "RecipientUser": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserMessageSimpleDto": {
+        "type": "object",
+        "properties": {
+          "UserMessageID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateUserID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "RecipientUserID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "CreateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

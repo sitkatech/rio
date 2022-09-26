@@ -16,6 +16,8 @@ namespace Rio.EFModels.Entities
             FileResources = new HashSet<FileResource>();
             ParcelLedgers = new HashSet<ParcelLedger>();
             Postings = new HashSet<Posting>();
+            UserMessageCreateUsers = new HashSet<UserMessage>();
+            UserMessageRecipientUsers = new HashSet<UserMessage>();
         }
 
         [Key]
@@ -61,5 +63,9 @@ namespace Rio.EFModels.Entities
         public virtual ICollection<ParcelLedger> ParcelLedgers { get; set; }
         [InverseProperty("CreateUser")]
         public virtual ICollection<Posting> Postings { get; set; }
+        [InverseProperty("CreateUser")]
+        public virtual ICollection<UserMessage> UserMessageCreateUsers { get; set; }
+        [InverseProperty("RecipientUser")]
+        public virtual ICollection<UserMessage> UserMessageRecipientUsers { get; set; }
     }
 }

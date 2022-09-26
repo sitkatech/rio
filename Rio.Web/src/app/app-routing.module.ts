@@ -62,6 +62,9 @@ import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { IncludeWaterSupplyGuard } from './shared/guards/unauthenticated-access/include-water-supply-guard';
+import { UserMessageDetailComponent } from './pages/user-message-detail/user-message-detail.component';
+import { UserMessageListComponent } from './pages/user-message-list/user-message-list.component';
+import { UserMessageNewComponent } from './pages/user-message-new/user-message-new.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -90,6 +93,9 @@ const routes: Routes = [
   { path: "users/:id", component: UserDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit", component: UserEditComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "users/:id/edit-accounts", component: UserEditAccountsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard]},
+  { path: "user-messages", component: UserMessageListComponent, canActivate: [UnauthenticatedAccessGuard]},
+  { path: "user-messages/new", component: UserMessageNewComponent, canActivate: [UnauthenticatedAccessGuard]},
+  { path: "user-messages/:id", component: UserMessageDetailComponent, canActivate: [UnauthenticatedAccessGuard]},
   { path: "account-reconciliation", component: AccountReconciliationComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "accounts", component: AccountListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},
   { path: "accounts/:id", component: AccountDetailComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard]},

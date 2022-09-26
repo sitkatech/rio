@@ -11,6 +11,7 @@ import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { UserPartnerInviteDto } from 'src/app/shared/generated/model/user-partner-invite-dto';
 import { UserUpsertDto } from 'src/app/shared/generated/model/user-upsert-dto';
 import { UserEditAccountsDto } from 'src/app/shared/generated/model/user-edit-accounts-dto';
+import { UserMessageDto } from 'src/app/shared/generated/model/user-message-dto';
 
 @Injectable({
     providedIn: 'root'
@@ -96,5 +97,10 @@ export class UserService {
     setDisclaimerAcknowledgedDate(userID: number): Observable<UserDto> {
         let route = `/users/set-disclaimer-acknowledged-date`
         return this.apiService.putToApi(route, userID);
+    }
+
+    getMessagesForLoggedInUser(): Observable<UserMessageDto[]> {
+        let route = `/users/get-messages-for-logged-in-user`
+        return this.apiService.getFromApi(route);
     }
 }

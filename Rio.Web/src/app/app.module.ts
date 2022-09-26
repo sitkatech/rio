@@ -86,6 +86,9 @@ import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parce
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { DropdownSelectFilterComponent } from './shared/components/ag-grid/dropdown-select-filter/dropdown-select-filter.component';
 import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/clear-grid-filters-button/clear-grid-filters-button.component';
+import { UserMessageListComponent } from './pages/user-message-list/user-message-list.component';
+import { UserMessageDetailComponent } from './pages/user-message-detail/user-message-detail.component';
+import { UserMessageNewComponent } from './pages/user-message-new/user-message-new.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -157,7 +160,10 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     TagBulkParcelsComponent,
     ParcelLedgerTransactionHistoryComponent,
     DropdownSelectFilterComponent,
-    ClearGridFiltersButtonComponent
+    ClearGridFiltersButtonComponent,
+    UserMessageListComponent,
+    UserMessageNewComponent,
+    UserMessageDetailComponent
   ],
   imports: [
     AppRoutingModule,

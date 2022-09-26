@@ -499,5 +499,12 @@ As an administrator of the {_rioConfiguration.PlatformShortName}, you can assign
             mailMessage.ReplyToList.Add(_rioConfiguration.LeadOrganizationEmail);
             await smtpClient.Send(mailMessage);
         }
+
+        [HttpGet("users/get-messages-for-logged-in-user")]
+        public ActionResult<List<UserMessageDto>> GetMessagesForLoggedInUser()
+        {
+            var userFromContextDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
+            return UserMessages.ListByCreatedDate(_dbContext, userFromContextDto.UserID);
+        }
     }
 }

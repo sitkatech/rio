@@ -39,6 +39,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Trade> Trades { get; set; }
         public virtual DbSet<UploadedGdb> UploadedGdbs { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserMessage> UserMessages { get; set; }
         public virtual DbSet<WaterTradingScenarioWell> WaterTradingScenarioWells { get; set; }
         public virtual DbSet<WaterTransfer> WaterTransfers { get; set; }
         public virtual DbSet<WaterTransferRegistration> WaterTransferRegistrations { get; set; }
@@ -233,6 +234,21 @@ namespace Rio.EFModels.Entities
                 entity.HasIndex(e => e.UserGuid, "AK_User_UserGuid")
                     .IsUnique()
                     .HasFilter("([UserGuid] IS NOT NULL)");
+            });
+
+            modelBuilder.Entity<UserMessage>(entity =>
+            {
+                entity.HasOne(d => d.CreateUser)
+                    .WithMany(p => p.UserMessageCreateUsers)
+                    .HasForeignKey(d => d.CreateUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserMessage_User_CreateUserID_UserID");
+
+                entity.HasOne(d => d.RecipientUser)
+                    .WithMany(p => p.UserMessageRecipientUsers)
+                    .HasForeignKey(d => d.RecipientUserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserMessage_User_RecipientUserID_UserID");
             });
 
             modelBuilder.Entity<WaterTradingScenarioWell>(entity =>
