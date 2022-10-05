@@ -328,7 +328,7 @@ namespace Rio.API.Services
                 //We are somehow storing sync histories without file retrieval urls, this is not good
                 TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, new OpenETException(
                     $"OpenETSyncHistory record:{syncHistoryObject.OpenETSyncHistoryID} was saved without a file retrieval URL but we attempted to update with it. Check integration!"), "Error communicating with OpenET API.");
-                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed, "Record was saved with a Google Bucket File Retrieval URL. Support has been notified.");
+                OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed, "Record was saved without a Google Bucket File Retrieval URL. Support has been notified.");
                 return;
             }
 
