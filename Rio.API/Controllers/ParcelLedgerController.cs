@@ -70,7 +70,7 @@ namespace Rio.API.Controllers
             {
                 // flip TransactionAmount sign for usage adjustment; usage is negative in the ledger, but a user-inputted positive value should increase usage sum (and vice versa)
                 parcelLedgerCreateDto.TransactionAmount *= -1;
-                ValidateUsageAmount(parcelLedgerCreateDto);
+                ValidateUsageAmount(parcelLedgerCreateDto, parcelDto.ParcelID);
             }
             if (!ModelState.IsValid)
             {
@@ -258,12 +258,12 @@ namespace Rio.API.Controllers
             }
         }
 
-        private void ValidateUsageAmount(ParcelLedgerCreateDto parcelLedgerCreateDto)
+        private void ValidateUsageAmount(ParcelLedgerCreateDto parcelLedgerCreateDto, int parcelID)
         {
             var effectiveDate = DateTime.Parse(parcelLedgerCreateDto.EffectiveDate);
             if (parcelLedgerCreateDto.TransactionAmount > 0)
             {
-                var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, effectiveDate.Year, effectiveDate.Month, parcelLedgerCreateDto.ParcelNumbers[0][0]);
+                var monthlyUsageSum = ParcelLedgers.GetUsageSumForMonthAndParcelID(_dbContext, effectiveDate.Year, effectiveDate.Month, parcelID);
                 if (parcelLedgerCreateDto.TransactionAmount + monthlyUsageSum > 0)
                 {
                     ModelState.AddModelError("TransactionAmount", 
