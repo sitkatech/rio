@@ -499,6 +499,7 @@ stages:
                 global.secrets.sendGridApiKey="$(SendGridApiKey)"
                 global.secrets.openETApiKey="$(OpenETAPIKey)"
                 global.secrets.hangfirePassword="$(HANGFIRE_ADMIN_PASSWORD)"
+                global.secrets.hangfireUserName="$(hangfireUsername)"
                 global.env.tenantName="$(tenantName)"
                 global.env.geoserverInitialMemory="$(geoserverInitialMemory)"
                 global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"
