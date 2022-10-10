@@ -1,3 +1,4 @@
+{{ if eq .Values.global.env.tenantName "rio-yolo" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -21,3 +22,4 @@ data:
   parcelBoundingBoxTop: "38.9258419099484"
   parcelBoundingBoxBottom: "38.3132769567598"
   enabledGETIntegration: "false"
+{{ end }}
