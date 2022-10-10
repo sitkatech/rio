@@ -409,7 +409,7 @@ stages:
                     CREATE USER [$(sqlGeoserverUsername)] FOR LOGIN [$(sqlGeoserverUsername)] WITH DEFAULT_SCHEMA=[dbo]
                     EXEC sp_addrolemember 'db_datareader', '$(sqlGeoserverUsername)'              
                   END
-            condition: and(succeeded())
+            condition: succeeded()
 
 - stage: DeployGeoServer
   displayName: Deploy GeoServer
