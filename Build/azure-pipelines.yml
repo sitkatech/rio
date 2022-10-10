@@ -166,7 +166,7 @@ stages:
         resourceId: '$(importResourceID)'
         commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "rabbitMqUser=$(rabbitMqUser)" -var "rabbitMqPass=$(rabbitMqPass)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)" -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
       continueOnError: true #after initial import this should not stop builds until it's removed.
-      condition: noteq(variables['importResourceID'], '')
+      condition: ne(variables['importResourceID'], '')
 
     - task: TerraformCLI@0
       inputs:
