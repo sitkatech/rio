@@ -1,3 +1,4 @@
+{{ if eq .Values.env.tenantName "rio-edf" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -26,3 +27,4 @@ data:
   ParcelBoundingBoxRight: "-119.11015104115182"
   ParcelBoundingBoxTop: "35.442022035628575"
   ParcelBoundingBoxBottom: "35.27608156273151"
+{{ end }}
