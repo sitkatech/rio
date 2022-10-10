@@ -4,6 +4,7 @@ global:
     dbServer: "databaseserver"
     databaseName: "databasename"
     sqlUsername: "sqlUsername"
+    sqlGeoserverUsername: "geoserverUsername"
     appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
     tenantName: "rio-edf"
     geoserverInitialMemory: "1G"
@@ -21,7 +22,7 @@ global:
     apiSqlPassword: "passwordhere"
     sendGridApiKey: "sendgridapikeyhere"
     openETApiKey: "openETApiKeyHere"
-    hangfireUserName: "hangfireUserName"
+    hangfireUserName: "HangfireAdmin"
     hangfirePassword: "passwordhere"
 
 rio-api:

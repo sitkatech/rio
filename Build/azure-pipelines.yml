@@ -271,6 +271,10 @@ stages:
               echo "##vso[task.setvariable variable=STORAGE_ACCOUNT_SAS_KEY;isOutput=true]$(TF_OUT_STORAGE_ACCOUNT_SAS_KEY)"
               echo "##vso[task.setvariable variable=APPLICATION_STORAGE_ACCOUNT_KEY;isOutput=true]$(TF_OUT_APPLICATION_STORAGE_ACCOUNT_KEY)"
               echo "##vso[task.setvariable variable=INSTRUMENTATION_KEY;isOutput=true]$(TF_OUT_INSTRUMENTATION_KEY)"
+              echo "##vso[task.setvariable variable=SQL_API_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_API_PASSWORD)"
+              echo "##vso[task.setvariable variable=SQL_GEOSERVER_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_GEOSERVER_PASSWORD)"
+              echo "##vso[task.setvariable variable=GEOSERVER_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_GEOSERVER_ADMIN_PASSWORD)"
+              echo "##vso[task.setvariable variable=HANGFIRE_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_HANGFIRE_ADMIN_PASSWORD)"
           - bash: 'env | sort'
 
 - stage: DeployDB
@@ -437,6 +441,10 @@ stages:
     variables: 
       APPLICATION_STORAGE_ACCOUNT_KEY: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.APPLICATION_STORAGE_ACCOUNT_KEY'] ]
       INSTRUMENTATION_KEY: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.INSTRUMENTATION_KEY'] ]
+      SQL_API_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_API_PASSWORD'] ]
+      SQL_GEOSERVER_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_GEOSERVER_PASSWORD'] ]
+      GEOSERVER_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.GEOSERVER_ADMIN_PASSWORD'] ]
+      HANGFIRE_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.HANGFIRE_ADMIN_PASSWORD'] ]
     # creates an environment if it doesn't exist
     environment: $(Environment)
     strategy:
@@ -473,6 +481,26 @@ stages:
               chartType: FilePath
               chartPath: '$(Pipeline.Workspace)/ChartArtifacts/chart'
               releaseName: '$(tenantName)'
-              overrideValues: 'global.env.appInsightsInstrumentationKey="$(INSTRUMENTATION_KEY)",global.domains.api="$(domainApi)",global.domains.web="$(domainWeb)",global.domains.geoserver="$(domainGeoserver)",global.env.name="$(Environment)",global.secrets.geoserverSqlServerPassword="$(GeoserverSqlServerPassword)",global.secrets.geoserverAdminPassword="$(GeoserverAdminPassword)",global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)",global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)",global.env.dbServer=$(dbServer),global.env.databaseName=$(databaseName),global.env.sqlUsername=$(sqlUsername),global.secrets.apiSqlPassword=$(sqlPassword),global.secrets.sendGridApiKey="$(SendGridApiKey)",global.secrets.openETApiKey="$(OpenETAPIKey)",global.env.tenantName="$(tenantName)",global.env.geoserverInitialMemory="$(geoserverInitialMemory)",global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"'
+              overrideValues: |
+                global.env.appInsightsInstrumentationKey="$(INSTRUMENTATION_KEY)"
+                global.domains.api="$(domainApi)"
+                global.domains.web="$(domainWeb)"
+                global.domains.geoserver="$(domainGeoserver)"
+                global.env.name="$(Environment)"
+                global.secrets.geoserverSqlServerPassword="$(SQL_GEOSERVER_PASSWORD)"
+                global.secrets.geoserverAdminPassword="$(GEOSERVER_ADMIN_PASSWORD)"
+                global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)"
+                global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)"
+                global.env.dbServer=$(dbServer)
+                global.env.databaseName=$(databaseName)
+                global.env.sqlUsername=$(sqlApiUsername)
+                global.env.sqlGeoserverUsername=$(sqlGeoserverUsername)
+                global.secrets.apiSqlPassword=$(SQL_API_PASSWORD)
+                global.secrets.sendGridApiKey="$(SendGridApiKey)"
+                global.secrets.openETApiKey="$(OpenETAPIKey)"
+                global.secrets.hangfirePassword="$(HANGFIRE_ADMIN_PASSWORD)"
+                global.env.tenantName="$(tenantName)"
+                global.env.geoserverInitialMemory="$(geoserverInitialMemory)"
+                global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"
               force: false
                       
