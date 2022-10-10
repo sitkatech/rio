@@ -200,6 +200,7 @@ resource "azurerm_mssql_database" "database" {
 resource "random_password" "sqlApiPassword" {
   length           = 16
   special          = true
+  override_special = "!#*-_"
   keepers = {
     amd_id = var.amd_id
   }
@@ -264,6 +265,7 @@ resource "mssql_user" "api" {
 resource "random_password" "geoserverAdminPassword" {
   length           = 16
   special          = true
+  override_special = "!#*-_"
   keepers = {
     amd_id = var.amd_id
   }
@@ -281,6 +283,7 @@ output "geoserver_admin_password" {
 resource "random_password" "sqlGeoserverPassword" {
   length           = 16
   special          = true
+  override_special = "!#*-_"
   keepers = {
     amd_id = var.amd_id
   }
