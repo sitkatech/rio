@@ -159,9 +159,20 @@ stages:
 
     - task: TerraformCLI@0
       inputs:
+        command: 'import'
+        environmentServiceName: '$(azureSubscription)'
+        allowTelemetryCollection: true
+        resourceAddress: 'azurerm_mssql_database.database'
+        resourceId: '$(importResourceID)'
+        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
+      continueOnError: true #after initial import this should not stop builds until it's removed.
+      condition: ne(variables['importResourceID'], '')
+
+    - task: TerraformCLI@0
+      inputs:
         command: 'plan'
         environmentServiceName: '$(azureSubscription)'
-        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)"'
+        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
         allowTelemetryCollection: true
         publishPlanResults: 'tfplan'
         
@@ -258,7 +269,7 @@ stages:
               command: 'apply'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
               environmentServiceName: '$(azureSubscription)'
-              commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)"'
+              commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
               allowTelemetryCollection: true
 
           - task: TerraformCLI@0
@@ -271,6 +282,10 @@ stages:
               echo "##vso[task.setvariable variable=STORAGE_ACCOUNT_SAS_KEY;isOutput=true]$(TF_OUT_STORAGE_ACCOUNT_SAS_KEY)"
               echo "##vso[task.setvariable variable=APPLICATION_STORAGE_ACCOUNT_KEY;isOutput=true]$(TF_OUT_APPLICATION_STORAGE_ACCOUNT_KEY)"
               echo "##vso[task.setvariable variable=INSTRUMENTATION_KEY;isOutput=true]$(TF_OUT_INSTRUMENTATION_KEY)"
+              echo "##vso[task.setvariable variable=SQL_API_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_API_PASSWORD)"
+              echo "##vso[task.setvariable variable=SQL_GEOSERVER_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_GEOSERVER_PASSWORD)"
+              echo "##vso[task.setvariable variable=GEOSERVER_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_GEOSERVER_ADMIN_PASSWORD)"
+              echo "##vso[task.setvariable variable=HANGFIRE_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_HANGFIRE_ADMIN_PASSWORD)"
           - bash: 'env | sort'
 
 - stage: DeployDB
@@ -320,7 +335,11 @@ stages:
                 if exists (select * from sys.databases where name = '$(databaseName)_qa')
                 begin
                   drop database [$(databaseName)_qa]
-                end            
+                end
+                if exists (select * from sys.databases where name = '$(databaseName)_prod')
+                begin
+                  drop database [$(databaseName)_prod]
+                end
                 
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
 
@@ -378,7 +397,31 @@ stages:
                 drop database [$(databaseName)_qa]
               
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
-
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: 'Azure SQL InlineSqlTask - Rename Users'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              ServerName: '$(dbServer)' 
+              DatabaseName: $(databaseName)
+              SqlUsername: '$(sqlUsername)'
+              SqlPassword: '$(sqlPassword)'
+              deployType: InlineSqlTask
+              SqlInline: |
+                if not exists (select * from sys.database_principals where name = N'$(sqlApiUsername)')
+                  BEGIN
+                    CREATE USER [$(sqlApiUsername)] FOR LOGIN [$(sqlApiUsername)] WITH DEFAULT_SCHEMA=[dbo]
+                    EXEC sp_addrolemember 'db_datawriter', '$(sqlApiUsername)'
+                    EXEC sp_addrolemember 'db_datareader', '$(sqlApiUsername)'
+                    EXEC sp_addrolemember 'db_ddladmin', '$(sqlApiUsername)'
+                  END
+                                
+                if not exists (select * from sys.database_principals where name = N'$(sqlGeoserverUsername)')
+                  BEGIN
+                    CREATE USER [$(sqlGeoserverUsername)] FOR LOGIN [$(sqlGeoserverUsername)] WITH DEFAULT_SCHEMA=[dbo]
+                    EXEC sp_addrolemember 'db_datareader', '$(sqlGeoserverUsername)'              
+                  END
+            condition: succeeded()
 
 - stage: DeployGeoServer
   displayName: Deploy GeoServer
@@ -437,6 +480,10 @@ stages:
     variables: 
       APPLICATION_STORAGE_ACCOUNT_KEY: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.APPLICATION_STORAGE_ACCOUNT_KEY'] ]
       INSTRUMENTATION_KEY: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.INSTRUMENTATION_KEY'] ]
+      SQL_API_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_API_PASSWORD'] ]
+      SQL_GEOSERVER_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_GEOSERVER_PASSWORD'] ]
+      GEOSERVER_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.GEOSERVER_ADMIN_PASSWORD'] ]
+      HANGFIRE_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.HANGFIRE_ADMIN_PASSWORD'] ]
     # creates an environment if it doesn't exist
     environment: $(Environment)
     strategy:
@@ -473,6 +520,27 @@ stages:
               chartType: FilePath
               chartPath: '$(Pipeline.Workspace)/ChartArtifacts/chart'
               releaseName: '$(tenantName)'
-              overrideValues: 'global.env.appInsightsInstrumentationKey="$(INSTRUMENTATION_KEY)",global.domains.api="$(domainApi)",global.domains.web="$(domainWeb)",global.domains.geoserver="$(domainGeoserver)",global.env.name="$(Environment)",global.secrets.geoserverSqlServerPassword="$(GeoserverSqlServerPassword)",global.secrets.geoserverAdminPassword="$(GeoserverAdminPassword)",global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)",global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)",global.env.dbServer=$(dbServer),global.env.databaseName=$(databaseName),global.env.sqlUsername=$(sqlUsername),global.secrets.apiSqlPassword=$(sqlPassword),global.secrets.sendGridApiKey="$(SendGridApiKey)",global.secrets.openETApiKey="$(OpenETAPIKey)",global.env.tenantName="$(tenantName)",global.env.geoserverInitialMemory="$(geoserverInitialMemory)",global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"'
+              overrideValues: |
+                global.env.appInsightsInstrumentationKey="$(INSTRUMENTATION_KEY)"
+                global.domains.api="$(domainApi)"
+                global.domains.web="$(domainWeb)"
+                global.domains.geoserver="$(domainGeoserver)"
+                global.env.name="$(Environment)"
+                global.secrets.geoserverSqlServerPassword="$(SQL_GEOSERVER_PASSWORD)"
+                global.secrets.geoserverAdminPassword="$(GEOSERVER_ADMIN_PASSWORD)"
+                global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)"
+                global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)"
+                global.env.dbServer=$(dbServer)
+                global.env.databaseName=$(databaseName)
+                global.env.sqlUsername=$(sqlApiUsername)
+                global.env.sqlGeoserverUsername=$(sqlGeoserverUsername)
+                global.secrets.apiSqlPassword=$(SQL_API_PASSWORD)
+                global.secrets.sendGridApiKey="$(SendGridApiKey)"
+                global.secrets.openETApiKey="$(OpenETAPIKey)"
+                global.secrets.hangfirePassword="$(HANGFIRE_ADMIN_PASSWORD)"
+                global.secrets.hangfireUserName="$(hangfireUsername)"
+                global.env.tenantName="$(tenantName)"
+                global.env.geoserverInitialMemory="$(geoserverInitialMemory)"
+                global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"
               force: false
                       

@@ -1,8 +1,8 @@
-{{ if eq .Values.global.env.tenantName "rio-edf" }}
+{{ if eq .Values.global.env.tenantName "rio-sonoma" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-api.fullname" . }}-rio-edf-configmap
+  name: {{ include "rio-api.fullname" . }}-rio-sonoma-configmap
 data:
   AllowTrading: "true"
   AllowOpenETSync: "true"
@@ -10,8 +10,8 @@ data:
   PlatformLongName: "Environmental Defense Fund Water Accounting and Trading Platform"
   PlatformShortName: "Water Accounting and Trading Platform"
   LeadOrganizationLongName: "Environmental Defense Fund"
-  LeadOrganizationShortName: "EDF"
-  LeadOrganizationHomeUrl: "https://edf.org"
+  LeadOrganizationShortName: "sonoma"
+  LeadOrganizationHomeUrl: "https://sonoma.org"
   LeadOrganizationEmail: "mriveratorres@edf.org"
   VerificationKeyChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ,0123456789"
   ValidParcelNumberRegexPattern: "^[0-9]{3}-[0-9]{2}-[0-9]{3}$$"

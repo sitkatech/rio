@@ -1,3 +1,4 @@
+{{ if eq .Values.global.env.tenantName "rio-rrb" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -21,3 +22,4 @@ data:
   parcelBoundingBoxTop: "35.442022035628575"
   parcelBoundingBoxBottom: "35.27608156273151"
   enabledGETIntegration: "false"
+{{ end }}
