@@ -324,7 +324,11 @@ stages:
                 if exists (select * from sys.databases where name = '$(databaseName)_qa')
                 begin
                   drop database [$(databaseName)_qa]
-                end            
+                end
+                if exists (select * from sys.databases where name = '$(databaseName)_prod')
+                begin
+                  drop database [$(databaseName)_prod]
+                end
                 
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
 
@@ -382,7 +386,30 @@ stages:
                 drop database [$(databaseName)_qa]
               
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
-
+          
+          - task: SqlAzureDacpacDeployment@1
+            displayName: 'Azure SQL InlineSqlTask - Rename Users'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              ServerName: '$(dbServer)' 
+              DatabaseName: $(databaseName)
+              SqlUsername: '$(sqlUsername)'
+              SqlPassword: '$(sqlPassword)'
+              deployType: InlineSqlTask
+              SqlInline: |
+                if not exists (select * from sys.database_principals where name = N'$(sqlApiUsername)')
+                  BEGIN
+                    CREATE USER [$(sqlApiUsername)] FOR LOGIN [$(sqlApiUsername)] WITH DEFAULT_SCHEMA=[dbo]
+                    EXEC sp_addrolemember 'db_datawriter', '$(sqlApiUsername)'
+                    EXEC sp_addrolemember 'db_datareader', '$(sqlApiUsername)'
+                  END
+                                
+                if not exists (select * from sys.database_principals where name = N'$(sqlGeoserverUsername)')
+                  BEGIN
+                    CREATE USER [$(sqlGeoserverUsername)] FOR LOGIN [$(sqlGeoserverUsername)] WITH DEFAULT_SCHEMA=[dbo]
+                    EXEC sp_addrolemember 'db_datareader', '$(sqlGeoserverUsername)'              
+                  END
+            condition: and(succeeded())
 
 - stage: DeployGeoServer
   displayName: Deploy GeoServer
