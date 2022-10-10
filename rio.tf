@@ -158,12 +158,6 @@ resource "azurerm_storage_share" "web" {
   quota                = 10 //10gb
 }
 
-
-
-
-
-
-
 #sql
 data "azurerm_mssql_server" "spoke" {
   name                = var.dbServerName
