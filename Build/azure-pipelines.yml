@@ -161,7 +161,7 @@ stages:
       inputs:
         command: 'plan'
         environmentServiceName: '$(azureSubscription)'
-        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)"'
+        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
         allowTelemetryCollection: true
         publishPlanResults: 'tfplan'
         
@@ -258,7 +258,7 @@ stages:
               command: 'apply'
               workingDirectory: '$(Pipeline.Workspace)/terraform'
               environmentServiceName: '$(azureSubscription)'
-              commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)"'
+              commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
               allowTelemetryCollection: true
 
           - task: TerraformCLI@0

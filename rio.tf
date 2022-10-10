@@ -43,6 +43,25 @@ variable "aspNetEnvironment" {
 	type = string
 }
 
+variable "azureClusterResourceGroup" {
+  type = string
+}
+
+variable "sqlApiUsername" {
+  type = string
+}
+
+variable "sqlGeoserverUsername" {
+  type = string
+}
+
+// this variable is used for the keepers for the random resources https://registry.terraform.io/providers/hashicorp/random/latest/docs
+variable "amd_id" {
+  type = string
+  sensitive = false
+  default = "1"
+}
+
 terraform {
 	required_version   = ">= 0.11"
 	backend "azurerm" {
