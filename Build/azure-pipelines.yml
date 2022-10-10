@@ -402,6 +402,7 @@ stages:
                     CREATE USER [$(sqlApiUsername)] FOR LOGIN [$(sqlApiUsername)] WITH DEFAULT_SCHEMA=[dbo]
                     EXEC sp_addrolemember 'db_datawriter', '$(sqlApiUsername)'
                     EXEC sp_addrolemember 'db_datareader', '$(sqlApiUsername)'
+                    EXEC sp_addrolemember 'db_ddladmin', '$(sqlApiUsername)'
                   END
                                 
                 if not exists (select * from sys.database_principals where name = N'$(sqlGeoserverUsername)')

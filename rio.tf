@@ -255,7 +255,7 @@ resource "mssql_user" "api" {
   username       = var.sqlApiUsername
   login_name     = var.sqlApiUsername
   depends_on = [data.azurerm_mssql_server.spoke, azurerm_mssql_database.database, mssql_login.api]
-  roles    = [ "db_datareader", "db_datawriter" ]
+  roles    = [ "db_datareader", "db_datawriter", "db_ddladmin" ]
 }
 ### END API Sql user/login ###
 
