@@ -414,6 +414,7 @@ stages:
                     EXEC sp_addrolemember 'db_datawriter', '$(sqlApiUsername)'
                     EXEC sp_addrolemember 'db_datareader', '$(sqlApiUsername)'
                     EXEC sp_addrolemember 'db_ddladmin', '$(sqlApiUsername)'
+                    GRANT EXECUTE ON SCHEMA::[dbo] TO $(sqlApiUsername)
                   END
                                 
                 if not exists (select * from sys.database_principals where name = N'$(sqlGeoserverUsername)')
