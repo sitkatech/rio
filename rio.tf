@@ -201,6 +201,9 @@ resource "random_password" "sqlApiPassword" {
   length           = 16
   special          = true
   override_special = "!#*-_"
+  min_lower = 1
+  min_numeric = 1
+  min_special = 1
   keepers = {
     amd_id = var.amd_id
   }
@@ -266,6 +269,9 @@ resource "random_password" "geoserverAdminPassword" {
   length           = 16
   special          = true
   override_special = "!#*-_"
+  min_lower = 1
+  min_numeric = 1
+  min_special = 1
   keepers = {
     amd_id = var.amd_id
   }
@@ -284,6 +290,9 @@ resource "random_password" "sqlGeoserverPassword" {
   length           = 16
   special          = true
   override_special = "!#*-_"
+  min_lower = 1
+  min_numeric = 1
+  min_special = 1
   keepers = {
     amd_id = var.amd_id
   }
