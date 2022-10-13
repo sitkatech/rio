@@ -1,3 +1,4 @@
+{{ if eq .Values.global.env.name "qa" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -13,3 +14,4 @@ data:
   APPINSIGHTS_INSTRUMENTATIONKEY: "{{ .Values.global.env.appInsightsInstrumentationKey }}"
   Ogr2OgrExecutable: "/usr/bin/ogr2ogr"
   OgrInfoExecutable: "/usr/bin/ogrinfo"
+{{ end }}

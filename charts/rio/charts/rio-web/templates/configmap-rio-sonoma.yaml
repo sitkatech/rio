@@ -1,8 +1,8 @@
-{{ if eq .Values.global.env.tenantName "rio-edf" }}
+{{ if eq .Values.global.env.tenantName "rio-sonoma" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-web.fullname" . }}-rio-edf-configmap
+  name: {{ include "rio-web.fullname" . }}-rio-sonoma-configmap
 data:
   allowTrading: "true"
   allowOpenETSync: "true"
