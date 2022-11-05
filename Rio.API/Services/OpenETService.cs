@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -190,16 +189,6 @@ namespace Rio.API.Services
                 {
                     StatusCode = HttpStatusCode.BadRequest,
                     Content = new StringContent("Syncing with OpenET is not enabled at this time")
-                };
-            }
-
-            if (!IsOpenETAPIKeyValid())
-            {
-                return new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.PreconditionFailed,
-                    Content = new StringContent(
-                        "OpenET API Key is invalid or expired. Support has been notified and will work to remedy the situation shortly")
                 };
             }
 
