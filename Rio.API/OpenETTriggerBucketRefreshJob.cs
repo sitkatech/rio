@@ -38,7 +38,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
+            if (!_rioConfiguration.AllowOpenETSync)
             {
                 return;
             }
