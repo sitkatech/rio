@@ -5,7 +5,7 @@ metadata:
   name: {{ include "rio-web.fullname" . }}-rio-pajaro-configmap
 data:
   allowTrading: "false"
-  allowOpenETSync: "true"
+  allowOpenETSync: "false"
   includeWaterSupply: "false"
   platformLongName: "Pajaro Valley Water Accounting Platform Pilot"
   platformShortName: "Water Accounting Platform Pilot"
