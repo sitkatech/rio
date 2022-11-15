@@ -42,13 +42,9 @@ namespace Rio.API
             
             var inProgressSyncs = _rioDbContext.OpenETSyncHistories
                 .Where(x => x.OpenETSyncResultTypeID == (int) OpenETSyncResultTypeEnum.InProgress).ToList();
-            if (inProgressSyncs.Any())
+            foreach (var openEtSyncHistory in inProgressSyncs)
             {
-                var filesReadyForExport = _openETService.GetAllFilesReadyForExport();
-                inProgressSyncs.ForEach(x =>
-                {
-                    _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(x.OpenETSyncHistoryID, filesReadyForExport, _httpClient);
-                });
+                _openETService.UpdateParcelMonthlyEvapotranspirationWithETData(openEtSyncHistory.OpenETSyncHistoryID, _httpClient);
             }
             
             //Fail any created syncs that have been in a created state for longer than 15 minutes
