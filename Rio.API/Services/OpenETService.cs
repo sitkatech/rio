@@ -302,8 +302,7 @@ namespace Rio.API.Services
         /// <summary>
         /// Check if OpenET has created data for a particular Year and Month sync that has been triggered and update our ParcelLedger with the updated data
         /// </summary>
-        public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport,
-            HttpClient httpClient)
+        public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, HttpClient httpClient)
         {
             var syncHistoryObject = OpenETSyncHistory.GetByOpenETSyncHistoryID(_rioDbContext, syncHistoryID);
 
@@ -323,17 +322,12 @@ namespace Rio.API.Services
                 return;
             }
 
-            if (filesReadyForExport == null || !filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
-            {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, "OpenET API never reported the results as available.");
-                return;
-            }
-
             var response = httpClient.GetAsync(syncHistoryObject.GoogleBucketFileRetrievalURL).Result;
 
             if (!response.IsSuccessStatusCode)
             {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, response.Content.ReadAsStringAsync().Result);
+                var errorMessage = response.StatusCode == HttpStatusCode.NotFound ? "OpenET API never reported the results as available." : response.Content.ReadAsStringAsync().Result;
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, errorMessage);
                 return;
             }
 
@@ -440,7 +434,7 @@ namespace Rio.API.Services
     {
         string[] GetAllFilesReadyForExport();
         HttpResponseMessage TriggerOpenETGoogleBucketRefresh(int waterYearMonthID);
-        void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport,
+        void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID,
             HttpClient httpClient);
         bool IsOpenETAPIKeyValid();
     }
@@ -458,7 +452,7 @@ namespace Rio.API.Services
         {
             Map(m => m.ParcelNumber).Name(parcelNumberColumnName);
             Map(m => m.Date).Name("time");
-            Map(m => m.EvapotranspirationRate).Name("et_mean");
+            Map(m => m.EvapotranspirationRate).Name("mean");
         }
     }
 
