@@ -283,7 +283,7 @@ namespace Rio.API.Services
 
         public class TimeseriesMultipolygonSuccessfulResponse
         {
-            [JsonProperty("bucket_url")]
+            [JsonProperty("destination")]
             public string FileRetrievalURL { get; set; }
         }
 
