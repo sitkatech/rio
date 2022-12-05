@@ -5,7 +5,7 @@ metadata:
   name: {{ include "rio-web.fullname" . }}-rio-edf-configmap
 data:
   allowTrading: "true"
-  allowOpenETSync: "true"
+  allowOpenETSync: "false"
   includeWaterSupply: "true"
   platformLongName: "Environmental Defense Fund Water Accounting and Trading Platform"
   platformShortName: "Water Accounting and Trading Platform"

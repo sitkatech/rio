@@ -5,7 +5,7 @@ metadata:
   name: {{ include "rio-api.fullname" . }}-rio-sonoma-configmap
 data:
   AllowTrading: "true"
-  AllowOpenETSync: "true"
+  AllowOpenETSync: "false"
   IncludeWaterSupply: "true"
   PlatformLongName: "Environmental Defense Fund Water Accounting and Trading Platform"
   PlatformShortName: "Water Accounting and Trading Platform"

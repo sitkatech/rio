@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Rio.EFModels.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.Extensions.Options;
 using Rio.API.Services;
 
@@ -38,7 +39,7 @@ namespace Rio.API
 
         protected override void RunJobImplementation()
         {
-            if (!_rioConfiguration.AllowOpenETSync || !_openETService.IsOpenETAPIKeyValid())
+            if (!_rioConfiguration.AllowOpenETSync)
             {
                 return;
             }
@@ -52,6 +53,7 @@ namespace Rio.API
             nonFinalizedWaterYearMonths.ToList().ForEach(x =>
                 {
                     _openETService.TriggerOpenETGoogleBucketRefresh(x.WaterYearMonthID);
+                    Thread.Sleep(2000); // intentional sleep here to make sure we don't hit the maximum rate limit
                 });
         }
     }

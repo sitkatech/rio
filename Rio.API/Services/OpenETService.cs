@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -193,16 +193,6 @@ namespace Rio.API.Services
                 };
             }
 
-            if (!IsOpenETAPIKeyValid())
-            {
-                return new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.PreconditionFailed,
-                    Content = new StringContent(
-                        "OpenET API Key is invalid or expired. Support has been notified and will work to remedy the situation shortly")
-                };
-            }
-
             var waterYearMonthDto = WaterYearMonth.GetByWaterYearMonthID(_rioDbContext, waterYearMonthID);
 
             if (waterYearMonthDto == null)
@@ -241,6 +231,7 @@ namespace Rio.API.Services
                         $"The sync for {monthNameToDisplay} {year} will not be completed for the following reason: {newSyncHistory.OpenETSyncResultType.OpenETSyncResultTypeDisplayName}.{(newSyncHistory.OpenETSyncResultType.OpenETSyncResultTypeID == (int)OpenETSyncResultTypeEnum.Failed ? " Error Message:" + newSyncHistory.ErrorMessage : "")}")
                 };
             }
+            Thread.Sleep(1000); // intentional sleep here to avoid maximum rate limit message
 
             var openETRequestURL = $"{_rioConfiguration.OpenETRasterTimeSeriesMultipolygonRoute}?shapefile_asset_id={_rioConfiguration.OpenETShapefilePath}&start_date={new DateTime(year, month, 1):yyyy-MM-dd}&end_date={new DateTime(year, month, DateTime.DaysInMonth(year, month)):yyyy-MM-dd}&model=ensemble&variable=et&units=english&output_date_format=standard&ref_et_source=cimis&filename_suffix={_rioConfiguration.LeadOrganizationShortName}_{month}_{year}_public&include_columns={_rioConfiguration.OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}&provisional=true&interval=monthly";
 
@@ -292,7 +283,7 @@ namespace Rio.API.Services
 
         public class TimeseriesMultipolygonSuccessfulResponse
         {
-            [JsonProperty("bucket_url")]
+            [JsonProperty("destination")]
             public string FileRetrievalURL { get; set; }
         }
 
@@ -311,8 +302,7 @@ namespace Rio.API.Services
         /// <summary>
         /// Check if OpenET has created data for a particular Year and Month sync that has been triggered and update our ParcelLedger with the updated data
         /// </summary>
-        public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport,
-            HttpClient httpClient)
+        public void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, HttpClient httpClient)
         {
             var syncHistoryObject = OpenETSyncHistory.GetByOpenETSyncHistoryID(_rioDbContext, syncHistoryID);
 
@@ -332,17 +322,12 @@ namespace Rio.API.Services
                 return;
             }
 
-            if (filesReadyForExport == null || !filesReadyForExport.Contains(syncHistoryObject.GoogleBucketFileRetrievalURL))
-            {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, "OpenET API never reported the results as available.");
-                return;
-            }
-
             var response = httpClient.GetAsync(syncHistoryObject.GoogleBucketFileRetrievalURL).Result;
 
             if (!response.IsSuccessStatusCode)
             {
-                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, response.Content.ReadAsStringAsync().Result);
+                var errorMessage = response.StatusCode == HttpStatusCode.NotFound ? "OpenET API never reported the results as available." : response.Content.ReadAsStringAsync().Result;
+                UpdateStatusAndFailIfOperationHasExceeded24Hours(_rioDbContext, syncHistoryObject, errorMessage);
                 return;
             }
 
@@ -449,7 +434,7 @@ namespace Rio.API.Services
     {
         string[] GetAllFilesReadyForExport();
         HttpResponseMessage TriggerOpenETGoogleBucketRefresh(int waterYearMonthID);
-        void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID, string[] filesReadyForExport,
+        void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID,
             HttpClient httpClient);
         bool IsOpenETAPIKeyValid();
     }
@@ -467,7 +452,7 @@ namespace Rio.API.Services
         {
             Map(m => m.ParcelNumber).Name(parcelNumberColumnName);
             Map(m => m.Date).Name("time");
-            Map(m => m.EvapotranspirationRate).Name("et_mean");
+            Map(m => m.EvapotranspirationRate).Name("mean");
         }
     }
 

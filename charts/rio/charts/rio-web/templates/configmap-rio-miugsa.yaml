@@ -5,7 +5,7 @@ metadata:
   name: {{ include "rio-web.fullname" . }}-rio-miugsa-configmap
 data:
   allowTrading: "false"
-  allowOpenETSync: "true"
+  allowOpenETSync: "false"
   includeWaterSupply: "true"
   platformLongName: "MIUGSA Water Accounting Platform Pilot"
   platformShortName: "Water Accounting Platform Pilot"
