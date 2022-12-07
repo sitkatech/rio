@@ -68,3 +68,4 @@ model/water-type-dto.ts
 model/water-usage-overview-dto.ts
 model/water-year-dto.ts
 model/water-year-month-dto.ts
+param.ts
