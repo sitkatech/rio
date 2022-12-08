@@ -24,6 +24,7 @@
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <DefaultCollation>SQL_Latin1_General_CP1_CI_AS</DefaultCollation>
     <DefaultFilegroup>PRIMARY</DefaultFilegroup>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -156,6 +157,7 @@
     <None Include="Scripts\LookupTables\dbo.ParcelLedgerEntrySourceType.sql" />
     <None Include="Scripts\ReleaseScripts\0001 - Initial data script.sql" />
     <None Include="Scripts\ReleaseScripts\0002 - Add WaterYears 2018-2022 and their corresponding WaterYearMonths.sql" />
+    <None Include="Scripts\ReleaseScripts\0004 - Update CustomRichText for website footer.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />
