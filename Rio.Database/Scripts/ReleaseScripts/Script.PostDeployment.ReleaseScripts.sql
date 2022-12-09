@@ -16,4 +16,6 @@ GO
 GO
 :r ".\0004 - Update CustomRichText for website footer.sql"
 GO
+:r ".\0005 - Update CustomRichText for website footer to remove message.sql"
+GO
 
