@@ -148,33 +148,6 @@ namespace Rio.API.Services
             public string ResponseType { get; set; }
         }
 
-        public string[] GetAllFilesReadyForExport()
-        {
-            var openETRequestURL = _rioConfiguration.OpenETAllFilesReadyForExportRoute;
-
-            try
-            {
-                var response = _httpClient.GetAsync(openETRequestURL).Result;
-
-                var body = response.Content.ReadAsStringAsync().Result;
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new OpenETException(
-                        $"Call to {openETRequestURL} was unsuccessful. Status code: ${response.StatusCode} Message: {body}");
-                }
-
-                var responseObject =
-                    JsonConvert.DeserializeObject<ExportAllFilesResponse>(body);
-                return responseObject.TimeseriesFilesReadyForExport;
-            }
-            catch (Exception ex)
-            {
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error when attempting to get all files that are ready for export.");
-                return null;
-            }
-        }
-
         public class ExportAllFilesResponse
         {
             [JsonProperty("timeseries")]
@@ -432,7 +405,6 @@ namespace Rio.API.Services
 
     public interface IOpenETService
     {
-        string[] GetAllFilesReadyForExport();
         HttpResponseMessage TriggerOpenETGoogleBucketRefresh(int waterYearMonthID);
         void UpdateParcelMonthlyEvapotranspirationWithETData(int syncHistoryID,
             HttpClient httpClient);
