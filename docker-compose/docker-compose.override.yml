@@ -13,6 +13,7 @@ services:
       - SECRET_PATH=${SECRET_PATH}
       - KEYSTONE_REDIRECT_URL=${KEYSTONE_REDIRECT_URL}
       - AllowTrading=${AllowTrading}
+      - AllowOpenETSync=${AllowOpenETSync}
       - IncludeWaterSupply=${IncludeWaterSupply}
       - PlatformLongName=${PlatformLongName}
       - PlatformShortName=${PlatformShortName}
@@ -27,13 +28,12 @@ services:
       - OpenETRasterTimeSeriesMultipolygonRoute=${OpenETRasterTimeSeriesMultipolygonRoute}
       - OpenETRasterMetadataRoute=${OpenETRasterMetadataRoute}
       - OpenETAllFilesReadyForExportRoute=${OpenETAllFilesReadyForExportRoute}
-      - OpenETGoogleBucketBaseURL=${OpenETGoogleBucketBaseURL}
+      - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
+      - OpenETShapefilePath=${OpenETShapefilePath}
       - ParcelBoundingBoxLeft=${ParcelBoundingBoxLeft}
       - ParcelBoundingBoxRight=${ParcelBoundingBoxRight}
       - ParcelBoundingBoxTop=${ParcelBoundingBoxTop}
       - ParcelBoundingBoxBottom=${ParcelBoundingBoxBottom}
-      - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
-      - AllowOpenETSync=${AllowOpenETSync}
       - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
       - Ogr2OgrExecutable=${Ogr2OgrExecutable}
       - OgrInfoExecutable=${OgrInfoExecutable}
