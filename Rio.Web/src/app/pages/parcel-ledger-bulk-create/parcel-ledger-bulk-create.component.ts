@@ -70,10 +70,10 @@ export class ParcelLedgerBulkCreateComponent implements OnInit {
     this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
 
-      forkJoin(
-        this.waterTypeService.getWaterTypes(),
-        this.parcelService.getParcelWaterSupplyAndUsagesByYear(new Date().getFullYear())
-      ).subscribe(([waterTypes, parcelWaterSupplyAndUsagesByYear]) => {
+      forkJoin({
+        waterTypes: this.waterTypeService.getWaterTypes(),
+        parcelWaterSupplyAndUsagesByYear: this.parcelService.getParcelWaterSupplyAndUsagesByYear(new Date().getFullYear())
+      }).subscribe(({waterTypes, parcelWaterSupplyAndUsagesByYear}) => {
         this.waterTypes = waterTypes;
         this.parcelWaterSupplyAndUsagesByYear = parcelWaterSupplyAndUsagesByYear;
 
