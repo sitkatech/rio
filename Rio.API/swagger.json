@@ -2073,7 +2073,7 @@
         }
       }
     },
-    "/parcel-ledgers/new": {
+    "/parcel-ledgers": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2109,7 +2109,7 @@
         }
       }
     },
-    "/parcel-ledgers/bulk-new": {
+    "/parcel-ledgers/bulk": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2145,7 +2145,7 @@
         }
       }
     },
-    "/parcel-ledgers/new-csv-upload": {
+    "/parcel-ledgers/csv": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2183,6 +2183,120 @@
                   "style": "form"
                 },
                 "WaterTypeID": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/parcel-usages/csv/headers": {
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "geographyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "UploadedFile"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/geography/{geographyID}/parcel-usages/csv": {
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "geographyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "apnColumnName",
+                  "EffectiveDate",
+                  "quantityColumnName",
+                  "UploadedFile"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "EffectiveDate": {
+                    "pattern": "^\\d{4}\\-\\d{1,2}\\-\\d{1,2}$",
+                    "type": "string"
+                  },
+                  "apnColumnName": {
+                    "type": "string"
+                  },
+                  "quantityColumnName": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                },
+                "EffectiveDate": {
+                  "style": "form"
+                },
+                "apnColumnName": {
+                  "style": "form"
+                },
+                "quantityColumnName": {
                   "style": "form"
                 }
               }

@@ -32,6 +32,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
         public virtual DbSet<ParcelTag> ParcelTags { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
+        public virtual DbSet<ParcelUsageStaging> ParcelUsageStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
         public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocations { get; set; }
         public virtual DbSet<ScenarioRechargeBasin> ScenarioRechargeBasins { get; set; }
@@ -187,6 +188,14 @@ namespace Rio.EFModels.Entities
                 entity.HasOne(d => d.Tag)
                     .WithMany(p => p.ParcelTags)
                     .HasForeignKey(d => d.TagID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelUsageStaging>(entity =>
+            {
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelUsageStagings)
+                    .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
