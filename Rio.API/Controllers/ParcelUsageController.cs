@@ -6,13 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Qanat.EFModels.Entities;
-using Rio.API.Controllers;
 using Rio.API.Models;
 using Rio.API.Services;
+using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 
 
@@ -21,12 +20,11 @@ namespace Rio.API.Controllers;
 [ApiController]
 public class ParcelUsageController : SitkaController<ParcelUsageController>
 {
-    public ParcelUsageController(RioDbContext dbContext, ILogger<ParcelUsageController> logger, KeystoneService keystoneService,
-        IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration)
-    {
-    }
+    public ParcelUsageController(RioDbContext dbContext, ILogger<ParcelUsageController> logger, KeystoneService keystoneService, 
+        IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration) { }
 
     [HttpPost("parcel-usages/csv/headers")]
+    [ParcelManageFeature]
     [RequestSizeLimit(524288000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
     public async Task<IActionResult> ListCSVHeaders([FromForm] CsvUpsertDto csvUpsertDto, [FromRoute] int geographyID)
@@ -52,7 +50,8 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         return Ok(headerNames);
     }
 
-    [HttpPost("geography/{geographyID}/parcel-usages/csv")]
+    [HttpPost("parcel-usages/csv")]
+    [ParcelManageFeature]
     [RequestSizeLimit(524288000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
     public async Task<IActionResult> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)

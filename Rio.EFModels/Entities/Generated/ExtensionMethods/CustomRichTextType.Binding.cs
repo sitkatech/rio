@@ -39,13 +39,14 @@ namespace Rio.EFModels.Entities
         public static readonly CustomRichTextTypeAccountReconciliationReport AccountReconciliationReport = Rio.EFModels.Entities.CustomRichTextTypeAccountReconciliationReport.Instance;
         public static readonly CustomRichTextTypeParcelLedgerCreate ParcelLedgerCreate = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerCreate.Instance;
         public static readonly CustomRichTextTypeParcelLedgerBulkCreate ParcelLedgerBulkCreate = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerBulkCreate.Instance;
-        public static readonly CustomRichTextTypeParcelLedgerCreateFromSpreadsheet ParcelLedgerCreateFromSpreadsheet = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerCreateFromSpreadsheet.Instance;
+        public static readonly CustomRichTextTypeParcelLedgerCsvUploadSupply ParcelLedgerCsvUploadSupply = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerCsvUploadSupply.Instance;
         public static readonly CustomRichTextTypeWebsiteFooter WebsiteFooter = Rio.EFModels.Entities.CustomRichTextTypeWebsiteFooter.Instance;
         public static readonly CustomRichTextTypePurchasedDescription PurchasedDescription = Rio.EFModels.Entities.CustomRichTextTypePurchasedDescription.Instance;
         public static readonly CustomRichTextTypeSoldDescription SoldDescription = Rio.EFModels.Entities.CustomRichTextTypeSoldDescription.Instance;
         public static readonly CustomRichTextTypeTagList TagList = Rio.EFModels.Entities.CustomRichTextTypeTagList.Instance;
         public static readonly CustomRichTextTypeBulkTagParcels BulkTagParcels = Rio.EFModels.Entities.CustomRichTextTypeBulkTagParcels.Instance;
         public static readonly CustomRichTextTypeTransactionHistory TransactionHistory = Rio.EFModels.Entities.CustomRichTextTypeTransactionHistory.Instance;
+        public static readonly CustomRichTextTypeParcelLedgerCsvUploadUsage ParcelLedgerCsvUploadUsage = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerCsvUploadUsage.Instance;
 
         public static readonly List<CustomRichTextType> All;
         public static readonly List<CustomRichTextTypeDto> AllAsDto;
@@ -57,8 +58,8 @@ namespace Rio.EFModels.Entities
         /// </summary>
         static CustomRichTextType()
         {
-            All = new List<CustomRichTextType> { HomePage, Contact, FrequentlyAskedQuestions, AboutGET, Disclaimer, PlatformOverview, MeasuringWaterUse, ConfigureWaterTypes, CreateWaterTransactions, TrainingVideos, CreateUserProfile, CreateUserProfileStepOne, CreateUserProfileStepTwo, CreateUserProfileStepThree, WaterAccountsAdd, WaterAccountsAddLegalText, WaterAccountsInvite, ParcelList, OpenETIntegration, ParcelUpdateLayer, InactiveParcelList, AccountReconciliationReport, ParcelLedgerCreate, ParcelLedgerBulkCreate, ParcelLedgerCreateFromSpreadsheet, WebsiteFooter, PurchasedDescription, SoldDescription, TagList, BulkTagParcels, TransactionHistory };
-            AllAsDto = new List<CustomRichTextTypeDto> { HomePage.AsDto(), Contact.AsDto(), FrequentlyAskedQuestions.AsDto(), AboutGET.AsDto(), Disclaimer.AsDto(), PlatformOverview.AsDto(), MeasuringWaterUse.AsDto(), ConfigureWaterTypes.AsDto(), CreateWaterTransactions.AsDto(), TrainingVideos.AsDto(), CreateUserProfile.AsDto(), CreateUserProfileStepOne.AsDto(), CreateUserProfileStepTwo.AsDto(), CreateUserProfileStepThree.AsDto(), WaterAccountsAdd.AsDto(), WaterAccountsAddLegalText.AsDto(), WaterAccountsInvite.AsDto(), ParcelList.AsDto(), OpenETIntegration.AsDto(), ParcelUpdateLayer.AsDto(), InactiveParcelList.AsDto(), AccountReconciliationReport.AsDto(), ParcelLedgerCreate.AsDto(), ParcelLedgerBulkCreate.AsDto(), ParcelLedgerCreateFromSpreadsheet.AsDto(), WebsiteFooter.AsDto(), PurchasedDescription.AsDto(), SoldDescription.AsDto(), TagList.AsDto(), BulkTagParcels.AsDto(), TransactionHistory.AsDto() };
+            All = new List<CustomRichTextType> { HomePage, Contact, FrequentlyAskedQuestions, AboutGET, Disclaimer, PlatformOverview, MeasuringWaterUse, ConfigureWaterTypes, CreateWaterTransactions, TrainingVideos, CreateUserProfile, CreateUserProfileStepOne, CreateUserProfileStepTwo, CreateUserProfileStepThree, WaterAccountsAdd, WaterAccountsAddLegalText, WaterAccountsInvite, ParcelList, OpenETIntegration, ParcelUpdateLayer, InactiveParcelList, AccountReconciliationReport, ParcelLedgerCreate, ParcelLedgerBulkCreate, ParcelLedgerCsvUploadSupply, WebsiteFooter, PurchasedDescription, SoldDescription, TagList, BulkTagParcels, TransactionHistory, ParcelLedgerCsvUploadUsage };
+            AllAsDto = new List<CustomRichTextTypeDto> { HomePage.AsDto(), Contact.AsDto(), FrequentlyAskedQuestions.AsDto(), AboutGET.AsDto(), Disclaimer.AsDto(), PlatformOverview.AsDto(), MeasuringWaterUse.AsDto(), ConfigureWaterTypes.AsDto(), CreateWaterTransactions.AsDto(), TrainingVideos.AsDto(), CreateUserProfile.AsDto(), CreateUserProfileStepOne.AsDto(), CreateUserProfileStepTwo.AsDto(), CreateUserProfileStepThree.AsDto(), WaterAccountsAdd.AsDto(), WaterAccountsAddLegalText.AsDto(), WaterAccountsInvite.AsDto(), ParcelList.AsDto(), OpenETIntegration.AsDto(), ParcelUpdateLayer.AsDto(), InactiveParcelList.AsDto(), AccountReconciliationReport.AsDto(), ParcelLedgerCreate.AsDto(), ParcelLedgerBulkCreate.AsDto(), ParcelLedgerCsvUploadSupply.AsDto(), WebsiteFooter.AsDto(), PurchasedDescription.AsDto(), SoldDescription.AsDto(), TagList.AsDto(), BulkTagParcels.AsDto(), TransactionHistory.AsDto(), ParcelLedgerCsvUploadUsage.AsDto() };
             AllLookupDictionary = new ReadOnlyDictionary<int, CustomRichTextType>(All.ToDictionary(x => x.CustomRichTextTypeID));
             AllAsDtoLookupDictionary = new ReadOnlyDictionary<int, CustomRichTextTypeDto>(AllAsDto.ToDictionary(x => x.CustomRichTextTypeID));
         }
@@ -165,8 +166,10 @@ namespace Rio.EFModels.Entities
                     return ParcelLedgerBulkCreate;
                 case CustomRichTextTypeEnum.ParcelLedgerCreate:
                     return ParcelLedgerCreate;
-                case CustomRichTextTypeEnum.ParcelLedgerCreateFromSpreadsheet:
-                    return ParcelLedgerCreateFromSpreadsheet;
+                case CustomRichTextTypeEnum.ParcelLedgerCsvUploadSupply:
+                    return ParcelLedgerCsvUploadSupply;
+                case CustomRichTextTypeEnum.ParcelLedgerCsvUploadUsage:
+                    return ParcelLedgerCsvUploadUsage;
                 case CustomRichTextTypeEnum.ParcelList:
                     return ParcelList;
                 case CustomRichTextTypeEnum.ParcelUpdateLayer:
@@ -223,13 +226,14 @@ namespace Rio.EFModels.Entities
         AccountReconciliationReport = 22,
         ParcelLedgerCreate = 23,
         ParcelLedgerBulkCreate = 24,
-        ParcelLedgerCreateFromSpreadsheet = 25,
+        ParcelLedgerCsvUploadSupply = 25,
         WebsiteFooter = 26,
         PurchasedDescription = 28,
         SoldDescription = 29,
         TagList = 30,
         BulkTagParcels = 31,
-        TransactionHistory = 32
+        TransactionHistory = 32,
+        ParcelLedgerCsvUploadUsage = 33
     }
 
     public partial class CustomRichTextTypeHomePage : CustomRichTextType
@@ -376,10 +380,10 @@ namespace Rio.EFModels.Entities
         public static readonly CustomRichTextTypeParcelLedgerBulkCreate Instance = new CustomRichTextTypeParcelLedgerBulkCreate(24, @"ParcelLedgerBulkCreate", @"Create Bulk Transaction");
     }
 
-    public partial class CustomRichTextTypeParcelLedgerCreateFromSpreadsheet : CustomRichTextType
+    public partial class CustomRichTextTypeParcelLedgerCsvUploadSupply : CustomRichTextType
     {
-        private CustomRichTextTypeParcelLedgerCreateFromSpreadsheet(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
-        public static readonly CustomRichTextTypeParcelLedgerCreateFromSpreadsheet Instance = new CustomRichTextTypeParcelLedgerCreateFromSpreadsheet(25, @"ParcelLedgerCreateFromSpreadsheet", @"Create Transaction From Spreadsheet Upload");
+        private CustomRichTextTypeParcelLedgerCsvUploadSupply(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
+        public static readonly CustomRichTextTypeParcelLedgerCsvUploadSupply Instance = new CustomRichTextTypeParcelLedgerCsvUploadSupply(25, @"ParcelLedgerCsvUploadSupply", @"Parcel Ledger CSV Upload (Supply)");
     }
 
     public partial class CustomRichTextTypeWebsiteFooter : CustomRichTextType
@@ -416,5 +420,11 @@ namespace Rio.EFModels.Entities
     {
         private CustomRichTextTypeTransactionHistory(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
         public static readonly CustomRichTextTypeTransactionHistory Instance = new CustomRichTextTypeTransactionHistory(32, @"TransactionHistory", @"Transaction History");
+    }
+
+    public partial class CustomRichTextTypeParcelLedgerCsvUploadUsage : CustomRichTextType
+    {
+        private CustomRichTextTypeParcelLedgerCsvUploadUsage(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
+        public static readonly CustomRichTextTypeParcelLedgerCsvUploadUsage Instance = new CustomRichTextTypeParcelLedgerCsvUploadUsage(33, @"ParcelLedgerCsvUploadUsage", @"Parcel Ledger CSV Upload (Usage)");
     }
 }

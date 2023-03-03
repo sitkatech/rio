@@ -168,6 +168,7 @@
     <None Include="Rio.Pajaro.Database.publish.xml" />
     <None Include="Rio.RRB.Database.publish.xml" />
     <None Include="Rio.Yolo.Database.publish.xml" />
+    <None Include="Scripts\ReleaseScripts\0004 - Add RTE for Usage CSV Upload.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\Script.PostDeployment.sql" />

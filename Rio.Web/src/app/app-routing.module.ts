@@ -56,12 +56,13 @@ import { AccountReconciliationComponent } from './pages/account-reconciliation/a
 import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
-import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { ParcelLedgerCsvUploadSupplyComponent } from './pages/parcel-ledger-csv-upload-supply/parcel-ledger-csv-upload-supply.component';
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { IncludeWaterSupplyGuard } from './shared/guards/unauthenticated-access/include-water-supply-guard';
+import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -81,7 +82,8 @@ const routes: Routes = [
   { path: "parcels/:id/parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-ledger-create-from-spreadsheet", component: ParcelLedgerCreateFromSpreadsheetComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-csv-upload/supply", component: ParcelLedgerCsvUploadSupplyComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-csv-upload/usage", component: ParcelLedgerCsvUploadUsageComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-transaction-history", component: ParcelLedgerTransactionHistoryComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags", component: TagListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags/bulk-tag-parcels", component: TagBulkParcelsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },

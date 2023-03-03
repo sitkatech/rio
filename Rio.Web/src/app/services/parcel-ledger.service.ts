@@ -18,12 +18,12 @@ export class ParcelLedgerService {
   }
 
   newTransaction(model: ParcelLedgerCreateDto): Observable<any[]> {
-    let route = `parcel-ledgers/new`;
+    let route = `parcel-ledgers`;
     return this.apiService.postToApi(route, model);
   }
 
   newBulkTransaction(model: ParcelLedgerCreateDto): Observable<any[]> {
-    let route = `parcel-ledgers/bulk-new`;
+    let route = `parcel-ledgers/bulk`;
     return this.apiService.postToApi(route, model);
   }
 
@@ -34,7 +34,7 @@ export class ParcelLedgerService {
     formData.append("WaterTypeID", waterTypeID);
 
     const programApiRoute = environment.mainAppApiUrl;
-    const route = `${programApiRoute}/parcel-ledgers/new-csv-upload`;
+    const route = `${programApiRoute}/parcel-ledgers/csv`;
     var result = this.httpClient.post<any>(
       route,
       formData

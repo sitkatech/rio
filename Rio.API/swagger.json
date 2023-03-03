@@ -2242,7 +2242,7 @@
         }
       }
     },
-    "/geography/{geographyID}/parcel-usages/csv": {
+    "/parcel-usages/csv": {
       "post": {
         "tags": [
           "ParcelUsage"

@@ -14,4 +14,6 @@ GO
 GO
 :r ".\0003 - Insert ownership relationships between Accounts and Parcels for historic WaterYears.sql"
 GO
+:r ".\0004 - Add RTE for Usage CSV Upload.sql"
+GO
 

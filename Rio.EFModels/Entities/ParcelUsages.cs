@@ -16,12 +16,11 @@ public static class ParcelUsages
         var transactionDate = DateTime.UtcNow;
         effectiveDate = effectiveDate.AddHours(8); // todo: convert effective date to utc date
         var parcelUsages = new List<ParcelUsageStaging>();
-
-        var parcelNumbers = new List<string>();
         var unmatchedParcelNumbers = new List<string>();
 
         var parcelAreaDictionary = dbContext.Parcels.AsNoTracking()
-            .ToDictionary(x => x.ParcelNumber, y => y.ParcelAreaInAcres);
+            .ToDictionary(x => x.ParcelNumber, y => new { ParcelID = y.ParcelID, ParcelAreaInAcres = y.ParcelAreaInAcres }
+            );
 
         var recordGroups = records.GroupBy(x => x.APN);
         foreach (var recordGroup in recordGroups)
@@ -31,17 +30,17 @@ public static class ParcelUsages
                 unmatchedParcelNumbers.Add(recordGroup.Key);
                 continue;
             }
-            parcelNumbers.Add(recordGroup.Key);
 
             var reportedValue = recordGroup.Sum(x => x.Quantity.Value);
             var parcelUsage = new ParcelUsageStaging()
             {
+                ParcelID = parcelAreaDictionary[recordGroup.Key].ParcelID,
                 ParcelNumber = recordGroup.Key,
                 LastUpdateDate = transactionDate,
                 ReportedDate = effectiveDate,
                 ReportedValue = (decimal)reportedValue,
                 ReportedValueInAcreFeet = 
-                    (decimal)ConvertMillimetersToAcreFeet(reportedValue, parcelAreaDictionary[recordGroup.Key])
+                    (decimal)ConvertMillimetersToAcreFeet(reportedValue, parcelAreaDictionary[recordGroup.Key].ParcelAreaInAcres)
             };
 
             parcelUsages.Add(parcelUsage);
