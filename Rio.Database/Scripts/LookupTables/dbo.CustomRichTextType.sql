@@ -24,13 +24,14 @@ USING (VALUES
 (22, 'AccountReconciliationReport', 'Account Reconciliation Report'),
 (23, 'ParcelLedgerCreate', 'Create New Transaction'),
 (24, 'ParcelLedgerBulkCreate', 'Create Bulk Transaction'),
-(25, 'ParcelLedgerCreateFromSpreadsheet', 'Create Transaction From Spreadsheet Upload'),
+(25, 'ParcelLedgerCsvUploadSupply', 'Parcel Ledger CSV Upload (Supply)'),
 (26, 'WebsiteFooter', 'Website Footer'),
 (28, 'PurchasedDescription', 'Purchased Water Description'),
 (29, 'SoldDescription', 'Sold Water Description'),
 (30, 'TagList', 'Tag List'),
 (31, 'BulkTagParcels', 'Bulk Tag Parcels'),
-(32, 'TransactionHistory', 'Transaction History')
+(32, 'TransactionHistory', 'Transaction History'),
+(33, 'ParcelLedgerCsvUploadUsage', 'Parcel Ledger CSV Upload (Usage)')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

@@ -25,21 +25,26 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-10 m-auto">
+        <div class="col-8 m-auto">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-md-6">
                     <button routerLink="/parcel-ledger-create" class="btn btn-rio w-100 p-2 m-4">
                         Create Single Transaction
                     </button>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-md-6">
                     <button routerLink="/parcel-ledger-bulk-create" class="btn btn-rio w-100 p-2 m-4" [disabled]="!includeWaterSupply()">
                         Create Bulk Transaction
                     </button>
                 </div>
-                <div class="col-sm-4">
-                    <button routerLink="/parcel-ledger-create-from-spreadsheet" class="btn btn-rio w-100 p-2 m-4" [disabled]="!includeWaterSupply()">
-                        Upload Spreadsheet
+                <div class="col-md-6">
+                    <button routerLink="/parcel-ledger-csv-upload/supply" class="btn btn-rio w-100 p-2 m-4" [disabled]="!includeWaterSupply()">
+                        Upload Supply Transactions (CSV)
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button routerLink="/parcel-ledger-csv-upload/usage" class="btn btn-rio w-100 p-2 m-4">
+                        Upload Usage Transactions (CSV)
                     </button>
                 </div>
             </div>

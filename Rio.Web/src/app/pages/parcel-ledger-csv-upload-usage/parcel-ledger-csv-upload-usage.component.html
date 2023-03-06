@@ -1,0 +1,131 @@
+<div class="breadcrumb-container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item" aria-current="page">
+        <a routerLink="/manager-dashboard">Manager Dashboard</a>
+      </li>
+      <li class="breadcrumb-item" aria-current="page">
+        <a routerLink="/parcels/create-water-transactions">Create Water Transactions</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Upload Usage Transactions (CSV)
+      </li>
+    </ol>
+  </nav>
+</div>
+
+<div class="container mt-sm-4">
+
+  <app-alert-display></app-alert-display>
+  <h2 class="d-inline-block">Upload Usage Transactions (CSV)</h2>
+
+  <div class="card card-body mt-2 mb-5">
+    <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
+  </div>
+
+  <form>
+
+    <ng-template #fileInputPanel>
+
+      <div class="row mt-3 align-items-center">
+        
+        <div class="col-md-3 control-label text-sm-right">
+            <label class="required">Select File</label>
+        </div>
+
+        <div class="col-md-5 input-group">
+          <div class="input-group">
+            <div class="custom-file">
+                <input type="file" [id]="fileUploadElementID" class="form-control custom-file-input" (change)="onFileUploadChange($event)">
+                <label for="CSV-upload"
+                  class="custom-file-label">{{fileUpload ? this.fileUpload.name : "No file chosen..."}}
+                </label>
+            </div>
+  
+            <div class="input-group-append">
+              <button type="button" class="btn btn-secondary fas fa-folder-open" (click)="onClickFileUpload()"></button>
+            </div>
+          </div>
+
+          <i class="fas fa-info-circle p-2" aria-hidden="true"></i>
+          <span class="font-italic font-weight-light">Accepted File Types: CSV</span>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-10 text-right">
+          <button class="btn btn-rio" (click)="getFileUploadHeaders()" [disabled]="!fileUpload || isLoadingSubmit">
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Continue
+          </button>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-container *ngIf="!displayFileInputPanel; else fileInputPanel">
+        
+      <div class="row mt-3 align-items-center">
+        <div class="col-md-3 control-label text-sm-right">
+          <label class="required">APN Column</label>
+        </div>
+        <div class="col-md-5">
+          <select name="apnColumnName" class="form-control" [(ngModel)]="apnColumnName">
+            <option disabled selected hidden></option>
+            <option *ngFor="let fileUploadHeader of fileUploadHeaders" [value]="fileUploadHeader" [disabled]="fileUploadHeader == quantityColumnName">
+              {{ fileUploadHeader }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mt-3 align-items-center">
+        <div class="col-md-3 control-label text-sm-right">
+          <label class="required">Value Column</label>
+        </div>
+        <div class="col-md-5">
+          <select name="quantityColumnName" class="form-control" [(ngModel)]="quantityColumnName">
+            <option disabled selected hidden></option>
+            <option *ngFor="let fileUploadHeader of fileUploadHeaders" [value]="fileUploadHeader" [disabled]="fileUploadHeader == apnColumnName">
+              {{ fileUploadHeader }}
+            </option>
+          </select>
+
+          <i class="fas fa-info-circle p-2" aria-hidden="true"></i>
+          <span class="font-italic font-weight-light">Usage values expected in millimeters</span>
+        </div>
+      </div>
+
+      <div class="row mt-3 align-items-center">
+        <div class="col-md-3 control-label text-sm-right">
+          <label class="required">Effective Date</label>
+        </div>
+        <div class="col-md-5">
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp"
+              ngbDatepicker #d="ngbDatepicker" [(ngModel)]="effectiveDate" required>
+            <div class="input-group-append">
+              <button class="btn btn-secondary far fa-calendar" (click)="d.toggle()" type="button"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+
+        <div class="col-md-2 text-right">
+          <i class="fas fa-bolt"></i> Required field
+        </div>
+  
+        <div class="col-md-8 text-right">
+          <button class="btn btn-secondary mr-2" (click)="backToFileInputPanel()">Back</button>
+
+          <button type="submit" class="btn btn-rio" (click)="onSubmit()" [disabled]="isLoadingSubmit">
+            <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+            Save
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+  </form>
+</div>

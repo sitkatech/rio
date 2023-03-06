@@ -8,11 +8,11 @@ using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rio.API.Models;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using Rio.Models.DataTransferObjects;
-using ParcelLedgerCreateCSVUploadDto = Rio.API.Models.ParcelLedgerCreateCSVUploadDto;
 
 namespace Rio.API.Controllers
 {
@@ -37,7 +37,7 @@ namespace Rio.API.Controllers
             return Ok(transactionHistoryDtos);
         }
 
-        [HttpPost("parcel-ledgers/new")]
+        [HttpPost("parcel-ledgers")]
         [ParcelManageFeature]
         public IActionResult New([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
@@ -82,7 +82,7 @@ namespace Rio.API.Controllers
             return Ok();
         }
 
-        [HttpPost("parcel-ledgers/bulk-new")]
+        [HttpPost("parcel-ledgers/bulk")]
         [ParcelManageFeature]
         public IActionResult BulkNew([FromBody] ParcelLedgerCreateDto parcelLedgerCreateDto)
         {
@@ -107,21 +107,21 @@ namespace Rio.API.Controllers
             return Ok(postingCount);
         }
 
-        [HttpPost("/parcel-ledgers/new-csv-upload")]
+        [HttpPost("/parcel-ledgers/csv")]
         [RequestSizeLimit(524288000)]
         [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
-        public async Task<IActionResult> NewCSVUpload([FromForm] ParcelLedgerCreateCSVUploadDto parcelLedgerCreateCSVUploadDto)
+        public async Task<IActionResult> NewCSVUpload([FromForm] ParcelLedgerCsvUpsertDto parcelLedgerCsvUpsertDto)
         {
             if (!_includeWaterSupply)
             {
                 return Forbid();
             }
 
-            var fileResource = await HttpUtilities.MakeFileResourceFromIFormFile(parcelLedgerCreateCSVUploadDto.UploadedFile, _dbContext, HttpContext);
+            var fileResource = await HttpUtilities.MakeFileResourceFromIFormFile(parcelLedgerCsvUpsertDto.UploadedFile, _dbContext, HttpContext);
             var waterTypeDisplayName =
-                _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCreateCSVUploadDto.WaterTypeID).WaterTypeName;
+                _dbContext.WaterTypes.Single(x => x.WaterTypeID == parcelLedgerCsvUpsertDto.WaterTypeID).WaterTypeName;
 
-            ValidateEffectiveDate(parcelLedgerCreateCSVUploadDto.EffectiveDate);
+            ValidateEffectiveDate(parcelLedgerCsvUpsertDto.EffectiveDate);
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -137,8 +137,8 @@ namespace Rio.API.Controllers
             }
 
             var userDto = UserContext.GetUserFromHttpContext(_dbContext, HttpContext);
-            var effectiveDate = DateTime.Parse(parcelLedgerCreateCSVUploadDto.EffectiveDate);
-            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, effectiveDate, parcelLedgerCreateCSVUploadDto.WaterTypeID.Value, userDto.UserID);
+            var effectiveDate = DateTime.Parse(parcelLedgerCsvUpsertDto.EffectiveDate);
+            var postingCount = ParcelLedgers.CreateNewFromCSV(_dbContext, records, fileResource.OriginalBaseFilename, effectiveDate, parcelLedgerCsvUpsertDto.WaterTypeID.Value, userDto.UserID);
             return Ok(postingCount);
         }
 
@@ -214,7 +214,7 @@ namespace Rio.API.Controllers
                 return false;
             }
 
-            // no duplicate APNs permitted
+            // no duplicate APNs
             var duplicateAPNs = records.GroupBy(x => x.APN).Where(x => x.Count() > 1)
                 .Select(x => x.Key).ToList();
 
@@ -226,7 +226,7 @@ namespace Rio.API.Controllers
                 return false;
             }
 
-            // all parcel numbers must match an existing Parcel record
+            // all existing APNs
             var allParcelNumbers = _dbContext.Parcels.Select(y => y.ParcelNumber);
             var unmatchedRecords = records.Where(x => !allParcelNumbers.Contains(x.APN)).ToList();
 
