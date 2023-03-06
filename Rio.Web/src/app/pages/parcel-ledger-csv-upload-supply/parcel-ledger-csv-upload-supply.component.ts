@@ -16,16 +16,15 @@ import { ApiService } from 'src/app/shared/services';
 
 
 @Component({
-  selector: 'rio-parcel-ledger-create-from-spreadsheet',
-  templateUrl: './parcel-ledger-create-from-spreadsheet.component.html',
-  styleUrls: ['./parcel-ledger-create-from-spreadsheet.component.scss'],
+  selector: 'rio-parcel-ledger-csv-upload-supply',
+  templateUrl: './parcel-ledger-csv-upload-supply.component.html',
+  styleUrls: ['./parcel-ledger-csv-upload-supply.component.scss'],
   providers: [{provide: NgbDateAdapter, useClass: NgbDateAdapterFromString}]
 })
-export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
-
-  
+export class ParcelLedgerCsvUploadSupplyComponent implements OnInit {
   private currentUser: UserDto;
-  public richTextTypeID = CustomRichTextTypeEnum.ParcelLedgerCreateFromSpreadsheet;
+
+  public richTextTypeID = CustomRichTextTypeEnum.ParcelLedgerCsvUploadSupply;
   public waterTypes: WaterTypeDto[];
   public isLoadingSubmit: boolean = false;
  
@@ -55,8 +54,6 @@ export class ParcelLedgerCreateFromSpreadsheetComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    
-    
     this.cdr.detach();
   }
 

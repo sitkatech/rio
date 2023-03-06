@@ -79,13 +79,14 @@ import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
-import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { ParcelLedgerCsvUploadSupplyComponent } from './pages/parcel-ledger-csv-upload-supply/parcel-ledger-csv-upload-supply.component';
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { DropdownSelectFilterComponent } from './shared/components/ag-grid/dropdown-select-filter/dropdown-select-filter.component';
 import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/clear-grid-filters-button/clear-grid-filters-button.component';
+import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -151,7 +152,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     AccountReconciliationComponent,
     ParcelLedgerCreateComponent,
     ParcelLedgerBulkCreateComponent,
-    ParcelLedgerCreateFromSpreadsheetComponent,
+    ParcelLedgerCsvUploadSupplyComponent,
+    ParcelLedgerCsvUploadUsageComponent,
     TagListComponent,
     TagDetailComponent,
     TagBulkParcelsComponent,
