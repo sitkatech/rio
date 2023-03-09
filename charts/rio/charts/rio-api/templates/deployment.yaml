@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rio-api.fullname" . }}
+  name: {{ include "api.fullname" . }}
   labels:
-    {{- include "rio-api.labels" . | nindent 4 }}
+    {{- include "api.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "rio-api.selectorLabels" . | nindent 6 }}
+      {{- include "api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -19,12 +19,12 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "rio-api.selectorLabels" . | nindent 8 }}
+        {{- include "api.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
       - name: secrets
         secret:
-          secretName: rio-{{ .Values.global.env.tenantName }}-api-secrets
+          secretName: {{ .Values.global.env.tenantName }}-api-secrets
       # - name: certs
       #   hostPath:
       #     # directory location on host
@@ -35,7 +35,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "rio-api.serviceAccountName" . }}
+      serviceAccountName: {{ include "api.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -62,9 +62,9 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
           - configMapRef:
-              name: {{ include "rio-api.fullname" . }}-{{ .Values.global.env.name }}-configmap
+              name: {{ include "api.fullname" . }}-{{ .Values.global.env.name }}-configmap
           - configMapRef:
-              name: {{ include "rio-api.fullname" . }}-{{ .Values.global.env.tenantName }}-configmap
+              name: {{ include "api.fullname" . }}-{{ .Values.global.env.tenantName }}-configmap
           volumeMounts:
           - name: secrets
             mountPath: /app/secrets

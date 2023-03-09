@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rio-web.fullname" . }}
+  name: {{ include "web.fullname" . }}
   labels:
-    {{- include "rio-web.labels" . | nindent 4 }}
+    {{- include "web.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "rio-web.selectorLabels" . | nindent 6 }}
+      {{- include "web.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -19,17 +19,17 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "rio-web.selectorLabels" . | nindent 8 }} 
+        {{- include "web.selectorLabels" . | nindent 8 }} 
     spec:
       # volumes:
       # - name: secrets
       #   secret:
-      #     secretName: rio-web-secrets
+      #     secretName: {{ .Values.global.env.tenantName }}-web-secrets
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "rio-web.serviceAccountName" . }}
+      serviceAccountName: {{ include "web.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -52,9 +52,9 @@ spec:
           #     port: http
           envFrom:
           - configMapRef:
-              name: {{ include "rio-web.fullname" . }}-{{ .Values.global.env.name }}-configmap
+              name: {{ include "web.fullname" . }}-{{ .Values.global.env.name }}-configmap
           - configMapRef:
-              name: {{ include "rio-web.fullname" . }}-{{ .Values.global.env.tenantName }}-configmap
+              name: {{ include "web.fullname" . }}-{{ .Values.global.env.tenantName }}-configmap
           # volumeMounts:
           # - name: secrets
           #   mountPath: /app/secrets

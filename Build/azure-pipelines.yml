@@ -49,7 +49,7 @@ stages:
     - task: DockerCompose@0
       displayName: Build API services
       inputs:
-        azureSubscriptionEndpoint: '$(azureCRSubscription)'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '$(containerRegistry)'
         dockerComposeFile: docker-compose/docker-compose.yml
         dockerComposeFileArgs: env=$(environment)
@@ -64,7 +64,7 @@ stages:
       displayName: Push API Image to Registry  
       condition: eq(variables['pushImages'], 'true')
       inputs:
-        azureSubscriptionEndpoint: '$(azureCRSubscription)'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '$(containerRegistry)'
         dockerComposeFile: docker-compose/docker-compose.yml
         dockerComposeFileArgs: env=$(environment)
@@ -90,7 +90,7 @@ stages:
     - task: DockerCompose@0
       displayName: Build Web services
       inputs:
-        azureSubscriptionEndpoint: '$(azureCRSubscription)'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '$(containerRegistry)'
         dockerComposeFile: Rio.Web/docker-compose/docker-compose.yml
         dockerComposeFileArgs: env=$(environment)
@@ -106,7 +106,7 @@ stages:
       displayName: Push Web Image to Registry  
       condition: eq(variables['pushImages'], 'true')
       inputs:
-        azureSubscriptionEndpoint: '$(azureCRSubscription)'
+        azureSubscriptionEndpoint: '$(azureSubscription)'
         azureContainerRegistry: '$(containerRegistry)'      
         dockerComposeFile: Rio.Web/docker-compose/docker-compose.yml
         dockerComposeFileArgs: env=$(environment)
@@ -157,16 +157,6 @@ stages:
         #backendAzureRmKey: 'd'
         allowTelemetryCollection: true
 
-    - task: TerraformCLI@0
-      inputs:
-        command: 'import'
-        environmentServiceName: '$(azureSubscription)'
-        allowTelemetryCollection: true
-        resourceAddress: 'azurerm_mssql_database.database'
-        resourceId: '$(importResourceID)'
-        commandOptions: '-var "appInsightsName=$(appInsightsName)" -var "keyVaultName=$(keyVaultName)" -var "storageAccountName=$(storageAccountApplicationName)" -var "resourceGroupName=$(resourceGroupName)" -var "dbServerName=$(dbServerName)" -var "aspNetEnvironment=$(aspNetEnvironment)" -var "databaseName=$(databaseName)" -var "databaseEdition=$(databaseEdition)" -var "databaseTier=$(databaseTier)" -var "sqlPassword=$(sqlPassword)" -var "sqlUsername=$(sqlUsername)" -var "azureClusterResourceGroup=$(azureClusterResourceGroup)"  -var "sqlApiUsername=$(sqlApiUsername)" -var "sqlGeoserverUsername=$(sqlGeoserverUsername)"'
-      continueOnError: true #after initial import this should not stop builds until it's removed.
-      condition: ne(variables['importResourceID'], '')
 
     - task: TerraformCLI@0
       inputs:
@@ -285,7 +275,7 @@ stages:
               echo "##vso[task.setvariable variable=SQL_API_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_API_PASSWORD)"
               echo "##vso[task.setvariable variable=SQL_GEOSERVER_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_GEOSERVER_PASSWORD)"
               echo "##vso[task.setvariable variable=GEOSERVER_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_GEOSERVER_ADMIN_PASSWORD)"
-              echo "##vso[task.setvariable variable=HANGFIRE_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_HANGFIRE_ADMIN_PASSWORD)"
+              echo "##vso[task.setvariable variable=HANGFIRE_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_HANGFIRE_PASSWORD)"
           - bash: 'env | sort'
 
 - stage: DeployDB
@@ -484,7 +474,7 @@ stages:
       SQL_API_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_API_PASSWORD'] ]
       SQL_GEOSERVER_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_GEOSERVER_PASSWORD'] ]
       GEOSERVER_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.GEOSERVER_ADMIN_PASSWORD'] ]
-      HANGFIRE_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.HANGFIRE_ADMIN_PASSWORD'] ]
+      HANGFIRE_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.HANGFIRE_PASSWORD'] ]
     # creates an environment if it doesn't exist
     environment: $(Environment)
     strategy:
@@ -517,6 +507,8 @@ stages:
               azureSubscription: '$(azureSubscription)'
               azureResourceGroup: '$(azureClusterResourceGroup)'
               kubernetesCluster: '$(kubernetesCluster)'
+              namespace: 'h2o'
+              arguments: '--create-namespace'
               command: upgrade
               chartType: FilePath
               chartPath: '$(Pipeline.Workspace)/ChartArtifacts/chart'
@@ -529,8 +521,8 @@ stages:
                 global.env.name="$(Environment)"
                 global.secrets.geoserverSqlServerPassword="$(SQL_GEOSERVER_PASSWORD)"
                 global.secrets.geoserverAdminPassword="$(GEOSERVER_ADMIN_PASSWORD)"
-                global.secrets.geoserverAzureStorageAccountName="$(storageAccountApplicationName)"
-                global.secrets.geoserverAzureStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)"
+                global.secrets.applicationStorageAccountName="$(storageAccountApplicationName)"
+                global.secrets.applicationStorageAccountKey="$(APPLICATION_STORAGE_ACCOUNT_KEY)"
                 global.env.dbServer=$(dbServer)
                 global.env.databaseName=$(databaseName)
                 global.env.sqlUsername=$(sqlApiUsername)
@@ -538,10 +530,8 @@ stages:
                 global.secrets.apiSqlPassword=$(SQL_API_PASSWORD)
                 global.secrets.sendGridApiKey="$(SendGridApiKey)"
                 global.secrets.openETApiKey="$(OpenETAPIKey)"
-                global.secrets.hangfirePassword="$(HANGFIRE_ADMIN_PASSWORD)"
-                global.secrets.hangfireUserName="$(hangfireUsername)"
+                global.secrets.hangfirePassword="$(HANGFIRE_PASSWORD)"
                 global.env.tenantName="$(tenantName)"
                 global.env.geoserverInitialMemory="$(geoserverInitialMemory)"
                 global.env.geoserverMaximumMemory="$(geoserverMaximumMemory)"
               force: false
-                      

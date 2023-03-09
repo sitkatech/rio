@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "rio-web.fullname" . }}
+  name: {{ include "web.fullname" . }}
   labels:
-    {{- include "rio-web.labels" . | nindent 4 }}
+    {{- include "web.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "rio-web.selectorLabels" . | nindent 4 }}
+    {{- include "web.selectorLabels" . | nindent 4 }}

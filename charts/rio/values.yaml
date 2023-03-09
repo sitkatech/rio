@@ -17,25 +17,21 @@ global:
   secrets:
     geoserverSqlServerPassword: "passwordhere"
     geoserverAdminPassword: "geomaster"
-    geoserverAzureStorageAccountName: "storageAccountName"
-    geoserverAzureStorageAccountKey:  "longkeyreplacedhere"
+    applicationStorageAccountName: "storageAccountName"
+    applicationStorageAccountKey:  "longkeyreplacedhere"
     apiSqlPassword: "passwordhere"
     sendGridApiKey: "sendgridapikeyhere"
     openETApiKey: "openETApiKeyHere"
-    hangfireUserName: "HangfireAdmin"
     hangfirePassword: "passwordhere"
 
-rio-api:
+api:
   replicaCount: 1
   image:
-    repository: sitkacontainers.azurecr.io/rio/api
+    repository: esacontainers.azurecr.io/rio/api
     pullPolicy: Always
-    # Overrides the image tag whose default is the chart appVersion.
-  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
-    - name: sitka-docker-acr
   nameOverride: ""
   fullnameOverride: ""
-  namespace: rio
+  namespace: h2o
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -65,6 +61,7 @@ rio-api:
       cert-manager.io/cluster-issuer: letsencrypt
       acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      appgw.ingress.kubernetes.io/request-timeout: "300"
       cert-manager.io/issue-temporary-certificate: "true"
   autoscaling:
     enabled: false
@@ -76,19 +73,15 @@ rio-api:
     agentpool: appnodepool
   tolerations: []
   affinity: {}
-  
 
-rio-web:
+web:
   replicaCount: 1
   image:
-    repository: sitkacontainers.azurecr.io/rio/web
+    repository: esacontainers.azurecr.io/rio/web
     pullPolicy: Always
-    # Overrides the image tag whose default is the chart appVersion.
-  imagePullSecrets: #NOTE: will be required if these are to pull from the azure container registry
-    - name: sitka-docker-acr
   nameOverride: ""
   fullnameOverride: ""
-  namespace: rio
+  namespace: h2o
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -118,6 +111,7 @@ rio-web:
       cert-manager.io/cluster-issuer: letsencrypt
       acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
+      appgw.ingress.kubernetes.io/request-timeout: "300"
       cert-manager.io/issue-temporary-certificate: "true"
   autoscaling:
     enabled: false
@@ -130,7 +124,7 @@ rio-web:
   tolerations: []
   affinity: {}
 
-rio-geoserver:
+geoserver:
   replicaCount: 1
   image:
     repository: kartoza/geoserver
@@ -139,7 +133,7 @@ rio-geoserver:
     # Overrides the image tag whose default is the chart appVersion.
   nameOverride: ""
   fullnameOverride: ""
-  namespace: rio
+  namespace: h2o
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
