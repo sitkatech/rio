@@ -87,6 +87,7 @@ import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-t
 import { DropdownSelectFilterComponent } from './shared/components/ag-grid/dropdown-select-filter/dropdown-select-filter.component';
 import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/clear-grid-filters-button/clear-grid-filters-button.component';
 import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
+import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -159,7 +160,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     TagBulkParcelsComponent,
     ParcelLedgerTransactionHistoryComponent,
     DropdownSelectFilterComponent,
-    ClearGridFiltersButtonComponent
+    ClearGridFiltersButtonComponent,
+    ParcelLedgerUsagePreviewComponent
   ],
   imports: [
     AppRoutingModule,
