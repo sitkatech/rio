@@ -2196,6 +2196,35 @@
         }
       }
     },
+    "/parcel-usages": {
+      "get": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/parcel-usages/csv/headers": {
       "post": {
         "tags": [
@@ -5427,6 +5456,40 @@
           "NumParcelsWithConflicts": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageStagingDto": {
+        "type": "object",
+        "properties": {
+          "ParcelUsageStagingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Parcel": {
+            "$ref": "#/components/schemas/ParcelDto"
+          },
+          "ParcelNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ReportedValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "ReportedValueInAcreFeet": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

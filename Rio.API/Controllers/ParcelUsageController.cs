@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Qanat.EFModels.Entities;
@@ -13,6 +14,7 @@ using Rio.API.Models;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects;
 
 
 namespace Rio.API.Controllers;
@@ -22,6 +24,49 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
 {
     public ParcelUsageController(RioDbContext dbContext, ILogger<ParcelUsageController> logger, KeystoneService keystoneService, 
         IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration) { }
+
+    [HttpGet("parcel-usages")]
+    [ParcelManageFeature]
+    public ActionResult<ParcelUsageStagingPreviewDto> GetStagedParcelUsagesForCurrentUser()
+    {
+        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+
+        var stagedParcelUsages = ParcelUsages.ListByUserID(_dbContext, userID).ToList();
+        var parcelUsageStagingSimpleDtos = stagedParcelUsages
+            .Select(x => x.AsSimpleDto()).ToList();
+
+        var stagedParcelUsagesParcelIDs = stagedParcelUsages.Select(x => x.ParcelID);
+        var existingParcels = _dbContext.Parcels.AsNoTracking();
+
+        var parcelNumbersWithoutStagedUsages = existingParcels
+            .Where(x => !stagedParcelUsagesParcelIDs.Contains(x.ParcelID))
+            .Select(x => x.ParcelNumber).ToList();
+
+        var parcelUsageStagingPreviewDto =
+            new ParcelUsageStagingPreviewDto(parcelUsageStagingSimpleDtos, parcelNumbersWithoutStagedUsages);
+
+        return Ok(parcelUsageStagingPreviewDto);
+    }
+
+    [HttpPost("parcel-usages")]
+    [ParcelManageFeature]
+    public ActionResult<int> PublishStagedParcelUsagesForCurrentUser()
+    {
+        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+        ParcelUsages.PublishStagingToParcelLedgerByUserID(_dbContext, userID);
+
+        return Ok();
+    }
+
+    [HttpDelete("parcel-usages")]
+    [ParcelManageFeature]
+    public ActionResult DeleteStagedParcelUsagesForCurrentUser()
+    {
+        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+        ParcelUsages.DeleteFromStagingByUserID(_dbContext, userID);
+
+        return Ok();
+    }
 
     [HttpPost("parcel-usages/csv/headers")]
     [ParcelManageFeature]
@@ -80,8 +125,10 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
             return BadRequest(ModelState);
         }
 
-        var effectiveDate = DateTime.Parse(parcelUsageCsvUpsertDto.EffectiveDate);
-        var parcelUsageCsvResponseDto = ParcelUsages.CreateStagingRecordsFromCSV(_dbContext, records, effectiveDate);
+        var effectiveDate = DateTime.Parse(parcelUsageCsvUpsertDto.EffectiveDate).AddHours(8);
+        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+
+        var parcelUsageCsvResponseDto = ParcelUsages.CreateStagingRecordsFromCsv(_dbContext, records, effectiveDate, parcelUsageCsvUpsertDto.UploadedFile.FileName, userID);
 
         return Ok(parcelUsageCsvResponseDto);
     }

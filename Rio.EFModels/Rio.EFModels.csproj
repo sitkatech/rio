@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Rio.Models\Rio.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\ExtensionMethods\" />
+  </ItemGroup>
+
 </Project>
