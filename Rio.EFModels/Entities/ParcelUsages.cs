@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Qanat.EFModels.Entities;
-using Rio.API.Models;
 
 namespace Rio.EFModels.Entities;
 
@@ -11,7 +10,15 @@ public static class ParcelUsages
 {
     private const double MillimetersToFeetConversionFactor = 304.8;
 
-    public static ParcelUsageCsvResponseDto CreateStagingRecordsFromCSV(RioDbContext dbContext, List<ParcelTransactionCSV> records, DateTime effectiveDate)
+    public static IEnumerable<ParcelUsageStaging> GetByUserID(RioDbContext dbContext, int userID)
+    {
+        return dbContext.ParcelUsageStagings.AsNoTracking()
+            .Include(x => x.Parcel)
+            .ThenInclude(x => x.ParcelLedgers)
+            .Where(x => x.UserID == userID);
+    }
+
+    public static List<string> CreateStagingRecordsFromCsv(RioDbContext dbContext, List<ParcelTransactionCSV> records, DateTime effectiveDate, string uploadedFileName, int userID)
     {
         var transactionDate = DateTime.UtcNow;
         effectiveDate = effectiveDate.AddHours(8); // todo: convert effective date to utc date
@@ -40,7 +47,9 @@ public static class ParcelUsages
                 ReportedDate = effectiveDate,
                 ReportedValue = (decimal)reportedValue,
                 ReportedValueInAcreFeet = 
-                    (decimal)ConvertMillimetersToAcreFeet(reportedValue, parcelAreaDictionary[recordGroup.Key].ParcelAreaInAcres)
+                    (decimal)ConvertMillimetersToAcreFeet(reportedValue, parcelAreaDictionary[recordGroup.Key].ParcelAreaInAcres),
+                UploadedFileName = uploadedFileName,
+                UserID = userID
             };
 
             parcelUsages.Add(parcelUsage);
@@ -49,11 +58,50 @@ public static class ParcelUsages
         dbContext.ParcelUsageStagings.AddRange(parcelUsages);
         dbContext.SaveChanges();
 
-        return new ParcelUsageCsvResponseDto(parcelUsages.Count, unmatchedParcelNumbers);
+        return unmatchedParcelNumbers;
     }
 
     private static double ConvertMillimetersToAcreFeet(double reportedValue, double parcelAreaInAcres)
     {
         return (reportedValue / MillimetersToFeetConversionFactor) * parcelAreaInAcres;
+    }
+
+    public static int PublishStagingToParcelLedgerByUserID(RioDbContext dbContext, int userID)
+    {
+        var transactionDate = DateTime.UtcNow;
+        var parcelUsageStagings = GetByUserID(dbContext, userID).ToList();
+
+        var parcelLedgers = new List<ParcelLedger>();
+        foreach (var parcelUsageStaging in parcelUsageStagings)
+        {
+            parcelLedgers.Add(new ParcelLedger()
+            {
+                ParcelID = parcelUsageStaging.ParcelID,
+                TransactionDate = transactionDate,
+                EffectiveDate = parcelUsageStaging.ReportedDate,
+                TransactionTypeID = (int)TransactionTypeEnum.Usage,
+                ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
+                TransactionAmount = parcelUsageStaging.ReportedValueInAcreFeet,
+                TransactionDescription = $"Transaction recorded via spreadsheet upload: {parcelUsageStaging.UploadedFileName}",
+                UserID = userID,
+                UploadedFileName = parcelUsageStaging.UploadedFileName
+            });
+        }
+
+        dbContext.ParcelLedgers.AddRange(parcelLedgers);
+        dbContext.SaveChanges();
+
+        dbContext.ParcelUsageStagings.RemoveRange(parcelUsageStagings);
+        dbContext.SaveChanges();
+
+        return parcelLedgers.Count;
+    }
+
+    public static void DeleteFromStagingByUserID(RioDbContext dbContext, int userID)
+    {
+        var parcelUsageStagings = dbContext.ParcelUsageStagings.Where(x => x.UserID == userID);
+
+        dbContext.ParcelUsageStagings.RemoveRange(parcelUsageStagings);
+        dbContext.SaveChanges();
     }
 }

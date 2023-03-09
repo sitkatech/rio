@@ -14,8 +14,10 @@ namespace Rio.Models.DataTransferObjects
         public string ParcelNumber { get; set; }
         public DateTime ReportedDate { get; set; }
         public decimal ReportedValue { get; set; }
-        public decimal? ReportedValueInAcreFeet { get; set; }
+        public decimal ReportedValueInAcreFeet { get; set; }
         public DateTime LastUpdateDate { get; set; }
+        public string UploadedFileName { get; set; }
+        public UserDto User { get; set; }
     }
 
     public partial class ParcelUsageStagingSimpleDto
@@ -25,8 +27,10 @@ namespace Rio.Models.DataTransferObjects
         public string ParcelNumber { get; set; }
         public DateTime ReportedDate { get; set; }
         public decimal ReportedValue { get; set; }
-        public decimal? ReportedValueInAcreFeet { get; set; }
+        public decimal ReportedValueInAcreFeet { get; set; }
         public DateTime LastUpdateDate { get; set; }
+        public string UploadedFileName { get; set; }
+        public int UserID { get; set; }
     }
 
 }

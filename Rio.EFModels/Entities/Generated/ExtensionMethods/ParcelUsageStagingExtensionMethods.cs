@@ -19,7 +19,9 @@ namespace Rio.EFModels.Entities
                 ReportedDate = parcelUsageStaging.ReportedDate,
                 ReportedValue = parcelUsageStaging.ReportedValue,
                 ReportedValueInAcreFeet = parcelUsageStaging.ReportedValueInAcreFeet,
-                LastUpdateDate = parcelUsageStaging.LastUpdateDate
+                LastUpdateDate = parcelUsageStaging.LastUpdateDate,
+                UploadedFileName = parcelUsageStaging.UploadedFileName,
+                User = parcelUsageStaging.User.AsDto()
             };
             DoCustomMappings(parcelUsageStaging, parcelUsageStagingDto);
             return parcelUsageStagingDto;
@@ -37,7 +39,9 @@ namespace Rio.EFModels.Entities
                 ReportedDate = parcelUsageStaging.ReportedDate,
                 ReportedValue = parcelUsageStaging.ReportedValue,
                 ReportedValueInAcreFeet = parcelUsageStaging.ReportedValueInAcreFeet,
-                LastUpdateDate = parcelUsageStaging.LastUpdateDate
+                LastUpdateDate = parcelUsageStaging.LastUpdateDate,
+                UploadedFileName = parcelUsageStaging.UploadedFileName,
+                UserID = parcelUsageStaging.UserID
             };
             DoCustomSimpleDtoMappings(parcelUsageStaging, parcelUsageStagingSimpleDto);
             return parcelUsageStagingSimpleDto;

@@ -31,6 +31,8 @@ model/parcel-required-column-and-mapping-dto.ts
 model/parcel-simple-dto.ts
 model/parcel-status-dto.ts
 model/parcel-update-expected-results-dto.ts
+model/parcel-usage-staging-preview-dto.ts
+model/parcel-usage-staging-simple-dto.ts
 model/parcel-water-supply-and-usage-dto.ts
 model/posting-detailed-dto.ts
 model/posting-dto.ts

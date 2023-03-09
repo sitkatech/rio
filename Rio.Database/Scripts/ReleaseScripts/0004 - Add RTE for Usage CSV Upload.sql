@@ -7,7 +7,8 @@ BEGIN
 	PRINT @MigrationName;
 
     insert into dbo.CustomRichText(CustomRichTextTypeID, CustomRichTextContent)
-    values (33, 'Instructions for uploading usage transactions via CSV...')
+    values (33, 'Instructions for uploading usage transactions via CSV...'),
+        (34, 'Instructions for previewing and approving usage transactions...')
 
     INSERT INTO dbo.DatabaseMigration(MigrationAuthorName, ReleaseScriptFileName, MigrationReason)
     SELECT 'Jamie Quishenberry', @MigrationName, '0004 - Add RTE for Usage CSV Upload'

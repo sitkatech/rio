@@ -31,7 +31,8 @@ USING (VALUES
 (30, 'TagList', 'Tag List'),
 (31, 'BulkTagParcels', 'Bulk Tag Parcels'),
 (32, 'TransactionHistory', 'Transaction History'),
-(33, 'ParcelLedgerCsvUploadUsage', 'Parcel Ledger CSV Upload (Usage)')
+(33, 'ParcelLedgerCsvUploadUsage', 'Parcel Ledger CSV Upload (Usage)'),
+(34, 'ParcelLedgerUsagePreview', 'Parcel Ledger Usage Preview')
 )
 AS Source (CustomRichTextTypeID, CustomRichTextTypeName, CustomRichTextTypeDisplayName)
 ON Target.CustomRichTextTypeID = Source.CustomRichTextTypeID

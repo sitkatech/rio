@@ -197,6 +197,11 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelUsageStagings)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ParcelUsageStagings)
+                    .HasForeignKey(d => d.UserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Posting>(entity =>
