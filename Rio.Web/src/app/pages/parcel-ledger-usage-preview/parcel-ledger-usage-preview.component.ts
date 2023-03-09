@@ -33,6 +33,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   public defaultColDef: ColDef;
 
   public isLoadingSubmit = false;
+  public unsavedChanges = true;
 
   constructor(
     private router: Router,
@@ -68,9 +69,15 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
     this.cdr.detach;
   }
 
-  public onGridReady(): void {
-    this.stagedParcelUsagesGrid.api.sizeColumnsToFit();
-    this.parcelNumbersWithoutStagedUsagesGrid.api.sizeColumnsToFit();
+  public canExit(): boolean {
+    return !this.unsavedChanges;
+  }
+
+  public onExit(): void {
+    console.log("deleting staged records")
+    this.parcelUsageService.deleteStagedParcelUsage().subscribe(() => {
+      console.log("did it")
+    });
   }
 
   private createColumnDefs() {
@@ -98,6 +105,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
 
     this.parcelUsageService.publishStagedParcelUsage().subscribe(transactionCount => {
       this.isLoadingSubmit = false;
+      this.unsavedChanges = false;
 
       this.router.navigate(['/parcels/create-water-transactions']).then(() => {
         this.alertService.pushAlert(new Alert(`${transactionCount} transactions successfully created.`, AlertContext.Success));
@@ -109,8 +117,9 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   }
 
   public cancel() {
-    this.parcelUsageService.deleteStagedParcelUsage().subscribe(() => {
-      this.router.navigate(['/parcels/create-water-transactions']);
-    });
+    this.router.navigate(['/parcels/create-water-transactions']);
+
+    // this.parcelUsageService.deleteStagedParcelUsage().subscribe(() => {
+    // });
   }
 }

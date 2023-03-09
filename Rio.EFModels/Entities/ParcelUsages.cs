@@ -99,9 +99,9 @@ public static class ParcelUsages
 
     public static void DeleteFromStagingByUserID(RioDbContext dbContext, int userID)
     {
-        var stagedParcelUsages = GetByUserID(dbContext, userID);
-        
-        dbContext.ParcelUsageStagings.RemoveRange(stagedParcelUsages);
+        var parcelUsageStagings = dbContext.ParcelUsageStagings.Where(x => x.UserID == userID);
+
+        dbContext.ParcelUsageStagings.RemoveRange(parcelUsageStagings);
         dbContext.SaveChanges();
     }
 }

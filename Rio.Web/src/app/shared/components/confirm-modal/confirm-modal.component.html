@@ -1,0 +1,10 @@
+<div class="modal-header pt-3">
+    <h5 class="modal-title text-white no-wrap">{{ options.title }}</h5>
+</div>
+<div class="modal-body">
+    <div [innerHtml]="this.sanitizer.bypassSecurityTrustHtml(options.message)"></div>
+    <div class="modal-footer">
+        <button class="btn {{options.buttonClassYes}}" [disabled]="options.buttonDisabledYes" (click)="yes()">{{ options.buttonTextYes }}</button>
+        <button class="btn btn-secondary right" (click)="no()">{{ options.buttonTextNo }}</button>
+    </div>
+</div>
