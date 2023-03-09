@@ -31,7 +31,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     {
         var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
 
-        var stagedParcelUsages = ParcelUsages.ListByUserID(_dbContext, userID).ToList();
+        var stagedParcelUsages = ParcelUsages.GetByUserID(_dbContext, userID).ToList();
         var parcelUsageStagingSimpleDtos = stagedParcelUsages
             .Select(x => x.AsSimpleDto()).ToList();
 
@@ -53,9 +53,9 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     public ActionResult<int> PublishStagedParcelUsagesForCurrentUser()
     {
         var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
-        ParcelUsages.PublishStagingToParcelLedgerByUserID(_dbContext, userID);
+        var transactionCount = ParcelUsages.PublishStagingToParcelLedgerByUserID(_dbContext, userID);
 
-        return Ok();
+        return Ok(transactionCount);
     }
 
     [HttpDelete("parcel-usages")]
@@ -99,7 +99,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     [ParcelManageFeature]
     [RequestSizeLimit(524288000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
-    public async Task<IActionResult> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
+    public async Task<ActionResult<List<string>>> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
     {
         var extension = Path.GetExtension(parcelUsageCsvUpsertDto.UploadedFile.FileName);
         if (extension != ".csv")
@@ -128,9 +128,9 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         var effectiveDate = DateTime.Parse(parcelUsageCsvUpsertDto.EffectiveDate).AddHours(8);
         var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
 
-        var parcelUsageCsvResponseDto = ParcelUsages.CreateStagingRecordsFromCsv(_dbContext, records, effectiveDate, parcelUsageCsvUpsertDto.UploadedFile.FileName, userID);
+        var unmatchedParcelNumbers = ParcelUsages.CreateStagingRecordsFromCsv(_dbContext, records, effectiveDate, parcelUsageCsvUpsertDto.UploadedFile.FileName, userID);
 
-        return Ok(parcelUsageCsvResponseDto);
+        return Ok(unmatchedParcelNumbers);
     }
 
     private bool ListHeadersFromCsvUpload(byte[] fileData, out List<string> headerNames)

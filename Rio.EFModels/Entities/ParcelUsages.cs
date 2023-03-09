@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Qanat.EFModels.Entities;
-using Rio.API.Models;
-using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities;
 
@@ -12,7 +10,7 @@ public static class ParcelUsages
 {
     private const double MillimetersToFeetConversionFactor = 304.8;
 
-    public static IEnumerable<ParcelUsageStaging> ListByUserID(RioDbContext dbContext, int userID)
+    public static IEnumerable<ParcelUsageStaging> GetByUserID(RioDbContext dbContext, int userID)
     {
         return dbContext.ParcelUsageStagings.AsNoTracking()
             .Include(x => x.Parcel)
@@ -20,7 +18,7 @@ public static class ParcelUsages
             .Where(x => x.UserID == userID);
     }
 
-    public static ParcelUsageCsvResponseDto CreateStagingRecordsFromCsv(RioDbContext dbContext, List<ParcelTransactionCSV> records, DateTime effectiveDate, string uploadedFileName, int userID)
+    public static List<string> CreateStagingRecordsFromCsv(RioDbContext dbContext, List<ParcelTransactionCSV> records, DateTime effectiveDate, string uploadedFileName, int userID)
     {
         var transactionDate = DateTime.UtcNow;
         effectiveDate = effectiveDate.AddHours(8); // todo: convert effective date to utc date
@@ -60,7 +58,7 @@ public static class ParcelUsages
         dbContext.ParcelUsageStagings.AddRange(parcelUsages);
         dbContext.SaveChanges();
 
-        return new ParcelUsageCsvResponseDto(parcelUsages.Count, unmatchedParcelNumbers);
+        return unmatchedParcelNumbers;
     }
 
     private static double ConvertMillimetersToAcreFeet(double reportedValue, double parcelAreaInAcres)
@@ -71,32 +69,37 @@ public static class ParcelUsages
     public static int PublishStagingToParcelLedgerByUserID(RioDbContext dbContext, int userID)
     {
         var transactionDate = DateTime.UtcNow;
-        var stagedParcelUsages = ListByUserID(dbContext, userID);
+        var parcelUsageStagings = GetByUserID(dbContext, userID).ToList();
 
-        var parcelLedgers = stagedParcelUsages.Select(stagedParcelUsage => new ParcelLedger()
+        var parcelLedgers = new List<ParcelLedger>();
+        foreach (var parcelUsageStaging in parcelUsageStagings)
         {
-            ParcelID = stagedParcelUsage.ParcelID,
-            TransactionDate = transactionDate,
-            EffectiveDate = stagedParcelUsage.ReportedDate,
-            TransactionTypeID = (int)TransactionTypeEnum.Usage,
-            ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
-            TransactionAmount = stagedParcelUsage.ReportedValueInAcreFeet,
-            TransactionDescription = $"Transaction recorded via spreadsheet upload: {stagedParcelUsage.UploadedFileName}",
-            UserID = userID,
-            UploadedFileName = stagedParcelUsage.UploadedFileName
-        }).ToList();
+            parcelLedgers.Add(new ParcelLedger()
+            {
+                ParcelID = parcelUsageStaging.ParcelID,
+                TransactionDate = transactionDate,
+                EffectiveDate = parcelUsageStaging.ReportedDate,
+                TransactionTypeID = (int)TransactionTypeEnum.Usage,
+                ParcelLedgerEntrySourceTypeID = (int)ParcelLedgerEntrySourceTypeEnum.Manual,
+                TransactionAmount = parcelUsageStaging.ReportedValueInAcreFeet,
+                TransactionDescription = $"Transaction recorded via spreadsheet upload: {parcelUsageStaging.UploadedFileName}",
+                UserID = userID,
+                UploadedFileName = parcelUsageStaging.UploadedFileName
+            });
+        }
 
         dbContext.ParcelLedgers.AddRange(parcelLedgers);
         dbContext.SaveChanges();
 
-        DeleteFromStagingByUserID(dbContext, userID);
+        dbContext.ParcelUsageStagings.RemoveRange(parcelUsageStagings);
+        dbContext.SaveChanges();
 
         return parcelLedgers.Count;
     }
 
     public static void DeleteFromStagingByUserID(RioDbContext dbContext, int userID)
     {
-        var stagedParcelUsages = ListByUserID(dbContext, userID);
+        var stagedParcelUsages = GetByUserID(dbContext, userID);
         
         dbContext.ParcelUsageStagings.RemoveRange(stagedParcelUsages);
         dbContext.SaveChanges();
