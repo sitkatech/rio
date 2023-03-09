@@ -1,4 +1,4 @@
-{{ if eq .Values.global.env.tenantName "rio-rrb" }}
+{{ if eq .Values.global.env.tenantName "rrb" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

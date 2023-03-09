@@ -6,7 +6,7 @@ global:
     sqlUsername: "sqlUsername"
     sqlGeoserverUsername: "geoserverUsername"
     appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
-    tenantName: "rio-edf"
+    tenantName: "edf"
     geoserverInitialMemory: "1G"
     geoserverMaximumMemory: "2G"
     keystoneClientID: "Rio-EDF"
