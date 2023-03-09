@@ -34,5 +34,6 @@ export enum CustomRichTextTypeEnum {
   TagList = 30,
   BulkTagParcels = 31,
   TransactionHistory = 32,
-  ParcelLedgerCsvUploadUsage = 33
+  ParcelLedgerCsvUploadUsage = 33,
+  ParcelLedgerUsagePreview = 34
 }

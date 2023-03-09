@@ -1,5 +1,5 @@
 <div class="modal-header pt-3">
-    <h5 class="modal-title text-white no-wrap">{{ options.title }}</h5>
+    <h5 class="modal-title no-wrap">{{ options.title }}</h5>
 </div>
 <div class="modal-body">
     <div [innerHtml]="this.sanitizer.bypassSecurityTrustHtml(options.message)"></div>

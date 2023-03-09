@@ -6,6 +6,7 @@ import { ColDef } from 'ag-grid-community';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelUsageService } from 'src/app/services/parcel-usage.service';
 import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
+import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { ParcelUsageStagingSimpleDto } from 'src/app/shared/generated/model/parcel-usage-staging-simple-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { Alert } from 'src/app/shared/models/alert';
@@ -34,6 +35,8 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
 
   public isLoadingSubmit = false;
   public unsavedChanges = true;
+
+  public richTextTypeID = CustomRichTextTypeEnum.ParcelLedgerUsagePreview;
 
   constructor(
     private router: Router,
@@ -74,10 +77,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   }
 
   public onExit(): void {
-    console.log("deleting staged records")
-    this.parcelUsageService.deleteStagedParcelUsage().subscribe(() => {
-      console.log("did it")
-    });
+    this.parcelUsageService.deleteStagedParcelUsage().subscribe();
   }
 
   private createColumnDefs() {

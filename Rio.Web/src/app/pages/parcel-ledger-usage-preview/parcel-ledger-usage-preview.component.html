@@ -15,10 +15,10 @@
 <div class="container mt-sm-4">
     <h2 class="d-inline-block">Preview Uploaded Usage Transactions</h2>
     <div class="card card-body mt-2 mb-4">
-      <!-- <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text> -->
+        <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
-    <app-alert-display></app-alert-display>
 
+    <app-alert-display></app-alert-display>
 
     <div class="row mb-2">
         <div class="col"><b>Effective Date</b>: {{ effectiveDate | date:'longDate'}}</div>
@@ -42,7 +42,7 @@
             </button>
         </div>
     </div>
-    
+
     <hr />
     <div class="row mt-4 mb-2" *ngIf="parcelNumbersWithoutStagedUsages?.length > 0">
         <div class="col-12"><b>APNs not found in uploaded file ({{ parcelNumbersWithoutStagedUsages?.length | number}}):</b></div>
