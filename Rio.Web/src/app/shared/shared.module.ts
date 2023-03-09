@@ -20,6 +20,7 @@ import { ScenarioMapComponent } from './components/scenario-map/scenario-map.com
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         MultiLinkRendererComponent,
         WaterYearSelectComponent,
         ScenarioMapComponent,
-        CustomRichTextComponent
+        CustomRichTextComponent,
+        ConfirmModalComponent
     ],
     imports: [
         CommonModule,

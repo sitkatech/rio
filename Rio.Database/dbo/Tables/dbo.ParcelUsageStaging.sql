@@ -4,6 +4,8 @@
 	[ParcelNumber] [varchar](20) NOT NULL,
 	[ReportedDate] [datetime] NOT NULL,
 	[ReportedValue] [decimal](20, 4) NOT NULL,
-	[ReportedValueInAcreFeet] [decimal](20, 4) NULL,
-	[LastUpdateDate] [datetime] NOT NULL
+	[ReportedValueInAcreFeet] [decimal](20, 4) NOT NULL,
+	[LastUpdateDate] [datetime] NOT NULL,
+	[UploadedFileName] [varchar](100) NOT NULL,
+	[UserID] [int] NOT NULL CONSTRAINT [FK_ParcelUsageStaging_User_UserID] FOREIGN KEY REFERENCES [dbo].[User] ([UserID]),
 )

@@ -29,6 +29,8 @@ export * from '././parcel-required-column-and-mapping-dto';
 export * from '././parcel-simple-dto';
 export * from '././parcel-status-dto';
 export * from '././parcel-update-expected-results-dto';
+export * from '././parcel-usage-staging-preview-dto';
+export * from '././parcel-usage-staging-simple-dto';
 export * from '././parcel-water-supply-and-usage-dto';
 export * from '././posting-detailed-dto';
 export * from '././posting-dto';

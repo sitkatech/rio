@@ -121,17 +121,16 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     this.parcelUsageService.uploadParcelUsageCsvToStaging(this.fileUpload, this.effectiveDate, this.apnColumnName, this.quantityColumnName)
-      .subscribe(response => {
+      .subscribe(transactionCount => {
         this.isLoadingSubmit = false;
 
-        this.router.navigate(['/parcels/create-water-transactions'], {relativeTo: this.route}).then(() => {
-          console.log(response)
-          const successMessage = `${response.TransactionCount} transactions successfully created.` + 
-            (response.UnmatchedParcelNumbers?.length > 0 ? ` ${response.UnmatchedParcelNumbers.length} transactions skipped because the following APNs were not found in the database: ${ response.UnmatchedParcelNumbers.join(', ') }.` : '');
-          this.alertService.pushAlert(new Alert(successMessage, AlertContext.Success));
+        this.router.navigate(['preview'], {relativeTo: this.route}).then(() => {
+          if (transactionCount?.length == 0) return;
+
+          const message = `${transactionCount.length} transactions skipped because the following APNs were not found in the database: ${transactionCount.join(', ')}`;
+          this.alertService.pushAlert(new Alert(message, AlertContext.Info, false));
         });
-      },
-      error => {
+      }, error => {
         this.isLoadingSubmit = false;
         this.cdr.detectChanges();
 

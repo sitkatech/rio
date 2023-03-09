@@ -16,9 +16,3 @@ public class ParcelLedgerCsvUpsertDto
     [Required]
     public int? WaterTypeID { get; set; }
 }
-
-public class CsvUpsertDto
-{
-    [Required]
-    public IFormFile UploadedFile { get; set; }
-}

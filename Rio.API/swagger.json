@@ -2196,6 +2196,75 @@
         }
       }
     },
+    "/parcel-usages": {
+      "get": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/parcel-usages/csv/headers": {
       "post": {
         "tags": [
@@ -2305,7 +2374,33 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -5427,6 +5522,84 @@
           "NumParcelsWithConflicts": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageStagingPreviewDto": {
+        "type": "object",
+        "properties": {
+          "StagedParcelUsages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParcelUsageStagingSimpleDto"
+            },
+            "nullable": true
+          },
+          "ParcelNumbersWithoutStagedUsages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageStagingSimpleDto": {
+        "type": "object",
+        "properties": {
+          "ParcelUsageStagingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ReportedValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "ReportedValueInAcreFeet": {
+            "type": "number",
+            "format": "double"
+          },
+          "LastUpdateDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "UploadedFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "UserID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExistingAnnualUsageAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "ExistingMonthlyUsageAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "UpdatedAnnualUsageAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "UpdatedMonthlyUsageAmount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

@@ -21,12 +21,20 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "decimal(20, 4)")]
         public decimal ReportedValue { get; set; }
         [Column(TypeName = "decimal(20, 4)")]
-        public decimal? ReportedValueInAcreFeet { get; set; }
+        public decimal ReportedValueInAcreFeet { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime LastUpdateDate { get; set; }
+        [Required]
+        [StringLength(100)]
+        [Unicode(false)]
+        public string UploadedFileName { get; set; }
+        public int UserID { get; set; }
 
         [ForeignKey("ParcelID")]
         [InverseProperty("ParcelUsageStagings")]
         public virtual Parcel Parcel { get; set; }
+        [ForeignKey("UserID")]
+        [InverseProperty("ParcelUsageStagings")]
+        public virtual User User { get; set; }
     }
 }
