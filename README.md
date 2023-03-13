@@ -3,7 +3,7 @@ Welcome to the Water Accounting Platform. The platform is designed to meet these
 - Over the longer term, consider opportunities to generate additional benefits from fallowed land such as groundwater recharge basins and wildlife habitat.
 - Exploring water trading policies, including reducing water trading transaction costs and facilitate effective accounting and management of available water resources.
 
-This project is a collaborative effort by the Rosedale-Rio Bravo Water Storage District (https://www.rrbwsd.com), Environmental Defense Fund (https://www.edf.org), Westwater Research (http://www.waterexchange.com), and Sitka Technology Group (https://sitkatech.com). 
+This project is a collaborative effort by the Rosedale-Rio Bravo Water Storage District (https://www.rrbwsd.com), Environmental Defense Fund (https://www.edf.org), Westwater Research (http://www.waterexchange.com), and Environmental Science Associates (https://esassoc.com). 
 
 Please contact support@sitkatech.com with any questions about this project.
 
