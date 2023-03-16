@@ -19,6 +19,7 @@ model/offer-status-dto.ts
 model/offer-upsert-dto.ts
 model/open-et-sync-history-dto.ts
 model/open-et-sync-result-type-dto.ts
+model/overconsumption-rate-upsert-dto.ts
 model/parcel-change-owner-dto.ts
 model/parcel-dto.ts
 model/parcel-id-list-dto.ts

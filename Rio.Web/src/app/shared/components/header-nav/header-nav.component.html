@@ -80,6 +80,9 @@
                     <a *ngIf="isAdministratorOrDemoUser() && openETSyncEnabled()" routerLink="/openet-integration" class="dropdown-item">
                         OpenET Integration Status
                     </a>
+                    <a *ngIf="isAdministrator()" routerLink="/set-overconsumption-rates" class="dropdown-item">
+                        Set Overconsumption Rates
+                    </a>
                     <div class="dropdown-divider"></div>
                     <a *ngIf="isAdministrator()" routerLink="/update-parcels-and-accounts" class="dropdown-item">
                         Update Parcels and Accounts

@@ -65,6 +65,7 @@ import { IncludeWaterSupplyGuard } from './shared/guards/unauthenticated-access/
 import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
 import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
 import { UnsavedChangesGuard } from './shared/guards/unsaved-changes.guard';
+import { OverconsumptionRateEditComponent } from './pages/overconsumption-rate-edit/overconsumption-rate-edit.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -113,6 +114,7 @@ const routes: Routes = [
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
+  { path: "set-overconsumption-rates", component: OverconsumptionRateEditComponent, canActivate: [ManagerOnlyGuard]},
   { path: "create-user-profile", component: CreateUserProfileComponent },
   { path: "training-videos", component: TrainingVideosComponent},
   { path: "disclaimer", component: DisclaimerComponent },

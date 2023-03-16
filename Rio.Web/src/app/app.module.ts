@@ -88,6 +88,7 @@ import { DropdownSelectFilterComponent } from './shared/components/ag-grid/dropd
 import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/clear-grid-filters-button/clear-grid-filters-button.component';
 import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
 import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
+import { OverconsumptionRateEditComponent } from './pages/overconsumption-rate-edit/overconsumption-rate-edit.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -161,7 +162,8 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     ParcelLedgerTransactionHistoryComponent,
     DropdownSelectFilterComponent,
     ClearGridFiltersButtonComponent,
-    ParcelLedgerUsagePreviewComponent
+    ParcelLedgerUsagePreviewComponent,
+    OverconsumptionRateEditComponent
   ],
   imports: [
     AppRoutingModule,
