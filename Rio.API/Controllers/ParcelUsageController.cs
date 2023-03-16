@@ -116,7 +116,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         var fileData = await HttpUtilities.GetIFormFileData(parcelUsageCsvUpsertDto.UploadedFile);
 
         if (!ParseCsvUpload(fileData, parcelUsageCsvUpsertDto.apnColumnName, parcelUsageCsvUpsertDto.quantityColumnName, out var records)
-            || !ValidateCsvUploadData(records, geographyID))
+            || !ValidateCsvUploadData(records))
         {
             return BadRequest(ModelState);
         }
@@ -206,13 +206,18 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         }
     }
 
-    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records, out int nullAPNsCount)
+    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records)
     {
         var isValid = true;
 
-        // count null APNs
-         nullAPNsCount = records.Count(x => x.APN == "");
-        
+        // no null APNs
+        var nullAPNsCount = records.Count(x => x.APN == "");
+        if (nullAPNsCount > 0)
+        {
+            ModelState.AddModelError("UploadedFile",
+                $"The uploaded file contains {nullAPNsCount} {(nullAPNsCount > 1 ? "rows" : "row")} specifying a value with no corresponding APN.");
+            isValid = false;
+        }
 
         // no null quantities
         var nullQuantities = records.Where(x => x.Quantity == null).ToList();
