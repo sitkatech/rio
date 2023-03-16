@@ -191,6 +191,11 @@ namespace Rio.EFModels.Entities
 
             dbContext.ParcelLedgers.Add(parcelLedger);
             dbContext.SaveChanges();
+
+            if (parcelLedgerCreateDto.TransactionTypeID == (int)TransactionTypeEnum.Usage)
+            {
+                ParcelOverconsumptionCharges.UpdateByYearAndParcelID(dbContext, parcelLedger.EffectiveDate.Year, parcelLedger.ParcelID);
+            }
         }
 
         public static int BulkCreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Qanat.EFModels.Entities;
+using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities;
 
@@ -89,10 +90,13 @@ public static class ParcelUsages
         }
 
         dbContext.ParcelLedgers.AddRange(parcelLedgers);
-        dbContext.SaveChanges();
-
         dbContext.ParcelUsageStagings.RemoveRange(parcelUsageStagings);
         dbContext.SaveChanges();
+
+        if (parcelLedgers.Any())
+        {
+            ParcelOverconsumptionCharges.UpdateByYear(dbContext, parcelLedgers.First().EffectiveDate.Year);
+        }
 
         return parcelLedgers.Count;
     }
