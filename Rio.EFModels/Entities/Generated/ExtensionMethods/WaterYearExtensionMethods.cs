@@ -15,7 +15,8 @@ namespace Rio.EFModels.Entities
             {
                 WaterYearID = waterYear.WaterYearID,
                 Year = waterYear.Year,
-                ParcelLayerUpdateDate = waterYear.ParcelLayerUpdateDate
+                ParcelLayerUpdateDate = waterYear.ParcelLayerUpdateDate,
+                OverconsumptionRate = waterYear.OverconsumptionRate
             };
             DoCustomMappings(waterYear, waterYearDto);
             return waterYearDto;
@@ -29,7 +30,8 @@ namespace Rio.EFModels.Entities
             {
                 WaterYearID = waterYear.WaterYearID,
                 Year = waterYear.Year,
-                ParcelLayerUpdateDate = waterYear.ParcelLayerUpdateDate
+                ParcelLayerUpdateDate = waterYear.ParcelLayerUpdateDate,
+                OverconsumptionRate = waterYear.OverconsumptionRate
             };
             DoCustomSimpleDtoMappings(waterYear, waterYearSimpleDto);
             return waterYearSimpleDto;

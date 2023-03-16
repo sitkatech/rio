@@ -16,4 +16,6 @@ GO
 GO
 :r ".\0004 - Add RTE for Usage CSV Upload.sql"
 GO
+:r ".\0005 - Add RTE for Overconsumption Rate editor.sql"
+GO
 

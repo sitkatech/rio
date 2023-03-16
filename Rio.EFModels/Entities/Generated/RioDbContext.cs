@@ -30,6 +30,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Parcel> Parcels { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
+        public virtual DbSet<ParcelOverconsumptionCharge> ParcelOverconsumptionCharges { get; set; }
         public virtual DbSet<ParcelTag> ParcelTags { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<ParcelUsageStaging> ParcelUsageStagings { get; set; }
@@ -176,6 +177,21 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<ParcelOverconsumptionCharge>(entity =>
+            {
+                entity.HasOne(d => d.Parcel)
+                    .WithMany(p => p.ParcelOverconsumptionCharges)
+                    .HasForeignKey(d => d.ParcelID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AK_ParcelOverconsumptionCharge_Parcel_ParcelID");
+
+                entity.HasOne(d => d.WaterYear)
+                    .WithMany(p => p.ParcelOverconsumptionCharges)
+                    .HasForeignKey(d => d.WaterYearID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AK_ParcelOverconsumptionCharge_WaterYear_WaterYearID");
             });
 
             modelBuilder.Entity<ParcelTag>(entity =>

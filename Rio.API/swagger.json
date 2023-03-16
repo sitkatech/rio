@@ -4443,6 +4443,53 @@
         }
       }
     },
+    "/water-years/{waterYearID}/overconsumption-rate": {
+      "put": {
+        "tags": [
+          "WaterYear"
+        ],
+        "parameters": [
+          {
+            "name": "waterYearID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/water-year-months": {
       "get": {
         "tags": [
@@ -5181,6 +5228,24 @@
           "OpenETSyncResultTypeDisplayName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OverconsumptionRateUpsertDto": {
+        "required": [
+          "OverconsumptionRate",
+          "WaterYearID"
+        ],
+        "type": "object",
+        "properties": {
+          "WaterYearID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -6824,6 +6889,10 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

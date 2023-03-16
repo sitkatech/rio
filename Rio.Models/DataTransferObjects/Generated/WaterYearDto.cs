@@ -12,6 +12,7 @@ namespace Rio.Models.DataTransferObjects
         public int WaterYearID { get; set; }
         public int Year { get; set; }
         public DateTime? ParcelLayerUpdateDate { get; set; }
+        public decimal OverconsumptionRate { get; set; }
     }
 
     public partial class WaterYearSimpleDto
@@ -19,6 +20,7 @@ namespace Rio.Models.DataTransferObjects
         public int WaterYearID { get; set; }
         public int Year { get; set; }
         public DateTime? ParcelLayerUpdateDate { get; set; }
+        public decimal OverconsumptionRate { get; set; }
     }
 
 }

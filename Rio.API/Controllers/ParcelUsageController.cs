@@ -115,12 +115,8 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
 
         var fileData = await HttpUtilities.GetIFormFileData(parcelUsageCsvUpsertDto.UploadedFile);
 
-        if (!ParseCsvUpload(fileData, parcelUsageCsvUpsertDto.apnColumnName, parcelUsageCsvUpsertDto.quantityColumnName, out var records))
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (!ValidateCsvUploadData(records, geographyID))
+        if (!ParseCsvUpload(fileData, parcelUsageCsvUpsertDto.apnColumnName, parcelUsageCsvUpsertDto.quantityColumnName, out var records)
+            || !ValidateCsvUploadData(records))
         {
             return BadRequest(ModelState);
         }
@@ -210,7 +206,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         }
     }
 
-    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records, int geographyID)
+    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records)
     {
         var isValid = true;
 

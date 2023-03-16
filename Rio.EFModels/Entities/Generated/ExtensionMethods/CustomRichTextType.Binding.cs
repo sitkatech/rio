@@ -48,6 +48,7 @@ namespace Rio.EFModels.Entities
         public static readonly CustomRichTextTypeTransactionHistory TransactionHistory = Rio.EFModels.Entities.CustomRichTextTypeTransactionHistory.Instance;
         public static readonly CustomRichTextTypeParcelLedgerCsvUploadUsage ParcelLedgerCsvUploadUsage = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerCsvUploadUsage.Instance;
         public static readonly CustomRichTextTypeParcelLedgerUsagePreview ParcelLedgerUsagePreview = Rio.EFModels.Entities.CustomRichTextTypeParcelLedgerUsagePreview.Instance;
+        public static readonly CustomRichTextTypeSetOverconsumptionRate SetOverconsumptionRate = Rio.EFModels.Entities.CustomRichTextTypeSetOverconsumptionRate.Instance;
 
         public static readonly List<CustomRichTextType> All;
         public static readonly List<CustomRichTextTypeDto> AllAsDto;
@@ -59,8 +60,8 @@ namespace Rio.EFModels.Entities
         /// </summary>
         static CustomRichTextType()
         {
-            All = new List<CustomRichTextType> { HomePage, Contact, FrequentlyAskedQuestions, AboutGET, Disclaimer, PlatformOverview, MeasuringWaterUse, ConfigureWaterTypes, CreateWaterTransactions, TrainingVideos, CreateUserProfile, CreateUserProfileStepOne, CreateUserProfileStepTwo, CreateUserProfileStepThree, WaterAccountsAdd, WaterAccountsAddLegalText, WaterAccountsInvite, ParcelList, OpenETIntegration, ParcelUpdateLayer, InactiveParcelList, AccountReconciliationReport, ParcelLedgerCreate, ParcelLedgerBulkCreate, ParcelLedgerCsvUploadSupply, WebsiteFooter, PurchasedDescription, SoldDescription, TagList, BulkTagParcels, TransactionHistory, ParcelLedgerCsvUploadUsage, ParcelLedgerUsagePreview };
-            AllAsDto = new List<CustomRichTextTypeDto> { HomePage.AsDto(), Contact.AsDto(), FrequentlyAskedQuestions.AsDto(), AboutGET.AsDto(), Disclaimer.AsDto(), PlatformOverview.AsDto(), MeasuringWaterUse.AsDto(), ConfigureWaterTypes.AsDto(), CreateWaterTransactions.AsDto(), TrainingVideos.AsDto(), CreateUserProfile.AsDto(), CreateUserProfileStepOne.AsDto(), CreateUserProfileStepTwo.AsDto(), CreateUserProfileStepThree.AsDto(), WaterAccountsAdd.AsDto(), WaterAccountsAddLegalText.AsDto(), WaterAccountsInvite.AsDto(), ParcelList.AsDto(), OpenETIntegration.AsDto(), ParcelUpdateLayer.AsDto(), InactiveParcelList.AsDto(), AccountReconciliationReport.AsDto(), ParcelLedgerCreate.AsDto(), ParcelLedgerBulkCreate.AsDto(), ParcelLedgerCsvUploadSupply.AsDto(), WebsiteFooter.AsDto(), PurchasedDescription.AsDto(), SoldDescription.AsDto(), TagList.AsDto(), BulkTagParcels.AsDto(), TransactionHistory.AsDto(), ParcelLedgerCsvUploadUsage.AsDto(), ParcelLedgerUsagePreview.AsDto() };
+            All = new List<CustomRichTextType> { HomePage, Contact, FrequentlyAskedQuestions, AboutGET, Disclaimer, PlatformOverview, MeasuringWaterUse, ConfigureWaterTypes, CreateWaterTransactions, TrainingVideos, CreateUserProfile, CreateUserProfileStepOne, CreateUserProfileStepTwo, CreateUserProfileStepThree, WaterAccountsAdd, WaterAccountsAddLegalText, WaterAccountsInvite, ParcelList, OpenETIntegration, ParcelUpdateLayer, InactiveParcelList, AccountReconciliationReport, ParcelLedgerCreate, ParcelLedgerBulkCreate, ParcelLedgerCsvUploadSupply, WebsiteFooter, PurchasedDescription, SoldDescription, TagList, BulkTagParcels, TransactionHistory, ParcelLedgerCsvUploadUsage, ParcelLedgerUsagePreview, SetOverconsumptionRate };
+            AllAsDto = new List<CustomRichTextTypeDto> { HomePage.AsDto(), Contact.AsDto(), FrequentlyAskedQuestions.AsDto(), AboutGET.AsDto(), Disclaimer.AsDto(), PlatformOverview.AsDto(), MeasuringWaterUse.AsDto(), ConfigureWaterTypes.AsDto(), CreateWaterTransactions.AsDto(), TrainingVideos.AsDto(), CreateUserProfile.AsDto(), CreateUserProfileStepOne.AsDto(), CreateUserProfileStepTwo.AsDto(), CreateUserProfileStepThree.AsDto(), WaterAccountsAdd.AsDto(), WaterAccountsAddLegalText.AsDto(), WaterAccountsInvite.AsDto(), ParcelList.AsDto(), OpenETIntegration.AsDto(), ParcelUpdateLayer.AsDto(), InactiveParcelList.AsDto(), AccountReconciliationReport.AsDto(), ParcelLedgerCreate.AsDto(), ParcelLedgerBulkCreate.AsDto(), ParcelLedgerCsvUploadSupply.AsDto(), WebsiteFooter.AsDto(), PurchasedDescription.AsDto(), SoldDescription.AsDto(), TagList.AsDto(), BulkTagParcels.AsDto(), TransactionHistory.AsDto(), ParcelLedgerCsvUploadUsage.AsDto(), ParcelLedgerUsagePreview.AsDto(), SetOverconsumptionRate.AsDto() };
             AllLookupDictionary = new ReadOnlyDictionary<int, CustomRichTextType>(All.ToDictionary(x => x.CustomRichTextTypeID));
             AllAsDtoLookupDictionary = new ReadOnlyDictionary<int, CustomRichTextTypeDto>(AllAsDto.ToDictionary(x => x.CustomRichTextTypeID));
         }
@@ -181,6 +182,8 @@ namespace Rio.EFModels.Entities
                     return PlatformOverview;
                 case CustomRichTextTypeEnum.PurchasedDescription:
                     return PurchasedDescription;
+                case CustomRichTextTypeEnum.SetOverconsumptionRate:
+                    return SetOverconsumptionRate;
                 case CustomRichTextTypeEnum.SoldDescription:
                     return SoldDescription;
                 case CustomRichTextTypeEnum.TagList:
@@ -237,7 +240,8 @@ namespace Rio.EFModels.Entities
         BulkTagParcels = 31,
         TransactionHistory = 32,
         ParcelLedgerCsvUploadUsage = 33,
-        ParcelLedgerUsagePreview = 34
+        ParcelLedgerUsagePreview = 34,
+        SetOverconsumptionRate = 35
     }
 
     public partial class CustomRichTextTypeHomePage : CustomRichTextType
@@ -436,5 +440,11 @@ namespace Rio.EFModels.Entities
     {
         private CustomRichTextTypeParcelLedgerUsagePreview(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
         public static readonly CustomRichTextTypeParcelLedgerUsagePreview Instance = new CustomRichTextTypeParcelLedgerUsagePreview(34, @"ParcelLedgerUsagePreview", @"Parcel Ledger Usage Preview");
+    }
+
+    public partial class CustomRichTextTypeSetOverconsumptionRate : CustomRichTextType
+    {
+        private CustomRichTextTypeSetOverconsumptionRate(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
+        public static readonly CustomRichTextTypeSetOverconsumptionRate Instance = new CustomRichTextTypeSetOverconsumptionRate(35, @"SetOverconsumptionRate", @"Set Overconsumption Rate");
     }
 }

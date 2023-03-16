@@ -10,11 +10,9 @@
  * Do not edit the class manually.
  */
 
-export class WaterYearDto { 
-    WaterYearID?: number;
-    Year?: number;
-    ParcelLayerUpdateDate?: string;
-    OverconsumptionRate?: number;
+export class OverconsumptionRateUpsertDto { 
+    WaterYearID: number;
+    OverconsumptionRate: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

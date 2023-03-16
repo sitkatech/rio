@@ -17,6 +17,7 @@ export * from '././offer-status-dto';
 export * from '././offer-upsert-dto';
 export * from '././open-et-sync-history-dto';
 export * from '././open-et-sync-result-type-dto';
+export * from '././overconsumption-rate-upsert-dto';
 export * from '././parcel-change-owner-dto';
 export * from '././parcel-dto';
 export * from '././parcel-id-list-dto';
