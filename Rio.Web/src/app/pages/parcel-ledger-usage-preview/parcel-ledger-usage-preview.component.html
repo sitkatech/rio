@@ -18,8 +18,6 @@
         <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
 
-    <app-alert-display></app-alert-display>
-
     <div class="row mb-2">
         <div class="col"><b>Effective Date</b>: {{ effectiveDate | date:'longDate'}}</div>
         <div class="col-auto ml-auto">
@@ -44,8 +42,12 @@
     </div>
 
     <hr />
+    <app-alert-display></app-alert-display>
+
     <div class="row mt-4 mb-2" *ngIf="parcelNumbersWithoutStagedUsages?.length > 0">
-        <div class="col-12"><b>APNs not found in uploaded file ({{ parcelNumbersWithoutStagedUsages?.length | number}}):</b></div>
+        <div class="col-12"></div>
+
+        <div class="col-12">{{ parcelNumbersWithoutStagedUsages.length | number}} APNs from the database were not found in the uploaded file:</div>
     
         <div class="col-12 card mb-3">
             <div class="card-body row" style="max-height: 250px; overflow: auto;">

@@ -171,15 +171,15 @@
             </tr>
             <tr>
               <th class="text-sm-left pb-3">
-                Overconsumption Charge
+                Overconsumption Rate
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
-                $ {{getOverconsumptionCharge() | number: '1.2-2'}} {{unitsShown == 'ac-ft' ? '' : '/ ac'}}
+                $ {{this.waterYearToDisplay.OverconsumptionRate | number: '1.2-2'}} / ac-ft
               </td>
             </tr>
             <tr>
               <th class="text-sm-left pb-3">
-                Overconsumption Amount
+                Overconsumption Volume
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
                 {{getOverconsumptionAmount() | number: '1.2-2'}} {{unitsShown}}
@@ -187,10 +187,10 @@
             </tr>
             <tr>
               <th class="text-sm-left pb-3">
-                Overconsumption Rate
+                Overconsumption Amount
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
-                $ {{this.waterYearToDisplay.OverconsumptionRate | number: '1.2-2'}} / ac-ft
+                $ {{getOverconsumptionCharge() | number: '1.2-2'}} {{unitsShown == 'ac-ft' ? '' : '/ ac'}}
               </td>
             </tr>
             <tr>
