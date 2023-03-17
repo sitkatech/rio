@@ -194,7 +194,7 @@ namespace Rio.EFModels.Entities
 
             if (parcelLedgerCreateDto.TransactionTypeID == (int)TransactionTypeEnum.Usage)
             {
-                ParcelOverconsumptionCharges.UpdateByYearAndParcelID(dbContext, parcelLedger.EffectiveDate.Year, parcelLedger.ParcelID);
+                AccountOverconsumptionCharges.UpdateByYearAndParcelID(dbContext, parcelLedger.EffectiveDate.Year, parcelLedger.ParcelID);
             }
         }
 

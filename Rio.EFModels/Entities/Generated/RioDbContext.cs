@@ -17,6 +17,7 @@ namespace Rio.EFModels.Entities
         }
 
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<AccountOverconsumptionCharge> AccountOverconsumptionCharges { get; set; }
         public virtual DbSet<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
         public virtual DbSet<AccountReconciliation> AccountReconciliations { get; set; }
         public virtual DbSet<AccountUser> AccountUsers { get; set; }
@@ -30,7 +31,6 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<Parcel> Parcels { get; set; }
         public virtual DbSet<ParcelLayerGDBCommonMappingToParcelStagingColumn> ParcelLayerGDBCommonMappingToParcelStagingColumns { get; set; }
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
-        public virtual DbSet<ParcelOverconsumptionCharge> ParcelOverconsumptionCharges { get; set; }
         public virtual DbSet<ParcelTag> ParcelTags { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
         public virtual DbSet<ParcelUsageStaging> ParcelUsageStagings { get; set; }
@@ -67,6 +67,21 @@ namespace Rio.EFModels.Entities
                     .HasFilter("([AccountVerificationKey] IS NOT NULL)");
 
                 entity.Property(e => e.AccountNumber).HasComputedColumnSql("(isnull([AccountID]+(10000),(0)))", false);
+            });
+
+            modelBuilder.Entity<AccountOverconsumptionCharge>(entity =>
+            {
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.AccountOverconsumptionCharges)
+                    .HasForeignKey(d => d.AccountID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AK_AccountOverconsumptionCharge_Account_AccountID");
+
+                entity.HasOne(d => d.WaterYear)
+                    .WithMany(p => p.AccountOverconsumptionCharges)
+                    .HasForeignKey(d => d.WaterYearID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("AK_AccountOverconsumptionCharge_WaterYear_WaterYearID");
             });
 
             modelBuilder.Entity<AccountParcelWaterYear>(entity =>
@@ -177,21 +192,6 @@ namespace Rio.EFModels.Entities
                     .WithMany(p => p.ParcelLedgers)
                     .HasForeignKey(d => d.ParcelID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
-            });
-
-            modelBuilder.Entity<ParcelOverconsumptionCharge>(entity =>
-            {
-                entity.HasOne(d => d.Parcel)
-                    .WithMany(p => p.ParcelOverconsumptionCharges)
-                    .HasForeignKey(d => d.ParcelID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("AK_ParcelOverconsumptionCharge_Parcel_ParcelID");
-
-                entity.HasOne(d => d.WaterYear)
-                    .WithMany(p => p.ParcelOverconsumptionCharges)
-                    .HasForeignKey(d => d.WaterYearID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("AK_ParcelOverconsumptionCharge_WaterYear_WaterYearID");
             });
 
             modelBuilder.Entity<ParcelTag>(entity =>

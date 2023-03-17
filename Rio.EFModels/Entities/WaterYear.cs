@@ -70,6 +70,6 @@ public partial class WaterYear
         waterYear.OverconsumptionRate = overconsumptionRate;
         dbContext.SaveChanges();
 
-        Entities.ParcelOverconsumptionCharges.UpdateByWaterYear(dbContext, waterYear);
+        Entities.AccountOverconsumptionCharges.UpdateByWaterYear(dbContext, waterYear);
     }
 }

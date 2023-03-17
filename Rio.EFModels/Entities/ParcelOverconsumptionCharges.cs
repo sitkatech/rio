@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities;
 
-public static class ParcelOverconsumptionCharges {
+public static class AccountOverconsumptionCharges {
 
     public static void UpdateByYear(RioDbContext dbContext, int year)
     {
@@ -19,60 +19,67 @@ public static class ParcelOverconsumptionCharges {
 
     public static void UpdateByWaterYear(RioDbContext dbContext, WaterYear waterYear)
     {
-        var existingParcelOverconsumptions = dbContext.ParcelOverconsumptionCharges
+        var existingAccountOverconsumptionCharges = dbContext.AccountOverconsumptionCharges
             .Where(x => x.WaterYearID == waterYear.WaterYearID).ToList();
-        dbContext.ParcelOverconsumptionCharges.RemoveRange(existingParcelOverconsumptions);
+        dbContext.AccountOverconsumptionCharges.RemoveRange(existingAccountOverconsumptionCharges);
 
-        var parcelGroups = dbContext.ParcelLedgers.AsNoTracking()
-            .Where(x => x.TransactionDate.Year == waterYear.Year).ToList()
-            .GroupBy(x => x.ParcelID);
+        var parcelLedgersByParcelID = dbContext.ParcelLedgers.AsNoTracking()
+            .Where(x => x.EffectiveDate.Year == waterYear.Year)
+            .ToLookup(x => x.ParcelID);
 
-        var newParcelOverconsumptions = new List<ParcelOverconsumptionCharge>();
-        foreach (var parcelGroup in parcelGroups)
+        var accountGroups = dbContext.AccountParcelWaterYears
+            .Where(x => x.WaterYearID == waterYear.WaterYearID).ToList()
+            .GroupBy(x => x.AccountID);
+
+        var accountOverconsumptionCharges = new List<AccountOverconsumptionCharge>();
+        foreach (var accountGroup in accountGroups)
         {
-            var parcelOverconsumptionCharge = new ParcelOverconsumptionCharge();
-            parcelOverconsumptionCharge.ParcelID = parcelGroup.Key;
-            parcelOverconsumptionCharge.WaterYearID = waterYear.WaterYearID;
+            var totalRemaining = accountGroup.Sum(x => 
+                parcelLedgersByParcelID[x.ParcelID].Sum(y => y.TransactionAmount));
 
-            UpdateParcelOverconsumptionCharge(parcelOverconsumptionCharge, new List<ParcelLedger>(parcelGroup), waterYear.OverconsumptionRate);
-            newParcelOverconsumptions.Add(parcelOverconsumptionCharge);
+            var accountOverconsumptionCharge = new AccountOverconsumptionCharge
+            {
+                AccountID = accountGroup.Key,
+                WaterYearID = waterYear.WaterYearID
+            };
+
+            CalculateOverconsumptionCharge(accountOverconsumptionCharge, totalRemaining, waterYear.OverconsumptionRate);
+            accountOverconsumptionCharges.Add(accountOverconsumptionCharge);
         }
-
-        dbContext.AddRange(newParcelOverconsumptions);
+        
+        dbContext.AccountOverconsumptionCharges.AddRange(accountOverconsumptionCharges);
         dbContext.SaveChanges();
     }
 
     public static void UpdateByYearAndParcelID(RioDbContext dbContext, int year, int parcelID)
     {
         var waterYear = WaterYear.GetByYear(dbContext, year);
-        if (waterYear == null || waterYear.OverconsumptionRate == 0)
-        {
-            return;
-        }
+        if (waterYear == null || waterYear.OverconsumptionRate == 0) return;
 
-        var parcelOverconsumptionCharge = dbContext.ParcelOverconsumptionCharges
-            .SingleOrDefault(x => x.WaterYearID == waterYear.WaterYearID && x.ParcelID == parcelID);
-        if (parcelOverconsumptionCharge == null)
-        {
-            // if record doesn't exist, overconsumption charge hasn't been set for the associated water year
-            return;
-        }
+        var accountParcelWaterYear = AccountParcelWaterYear.GetByParcelIDAndWaterYearID(dbContext, parcelID, waterYear.WaterYearID);
+        if (accountParcelWaterYear == null) return;
 
-        var parcelLedgers = dbContext.ParcelLedgers.AsNoTracking()
-            .Where(x => x.TransactionDate.Year == waterYear.WaterYearID && x.ParcelID == parcelID).ToList();
+        var accountOverconsumptionCharge = dbContext.AccountOverconsumptionCharges
+            .SingleOrDefault(x => x.AccountID == accountParcelWaterYear.AccountID && x.WaterYearID == waterYear.WaterYearID);
+        
+        // if record doesn't exist, overconsumption charge hasn't been set for the associated water year
+        if (accountOverconsumptionCharge == null) return;
 
-        UpdateParcelOverconsumptionCharge(parcelOverconsumptionCharge, parcelLedgers, waterYear.OverconsumptionRate);
+        var totalRemaining = dbContext.ParcelLedgers.AsNoTracking()
+            .Where(x => x.EffectiveDate.Year == waterYear.WaterYearID && x.ParcelID == parcelID)
+            .Sum(x => x.TransactionAmount);
+        
+
+        CalculateOverconsumptionCharge(accountOverconsumptionCharge, totalRemaining, waterYear.OverconsumptionRate);
         dbContext.SaveChanges();
     }
 
-    private static void UpdateParcelOverconsumptionCharge(ParcelOverconsumptionCharge parcelOverconsumptionCharge, List<ParcelLedger> parcelLedgers, decimal overconsumptionRate)
+    private static void CalculateOverconsumptionCharge(AccountOverconsumptionCharge accountOverconsumptionCharge, decimal totalRemaining, decimal overconsumptionRate)
     {
-        var totalRemaining = parcelLedgers.Sum(x => x.TransactionAmount);
-
         // only populate the overconsumption amount if total remaining is less than 0
         var overconsumptionAmount = totalRemaining < 0 ? (-1 * totalRemaining) : 0;
 
-        parcelOverconsumptionCharge.OverconsumptionAmount = overconsumptionAmount;
-        parcelOverconsumptionCharge.OverconsumptionCharge = overconsumptionAmount * overconsumptionRate;
+        accountOverconsumptionCharge.OverconsumptionAmount = overconsumptionAmount;
+        accountOverconsumptionCharge.OverconsumptionCharge = overconsumptionAmount * overconsumptionRate;
     }
 }

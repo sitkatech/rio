@@ -159,7 +159,7 @@
     <None Include="Scripts\ReleaseScripts\0002 - Add WaterYears 2018-2022 and their corresponding WaterYearMonths.sql" />
     <None Include="Scripts\ReleaseScripts\0003 - Insert ownership relationships between Accounts and Parcels for historic WaterYears.sql" />
     <Build Include="dbo\Tables\dbo.ParcelUsageStaging.sql" />
-    <Build Include="dbo\Tables\dbo.ParcelOverconsumptionCharge.sql" />
+    <Build Include="dbo\Tables\dbo.AccountOverconsumptionCharge.sql" />
     <None Include="Scripts\ReleaseScripts\0005 - Add RTE for Overconsumption Rate editor.sql" />
   </ItemGroup>
   <ItemGroup>

@@ -95,7 +95,7 @@ public static class ParcelUsages
 
         if (parcelLedgers.Any())
         {
-            ParcelOverconsumptionCharges.UpdateByYear(dbContext, parcelLedgers.First().EffectiveDate.Year);
+            AccountOverconsumptionCharges.UpdateByYear(dbContext, parcelLedgers.First().EffectiveDate.Year);
         }
 
         return parcelLedgers.Count;
