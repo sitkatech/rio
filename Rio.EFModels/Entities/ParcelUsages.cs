@@ -27,10 +27,10 @@ public static class ParcelUsages
         var unmatchedParcelNumbers = new List<string>();
 
         var parcelAreaDictionary = dbContext.Parcels.AsNoTracking()
-            .ToDictionary(x => x.ParcelNumber, y => new { ParcelID = y.ParcelID, ParcelAreaInAcres = y.ParcelAreaInAcres }
-            );
+            .ToDictionary(x => x.ParcelNumber, y => new { y.ParcelID, y.ParcelAreaInAcres });
 
-        var recordGroups = records.GroupBy(x => x.APN);
+        var recordGroups = records.Where(x => !string.IsNullOrEmpty(x.APN))
+            .GroupBy(x => x.APN);
         foreach (var recordGroup in recordGroups)
         {
             if (!parcelAreaDictionary.ContainsKey(recordGroup.Key))

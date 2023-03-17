@@ -9,6 +9,7 @@ import { ParcelUsageService } from 'src/app/services/parcel-usage.service';
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
+import { ApiService } from 'src/app/shared/services';
 
 @Component({
   selector: 'parcel-ledger-csv-upload-usage',
@@ -39,6 +40,7 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private parcelUsageService: ParcelUsageService,
     private alertService: AlertService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
@@ -87,6 +89,7 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
 
     }, error => {
       this.isLoadingSubmit = false;
+      this.apiService.sendErrorToHandleError(error);
     });
   }
 
@@ -121,23 +124,21 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     this.parcelUsageService.uploadParcelUsageCsvToStaging(this.fileUpload, this.effectiveDate, this.apnColumnName, this.quantityColumnName)
-      .subscribe(transactionCount => {
+      .subscribe(() => {
         this.isLoadingSubmit = false;
 
-        this.router.navigate(['preview'], {relativeTo: this.route}).then(() => {
-          if (transactionCount?.length == 0) return;
-
-          const message = `${transactionCount.length} transactions skipped because the following APNs were not found in the database: ${transactionCount.join(', ')}`;
-          this.alertService.pushAlert(new Alert(message, AlertContext.Info, false));
-        });
+        this.router.navigate(['preview'], {relativeTo: this.route});
       }, error => {
         this.isLoadingSubmit = false;
-        this.cdr.detectChanges();
+        this.apiService.sendErrorToHandleError(error);
 
         if (error.error?.UploadedFile) {
           this.fileUpload = null;
           this.fileUploadElement.value = null;
+
+          this.displayFileInputPanel = true;
         }
+        this.cdr.detectChanges();
       });
     }
 }

@@ -18,4 +18,8 @@ GO
 GO
 :r ".\0005 - Add RTE for Overconsumption Rate editor.sql"
 GO
+:r ".\0006 - Add WaterYear 2023 and its corresponding WaterYearMonths.sql"
+GO
+:r ".\0007 - Create 2023 ownership relationships.sql"
+GO
 
