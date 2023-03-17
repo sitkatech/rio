@@ -23,8 +23,7 @@ from
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
 	from dbo.Account acc
 	left join (
-	select acc.AccountID, 
-				sum(p.ParcelAreaInAcres) as AcresManaged
+		select acc.AccountID, sum(p.ParcelAreaInAcres) as AcresManaged
 		from dbo.Account acc
 		join (
 			select apwy.AccountID, apwy.ParcelID

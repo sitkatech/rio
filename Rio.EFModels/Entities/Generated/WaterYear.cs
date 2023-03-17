@@ -12,8 +12,8 @@ namespace Rio.EFModels.Entities
     {
         public WaterYear()
         {
+            AccountOverconsumptionCharges = new HashSet<AccountOverconsumptionCharge>();
             AccountParcelWaterYears = new HashSet<AccountParcelWaterYear>();
-            ParcelOverconsumptionCharges = new HashSet<ParcelOverconsumptionCharge>();
             WaterYearMonths = new HashSet<WaterYearMonth>();
         }
 
@@ -26,9 +26,9 @@ namespace Rio.EFModels.Entities
         public decimal OverconsumptionRate { get; set; }
 
         [InverseProperty("WaterYear")]
-        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
+        public virtual ICollection<AccountOverconsumptionCharge> AccountOverconsumptionCharges { get; set; }
         [InverseProperty("WaterYear")]
-        public virtual ICollection<ParcelOverconsumptionCharge> ParcelOverconsumptionCharges { get; set; }
+        public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
         [InverseProperty("WaterYear")]
         public virtual ICollection<WaterYearMonth> WaterYearMonths { get; set; }
     }

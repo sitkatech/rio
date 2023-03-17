@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
@@ -11,6 +11,7 @@ import { ParcelUsageStagingSimpleDto } from 'src/app/shared/generated/model/parc
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
+import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -26,6 +27,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
 
   public stagedParcelUsages: ParcelUsageStagingSimpleDto[];
   public effectiveDate: string;
+  
   public parcelNumbersWithoutStagedUsages: string[];
   public parcelNumbersWithoutStagedUsagesCount: number;
 
@@ -44,7 +46,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private parcelUsageService: ParcelUsageService,
     private alertService: AlertService,
-    private datePipe: DatePipe,
+    private decimalPipe: DecimalPipe,
     private utilityFunctionsService: UtilityFunctionsService
   ) { }
 
@@ -58,7 +60,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
 
         this.parcelNumbersWithoutStagedUsages = parcelUsageStagingPreviewDto.ParcelNumbersWithoutStagedUsages;
         this.parcelNumbersWithoutStagedUsagesCount = parcelUsageStagingPreviewDto.ParcelNumbersWithoutStagedUsages.length;
-        
+
         this.createColumnDefs();
         this.stagedParcelUsagesGrid.api.sizeColumnsToFit();
 
@@ -81,23 +83,34 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   }
 
   private createColumnDefs() {
-    var _datePipe = this.datePipe;
-    var month = _datePipe.transform(this.stagedParcelUsages[0].ReportedDate, 'MMM');
+    var _decimalPipe = this.decimalPipe;
 
     this.columnDefs = [
-      { headerName: 'APN', field: 'ParcelNumber', width: 140 },
-      this.utilityFunctionsService.createDecimalColumnDef(`Current Monthly Usage (${month})`, 'ExistingMonthlyUsageAmount', 210, 3),
-      this.utilityFunctionsService.createDecimalColumnDef('Current Annual Usage', 'ExistingAnnualUsageAmount', 170, 3),
-      this.utilityFunctionsService.createDecimalColumnDef('Usage Adjustment (ac-ft)', 'ReportedValueInAcreFeet', 200, 3),
-      this.utilityFunctionsService.createDecimalColumnDef(`Updated Monthly Usage (${month})`, 'UpdatedMonthlyUsageAmount', 210, 3),
-      this.utilityFunctionsService.createDecimalColumnDef('Updated Annual Usage', 'UpdatedAnnualUsageAmount', 170, 3),
+      { headerName: 'APN', field: 'ParcelNumber' },
+      {
+        headerName: 'Transaction Quantity (ac-ft)', 
+        filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' },
+        valueGetter: params => params.data.ReportedValueInAcreFeet,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.3-3'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ReportedValueInAcreFeet, '1.3-3'))
+      },
+      {
+        headerName: 'Previous Monthly Usage (ac-ft)', 
+        filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' },
+        valueGetter: params => params.data.ExistingMonthlyUsageAmount * -1,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ExistingMonthlyUsageAmount * -1, '1.3-3'))
+      },
+      {
+        headerName: 'Updated Monthly Usage (ac-ft)', 
+        filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' },
+        valueGetter: params => params.data.UpdatedMonthlyUsageAmount,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.UpdatedMonthlyUsageAmount, '1.3-3'))
+      }
     ];
 
-    this.parcelNumbersWithoutStagedUsagesColumnDefs = [
-      { headerName: 'APN', field: 'ParcelNumber' }
-    ];
-
-    this.defaultColDef = { filter: true, sortable: true, resizable: true };
+    this.defaultColDef = { filter: true, sortable: true, resizable: true, width: 270 };
   }
 
   public publishStagedParcelUsages() {
@@ -112,14 +125,12 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
       });
     }, error => {
       this.isLoadingSubmit = false;
+
       this.cdr.detectChanges();
     });
   }
 
   public cancel() {
     this.router.navigate(['/parcels/create-water-transactions']);
-
-    // this.parcelUsageService.deleteStagedParcelUsage().subscribe(() => {
-    // });
   }
 }

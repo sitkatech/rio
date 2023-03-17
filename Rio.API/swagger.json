@@ -2378,26 +2378,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
                 }
               }
             }
@@ -5585,6 +5576,23 @@
             "format": "int32"
           },
           "NumParcelsWithConflicts": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageCSVResponseDto": {
+        "type": "object",
+        "properties": {
+          "UnmatchedParcelNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "NullParcelNumberCount": {
             "type": "integer",
             "format": "int32"
           }

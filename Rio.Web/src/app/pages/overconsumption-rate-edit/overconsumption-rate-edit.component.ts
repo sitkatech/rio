@@ -22,15 +22,14 @@ export class OverconsumptionRateEditComponent implements OnInit, OnDestroy {
 
   public waterYears: WaterYearDto[];
   public model = new OverconsumptionRateUpsertDto();
+  public currentOverconsumptionRate: number;
 
   public customRichTextTypeID = CustomRichTextTypeEnum.SetOverconsumptionRate;
   public isLoadingSubmit: boolean = false;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     private alertService: AlertService,
-    private parcelService: ParcelService,
     private authenticationService: AuthenticationService,
     private waterYearService: WaterYearService,
     private cdr: ChangeDetectorRef
@@ -41,8 +40,12 @@ export class OverconsumptionRateEditComponent implements OnInit, OnDestroy {
       this.waterYearService.getWaterYears().subscribe(waterYears => {
         this.waterYears = waterYears;
       });
-    
     });
+  }
+
+  onWaterYearSelected() {
+    const i = this.waterYears.findIndex(x => x.WaterYearID == this.model.WaterYearID);
+    this.currentOverconsumptionRate = this.waterYears[i]?.OverconsumptionRate;
   }
 
   ngOnDestroy() {

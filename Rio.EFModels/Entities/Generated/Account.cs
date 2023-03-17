@@ -12,6 +12,7 @@ namespace Rio.EFModels.Entities
     {
         public Account()
         {
+            AccountOverconsumptionCharges = new HashSet<AccountOverconsumptionCharge>();
             AccountParcelWaterYears = new HashSet<AccountParcelWaterYear>();
             AccountReconciliations = new HashSet<AccountReconciliation>();
             AccountUsers = new HashSet<AccountUser>();
@@ -42,6 +43,8 @@ namespace Rio.EFModels.Entities
         [Column(TypeName = "datetime")]
         public DateTime? InactivateDate { get; set; }
 
+        [InverseProperty("Account")]
+        public virtual ICollection<AccountOverconsumptionCharge> AccountOverconsumptionCharges { get; set; }
         [InverseProperty("Account")]
         public virtual ICollection<AccountParcelWaterYear> AccountParcelWaterYears { get; set; }
         [InverseProperty("Account")]

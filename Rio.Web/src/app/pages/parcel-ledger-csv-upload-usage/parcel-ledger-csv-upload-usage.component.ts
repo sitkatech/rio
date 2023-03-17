@@ -9,6 +9,7 @@ import { ParcelUsageService } from 'src/app/services/parcel-usage.service';
 import { NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateAdapterFromString } from 'src/app/shared/components/ngb-date-adapter-from-string';
 import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
+import { ApiService } from 'src/app/shared/services';
 
 @Component({
   selector: 'parcel-ledger-csv-upload-usage',
@@ -39,6 +40,7 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private parcelUsageService: ParcelUsageService,
     private alertService: AlertService,
+    private apiService: ApiService
   ) { }
 
   ngOnInit(): void {
@@ -87,6 +89,7 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
 
     }, error => {
       this.isLoadingSubmit = false;
+      this.apiService.sendErrorToHandleError(error);
     });
   }
 
@@ -121,23 +124,30 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     this.parcelUsageService.uploadParcelUsageCsvToStaging(this.fileUpload, this.effectiveDate, this.apnColumnName, this.quantityColumnName)
-      .subscribe(transactionCount => {
+      .subscribe(parcelUsageCsvResponseDto => {
         this.isLoadingSubmit = false;
 
         this.router.navigate(['preview'], {relativeTo: this.route}).then(() => {
-          if (transactionCount?.length == 0) return;
-
-          const message = `${transactionCount.length} transactions skipped because the following APNs were not found in the database: ${transactionCount.join(', ')}`;
-          this.alertService.pushAlert(new Alert(message, AlertContext.Info, false));
+          if (parcelUsageCsvResponseDto.UnmatchedParcelNumbers?.length > 0) {
+            const unmatchedAPNsMessage = `${parcelUsageCsvResponseDto.UnmatchedParcelNumbers?.length} transactions skipped because the APNs were found in the file and are not in the Water Accounting Database: ${parcelUsageCsvResponseDto.UnmatchedParcelNumbers}`
+            this.alertService.pushAlert(new Alert(unmatchedAPNsMessage, AlertContext.Info, false));
+          }
+          if (parcelUsageCsvResponseDto.NullParcelNumberCount > 0) {
+            const nullAPNsMessage = `${parcelUsageCsvResponseDto.NullParcelNumberCount} <X> transactions were skipped because an APN was not provided in the specified column`
+            this.alertService.pushAlert(new Alert(nullAPNsMessage, AlertContext.Info, false));
+          }
         });
       }, error => {
         this.isLoadingSubmit = false;
-        this.cdr.detectChanges();
+        this.apiService.sendErrorToHandleError(error);
 
         if (error.error?.UploadedFile) {
           this.fileUpload = null;
           this.fileUploadElement.value = null;
+
+          this.displayFileInputPanel = true;
         }
+        this.cdr.detectChanges();
       });
     }
 }

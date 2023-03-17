@@ -99,7 +99,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     [ParcelManageFeature]
     [RequestSizeLimit(524288000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
-    public async Task<ActionResult<List<string>>> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
+    public async Task<ActionResult<ParcelUsageCSVResponseDto>> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
     {
         var extension = Path.GetExtension(parcelUsageCsvUpsertDto.UploadedFile.FileName);
         if (extension != ".csv")
@@ -116,7 +116,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         var fileData = await HttpUtilities.GetIFormFileData(parcelUsageCsvUpsertDto.UploadedFile);
 
         if (!ParseCsvUpload(fileData, parcelUsageCsvUpsertDto.apnColumnName, parcelUsageCsvUpsertDto.quantityColumnName, out var records)
-            || !ValidateCsvUploadData(records))
+            || !ValidateCsvUploadData(records, out var nullParcelNumberCount))
         {
             return BadRequest(ModelState);
         }
@@ -126,7 +126,8 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
 
         var unmatchedParcelNumbers = ParcelUsages.CreateStagingRecordsFromCsv(_dbContext, records, effectiveDate, parcelUsageCsvUpsertDto.UploadedFile.FileName, userID);
 
-        return Ok(unmatchedParcelNumbers);
+        var parcelUsageCSVResponseDto = new ParcelUsageCSVResponseDto(unmatchedParcelNumbers, nullParcelNumberCount);
+        return Ok(parcelUsageCSVResponseDto);
     }
 
     private bool ListHeadersFromCsvUpload(byte[] fileData, out List<string> headerNames)
@@ -206,20 +207,12 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         }
     }
 
-    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records)
+    private bool ValidateCsvUploadData(List<ParcelTransactionCSV> records, out int nullAPNsCount)
     {
         var isValid = true;
 
-        // no null APNs
-        var nullAPNsCount = records.Count(x => x.APN == "");
-        if (nullAPNsCount > 0)
-        {
-            ModelState.AddModelError("UploadedFile",
-                $"The uploaded file contains {nullAPNsCount} {(nullAPNsCount > 1 ? "rows" : "row")} specifying a value with no corresponding APN.");
-            isValid = false;
-        }
+        nullAPNsCount = records.Count(x => x.APN == "");
 
-        // no null quantities
         var nullQuantities = records.Where(x => x.Quantity == null).ToList();
         if (nullQuantities.Any())
         {

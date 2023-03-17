@@ -6,24 +6,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Rio.EFModels.Entities
 {
-    [Table("ParcelOverconsumptionCharge")]
-    [Index("ParcelID", "WaterYearID", Name = "AK_ParcelOverconsumptionCharge_ParcelID_WaterYearID", IsUnique = true)]
-    public partial class ParcelOverconsumptionCharge
+    [Table("AccountOverconsumptionCharge")]
+    [Index("AccountID", "WaterYearID", Name = "AK_AccountOverconsumptionCharge_AccountID_WaterYearID", IsUnique = true)]
+    public partial class AccountOverconsumptionCharge
     {
         [Key]
-        public int ParcelOverconsumptionChargeID { get; set; }
-        public int ParcelID { get; set; }
+        public int AccountOverconsumptionChargeID { get; set; }
+        public int AccountID { get; set; }
         public int WaterYearID { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal OverconsumptionAmount { get; set; }
         [Column(TypeName = "decimal(10, 4)")]
         public decimal OverconsumptionCharge { get; set; }
 
-        [ForeignKey("ParcelID")]
-        [InverseProperty("ParcelOverconsumptionCharges")]
-        public virtual Parcel Parcel { get; set; }
+        [ForeignKey("AccountID")]
+        [InverseProperty("AccountOverconsumptionCharges")]
+        public virtual Account Account { get; set; }
         [ForeignKey("WaterYearID")]
-        [InverseProperty("ParcelOverconsumptionCharges")]
+        [InverseProperty("AccountOverconsumptionCharges")]
         public virtual WaterYear WaterYear { get; set; }
     }
 }

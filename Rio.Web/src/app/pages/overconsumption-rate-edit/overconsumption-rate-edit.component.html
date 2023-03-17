@@ -28,7 +28,7 @@
             </div>
 
             <div class="col-sm-5">
-                <select name="water-type" class="form-control" [(ngModel)]="model.WaterYearID">
+                <select name="water-type" class="form-control" [(ngModel)]="model.WaterYearID" (change)="onWaterYearSelected()">
                     <option disabled selected hidden></option>
                     <option *ngFor="let waterYear of waterYears" [value]="waterYear.WaterYearID">
                         {{ waterYear.Year }}
@@ -37,9 +37,19 @@
             </div>
          </div>
 
+        <div class="row mt-3 align-items-center" *ngIf="model?.WaterYearID">
+            <div class="col-sm-3 control-label text-sm-right">
+                <label>Current Rate</label>
+            </div>
+
+            <div class="col-sm-5" >
+                <b>${{ currentOverconsumptionRate | number:"1.2-2"}} per ac-ft </b>
+            </div>
+         </div>
+
         <div class="row mt-3 align-items-center">
             <div class="col-sm-3 control-label text-sm-right">
-                <label class="required">Quantity</label>
+                <label class="required">New Rate</label>
             </div>
 
             <div class="col-sm-5">

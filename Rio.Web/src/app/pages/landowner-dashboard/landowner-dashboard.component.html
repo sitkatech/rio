@@ -171,6 +171,35 @@
             </tr>
             <tr>
               <th class="text-sm-left pb-3">
+                Overconsumption Rate
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                $ {{this.waterYearToDisplay.OverconsumptionRate | number: '1.2-2'}} / ac-ft
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
+                Overconsumption Volume
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                {{getOverconsumptionAmount() | number: '1.2-2'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
+                Overconsumption Amount
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                $ {{getOverconsumptionCharge() | number: '1.2-2'}} {{unitsShown == 'ac-ft' ? '' : '/ ac'}}
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <hr class="mt-0" />
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
                 Average Annual Usage
               </th>
               <td class="text-sm-right font-weight-bold pb-3">
