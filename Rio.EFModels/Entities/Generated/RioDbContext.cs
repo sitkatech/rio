@@ -33,6 +33,7 @@ namespace Rio.EFModels.Entities
         public virtual DbSet<ParcelLedger> ParcelLedgers { get; set; }
         public virtual DbSet<ParcelTag> ParcelTags { get; set; }
         public virtual DbSet<ParcelUpdateStaging> ParcelUpdateStagings { get; set; }
+        public virtual DbSet<ParcelUsageFileUpload> ParcelUsageFileUploads { get; set; }
         public virtual DbSet<ParcelUsageStaging> ParcelUsageStagings { get; set; }
         public virtual DbSet<Posting> Postings { get; set; }
         public virtual DbSet<ScenarioArsenicContaminationLocation> ScenarioArsenicContaminationLocations { get; set; }
@@ -207,12 +208,21 @@ namespace Rio.EFModels.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
+            modelBuilder.Entity<ParcelUsageFileUpload>(entity =>
+            {
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.ParcelUsageFileUploads)
+                    .HasForeignKey(d => d.UserID)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
             modelBuilder.Entity<ParcelUsageStaging>(entity =>
             {
-                entity.HasOne(d => d.Parcel)
+                entity.HasOne(d => d.ParcelUsageFileUpload)
                     .WithMany(p => p.ParcelUsageStagings)
-                    .HasForeignKey(d => d.ParcelID)
-                    .OnDelete(DeleteBehavior.ClientSetNull);
+                    .HasForeignKey(d => d.ParcelUsageFileUploadID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ParcelUsagStaging_ParcelUsageFileUpload_ParcelUsageFileUploadID");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.ParcelUsageStagings)

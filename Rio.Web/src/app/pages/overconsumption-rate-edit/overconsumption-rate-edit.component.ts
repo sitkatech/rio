@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ParcelService } from 'src/app/services/parcel/parcel.service';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert.service';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';

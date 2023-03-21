@@ -14,12 +14,25 @@
 
 <div class="container mt-sm-4">
     <h2 class="d-inline-block">Preview Uploaded Usage Transactions</h2>
-    <div class="card card-body mt-2 mb-4">
+    <div class="mb-2">
         <rio-custom-rich-text [customRichTextTypeID]="richTextTypeID"></rio-custom-rich-text>
     </div>
 
+    <app-alert-display></app-alert-display>
+
+    <div class="card card-body mt-2 mb-4" *ngIf="stagedParcelUsages">
+        <div class="mb-3"><b>Upload Summary:</b></div>
+        <ul>
+            <li class="mb-2"><b>{{ stagedParcelUsages?.length ?? 0}} APNs</b> from the uploaded CSV were found in the Accounting Platform parcel inventory.</li>
+            <li class="mb-2"><b>{{ unmatchedParcelNumbers?.length ?? 0 | number }} APNs</b> from the uploaded CSV were not found in the Accounting Platform parcel inventory.</li>
+            <li class="mb-2"><b>{{ parcelNumbersWithoutStagedUsages?.length ?? 0 | number}} APNs</b> from the Accounting Platfrom parcel inventory were not found in the uploaded CSV.</li>
+            <li *ngIf="nullParcelNumbersCount"><b>{{ nullParcelNumbersCount | number}} null values</b> were found in the identified APN column of the uploaded CSV.</li>
+        </ul>
+    </div>
+    
     <div class="row mb-2">
-        <div class="col"><b>Effective Date</b>: {{ effectiveDate | date:'longDate'}}</div>
+        <div class="col-12"><b>Effective Date</b>: {{ effectiveDate | date:'longDate'}}</div>
+
         <div class="col-auto ml-auto">
             <rio-clear-grid-filters-button [grid]="stagedParcelUsagesGrid"></rio-clear-grid-filters-button>
         </div>
@@ -42,12 +55,25 @@
     </div>
 
     <hr />
-    <app-alert-display></app-alert-display>
+
+    <div class="row mt-4" *ngIf="unmatchedParcelNumbers?.length > 0">
+        <div class="col-12" >
+            <b>{{ unmatchedParcelNumbers.length | number }} APNs</b> from the uploaded CSV not found in the Accounting Platform parcel inventory:
+        </div>
+
+        <div class="col-12 card mb-3">
+            <div class="card-body row" style="max-height: 250px; overflow: auto;">
+                <div class="col-2" *ngFor="let parcelNumber of unmatchedParcelNumbers">
+                    {{ parcelNumber }}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row mt-4 mb-2" *ngIf="parcelNumbersWithoutStagedUsages?.length > 0">
-        <div class="col-12"></div>
-
-        <div class="col-12">{{ parcelNumbersWithoutStagedUsages.length | number}} APNs from the database were not found in the uploaded file:</div>
+        <div class="col-12">
+            <b>{{ parcelNumbersWithoutStagedUsages.length | number}} APNs</b> from the Accounting Platfrom parcel inventory not found in the uploaded CSV:
+        </div>
     
         <div class="col-12 card mb-3">
             <div class="card-body row" style="max-height: 250px; overflow: auto;">
@@ -57,5 +83,4 @@
             </div>
         </div>
     </div>
-
 </div>

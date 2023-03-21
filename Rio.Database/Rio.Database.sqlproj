@@ -163,6 +163,7 @@
     <None Include="Scripts\ReleaseScripts\0005 - Add RTE for Overconsumption Rate editor.sql" />
     <None Include="Scripts\ReleaseScripts\0006 - Add WaterYear 2023 and its corresponding WaterYearMonths.sql" />
     <None Include="Scripts\ReleaseScripts\0007 - Create 2023 ownership relationships.sql" />
+    <Build Include="dbo\Tables\dbo.ParcelUsageFileUpload.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Rio.Database.publish.xml" />

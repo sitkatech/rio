@@ -14,13 +14,12 @@ namespace Rio.EFModels.Entities
             var parcelUsageStagingDto = new ParcelUsageStagingDto()
             {
                 ParcelUsageStagingID = parcelUsageStaging.ParcelUsageStagingID,
-                Parcel = parcelUsageStaging.Parcel.AsDto(),
+                Parcel = parcelUsageStaging.Parcel?.AsDto(),
                 ParcelNumber = parcelUsageStaging.ParcelNumber,
                 ReportedDate = parcelUsageStaging.ReportedDate,
                 ReportedValue = parcelUsageStaging.ReportedValue,
                 ReportedValueInAcreFeet = parcelUsageStaging.ReportedValueInAcreFeet,
-                LastUpdateDate = parcelUsageStaging.LastUpdateDate,
-                UploadedFileName = parcelUsageStaging.UploadedFileName,
+                ParcelUsageFileUpload = parcelUsageStaging.ParcelUsageFileUpload.AsDto(),
                 User = parcelUsageStaging.User.AsDto()
             };
             DoCustomMappings(parcelUsageStaging, parcelUsageStagingDto);
@@ -39,8 +38,7 @@ namespace Rio.EFModels.Entities
                 ReportedDate = parcelUsageStaging.ReportedDate,
                 ReportedValue = parcelUsageStaging.ReportedValue,
                 ReportedValueInAcreFeet = parcelUsageStaging.ReportedValueInAcreFeet,
-                LastUpdateDate = parcelUsageStaging.LastUpdateDate,
-                UploadedFileName = parcelUsageStaging.UploadedFileName,
+                ParcelUsageFileUploadID = parcelUsageStaging.ParcelUsageFileUploadID,
                 UserID = parcelUsageStaging.UserID
             };
             DoCustomSimpleDtoMappings(parcelUsageStaging, parcelUsageStagingSimpleDto);

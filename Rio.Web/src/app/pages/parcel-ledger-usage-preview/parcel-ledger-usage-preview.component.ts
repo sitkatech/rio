@@ -1,17 +1,15 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { ParcelUsageService } from 'src/app/services/parcel-usage.service';
-import { UtilityFunctionsService } from 'src/app/services/utility-functions.service';
 import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-rich-text-type-enum';
 import { ParcelUsageStagingSimpleDto } from 'src/app/shared/generated/model/parcel-usage-staging-simple-dto';
 import { UserDto } from 'src/app/shared/generated/model/user-dto';
 import { Alert } from 'src/app/shared/models/alert';
 import { AlertContext } from 'src/app/shared/models/enums/alert-context.enum';
-import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
 
 @Component({
@@ -21,15 +19,16 @@ import { AlertService } from 'src/app/shared/services/alert.service';
 })
 export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   @ViewChild('stagedParcelUsagesGrid') stagedParcelUsagesGrid: AgGridAngular;
-  @ViewChild('parcelNumbersWithoutStagedUsagesGrid') parcelNumbersWithoutStagedUsagesGrid: AgGridAngular;
 
   private currentUser: UserDto;
+  private parcelUsageFileUploadID: number;
 
   public stagedParcelUsages: ParcelUsageStagingSimpleDto[];
   public effectiveDate: string;
   
+  public unmatchedParcelNumbers: string[];
   public parcelNumbersWithoutStagedUsages: string[];
-  public parcelNumbersWithoutStagedUsagesCount: number;
+  public nullParcelNumbersCount: number;
 
   public columnDefs: ColDef[];
   public parcelNumbersWithoutStagedUsagesColumnDefs: ColDef[];
@@ -42,31 +41,32 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private authenticationService: AuthenticationService,
     private parcelUsageService: ParcelUsageService,
     private alertService: AlertService,
-    private decimalPipe: DecimalPipe,
-    private utilityFunctionsService: UtilityFunctionsService
+    private decimalPipe: DecimalPipe
   ) { }
 
   ngOnInit(): void {
     this.authenticationService.getCurrentUser().subscribe((currentUser) => {
       this.currentUser = currentUser;
 
-      this.parcelUsageService.previewStagedParcelUsage().subscribe(parcelUsageStagingPreviewDto => {
-        this.stagedParcelUsages = parcelUsageStagingPreviewDto.StagedParcelUsages;
+      this.parcelUsageFileUploadID = parseInt(this.route.snapshot.paramMap.get('parcelUsageFileUploadID'));
+      if (!this.parcelUsageFileUploadID) return;
+
+      this.parcelUsageService.previewStagedParcelUsage(this.parcelUsageFileUploadID).subscribe(parcelUsageStagingPreviewDto => {
+        this.stagedParcelUsages = parcelUsageStagingPreviewDto.StagedParcelUsages.filter(x => x.ParcelID);
         this.effectiveDate = this.stagedParcelUsages.length > 0 ? this.stagedParcelUsages[0].ReportedDate : null;
 
+        this.unmatchedParcelNumbers = parcelUsageStagingPreviewDto.StagedParcelUsages.filter(x => !x.ParcelID).map(x => x.ParcelNumber);
         this.parcelNumbersWithoutStagedUsages = parcelUsageStagingPreviewDto.ParcelNumbersWithoutStagedUsages;
-        this.parcelNumbersWithoutStagedUsagesCount = parcelUsageStagingPreviewDto.ParcelNumbersWithoutStagedUsages.length;
+        this.nullParcelNumbersCount = parcelUsageStagingPreviewDto.NullParcelNumberCount;
 
         this.createColumnDefs();
-        this.stagedParcelUsagesGrid.api.sizeColumnsToFit();
-
         this.cdr.detectChanges();
       });
-
     });
   }
 
@@ -90,9 +90,9 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
       {
         headerName: 'Transaction Quantity (ac-ft)', 
         filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' },
-        valueGetter: params => params.data.ReportedValueInAcreFeet,
-        valueFormatter: params => _decimalPipe.transform(params.value, '1.3-3'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ReportedValueInAcreFeet, '1.3-3'))
+        valueGetter: params => params.data.ReportedValueInAcreFeet * -1,
+        valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.ReportedValueInAcreFeet * -1, '1.2-2'))
       },
       {
         headerName: 'Previous Monthly Usage (ac-ft)', 
@@ -104,9 +104,9 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
       {
         headerName: 'Updated Monthly Usage (ac-ft)', 
         filter: 'agNumberColumnFilter', cellStyle: { textAlign: 'right' },
-        valueGetter: params => params.data.UpdatedMonthlyUsageAmount,
+        valueGetter: params => params.data.UpdatedMonthlyUsageAmount * -1,
         valueFormatter: params => _decimalPipe.transform(params.value, '1.2-2'),
-        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.UpdatedMonthlyUsageAmount, '1.3-3'))
+        filterValueGetter: params => parseFloat(_decimalPipe.transform(params.data.UpdatedMonthlyUsageAmount * -1, '1.3-3'))
       }
     ];
 
@@ -116,7 +116,7 @@ export class ParcelLedgerUsagePreviewComponent implements OnInit, OnDestroy {
   public publishStagedParcelUsages() {
     this.isLoadingSubmit = true;
 
-    this.parcelUsageService.publishStagedParcelUsage().subscribe(transactionCount => {
+    this.parcelUsageService.publishStagedParcelUsage(this.parcelUsageFileUploadID).subscribe(transactionCount => {
       this.isLoadingSubmit = false;
       this.unsavedChanges = false;
 

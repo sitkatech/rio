@@ -17,8 +17,7 @@ export class ParcelUsageStagingSimpleDto {
     ReportedDate?: string;
     ReportedValue?: number;
     ReportedValueInAcreFeet?: number;
-    LastUpdateDate?: string;
-    UploadedFileName?: string;
+    ParcelUsageFileUploadID?: number;
     UserID?: number;
     ExistingAnnualUsageAmount?: number;
     ExistingMonthlyUsageAmount?: number;

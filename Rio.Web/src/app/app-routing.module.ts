@@ -87,7 +87,7 @@ const routes: Routes = [
   { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-csv-upload/supply", component: ParcelLedgerCsvUploadSupplyComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-csv-upload/usage", component: ParcelLedgerCsvUploadUsageComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-ledger-csv-upload/usage/preview", component: ParcelLedgerUsagePreviewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard], canDeactivate: [UnsavedChangesGuard] },
+  { path: "parcel-ledger-csv-upload/usage/:parcelUsageFileUploadID/preview", component: ParcelLedgerUsagePreviewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard], canDeactivate: [UnsavedChangesGuard] },
   { path: "parcel-ledger-transaction-history", component: ParcelLedgerTransactionHistoryComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags", component: TagListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags/bulk-tag-parcels", component: TagBulkParcelsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },

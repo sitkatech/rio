@@ -14,6 +14,7 @@ import { ParcelUsageStagingSimpleDto } from '././parcel-usage-staging-simple-dto
 export class ParcelUsageStagingPreviewDto { 
     StagedParcelUsages?: Array<ParcelUsageStagingSimpleDto>;
     ParcelNumbersWithoutStagedUsages?: Array<string>;
+    NullParcelNumberCount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

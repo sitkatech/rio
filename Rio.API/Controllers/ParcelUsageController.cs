@@ -25,13 +25,17 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     public ParcelUsageController(RioDbContext dbContext, ILogger<ParcelUsageController> logger, KeystoneService keystoneService, 
         IOptions<RioConfiguration> rioConfiguration) : base(dbContext, logger, keystoneService, rioConfiguration) { }
 
-    [HttpGet("parcel-usages")]
+    [HttpGet("parcel-usages/file-upload/{parcelUsageFileUploadID}")]
     [ParcelManageFeature]
-    public ActionResult<ParcelUsageStagingPreviewDto> GetStagedParcelUsagesForCurrentUser()
+    public ActionResult<ParcelUsageStagingPreviewDto> GetStagedParcelUsagesByFileUploadID([FromRoute] int parcelUsageFileUploadID)
     {
-        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+        if (!ValidateParcelUsageFileUpload(parcelUsageFileUploadID, out var parcelUsageFileUpload, out var actionResult))
+        {
+            return actionResult;
+        }
 
-        var stagedParcelUsages = ParcelUsages.GetByUserID(_dbContext, userID).ToList();
+        var stagedParcelUsages = 
+            ParcelUsages.GetByParcelUsageFileUploadID(_dbContext, parcelUsageFileUploadID).ToList();
         var parcelUsageStagingSimpleDtos = stagedParcelUsages
             .Select(x => x.AsSimpleDto()).ToList();
 
@@ -42,20 +46,63 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
             .Where(x => !stagedParcelUsagesParcelIDs.Contains(x.ParcelID))
             .Select(x => x.ParcelNumber).ToList();
 
-        var parcelUsageStagingPreviewDto =
-            new ParcelUsageStagingPreviewDto(parcelUsageStagingSimpleDtos, parcelNumbersWithoutStagedUsages);
+        var parcelUsageStagingPreviewDto = new ParcelUsageStagingPreviewDto()
+        {
+            StagedParcelUsages = parcelUsageStagingSimpleDtos,
+            ParcelNumbersWithoutStagedUsages = parcelNumbersWithoutStagedUsages,
+            NullParcelNumberCount = parcelUsageFileUpload.NullParcelNumberCount
+        };
 
         return Ok(parcelUsageStagingPreviewDto);
     }
 
-    [HttpPost("parcel-usages")]
+    [HttpPost("parcel-usages/file-upload/{parcelUsageFileUploadID}")]
     [ParcelManageFeature]
-    public ActionResult<int> PublishStagedParcelUsagesForCurrentUser()
+    public ActionResult<int> PublishStagedParcelUsagesByFileUploadID([FromRoute] int parcelUsageFileUploadID)
     {
-        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
-        var transactionCount = ParcelUsages.PublishStagingToParcelLedgerByUserID(_dbContext, userID);
+        if (!ValidateParcelUsageFileUpload(parcelUsageFileUploadID, out var parcelUsageFileUpload, out var actionResult))
+        {
+            return actionResult;
+        }
+
+        var transactionCount = ParcelUsages.PublishStagingByParcelUsageFileUploadID(_dbContext, parcelUsageFileUpload);
+        ParcelUsages.DeleteFromStagingByUserID(_dbContext, parcelUsageFileUpload.UserID);
 
         return Ok(transactionCount);
+    }
+
+    private bool ValidateParcelUsageFileUpload(int parcelUsageFileUploadID, out ParcelUsageFileUpload parcelUsageFileUpload, out ActionResult actionResult)
+    {
+        actionResult = NotFound();
+
+        parcelUsageFileUpload = ParcelUsages.GetParcelUsageFileUploadByID(_dbContext, parcelUsageFileUploadID);
+        if (parcelUsageFileUpload == null)
+        {
+            return false;
+        }
+
+        actionResult = BadRequest();
+
+        if (parcelUsageFileUpload.PublishDate != null)
+        {
+            return false;
+        }
+
+        var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
+        if (parcelUsageFileUpload.UserID != userID)
+        {
+            return false;
+        }
+
+        var latestParcelUsageFileUploadForUser = _dbContext.ParcelUsageFileUploads.Where(x => x.UserID == userID).ToList()
+            .MaxBy(x => x.UploadDate);
+        if (latestParcelUsageFileUploadForUser?.ParcelUsageFileUploadID != parcelUsageFileUploadID)
+        {
+            return false;
+        }
+
+        actionResult = null;
+        return true;
     }
 
     [HttpDelete("parcel-usages")]
@@ -99,7 +146,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
     [ParcelManageFeature]
     [RequestSizeLimit(524288000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 524288000)]
-    public async Task<ActionResult<ParcelUsageCSVResponseDto>> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
+    public async Task<ActionResult<int>> NewCSVUpload([FromForm] ParcelUsageCsvUpsertDto parcelUsageCsvUpsertDto, [FromRoute] int geographyID)
     {
         var extension = Path.GetExtension(parcelUsageCsvUpsertDto.UploadedFile.FileName);
         if (extension != ".csv")
@@ -124,10 +171,10 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         var effectiveDate = DateTime.Parse(parcelUsageCsvUpsertDto.EffectiveDate).AddHours(8);
         var userID = UserContext.GetUserFromHttpContext(_dbContext, HttpContext).UserID;
 
-        var unmatchedParcelNumbers = ParcelUsages.CreateStagingRecordsFromCsv(_dbContext, records, effectiveDate, parcelUsageCsvUpsertDto.UploadedFile.FileName, userID);
-
-        var parcelUsageCSVResponseDto = new ParcelUsageCSVResponseDto(unmatchedParcelNumbers, nullParcelNumberCount);
-        return Ok(parcelUsageCSVResponseDto);
+        var parcelUsageFileUploadID = ParcelUsages.CreateStagingRecords(_dbContext, records, effectiveDate, 
+            parcelUsageCsvUpsertDto.UploadedFile.FileName, nullParcelNumberCount, userID);
+        
+        return Ok(parcelUsageFileUploadID);
     }
 
     private bool ListHeadersFromCsvUpload(byte[] fileData, out List<string> headerNames)
