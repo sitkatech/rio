@@ -5037,6 +5037,21 @@
             "format": "double",
             "nullable": true
           },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionCharge": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "NumberOfPostings": {
             "type": "integer",
             "format": "int32"

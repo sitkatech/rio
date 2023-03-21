@@ -14,6 +14,9 @@ namespace Rio.Models.DataTransferObjects
         public decimal? TotalSupply { get; set; }
         public decimal? UsageToDate { get; set; }
         public decimal? CurrentAvailable { get; set; }
+        public decimal? OverconsumptionRate { get; set; }
+        public decimal? OverconsumptionAmount { get; set; }
+        public decimal? OverconsumptionCharge { get; set; }
         public int NumberOfPostings { get; set; }
         public int NumberOfTrades { get; set; }
         public string MostRecentTradeNumber { get; set; }

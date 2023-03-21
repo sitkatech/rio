@@ -19,9 +19,7 @@ export class ParcelUsageStagingSimpleDto {
     ReportedValueInAcreFeet?: number;
     ParcelUsageFileUploadID?: number;
     UserID?: number;
-    ExistingAnnualUsageAmount?: number;
     ExistingMonthlyUsageAmount?: number;
-    UpdatedAnnualUsageAmount?: number;
     UpdatedMonthlyUsageAmount?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);

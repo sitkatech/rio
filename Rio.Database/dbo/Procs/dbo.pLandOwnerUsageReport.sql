@@ -8,7 +8,7 @@ begin
 select a.AccountID, a.AccountName, a.AccountNumber, a.AcresManaged, a.Precipitation, a.Purchased, a.Sold,
 a.ManualSupply + a.Precipitation + a.Purchased - a.Sold as TotalSupply, a.UsageToDate,
 a.ManualSupply + a.Precipitation + a.Purchased - a.Sold - a.UsageToDate as CurrentAvailable,
-a.NumberOfPostings, a.NumberOfTrades,
+wy.OverconsumptionRate, a.OverconsumptionAmount, a.OverconsumptionCharge, a.NumberOfPostings, a.NumberOfTrades,
 mrtr.TradeNumber as MostRecentTradeNumber
 from
 (
@@ -19,6 +19,8 @@ from
 			isnull(pa.Purchased, 0) as Purchased,
 			isnull(pa.Sold, 0) as Sold,
 			isnull(pa.UsageToDate, 0) as UsageToDate,
+			isnull(aoc.OverconsumptionAmount, 0) as OverconsumptionAmount,
+			isnull(aoc.OverconsumptionCharge, 0) as OverconsumptionCharge,
 			isnull(post.NumberOfPostings, 0) as NumberOfPostings,
 			isnull(tr.NumberOfTrades, 0) as NumberOfTrades
 	from dbo.Account acc
@@ -53,6 +55,13 @@ from
 		join dbo.ParcelLedger pa on p.ParcelID = pa.ParcelID and year(pa.EffectiveDate) = @year
 		group by acc.AccountID
 	) pa on acc.AccountID = pa.AccountID
+	left join
+	(
+		select aoc.AccountID, aoc.OverconsumptionAmount, aoc.OverconsumptionCharge, wy.OverconsumptionRate
+		from dbo.AccountOverconsumptionCharge aoc
+		join dbo.WaterYear wy on aoc.WaterYearID = wy.WaterYearID
+		where wy.[Year] = @year
+	) aoc on acc.AccountID = aoc.AccountID
 	left join 
 	(
 		select acc.AccountID, count(post.PostingID) as NumberOfPostings
@@ -69,7 +78,7 @@ from
 		where year(post.TradeDate) = @year
 		group by acc.AccountID
 	) tr on acc.AccountID = tr.AccountID
-) a
+) a 
 left join
 (
 	select th.TradeID, th.TradeNumber, th.AccountID, th.TransactionDate, rank() over(partition by th.AccountID order by th.TransactionDate desc, th.TradeNumber desc) as Ranking
@@ -93,6 +102,6 @@ left join
 		where wtr.StatusDate is not null
 	) th
 ) mrtr on a.AccountID = mrtr.AccountID and mrtr.Ranking = 1
-
+left join dbo.WaterYear wy on wy.[Year] = @year
 
 end

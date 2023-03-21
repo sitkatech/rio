@@ -14,9 +14,9 @@ namespace Rio.EFModels.Entities
         public int AccountOverconsumptionChargeID { get; set; }
         public int AccountID { get; set; }
         public int WaterYearID { get; set; }
-        [Column(TypeName = "decimal(10, 4)")]
+        [Column(TypeName = "decimal(12, 2)")]
         public decimal OverconsumptionAmount { get; set; }
-        [Column(TypeName = "decimal(10, 4)")]
+        [Column(TypeName = "decimal(12, 2)")]
         public decimal OverconsumptionCharge { get; set; }
 
         [ForeignKey("AccountID")]
