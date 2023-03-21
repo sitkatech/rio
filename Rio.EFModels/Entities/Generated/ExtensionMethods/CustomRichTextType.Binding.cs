@@ -283,7 +283,7 @@ namespace Rio.EFModels.Entities
     public partial class CustomRichTextTypeMeasuringWaterUse : CustomRichTextType
     {
         private CustomRichTextTypeMeasuringWaterUse(int customRichTextTypeID, string customRichTextTypeName, string customRichTextTypeDisplayName) : base(customRichTextTypeID, customRichTextTypeName, customRichTextTypeDisplayName) {}
-        public static readonly CustomRichTextTypeMeasuringWaterUse Instance = new CustomRichTextTypeMeasuringWaterUse(7, @"MeasuringWaterUse", @"Measuring Water Use With OpenET");
+        public static readonly CustomRichTextTypeMeasuringWaterUse Instance = new CustomRichTextTypeMeasuringWaterUse(7, @"MeasuringWaterUse", @"Measuring Water Use");
     }
 
     public partial class CustomRichTextTypeConfigureWaterTypes : CustomRichTextType
