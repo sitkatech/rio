@@ -21,6 +21,9 @@ export class LandownerUsageReportDto {
     TotalSupply?: number;
     UsageToDate?: number;
     CurrentAvailable?: number;
+    OverconsumptionRate?: number;
+    OverconsumptionAmount?: number;
+    OverconsumptionCharge?: number;
     NumberOfPostings?: number;
     NumberOfTrades?: number;
     MostRecentTradeNumber?: string;

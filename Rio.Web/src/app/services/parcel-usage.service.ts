@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ParcelUsageStagingPreviewDto } from '../shared/generated/model/parcel-usage-staging-preview-dto';
-import { ParcelUsageCsvResponseDto } from '../shared/models/parcel-usage-csv-response-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +11,13 @@ import { ParcelUsageCsvResponseDto } from '../shared/models/parcel-usage-csv-res
 export class ParcelUsageService {
   constructor(private apiService: ApiService, private httpClient: HttpClient) { }
 
-  previewStagedParcelUsage(): Observable<ParcelUsageStagingPreviewDto> {
-    let route = 'parcel-usages';
+  previewStagedParcelUsage(parcelUsageFileUploadID: number): Observable<ParcelUsageStagingPreviewDto> {
+    let route = `parcel-usages/file-upload/${parcelUsageFileUploadID}`;
     return this.apiService.getFromApi(route);
   }
 
-  publishStagedParcelUsage(): Observable<number> {
-    let route = 'parcel-usages';
+  publishStagedParcelUsage(parcelUsageFileUploadID: number): Observable<number> {
+    let route = `parcel-usages/file-upload/${parcelUsageFileUploadID}`;
     return this.apiService.postToApi(route, {});
   }
 
@@ -38,7 +37,7 @@ export class ParcelUsageService {
     return result;
   }
 
-  uploadParcelUsageCsvToStaging(uploadedFile: any, effectiveDate: string, apnColumnName: string, quantityColumnName: string): Observable<ParcelUsageCsvResponseDto> {
+  uploadParcelUsageCsvToStaging(uploadedFile: any, effectiveDate: string, apnColumnName: string, quantityColumnName: string): Observable<number> {
     let formData = new FormData();
     formData.append("UploadedFile", uploadedFile);
     formData.append("EffectiveDate", effectiveDate);

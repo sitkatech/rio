@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { WaterUseMeasurementComponent } from './measuring-water-use-with-openet.component';
+import { WaterUseMeasurementComponent } from './measuring-water-use.component';
 
 describe('WaterUseMeasurementComponent', () => {
   let component: WaterUseMeasurementComponent;

@@ -32,7 +32,7 @@ export class UnsavedChangesGuard implements CanDeactivate<IDeactivateComponent> 
     if (component.canExit && !component.canExit()) {
       return this.confirmService.confirm({ buttonClassYes: 'btn-danger', modalSize: 'md', title: 'Warning: Unsaved Changes', message: 'You have unsaved changes on this page.  Are you sure you want to leave?', buttonTextYes: "Proceed", buttonTextNo: "Cancel" })
         .then(x => {
-          if (component.onExit) {
+          if (x && component.onExit) {
             component.onExit();
           }
 

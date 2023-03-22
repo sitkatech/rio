@@ -5,7 +5,7 @@ metadata:
   name: {{ include "api.fullname" . }}-rrb-configmap
 data:
   AllowTrading: "false"
-  AllowOpenETSync: "true"
+  AllowOpenETSync: "false"
   IncludeWaterSupply: "true"
   PlatformLongName: "Rosedale-Rio Bravo Water Accounting Platform"
   PlatformShortName: "Water Accounting Platform"

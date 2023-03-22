@@ -2196,10 +2196,21 @@
         }
       }
     },
-    "/parcel-usages": {
+    "/parcel-usages/file-upload/{parcelUsageFileUploadID}": {
       "get": {
         "tags": [
           "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "parcelUsageFileUploadID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -2228,6 +2239,17 @@
         "tags": [
           "ParcelUsage"
         ],
+        "parameters": [
+          {
+            "name": "parcelUsageFileUploadID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2253,7 +2275,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/parcel-usages": {
       "delete": {
         "tags": [
           "ParcelUsage"
@@ -2378,17 +2402,20 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
+                  "type": "integer",
+                  "format": "int32"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
+                  "type": "integer",
+                  "format": "int32"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ParcelUsageCSVResponseDto"
+                  "type": "integer",
+                  "format": "int32"
                 }
               }
             }
@@ -5010,6 +5037,21 @@
             "format": "double",
             "nullable": true
           },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionCharge": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "NumberOfPostings": {
             "type": "integer",
             "format": "int32"
@@ -5582,23 +5624,6 @@
         },
         "additionalProperties": false
       },
-      "ParcelUsageCSVResponseDto": {
-        "type": "object",
-        "properties": {
-          "UnmatchedParcelNumbers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "NullParcelNumberCount": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
       "ParcelUsageStagingPreviewDto": {
         "type": "object",
         "properties": {
@@ -5615,6 +5640,10 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "NullParcelNumberCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -5628,7 +5657,8 @@
           },
           "ParcelID": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "ParcelNumber": {
             "type": "string",
@@ -5646,27 +5676,15 @@
             "type": "number",
             "format": "double"
           },
-          "LastUpdateDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "UploadedFileName": {
-            "type": "string",
-            "nullable": true
+          "ParcelUsageFileUploadID": {
+            "type": "integer",
+            "format": "int32"
           },
           "UserID": {
             "type": "integer",
             "format": "int32"
           },
-          "ExistingAnnualUsageAmount": {
-            "type": "number",
-            "format": "double"
-          },
           "ExistingMonthlyUsageAmount": {
-            "type": "number",
-            "format": "double"
-          },
-          "UpdatedAnnualUsageAmount": {
             "type": "number",
             "format": "double"
           },

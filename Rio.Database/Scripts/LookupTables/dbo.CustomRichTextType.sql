@@ -6,7 +6,7 @@ USING (VALUES
 (4, 'AboutGET', 'About GET'),
 (5, 'Disclaimer', 'Disclaimer'),
 (6, 'PlatformOverview', 'Platform Overview'),
-(7, 'MeasuringWaterUse', 'Measuring Water Use With OpenET'),
+(7, 'MeasuringWaterUse', 'Measuring Water Use'),
 (8, 'ConfigureWaterTypes', 'Configure Water Types'),
 (9, 'CreateWaterTransactions', 'Create Water Transactions'),
 (10, 'TrainingVideos', 'Training Videos'),

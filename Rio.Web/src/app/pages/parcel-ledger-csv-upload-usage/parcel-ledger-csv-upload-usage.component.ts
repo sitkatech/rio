@@ -124,19 +124,10 @@ export class ParcelLedgerCsvUploadUsageComponent implements OnInit {
     this.isLoadingSubmit = true;
 
     this.parcelUsageService.uploadParcelUsageCsvToStaging(this.fileUpload, this.effectiveDate, this.apnColumnName, this.quantityColumnName)
-      .subscribe(parcelUsageCsvResponseDto => {
+      .subscribe(parcelUsageFileUploadID => {
         this.isLoadingSubmit = false;
 
-        this.router.navigate(['preview'], {relativeTo: this.route}).then(() => {
-          if (parcelUsageCsvResponseDto.UnmatchedParcelNumbers?.length > 0) {
-            const unmatchedAPNsMessage = `${parcelUsageCsvResponseDto.UnmatchedParcelNumbers?.length} transactions skipped because the APNs were found in the file and are not in the Water Accounting Database: ${parcelUsageCsvResponseDto.UnmatchedParcelNumbers}`
-            this.alertService.pushAlert(new Alert(unmatchedAPNsMessage, AlertContext.Info, false));
-          }
-          if (parcelUsageCsvResponseDto.NullParcelNumberCount > 0) {
-            const nullAPNsMessage = `${parcelUsageCsvResponseDto.NullParcelNumberCount} <X> transactions were skipped because an APN was not provided in the specified column`
-            this.alertService.pushAlert(new Alert(nullAPNsMessage, AlertContext.Info, false));
-          }
-        });
+        this.router.navigate([parcelUsageFileUploadID, 'preview'], {relativeTo: this.route});
       }, error => {
         this.isLoadingSubmit = false;
         this.apiService.sendErrorToHandleError(error);

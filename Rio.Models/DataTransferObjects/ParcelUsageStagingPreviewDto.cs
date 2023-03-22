@@ -7,11 +7,5 @@ public class ParcelUsageStagingPreviewDto
 {
     public List<ParcelUsageStagingSimpleDto> StagedParcelUsages { get; set; }
     public List<string> ParcelNumbersWithoutStagedUsages { get; set; }
-
-    public ParcelUsageStagingPreviewDto(List<ParcelUsageStagingSimpleDto> stagedParcelUsages,
-        List<string> parcelNumbersWithoutStagedUsages)
-    {
-        StagedParcelUsages = stagedParcelUsages;
-        ParcelNumbersWithoutStagedUsages = parcelNumbersWithoutStagedUsages;
-    }
+    public int NullParcelNumberCount { get; set; }
 }

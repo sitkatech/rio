@@ -22,6 +22,9 @@ namespace Rio.EFModels.Entities
         public decimal? TotalSupply { get; set; }
         public decimal? UsageToDate { get; set; }
         public decimal? CurrentAvailable { get; set; }
+        public decimal? OverconsumptionRate { get; set; }
+        public decimal? OverconsumptionAmount { get; set; }
+        public decimal? OverconsumptionCharge { get; set; }
         public int NumberOfPostings { get; set; }
         public int NumberOfTrades { get; set; }
         public string MostRecentTradeNumber { get; set; }
@@ -43,6 +46,9 @@ namespace Rio.EFModels.Entities
                 TotalSupply = x.TotalSupply,
                 UsageToDate = x.UsageToDate,
                 CurrentAvailable = x.CurrentAvailable,
+                OverconsumptionRate = x.OverconsumptionRate,
+                OverconsumptionAmount = x.OverconsumptionAmount,
+                OverconsumptionCharge = x.OverconsumptionCharge,
                 NumberOfPostings = x.NumberOfPostings,
                 NumberOfTrades = x.NumberOfTrades,
                 MostRecentTradeNumber = x.MostRecentTradeNumber

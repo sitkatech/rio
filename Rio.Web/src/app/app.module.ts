@@ -55,7 +55,7 @@ import { CreateUserCallbackComponent } from './pages/create-user-callback/create
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
 import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
-import { WaterUseMeasurementComponent } from './pages/measuring-water-use-with-openet/measuring-water-use-with-openet.component';
+import { WaterUseMeasurementComponent } from './pages/measuring-water-use/measuring-water-use.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AppInitService } from './app.init';
 import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
