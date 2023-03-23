@@ -432,7 +432,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
       this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Rate (per ac-ft)', 'OverconsumptionRate', 150),
       this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Volume (ac-ft)', 'OverconsumptionAmount', 150),
-      this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Amount', 'OverconsumptionCharge', 150),
+      this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Amount ($)', 'OverconsumptionCharge', 150),
       this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
     ];
 
