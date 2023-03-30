@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Rio.API.Models;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
@@ -43,6 +45,27 @@ namespace Rio.API.Controllers
         {
             var waterYearToDisplay = WaterYear.GetDefaultYearToDisplay(_dbContext);
             return Ok(waterYearToDisplay);
+        }
+
+        [HttpPut("water-years/{waterYearID}/overconsumption-rate")]
+        [ParcelManageFeature]
+        public ActionResult UpdateOverconsumptionRate([FromRoute] int waterYearID, [FromBody] OverconsumptionRateUpsertDto overconsumptionRateUpsertDto)
+        {
+            if (overconsumptionRateUpsertDto.OverconsumptionRate < 0)
+            {
+                ModelState.AddModelError("OverconsumptionRate", "Overconsumption Rate cannot be negative.");
+                return BadRequest(ModelState);
+            }
+
+            var waterYear = WaterYear.GetByID(_dbContext, waterYearID);
+            if (waterYear == null)
+            {
+                return NotFound();
+            }
+
+            WaterYear.UpdateOverconsumptionRate(_dbContext, waterYear, overconsumptionRateUpsertDto.OverconsumptionRate.Value);
+
+            return Ok();
         }
     }
 }

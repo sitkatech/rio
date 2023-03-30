@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "rio-geoserver.fullname" . }}
+  name: {{ include "geoserver.fullname" . }}
   labels:
-    {{- include "rio-geoserver.labels" . | nindent 4 }}
+    {{- include "geoserver.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "rio-geoserver.selectorLabels" . | nindent 6 }}
+      {{- include "geoserver.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -19,22 +19,22 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "rio-geoserver.selectorLabels" . | nindent 8 }}
+        {{- include "geoserver.selectorLabels" . | nindent 8 }}
     spec:
       volumes:
       - name: geoserver-data
         azureFile: 
-          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-volume-secret
+          secretName: {{ .Values.global.env.tenantName }}-geoserver-volume-secret
           shareName: geoserver
           readOnly: false
       - name: config
         projected:
           sources:
           - configMap:
-              name: {{ include "rio-geoserver.fullname" . }}-{{ .Values.global.env.tenantName }}-environment-properties-configmap
+              name: {{ include "geoserver.fullname" . }}-{{ .Values.global.env.tenantName }}-environment-properties-configmap
       - name: secrets
         secret:
-          secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-secrets
+          secretName: {{ .Values.global.env.tenantName }}-geoserver-secrets
           items:
           - key: geoserverSqlServerPassword
             path: geoserverSqlServerPassword
@@ -44,7 +44,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "rio-geoserver.serviceAccountName" . }}
+      serviceAccountName: {{ include "geoserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -80,7 +80,7 @@ spec:
             
           envFrom:
           - configMapRef:
-              name: {{ include "rio-geoserver.fullname" . }}-configmap
+              name: {{ include "geoserver.fullname" . }}-configmap
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

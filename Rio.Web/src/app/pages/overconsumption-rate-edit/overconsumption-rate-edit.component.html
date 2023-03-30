@@ -1,0 +1,83 @@
+<div class="breadcrumb-container"> 
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item" aria-current="page">
+                    <a routerLink="/manager-dashboard">Manager Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Set Overconsumption Rate
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container mt-sm-4">
+
+    <h2>Set Overconsumption Rate</h2>
+    <app-alert-display></app-alert-display>
+
+    <rio-custom-rich-text [customRichTextTypeID]="customRichTextTypeID"></rio-custom-rich-text>
+
+    <form (ngSubmit)="onSubmit()">
+
+        <div class="row mt-3 align-items-center">
+            <div class="col-sm-3 control-label text-sm-right">
+                <label class="required">Water Year</label>
+            </div>
+
+            <div class="col-sm-5">
+                <select name="water-type" class="form-control" [(ngModel)]="model.WaterYearID" (change)="onWaterYearSelected()">
+                    <option disabled selected hidden></option>
+                    <option *ngFor="let waterYear of waterYears" [value]="waterYear.WaterYearID">
+                        {{ waterYear.Year }}
+                    </option>
+                </select>
+            </div>
+         </div>
+
+        <div class="row mt-3 align-items-center" *ngIf="model?.WaterYearID">
+            <div class="col-sm-3 control-label text-sm-right">
+                <label>Current Rate</label>
+            </div>
+
+            <div class="col-sm-5" >
+                <b>${{ currentOverconsumptionRate | number:"1.2-2"}} per ac-ft </b>
+            </div>
+         </div>
+
+        <div class="row mt-3 align-items-center">
+            <div class="col-sm-3 control-label text-sm-right">
+                <label class="required">New Rate</label>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <div class="input-group-append">
+                        <span class="input-group-text">$</span>
+                    </div>
+                    <input type="number" class="form-control" name="Quantity" step="1" [(ngModel)]="model.OverconsumptionRate"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text"> per ac-ft</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-sm-3 text-right">
+                <i class="fas fa-bolt"></i> Required field
+            </div>
+
+            <div class="col-sm-6 text-right">
+                <button type="submit" class="btn btn-rio" [disabled]="isLoadingSubmit">
+                    <span *ngIf="isLoadingSubmit" class="fa fa-spinner loading-spinner"></span>
+                    Submit
+                </button>
+
+                <a class="btn btn-secondary ml-1" routerLink="/manager-dashboard">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>

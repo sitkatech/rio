@@ -14,6 +14,7 @@ export class WaterYearDto {
     WaterYearID?: number;
     Year?: number;
     ParcelLayerUpdateDate?: string;
+    OverconsumptionRate?: number;
     constructor(obj?: any) {
         Object.assign(this, obj);
     }

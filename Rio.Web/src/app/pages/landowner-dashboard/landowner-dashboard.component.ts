@@ -103,18 +103,7 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
       return this._highlightedParcelID;    
   }
 
-  public months = ["Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"];
+  public months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
   public emptyCumulativeWaterUsage: SeriesEntry[] = this.months.map(y => { return this.createSeriesEntry(y, 0); });
   public waterTypes: WaterTypeDto[];
@@ -224,7 +213,6 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
     if (!this.parcelLedgers) {
       this.accountService.getParcelLedgersByAccountID(this.activeAccount.AccountID).subscribe(parcelLedgers => {
         this.parcelLedgers = parcelLedgers;
-        // call needs to wait until this.parcelLedgers is populated to avoid race condition
         this.updateParcelLedgersAndChartDataForWaterYear();
       });
     } else {
@@ -453,6 +441,18 @@ export class LandownerDashboardComponent implements OnInit, OnDestroy {
 
   public getCurrentAvailableWater(): number {
     return this.getTotalSupply() - this.getWaterUsageToDate();
+  }
+
+  public getOverconsumptionAmount(): number {
+    const currentAvailable = this.getCurrentAvailableWater();
+    return currentAvailable < 0 ? (-1 * currentAvailable) : 0;
+  }
+
+  public getOverconsumptionCharge(): number {
+    if (!this.waterYearToDisplay.OverconsumptionRate) {
+      return 0;
+    }
+    return this.getOverconsumptionAmount() * this.waterYearToDisplay.OverconsumptionRate;
   }
 
   public getWaterUsageToDate(): number {

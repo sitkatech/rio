@@ -413,7 +413,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   private initializeLandownerUsageReportGrid(): void {
-    let _decimalPipe = this.decimalPipe;
 
     this.landownerUsageReportGridColumnDefs = [
       {
@@ -431,6 +430,9 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       // N.B.: The columns for individual water types will be inserted here via a splice after the WaterTypes are retrieved.
       //
       this.utilityFunctionsService.createDecimalColumnDef('Total Usage (ac-ft)', 'UsageToDate', 150),
+      this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Rate (per ac-ft)', 'OverconsumptionRate', 150),
+      this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Volume (ac-ft)', 'OverconsumptionAmount', 150),
+      this.utilityFunctionsService.createDecimalColumnDef('Overconsumption Amount ($)', 'OverconsumptionCharge', 150),
       this.utilityFunctionsService.createDecimalColumnDef('Acres Managed', 'AcresManaged', 140),
     ];
 

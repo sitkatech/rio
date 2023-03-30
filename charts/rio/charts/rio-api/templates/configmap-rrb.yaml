@@ -1,0 +1,30 @@
+{{ if eq .Values.global.env.tenantName "rrb" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "api.fullname" . }}-rrb-configmap
+data:
+  AllowTrading: "false"
+  AllowOpenETSync: "false"
+  IncludeWaterSupply: "true"
+  PlatformLongName: "Rosedale-Rio Bravo Water Accounting Platform"
+  PlatformShortName: "Water Accounting Platform"
+  LeadOrganizationLongName: "Rosedale-Rio Bravo Water Storage District"
+  LeadOrganizationShortName: "RRB"
+  LeadOrganizationHomeUrl: "https://rrbwsd.com"
+  LeadOrganizationEmail: "admin@rrbwsd.com"
+  VerificationKeyChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ,0123456789"
+  ValidParcelNumberRegexPattern: "^[0-9]{3}-[0-9]{3}-[0-9]{2}$$"
+  ValidParcelNumberPatternAsStringForDisplay: "###-###-##"
+  OpenETAPIBaseUrl: "https://openet.dri.edu"
+  OpenETRasterTimeSeriesMultipolygonRoute: "raster/timeseries/multipolygon"
+  OpenETRasterMetadataRoute: "raster/metadata"
+  OpenETAllFilesReadyForExportRoute: "raster/export/all_files"
+  OpenETRasterExportStatusRoute: "raster/export/status"
+  OpenETShapefilePath: "users/esa-sitka/RRB_Parcels_2022-06-07"
+  OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier: "APN_LABEL"
+  ParcelBoundingBoxLeft: "-119.45272037350193"
+  ParcelBoundingBoxRight: "-119.11015104115182"
+  ParcelBoundingBoxTop: "35.442022035628575"
+  ParcelBoundingBoxBottom: "35.27608156273151"
+{{ end }}

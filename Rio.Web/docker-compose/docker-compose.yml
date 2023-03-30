@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   rio.web:
-    image: sitkacontainers.azurecr.io/rio/web
+    image: rio/web
     build:
       args:
         env: ${ENVIRONMENT}

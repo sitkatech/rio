@@ -35,7 +35,7 @@ import { CreateUserCallbackComponent } from './pages/create-user-callback/create
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
 import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
-import { WaterUseMeasurementComponent } from './pages/measuring-water-use-with-openet/measuring-water-use-with-openet.component';
+import { WaterUseMeasurementComponent } from './pages/measuring-water-use/measuring-water-use.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
 import { ManagedRechargeScenarioComponent } from './pages/managed-recharge-scenario/managed-recharge-scenario.component';
@@ -56,12 +56,16 @@ import { AccountReconciliationComponent } from './pages/account-reconciliation/a
 import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel-ledger-create.component';
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
-import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { ParcelLedgerCsvUploadSupplyComponent } from './pages/parcel-ledger-csv-upload-supply/parcel-ledger-csv-upload-supply.component';
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { IncludeWaterSupplyGuard } from './shared/guards/unauthenticated-access/include-water-supply-guard';
+import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
+import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
+import { UnsavedChangesGuard } from './shared/guards/unsaved-changes.guard';
+import { OverconsumptionRateEditComponent } from './pages/overconsumption-rate-edit/overconsumption-rate-edit.component';
 
 const routes: Routes = [
   { path: "trades", component: PostingListComponent, canActivate: [UnauthenticatedAccessGuard, AllowTradeGuard, AcknowledgedDisclaimerGuard] },
@@ -81,7 +85,9 @@ const routes: Routes = [
   { path: "parcels/:id/parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-create", component: ParcelLedgerCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "parcel-ledger-bulk-create", component: ParcelLedgerBulkCreateComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
-  { path: "parcel-ledger-create-from-spreadsheet", component: ParcelLedgerCreateFromSpreadsheetComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-csv-upload/supply", component: ParcelLedgerCsvUploadSupplyComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-csv-upload/usage", component: ParcelLedgerCsvUploadUsageComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
+  { path: "parcel-ledger-csv-upload/usage/:parcelUsageFileUploadID/preview", component: ParcelLedgerUsagePreviewComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard], canDeactivate: [UnsavedChangesGuard] },
   { path: "parcel-ledger-transaction-history", component: ParcelLedgerTransactionHistoryComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, IncludeWaterSupplyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags", component: TagListComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOrDemoUserOnlyGuard, AcknowledgedDisclaimerGuard] },
   { path: "tags/bulk-tag-parcels", component: TagBulkParcelsComponent, canActivate: [UnauthenticatedAccessGuard, ManagerOnlyGuard, AcknowledgedDisclaimerGuard] },
@@ -108,6 +114,7 @@ const routes: Routes = [
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
+  { path: "set-overconsumption-rates", component: OverconsumptionRateEditComponent, canActivate: [ManagerOnlyGuard]},
   { path: "create-user-profile", component: CreateUserProfileComponent },
   { path: "training-videos", component: TrainingVideosComponent},
   { path: "disclaimer", component: DisclaimerComponent },
@@ -115,7 +122,7 @@ const routes: Routes = [
   { path: "help", component: HelpComponent },
   { path: "platform-overview", component: AboutComponent},
   { path: "frequently-asked-questions", component: GeneralFaqComponent},
-  { path: "measuring-water-use-with-openet", component: WaterUseMeasurementComponent},
+  { path: "measuring-water-use", component: WaterUseMeasurementComponent},
   { path: "glossary", component: GlossaryComponent },
   { path: "roles-and-permissions", component: RolesAndPermissionsComponent },
   { path: "create-user-callback", component: CreateUserCallbackComponent },

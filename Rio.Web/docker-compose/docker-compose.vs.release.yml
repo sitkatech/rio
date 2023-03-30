@@ -4,6 +4,6 @@ services:
   rio.web:
     environment:
       - DOTNET_USE_POLLING_FILE_WATCHER=1    
-    image: sitkacontainers.azurecr.io/rio/web
+    image: rio/web
     labels:
       - "com.microsoft.visualstudio.targetoperatingsystem=linux"

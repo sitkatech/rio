@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "rio-geoserver.fullname" . }}-configmap
+  name: {{ include "geoserver.fullname" . }}-configmap
 data:
   ENABLE_JSONP: "true"
   CATALINA_OPTS: "-DALLOW_ENV_PARAMETRIZATION=true"

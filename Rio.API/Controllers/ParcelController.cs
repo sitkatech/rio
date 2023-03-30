@@ -248,7 +248,7 @@ namespace Rio.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, model.YearChangesToTakeEffect);
+            var waterYearDto = WaterYear.GetByIDAsDto(_dbContext, model.YearChangesToTakeEffect);
 
             if (waterYearDto == null)
             {
@@ -290,7 +290,7 @@ namespace Rio.API.Controllers
         [HttpPost("/parcels/enactGDBChanges")]
         public async Task<ActionResult> EnactGDBChanges([FromBody] int waterYearID)
         {
-            var waterYearDto = WaterYear.GetByWaterYearID(_dbContext, waterYearID);
+            var waterYearDto = WaterYear.GetByIDAsDto(_dbContext, waterYearID);
             
             if (waterYearDto == null)
             {

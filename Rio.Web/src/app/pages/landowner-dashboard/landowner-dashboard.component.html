@@ -30,7 +30,7 @@
         <div class="row">
           <div class="col-lg-4 col-sm-12" *ngIf="waterYears">
             <div class="d-inline d-lg-none float-right">
-              <a routerLink="/measuring-water-use-with-openet" class="d-inline align-middle">
+              <a routerLink="/measuring-water-use" class="d-inline align-middle">
                 <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
               </a>
             </div>
@@ -51,7 +51,7 @@
             </div>
           </div>
           <div class="col-lg-4 text-right pt-1 d-none d-lg-block">
-            <a routerLink="/measuring-water-use-with-openet" class="d-inline align-middle">
+            <a routerLink="/measuring-water-use" class="d-inline align-middle">
               <i class="fas fa-info-circle p-2" aria-hidden="true"></i>Definitions
             </a>
           </div>
@@ -144,7 +144,7 @@
             <tr>
               <th class="text-sm-left pb-3">
                 Usage to Date
-                <a routerLink="/measuring-water-use-with-openet" target="_blank" style="cursor:pointer"
+                <a routerLink="/measuring-water-use" target="_blank" style="cursor:pointer"
                   placement="top" ngbTooltip="Learn how water usage is measured"><i
                     class="fas fa-question-circle small ml-1"></i></a>
               </th>
@@ -164,6 +164,35 @@
                 </td>
               </tr>
             </ng-container>
+            <tr>
+              <td colspan="2">
+                <hr class="mt-0" />
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
+                Overconsumption Rate
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                $ {{this.waterYearToDisplay.OverconsumptionRate | number: '1.2-2'}} / ac-ft
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
+                Overconsumption Volume
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                {{getOverconsumptionAmount() | number: '1.2-2'}} {{unitsShown}}
+              </td>
+            </tr>
+            <tr>
+              <th class="text-sm-left pb-3">
+                Overconsumption Amount
+              </th>
+              <td class="text-sm-right font-weight-bold pb-3">
+                $ {{getOverconsumptionCharge() | number: '1.2-2'}} {{unitsShown == 'ac-ft' ? '' : '/ ac'}}
+              </td>
+            </tr>
             <tr>
               <td colspan="2">
                 <hr class="mt-0" />
@@ -322,7 +351,7 @@
         <div class="col-sm-12">
           <div class="mt-3 mb-3">
             <span class="h3 align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Visualization </span>
-            <a routerLink="/measuring-water-use-with-openet" target="_blank"
+            <a routerLink="/measuring-water-use" target="_blank"
               style="cursor:pointer; vertical-align: middle;" placement="top"
               ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i>
             </a>
@@ -330,13 +359,13 @@
           <rio-landowner-water-use-chart *ngIf="!isWaterUsageForWaterYearNullOrEmpty()"
             [waterUsageData]="getWaterUsageForWaterYear()" [parcelNumbers]="parcelNumbers" #landownerWaterUseChart>
           </rio-landowner-water-use-chart>
-          <p *ngIf="isWaterUsageForWaterYearNullOrEmpty()">OpenET water usage data not yet available for
+          <p *ngIf="isWaterUsageForWaterYearNullOrEmpty()">Water usage data not yet available for
             {{waterYearToDisplay?.Year}}</p>
           <p class="small">
             Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
             <br>
-            Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
-              routerLinkActive="true">OpenET FAQ</a>.
+            Details of water use measurements can be found in the <a routerLink="/measuring-water-use"
+              routerLinkActive="true">Water Use FAQ</a>.
           </p>
         </div>
       </div>
@@ -344,7 +373,7 @@
         <div class="col-sm-12">
           <div class="mb-3">
             <span class="h3 align-middle">{{waterYearToDisplay?.Year}} Water Usage by Parcel Tabular </span>
-            <a routerLink="/measuring-water-use-with-openet" target="_blank"
+            <a routerLink="/measuring-water-use" target="_blank"
               style="cursor:pointer; vertical-align: middle;" placement="top"
               ngbTooltip="Learn how water usage is measured"><i class="fas fa-question-circle small"></i>
             </a>
@@ -385,8 +414,8 @@
             <br>
             Estimated water usage is based on satellite imagery and may not be accurate at the APN level.
             <br>
-            Details of water use measurements can be found in the <a routerLink="/measuring-water-use-with-openet"
-              routerLinkActive="true">OpenET FAQ</a>.
+            Details of water use measurements can be found in the <a routerLink="/measuring-water-use"
+              routerLinkActive="true">Water Use FAQ</a>.
           </p>
         </div>
       </div>

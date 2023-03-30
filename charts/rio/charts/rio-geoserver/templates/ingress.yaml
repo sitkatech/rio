@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "rio-geoserver.fullname" . -}}
+{{- $fullName := include "geoserver.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -17,7 +17,7 @@ kind: Ingress
 metadata:
   name: {{ $fullName }}
   labels:
-    {{- include "rio-geoserver.labels" . | nindent 4 }}
+    {{- include "geoserver.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -27,7 +27,7 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   tls:
-    - secretName: rio-{{ .Values.global.env.tenantName }}-geoserver-tls
+    - secretName: {{ .Values.global.env.tenantName }}-geoserver-tls
       hosts:
         - {{ .Values.global.domains.geoserver }}
   rules:

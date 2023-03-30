@@ -2073,7 +2073,7 @@
         }
       }
     },
-    "/parcel-ledgers/new": {
+    "/parcel-ledgers": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2109,7 +2109,7 @@
         }
       }
     },
-    "/parcel-ledgers/bulk-new": {
+    "/parcel-ledgers/bulk": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2145,7 +2145,7 @@
         }
       }
     },
-    "/parcel-ledgers/new-csv-upload": {
+    "/parcel-ledgers/csv": {
       "post": {
         "tags": [
           "ParcelLedger"
@@ -2192,6 +2192,233 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/parcel-usages/file-upload/{parcelUsageFileUploadID}": {
+      "get": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "parcelUsageFileUploadID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelUsageStagingPreviewDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "parcelUsageFileUploadID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parcel-usages": {
+      "delete": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/parcel-usages/csv/headers": {
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "geographyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "UploadedFile"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/parcel-usages/csv": {
+      "post": {
+        "tags": [
+          "ParcelUsage"
+        ],
+        "parameters": [
+          {
+            "name": "geographyID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "apnColumnName",
+                  "EffectiveDate",
+                  "quantityColumnName",
+                  "UploadedFile"
+                ],
+                "type": "object",
+                "properties": {
+                  "UploadedFile": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "EffectiveDate": {
+                    "pattern": "^\\d{4}\\-\\d{1,2}\\-\\d{1,2}$",
+                    "type": "string"
+                  },
+                  "apnColumnName": {
+                    "type": "string"
+                  },
+                  "quantityColumnName": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "UploadedFile": {
+                  "style": "form"
+                },
+                "EffectiveDate": {
+                  "style": "form"
+                },
+                "apnColumnName": {
+                  "style": "form"
+                },
+                "quantityColumnName": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
           }
         }
       }
@@ -4234,6 +4461,53 @@
         }
       }
     },
+    "/water-years/{waterYearID}/overconsumption-rate": {
+      "put": {
+        "tags": [
+          "WaterYear"
+        ],
+        "parameters": [
+          {
+            "name": "waterYearID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/OverconsumptionRateUpsertDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/water-year-months": {
       "get": {
         "tags": [
@@ -4763,6 +5037,21 @@
             "format": "double",
             "nullable": true
           },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OverconsumptionCharge": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "NumberOfPostings": {
             "type": "integer",
             "format": "int32"
@@ -4972,6 +5261,24 @@
           "OpenETSyncResultTypeDisplayName": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "OverconsumptionRateUpsertDto": {
+        "required": [
+          "OverconsumptionRate",
+          "WaterYearID"
+        ],
+        "type": "object",
+        "properties": {
+          "WaterYearID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -5313,6 +5620,77 @@
           "NumParcelsWithConflicts": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageStagingPreviewDto": {
+        "type": "object",
+        "properties": {
+          "StagedParcelUsages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParcelUsageStagingSimpleDto"
+            },
+            "nullable": true
+          },
+          "ParcelNumbersWithoutStagedUsages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "NullParcelNumberCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ParcelUsageStagingSimpleDto": {
+        "type": "object",
+        "properties": {
+          "ParcelUsageStagingID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ParcelID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ParcelNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ReportedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ReportedValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "ReportedValueInAcreFeet": {
+            "type": "number",
+            "format": "double"
+          },
+          "ParcelUsageFileUploadID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "UserID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExistingMonthlyUsageAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "UpdatedMonthlyUsageAmount": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -6537,6 +6915,10 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "OverconsumptionRate": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false

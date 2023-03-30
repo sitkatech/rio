@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   rio.api:
-    image: sitkacontainers.azurecr.io/rio/api
+    image: rio/api
     labels:
       - "com.microsoft.visualstudio.targetoperatingsystem=linux"
     build:

@@ -78,5 +78,14 @@ namespace Rio.API.Services
 
             return bytes;
         }
+
+        public static async Task<byte[]> GetIFormFileData(IFormFile file)
+        {
+            await using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+
+            return bytes;
+        }
     }
 }

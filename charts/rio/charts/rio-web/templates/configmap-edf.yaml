@@ -1,0 +1,25 @@
+{{ if eq .Values.global.env.tenantName "edf" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "web.fullname" . }}-edf-configmap
+data:
+  allowTrading: "true"
+  allowOpenETSync: "false"
+  includeWaterSupply: "true"
+  platformLongName: "Environmental Defense Fund Water Accounting and Trading Platform"
+  platformShortName: "Water Accounting and Trading Platform"
+  leadOrganizationLongName: "Environmental Defense Fund"
+  leadOrganizationShortName: "EDF"
+  leadOrganizationHomeUrl: "https://edf.org"
+  faviconFilename: "edf_favicon.ico"
+  leadOrganizationLogoFilename: "edf-full-logo.jpg"
+  navThemeColor: "light"
+  homepageBannerFilename: "/assets/main/home_image.jpg"
+  applicationInternalName: "{{ .Values.global.env.tenantName }}"
+  parcelBoundingBoxLeft: "-119.45272037350193"
+  parcelBoundingBoxRight: "-119.11015104115182"
+  parcelBoundingBoxTop: "35.442022035628575"
+  parcelBoundingBoxBottom: "35.27608156273151"
+  enabledGETIntegration: "true"
+{{ end }}

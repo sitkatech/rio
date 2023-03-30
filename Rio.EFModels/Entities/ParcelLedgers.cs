@@ -102,7 +102,7 @@ namespace Rio.EFModels.Entities
             return parcelLedgerDtos;
         }
 
-        public static List<ParcelLedgerDto> ListByParcelIDAsDto(RioDbContext dbContext, IEnumerable<int> parcelIDs)
+        public static List<ParcelLedgerDto> ListByParcelIDsAsDto(RioDbContext dbContext, IEnumerable<int> parcelIDs)
         {
             var parcelLedgers = GetParcelLedgersImpl(dbContext)
                 .Where(x => parcelIDs.Contains(x.ParcelID))
@@ -116,7 +116,7 @@ namespace Rio.EFModels.Entities
 
         public static List<ParcelLedgerDto> ListByParcelIDAsDto(RioDbContext dbContext, int parcelID)
         {
-            var parcelLedgers = ListByParcelIDAsDto(dbContext, new List<int> {parcelID});
+            var parcelLedgers = ListByParcelIDsAsDto(dbContext, new List<int> {parcelID});
             return parcelLedgers;
         }
 
@@ -191,6 +191,11 @@ namespace Rio.EFModels.Entities
 
             dbContext.ParcelLedgers.Add(parcelLedger);
             dbContext.SaveChanges();
+
+            if (parcelLedgerCreateDto.TransactionTypeID == (int)TransactionTypeEnum.Usage)
+            {
+                AccountOverconsumptionCharges.UpdateByYearAndParcelID(dbContext, parcelLedger.EffectiveDate.Year, parcelLedger.ParcelID);
+            }
         }
 
         public static int BulkCreateNew(RioDbContext dbContext, ParcelLedgerCreateDto parcelLedgerCreateDto, int userID)

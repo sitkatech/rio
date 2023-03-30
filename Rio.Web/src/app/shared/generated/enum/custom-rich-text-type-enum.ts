@@ -27,11 +27,14 @@ export enum CustomRichTextTypeEnum {
   AccountReconciliationReport = 22,
   ParcelLedgerCreate = 23,
   ParcelLedgerBulkCreate = 24,
-  ParcelLedgerCreateFromSpreadsheet = 25,
+  ParcelLedgerCsvUploadSupply = 25,
   WebsiteFooter = 26,
   PurchasedDescription = 28,
   SoldDescription = 29,
   TagList = 30,
   BulkTagParcels = 31,
-  TransactionHistory = 32
+  TransactionHistory = 32,
+  ParcelLedgerCsvUploadUsage = 33,
+  ParcelLedgerUsagePreview = 34,
+  SetOverconsumptionRate = 35
 }

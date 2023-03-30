@@ -55,7 +55,7 @@ import { CreateUserCallbackComponent } from './pages/create-user-callback/create
 import { UserEditAccountsComponent } from './pages/user-edit-accounts/user-edit-accounts.component';
 import { AboutComponent } from './pages/about/about.component';
 import { GeneralFaqComponent } from './pages/general-faq/general-faq.component';
-import { WaterUseMeasurementComponent } from './pages/measuring-water-use-with-openet/measuring-water-use-with-openet.component';
+import { WaterUseMeasurementComponent } from './pages/measuring-water-use/measuring-water-use.component';
 import { DisclaimerComponent } from './pages/disclaimer/disclaimer.component';
 import { AppInitService } from './app.init';
 import { AboutGroundwaterEvaluationComponent } from './pages/about-groundwater-evaluation/about-groundwater-evaluation.component';
@@ -79,13 +79,16 @@ import { ParcelLedgerCreateComponent } from './pages/parcel-ledger-create/parcel
 import { WaterTypeEditComponent } from './pages/water-type-edit/water-type-edit.component';
 import { CookieStorageService } from './shared/services/cookies/cookie-storage.service';
 import { ParcelLedgerBulkCreateComponent } from './pages/parcel-ledger-bulk-create/parcel-ledger-bulk-create.component';
-import { ParcelLedgerCreateFromSpreadsheetComponent } from './pages/parcel-ledger-create-from-spreadsheet/parcel-ledger-create-from-spreadsheet.component';
+import { ParcelLedgerCsvUploadSupplyComponent } from './pages/parcel-ledger-csv-upload-supply/parcel-ledger-csv-upload-supply.component';
 import { TagListComponent } from './pages/tag-list/tag-list.component';
 import { TagDetailComponent } from './pages/tag-detail/tag-detail.component';
 import { TagBulkParcelsComponent } from './pages/tag-bulk-parcels/tag-bulk-parcels.component';
 import { ParcelLedgerTransactionHistoryComponent } from './pages/parcel-ledger-transaction-history/parcel-ledger-transaction-history.component';
 import { DropdownSelectFilterComponent } from './shared/components/ag-grid/dropdown-select-filter/dropdown-select-filter.component';
 import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/clear-grid-filters-button/clear-grid-filters-button.component';
+import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
+import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
+import { OverconsumptionRateEditComponent } from './pages/overconsumption-rate-edit/overconsumption-rate-edit.component';
 
 export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
   return () => appLoadService.init().then(() => {
@@ -151,13 +154,16 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     AccountReconciliationComponent,
     ParcelLedgerCreateComponent,
     ParcelLedgerBulkCreateComponent,
-    ParcelLedgerCreateFromSpreadsheetComponent,
+    ParcelLedgerCsvUploadSupplyComponent,
+    ParcelLedgerCsvUploadUsageComponent,
     TagListComponent,
     TagDetailComponent,
     TagBulkParcelsComponent,
     ParcelLedgerTransactionHistoryComponent,
     DropdownSelectFilterComponent,
-    ClearGridFiltersButtonComponent
+    ClearGridFiltersButtonComponent,
+    ParcelLedgerUsagePreviewComponent,
+    OverconsumptionRateEditComponent
   ],
   imports: [
     AppRoutingModule,
