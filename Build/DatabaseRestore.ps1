@@ -12,7 +12,7 @@ $config = Get-Config -iniFile $iniFile -tenantIniFile $tenantIniFile
 
 $sqlServer = $config.Server
 $currentDbName = $config.DatabaseName
-$sqlConnectionString = "Server='$sqlserver';Database='$currentDbName';Integrated Security=True"
+$sqlConnectionString = "Server='$sqlserver';Database='$currentDbName';Integrated Security=True;TrustServerCertificate=True"
 $path = "./temp/" + $currentDbName + ".bacpac"
 
 if (Test-Path -Path $path) {
