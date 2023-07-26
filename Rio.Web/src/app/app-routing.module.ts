@@ -114,7 +114,7 @@ const routes: Routes = [
   { path: "about-groundwater-evaluation", component: AboutGroundwaterEvaluationComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "managed-recharge-scenario", component: ManagedRechargeScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
   { path: "water-trading-scenario", component: WaterTradingScenarioComponent, canActivate: [GETIntegrationEnabledGuard]},
-  { path: "set-overconsumption-rates", component: OverconsumptionRateEditComponent, canActivate: [ManagerOnlyGuard]},
+  { path: "set-water-chart-rate", component: OverconsumptionRateEditComponent, canActivate: [ManagerOnlyGuard]},
   { path: "create-user-profile", component: CreateUserProfileComponent },
   { path: "training-videos", component: TrainingVideosComponent},
   { path: "disclaimer", component: DisclaimerComponent },

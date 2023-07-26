@@ -57,7 +57,7 @@ export class OverconsumptionRateEditComponent implements OnInit, OnDestroy {
     this.waterYearService.updateOverconsumptionRate(this.model.WaterYearID, this.model).subscribe(() => {
       this.isLoadingSubmit = false;
       this.router.navigateByUrl(`/manager-dashboard`).then(x => {
-        this.alertService.pushAlert(new Alert(`Overconsumption rate successfully updated`, AlertContext.Success));
+        this.alertService.pushAlert(new Alert(`Water Charge Rate successfully updated`, AlertContext.Success));
       });
     }), error => {
       this.isLoadingSubmit = false;
