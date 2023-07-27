@@ -37,6 +37,7 @@
     "@microsoft/applicationinsights-web": "^2.5.10",
     "@ng-bootstrap/ng-bootstrap": "^12.0.0",
     "@swimlane/ngx-charts": "^19.1.0",
+    "@tinymce/tinymce-angular": "^6.0.0",
     "@types/geojson": "^7946.0.7",
     "ag-grid-angular": "^26.1.0",
     "ag-grid-community": "^26.1.0",
@@ -60,6 +61,7 @@
     "rxjs": "^6.5.5",
     "set-value": ">=4.0.1",
     "style-loader": "^1.2.1",
+    "tinymce": "^6.4.2",
     "tslib": "^2.3.1",
     "webpack": "^5.30.0",
     "zone.js": "~0.11.4"
