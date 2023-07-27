@@ -59,9 +59,6 @@ import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.
         WaterYearSelectComponent,
         ScenarioMapComponent,
         CustomRichTextComponent
-    ],
-    entryComponents:[
-        ParcelDetailPopupComponent
     ]
 })
 export class SharedModule {
