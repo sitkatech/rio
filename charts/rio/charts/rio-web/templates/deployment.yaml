@@ -42,14 +42,32 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          # this startup probe checks the app every 10 seconds to see if it's ready to receive traffic
+          # it gives a very generous 5 minutes for the container to startup. As soon as it is successful
+          # the liveness probe kicks into effect.
+          startupProbe: 
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 80
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 4
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","120"]
+          terminationGracePeriodSeconds: 131
           envFrom:
           - configMapRef:
               name: {{ include "web.fullname" . }}-{{ .Values.global.env.name }}-configmap

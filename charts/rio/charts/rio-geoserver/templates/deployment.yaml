@@ -59,14 +59,37 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          # this startup probe checks the app every 10 seconds to see if it's ready to receive traffic
+          # it gives a very generous 5 minutes for geoserver to startup. As soon as it is successful
+          # the liveness probe kicks into effect.
+          startupProbe: 
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+          # this livenessProbe gets called every 4 seconds, if it fails three times in a row it determines
+          # the pod as unreachable and attempts to kill it and start a new pod
+          livenessProbe:
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 8080
+            periodSeconds: 4
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # this readinessProbe lets kubernetes know that it's fully deployed and can start directing traffic to it
+          readinessProbe:
+            httpGet:
+              path: /
+              scheme: HTTP
+              port: 8080
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","120"]
+          terminationGracePeriodSeconds: 131
           volumeMounts:
           - name: secrets
             mountPath: /app/secrets
