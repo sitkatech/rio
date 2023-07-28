@@ -22,4 +22,6 @@ GO
 GO
 :r ".\0007 - Create 2023 ownership relationships.sql"
 GO
+:r ".\0008 - update RTE text with Overconsumption rate.sql"
+GO
 

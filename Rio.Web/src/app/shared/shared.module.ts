@@ -18,9 +18,9 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { WaterYearSelectComponent } from './components/water-year-select/water-year-select/water-year-select.component';
 import { ScenarioMapComponent } from './components/scenario-map/scenario-map.component';
 import { CustomRichTextComponent } from './components/custom-rich-text/custom-rich-text.component';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.component';
+import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 
 @NgModule({
     declarations: [
@@ -46,8 +46,8 @@ import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.
         NgProgressModule,
         RouterModule,
         SelectDropDownModule,
-        CKEditorModule,
-        NgbModule
+        NgbModule,
+        EditorModule
     ],
     exports: [
         CommonModule,
@@ -58,10 +58,11 @@ import { ConfirmModalComponent } from './components/confirm-modal/confirm-modal.
         HeaderNavComponent,
         WaterYearSelectComponent,
         ScenarioMapComponent,
-        CustomRichTextComponent
+        CustomRichTextComponent,
+        EditorModule
     ],
-    entryComponents:[
-        ParcelDetailPopupComponent
+    providers:[
+        { provide: TINYMCE_SCRIPT_SRC, useValue: 'assets/tinymce/tinymce.min.js' }
     ]
 })
 export class SharedModule {
