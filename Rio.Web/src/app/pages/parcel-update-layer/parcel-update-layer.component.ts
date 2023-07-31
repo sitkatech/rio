@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ColDef } from 'ag-grid-community';
 import { forkJoin } from 'rxjs';
 import { AuthenticationService } from 'src/app/services/authentication.service';
@@ -17,6 +16,7 @@ import { CustomRichTextTypeEnum } from 'src/app/shared/generated/enum/custom-ric
 import { FeatureClassInfoDto } from 'src/app/shared/models/feature-class-info-dto';
 import { ApiService } from 'src/app/shared/services';
 import { AlertService } from 'src/app/shared/services/alert.service';
+import { ConfirmService } from 'src/app/shared/services/confirm.service';
 
 @Component({
   selector: 'rio-parcel-update-layer',
@@ -27,7 +27,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
 
   @ViewChildren('fileInput') public fileInput: QueryList<any>;
   
-  public modalReference: NgbModalRef;
   public richTextTypeID: number = CustomRichTextTypeEnum.ParcelUpdateLayer;
 
 
@@ -60,7 +59,7 @@ export class ParcelUpdateLayerComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private parcelService: ParcelService,
     private waterYearService: WaterYearService,
-    private modalService: NgbModal,
+    private confirmService: ConfirmService,
     private apiService: ApiService,
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -191,26 +190,6 @@ export class ParcelUpdateLayerComponent implements OnInit {
     return this.currentWaterYear.ParcelLayerUpdateDate != null && this.currentWaterYear.ParcelLayerUpdateDate != undefined
   }
 
-  public onSubmitChanges() {
-    if (this.modalReference) {
-      this.modalReference.close();
-      this.modalReference = null;
-    }
-
-    let waterYear = this.submitForPreviewForm.get('waterYearSelection').value;
-
-    this.isLoadingSubmit = true;
-    this.parcelService.enactGDBChanges(this.submitForPreviewForm.get('waterYearSelection').value).subscribe(() => {
-      this.isLoadingSubmit = false;
-      this.router.navigate(['/manager-dashboard']).then(() => {
-        this.alertService.pushAlert(new Alert(`Successfully updated Account and Parcel associations`, AlertContext.Success));
-      });
-    }, () => {
-      this.isLoadingSubmit = false;
-      this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
-    })
-  }
-
   public resetWorkflow() {
     this.removeResultPreview();
     this.removeFeatureClasses();
@@ -238,7 +217,23 @@ export class ParcelUpdateLayerComponent implements OnInit {
   }
 
   public launchModal(modalContent: any) {
-    this.modalReference = this.modalService.open(modalContent, { windowClass: 'modal-size', backdrop: 'static', keyboard: false });
+    this.confirmService.confirm({buttonClassYes: 'btn-rio btn-sm', buttonTextYes: 'Save', buttonTextNo: 'Cancel', message: 'Are you sure you want to finalize these changes? This action cannot be undone.', title: 'Finalize Account and Parcel Changes', modalSize: 'md' }).then(x => {
+      if(x)
+      {
+        let waterYear = this.submitForPreviewForm.get('waterYearSelection').value;
+
+        this.isLoadingSubmit = true;
+        this.parcelService.enactGDBChanges(this.submitForPreviewForm.get('waterYearSelection').value).subscribe(() => {
+          this.isLoadingSubmit = false;
+          this.router.navigate(['/manager-dashboard']).then(() => {
+            this.alertService.pushAlert(new Alert(`Successfully updated Account and Parcel associations`, AlertContext.Success));
+          });
+        }, () => {
+          this.isLoadingSubmit = false;
+          this.alertService.pushAlert(new Alert("Failed enact GDB changes!", AlertContext.Danger));
+        })
+      }
+    });
   }
 
   public removeResultPreview() {
