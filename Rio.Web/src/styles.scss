@@ -189,3 +189,7 @@ input:checked + .slider .off {
     display: none;
   }
 }
+
+ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
