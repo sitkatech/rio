@@ -43,6 +43,7 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
         var existingParcels = _dbContext.Parcels.AsNoTracking();
 
         var parcelNumbersWithoutStagedUsages = existingParcels
+            .Where(x => x.ParcelStatus == ParcelStatus.Active)
             .Where(x => !stagedParcelUsagesParcelIDs.Contains(x.ParcelID))
             .Select(x => x.ParcelNumber).ToList();
 
