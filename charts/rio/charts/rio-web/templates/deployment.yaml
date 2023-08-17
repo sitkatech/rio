@@ -67,7 +67,6 @@ spec:
             preStop:
               exec:
                 command: ["sleep","120"]
-          terminationGracePeriodSeconds: 131
           envFrom:
           - configMapRef:
               name: {{ include "web.fullname" . }}-{{ .Values.global.env.name }}-configmap
@@ -79,6 +78,7 @@ spec:
           #   readOnly: true
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      terminationGracePeriodSeconds: 131
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

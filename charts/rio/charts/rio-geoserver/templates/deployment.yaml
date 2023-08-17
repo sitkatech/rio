@@ -89,7 +89,6 @@ spec:
             preStop:
               exec:
                 command: ["sleep","120"]
-          terminationGracePeriodSeconds: 131
           volumeMounts:
           - name: secrets
             mountPath: /app/secrets
@@ -100,12 +99,12 @@ spec:
           - name: geoserver-data
             mountPath: /opt/geoserver
             readOnly: false
-            
           envFrom:
           - configMapRef:
               name: {{ include "geoserver.fullname" . }}-configmap
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      terminationGracePeriodSeconds: 131
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
