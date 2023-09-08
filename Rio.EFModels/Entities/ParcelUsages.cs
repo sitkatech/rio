@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using NetTopologySuite.IO;
 using Qanat.EFModels.Entities;
-using Rio.Models.DataTransferObjects;
 
 namespace Rio.EFModels.Entities;
 
@@ -15,8 +13,6 @@ public static class ParcelUsages
     public static IEnumerable<ParcelUsageStaging> GetByParcelUsageFileUploadID(RioDbContext dbContext, int parcelUsageFileUploadID)
     {
         return dbContext.ParcelUsageStagings.AsNoTracking()
-            .Include(x => x.Parcel)
-            .ThenInclude(x => x.ParcelLedgers)
             .Where(x => x.ParcelUsageFileUploadID == parcelUsageFileUploadID);
     }
 
