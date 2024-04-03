@@ -22,4 +22,6 @@ GO
 GO
 :r ".\0007 - Create 2023 ownership relationships.sql"
 GO
+:r ".\0008 - Add 2024 WaterYear record.sql"
+GO
 
