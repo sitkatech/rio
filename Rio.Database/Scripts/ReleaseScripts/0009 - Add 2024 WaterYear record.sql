@@ -1,5 +1,5 @@
 DECLARE @MigrationName VARCHAR(200);
-SET @MigrationName = '0008 - Add 2024 WaterYear record'
+SET @MigrationName = '0009 - Add 2024 WaterYear record'
 
 IF NOT EXISTS(SELECT * FROM dbo.DatabaseMigration DM WHERE DM.ReleaseScriptFileName = @MigrationName)
 BEGIN

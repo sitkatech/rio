@@ -270,22 +270,3 @@
         </div>
     </form>
 </div>
-
-<ng-template #finalizeChangesModalContent let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="finalizeChangesModalTitle">Finalize Account and Parcel Changes</h5>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <p>
-            Are you sure you want to finalize these changes? This action cannot be undone.
-        </p>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-rio btn-sm" (click)="onSubmitChanges()" ngbAutoFocus>
-                Save</button>
-            <button type="button" class="btn btn-secondary btn-sm" (click)="modal.close('Cancel click')">Cancel</button>
-        </div>
-    </div>
-</ng-template>

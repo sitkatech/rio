@@ -22,8 +22,10 @@ GO
 GO
 :r ".\0007 - Create 2023 ownership relationships.sql"
 GO
-:r ".\0008 - Add 2024 WaterYear record.sql"
+:r ".\0008 - update RTE text with Overconsumption rate.sql"
 GO
-:r ".\0009 - Create 2024 ownership relationships.sql"
+:r ".\0009 - Add 2024 WaterYear record.sql"
+GO
+:r ".\0010 - Create 2024 ownership relationships.sql"
 GO
 

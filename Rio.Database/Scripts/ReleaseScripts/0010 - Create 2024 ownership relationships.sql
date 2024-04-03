@@ -1,5 +1,5 @@
 DECLARE @MigrationName VARCHAR(200);
-SET @MigrationName = '0007 - Create 2024 ownership relationships'
+SET @MigrationName = '0010 - Create 2024 ownership relationships'
 
 IF NOT EXISTS(SELECT * FROM dbo.DatabaseMigration DM WHERE DM.ReleaseScriptFileName = @MigrationName)
 BEGIN

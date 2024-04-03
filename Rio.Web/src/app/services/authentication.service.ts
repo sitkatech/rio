@@ -43,7 +43,7 @@ export class AuthenticationService {
       });
 
     this.oauthService.events
-      .pipe(filter(e => ['session_terminated', 'session_error', 'token_error', 'token_refresh_error', 'silent_refresh_error', 'token_validation_error'].includes(e.type)))
+      .pipe(filter(e => ['session_terminated', 'session_error'].includes(e.type)))
       .subscribe(e => this.router.navigateByUrl("/"));
 
     this.oauthService.setupAutomaticSilentRefresh();

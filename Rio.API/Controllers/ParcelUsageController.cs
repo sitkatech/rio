@@ -34,15 +34,26 @@ public class ParcelUsageController : SitkaController<ParcelUsageController>
             return actionResult;
         }
 
-        var stagedParcelUsages = 
-            ParcelUsages.GetByParcelUsageFileUploadID(_dbContext, parcelUsageFileUploadID).ToList();
+        var stagedParcelUsages = ParcelUsages.GetByParcelUsageFileUploadID(_dbContext, parcelUsageFileUploadID).ToList();
+        var stagedParcelUsagesParcelIDs = stagedParcelUsages.Where(x => x.ParcelID.HasValue).Select(x => x.ParcelID.Value).ToList();
+        var parcelUsages = ParcelLedgers.GetUsagesByParcelIDs(_dbContext, stagedParcelUsagesParcelIDs).ToLookup(x => x.ParcelID);
+
         var parcelUsageStagingSimpleDtos = stagedParcelUsages
             .Select(x => x.AsSimpleDto()).ToList();
+        foreach (var parcelUsageStagingSimpleDto in parcelUsageStagingSimpleDtos.Where(x => x.ParcelID.HasValue))
+        {
+            var usagesForWaterMonth = parcelUsages[parcelUsageStagingSimpleDto.ParcelID.Value]
+                .Where(x => x.WaterYear == parcelUsageStagingSimpleDto.ReportedDate.Year &&
+                            x.WaterMonth == parcelUsageStagingSimpleDto.ReportedDate.Month).ToList();
 
-        var stagedParcelUsagesParcelIDs = stagedParcelUsages.Select(x => x.ParcelID);
-        var existingParcels = _dbContext.Parcels.AsNoTracking();
+            var existingMonthlyUsageAmount = usagesForWaterMonth?.Sum(x => x.TransactionAmount);
 
-        var parcelNumbersWithoutStagedUsages = existingParcels
+            parcelUsageStagingSimpleDto.ExistingMonthlyUsageAmount = (decimal)existingMonthlyUsageAmount;
+            parcelUsageStagingSimpleDto.UpdatedMonthlyUsageAmount = (decimal)(existingMonthlyUsageAmount + parcelUsageStagingSimpleDto.ReportedValueInAcreFeet);
+        }
+
+        var parcelNumbersWithoutStagedUsages = _dbContext.Parcels.AsNoTracking()
+            .Where(x => x.ParcelStatusID == ParcelStatus.Active.ParcelStatusID)
             .Where(x => !stagedParcelUsagesParcelIDs.Contains(x.ParcelID))
             .Select(x => x.ParcelNumber).ToList();
 
