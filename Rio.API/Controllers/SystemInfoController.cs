@@ -17,17 +17,14 @@ public class SystemInfoController : SitkaController<SystemInfoController>
     {
     }
 
-    [HttpGet("/", Name = "GetSystemInfo")]  // MCS: the pattern seems to be to allow anonymous access to this endpoint
-    [AllowAnonymous]
-    public IActionResult GetSystemInfo([FromServices] IWebHostEnvironment environment)
+    public ActionResult<SystemInfoDto> GetSystemInfo([FromServices] IWebHostEnvironment environment)
     {
         SystemInfoDto systemInfo = new SystemInfoDto
         {
             Environment = environment.EnvironmentName,
-            CurrentTimeUTC = DateTime.UtcNow.ToString("o")
+            CurrentTimeUTC = DateTime.UtcNow.ToString("o"),
+            PodName = _rioConfiguration.HostName
         };
-
         return Ok(systemInfo);
     }
-
 }
