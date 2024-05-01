@@ -7,6 +7,7 @@ using Rio.API.Services;
 using Rio.EFModels.Entities;
 using System;
 using Rio.Models.DataTransferObjects;
+using Zybach.API.Logging;
 
 namespace Rio.API.Controllers;
 
@@ -17,6 +18,9 @@ public class SystemInfoController : SitkaController<SystemInfoController>
     {
     }
 
+    [HttpGet("/", Name = "GetSystemInfo")]  // MCS: the pattern seems to be to allow anonymous access to this endpoint
+    [AllowAnonymous]
+    [LogIgnore]
     public ActionResult<SystemInfoDto> GetSystemInfo([FromServices] IWebHostEnvironment environment)
     {
         SystemInfoDto systemInfo = new SystemInfoDto
