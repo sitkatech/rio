@@ -27,6 +27,7 @@ using Rio.API.Services.Telemetry;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
+using Zybach.API.Logging;
 using ILogger = Serilog.ILogger;
 
 namespace Rio.API
@@ -175,7 +176,11 @@ namespace Rio.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory, ILogger logger)
         {
-            loggerFactory.AddSerilog(logger);
+            app.UseSerilogRequestLogging(opts =>
+            {
+                opts.EnrichDiagnosticContext = LogHelper.EnrichFromRequest;
+                opts.GetLevel = LogHelper.CustomGetLevel;
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -200,6 +205,7 @@ namespace Rio.API
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<LogHelper>();
 
             app.Use(TelemetryHelper.PostBodyTelemetryMiddleware);
 
