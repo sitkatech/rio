@@ -1,8 +1,4 @@
 
-variable "appInsightsName" {
-  type = string
-}
-
 variable "keyVaultName" {
   type = string
 }
@@ -352,29 +348,6 @@ output "hangfire_password" {
 }
 ### END Hangfire password ###
 
-resource "azurerm_log_analytics_workspace" "web" {
-  name                = "${var.appInsightsName}-workspace"
-  location            = azurerm_resource_group.web.location
-  resource_group_name = azurerm_resource_group.web.name
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
-  tags                = local.tags
-}
-
-resource "azurerm_application_insights" "web" {
-	name                         = var.appInsightsName
-	resource_group_name          = azurerm_resource_group.web.name
-	location                     = azurerm_resource_group.web.location
-  workspace_id                 = azurerm_log_analytics_workspace.web.id
-	application_type             = "web"
-	tags                         = local.tags
-}
-
-output "instrumentation_key" {
-	sensitive = true
-  value = azurerm_application_insights.web.instrumentation_key
-}
-
 #key vault was created prior to terraform run
 resource "azurerm_key_vault" "web" {
   name                         = var.keyVaultName
@@ -429,17 +402,6 @@ resource "azurerm_key_vault_secret" "sqlAdminUser" {
   ]
 }
   
-resource "azurerm_key_vault_secret" "appInsightsInstrumentationKey" {
-  name                         = "appInsightsInstrumentationKey"
-  value                        = azurerm_application_insights.web.instrumentation_key
-  key_vault_id                 = azurerm_key_vault.web.id
-
-  tags                         = local.tags
-  depends_on = [
-    azurerm_key_vault_access_policy.thisPipeline
-  ]
-}
-
  resource "azurerm_key_vault_secret" "sqlApiUsername" {
    name                         = "sqlApiUsername"
    value                        = var.sqlApiUsername

@@ -2,6 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { BusyService } from '.';
 import { Alert } from '../models/alert';
 import { AlertService } from './alert.service';
+import { datadogLogs } from '@datadog/browser-logs';
 
 @Injectable({
   providedIn: 'root'
@@ -37,14 +38,13 @@ export class GlobalErrorHandlerService {
       }
 
       console.error(error);
-      if ((window as any).appInsights) {
-        (window as any).appInsights.trackException({
-          exception: error.originalError || error
-        });
+      if(error.stack) {
+        datadogLogs.logger.error(error.message, error, error);
       }
     } else if (error) {
       console.warn(error);
       this.busyService.setBusy(false);
+      datadogLogs.logger.warn(error);
     }
   }
 }

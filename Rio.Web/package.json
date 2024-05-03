@@ -14,6 +14,7 @@
     "build-dev": "ng build",
     "build-qa": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=qa --configuration production",
     "build-prod": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration=production --configuration production",
+    "prestart": "@powershell nvm install $(Get-Content .nvmrc) && @powershell nvm use $(Get-Content .nvmrc)",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -31,7 +32,6 @@
     "@angular/platform-browser": "^13.4.0",
     "@angular/platform-browser-dynamic": "^13.4.0",
     "@angular/router": "^13.4.0",
-    "@microsoft/applicationinsights-web": "^2.5.10",
     "@ng-bootstrap/ng-bootstrap": "^12.0.0",
     "@swimlane/ngx-charts": "^19.1.0",
     "@tinymce/tinymce-angular": "^6.0.0",
@@ -61,7 +61,8 @@
     "tinymce": "^6.4.2",
     "tslib": "^2.3.1",
     "webpack": "^5.30.0",
-    "zone.js": "~0.11.4"
+    "zone.js": "~0.11.4",
+    "@datadog/browser-logs": "^5.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.11",
@@ -70,7 +71,7 @@
     "@angular/compiler-cli": "^13.4.0",
     "@angular/language-service": "^13.4.0",
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "@openapitools/openapi-generator-cli": "^2.4.13",
+    "@openapitools/openapi-generator-cli": "2.5.2",
     "@types/node": "^13.13.50",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.3.0",

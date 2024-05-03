@@ -1,10 +1,5 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using Hangfire;
+﻿using Hangfire;
+using Hangfire.SqlServer;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,43 +13,23 @@ using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
 using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
-using Hangfire.SqlServer;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DependencyCollector;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Extensions.Logging;
-using Rio.API.Services.Telemetry;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using Zybach.API.Logging;
-using ILogger = Serilog.ILogger;
 
 namespace Rio.API
 {
     public class Startup
     {
-        private readonly TelemetryClient _telemetryClient;
         private readonly IWebHostEnvironment _environment;
-        private readonly string _instrumentationKey;
         public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Configuration = configuration;
             _environment = environment;
-
-            _instrumentationKey = Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"];
-
-            if (!string.IsNullOrWhiteSpace(_instrumentationKey))
-            {
-                _telemetryClient = new TelemetryClient(TelemetryConfiguration.CreateDefault())
-                {
-                    InstrumentationKey = _instrumentationKey
-                };
-            }
-            else
-            {
-                _telemetryClient = new TelemetryClient(TelemetryConfiguration.CreateDefault());
-            }
         }
 
         public IConfiguration Configuration { get; }
@@ -62,7 +37,6 @@ namespace Rio.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(_instrumentationKey);
             services.AddControllers().AddNewtonsoftJson(opt =>
                 {
                     if (!_environment.IsProduction())
@@ -114,11 +88,7 @@ namespace Rio.API
             services.AddDbContext<RioDbContext>(c => { c.UseSqlServer(connectionString, x => x.UseNetTopologySuite()); });
 
             services.AddSingleton(Configuration);
-            services.AddSingleton<ITelemetryInitializer, CloudRoleNameTelemetryInitializer>();
-            services.AddSingleton<ITelemetryInitializer, UserInfoTelemetryInitializer>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            var logger = GetSerilogLogger();
-            services.AddSingleton(logger);
 
             services.AddTransient(s => new KeystoneService(s.GetService<IHttpContextAccessor>(), keystoneHost));
 
@@ -174,7 +144,7 @@ namespace Rio.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime, ILoggerFactory loggerFactory, ILogger logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSerilogRequestLogging(opts =>
             {
@@ -207,7 +177,6 @@ namespace Rio.API
             app.UseAuthorization();
             app.UseMiddleware<LogHelper>();
 
-            app.Use(TelemetryHelper.PostBodyTelemetryMiddleware);
 
             #region Swagger
             // Register swagger middleware and enable the swagger UI which will be 
@@ -239,38 +208,7 @@ namespace Rio.API
 
             HangfireJobScheduler.ScheduleRecurringJobs();
 
-            applicationLifetime.ApplicationStopping.Register(OnShutdown);
-
-            var modules = app.ApplicationServices.GetServices<ITelemetryModule>();
-            var dependencyModule = modules.OfType<DependencyTrackingTelemetryModule>().FirstOrDefault();
-
-            if (dependencyModule != null)
-            {
-                var domains = dependencyModule.ExcludeComponentCorrelationHttpHeadersOnDomains;
-                domains.Add("core.windows.net");
-                domains.Add("10.0.75.1");
-            }
         }
-
-        private void OnShutdown()
-        {
-            _telemetryClient.Flush();
-            Thread.Sleep(1000);
-        }
-
-        private ILogger GetSerilogLogger()
-        {
-            var outputTemplate = $"{{Timestamp:yyyy-MM-dd HH:mm:ss zzz}} {{Level}} | {{RequestId}}-{{SourceContext}}: {{Message}}{{NewLine}}{{Exception}}";
-            var serilogLogger = new LoggerConfiguration()
-                .ReadFrom.Configuration(Configuration)
-                .WriteTo.Console(outputTemplate: outputTemplate);
-
-            if (!_environment.IsDevelopment())
-            {
-                serilogLogger.WriteTo.ApplicationInsights(_telemetryClient, new TraceTelemetryConverter());
-            }
-
-            return serilogLogger.CreateLogger();
-        }
+       
     }
 }

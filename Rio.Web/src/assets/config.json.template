@@ -41,7 +41,6 @@
     "logoutUrl": [TODO],
     "postLogoutRedirectUri": [TODO],
     "waitForTokenInMsec": [TODO]
-  }
-
-  "appInsightsInstrumentationKey": [TODO]
+  },
+  "datadogClientToken": [TODO]
 }
