@@ -10,7 +10,7 @@ export class SystemInfoService {
 
   constructor(private apiService: ApiService) { }
 
-  public getSystemInfo(): Observable<SystemInfoDto[]>{
+  public getSystemInfo(): Observable<SystemInfoDto>{
     return this.apiService.getFromApi('/');
   }
 
