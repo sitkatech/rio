@@ -96,6 +96,7 @@ namespace Rio.Web
             includeWaterSupply = bool.Parse(configuration["includeWaterSupply"]);
             geoserverMapServiceUrl = configuration["geoserverMapServiceUrl"];
             keystoneAuthConfiguration = new KeystoneAuthConfigurationDto(configuration);
+            datadogClientToken = configuration["datadogClientToken"];
             platformLongName = configuration["platformLongName"];
             platformShortName = configuration["platformShortName"];
             leadOrganizationShortName = configuration["leadOrganizationShortName"];
@@ -108,7 +109,6 @@ namespace Rio.Web
             navThemeColor = configuration["navThemeColor"];
             applicationInternalName = configuration["applicationInternalName"];
             allowOpenETSync = bool.Parse(configuration["allowOpenETSync"]);
-            appInsightsInstrumentationKey =  configuration["appInsightsInstrumentationKey"];
             parcelBoundingBoxLeft =  double.Parse(configuration["parcelBoundingBoxLeft"]);
             parcelBoundingBoxRight =  double.Parse(configuration["parcelBoundingBoxRight"]);
             parcelBoundingBoxTop =  double.Parse(configuration["parcelBoundingBoxTop"]);
@@ -133,11 +133,11 @@ namespace Rio.Web
         public bool enabledGETIntegration { get; set;}
         public string navThemeColor { get; set;}
         public string applicationInternalName { get; set;}
-        public string appInsightsInstrumentationKey {get; set;}
         public double parcelBoundingBoxLeft {get; set;}
         public double parcelBoundingBoxRight {get; set;}
         public double parcelBoundingBoxTop {get; set;}
         public double parcelBoundingBoxBottom {get; set;}
+        public string datadogClientToken {get; set;}
     }
 
     public class KeystoneAuthConfigurationDto

@@ -1,4 +1,14 @@
-﻿using System;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Rio.API.Controllers;
+using Rio.EFModels.Entities;
+using Rio.Models.DataTransferObjects;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -9,17 +19,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Rio.API.Controllers;
-using Rio.API.Services.Telemetry;
-using Rio.EFModels.Entities;
-using Rio.Models.DataTransferObjects;
 
 namespace Rio.API.Services
 {
@@ -118,12 +117,12 @@ namespace Rio.API.Services
             {
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, "OpenET API did not respond");
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
+                _logger.LogCritical(ex, "Error communicating with OpenET API.");
                 return false;
             }
             catch (Exception ex)
             {
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error when attempting to check raster metadata date ingested.");
+                _logger.LogCritical(ex, "Error when attempting to check raster metadata date ingested.");
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, ex.Message);
                 return false;
@@ -232,7 +231,7 @@ namespace Rio.API.Services
             {
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, "OpenET API did not respond");
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
+                _logger.LogCritical(ex, "Error communicating with OpenET API.");
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -244,7 +243,7 @@ namespace Rio.API.Services
             {
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, newSyncHistory.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, ex.Message);
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error communicating with OpenET API.");
+                _logger.LogCritical(ex, "Error communicating with OpenET API.");
                 return new HttpResponseMessage()
                 {
                     StatusCode = HttpStatusCode.InternalServerError,
@@ -289,7 +288,7 @@ namespace Rio.API.Services
             if (String.IsNullOrWhiteSpace(syncHistoryObject.GoogleBucketFileRetrievalURL))
             {
                 //We are somehow storing sync histories without file retrieval urls, this is not good
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, new OpenETException(
+                _logger.LogCritical(new OpenETException(
                     $"OpenETSyncHistory record:{syncHistoryObject.OpenETSyncHistoryID} was saved without a file retrieval URL but we attempted to update with it. Check integration!"), "Error communicating with OpenET API.");
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, syncHistoryObject.OpenETSyncHistoryID, OpenETSyncResultTypeEnum.Failed, "Record was saved without a Google Bucket File Retrieval URL. Support has been notified.");
                 return;
@@ -364,7 +363,7 @@ namespace Rio.API.Services
             }
             catch (Exception ex)
             {
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error parsing file from OpenET or getting records into database.");
+                _logger.LogCritical(ex, "Error parsing file from OpenET or getting records into database.");
                 OpenETSyncHistory.UpdateOpenETSyncEntityByID(_rioDbContext, syncHistoryObject.OpenETSyncHistoryID,
                     OpenETSyncResultTypeEnum.Failed, ex.Message);
             }
@@ -397,7 +396,7 @@ namespace Rio.API.Services
             }
             catch (Exception ex)
             {
-                TelemetryHelper.LogCaughtException(_logger, LogLevel.Critical, ex, "Error validating OpenET API Key.");
+                _logger.LogCritical(ex, "Error validating OpenET API Key.");
                 return false;
             }
         }

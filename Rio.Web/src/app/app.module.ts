@@ -70,7 +70,6 @@ import { WaterAccountsInviteComponent } from './pages/water-accounts-invite/wate
 import { NgxPaginationModule } from 'ngx-pagination';
 import { OpenetSyncWaterYearMonthStatusListComponent } from './pages/openet-sync-water-year-month-status-list/openet-sync-water-year-month-status-list.component';
 import { environment } from 'src/environments/environment';
-import { AppInsightsService } from './shared/services/app-insights.service';
 import { GlobalErrorHandlerService } from './shared/services/global-error-handler.service';
 import { ParcelUpdateLayerComponent } from './pages/parcel-update-layer/parcel-update-layer.component';
 import { ParcelListInactiveComponent } from './pages/parcel-list-inactive/parcel-list-inactive.component';
@@ -89,12 +88,13 @@ import { ClearGridFiltersButtonComponent } from './shared/components/ag-grid/cle
 import { ParcelLedgerCsvUploadUsageComponent } from './pages/parcel-ledger-csv-upload-usage/parcel-ledger-csv-upload-usage.component';
 import { ParcelLedgerUsagePreviewComponent } from './pages/parcel-ledger-usage-preview/parcel-ledger-usage-preview.component';
 import { OverconsumptionRateEditComponent } from './pages/overconsumption-rate-edit/overconsumption-rate-edit.component';
+import { DatadogService } from './shared/services/datadog.service';
 
-export function init_app(appLoadService: AppInitService, appInsightsService: AppInsightsService) {
+export function init_app(appLoadService: AppInitService, datadogService: DatadogService) {
   return () => appLoadService.init().then(() => {
-    if (environment.appInsightsInstrumentationKey) {
-      appInsightsService.initAppInsights();
-    }
+    if (environment.datadogClientToken) {
+        datadogService.init();
+      }
   });
 }
 
@@ -184,7 +184,7 @@ export function init_app(appLoadService: AppInitService, appInsightsService: App
     providers: [
         CookieService,
         AppInitService,
-        { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService, AppInsightsService], multi: true },
+        { provide: APP_INITIALIZER, useFactory: init_app, deps: [AppInitService, DatadogService], multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         DecimalPipe, CurrencyPipe, DatePipe,
         {

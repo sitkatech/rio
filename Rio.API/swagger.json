@@ -2783,7 +2783,24 @@
         "operationId": "GetSystemInfo",
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemInfoDto"
+                }
+              }
+            }
           }
         }
       }
@@ -6005,6 +6022,41 @@
           "SortOrder": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemInfoDto": {
+        "type": "object",
+        "properties": {
+          "Environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "CurrentTimeUTC": {
+            "type": "string",
+            "nullable": true
+          },
+          "Application": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "FullInformationalVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "PodName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Version": {
+            "type": "string",
+            "nullable": true
+          },
+          "CompilationDateTime": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

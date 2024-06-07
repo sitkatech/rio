@@ -42,6 +42,7 @@ model/posting-type-dto.ts
 model/posting-update-status-dto.ts
 model/posting-upsert-dto.ts
 model/role-dto.ts
+model/system-info-dto.ts
 model/tag-bulk-set-upsert-dto.ts
 model/tag-dto.ts
 model/trade-activity-by-month-dto.ts
@@ -71,3 +72,4 @@ model/water-type-dto.ts
 model/water-usage-overview-dto.ts
 model/water-year-dto.ts
 model/water-year-month-dto.ts
+param.ts

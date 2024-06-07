@@ -89,10 +89,6 @@ export class DynamicEnvironment {
         return window.config.allowOpenETSync;
     }
 
-    public get appInsightsInstrumentationKey() {
-        return window.config.appInsightsInstrumentationKey;
-    }
-
     public get parcelBoundingBoxLeft() {
         return window.config.parcelBoundingBoxLeft;
     }
@@ -111,5 +107,8 @@ export class DynamicEnvironment {
 
     public get homepageBannerFilename() {
         return window.config.homepageBannerFilename;
+    }
+    public get datadogClientToken() {
+        return window.config.datadogClientToken;
     }
 }

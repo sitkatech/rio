@@ -5,7 +5,6 @@ global:
     databaseName: "databasename"
     sqlUsername: "sqlUsername"
     sqlGeoserverUsername: "geoserverUsername"
-    appInsightsInstrumentationKey: "00000000-0000-0000-0000-000000000000"
     tenantName: "rrb"
     geoserverInitialMemory: "1G"
     geoserverMaximumMemory: "2G"
