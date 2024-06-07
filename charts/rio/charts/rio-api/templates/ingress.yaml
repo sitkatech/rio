@@ -27,7 +27,7 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   tls:
-    - secretName: {{ .Values.global.env.tenantName }}-api-tls
+    - secretName: {{ .Values.global.env.tenantName }}-tls
       hosts:
         - {{ .Values.global.domains.api }}
   rules:

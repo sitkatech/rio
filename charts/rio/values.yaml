@@ -25,7 +25,7 @@ global:
 api:
   replicaCount: 1
   image:
-    repository: esacontainers.azurecr.io/rio/api
+    repository: containersesaqa.azurecr.io/rio/api
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
@@ -56,14 +56,10 @@ api:
     port: 80
   ingress:
     enabled: true
-    className: ""
+    className: "azure-application-gateway"
     annotations:
-      kubernetes.io/ingress.class: azure/application-gateway
-      cert-manager.io/cluster-issuer: letsencrypt
-      acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
       appgw.ingress.kubernetes.io/request-timeout: "300"
-      cert-manager.io/issue-temporary-certificate: "true"
       appgw.ingress.kubernetes.io/connection-draining: "true"
       appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
   autoscaling:
@@ -80,7 +76,7 @@ api:
 web:
   replicaCount: 1
   image:
-    repository: esacontainers.azurecr.io/rio/web
+    repository: containersesaqa.azurecr.io/rio/web
     pullPolicy: Always
   nameOverride: ""
   fullnameOverride: ""
@@ -111,9 +107,8 @@ web:
     port: 80
   ingress:
     enabled: true
-    className: ""
+    className: "azure-application-gateway"
     annotations:
-      kubernetes.io/ingress.class: azure/application-gateway
       cert-manager.io/cluster-issuer: letsencrypt
       acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
@@ -168,13 +163,9 @@ geoserver:
     port: 80
   ingress:
     enabled: true
-    className: ""
+    className: "azure-application-gateway"
     annotations:
-      kubernetes.io/ingress.class: azure/application-gateway
-      cert-manager.io/cluster-issuer: letsencrypt
-      acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
-      cert-manager.io/issue-temporary-certificate: "true"
       appgw.ingress.kubernetes.io/connection-draining: "true"
       appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
   autoscaling:
