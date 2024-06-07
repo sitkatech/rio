@@ -27,10 +27,9 @@ spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- end }}
   tls:
-    - secretName: {{ .Values.global.env.tenantName }}-tls
+    - secretName: {{ .Values.global.env.tenantName }}-web-tls
       hosts:
         - {{ .Values.global.domains.web }}
-        - "*.{{ .Values.global.domains.web }}"
   rules:
     - host: {{ .Values.global.domains.web }}
       http:
