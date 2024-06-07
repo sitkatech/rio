@@ -512,7 +512,6 @@ stages:
                 global.env.sqlGeoserverUsername=$(sqlGeoserverUsername)
                 global.secrets.apiSqlPassword=$(SQL_API_PASSWORD)
                 global.secrets.sendGridApiKey="$(kv-sendGridApiKey)"
-                global.secrets.beehiveApiKey="$(beehiveApiKey)"
                 api.image.tag="$(Build.BuildNumber)-$(environment)"
                 web.image.tag="$(Build.BuildNumber)-$(environment)"
                 api.image.repository="$(kv-containerRegistry)/rio/api"
