@@ -165,10 +165,7 @@ geoserver:
     enabled: true
     className: "azure-application-gateway"
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt
-      acme.cert-manager.io/http01-edit-in-place: "true"
       appgw.ingress.kubernetes.io/ssl-redirect: "true"
-      cert-manager.io/issue-temporary-certificate: "true"
       appgw.ingress.kubernetes.io/connection-draining: "true"
       appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
   autoscaling:
