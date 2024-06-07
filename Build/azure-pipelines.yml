@@ -19,9 +19,9 @@ variables:
   sqlApiUsername: 'RioWeb'
   sqlGeoserverUsername: 'RioGeo'
 
-  domainApi: 'api-rio.esa-$(Environment).sitkatech.com'
-  domainWeb: 'rio.esa-$(Environment).sitkatech.com'
-  domainGeoserver: 'geoserver-rio.esa-$(Environment).sitkatech.com'
+  # domainApi: 'api-rio.esa-$(Environment).sitkatech.com'
+  # domainWeb: 'rio.esa-$(Environment).sitkatech.com'
+  # domainGeoserver: 'geoserver-rio.esa-$(Environment).sitkatech.com'
 
 resources:
   repositories:
