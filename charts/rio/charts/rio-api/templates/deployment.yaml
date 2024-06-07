@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: {{ include "api.fullname" . }}
   labels:
+    tags.datadoghq.com/env: {{ .Values.global.env.name | quote }}
+    tags.datadoghq.com/service: {{ include "api.fullname" . }}
+    tags.datadoghq.com/version: {{ .Values.image.tag | quote }}
     {{- include "api.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -14,6 +17,7 @@ spec:
   template:
     metadata:
       annotations:
+        ad.datadoghq.com/tags: '{"teamName": "{{ .Values.namespace }}"}'
         rollme: {{ randAlphaNum 5 | quote }} # roll deployments on every upgrade: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
@@ -42,7 +46,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.global.env.name }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

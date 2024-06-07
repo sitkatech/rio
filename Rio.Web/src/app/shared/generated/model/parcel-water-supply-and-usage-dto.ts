@@ -17,7 +17,7 @@ export class ParcelWaterSupplyAndUsageDto {
     Purchased?: number;
     Sold?: number;
     UsageToDate?: number;
-    WaterSupplyByWaterType?: { [key: string]: number; };
+    WaterSupplyByWaterType?: { [key: string]: number | null; };
     ParcelID?: number;
     ParcelNumber?: string;
     ParcelAreaInSquareFeet?: number;

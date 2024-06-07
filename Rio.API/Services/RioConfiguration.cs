@@ -30,9 +30,9 @@
         public string ParcelBoundingBoxBottom { get; set; }
         public string OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier { get; set; }
         public bool AllowOpenETSync { get; set; }
-        public string APPINSIGHTS_INSTRUMENTATIONKEY { get; set; }
         public string Ogr2OgrExecutable { get; set; }
         public string OgrInfoExecutable { get; set; }
         public string SendGridApiKey { get; set; }
+        public string HostName { get; set; }
     }
 }

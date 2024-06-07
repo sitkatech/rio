@@ -27,4 +27,5 @@ data:
   ParcelBoundingBoxRight: "-119.11015104115182"
   ParcelBoundingBoxTop: "35.442022035628575"
   ParcelBoundingBoxBottom: "35.27608156273151"
+  datadogClientToken: "pub083a61c0ce87f2d49aff26114600b3e4"
 {{ end }}

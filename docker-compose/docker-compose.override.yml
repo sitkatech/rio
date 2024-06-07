@@ -34,7 +34,6 @@ services:
       - ParcelBoundingBoxRight=${ParcelBoundingBoxRight}
       - ParcelBoundingBoxTop=${ParcelBoundingBoxTop}
       - ParcelBoundingBoxBottom=${ParcelBoundingBoxBottom}
-      - APPINSIGHTS_INSTRUMENTATIONKEY=${APPINSIGHTS_INSTRUMENTATIONKEY}
       - Ogr2OgrExecutable=${Ogr2OgrExecutable}
       - OgrInfoExecutable=${OgrInfoExecutable}
       - CimisApiUrl=${CimisApiUrl}

@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: {{ include "geoserver.fullname" . }}
   labels:
+    tags.datadoghq.com/env: {{ .Values.global.env.name | quote }}
+    tags.datadoghq.com/service: {{ include "geoserver.fullname" . }}
     {{- include "geoserver.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -14,6 +16,7 @@ spec:
   template:
     metadata:
       annotations:
+        ad.datadoghq.com/tags: '{"teamName": "{{ .Values.namespace }}"}'
         rollme: {{ randAlphaNum 5 | quote }} # roll deployments on every upgrade: https://helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}

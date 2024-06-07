@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Rio.API
 {
@@ -23,6 +25,13 @@ namespace Rio.API
                     {
                         config.AddJsonFile(secretPath);
                     }
+                })
+                .ConfigureLogging(logging => { logging.ClearProviders(); })
+                .UseSerilog((context, services, configuration) =>
+                {
+                    configuration
+                        .Enrich.FromLogContext()
+                        .ReadFrom.Configuration(context.Configuration);
                 }).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
             return hostBuilder;
         }
