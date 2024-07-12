@@ -37,7 +37,7 @@
     "@tinymce/tinymce-angular": "^6.0.0",
     "@types/geojson": "^7946.0.7",
     "ag-grid-angular": "^26.1.0",
-    "ag-grid-community": "^26.1.0",
+    "ag-grid-community": "^32.0.1",
     "angular-oauth2-oidc": "^12.1.0",
     "angular-oauth2-oidc-jwks": "^12.0.0",
     "bootstrap": "^4.4.1",
