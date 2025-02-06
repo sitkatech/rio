@@ -516,5 +516,6 @@ stages:
                 web.image.tag="$(Build.BuildNumber)-$(environment)"
                 api.image.repository="$(kv-containerRegistry)/rio/api"
                 web.image.repository="$(kv-containerRegistry)/rio/web"
+                geoserver.image.repository="$(kv-containerRegistry)/kartoza/geoserver"
                 global.secrets.hangfirePassword="$(HANGFIRE_PASSWORD)"
               force: false
