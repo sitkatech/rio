@@ -1,8 +1,0 @@
-version: '3.5'
-
-services:
-  rio.api:
-    image: edf/api
-    build:
-      context: ..
-      dockerfile: Rio.API/Dockerfile

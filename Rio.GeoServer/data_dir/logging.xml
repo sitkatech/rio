@@ -1,5 +1,7 @@
+
 <logging>
-  <level>PRODUCTION_LOGGING.properties</level>
-  <location>logs/geoserver.log</location>
+  <level>DEFAULT_LOGGING</level>
+  <location>/opt/geoserver/data_dir/logs/geoserver.log</location>
   <stdOutLogging>true</stdOutLogging>
 </logging>
+

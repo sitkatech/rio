@@ -1,16 +1,17 @@
 
 Param(
-  [Parameter (Mandatory = $false)]
-  [string] $iniFile = ".\build.ini",
-  [Parameter (Mandatory = $true)]
-  [string] $tenantIniFile
+    [Parameter (Mandatory = $false)]
+    [string] $iniFile = ".\build.ini",
+    [Parameter (Mandatory = $false)]
+    [string] $secretsIniFile = ".\secrets.ini"
 )
 
 Import-Module .\Get-Config.psm1
 
-$config = Get-Config -iniFile $iniFile -tenantIniFile $tenantIniFile
+$config = Get-Config -iniFile $iniFile
+$secrets = Get-Config -iniFile $secretsIniFile
 
-$backupConnectionString = $config.BackupConnectionString
+$backupConnectionString = $secrets.BackupConnectionString
 
 if ("" -ne $backupConnectionString)
 {

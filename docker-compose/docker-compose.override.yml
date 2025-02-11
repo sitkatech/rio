@@ -1,19 +1,23 @@
-version: '3.5'
-
 services:
   rio.api:
     build:
-      dockerfile: Rio.API/LocalDockerfile
+      args:
+        source: .
+    ports:
+      - "8788:8080"
+      - "8789:8081"
     environment:
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - KEYSTONE_HOST=${KEYSTONE_HOST}
-      - SendgridApiKey=${SendgridApiKey}
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - Kestrel__Certificates__Default__Path=/https/host.docker.internal.pfx
+      - Kestrel__Certificates__Default__Password=password#1
       - SITKA_EMAIL_REDIRECT=${SITKA_EMAIL_REDIRECT}
       - WEB_URL=${WEB_URL}
       - SECRET_PATH=${SECRET_PATH}
+      - KEYSTONE_HOST=${KEYSTONE_HOST}
       - KEYSTONE_REDIRECT_URL=${KEYSTONE_REDIRECT_URL}
       - AllowTrading=${AllowTrading}
-      - AllowOpenETSync=${AllowOpenETSync}
       - IncludeWaterSupply=${IncludeWaterSupply}
       - PlatformLongName=${PlatformLongName}
       - PlatformShortName=${PlatformShortName}
@@ -24,16 +28,31 @@ services:
       - VerificationKeyChars=${VerificationKeyChars}
       - ValidParcelNumberRegexPattern=${ValidParcelNumberRegexPattern}
       - ValidParcelNumberPatternAsStringForDisplay=${ValidParcelNumberPatternAsStringForDisplay}
-      - OpenETAPIBaseUrl=${OpenETAPIBaseUrl}
-      - OpenETRasterTimeSeriesMultipolygonRoute=${OpenETRasterTimeSeriesMultipolygonRoute}
-      - OpenETRasterMetadataRoute=${OpenETRasterMetadataRoute}
-      - OpenETAllFilesReadyForExportRoute=${OpenETAllFilesReadyForExportRoute}
-      - OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier=${OpenETRasterTimeseriesMultipolygonColumnToUseAsIdentifier}
-      - OpenETShapefilePath=${OpenETShapefilePath}
       - ParcelBoundingBoxLeft=${ParcelBoundingBoxLeft}
       - ParcelBoundingBoxRight=${ParcelBoundingBoxRight}
       - ParcelBoundingBoxTop=${ParcelBoundingBoxTop}
       - ParcelBoundingBoxBottom=${ParcelBoundingBoxBottom}
       - Ogr2OgrExecutable=${Ogr2OgrExecutable}
       - OgrInfoExecutable=${OgrInfoExecutable}
-      - CimisApiUrl=${CimisApiUrl}
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  geoserver:
+    container_name: rio_geoserver
+    image: kartoza/geoserver:2.25.2
+    environment:
+      - ENABLE_JSONP=true
+      - CATALINA_OPTS=-DALLOW_ENV_PARAMETRIZATION=true
+      - ENV_PROPERTIES=/opt/geoserver/geoserver-environment.properties
+      - STABLE_EXTENSIONS=sqlserver-plugin
+      - TOMCAT_EXTRAS=false
+      - ROOT_WEBAPP_REDIRECT=true
+      - SAMPLE_DATA=false
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=${GeoserverAdminPassword}
+    ports:
+      - 127.0.0.1:8780:8080
+    volumes:
+      - c:/git/sitkatech/rio/Rio.GeoServer/data_dir:/opt/geoserver/data_dir
+      - c:/sitka/Rio/GeoServer/geoserver-environment.properties:/opt/geoserver/geoserver-environment.properties
+

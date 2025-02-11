@@ -1,6 +1,4 @@
-﻿using Hangfire;
-using Hangfire.SqlServer;
-using IdentityServer4.AccessTokenValidation;
+﻿using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,14 +9,11 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Rio.API.Services;
-using Rio.API.Services.Authorization;
 using Rio.EFModels.Entities;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using Zybach.API.Logging;
 
 namespace Rio.API
@@ -96,40 +91,10 @@ namespace Rio.API
 
             services.AddSingleton<SitkaSmtpClientService>();
 
-            services.AddHttpClient("OpenETClient", c =>
-            {
-                c.BaseAddress = new Uri(rioConfiguration.OpenETAPIBaseUrl);
-                c.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
-                c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(rioConfiguration.OpenETAPIKey);
-            });
-
-            services.AddHttpClient("GenericClient", c =>
-            {
-                c.Timeout = new TimeSpan(60 * TimeSpan.TicksPerSecond);
-            });
-
             services.AddScoped(s => s.GetService<IHttpContextAccessor>().HttpContext);
             services.AddScoped(s => UserContext.GetUserFromHttpContext(s.GetService<RioDbContext>(), s.GetService<IHttpContextAccessor>().HttpContext));
-            services.AddScoped<IOpenETService, OpenETService>();
-            services.AddScoped<IOpenETRetrieveFromBucketJob, OpenETRetrieveFromBucketJob>();
-            services.AddScoped<IOpenETTriggerBucketRefreshJob, OpenETTriggerBucketRefreshJob>();
-
-            // Add Hangfire services.
-            services.AddHangfire(configuration => configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
 
             services.AddControllers();
-
 
             #region Swagger
             // Base swagger services
@@ -195,19 +160,6 @@ namespace Rio.API
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/healthz");
             });
-
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
-            {
-                Authorization = new[] { new HangfireAuthorizationFilter(Configuration) }
-            });
-            app.UseHangfireServer(new BackgroundJobServerOptions()
-            {
-                WorkerCount = 1
-            });
-            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
-
-            HangfireJobScheduler.ScheduleRecurringJobs();
-
         }
        
     }

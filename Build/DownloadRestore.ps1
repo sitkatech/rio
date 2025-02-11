@@ -1,6 +1,6 @@
 
-"Download EDF"
-& "$PSScriptRoot\DatabaseDownload.ps1" -iniFile "./build.ini"
+"Download Qanat"
+& "$PSScriptRoot\DatabaseDownload.ps1" -iniFile "./build.ini" -secretsIniFile "./secrets.ini"
 
-"Restore EDF"
+"Restore Qanat"
 & "$PSScriptRoot\DatabaseRestore.ps1" -iniFile "./build.ini"
