@@ -236,6 +236,7 @@ resource "azurerm_mssql_database" "database" {
   sku_name        = var.databaseTier
   zone_redundant  = false
   elastic_pool_id = data.azurerm_mssql_elasticpool.spoke.id
+  enclave_type = "VBS"
 
   long_term_retention_policy {
     weekly_retention  = "P3M"
@@ -324,29 +325,6 @@ output "sql_geoserver_password" {
 }
 
 ### END Geoserver Sql user/login ###
-
-### BEGIN Hangfire password ###
-resource "random_password" "hangfirePassword" {
-  length           = 16
-  special          = true
-  override_special = "!*-_"
-  min_special      = 1
-  min_lower        = 1
-  min_upper        = 1
-  min_numeric      = 1
-  keepers = {
-    amd_id = var.amd_id
-  }
-}
-
-output "hangfire_password" {
-  sensitive = true
-  value = random_password.hangfirePassword.result
-  depends_on = [
-    random_password.hangfirePassword
-  ]
-}
-### END Hangfire password ###
 
 #key vault was created prior to terraform run
 resource "azurerm_key_vault" "web" {
@@ -479,17 +457,6 @@ resource "azurerm_key_vault_secret" "geoserverAdminPassword" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "hangfirePassword" {
-  name                         = "hangfirePassword"
-  value                        = random_password.hangfirePassword.result
-  key_vault_id                 = azurerm_key_vault.web.id
-
-  tags                         = local.tags
-  depends_on = [
-    azurerm_key_vault_access_policy.thisPipeline
-  ]
-}
-
 resource "datadog_synthetics_test" "test_api" {
   type    = "api"
   subtype = "http"
@@ -565,7 +532,7 @@ resource "datadog_synthetics_test" "test_geoserver" {
   subtype = "http"
   request_definition {
     method = "GET"
-    url    = "https://${var.domainGeoserver}/geoserver/web/"
+    url    = "https://${var.domainGeoserver}/geoserver/web/wicket/resource/org.geoserver.web.GeoServerBasePage/img/logo.png"
   }
   request_headers = {
     Content-Type   = "application/json"
