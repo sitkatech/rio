@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "geoserver.fullname" . }}-{{ .Values.global.env.tenantName }}-environment-properties-configmap
+  name: {{ include "geoserver.fullname" . }}-environment-properties-configmap
 data:
-  geoserver-environment.properties.template: |
+  geoserver-environment.properties: |
     datastore-host = {{ .Values.global.env.dbServer }}
     datastore-database = {{ .Values.global.env.databaseName }}
     datastore-user = {{ .Values.global.env.sqlGeoserverUsername }}
-    datastore-password = /app/secrets/geoserverSqlServerPassword
+    datastore-password = {{ .Values.global.secrets.geoserverSqlServerPassword }}

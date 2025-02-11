@@ -14,7 +14,6 @@ variables:
   storageAccountName: 'rioapp$(Environment)'
 
   databaseName: 'Rio-RRBDB'
-  databaseEdition: 'Standard'
   databaseTier: 'ElasticPool'
   sqlApiUsername: 'RioWeb'
   sqlGeoserverUsername: 'RioGeo'
@@ -48,8 +47,6 @@ stages:
 - stage: Test
   displayName: Test All
   condition: and(succeeded(), eq(variables['runTests'], 'true'))
-  pool:
-    vmImage: ubuntu-latest
   jobs:  
   - job: Tests
     displayName: 'Tests'
@@ -108,6 +105,7 @@ stages:
           $(Build.BuildNumber)-$(environment)
         includeLatestTag: true
 
+
   - job: BuildWeb
     displayName: Build Web
     condition: eq(variables['build'], 'true')
@@ -134,6 +132,7 @@ stages:
         additionalImageTags: |
           $(Build.BuildNumber)-$(environment)
         includeLatestTag: true
+
 
 - stage: BuildTerraform
   displayName: Terraform Plan
@@ -249,9 +248,8 @@ stages:
               echo "##vso[task.setvariable variable=APPLICATION_STORAGE_ACCOUNT_KEY;isOutput=true;issecret=true]$(TF_OUT_APPLICATION_STORAGE_ACCOUNT_KEY)"
               echo "##vso[task.setvariable variable=SQL_API_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_API_PASSWORD)"
               echo "##vso[task.setvariable variable=SQL_GEOSERVER_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_SQL_GEOSERVER_PASSWORD)"
-              echo "##vso[task.setvariable variable=GEOSERVER_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_GEOSERVER_ADMIN_PASSWORD)"
-              echo "##vso[task.setvariable variable=HANGFIRE_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_HANGFIRE_PASSWORD)"
               echo "##vso[task.setvariable variable=DATABASE_ID;isOutput=true;issecret=true]$(TF_OUT_DATABASE_ID)"
+              echo "##vso[task.setvariable variable=GEOSERVER_ADMIN_PASSWORD;isOutput=true;issecret=true]$(TF_OUT_GEOSERVER_ADMIN_PASSWORD)"
           - bash: 'env | sort'
 
 - stage: DeployDB
@@ -281,7 +279,7 @@ stages:
           steps:
           - download: current
             artifact: Database 
-          
+
           - task: AzureKeyVault@2
             inputs:
               azureSubscription: "$(azureSubscription)"
@@ -298,13 +296,12 @@ stages:
               artifact: bacpac  
               path: '$(Pipeline.Workspace)/bacpac'
             condition: and(succeeded(), eq(variables['restoreDatabase'], true))
-
+          
           - template: azure-pipelines/templates/database/db-deploy-template.yml@BuildTemplates 
             parameters:
               subscription: '$(azureSubscription)'
               serverName: '$(kv-dbServerName).database.windows.net'
               databaseName: '$(databaseName)'
-              databaseEdition: '$(databaseEdition)'
               elasticPoolName: '$(kv-elasticPoolName)'
               sqlAdministratorUsername: '$(kv-sqlAdministratorUsername)'
               sqlAdministratorPassword: '$(kv-sqlAdministratorPassword)'
@@ -336,6 +333,8 @@ stages:
               desiredSqlPassword: '$(SQL_GEOSERVER_PASSWORD)'
               roles: 'db_datareader'
 
+
+
 - stage: DeployGeoServer
   displayName: Deploy GeoServer
   dependsOn: DeployTerraform
@@ -360,7 +359,7 @@ stages:
           steps:        
           - download: current
             artifact: GeoServerArtifacts
-         
+             
           - task: AzureCLI@2
             inputs:
               azureSubscription: '$(azureSubscription)'
@@ -393,7 +392,6 @@ stages:
       SQL_API_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_API_PASSWORD'] ]
       SQL_GEOSERVER_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_GEOSERVER_PASSWORD'] ]
       GEOSERVER_ADMIN_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.GEOSERVER_ADMIN_PASSWORD'] ]
-      HANGFIRE_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.HANGFIRE_PASSWORD'] ]
     # creates an environment if it doesn't exist
     environment: $(Environment)
     strategy:
@@ -512,10 +510,10 @@ stages:
                 global.env.sqlGeoserverUsername=$(sqlGeoserverUsername)
                 global.secrets.apiSqlPassword=$(SQL_API_PASSWORD)
                 global.secrets.sendGridApiKey="$(kv-sendGridApiKey)"
-                global.secrets.beehiveApiKey="$(beehiveApiKey)"
                 api.image.tag="$(Build.BuildNumber)-$(environment)"
                 web.image.tag="$(Build.BuildNumber)-$(environment)"
                 api.image.repository="$(kv-containerRegistry)/rio/api"
                 web.image.repository="$(kv-containerRegistry)/rio/web"
+                geoserver.image.repository="$(kv-containerRegistry)/kartoza/geoserver"
                 global.secrets.hangfirePassword="$(HANGFIRE_PASSWORD)"
               force: false

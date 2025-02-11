@@ -5,6 +5,11 @@
 
 trigger: none
 
+variables:
+  spokeKeyVaultName: 'aks-spoke-kv-esa-prod'
+  databaseName: 'Rio-RRBDB'
+  qaStorageAccountName: 'rioappqa'
+
 jobs:
 - job: BackupDB
   displayName: 'Backup Production DB'
@@ -16,15 +21,23 @@ jobs:
 
   steps:
   - checkout: none
+
+  - task: AzureKeyVault@2
+    inputs:
+      azureSubscription: "$(AzureServiceConnection)"
+      KeyVaultName: '$(spokeKeyVaultName)'
+      SecretsFilter: '*'
+      RunAsPreJob: true
+      
   - task: SqlAzureDacpacDeployment@1
     name: export
     displayName: 'Export Production DB'
     inputs:
-      azureSubscription: '$(azureServiceConnection)' #Should be Prod Service Connection
-      ServerName: '$(serverName)'
+      azureSubscription: '$(AzureServiceConnection)' #Should be Prod Service Connection
+      ServerName: '$(kv-dbServerName).database.windows.net'
       DatabaseName: '$(databaseName)'
-      SqlUsername: '$(sqlAdministrator)'
-      SqlPassword: '$(sqlPassword)'
+      SqlUsername: '$(kv-sqlAdministratorUsername)'
+      SqlPassword: '$(kv-sqlAdministratorPassword)'
       DeploymentAction: Export
 
   - publish: '$(export.SqlDeploymentOutputFile)'
@@ -34,8 +47,8 @@ jobs:
     displayName: 'Copy BacPac to QA Blob storage'
     inputs:
       SourcePath: '$(export.SqlDeploymentOutputFile)'
-      azureSubscription: '$(azureServiceConnection)' #Should be QA Service Connection
+      azureSubscription: '$(AzureQAServiceConnection)' #Should be QA Service Connection
       Destination: 'AzureBlob'
-      storage: '$(storageAccountName)'
+      storage: '$(qaStorageAccountName)'
       ContainerName: 'prod-backup'
 
