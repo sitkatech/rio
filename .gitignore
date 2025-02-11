@@ -28,4 +28,3 @@ Rio.Web/openapitools.json
 Rio.Web/wwwroot/
 /Build/*.ini
 /Build/temp
-/Rio.GeoServer/data_dir/gwc/diskquota_page_store_hsql

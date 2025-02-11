@@ -5,6 +5,6 @@ function Import-BacPac {
     )
     "Importing BacPac."
     $sqlConnectionString
-
+    
     & sqlpackage /a:Import /sf:$bacpacPath /tcs:$sqlConnectionString
 }

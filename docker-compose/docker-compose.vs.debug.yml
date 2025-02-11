@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+  rio.api:
+    image: rio/api
+    labels:
+      - "com.microsoft.visualstudio.targetoperatingsystem=linux"
+    build:
+      args:
+        source: ${DOCKER_BUILD_SOURCE}
+    ports:
+      - "8788:80"
+      - "8789:443"
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - Kestrel__Certificates__Default__Path=/https/host.docker.internal.pfx
+      - Kestrel__Certificates__Default__Password=password#1
+    volumes:
+      - ~/.aspnet/https:/https:ro 

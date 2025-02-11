@@ -1,9 +1,15 @@
+Param(
+  [Parameter (Mandatory = $false)]
+  [string] $iniFile = ".\build.ini",
+  [Parameter (Mandatory = $true)]
+  [string] $tenantIniFile
+)
 
-"Download Qanat"
-& "$PSScriptRoot\DatabaseDownload.ps1" -iniFile "./build.ini" -secretsIniFile "./secrets.ini"
+"Download DB"
+& "$PSScriptRoot\DatabaseDownload.ps1" -iniFile $iniFile -tenantIniFile $tenantIniFile 
 
-"Restore Qanat"
-& "$PSScriptRoot\DatabaseRestore.ps1" -iniFile "./build.ini"
+"Restore DB"
+& "$PSScriptRoot\DatabaseRestore.ps1" -iniFile $iniFile -tenantIniFile $tenantIniFile 
 
-"Build Qanat"
-& "$PSScriptRoot\DatabaseBuild.ps1" -iniFile "./build.ini"
+"Build DB"
+& "$PSScriptRoot\DatabaseBuild.ps1" -iniFile $iniFile -tenantIniFile $tenantIniFile

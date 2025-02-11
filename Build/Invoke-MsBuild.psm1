@@ -56,9 +56,9 @@ function Invoke-MsBuild
 	By default the build output is not shown in any window.
 	NOTE: This switch will override the ShowBuildOutputInNewWindow switch.
 	NOTE: There is a problem with the -NoNewWindow parameter of the Start-Process cmdlet; this is used for the ShowBuildOutputInCurrentWindow switch.
-		The bug is that in some PowerShell consoles, the build output is not directed back to the console calling this function, so nothing is displayed.
-		To avoid the build process from appearing to hang, PromptForInputBeforeClosing only has an effect with ShowBuildOutputInCurrentWindow when running
-		in the default "ConsoleHost" PowerShell console window, as we know it works properly with that console (it does not in other consoles like ISE, PowerGUI, etc.).
+		  The bug is that in some PowerShell consoles, the build output is not directed back to the console calling this function, so nothing is displayed.
+		  To avoid the build process from appearing to hang, PromptForInputBeforeClosing only has an effect with ShowBuildOutputInCurrentWindow when running
+		  in the default "ConsoleHost" PowerShell console window, as we know it works properly with that console (it does not in other consoles like ISE, PowerGUI, etc.).
 
 	.PARAMETER PromptForInputBeforeClosing
 	If set, this switch will prompt the user for input after the build completes, and will not continue until the user presses a key.
@@ -66,7 +66,7 @@ function Invoke-MsBuild
 	NOTE: This switch cannot be used with the PassThru switch.
 	NOTE: The user will need to provide input before execution will return back to the calling script (so do not use this switch for automated builds).
 	NOTE: To avoid the build process from appearing to hang, PromptForInputBeforeClosing only has an effect with ShowBuildOutputInCurrentWindow when running
-		in the default "ConsoleHost" PowerShell console window, as we know it works properly with that console (it does not in other consoles like ISE, PowerGUI, etc.).
+		  in the default "ConsoleHost" PowerShell console window, as we know it works properly with that console (it does not in other consoles like ISE, PowerGUI, etc.).
 
 	.PARAMETER MsBuildFilePath
 	By default this script will locate and use the latest version of MsBuild.exe on the machine.
@@ -208,7 +208,7 @@ function Invoke-MsBuild
 	.NOTES
 	Name:   Invoke-MsBuild
 	Author: Daniel Schroeder (originally based on the module at http://geekswithblogs.net/dwdii/archive/2011/05/27/part-2-automating-a-visual-studio-build-with-powershell.aspx)
-	Version: 2.7.1
+	Version: 2.6.4
 #>
 	[CmdletBinding(SupportsShouldProcess, DefaultParameterSetName="Wait")]
 	param
@@ -284,7 +284,7 @@ function Invoke-MsBuild
 
 		# Default the ParameterSet variables that may not have been set depending on which parameter set is being used. This is required for PowerShell v2.0 compatibility.
 		if (!(Test-Path Variable:Private:AutoLaunchBuildLogOnFailure)) { $AutoLaunchBuildLogOnFailure = $false }
-		if (!(Test-Path Variable:Private:AutoLaunchBuildErrorsLogOnFailure)) { $AutoLaunchBuildErrorsLogOnFailure = $false }
+		if (!(Test-Path Variable:Private:AutoLaunchBuildLogOnFailure)) { $AutoLaunchBuildErrorsLogOnFailure = $false }
 		if (!(Test-Path Variable:Private:KeepBuildLogOnSuccessfulBuilds)) { $KeepBuildLogOnSuccessfulBuilds = $false }
 		if (!(Test-Path Variable:Private:PromptForInputBeforeClosing)) { $PromptForInputBeforeClosing = $false }
 		if (!(Test-Path Variable:Private:PassThru)) { $PassThru = $false }
@@ -681,10 +681,6 @@ function Get-MsBuildPathForVisualStudio2015AndPrior([bool] $Use32BitMsBuild)
 		}
 	}
 
-	# Backup the current culture and force using English US to ensure version numbers are in the expected format (e.g. 17.0).
-	$previousCulture = [System.Threading.Thread]::CurrentThread.CurrentCulture
-	[System.Threading.Thread]::CurrentThread.CurrentCulture = 'en-US'
-
 	# Get the path to the directory that the latest version of MsBuild is in.
 	$msBuildToolsVersionsStrings = Get-ChildItem -Path $registryPathToMsBuildToolsVersions | Where-Object { $_ -match '[0-9]+\.[0-9]' } | Select-Object -ExpandProperty PsChildName
 	$msBuildToolsVersions = @{}
@@ -693,9 +689,6 @@ function Get-MsBuildPathForVisualStudio2015AndPrior([bool] $Use32BitMsBuild)
 	$registryPathToMsBuildToolsLatestVersion = Join-Path -Path $registryPathToMsBuildToolsVersions -ChildPath ("{0:n1}" -f $largestMsBuildToolsVersion)
 	$msBuildToolsVersionsKeyToUse = Get-Item -Path $registryPathToMsBuildToolsLatestVersion
 	$msBuildDirectoryPath = $msBuildToolsVersionsKeyToUse | Get-ItemProperty -Name 'MSBuildToolsPath' | Select-Object -ExpandProperty 'MSBuildToolsPath'
-
-	# Restore the previous culture now that we're done comparing version numbers.
-	[System.Threading.Thread]::CurrentThread.CurrentCulture = $previousCulture
 
 	if(!$msBuildDirectoryPath)
 	{
@@ -710,28 +703,25 @@ function Get-MsBuildPathForVisualStudio2015AndPrior([bool] $Use32BitMsBuild)
 
 function Get-CommonVisualStudioDirectoryPath
 {
-	# As of VS 2022 Visual Studio is 64-bit, so look in "Program Files" directory before "Program Files (x86)".
 	[string] $programFilesDirectory = $null
 	try
 	{
-		$programFilesDirectory = Get-Item 'Env:\ProgramFiles' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Value
+		$programFilesDirectory = Get-Item 'Env:\ProgramFiles(x86)' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Value
 	}
 	catch
 	{ }
 
 	if ([string]::IsNullOrEmpty($programFilesDirectory))
 	{
-		$programFilesDirectory = 'C:\Program Files'
+		$programFilesDirectory = 'C:\Program Files (x86)'
 	}
 
-	[string] $visualStudioDirectoryPath = Join-Path -Path $programFilesDirectory -ChildPath 'Microsoft Visual Studio'
-	[bool] $visualStudioDirectoryPathExists = (Test-Path -LiteralPath $visualStudioDirectoryPath -PathType Container)
-	if (!$visualStudioDirectoryPathExists)
+	# If we're on a 32-bit machine, we need to go straight after the "Program Files" directory.
+	if (!(Test-Path -LiteralPath $programFilesDirectory -PathType Container))
 	{
-		# Look for Visual Studio in "Program Files (x86)" directory.
 		try
 		{
-			$programFilesDirectory = Get-Item 'Env:\ProgramFiles(x86)' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Value
+			$programFilesDirectory = Get-Item 'Env:\ProgramFiles' -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Value
 		}
 		catch
 		{
@@ -740,12 +730,13 @@ function Get-CommonVisualStudioDirectoryPath
 
 		if ([string]::IsNullOrEmpty($programFilesDirectory))
 		{
-			$programFilesDirectory = 'C:\Program Files (x86)'
+			$programFilesDirectory = 'C:\Program Files'
 		}
 	}
 
-	$visualStudioDirectoryPath = Join-Path -Path $programFilesDirectory -ChildPath 'Microsoft Visual Studio'
-	$visualStudioDirectoryPathExists = (Test-Path -LiteralPath $visualStudioDirectoryPath -PathType Container)
+	[string] $visualStudioDirectoryPath = Join-Path -Path $programFilesDirectory -ChildPath 'Microsoft Visual Studio'
+
+	[bool] $visualStudioDirectoryPathExists = (Test-Path -LiteralPath $visualStudioDirectoryPath -PathType Container)
 	if (!$visualStudioDirectoryPathExists)
 	{
 		return $null

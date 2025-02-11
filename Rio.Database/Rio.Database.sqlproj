@@ -172,6 +172,10 @@
     <None Include="Rio.Database.publish.xml" />
     <None Include="Scripts\PreReleaseScripts\README.md" />
     <None Include="Scripts\ReleaseScripts\README.md" />
+    <None Include="Rio.Miugsa.Database.publish.xml" />
+    <None Include="Rio.Pajaro.Database.publish.xml" />
+    <None Include="Rio.RRB.Database.publish.xml" />
+    <None Include="Rio.Yolo.Database.publish.xml" />
     <None Include="Scripts\ReleaseScripts\0004 - Add RTE for Usage CSV Upload.sql" />
   </ItemGroup>
   <ItemGroup>

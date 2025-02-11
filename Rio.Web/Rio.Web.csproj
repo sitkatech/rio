@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <DockerComposeProjectPath>docker-compose\docker-compose.dcproj</DockerComposeProjectPath>
     </PropertyGroup>
 
@@ -34,6 +34,7 @@
         <None Remove=".editorconfig" />
         <None Remove=".gitignore" />
         <None Remove="angular.json" />
+        <None Remove="dev.geooptix.com_cert.pfx" />
         <None Remove="package-lock.json" />
         <None Remove="Rio.Web.sln.DotSettings" />
         <None Remove="tsconfig.json" />
