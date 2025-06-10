@@ -43,7 +43,7 @@ jobs:
   - publish: '$(export.SqlDeploymentOutputFile)'
     artifact: bacpac
 
-  - task: AzureFileCopy@2
+  - task: AzureFileCopy@6
     displayName: 'Copy BacPac to QA Blob storage'
     inputs:
       SourcePath: '$(export.SqlDeploymentOutputFile)'

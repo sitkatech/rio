@@ -143,7 +143,6 @@ stages:
     displayName: Terraform Plan
     pool:
       vmImage: 'windows-latest'
-      demands: msbuild
     steps:
     - checkout: self
       fetchDepth: 0
@@ -222,7 +221,6 @@ stages:
   - deployment: Terraform
     pool:
       vmImage: 'windows-latest'
-      demands: msbuild
     # creates an environment if it doesn't exist
     environment: '$(Environment)-Approve' # this Environment has an Approval Gate attached to it in the Azure DevOps UI
     strategy:
@@ -265,7 +263,6 @@ stages:
   - deployment: Database
     pool:
       vmImage: 'windows-latest'
-      demands: msbuild
     variables: 
       SQL_API_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_API_PASSWORD'] ]
       SQL_GEOSERVER_PASSWORD: $[ stageDependencies.DeployTerraform.Terraform.outputs['Terraform.Bash.SQL_GEOSERVER_PASSWORD'] ]
