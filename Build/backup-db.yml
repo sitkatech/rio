@@ -40,13 +40,32 @@ jobs:
       SqlPassword: '$(kv-sqlAdministratorPassword)'
       DeploymentAction: Export
 
-  - publish: '$(export.SqlDeploymentOutputFile)'
+  # SqlAzureDacpacDeployment@1 names its Export output '<database>_<new guid>.bacpac' and offers
+  # no input to change it, so SqlDeploymentOutputFile is a different filename on every run. 2
+  # consumers resolve this backup by the exact name '<databaseName>.bacpac' — the DB deploy
+  # stage's bacpacFile in azure-pipelines.yml and the local dev blob download in
+  # DatabaseDownload.ps1 — and none of them can match a per-run guid. Stage it under the stable
+  # name here so both the artifact and the blob keep that contract; publishing the task's path
+  # directly also meant every run uploaded a new blob instead of replacing the previous one.
+  - task: PowerShell@2
+    displayName: 'Stage BacPac under a stable filename'
+    inputs:
+      targetType: inline
+      failOnStderr: true
+      script: |
+        $exported = "$(export.SqlDeploymentOutputFile)"
+        $staged = Join-Path "$(Agent.TempDirectory)" "$(databaseName).bacpac"
+        Write-Host "Export task produced: $exported"
+        Copy-Item -LiteralPath $exported -Destination $staged -Force
+        Write-Host "Staged for publish as: $staged"
+
+  - publish: '$(Agent.TempDirectory)/$(databaseName).bacpac'
     artifact: bacpac
 
   - task: AzureFileCopy@6
     displayName: 'Copy BacPac to QA Blob storage'
     inputs:
-      SourcePath: '$(export.SqlDeploymentOutputFile)'
+      SourcePath: '$(Agent.TempDirectory)/$(databaseName).bacpac'
       azureSubscription: '$(AzureQAServiceConnection)' #Should be QA Service Connection
       Destination: 'AzureBlob'
       storage: '$(qaStorageAccountName)'
