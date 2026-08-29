@@ -60,12 +60,12 @@
     "style-loader": "^1.2.1",
     "tinymce": "^6.4.2",
     "tslib": "^2.3.1",
-    "webpack": "^5.30.0",
+    "webpack": "^5.94.0",
     "zone.js": "~0.11.4",
     "@datadog/browser-logs": "^5.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~13.3.11",
+    "@angular-devkit/build-angular": "~18.2.2",
     "@angular-eslint/eslint-plugin": "^12.6.1",
     "@angular/cli": "^13.3.11",
     "@angular/compiler-cli": "^13.4.0",
