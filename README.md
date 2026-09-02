@@ -1,3 +1,15 @@
+> ## ⚠️ Retired
+>
+> This project has been retired. Rosedale-Rio Bravo Water Storage District's water
+> accounting is now part of the **Groundwater Accounting Platform**, available at
+> https://groundwateraccounting.org/rrb — https://waterbudget.rrbwsd.com now
+> redirects there.
+>
+> This repository is archived and read-only. The setup instructions below are kept
+> for historical reference; the application and its infrastructure no longer exist.
+>
+> Questions: info@groundwateraccounting.org
+
 Welcome to the Water Accounting Platform. The platform is designed to meet these objectives:
 - Help water managers achieve groundwater sustainability goals and minimize economic costs to the community.
 - Over the longer term, consider opportunities to generate additional benefits from fallowed land such as groundwater recharge basins and wildlife habitat.
