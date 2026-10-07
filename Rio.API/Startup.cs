@@ -4,6 +4,7 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,9 @@ using Rio.EFModels.Entities;
 using SendGrid.Extensions.DependencyInjection;
 using Serilog;
 using System;
+using System.IO.Compression;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Zybach.API.Logging;
@@ -53,6 +56,16 @@ namespace Rio.API
                         }
                     }
                 });
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+            });
+            services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
 
             services.Configure<RioConfiguration>(Configuration);
             var rioConfiguration = Configuration.Get<RioConfiguration>();
@@ -162,6 +175,7 @@ namespace Rio.API
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseResponseCompression();
 
             app.UseRouting();
             app.UseCors(policy =>
